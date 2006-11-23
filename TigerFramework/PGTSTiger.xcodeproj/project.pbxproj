@@ -1,0 +1,439 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		530ADA1709ED18D5004A13C3 /* NSExpression+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADA1309ED18D5004A13C3 /* NSExpression+PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530ADA1809ED18D5004A13C3 /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 530ADA1409ED18D5004A13C3 /* NSPredicate+PGTSAdditions.m */; };
+		530ADA1909ED18D5004A13C3 /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 530ADA1509ED18D5004A13C3 /* NSExpression+PGTSAdditions.m */; };
+		530ADA1A09ED18D5004A13C3 /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADA1609ED18D5004A13C3 /* NSPredicate+PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530ADC8A09ED1C07004A13C3 /* PGTSTiger.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADC8909ED1C07004A13C3 /* PGTSTiger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		532FF6700A1B557C006BFB99 /* PGTSTigerConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 532FF66E0A1B557C006BFB99 /* PGTSTigerConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		532FF6710A1B557C006BFB99 /* PGTSTigerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 532FF66F0A1B557C006BFB99 /* PGTSTigerConstants.m */; };
+		53395C5609ECFC3B001D742A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		5360BE430A370370007B3BDC /* PGTSTigerConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 532FF66E0A1B557C006BFB99 /* PGTSTigerConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5360BE440A370371007B3BDC /* PGTSTigerConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 532FF66F0A1B557C006BFB99 /* PGTSTigerConstants.m */; };
+		5360BE450A370371007B3BDC /* NSExpression+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADA1309ED18D5004A13C3 /* NSExpression+PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5360BE460A370372007B3BDC /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 530ADA1509ED18D5004A13C3 /* NSExpression+PGTSAdditions.m */; };
+		5360BE470A370372007B3BDC /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADA1609ED18D5004A13C3 /* NSPredicate+PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5360BE480A370372007B3BDC /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 530ADA1409ED18D5004A13C3 /* NSPredicate+PGTSAdditions.m */; };
+		5360BE4A0A370374007B3BDC /* PGTSTiger.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADC8909ED1C07004A13C3 /* PGTSTiger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5361C6F20A35C96800696E64 /* PGTS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530ADA2109ED18F8004A13C3 /* PGTS.framework */; };
+		53E11A210A791A6600D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A200A791A6600D0107C /* ExceptionHandling.framework */; };
+		53FB8A1D0A37390F006CCF63 /* libPGTS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53C9BDF80A36FEB000AAFE50 /* libPGTS.a */; };
+		53FB8A1E0A373913006CCF63 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		530ADA2009ED18F8004A13C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530ADA1B09ED18F8004A13C3 /* Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53BA503708804F9A00BFAFB5;
+			remoteInfo = Framework;
+		};
+		533D6D690A37049600E0BEC9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530ADA1B09ED18F8004A13C3 /* Framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 536580D10A36FDFB00CDEC90;
+			remoteInfo = "Static archive";
+		};
+		5395D3870A35D0850035D52D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530ADA1B09ED18F8004A13C3 /* Framework.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53BA503608804F9A00BFAFB5;
+			remoteInfo = Framework;
+		};
+		53C9BDF70A36FEB000AAFE50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530ADA1B09ED18F8004A13C3 /* Framework.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 536580D20A36FDFB00CDEC90;
+			remoteInfo = "Static archive";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		32DBCF5E0370ADEE00C91783 /* PGTSTiger_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTiger_Prefix.pch; path = Sources/PGTSTiger_Prefix.pch; sourceTree = "<group>"; };
+		530ADA1309ED18D5004A13C3 /* NSExpression+PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = "NSExpression+PGTSAdditions.h"; path = "Sources/NSExpression+PGTSAdditions.h"; sourceTree = "<group>"; };
+		530ADA1409ED18D5004A13C3 /* NSPredicate+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = "NSPredicate+PGTSAdditions.m"; path = "Sources/NSPredicate+PGTSAdditions.m"; sourceTree = "<group>"; };
+		530ADA1509ED18D5004A13C3 /* NSExpression+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = "NSExpression+PGTSAdditions.m"; path = "Sources/NSExpression+PGTSAdditions.m"; sourceTree = "<group>"; };
+		530ADA1609ED18D5004A13C3 /* NSPredicate+PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = "NSPredicate+PGTSAdditions.h"; path = "Sources/NSPredicate+PGTSAdditions.h"; sourceTree = "<group>"; };
+		530ADA1B09ED18F8004A13C3 /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = ../Framework/Framework.xcodeproj; sourceTree = SOURCE_ROOT; };
+		530ADC8909ED1C07004A13C3 /* PGTSTiger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTiger.h; path = Sources/PGTSTiger.h; sourceTree = "<group>"; };
+		532FF66E0A1B557C006BFB99 /* PGTSTigerConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTigerConstants.h; path = Sources/PGTSTigerConstants.h; sourceTree = "<group>"; };
+		532FF66F0A1B557C006BFB99 /* PGTSTigerConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSTigerConstants.m; path = Sources/PGTSTigerConstants.m; sourceTree = "<group>"; };
+		5360BE310A370368007B3BDC /* basic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = basic.xcconfig; path = xcconfig/basic.xcconfig; sourceTree = SOURCE_ROOT; };
+		5360BE320A370368007B3BDC /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = xcconfig/debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		5360BE330A370368007B3BDC /* fmwk-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "fmwk-debug.xcconfig"; path = "xcconfig/fmwk-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
+		5360BE340A370368007B3BDC /* fmwk-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "fmwk-release.xcconfig"; path = "xcconfig/fmwk-release.xcconfig"; sourceTree = SOURCE_ROOT; };
+		5360BE350A370368007B3BDC /* fmwk.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = fmwk.xcconfig; path = xcconfig/fmwk.xcconfig; sourceTree = SOURCE_ROOT; };
+		5360BE360A370368007B3BDC /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = xcconfig/release.xcconfig; sourceTree = SOURCE_ROOT; };
+		5360BE370A370368007B3BDC /* static-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "static-debug.xcconfig"; path = "xcconfig/static-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
+		5360BE380A370368007B3BDC /* static-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "static-release.xcconfig"; path = "xcconfig/static-release.xcconfig"; sourceTree = SOURCE_ROOT; };
+		5360BE390A370368007B3BDC /* static.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = static.xcconfig; path = xcconfig/static.xcconfig; sourceTree = SOURCE_ROOT; };
+		53C9BE020A36FEBE00AAFE50 /* libPGTSTiger.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPGTSTiger.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		53E11A200A791A6600D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5B0486A6940098B216 /* PGTSTiger.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PGTSTiger.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		53C9BE000A36FEBE00AAFE50 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53FB8A1D0A37390F006CCF63 /* libPGTS.a in Frameworks */,
+				53FB8A1E0A373913006CCF63 /* Foundation.framework in Frameworks */,
+				53E11A210A791A6600D0107C /* ExceptionHandling.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53395C5609ECFC3B001D742A /* Foundation.framework in Frameworks */,
+				5361C6F20A35C96800696E64 /* PGTS.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5B0486A6940098B216 /* PGTSTiger.framework */,
+				53C9BE020A36FEBE00AAFE50 /* libPGTSTiger.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* PGTSTiger */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AEFE84172EC02AAC07 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				5360BE300A370368007B3BDC /* xcconfig */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = PGTSTiger;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				53E11A200A791A6600D0107C /* ExceptionHandling.framework */,
+				530ADA1B09ED18F8004A13C3 /* Framework.xcodeproj */,
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				532FF66E0A1B557C006BFB99 /* PGTSTigerConstants.h */,
+				532FF66F0A1B557C006BFB99 /* PGTSTigerConstants.m */,
+				530ADA1309ED18D5004A13C3 /* NSExpression+PGTSAdditions.h */,
+				530ADA1509ED18D5004A13C3 /* NSExpression+PGTSAdditions.m */,
+				530ADA1609ED18D5004A13C3 /* NSPredicate+PGTSAdditions.h */,
+				530ADA1409ED18D5004A13C3 /* NSPredicate+PGTSAdditions.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32DBCF5E0370ADEE00C91783 /* PGTSTiger_Prefix.pch */,
+				530ADC8909ED1C07004A13C3 /* PGTSTiger.h */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		530ADA1C09ED18F8004A13C3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53C9BDF80A36FEB000AAFE50 /* libPGTS.a */,
+				530ADA2109ED18F8004A13C3 /* PGTS.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5360BE300A370368007B3BDC /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				5360BE310A370368007B3BDC /* basic.xcconfig */,
+				5360BE320A370368007B3BDC /* debug.xcconfig */,
+				5360BE330A370368007B3BDC /* fmwk-debug.xcconfig */,
+				5360BE340A370368007B3BDC /* fmwk-release.xcconfig */,
+				5360BE350A370368007B3BDC /* fmwk.xcconfig */,
+				5360BE360A370368007B3BDC /* release.xcconfig */,
+				5360BE370A370368007B3BDC /* static-debug.xcconfig */,
+				5360BE380A370368007B3BDC /* static-release.xcconfig */,
+				5360BE390A370368007B3BDC /* static.xcconfig */,
+			);
+			path = xcconfig;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		53C9BDFE0A36FEBE00AAFE50 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5360BE430A370370007B3BDC /* PGTSTigerConstants.h in Headers */,
+				5360BE450A370371007B3BDC /* NSExpression+PGTSAdditions.h in Headers */,
+				5360BE470A370372007B3BDC /* NSPredicate+PGTSAdditions.h in Headers */,
+				5360BE4A0A370374007B3BDC /* PGTSTiger.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530ADA1709ED18D5004A13C3 /* NSExpression+PGTSAdditions.h in Headers */,
+				530ADA1A09ED18D5004A13C3 /* NSPredicate+PGTSAdditions.h in Headers */,
+				530ADC8A09ED1C07004A13C3 /* PGTSTiger.h in Headers */,
+				532FF6700A1B557C006BFB99 /* PGTSTigerConstants.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		53C9BE010A36FEBE00AAFE50 /* Static archive */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53C9BE050A36FEDD00AAFE50 /* Build configuration list for PBXNativeTarget "Static archive" */;
+			buildPhases = (
+				53C9BDFE0A36FEBE00AAFE50 /* Headers */,
+				53C9BDFF0A36FEBE00AAFE50 /* Sources */,
+				53C9BE000A36FEBE00AAFE50 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				533D6D6A0A37049600E0BEC9 /* PBXTargetDependency */,
+			);
+			name = "Static archive";
+			productName = "Static archive";
+			productReference = 53C9BE020A36FEBE00AAFE50 /* libPGTSTiger.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		8DC2EF4F0486A6940098B216 /* PGTSTiger */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "PGTSTiger" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5395D3880A35D0850035D52D /* PBXTargetDependency */,
+			);
+			name = PGTSTiger;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = PGTSTiger;
+			productReference = 8DC2EF5B0486A6940098B216 /* PGTSTiger.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "PGTSTiger" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* PGTSTiger */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 530ADA1C09ED18F8004A13C3 /* Products */;
+					ProjectRef = 530ADA1B09ED18F8004A13C3 /* Framework.xcodeproj */;
+				},
+			);
+			targets = (
+				53C9BE010A36FEBE00AAFE50 /* Static archive */,
+				8DC2EF4F0486A6940098B216 /* PGTSTiger */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		530ADA2109ED18F8004A13C3 /* PGTS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = PGTS.framework;
+			remoteRef = 530ADA2009ED18F8004A13C3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53C9BDF80A36FEB000AAFE50 /* libPGTS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libPGTS.a;
+			remoteRef = 53C9BDF70A36FEB000AAFE50 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		53C9BDFF0A36FEBE00AAFE50 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5360BE440A370371007B3BDC /* PGTSTigerConstants.m in Sources */,
+				5360BE460A370372007B3BDC /* NSExpression+PGTSAdditions.m in Sources */,
+				5360BE480A370372007B3BDC /* NSPredicate+PGTSAdditions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530ADA1809ED18D5004A13C3 /* NSPredicate+PGTSAdditions.m in Sources */,
+				530ADA1909ED18D5004A13C3 /* NSExpression+PGTSAdditions.m in Sources */,
+				532FF6710A1B557C006BFB99 /* PGTSTigerConstants.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		533D6D6A0A37049600E0BEC9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static archive";
+			targetProxy = 533D6D690A37049600E0BEC9 /* PBXContainerItemProxy */;
+		};
+		5395D3880A35D0850035D52D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Framework;
+			targetProxy = 5395D3870A35D0850035D52D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5360BE330A370368007B3BDC /* fmwk-debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5360BE340A370368007B3BDC /* fmwk-release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		53C9BE060A36FEDD00AAFE50 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5360BE370A370368007B3BDC /* static-debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		53C9BE070A36FEDD00AAFE50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5360BE380A370368007B3BDC /* static-release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "PGTSTiger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "PGTSTiger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53C9BE050A36FEDD00AAFE50 /* Build configuration list for PBXNativeTarget "Static archive" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53C9BE060A36FEDD00AAFE50 /* Debug */,
+				53C9BE070A36FEDD00AAFE50 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

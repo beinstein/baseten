@@ -1,0 +1,451 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		531741D3095A255F0098D3D5 /* TSObjectDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 531741D1095A255F0098D3D5 /* TSObjectDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		531741D4095A255F0098D3D5 /* TSObjectDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 531741D2095A255F0098D3D5 /* TSObjectDictionary.m */; };
+		53174299095AB4860098D3D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		533A93D10A0BA68A00E46C4E /* TSInvocationRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A93CF0A0BA68A00E46C4E /* TSInvocationRecorder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		533A93D20A0BA68A00E46C4E /* TSInvocationRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 533A93D00A0BA68A00E46C4E /* TSInvocationRecorder.m */; };
+		53657EAC0A36F97300CDEC90 /* TSAbstractDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 5383CEBB09F582D40044D8B6 /* TSAbstractDictionary.m */; };
+		53657EAD0A36F97400CDEC90 /* TSIndexDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B3838A08BF419D0071D224 /* TSIndexDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EAE0A36F97700CDEC90 /* TSNonRetainedObjectDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 537CB28C09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EAF0A36F97900CDEC90 /* TSObjectDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 531741D2095A255F0098D3D5 /* TSObjectDictionary.m */; };
+		53657EB10A36F97B00CDEC90 /* TSObjectTagDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B3839008BF428C0071D224 /* TSObjectTagDictionary.m */; };
+		53657EB20A36F97C00CDEC90 /* TSObjectDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 531741D1095A255F0098D3D5 /* TSObjectDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EB40A36F99C00CDEC90 /* TSObjectTagDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B3838F08BF428C0071D224 /* TSObjectTagDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EB50A36F99C00CDEC90 /* TSIndexDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B3838B08BF419D0071D224 /* TSIndexDictionary.m */; };
+		53657EB60A36F99D00CDEC90 /* TSAbstractDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CEBA09F582D40044D8B6 /* TSAbstractDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EB70A36F99E00CDEC90 /* TSNonRetainedObjectDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 537CB28B09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.m */; };
+		53657EB80A36F99F00CDEC90 /* TSNonRetainedObjectSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DCDADE0A08D71F00906A83 /* TSNonRetainedObjectSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EB90A36F99F00CDEC90 /* TSNonRetainedObjectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DCDADF0A08D71F00906A83 /* TSNonRetainedObjectSet.m */; };
+		53657EBC0A36F9A200CDEC90 /* TSInvocationRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A93CF0A0BA68A00E46C4E /* TSInvocationRecorder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EBD0A36F9A200CDEC90 /* TSInvocationRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 533A93D00A0BA68A00E46C4E /* TSInvocationRecorder.m */; };
+		53657EBE0A36F9A300CDEC90 /* NSInvocation+TSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C7FAF30A18B70400CFFB5A /* NSInvocation+TSAdditions.m */; };
+		53657EBF0A36F9A300CDEC90 /* NSInvocation+TSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C7FAF20A18B70400CFFB5A /* NSInvocation+TSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EC00A36F9A400CDEC90 /* TSInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C7FBF20A18C9AC00CFFB5A /* TSInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EC10A36F9A500CDEC90 /* TSInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C7FBF30A18C9AC00CFFB5A /* TSInvocation.m */; };
+		53657EC20A36F9AA00CDEC90 /* TSDataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381AAB608C10CCB00BCE69F /* TSDataTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53657EC30A36F9AC00CDEC90 /* TSDataTypes_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 32DBCF5E0370ADEE00C91783 /* TSDataTypes_Prefix.pch */; settings = {ATTRIBUTES = (Public, ); }; };
+		537CB28D09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 537CB28B09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.m */; };
+		537CB28E09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 537CB28C09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381AAB708C10CCB00BCE69F /* TSDataTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5381AAB608C10CCB00BCE69F /* TSDataTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5383CEBC09F582D40044D8B6 /* TSAbstractDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CEBA09F582D40044D8B6 /* TSAbstractDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5383CEBD09F582D40044D8B6 /* TSAbstractDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 5383CEBB09F582D40044D8B6 /* TSAbstractDictionary.m */; };
+		53B3843408BF78950071D224 /* TSIndexDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B3838A08BF419D0071D224 /* TSIndexDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53B3843508BF78950071D224 /* TSIndexDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B3838B08BF419D0071D224 /* TSIndexDictionary.m */; };
+		53B3843608BF78960071D224 /* TSObjectTagDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B3838F08BF428C0071D224 /* TSObjectTagDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53B3843708BF78960071D224 /* TSObjectTagDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B3839008BF428C0071D224 /* TSObjectTagDictionary.m */; };
+		53C7FBF40A18C9AC00CFFB5A /* TSInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C7FBF20A18C9AC00CFFB5A /* TSInvocation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C7FBF50A18C9AC00CFFB5A /* TSInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C7FBF30A18C9AC00CFFB5A /* TSInvocation.m */; };
+		53C7FC0F0A18CB2200CFFB5A /* NSInvocation+TSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C7FAF30A18B70400CFFB5A /* NSInvocation+TSAdditions.m */; };
+		53C7FC100A18CB2200CFFB5A /* NSInvocation+TSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C7FAF20A18B70400CFFB5A /* NSInvocation+TSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53DCDAE00A08D71F00906A83 /* TSNonRetainedObjectSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DCDADE0A08D71F00906A83 /* TSNonRetainedObjectSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53DCDAE10A08D71F00906A83 /* TSNonRetainedObjectSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DCDADF0A08D71F00906A83 /* TSNonRetainedObjectSet.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		53174850095C1A420098D3D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5317484A095C1A420098D3D5 /* TSDataTypesUnitTests.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53174802095C148D0098D3D5;
+			remoteInfo = TSDataTypesUnitTests;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32DBCF5E0370ADEE00C91783 /* TSDataTypes_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSDataTypes_Prefix.pch; path = Sources/TSDataTypes_Prefix.pch; sourceTree = "<group>"; };
+		531741D1095A255F0098D3D5 /* TSObjectDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSObjectDictionary.h; path = Sources/TSObjectDictionary.h; sourceTree = "<group>"; };
+		531741D2095A255F0098D3D5 /* TSObjectDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TSObjectDictionary.m; path = Sources/TSObjectDictionary.m; sourceTree = "<group>"; };
+		5317484A095C1A420098D3D5 /* TSDataTypesUnitTests.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypesUnitTests.xcodeproj; path = UnitTests/TSDataTypesUnitTests.xcodeproj; sourceTree = SOURCE_ROOT; };
+		533A93CF0A0BA68A00E46C4E /* TSInvocationRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSInvocationRecorder.h; path = Sources/TSInvocationRecorder.h; sourceTree = "<group>"; };
+		533A93D00A0BA68A00E46C4E /* TSInvocationRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TSInvocationRecorder.m; path = Sources/TSInvocationRecorder.m; sourceTree = "<group>"; };
+		537CB28B09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = TSNonRetainedObjectDictionary.m; path = Sources/TSNonRetainedObjectDictionary.m; sourceTree = "<group>"; };
+		537CB28C09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = TSNonRetainedObjectDictionary.h; path = Sources/TSNonRetainedObjectDictionary.h; sourceTree = "<group>"; };
+		5381AAB608C10CCB00BCE69F /* TSDataTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSDataTypes.h; path = Sources/TSDataTypes.h; sourceTree = "<group>"; };
+		5383CEBA09F582D40044D8B6 /* TSAbstractDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSAbstractDictionary.h; path = Sources/TSAbstractDictionary.h; sourceTree = "<group>"; };
+		5383CEBB09F582D40044D8B6 /* TSAbstractDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TSAbstractDictionary.m; path = Sources/TSAbstractDictionary.m; sourceTree = "<group>"; };
+		53B3838A08BF419D0071D224 /* TSIndexDictionary.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = TSIndexDictionary.h; path = Sources/TSIndexDictionary.h; sourceTree = "<group>"; };
+		53B3838B08BF419D0071D224 /* TSIndexDictionary.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = TSIndexDictionary.m; path = Sources/TSIndexDictionary.m; sourceTree = "<group>"; };
+		53B3838F08BF428C0071D224 /* TSObjectTagDictionary.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = TSObjectTagDictionary.h; path = Sources/TSObjectTagDictionary.h; sourceTree = "<group>"; };
+		53B3839008BF428C0071D224 /* TSObjectTagDictionary.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = TSObjectTagDictionary.m; path = Sources/TSObjectTagDictionary.m; sourceTree = "<group>"; };
+		53B383F408BF75740071D224 /* TSDataTypes.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TSDataTypes.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		53B383F508BF75740071D224 /* TSDataTypes-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "TSDataTypes-Info.plist"; sourceTree = "<group>"; };
+		53BF4A350A36F6680065845D /* libTSDataTypes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTSDataTypes.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		53BF4A4F0A36F8E90065845D /* basic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = basic.xcconfig; path = xcconfig/basic.xcconfig; sourceTree = SOURCE_ROOT; };
+		53BF4A500A36F8E90065845D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = xcconfig/debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		53BF4A510A36F8E90065845D /* fmwk-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "fmwk-debug.xcconfig"; path = "xcconfig/fmwk-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
+		53BF4A520A36F8E90065845D /* fmwk-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "fmwk-release.xcconfig"; path = "xcconfig/fmwk-release.xcconfig"; sourceTree = SOURCE_ROOT; };
+		53BF4A530A36F8E90065845D /* fmwk.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = fmwk.xcconfig; path = xcconfig/fmwk.xcconfig; sourceTree = SOURCE_ROOT; };
+		53BF4A540A36F8E90065845D /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = xcconfig/release.xcconfig; sourceTree = SOURCE_ROOT; };
+		53BF4A550A36F8E90065845D /* static-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "static-debug.xcconfig"; path = "xcconfig/static-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
+		53BF4A560A36F8E90065845D /* static-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "static-release.xcconfig"; path = "xcconfig/static-release.xcconfig"; sourceTree = SOURCE_ROOT; };
+		53BF4A570A36F8E90065845D /* static.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = static.xcconfig; path = xcconfig/static.xcconfig; sourceTree = SOURCE_ROOT; };
+		53C7FAF20A18B70400CFFB5A /* NSInvocation+TSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSInvocation+TSAdditions.h"; path = "Sources/NSInvocation+TSAdditions.h"; sourceTree = "<group>"; };
+		53C7FAF30A18B70400CFFB5A /* NSInvocation+TSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSInvocation+TSAdditions.m"; path = "Sources/NSInvocation+TSAdditions.m"; sourceTree = "<group>"; };
+		53C7FBF20A18C9AC00CFFB5A /* TSInvocation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSInvocation.h; path = Sources/TSInvocation.h; sourceTree = "<group>"; };
+		53C7FBF30A18C9AC00CFFB5A /* TSInvocation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TSInvocation.m; path = Sources/TSInvocation.m; sourceTree = "<group>"; };
+		53DCDADE0A08D71F00906A83 /* TSNonRetainedObjectSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSNonRetainedObjectSet.h; path = Sources/TSNonRetainedObjectSet.h; sourceTree = "<group>"; };
+		53DCDADF0A08D71F00906A83 /* TSNonRetainedObjectSet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TSNonRetainedObjectSet.m; path = Sources/TSNonRetainedObjectSet.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		53B383F208BF75740071D224 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53174299095AB4860098D3D5 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53BF4A330A36F6680065845D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53B383F408BF75740071D224 /* TSDataTypes.framework */,
+				53BF4A350A36F6680065845D /* libTSDataTypes.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* TSDataTypes */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AEFE84172EC02AAC07 /* Dictionaries */,
+				533A93D40A0BA6A300E46C4E /* Sets */,
+				533A93D50A0BA6B500E46C4E /* Utility */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				53BF4A4E0A36F8E90065845D /* xcconfig */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+				53B383F508BF75740071D224 /* TSDataTypes-Info.plist */,
+			);
+			name = TSDataTypes;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+				5317484A095C1A420098D3D5 /* TSDataTypesUnitTests.xcodeproj */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Dictionaries */ = {
+			isa = PBXGroup;
+			children = (
+				5383CEBA09F582D40044D8B6 /* TSAbstractDictionary.h */,
+				5383CEBB09F582D40044D8B6 /* TSAbstractDictionary.m */,
+				53B3838A08BF419D0071D224 /* TSIndexDictionary.h */,
+				53B3838B08BF419D0071D224 /* TSIndexDictionary.m */,
+				53B3838F08BF428C0071D224 /* TSObjectTagDictionary.h */,
+				53B3839008BF428C0071D224 /* TSObjectTagDictionary.m */,
+				531741D1095A255F0098D3D5 /* TSObjectDictionary.h */,
+				531741D2095A255F0098D3D5 /* TSObjectDictionary.m */,
+				537CB28C09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.h */,
+				537CB28B09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.m */,
+			);
+			name = Dictionaries;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5381AAB608C10CCB00BCE69F /* TSDataTypes.h */,
+				32DBCF5E0370ADEE00C91783 /* TSDataTypes_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		5317484D095C1A420098D3D5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53174851095C1A420098D3D5 /* UnitTestsStatic.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		533A93D40A0BA6A300E46C4E /* Sets */ = {
+			isa = PBXGroup;
+			children = (
+				53DCDADE0A08D71F00906A83 /* TSNonRetainedObjectSet.h */,
+				53DCDADF0A08D71F00906A83 /* TSNonRetainedObjectSet.m */,
+			);
+			name = Sets;
+			sourceTree = "<group>";
+		};
+		533A93D50A0BA6B500E46C4E /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				533A93CF0A0BA68A00E46C4E /* TSInvocationRecorder.h */,
+				533A93D00A0BA68A00E46C4E /* TSInvocationRecorder.m */,
+				53C7FAF20A18B70400CFFB5A /* NSInvocation+TSAdditions.h */,
+				53C7FAF30A18B70400CFFB5A /* NSInvocation+TSAdditions.m */,
+				53C7FBF20A18C9AC00CFFB5A /* TSInvocation.h */,
+				53C7FBF30A18C9AC00CFFB5A /* TSInvocation.m */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
+		53BF4A4E0A36F8E90065845D /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				53BF4A4F0A36F8E90065845D /* basic.xcconfig */,
+				53BF4A500A36F8E90065845D /* debug.xcconfig */,
+				53BF4A510A36F8E90065845D /* fmwk-debug.xcconfig */,
+				53BF4A520A36F8E90065845D /* fmwk-release.xcconfig */,
+				53BF4A530A36F8E90065845D /* fmwk.xcconfig */,
+				53BF4A540A36F8E90065845D /* release.xcconfig */,
+				53BF4A550A36F8E90065845D /* static-debug.xcconfig */,
+				53BF4A560A36F8E90065845D /* static-release.xcconfig */,
+				53BF4A570A36F8E90065845D /* static.xcconfig */,
+			);
+			path = xcconfig;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		53B383EF08BF75740071D224 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53B3843408BF78950071D224 /* TSIndexDictionary.h in Headers */,
+				53B3843608BF78960071D224 /* TSObjectTagDictionary.h in Headers */,
+				5381AAB708C10CCB00BCE69F /* TSDataTypes.h in Headers */,
+				531741D3095A255F0098D3D5 /* TSObjectDictionary.h in Headers */,
+				537CB28E09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.h in Headers */,
+				5383CEBC09F582D40044D8B6 /* TSAbstractDictionary.h in Headers */,
+				53DCDAE00A08D71F00906A83 /* TSNonRetainedObjectSet.h in Headers */,
+				533A93D10A0BA68A00E46C4E /* TSInvocationRecorder.h in Headers */,
+				53C7FBF40A18C9AC00CFFB5A /* TSInvocation.h in Headers */,
+				53C7FC100A18CB2200CFFB5A /* NSInvocation+TSAdditions.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53BF4A310A36F6680065845D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53657EAD0A36F97400CDEC90 /* TSIndexDictionary.h in Headers */,
+				53657EAE0A36F97700CDEC90 /* TSNonRetainedObjectDictionary.h in Headers */,
+				53657EB20A36F97C00CDEC90 /* TSObjectDictionary.h in Headers */,
+				53657EB40A36F99C00CDEC90 /* TSObjectTagDictionary.h in Headers */,
+				53657EB60A36F99D00CDEC90 /* TSAbstractDictionary.h in Headers */,
+				53657EB80A36F99F00CDEC90 /* TSNonRetainedObjectSet.h in Headers */,
+				53657EBC0A36F9A200CDEC90 /* TSInvocationRecorder.h in Headers */,
+				53657EBF0A36F9A300CDEC90 /* NSInvocation+TSAdditions.h in Headers */,
+				53657EC00A36F9A400CDEC90 /* TSInvocation.h in Headers */,
+				53657EC20A36F9AA00CDEC90 /* TSDataTypes.h in Headers */,
+				53657EC30A36F9AC00CDEC90 /* TSDataTypes_Prefix.pch in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		53B383F308BF75740071D224 /* TSDataTypes */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53B383F608BF75760071D224 /* Build configuration list for PBXNativeTarget "TSDataTypes" */;
+			buildPhases = (
+				53B383EF08BF75740071D224 /* Headers */,
+				53B383F008BF75740071D224 /* Resources */,
+				53B383F108BF75740071D224 /* Sources */,
+				53B383F208BF75740071D224 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TSDataTypes;
+			productName = TSDataTypes;
+			productReference = 53B383F408BF75740071D224 /* TSDataTypes.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		53BF4A340A36F6680065845D /* Static archive */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53BF4A370A36F66A0065845D /* Build configuration list for PBXNativeTarget "Static archive" */;
+			buildPhases = (
+				53BF4A310A36F6680065845D /* Headers */,
+				53BF4A320A36F6680065845D /* Sources */,
+				53BF4A330A36F6680065845D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Static archive";
+			productName = libtsdatatypes;
+			productReference = 53BF4A350A36F6680065845D /* libTSDataTypes.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 53B3838408BF41830071D224 /* Build configuration list for PBXProject "TSDataTypes" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* TSDataTypes */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 5317484D095C1A420098D3D5 /* Products */;
+					ProjectRef = 5317484A095C1A420098D3D5 /* TSDataTypesUnitTests.xcodeproj */;
+				},
+			);
+			targets = (
+				53B383F308BF75740071D224 /* TSDataTypes */,
+				53BF4A340A36F6680065845D /* Static archive */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		53174851095C1A420098D3D5 /* UnitTestsStatic.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = UnitTestsStatic.octest;
+			remoteRef = 53174850095C1A420098D3D5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		53B383F008BF75740071D224 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		53B383F108BF75740071D224 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53B3843508BF78950071D224 /* TSIndexDictionary.m in Sources */,
+				53B3843708BF78960071D224 /* TSObjectTagDictionary.m in Sources */,
+				531741D4095A255F0098D3D5 /* TSObjectDictionary.m in Sources */,
+				537CB28D09F52B4F00E542E9 /* TSNonRetainedObjectDictionary.m in Sources */,
+				5383CEBD09F582D40044D8B6 /* TSAbstractDictionary.m in Sources */,
+				53DCDAE10A08D71F00906A83 /* TSNonRetainedObjectSet.m in Sources */,
+				533A93D20A0BA68A00E46C4E /* TSInvocationRecorder.m in Sources */,
+				53C7FBF50A18C9AC00CFFB5A /* TSInvocation.m in Sources */,
+				53C7FC0F0A18CB2200CFFB5A /* NSInvocation+TSAdditions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53BF4A320A36F6680065845D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53657EAC0A36F97300CDEC90 /* TSAbstractDictionary.m in Sources */,
+				53657EAF0A36F97900CDEC90 /* TSObjectDictionary.m in Sources */,
+				53657EB10A36F97B00CDEC90 /* TSObjectTagDictionary.m in Sources */,
+				53657EB50A36F99C00CDEC90 /* TSIndexDictionary.m in Sources */,
+				53657EB70A36F99E00CDEC90 /* TSNonRetainedObjectDictionary.m in Sources */,
+				53657EB90A36F99F00CDEC90 /* TSNonRetainedObjectSet.m in Sources */,
+				53657EBD0A36F9A200CDEC90 /* TSInvocationRecorder.m in Sources */,
+				53657EBE0A36F9A300CDEC90 /* NSInvocation+TSAdditions.m in Sources */,
+				53657EC10A36F9A500CDEC90 /* TSInvocation.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		539F29750981A26000FD3758 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53BF4A520A36F8E90065845D /* fmwk-release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		539F29770981A26000FD3758 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		53B3838508BF41830071D224 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		53B383F708BF75760071D224 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53BF4A510A36F8E90065845D /* fmwk-debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		53BF4A380A36F66A0065845D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53BF4A550A36F8E90065845D /* static-debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		53BF4A390A36F66A0065845D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53BF4A560A36F8E90065845D /* static-release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		53B3838408BF41830071D224 /* Build configuration list for PBXProject "TSDataTypes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53B3838508BF41830071D224 /* Debug */,
+				539F29770981A26000FD3758 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		53B383F608BF75760071D224 /* Build configuration list for PBXNativeTarget "TSDataTypes" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53B383F708BF75760071D224 /* Debug */,
+				539F29750981A26000FD3758 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		53BF4A370A36F66A0065845D /* Build configuration list for PBXNativeTarget "Static archive" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53BF4A380A36F66A0065845D /* Debug */,
+				53BF4A390A36F66A0065845D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
