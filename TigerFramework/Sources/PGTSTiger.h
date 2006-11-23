@@ -28,4 +28,5 @@
 
 #import <PGTSTiger/NSExpression+PGTSAdditions.h>
 #import <PGTSTiger/NSPredicate+PGTSAdditions.h>
-#import <PGTSTiger/Constants.h>
+#import <PGTSTiger/PGTSTigerConstants.h>
+
