@@ -72,7 +72,7 @@ extern void BXInit ()
  * using the rows and sends commands to the database.
  *
  * This class is not thread-safe, i.e. 
- * if methods of an BXDatabaseContext instance will be called from 
+ * if methods of a BXDatabaseContext instance will be called from 
  * different threads the result is undefined and deadlocks are possible.
  */
 @implementation BXDatabaseContext
@@ -421,7 +421,7 @@ extern void BXInit ()
 /** 
  * \name Retrieving objects from the database.
  * The methods block until the query result has been retrieved.\n
- * If the method execution fails and the \c error parameter is NULL, an BXException named 
+ * If the method execution fails and the \c error parameter is NULL, a BXException named 
  * \c kBXExceptionUnhandledError is thrown.\n
  * If the method execution fails and the \c error parameter is not NULL, the given 
  * \c error pointer is set to the corresponding NSError object.
@@ -1093,7 +1093,7 @@ extern void BXInit ()
 /** 
  * Commit the changes.
  * \param sender Ignored.
- * \throw An BXException named \c kBXFailedToExecuteQueryException if commit fails
+ * \throw A BXException named \c kBXFailedToExecuteQueryException if commit fails
  */
 - (IBAction) saveDocument: (id) sender
 {

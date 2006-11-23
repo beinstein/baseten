@@ -181,7 +181,7 @@
  * INSERT INTO person_address VALUES (1, 'Hämeentie 94');
  * </code>
  *
- * An BXSynchronizedArrayController may be used to provide the contents of the <tt>person</tt> table to an NSTableView.
+ * A BXSynchronizedArrayController may be used to provide the contents of the <tt>person</tt> table to an NSTableView.
  * In this example, a person only has one address. To display the address in a text field, these steps should be followed:
  *
  * <ol>

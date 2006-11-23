@@ -41,7 +41,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
     A unique identifier for a database object
 
     This class is not thread-safe, i.e. 
-    if methods of an BXDatabaseObjectID instance will be called from 
+    if methods of a BXDatabaseObjectID instance will be called from 
     different threads the result is undefined.
 */
 @implementation BXDatabaseObjectID
@@ -381,7 +381,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
 /**
  * Primary key field value for the given key.
  * This method is thread-safe.
- * \param       aKey        An BXPropertyDescription
+ * \param       aKey        A BXPropertyDescription
  */
 - (id) objectForKey: (id) aKey
 {
@@ -397,7 +397,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
  * Primary key field value for the given keys.
  * At the moment calls NSDictionary's objectsForKeys:notFoundMarker: with nil as the second argument.
  * This method is thread-safe.
- * \param       aKey        An BXPropertyDescription
+ * \param       aKey        A BXPropertyDescription
  */
 - (id) objectsForKeys: (NSArray *) keys
 {

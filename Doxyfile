@@ -82,7 +82,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = .
+INPUT                  = ./Sources ./BaseTenAppKit/Sources
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \
@@ -124,7 +124,7 @@ FILE_PATTERNS          = *.c \
                          *.M \
                          *.MM \
                          *.PY
-RECURSIVE              = NO
+RECURSIVE              = YES 
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
