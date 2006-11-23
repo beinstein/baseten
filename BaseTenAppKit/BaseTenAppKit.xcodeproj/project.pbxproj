@@ -1,0 +1,430 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5303D6000A39E6CD00917C22 /* BXControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5340251D0A2C49FD0016E8D2 /* BXAppKitFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */; };
+		5340251E0A2C49FD0016E8D2 /* BXAppKitFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */; };
+		53438E2B0A384EE600BEDCFF /* NSController+BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */; };
+		53438E2C0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */; };
+		53438E560A384FE500BEDCFF /* BXController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E540A384FE500BEDCFF /* BXController.h */; };
+		53438E570A384FE500BEDCFF /* BXController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E550A384FE500BEDCFF /* BXController.m */; };
+		534690590A779BFB0067E3A9 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53967AE00A3725FD002DB5AE /* BaseTen.framework */; };
+		5364C8CB0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C8C90A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5364C8CC0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C8CA0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m */; };
+		53726D850A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53726D830A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h */; };
+		53726D860A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 53726D840A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m */; };
+		537E484C0A14B7BA00A22080 /* BXSynchronizedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E484A0A14B7BA00A22080 /* BXSynchronizedArrayController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		537E484D0A14B7BA00A22080 /* BXSynchronizedArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */; };
+		537E4A6E0A14C82200A22080 /* BaseTenAppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		537E48D50A14BFE800A22080 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = BaseTen;
+		};
+		53967ADF0A3725FD002DB5AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
+			remoteInfo = "BaseTen Static";
+		};
+		53967B440A372810002DB5AE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
+			remoteInfo = "BaseTen Static";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit_Prefix.pch; path = Sources/BaseTenAppKit_Prefix.pch; sourceTree = "<group>"; };
+		5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXControllerProtocol.h; path = Sources/BXControllerProtocol.h; sourceTree = "<group>"; };
+		5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitFunctions.h; path = Sources/BXAppKitFunctions.h; sourceTree = "<group>"; };
+		5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAppKitFunctions.m; path = Sources/BXAppKitFunctions.m; sourceTree = "<group>"; };
+		53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSController+BXAppKitAdditions.h"; path = "Sources/NSController+BXAppKitAdditions.h"; sourceTree = "<group>"; };
+		53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSController+BXAppKitAdditions.m"; path = "Sources/NSController+BXAppKitAdditions.m"; sourceTree = "<group>"; };
+		53438E540A384FE500BEDCFF /* BXController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXController.h; path = Sources/BXController.h; sourceTree = "<group>"; };
+		53438E550A384FE500BEDCFF /* BXController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXController.m; path = Sources/BXController.m; sourceTree = "<group>"; };
+		5364C8C90A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectStatusToColorTransformer.h; path = Sources/BXObjectStatusToColorTransformer.h; sourceTree = "<group>"; };
+		5364C8CA0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectStatusToColorTransformer.m; path = Sources/BXObjectStatusToColorTransformer.m; sourceTree = "<group>"; };
+		53726D830A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectStatusToEditableTransformer.h; path = Sources/BXObjectStatusToEditableTransformer.h; sourceTree = "<group>"; };
+		53726D840A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectStatusToEditableTransformer.m; path = Sources/BXObjectStatusToEditableTransformer.m; sourceTree = "<group>"; };
+		537E484A0A14B7BA00A22080 /* BXSynchronizedArrayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSynchronizedArrayController.h; path = Sources/BXSynchronizedArrayController.h; sourceTree = "<group>"; };
+		537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSynchronizedArrayController.m; path = Sources/BXSynchronizedArrayController.m; sourceTree = "<group>"; };
+		537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
+		537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit.h; path = Sources/BaseTenAppKit.h; sourceTree = "<group>"; };
+		537E4A860A14C91800A22080 /* BaseTenAppKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTenAppKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DC2EF560486A6940098B216 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
+				534690590A779BFB0067E3A9 /* BaseTen.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				537E4A860A14C91800A22080 /* BaseTenAppKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* CocoaFramework */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AEFE84172EC02AAC07 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+			);
+			name = CocoaFramework;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */,
+				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8DC2EF5A0486A6940098B216 /* Info.plist */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */,
+				53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */,
+				53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */,
+				53438E540A384FE500BEDCFF /* BXController.h */,
+				53438E550A384FE500BEDCFF /* BXController.m */,
+				537E484A0A14B7BA00A22080 /* BXSynchronizedArrayController.h */,
+				537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */,
+				53726DAD0A30E8FD0086BB60 /* Transformers */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */,
+				5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */,
+				537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */,
+				32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		53726DAD0A30E8FD0086BB60 /* Transformers */ = {
+			isa = PBXGroup;
+			children = (
+				5364C8C90A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h */,
+				5364C8CA0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m */,
+				53726D830A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h */,
+				53726D840A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m */,
+			);
+			name = Transformers;
+			sourceTree = "<group>";
+		};
+		537E48D20A14BFE800A22080 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53967AE00A3725FD002DB5AE /* BaseTen.framework */,
+				537E48D60A14BFE800A22080 /* BaseTen.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		8DC2EF500486A6940098B216 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				537E484C0A14B7BA00A22080 /* BXSynchronizedArrayController.h in Headers */,
+				537E4A6E0A14C82200A22080 /* BaseTenAppKit.h in Headers */,
+				5364C8CB0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h in Headers */,
+				5340251D0A2C49FD0016E8D2 /* BXAppKitFunctions.h in Headers */,
+				53726D850A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h in Headers */,
+				53438E2B0A384EE600BEDCFF /* NSController+BXAppKitAdditions.h in Headers */,
+				53438E560A384FE500BEDCFF /* BXController.h in Headers */,
+				5303D6000A39E6CD00917C22 /* BXControllerProtocol.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		8DC2EF4F0486A6940098B216 /* BaseTenAppKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "BaseTenAppKit" */;
+			buildPhases = (
+				8DC2EF500486A6940098B216 /* Headers */,
+				8DC2EF520486A6940098B216 /* Resources */,
+				8DC2EF540486A6940098B216 /* Sources */,
+				8DC2EF560486A6940098B216 /* Frameworks */,
+				5342D1800A7501650066192A /* Run install_name_tool */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				53967B450A372810002DB5AE /* PBXTargetDependency */,
+			);
+			name = BaseTenAppKit;
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = CocoaFramework;
+			productReference = 537E4A860A14C91800A22080 /* BaseTenAppKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "BaseTenAppKit" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* CocoaFramework */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 537E48D20A14BFE800A22080 /* Products */;
+					ProjectRef = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
+				},
+			);
+			targets = (
+				8DC2EF4F0486A6940098B216 /* BaseTenAppKit */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		537E48D60A14BFE800A22080 /* BaseTen.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTen.framework;
+			remoteRef = 537E48D50A14BFE800A22080 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53967AE00A3725FD002DB5AE /* BaseTen.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTen.framework;
+			remoteRef = 53967ADF0A3725FD002DB5AE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8DC2EF520486A6940098B216 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5342D1800A7501650066192A /* Run install_name_tool */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run install_name_tool";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "install_name_tool -change \\\n\t\"@loader_path/../Frameworks/BaseTen.framework/Versions/A/BaseTen\" \\\n\t\"@loader_path/../../../BaseTen.framework/Versions/A/BaseTen\" \\\n\t\"$BUILT_PRODUCTS_DIR\"/BaseTenAppKit.framework/BaseTenAppKit";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DC2EF540486A6940098B216 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				537E484D0A14B7BA00A22080 /* BXSynchronizedArrayController.m in Sources */,
+				5364C8CC0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m in Sources */,
+				5340251E0A2C49FD0016E8D2 /* BXAppKitFunctions.m in Sources */,
+				53726D860A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m in Sources */,
+				53438E2C0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m in Sources */,
+				53438E570A384FE500BEDCFF /* BXController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		53967B450A372810002DB5AE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTen Static";
+			targetProxy = 53967B440A372810002DB5AE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB91AE08733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEPLOYMENT_LOCATION = NO;
+				DSTROOT = /;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Sources/BaseTenAppKit_Prefix.pch;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				INFOPLIST_FILE = Info.plist;
+				INIT_ROUTINE = _BaseTenAppKitInitFramework;
+				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				OTHER_LDFLAGS = "-headerpad_max_install_names";
+				PREBINDING = NO;
+				PRODUCT_NAME = BaseTenAppKit;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				WARNING_CFLAGS = "-Wall";
+				WRAPPER_EXTENSION = framework;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB91AF08733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEPLOYMENT_LOCATION = NO;
+				DSTROOT = /;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "../build/$(BUILD_STYLE)";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
+				GCC_MODEL_TUNING = G4;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Sources/BaseTenAppKit_Prefix.pch;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				INFOPLIST_FILE = Info.plist;
+				INIT_ROUTINE = _BaseTenAppKitInitFramework;
+				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
+				INSTALL_PATH = "@loader_path/../Frameworks";
+				OTHER_LDFLAGS = "-headerpad_max_install_names";
+				PREBINDING = NO;
+				PRODUCT_NAME = BaseTenAppKit;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SKIP_INSTALL = YES;
+				STRIP_INSTALLED_PRODUCT = YES;
+				WARNING_CFLAGS = "-Wall";
+				WRAPPER_EXTENSION = framework;
+			};
+			name = Release;
+		};
+		1DEB91B208733DA50010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		1DEB91B308733DA50010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "BaseTenAppKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91AE08733DA50010E9CD /* Debug */,
+				1DEB91AF08733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "BaseTenAppKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB91B208733DA50010E9CD /* Debug */,
+				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

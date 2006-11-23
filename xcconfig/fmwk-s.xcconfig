@@ -1,0 +1,2 @@
+#include "fmwk.xcconfig"
+OTHER_LDFLAGS = -ObjC -headerpad_max_install_names
