@@ -88,6 +88,7 @@
 		53933EF609EBD082001D00BB /* BXInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 53933EF409EBD082001D00BB /* BXInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53A75FEF0B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */; };
 		53A75FF00B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53AE2C9A0B1721A4000E6EF1 /* BaseTen.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53AE2C990B1721A4000E6EF1 /* BaseTen.icns */; };
 		53B3F38E0AD63A95003E807B /* BXSetHelperTableRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */; };
 		53B3F38F0AD63A96003E807B /* BXSetHelperTableRelationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321C0570AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m */; };
 		53B86FF40A0A1D2A007315BC /* BXRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B86FF20A0A1D2A007315BC /* BXRelationshipDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -238,6 +239,7 @@
 		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
 		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
+		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseTen.icns; sourceTree = "<group>"; };
 		53B86FF20A0A1D2A007315BC /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
 		53B86FF30A0A1D2A007315BC /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelationshipDescription.m; path = Sources/BXRelationshipDescription.m; sourceTree = "<group>"; };
 		53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPropertyDescription.h; path = Sources/BXPropertyDescription.h; sourceTree = "<group>"; };
@@ -320,6 +322,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				53AE2C990B1721A4000E6EF1 /* BaseTen.icns */,
 				8DC2EF5A0486A6940098B216 /* Info.plist */,
 				53596CF50A3714AC009C39E9 /* datatypeassociations.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
@@ -643,6 +646,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				53596CF60A3714AC009C39E9 /* datatypeassociations.plist in Resources */,
+				53AE2C9A0B1721A4000E6EF1 /* BaseTen.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

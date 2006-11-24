@@ -22,6 +22,7 @@
 		537E484C0A14B7BA00A22080 /* BXSynchronizedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E484A0A14B7BA00A22080 /* BXSynchronizedArrayController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		537E484D0A14B7BA00A22080 /* BXSynchronizedArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */; };
 		537E4A6E0A14C82200A22080 /* BaseTenAppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53AE2CB80B1721F2000E6EF1 /* BaseTen.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -70,6 +71,7 @@
 		537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit.h; path = Sources/BaseTenAppKit.h; sourceTree = "<group>"; };
 		537E4A860A14C91800A22080 /* BaseTenAppKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTenAppKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTen.icns; path = ../BaseTen.icns; sourceTree = SOURCE_ROOT; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -118,6 +120,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */,
 				8DC2EF5A0486A6940098B216 /* Info.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
 			);
@@ -257,6 +260,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */,
+				53AE2CB80B1721F2000E6EF1 /* BaseTen.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
