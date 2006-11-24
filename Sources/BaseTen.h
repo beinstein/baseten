@@ -72,8 +72,9 @@
  *     <tt>/opt/local/postgresql/bin/postmaster -D /opt/local/postgresql/data > /opt/local/postgresql/postgresql.log 2>&1 &</tt>
  * \li Create your database.
  *     <tt>/opt/local/postgresql/bin/createdb myDB</tt>
- *
- *
+ */
+ 
+/**
  * \page dp1Limitations Limitations in Developer Preview 1
  * \li Renaming tables after having them prepared for modification observing will not work. Should tables need to be renamed, 
  *     first cancel modification observing, then rename the table and finally prepare it again.
@@ -92,8 +93,9 @@
  * \li The query logging system is not very consistent at the moment. Mostly, however, the queries are logged with the 
  *     performing connection object's address prepended.
  * \li Automatically updating collections currently don't post KVO notifications. Instead, one should subscribe to NSNotifications kBXInsertNotification, kBXUpdateNotification and kBXDeleteNotification with the entity description as the notification object.
- *
- *
+ */
+
+/**
  * \page usingAppKitClasses Using the NSController subclasses provided with the framework
  * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
  * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
@@ -126,7 +128,9 @@
  *     <li>Bind the Cocoa views to the controller.</li> 
  *     <li>Test the interface. The views should be populated using the database.</li>
  * </ol>
- * 
+ */ 
+
+/**
  * \section RelationshipsIB Using relationships from Interface Builder
  * BaseTen interprets foreign keys as relationships. However, to prevent retain cycles, objects and object sets
  * fetched using a relationship <b>will not</b> be retained automatically by the context or the base objects. If a
