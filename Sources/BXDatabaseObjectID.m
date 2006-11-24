@@ -397,7 +397,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
  * Primary key field value for the given keys.
  * At the moment calls NSDictionary's objectsForKeys:notFoundMarker: with nil as the second argument.
  * This method is thread-safe.
- * \param       aKey        A BXPropertyDescription
+ * \param       keys        An NSArray of BXPropertyDescriptions
  */
 - (id) objectsForKeys: (NSArray *) keys
 {
