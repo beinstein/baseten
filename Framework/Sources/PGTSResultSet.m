@@ -324,7 +324,7 @@ static unsigned int _serial;
     for (int i = 0; i < count; i++)
     {
         Class currentClass = [classes objectAtIndex: i];
-        //FIXME: ei älä käytä assertia vaan heitä esim. NSInvalidArgumentException, jos taulukossa on muita kuin luokkia
+        //FIXME: NSInvalidArgumentException might be better that an assertion
 #ifdef USE_ASSERTIONS
         NSAssert ([currentClass class] == currentClass, @"Class array may contain only classes");
 #endif

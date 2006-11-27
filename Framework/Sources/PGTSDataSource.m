@@ -78,7 +78,7 @@
  */
 - (void) addTable: (PGTSDataSourceTable *) aTable
 {
-    [tables setObject: aTable forKey: [aTable name]]; //FIXME: pitÃ¤isikÃ¶ selvittÃ¤Ã¤ taulun oikea nimi?
+    [tables setObject: aTable forKey: [aTable name]]; //FIXME: does this use the table's real name?
 }
 
 /**
@@ -120,7 +120,7 @@
             [[tables objectForKey: table] PGTSSetClauseParameters: parameters],
             [[conditions objectForKey: table] PGTSWhereClauseParameters: parameters]];
         
-        //FIXME: toimiiko tÃ¤mÃ¤ ^^^ muka???
+        //FIXME: this might not work at all.
         
         [connection executeQuery: queryFormat parameterArray: parameters];
         //FIXME: check the results. The user should decide, whether an exeption will be thrown on error
@@ -252,7 +252,7 @@
 
 - (void) removeRowsFromTable: (PGTSTableInfo *) table withEqualCondition: (NSDictionary *) conditions
 {
-    //FIXME: korjaa tämä
+    //FIXME: this should be fixed
 #if 0
     NSMutableString* queryFormat = [NSMutableString stringWithFormat: 
         @"DELETE FROM \"%@\".\"%@\" WHERE (%@)", [[table schemaName] PGTSEscapedString: connection], [[table name] PGTSEscapedString: connection], 

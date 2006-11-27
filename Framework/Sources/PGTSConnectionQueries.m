@@ -306,7 +306,6 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
 /** Cancel the current command */
 - (void) cancelCommand
 {
-    //FIXME: mieti prototyyppi
     int PQcancel(PGcancel *cancel, char *errbuf, int errbufsize);
 }
 

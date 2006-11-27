@@ -37,7 +37,7 @@
     [writeDelegate setValue: value forField: aKey row: rowNumber];
 }
 
-//FIXME: mieti tämä uudestaan
+//FIXME: this needs to be rethought.
 - (id) initWithWriteDelegate: (id <PGTSWriteDelegateProtocol>) anObject
 {
     if ((self = [super init]))
