@@ -360,7 +360,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
     id rval = nil;
     @synchronized (mPkeyFValues)
     {
-        rval = [mPkeyFValues copy];
+        rval = [[mPkeyFValues copy] autorelease];
     }
     return rval;
 }
