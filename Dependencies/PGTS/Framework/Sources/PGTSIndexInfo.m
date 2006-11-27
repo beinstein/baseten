@@ -29,8 +29,6 @@
 #import "PGTSIndexInfo.h"
 
 
-//FIXME: koodaa loppuun
-
 /** 
  * Table index
  */

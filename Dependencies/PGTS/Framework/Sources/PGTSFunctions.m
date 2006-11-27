@@ -76,7 +76,7 @@ PGTSInit ()
             
             PQconninfoOption *option = PQconndefaults ();
             char* keyword = NULL;
-            while ((keyword = option->keyword)) //FIXME: tarkista, että siirrytään oikeassa kohdassa
+            while ((keyword = option->keyword))
             {
                 NSString* key = [NSString stringWithUTF8String: keyword];
                 [keys addObject: key];

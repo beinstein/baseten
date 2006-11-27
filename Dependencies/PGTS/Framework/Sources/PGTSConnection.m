@@ -197,7 +197,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 
 - (void) dealloc
 {
-    //FIXME: tarkista tämä funktio
+    //FIXME: this method needs a check.
     [self disconnect];
     //Wait for the other thread to end
     [self endWorkerThread];

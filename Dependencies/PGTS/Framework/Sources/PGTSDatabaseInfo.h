@@ -54,7 +54,4 @@
 - (void) setConnectionPoolKey: (NSString *) aKey;
 - (void) updateTableCache: (PGTSTableInfo *) table;
 
-//FIXME: kehitä systeemi välimuistien rekursiiviseen tyhjentämiseen s.e. myös käyttäjän retainaamat tableinfot tyhjenevät
-//olioiden poistaminen NSMutableDictionaryista ei siis riitä vaan niihin pitää syöttää NULL-arvot
-//tarkista, riittääkö PGTSConnectionPoolin terminate-metodi
 @end
