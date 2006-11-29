@@ -189,7 +189,21 @@ static NSMutableSet* gViewEntities;
     Class cls = NSClassFromString ([decoder decodeObjectForKey: @"databaseObjectClassName"]);
     if (Nil != cls)
         [rval setDatabaseObjectClass: cls];
-    
+ 
+	NSString *IBDatabaseObjectClassName = [decoder decodeObjectForKey: @"IBDatabaseObjectClassName"];
+    if(nil != IBDatabaseObjectClassName)
+	{
+		[rval setIBDatabaseObjectClassName: IBDatabaseObjectClassName];
+		
+		if (Nil == cls)
+		{
+			cls = NSClassFromString(IBDatabaseObjectClassName);
+			
+			if (Nil != cls)
+				[rval setDatabaseObjectClass:cls];
+		}
+	}
+	
 #if 0
     NSArray* pkey = [decoder decodeObjectForKey: @"pkeyFields"];
     if (nil != pkey)
@@ -209,6 +223,7 @@ static NSMutableSet* gViewEntities;
     [encoder encodeObject: mSchemaName forKey: @"schemaName"];
     [encoder encodeObject: mDatabaseURI forKey: @"databaseURI"];
     [encoder encodeObject: NSStringFromClass (mDatabaseObjectClass) forKey: @"databaseObjectClassName"];
+    [encoder encodeObject: mIBDatabaseObjectClassName forKey: @"IBDatabaseObjectClassName"];
 #if 0
     [encoder encodeObject: mPkeyFields forKey: @"pkeyFields"];
     [encoder encodeObject: mViewEntities forKey: @"viewEntities"];
@@ -269,7 +284,11 @@ static NSMutableSet* gViewEntities;
 - (void) setDatabaseObjectClass: (Class) cls
 {
     if (YES == [cls isSubclassOfClass: [BXDatabaseObject class]])
+	{
         mDatabaseObjectClass = cls;
+		
+		[self setIBDatabaseObjectClassName: NSStringFromClass(cls)];
+	}
     else
     {
         NSString* reason = [NSString stringWithFormat: @"Expected %@ to be a subclass of BXDatabaseObject.", cls];
@@ -285,6 +304,24 @@ static NSMutableSet* gViewEntities;
 - (Class) databaseObjectClass
 {
     return mDatabaseObjectClass;
+}
+
+/**
+ * The class name for the entity. Used in Interface Builder.
+ * \return          Class name
+ */
+-(NSString *) IBDatabaseObjectClassName
+{
+	return [[mIBDatabaseObjectClassName retain] autorelease];
+}
+
+-(void) setIBDatabaseObjectClassName:(NSString *)IBDatabaseObjectClassName
+{
+	if(mIBDatabaseObjectClassName == IBDatabaseObjectClassName)
+		return;
+	
+	[mIBDatabaseObjectClassName release];
+	mIBDatabaseObjectClassName = [IBDatabaseObjectClassName retain];
 }
 
 /**
