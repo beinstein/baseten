@@ -1290,8 +1290,11 @@ static unsigned int SavepointIndex ()
     
     NSString* errorMessage = [res errorMessageField: PG_DIAG_MESSAGE_PRIMARY];
     if (nil != errorMessage)
+	{
         [userInfo setObject: errorMessage forKey: kBXErrorMessageKey];
-
+        [userInfo setObject: errorMessage forKey: NSLocalizedDescriptionKey];
+	}
+	
     NSError* placeholder = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];
 
     NSAssert (NULL != error, @"Expected error to be set (was NULL)");
