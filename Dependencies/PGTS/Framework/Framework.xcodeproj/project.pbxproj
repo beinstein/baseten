@@ -152,6 +152,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		2B6D85970B1DCC55008DE4E2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 531977540B15C2B6000FA952 /* libpq/psql/headers */;
+			remoteInfo = libpq/psql/headers;
+		};
 		53193DCD0A36CD01009747BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */;
@@ -188,13 +195,6 @@
 			remoteInfo = "Static archive";
 		};
 		535A6E4B0B15D95C0073FB42 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 531977540B15C2B6000FA952;
-			remoteInfo = libpq/psql/headers;
-		};
-		535A6E4F0B15D9670073FB42 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
@@ -708,8 +708,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				2B6D85980B1DCC55008DE4E2 /* PBXTargetDependency */,
 				53193F970A36CD1F009747BC /* PBXTargetDependency */,
-				535A6E500B15D9670073FB42 /* PBXTargetDependency */,
 			);
 			name = Framework;
 			productName = PGTS;
@@ -834,7 +834,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ranlib ResourcesAndLibraries/libpq.a";
+			shellScript = "#ranlib ResourcesAndLibraries/libpq.a";
 		};
 		535FF6AE09641621008A9741 /* Doxygen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -937,6 +937,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		2B6D85980B1DCC55008DE4E2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 531977540B15C2B6000FA952 /* libpq/psql/headers */;
+			targetProxy = 2B6D85970B1DCC55008DE4E2 /* PBXContainerItemProxy */;
+		};
 		53193F970A36CD1F009747BC /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = JaguarCompatibility;
@@ -946,11 +951,6 @@
 			isa = PBXTargetDependency;
 			target = 531977540B15C2B6000FA952 /* libpq/psql/headers */;
 			targetProxy = 535A6E4B0B15D95C0073FB42 /* PBXContainerItemProxy */;
-		};
-		535A6E500B15D9670073FB42 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 531977540B15C2B6000FA952 /* libpq/psql/headers */;
-			targetProxy = 535A6E4F0B15D9670073FB42 /* PBXContainerItemProxy */;
 		};
 		53F524D60A51A28900E7DDC4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
