@@ -784,7 +784,7 @@ DECLARE
     rval        "baseten".TableType;
 BEGIN
     tname       := "baseten".TableName (toid);
-    stablename  := "baseten".SerializedTableName (toid);
+    stablename  := "baseten".SerializedTableName1 (toid);
     mtablename  := "baseten".ModificationTableName (toid);
     ltablename  := "baseten".LockTableName (toid);
     lfname      := "baseten".LockNotifyFunctionName (toid);
