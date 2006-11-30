@@ -156,7 +156,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 531977540B15C2B6000FA952 /* libpq/psql/headers */;
+			remoteGlobalIDString = 531977540B15C2B6000FA952;
 			remoteInfo = libpq/psql/headers;
 		};
 		53193DCD0A36CD01009747BC /* PBXContainerItemProxy */ = {
