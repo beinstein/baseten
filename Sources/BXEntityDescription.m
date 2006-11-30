@@ -195,13 +195,10 @@ static NSMutableSet* gViewEntities;
 	{
 		[rval setIBDatabaseObjectClassName: IBDatabaseObjectClassName];
 		
-		if (Nil == cls)
-		{
-			cls = NSClassFromString(IBDatabaseObjectClassName);
+		cls = NSClassFromString(IBDatabaseObjectClassName);
 			
-			if (Nil != cls)
-				[rval setDatabaseObjectClass:cls];
-		}
+		if (Nil != cls)
+			[rval setDatabaseObjectClass:cls];
 	}
 	
 #if 0
