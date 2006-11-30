@@ -505,7 +505,7 @@ ParseSelector (SEL aSelector, NSString** key)
     if ([NSNull null] == rval)
         rval = nil;
     
-    return rval;    
+    return [[rval retain] autorelease];
 }
 
 /** 
