@@ -296,8 +296,30 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 //Pitääkö käyttää funktiota htonl tai vastaavaa?
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
-    return [[self class] dataWithBytes: value length: strlen (value)];
+	size_t resultLength = 0;
+	unsigned char *unescaped = PQunescapeBytea((unsigned char*)value, &resultLength);
+	
+	if (NULL == unescaped)
+	{
+		NSLog(@"-[%@ %@] ERROR! PQunescapeBytea failed.", [self className], NSStringFromSelector(_cmd)); // TODO! Handle error better?
+		return nil;
+	}
+	
+    NSData *data = [[self class] dataWithBytes: unescaped length: resultLength];
+	
+	PQfreemem(unescaped);
+	
+	return data;
 }
+
+- (char *) PGTSParameterLength: (int *) length
+{
+    const char* rval = [self bytes];
+    if (NULL != length)
+        *length = [self length];
+    return (char *) rval;
+}
+
 @end
 
 

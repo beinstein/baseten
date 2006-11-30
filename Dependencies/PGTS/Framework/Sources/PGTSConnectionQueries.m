@@ -355,10 +355,20 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
         //paramLengths [i] = length;
         //paramFormats [i] = (-1 == length ? 0 : 1);
         
-        paramTypes   [i] = InvalidOid;
-        paramValues  [i] = value;
-        paramLengths [i] = -1;        
-        paramFormats [i] = 0;
+		if([parameter isKindOfClass:[NSData class]]) // FIXME! Handle other binary types as well.
+		{
+			paramTypes   [i] = InvalidOid;
+			paramValues  [i] = value;
+			paramLengths [i] = length;
+			paramFormats [i] = 1;
+		}
+		else
+		{
+			paramTypes   [i] = InvalidOid;
+			paramValues  [i] = value;
+			paramLengths [i] = -1;
+			paramFormats [i] = 0;
+		}
     }
     
     LogQuery (queryString);
