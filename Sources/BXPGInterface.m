@@ -366,7 +366,7 @@ static unsigned int SavepointIndex ()
             //What to query
             NSString* queryFields = nil;
             if (YES == returnFaults)
-                queryFields = [pkeyQNames componentsJoinedByString: @", "];
+                queryFields = [pkeyQNames componentsJoinedByString: @", "]; // FIXME Quote fields
             else if (nil == excludedFields) 
                 queryFields = [NSString stringWithFormat: @"%@.*", [entity BXPGQualifiedName: connection]];
             else
@@ -475,7 +475,7 @@ static unsigned int SavepointIndex ()
         BXDatabaseObjectID* objectID = [anObject objectID];
         NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
         NSString* query = [NSString stringWithFormat: @"SELECT %@ FROM %@ WHERE %@", 
-            (aKey ? aKey : @"*"), [[objectID entity] BXPGQualifiedName: connection], [[objectID predicate] PGTSWhereClauseWithContext: ctx]];
+            (aKey ? [NSString stringWithFormat:@"\"%@\"", aKey] : @"*"), [[objectID entity] BXPGQualifiedName: connection], [[objectID predicate] PGTSWhereClauseWithContext: ctx]];
         PGTSResultSet* res = [connection executeQuery: query parameterArray: [ctx objectForKey: kPGTSParametersKey]];
         if (YES == [res advanceRow])
         {
