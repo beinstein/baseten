@@ -358,18 +358,8 @@ $$ STABLE LANGUAGE PLPGSQL;
 
 -- Replaces each underscore with two, each period with an underscore 
 -- and removes double quotes
-CREATE OR REPLACE FUNCTION "baseten".SerializedTableName1 (TEXT) RETURNS TEXT AS $$
-    SELECT replace (replace (replace ($1, '_', '__'), '.', '_'), '"', '');
-$$ IMMUTABLE LANGUAGE SQL;
-
-
-CREATE OR REPLACE FUNCTION "baseten".SerializedTableName1 (OID) RETURNS TEXT AS $$
-    SELECT "baseten".SerializedTableName1 ("baseten".TableName1 ($1));
-$$ STABLE LANGUAGE SQL;
-
-
 CREATE OR REPLACE FUNCTION "baseten".SerializedTableName (TEXT) RETURNS TEXT AS $$
-    SELECT quote_ident ("baseten".SerializedTableName1 ($1));
+    SELECT replace (replace (replace ($1, '_', '__'), '.', '_'), '"', '');
 $$ IMMUTABLE LANGUAGE SQL;
 
 
@@ -384,7 +374,7 @@ $$ IMMUTABLE LANGUAGE SQL;
 
 
 CREATE OR REPLACE FUNCTION "baseten".ModificationTableName1 (OID) RETURNS TEXT AS $$
-    SELECT "baseten".ModificationTableName1 ("baseten".SerializedTableName1 ($1));
+    SELECT "baseten".ModificationTableName1 ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
 
 
@@ -413,7 +403,7 @@ $$ IMMUTABLE LANGUAGE SQL;
 
 
 CREATE OR REPLACE FUNCTION "baseten".LockNotifyFunctionName (OID) RETURNS TEXT AS $$
-    SELECT "baseten".LockNotifyFunctionName ("baseten".SerializedTableName1 ($1));
+    SELECT "baseten".LockNotifyFunctionName ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
 
 
@@ -424,7 +414,7 @@ $$ IMMUTABLE LANGUAGE SQL;
 
 
 CREATE OR REPLACE FUNCTION "baseten".LockTableName (OID) RETURNS TEXT AS $$
-    SELECT "baseten".LockTableName ("baseten".SerializedTableName1 ($1));
+    SELECT "baseten".LockTableName ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
 
 
@@ -464,7 +454,7 @@ $$ VOLATILE LANGUAGE SQL;
 -- TEXT parameter needs to be the serialized table name
 CREATE OR REPLACE FUNCTION "baseten".ModifyInsertFunctionName (OID)
 RETURNS TEXT AS $$
-    SELECT quote_ident ('baseten') || '.' || quote_ident ('ModifyInsert_' || "baseten".SerializedTableName1 ($1));
+    SELECT quote_ident ('baseten') || '.' || quote_ident ('ModifyInsert_' || "baseten".SerializedTableName ($1));
 $$ IMMUTABLE LANGUAGE SQL;
 
 
@@ -784,7 +774,7 @@ DECLARE
     rval        "baseten".TableType;
 BEGIN
     tname       := "baseten".TableName (toid);
-    stablename  := "baseten".SerializedTableName1 (toid);
+    stablename  := "baseten".SerializedTableName (toid);
     mtablename  := "baseten".ModificationTableName (toid);
     ltablename  := "baseten".LockTableName (toid);
     lfname      := "baseten".LockNotifyFunctionName (toid);
