@@ -817,11 +817,9 @@ extern void BXInit ()
         //Fault objects and send the notification
         TSEnumerate (currentID, e, [objectIDs objectEnumerator])
         {
-            id currentObject = nil;
-            if ((currentObject = [mObjects objectForKey: currentID]))
+            id currentObject = [mObjects objectForKey: currentID];
+            if (currentObject)
                 [currentObject faultKey: nil];
-            else
-                currentObject = [NSNull null];
         }
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
             objectIDs, kBXObjectIDsKey,
