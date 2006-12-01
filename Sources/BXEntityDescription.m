@@ -184,7 +184,7 @@ static NSMutableSet* gViewEntities;
     NSString* eName = [decoder decodeObjectForKey: @"name"];
     NSString* sName = [decoder decodeObjectForKey: @"schemaName"];
     NSURL* uri = [decoder decodeObjectForKey: @"databaseURI"];
-    id rval = [[[self class] alloc] initWithURI: uri table: eName inSchema: sName];
+    id rval = [[[self class] alloc] initWithURI: uri table: eName inSchema: sName]; // FIXME! Initialize self, not a new object
     
     Class cls = NSClassFromString ([decoder decodeObjectForKey: @"databaseObjectClassName"]);
     if (Nil != cls)
