@@ -1280,7 +1280,9 @@ static unsigned int SavepointIndex ()
 {
     if (YES == noSavepoint && PQTRANS_IDLE != [connection transactionStatus]) //Autocommit etc.
     {
-        PGTSResultSet* res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+        PGTSResultSet* res = nil;
+        if (NO == [self autocommits])
+            res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
         res = [connection executeQuery: @"COMMIT TRANSACTION;"];
         ResetSavepointIndex ();
 
@@ -1298,8 +1300,10 @@ static unsigned int SavepointIndex ()
                @"Expected transaction status not to be PQTRANS_IDLE in %p", connection);
     if (YES == noSavepoint) //Autocommit etc.
     {
-        [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
-        [connection executeQuery: @"ROLLBACK TRANSACTION;"];
+        PGTSResultSet* res = nil;
+        if (NO == [self autocommits])
+            res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+        res = [connection executeQuery: @"ROLLBACK TRANSACTION;"];
         ResetSavepointIndex ();
 
         [self setLockedKey: nil];
