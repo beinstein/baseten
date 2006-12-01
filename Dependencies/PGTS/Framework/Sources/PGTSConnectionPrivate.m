@@ -450,7 +450,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
 
 - (void) logNotification: (id) anObject
 {
-    fprintf (stdout, "(%p) *** NOTIFY: %s\n", self, [[anObject description] UTF8String]);
+    //fprintf (stdout, "(%p) *** NOTIFY: %s\n", self, [[anObject description] UTF8String]);
 }
 
 /** Called when data is available from the libpq socket */
