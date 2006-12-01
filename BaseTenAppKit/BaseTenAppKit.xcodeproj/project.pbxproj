@@ -54,6 +54,8 @@
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		2B8B5E410B20189600EF04F3 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../xcconfig/debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		2B8B5E420B20189600EF04F3 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = ../xcconfig/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit_Prefix.pch; path = Sources/BaseTenAppKit_Prefix.pch; sourceTree = "<group>"; };
 		5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXControllerProtocol.h; path = Sources/BXControllerProtocol.h; sourceTree = "<group>"; };
 		5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitFunctions.h; path = Sources/BXAppKitFunctions.h; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				089C1665FE841158C02AAC07 /* Resources */,
+				2B8B5E3B0B20185100EF04F3 /* xcconfig */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
@@ -140,6 +143,15 @@
 				53726DAD0A30E8FD0086BB60 /* Transformers */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		2B8B5E3B0B20185100EF04F3 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				2B8B5E410B20189600EF04F3 /* debug.xcconfig */,
+				2B8B5E420B20189600EF04F3 /* release.xcconfig */,
+			);
+			name = xcconfig;
 			sourceTree = "<group>";
 		};
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
@@ -321,6 +333,7 @@
 /* Begin XCBuildConfiguration section */
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B8B5E410B20189600EF04F3 /* debug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -360,11 +373,8 @@
 		};
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B8B5E420B20189600EF04F3 /* release.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = /;
@@ -374,7 +384,6 @@
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
 				GCC_MODEL_TUNING = G4;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -383,13 +392,11 @@
 				INFOPLIST_FILE = Info.plist;
 				INIT_ROUTINE = _BaseTenAppKitInitFramework;
 				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
-				INSTALL_PATH = "@loader_path/../Frameworks";
 				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PREBINDING = NO;
 				PRODUCT_NAME = BaseTenAppKit;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = framework;
 			};
