@@ -33,7 +33,7 @@
 
 #define LOG_POSITION() fprintf( stderr, "Now at %s:%d\n", __FILE__, __LINE__ )
 
-//FIXME: käsittele lukot
+//FIXME: Handle locks
 
 
 @implementation BXSynchronizedArrayController
@@ -185,13 +185,14 @@
 }
 
 - (void) objectDidBeginEditing: (id) editor
-{    
+{
     [self BXLockKey: nil status: kBXObjectLockedStatus editor: editor];
     [super objectDidBeginEditing: editor];
 }
 
 - (void) objectDidEndEditing: (id) editor
 {
+    [super objectDidEndEditing: editor];
     [self BXUnlockKey: nil editor: editor];
 }
 
