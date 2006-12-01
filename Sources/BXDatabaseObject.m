@@ -165,7 +165,7 @@ ParseSelector (SEL aSelector, NSString** key)
         error,       kBXErrorKey,
         nil];
     @throw [NSException exceptionWithName: kBXFailedToExecuteQueryException
-                                   reason: nil
+                                   reason: [error localizedDescription]
                                  userInfo: userInfo];
 }
 
