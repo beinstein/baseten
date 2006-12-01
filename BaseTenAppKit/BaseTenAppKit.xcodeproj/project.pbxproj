@@ -306,7 +306,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "install_name_tool -change \\\n\t\"@loader_path/../Frameworks/BaseTen.framework/Versions/A/BaseTen\" \\\n\t\"@loader_path/../../../BaseTen.framework/Versions/A/BaseTen\" \\\n\t\"$BUILT_PRODUCTS_DIR\"/BaseTenAppKit.framework/BaseTenAppKit";
+			shellScript = "exit\n\n#\n# This script is not used!\n#\n\ninstall_name_tool -change \\\n\t\"@loader_path/../Frameworks/BaseTen.framework/Versions/A/BaseTen\" \\\n\t\"@loader_path/../../../BaseTen.framework/Versions/A/BaseTen\" \\\n\t\"$BUILT_PRODUCTS_DIR\"/BaseTenAppKit.framework/BaseTenAppKit";
 		};
 /* End PBXShellScriptBuildPhase section */
 
