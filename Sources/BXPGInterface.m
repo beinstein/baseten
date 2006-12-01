@@ -1085,7 +1085,7 @@ static unsigned int SavepointIndex ()
         
         modificationNotifier = [[PGTSModificationNotifier alloc] init];
         [modificationNotifier setConnection: notifyConnection];
-        [modificationNotifier setObservesSelfGenerated: YES];
+        [modificationNotifier setObservesSelfGenerated: NO];
     }
     if (nil == lockNotifier)
     {
