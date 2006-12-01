@@ -61,7 +61,7 @@
         [self fetch: nil];
     }
     
-    [super awakeFromNib];
+   [super awakeFromNib];
 }
 
 - (BXDatabaseContext *) BXDatabaseContext
@@ -171,6 +171,15 @@
     {
         [databaseContext release];
         databaseContext = [ctx retain];
+		
+		if (nil != databaseContext)
+		{
+			NSString *customClass = [entityDescription IBDatabaseObjectClassName];
+			[entityDescription autorelease];
+			entityDescription = [[databaseContext entityForTable:[entityDescription name] inSchema:[entityDescription schemaName]] retain];
+			[entityDescription setDatabaseObjectClass:NSClassFromString(customClass)];
+			[entityDescription setIBDatabaseObjectClassName:customClass];
+		}
     }
 }
 
