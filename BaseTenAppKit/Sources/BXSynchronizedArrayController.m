@@ -77,7 +77,7 @@
 - (BOOL) fetchObjectsMerging: (BOOL) merge error: (NSError **) error
 {    
     BOOL rval = NO;
-    NSArray* result = [databaseContext executeFetchForEntity: entityDescription withPredicate: nil error: error];
+    NSArray* result = [databaseContext executeFetchForEntity: entityDescription withPredicate: [self fetchPredicate] error: error];
     if (nil != result)
     {
         rval = YES;
