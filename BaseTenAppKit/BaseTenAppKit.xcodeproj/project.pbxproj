@@ -215,6 +215,7 @@
 				8DC2EF540486A6940098B216 /* Sources */,
 				8DC2EF560486A6940098B216 /* Frameworks */,
 				5342D1800A7501650066192A /* Run install_name_tool */,
+				2B97F3650B208C830003368B /* Set icon */,
 			);
 			buildRules = (
 			);
@@ -279,6 +280,20 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2B97F3650B208C830003368B /* Set icon */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set icon";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/../BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/../unzip.sh\" \"$PROJECT_DIR/../BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/../set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+		};
 		5342D1800A7501650066192A /* Run install_name_tool */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
