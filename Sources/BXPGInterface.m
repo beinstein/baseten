@@ -49,8 +49,15 @@
 
 
 //FIXME: these should be non-blockable assertions and the definitions should be somewhere else
-#define BXAssert0( ASSERTION )             NSAssert2( ASSERTION, @"Assertion failed in %s line %d", __FILE__, __LINE__)
-#define BXAssert( ASSERTION, MESSAGE )     NSAssert( ASSERTION, MESSAGE )
+#define BXAssert0( ASSERTION )                        if (!( ASSERTION )) BXHandleError( __FILE__, __LINE__, nil )
+#define BXAssert( ASSERTION, MESSAGE )                if (!( ASSERTION )) BXHandleError( __FILE__, __LINE__, MESSAGE )
+#define BXAssert2( ASSERTION, MESSAGE, ARG1, ARG2 )   if (!( ASSERTION )) BXHandleError( __FILE__, __LINE__, [NSString stringWithFormat: MESSAGE, ARG1, ARG2] )
+static void BXHandleError (char* file, int line, NSString* message)
+{
+    NSLog (@"*** Assertion failed in %s line %d", file, line);
+    if (nil != message)
+        fprintf (stderr, "\t%s\n", [message UTF8String]);
+}
 
 static unsigned int savepointIndex;
 static NSString* SavepointQuery ()
@@ -511,8 +518,22 @@ static unsigned int SavepointIndex ()
             NSAssert2 (nil == objectID || objectID == lockedObjectID, 
                        @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
                        objectID, lockedObjectID);
+            
+            //The run loop probably hasn't ran yet, if we don't have the transaction.
+            //FIXME: this should probably be done in executeDelete as well.
+            if ((PQTRANS_INTRANS != [connection transactionStatus]))
+            {
+                struct timeval tv = [connection timeout];
+                NSDate* date = [NSDate dateWithTimeIntervalSinceNow: tv.tv_usec + tv.tv_sec];
+                BOOL runLoopRan = NO;
+                do
+                    runLoopRan = [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: date] || runLoopRan;
+                while (! (PQTRANS_INTRANS == [connection transactionStatus] || [date timeIntervalSinceNow] < 0));
+                BXAssert0 (YES == runLoopRan);
+            }
         }
-        NSAssert (PQTRANS_INTRANS == [connection transactionStatus], @"Expected to have a transaction");        
+        BXAssert2 (PQTRANS_INTRANS == [connection transactionStatus], @"Expected to have a transaction (was: %d, expected: %d)",
+                   [connection transactionStatus], PQTRANS_INTRANS);
                 
         if (nil != objectID)
         {
@@ -552,8 +573,10 @@ static unsigned int SavepointIndex ()
         [self internalCommit]; 
         rval = objectIDs;
         
+#if 0
         [self setLockedKey: nil];
         [self setLockedObjectID: nil];                
+#endif
         
         //Check if pkey was updated
         NSDictionary* pkeyDict = nil;
@@ -665,9 +688,11 @@ static unsigned int SavepointIndex ()
         //Commit only if autocommitting
         [self internalCommit]; 
         rval = objectIDs;
-                  
+              
+#if 0
         [self setLockedKey: nil];
         [self setLockedObjectID: nil];                
+#endif
     }
     @catch (BXException* exception)
     {
@@ -1255,10 +1280,12 @@ static unsigned int SavepointIndex ()
 {
     if (YES == noSavepoint && PQTRANS_IDLE != [connection transactionStatus]) //Autocommit etc.
     {
-        [self setLockedKey: nil];
-        [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
-        [connection executeQuery: @"COMMIT TRANSACTION;"];
+        PGTSResultSet* res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+        res = [connection executeQuery: @"COMMIT TRANSACTION;"];
         ResetSavepointIndex ();
+
+        [self setLockedKey: nil];
+        [self setLockedObjectID: nil];
     }
 }
 
@@ -1269,12 +1296,14 @@ static unsigned int SavepointIndex ()
     //is to be locked again
     NSAssert1 (PQTRANS_IDLE != [connection transactionStatus], 
                @"Expected transaction status not to be PQTRANS_IDLE in %p", connection);
-    [self setLockedKey: nil];
     if (YES == noSavepoint) //Autocommit etc.
     {
         [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
         [connection executeQuery: @"ROLLBACK TRANSACTION;"];
         ResetSavepointIndex ();
+
+        [self setLockedKey: nil];
+        [self setLockedObjectID: nil];                
     }
     else
     {
