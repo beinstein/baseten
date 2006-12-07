@@ -512,8 +512,6 @@ ParseSelector (SEL aSelector, NSString** key)
  * Set value for the given key in the database.
  * \param   aVal    The new value.
  * \param   aKey    An NSString.
- * \bug     Foreign keys are not handled i.e. if \c aVal is an BXDatabaseObject and \c aKey
- *          a name of a foreign key, the query will fail and an BXException will be thrown.
  */
 - (void) setPrimitiveValue: (id) aVal forKey: (NSString *) aKey
 {    
