@@ -3,7 +3,7 @@ TARGET_FILE_PATH=$2
 
 unzip ()
 {
-	open "$ZIP_FILE_PATH"
+	open -a "/System/Library/CoreServices/BOMArchiveHelper.app" "$ZIP_FILE_PATH"
 	sleep 2
 	if [ -e "$TARGET_FILE_PATH" ]
 	then
