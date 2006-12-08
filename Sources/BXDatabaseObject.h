@@ -73,8 +73,8 @@ enum BXObjectStatus
 
 @interface BXDatabaseObject : NSObject
 {
-    BXDatabaseContext*     mContext; //Weak
-    BXDatabaseObjectID*    mObjectID;
+    BXDatabaseContext*      mContext; //Weak
+    BXDatabaseObjectID*     mObjectID;
     NSMutableDictionary*    mValues;
     unsigned int            mStatus;
 }

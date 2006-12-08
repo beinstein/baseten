@@ -1,0 +1,18 @@
+{
+    IBClasses = (
+        {
+            CLASS = BXSynchronizedArrayController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {databaseContext = BXDatabaseContext; window = NSWindow; }; 
+            SUPERCLASS = NSArrayController; 
+        }, 
+        {
+            CLASS = BaseTenPalette; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {arrayControllerButton = NSButton; contextButton = NSButton; }; 
+            SUPERCLASS = IBPalette; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

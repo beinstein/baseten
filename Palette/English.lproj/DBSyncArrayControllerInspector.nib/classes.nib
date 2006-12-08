@@ -1,0 +1,26 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {setPredicate = id; }; 
+            CLASS = BXSynchronizedArrayControllerInspector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                avoidsEmptySelectionButton = NSButtonCell; 
+                clearsFilterPredicateButton = NSButtonCell; 
+                contextWarningField = NSTextField; 
+                customClassNameField = NSTextField; 
+                fetchPredicateTextView = NSTextView; 
+                fetchesOnAwakeButton = NSButtonCell; 
+                multipleValuesMarkerButton = NSButtonCell; 
+                preservesSelectionButton = NSButtonCell; 
+                schemaNameField = NSTextField; 
+                selectsInsertedButton = NSButtonCell; 
+                setPredicateButton = NSButton; 
+                tableNameField = NSTextField; 
+            }; 
+            SUPERCLASS = IBInspector; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,16 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            CLASS = PROJECTNAMEASIDENTIFIERPalette; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = IBPalette; 
+        }, 
+        {
+            CLASS = "\UfffdPROJECTNAMEASIDENTIFIER\Ufffd"; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSView; 
+        }
+    ); 
+    IBVersion = 1; 
+}
