@@ -44,18 +44,24 @@
     {
         [self setAutomaticallyPreparesContent: NO];
         [self setEditable: YES];
-        fetchesOnAwake = YES;
-        changing = NO;
+        mFetchesOnAwake = YES;
+        mChanging = NO;
     }
     return self;
 }
 
 - (void) awakeFromNib
 {
+    if (nil == mEntityDescription)
+        [self setEntityDescription: [databaseContext entityForTable: mTableName inSchema: mSchemaName]];
+    //Set the custom class name.
+    if (nil != mDBObjectClassName)
+        [mEntityDescription setDatabaseObjectClass: NSClassFromString (mDBObjectClassName)];    
+    
     NSWindow* aWindow = [self BXWindow];
     [databaseContext setUndoManager: [aWindow undoManager]];
         
-    if (YES == fetchesOnAwake)
+    if (YES == mFetchesOnAwake)
     {
         [aWindow makeKeyAndOrderFront: nil];
         [self fetch: nil];
@@ -77,7 +83,7 @@
 - (BOOL) fetchObjectsMerging: (BOOL) merge error: (NSError **) error
 {    
     BOOL rval = NO;
-    NSArray* result = [databaseContext executeFetchForEntity: entityDescription withPredicate: [self fetchPredicate] error: error];
+    NSArray* result = [databaseContext executeFetchForEntity: mEntityDescription withPredicate: [self fetchPredicate] error: error];
     if (nil != result)
     {
         rval = YES;
@@ -104,13 +110,13 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
     [databaseContext release];
-    [entityDescription release];
+    [mEntityDescription release];
     [super dealloc];
 }
 
 - (void) BXAddedObjects: (NSNotification *) notification
 {
-    if (NO == changing)
+    if (NO == mChanging)
     {
         NSError* error = nil;
         NSArray* ids = [[notification userInfo] valueForKey: kBXObjectIDsKey];
@@ -137,25 +143,25 @@
 
 - (BXEntityDescription *) entityDescription
 {
-    return entityDescription;
+    return mEntityDescription;
 }
 
 - (void) setEntityDescription: (BXEntityDescription *) desc
 {
-    if (desc != entityDescription)
+    if (desc != mEntityDescription)
     {
         NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
         [nc removeObserver: self];
-        [entityDescription release];
+        [mEntityDescription release];
         
-        entityDescription = desc;
-        if (nil != entityDescription)
+        mEntityDescription = desc;
+        if (nil != mEntityDescription)
         {
-            [entityDescription retain];
+            [mEntityDescription retain];
             [nc addObserver: self selector: @selector (BXAddedObjects:)
-                       name: kBXInsertNotification object: entityDescription];
+                       name: kBXInsertNotification object: mEntityDescription];
             [nc addObserver: self selector: @selector (BXDeletedObjects:)
-                       name: kBXDeleteNotification object: entityDescription];
+                       name: kBXDeleteNotification object: mEntityDescription];
         }
     }
 }
@@ -170,27 +176,32 @@
     if (ctx != databaseContext)
     {
         [databaseContext release];
-        databaseContext = [ctx retain];
+        databaseContext = ctx;
 		
 		if (nil != databaseContext)
 		{
-			NSString *customClass = [entityDescription IBDatabaseObjectClassName];
-			[entityDescription autorelease];
-			entityDescription = [[databaseContext entityForTable:[entityDescription name] inSchema:[entityDescription schemaName]] retain];
-			[entityDescription setDatabaseObjectClass:NSClassFromString(customClass)];
-			[entityDescription setIBDatabaseObjectClassName:customClass];
+            [databaseContext retain];
+            
+            if (nil != mEntityDescription)
+            {
+                //Also set the entity description, since the database URI has changed.
+                BXEntityDescription* entityDescription = [databaseContext entityForTable: [mEntityDescription name] 
+                                                                                inSchema: [mEntityDescription schemaName]];
+                [entityDescription setDatabaseObjectClass: [mEntityDescription databaseObjectClass]];
+                [self setEntityDescription: mEntityDescription];
+            }
 		}
     }
 }
 
 - (BOOL) fetchesOnAwake
 {
-    return fetchesOnAwake;
+    return mFetchesOnAwake;
 }
 
 - (void) setFetchesOnAwake: (BOOL) aBool
 {
-    fetchesOnAwake = aBool;
+    mFetchesOnAwake = aBool;
 }
 
 - (void) objectDidBeginEditing: (id) editor
@@ -203,6 +214,45 @@
 {
     [super objectDidEndEditing: editor];
     [self BXUnlockKey: nil editor: editor];
+}
+
+- (NSString *) schemaName
+{
+    return mSchemaName; 
+}
+
+- (void) setSchemaName: (NSString *) aSchemaName
+{
+    if (mSchemaName != aSchemaName) {
+        [mSchemaName release];
+        mSchemaName = [aSchemaName retain];
+    }
+}
+
+- (NSString *) tableName
+{
+    return mTableName; 
+}
+
+- (void) setTableName: (NSString *) aTableName
+{
+    if (mTableName != aTableName) {
+        [mTableName release];
+        mTableName = [aTableName retain];
+    }
+}
+
+- (NSString *) databaseObjectClassName
+{
+    return mDBObjectClassName; 
+}
+
+- (void) setDatabaseObjectClassName: (NSString *) aDBObjectClassName
+{
+    if (mDBObjectClassName != aDBObjectClassName) {
+        [mDBObjectClassName release];
+        mDBObjectClassName = [aDBObjectClassName retain];
+    }
 }
 
 @end
@@ -235,18 +285,12 @@
     return [self fetchObjectsMerging: merge error: error];
 }
 
-- (void) setObjectClass: (Class) aClass
-{
-    NSAssert (nil != entityDescription, nil);
-    [entityDescription setDatabaseObjectClass: aClass];
-}
-
 - (id) newObject
 {
-    changing = YES;
+    mChanging = YES;
     NSError* error = nil;
-    id object = [databaseContext createObjectForEntity: entityDescription
-                               withFieldValues: nil error: &error];
+    id object = [databaseContext createObjectForEntity: mEntityDescription
+                                       withFieldValues: nil error: &error];
     if (nil != error)
         [self BXHandleError: error];
     else
@@ -254,7 +298,7 @@
         //The returned object should have retain count of 1
         [object retain];
     }
-    changing = NO;
+    mChanging = NO;
     return object;
 }
 
@@ -282,8 +326,11 @@
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
     [super encodeWithCoder: encoder];
-    [encoder encodeBool: fetchesOnAwake forKey: @"fetchesOnAwake"];
-    [encoder encodeObject: entityDescription forKey: @"entityDescription"];
+    [encoder encodeBool: mFetchesOnAwake forKey: @"fetchesOnAwake"];
+    
+    [encoder encodeObject: mTableName forKey: @"tableName"];
+    [encoder encodeObject: mSchemaName forKey: @"schemaName"];
+    [encoder encodeObject: mDBObjectClassName forKey: @"DBObjectClassName"];
 }
 
 - (id) initWithCoder: (NSCoder *) decoder
@@ -293,7 +340,10 @@
         [self setAutomaticallyPreparesContent: NO];
         [self setEditable: YES];
         [self setFetchesOnAwake: [decoder decodeBoolForKey: @"fetchesOnAwake"]];
-        [self setEntityDescription: [decoder decodeObjectForKey: @"entityDescription"]];
+        
+        [self setTableName:  [decoder decodeObjectForKey: @"tableName"]];
+        [self setSchemaName: [decoder decodeObjectForKey: @"schemaName"]];
+        [self setDatabaseObjectClassName: [decoder decodeObjectForKey: @"DBObjectClassName"]];
     }
     return self;
 }

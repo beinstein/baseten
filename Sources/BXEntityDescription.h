@@ -39,7 +39,6 @@
     NSURL*                  mDatabaseURI;
     NSString*               mSchemaName;
     Class                   mDatabaseObjectClass;
-    NSString*               mIBDatabaseObjectClassName;
     NSArray*                mPkeyFields;
     NSSet*                  mViewEntities;
     NSMutableDictionary*    mTargetViews;
@@ -61,8 +60,6 @@
 - (unsigned int) hash;
 - (void) setDatabaseObjectClass: (Class) cls;
 - (Class) databaseObjectClass;
-- (NSString *) IBDatabaseObjectClassName;
-- (void) setIBDatabaseObjectClassName:(NSString *)IBDatabaseObjectClassName;
 - (void) setPrimaryKeyFields: (NSArray *) anArray;
 - (NSArray *) primaryKeyFields;
 - (NSArray *) fields;

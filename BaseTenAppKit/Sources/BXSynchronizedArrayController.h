@@ -36,11 +36,24 @@
 @interface BXSynchronizedArrayController : NSArrayController
 {
     IBOutlet BXDatabaseContext* databaseContext;
-    IBOutlet NSWindow* window;    
-    BXEntityDescription* entityDescription;
-    BOOL fetchesOnAwake;
-    BOOL changing;
+    IBOutlet NSWindow* window;
+        
+    BXEntityDescription* mEntityDescription;
+    BOOL mFetchesOnAwake;
+    BOOL mChanging;
+    
+    //For the IB Palette
+    NSString* mSchemaName;
+    NSString* mTableName;
+    NSString* mDBObjectClassName;    
 }
+
+- (NSString *) schemaName;
+- (void) setSchemaName: (NSString *) aSchemaName;
+- (NSString *) tableName;
+- (void) setTableName: (NSString *) aTableName;
+- (NSString *) databaseObjectClassName;
+- (void) setDatabaseObjectClassName: (NSString *) aDBObjectClassName;
 
 - (BOOL) fetchObjectsMerging: (BOOL) merge error: (NSError **) error;
 - (BXDatabaseContext *) databaseContext;
