@@ -32,7 +32,7 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
      nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
 
 #define BXLocalizedString( KEY, VALUE, COMMENT ) \
-    NSLocalizedStringWithDefaultValue( KEY, nil, [NSBundle mainBundle], VALUE, COMMENT )
+    NSLocalizedStringWithDefaultValue( KEY, nil, [NSBundle bundleForClass:[BXDatabaseContext class]], VALUE, COMMENT )
 
 
 @class BXDatabaseObjectID;

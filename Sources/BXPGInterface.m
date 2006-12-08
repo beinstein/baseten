@@ -999,11 +999,11 @@ static unsigned int SavepointIndex ()
             BXLocalizedString (@"tableNotFound", @"Table %@ was not found in schema %@.", @"Error message for fetch"),
             [entity name], [entity schemaName]];
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+            localizedError, NSLocalizedFailureReasonErrorKey,
+            localizedError, NSLocalizedRecoverySuggestionErrorKey,
             context, kBXDatabaseContextKey,
             entity, kBXEntityDescriptionKey,
             BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-            localizedError, NSLocalizedFailureReasonErrorKey,
-            localizedError, NSLocalizedRecoverySuggestionErrorKey,
             nil];
         NSError* placeholder = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity 
                                                userInfo: userInfo];
