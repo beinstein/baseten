@@ -1,5 +1,5 @@
 //
-// PGTSDatabaseInfo.h
+// PGTSACLItem.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,33 +26,19 @@
 // $Id$
 //
 
+@class PGTSRoleDescription;
+
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractInfo.h>
-#import <PGTS/postgresql/libpq-fe.h> 
+#import <PGTS/PGTSConstants.h>
 
-
-@class PGTSTableInfo;
-@class PGTSTypeInfo;
-@class TSIndexDictionary;
-@class PGTSConnectionPoolItem;
-
-
-@interface PGTSDatabaseInfo : PGTSAbstractInfo 
+@interface PGTSACLItem : NSObject 
 {
-    TSIndexDictionary* tables;
-    TSIndexDictionary* types;
-    NSMutableDictionary* schemas;
-    PGTSConnectionPoolItem* poolItem;
-    NSString* connectionPoolKey;
-    NSMutableDictionary* roles;
+    PGTSRoleDescription* role;
+    enum PGTSACLItemPrivilege privileges;
 }
 
-- (PGTSTableInfo *) tableInfoForTableWithOid: (Oid) anOid;
-- (PGTSTableInfo *) tableInfoForTableNamed: (NSString *) tableName inSchemaNamed: (NSString *) schemaName;
-- (PGTSTypeInfo *) typeInfoForTypeWithOid: (Oid) anOid;
-- (BOOL) schemaExists: (NSString *) schemaName;
-- (NSString *) connectionPoolKey;
-- (void) setConnectionPoolKey: (NSString *) aKey;
-- (void) updateTableCache: (PGTSTableInfo *) table;
+- (enum PGTSACLItemPrivilege) privileges;
+- (PGTSRoleDescription *) role;
+- (void) setRole: (PGTSRoleDescription *) aRole;
 
 @end

@@ -97,3 +97,30 @@ enum PGTSErrors
     kPGTSUnsuccessfulQueryError = 1
 };
 /* See PGTSConnectionDelegate.h */
+
+enum PGTSACLItemPrivilege
+{
+    kPGTSPrivilegeNone            = 0,
+    kPGTSPrivilegeSelect          = 1 << 1,
+    kPGTSPrivilegeSelectGrant     = 1 << 2,
+    kPGTSPrivilegeUpdate          = 1 << 3,
+    kPGTSPrivilegeUpdateGrant     = 1 << 4,
+    kPGTSPrivilegeInsert          = 1 << 5,
+    kPGTSPrivilegeInsertGrant     = 1 << 6,
+    kPGTSPrivilegeDelete          = 1 << 7,
+    kPGTSPrivilegeDeleteGrant     = 1 << 8,
+    kPGTSPrivilegeReferences      = 1 << 9,
+    kPGTSPrivilegeReferencesGrant = 1 << 10,
+    kPGTSPrivilegeTrigger         = 1 << 11,
+    kPGTSPrivilegeTriggerGrant    = 1 << 12,
+    kPGTSPrivilegeExecute         = 1 << 13,
+    kPGTSPrivilegeExecuteGrant    = 1 << 14,
+    kPGTSPrivilegeUsage           = 1 << 15,
+    kPGTSPrivilegeUsageGrant      = 1 << 16,
+    kPGTSPrivilegeCreate          = 1 << 17,
+    kPGTSPrivilegeCreateGrant     = 1 << 18,
+    kPGTSPrivilegeConnect         = 1 << 19,
+    kPGTSPrivilegeConnectGrant    = 1 << 20,
+    kPGTSPrivilegeTemporary       = 1 << 21,
+    kPGTSPrivilegeTemporaryGrant  = 1 << 22
+};

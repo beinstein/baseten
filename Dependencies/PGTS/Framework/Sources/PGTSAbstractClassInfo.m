@@ -41,26 +41,17 @@
 {
     if ((self = [super initWithConnection: aConn]))
     {
-        oid = InvalidOid;
         schemaOid = InvalidOid;
+        aclItems = [[TSIndexDictionary alloc] init];
     }
     return self;
 }
 
 - (void) dealloc
 {
+    [aclItems release];
     [schemaName release];
     [super dealloc];
-}
-
-- (Oid) oid
-{
-    return oid;
-}
-
-- (void) setOid: (Oid) anOid
-{
-    oid = anOid;
 }
 
 - (Oid) schemaOid

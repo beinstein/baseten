@@ -31,15 +31,12 @@
 #import <PGTS/postgresql/libpq-fe.h> 
 
 
-@interface PGTSAbstractClassInfo : PGTSAbstractInfo
+@interface PGTSAbstractClassInfo : PGTSAbstractObjectDescription
 {
-    Oid oid;
     Oid schemaOid;
     NSString* schemaName;
+    TSIndexDictionary* aclItems;
 }
-- (Oid)  oid;
-- (void) setOid: (Oid) anOid;
-
 - (void) setSchemaOid: (Oid) anOid;
 - (void) setSchemaName: (NSString *) anString;
 
