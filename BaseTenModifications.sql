@@ -1,4 +1,4 @@
-﻿--
+--
 -- BaseTenModifications.sql
 -- BaseTen
 --
@@ -36,13 +36,38 @@ CREATE LANGUAGE plpgsql;
 COMMIT;
 
 
+-- Groups for baseten users
+BEGIN;
+DROP ROLE baseten;
+COMMIT;
+BEGIN;
+DROP ROLE basetenmod;
+COMMIT;
+BEGIN;
+CREATE ROLE baseten WITH
+	INHERIT
+	NOSUPERUSER
+	NOCREATEDB
+	NOCREATEROLE
+	NOLOGIN;
+CREATE ROLE basetenmod WITH
+	INHERIT
+	NOSUPERUSER
+	NOCREATEDB
+	NOCREATEROLE
+	NOLOGIN;
+COMMIT;
+
+
 BEGIN; -- Schema, helper functions and classes
 
 CREATE SCHEMA "baseten";
 COMMENT ON SCHEMA "baseten" IS 'Schema used by BaseTen. Please use the provided functions to edit.';
-GRANT USAGE ON SCHEMA "baseten" TO PUBLIC;
+REVOKE ALL PRIVILEGES ON SCHEMA "baseten" FROM PUBLIC;
+GRANT USAGE ON SCHEMA "baseten" TO baseten;
 
 CREATE TEMPORARY SEQUENCE "basetenlocksequence";
+REVOKE ALL PRIVILEGES ON SEQUENCE "basetenlocksequence" FROM PUBLIC;
 
 
 -- Helper functions
@@ -54,7 +79,9 @@ CREATE AGGREGATE "baseten".array_accum
     basetype = anyelement, 
     stype = anyarray, 
     initcond = '{}' 
-); 
+);
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_accum (anyelement) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".array_accum (anyelement) TO baseten;
 
 
 -- Takes two one-dimensional arrays the first one of which is smaller or equal in size to the other.
@@ -74,6 +101,8 @@ BEGIN
     RETURN destination;
 END;
 $$ IMMUTABLE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES 
+	ON FUNCTION "baseten".array_cat_each (TEXT [], TEXT [], TEXT) FROM PUBLIC;
 
 
 -- Prepends each element of an array with the first parameter
@@ -90,6 +119,8 @@ BEGIN
     RETURN destination;
 END;
 $$ IMMUTABLE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES 
+	ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
 
 
 CREATE OR REPLACE FUNCTION "baseten".running_backend_pids () 
@@ -98,22 +129,29 @@ RETURNS SETOF INTEGER AS $$
         pg_stat_get_backend_pid (idset.id) AS pid 
     FROM pg_stat_get_backend_idset () AS idset (id);
 $$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".running_backend_pids () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".running_backend_pids () TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".LockNextId () RETURNS BIGINT AS $$
     SELECT nextval ('basetenlocksequence');
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".LockNextId () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".LockNextId () TO basetenmod;
 
 
 CREATE TYPE "baseten".TableType AS (
     oid OID,
     description TEXT
 );
+-- No privileges on types
 
 
 CREATE OR REPLACE FUNCTION "baseten".TableType (OID, TEXT) RETURNS "baseten".TableType AS $$
     SELECT $1, $2;
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".TableType (OID, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".TableType (OID, TEXT) TO baseten;
 
 
 CREATE VIEW "baseten".PrimaryKey AS
@@ -124,6 +162,8 @@ CREATE VIEW "baseten".PrimaryKey AS
             AND a.atttypid = t.oid
             AND c.contype = 'p'
         ORDER BY oid ASC, a.attnum ASC;
+REVOKE ALL PRIVILEGES ON "baseten".PrimaryKey FROM PUBLIC;
+GRANT SELECT ON "baseten".PrimaryKey TO baseten;
 
 
 -- Constraint names
@@ -144,6 +184,8 @@ INNER JOIN pg_attribute a2 ON (
     a2.attnum = ANY (c.confkey)
 )
 GROUP BY c.oid;
+REVOKE ALL PRIVILEGES ON "baseten".conname FROM PUBLIC;
+GRANT SELECT ON "baseten".conname TO baseten;
 
 
 -- Many-to-one relationships
@@ -166,6 +208,8 @@ LEFT JOIN pg_constraint p ON (
 INNER JOIN "baseten".conname n ON (c.oid = n.oid)
 -- Only select foreign keys
 WHERE c.contype = 'f';
+REVOKE ALL PRIVILEGES ON "baseten".manytoone FROM PUBLIC;
+GRANT SELECT ON "baseten".manytoone TO baseten;
 
 
 CREATE OR REPLACE VIEW "baseten".relationships AS
@@ -257,7 +301,8 @@ INNER JOIN pg_class c1 ON (c1.oid = r.src)
 INNER JOIN pg_class c2 ON (c2.oid = r.dst)
 INNER JOIN pg_namespace n1 ON (n1.oid = c1.relnamespace)
 INNER JOIN pg_namespace n2 ON (n2.oid = c2.relnamespace);
-GRANT SELECT ON "baseten".relationships TO PUBLIC;
+REVOKE ALL PRIVILEGES ON "baseten".relationships FROM PUBLIC;
+GRANT SELECT ON "baseten".relationships TO baseten;
 
 
 -- For modification tracking
@@ -271,15 +316,18 @@ CREATE TABLE "baseten".Modification (
     "baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
 );
 CREATE SEQUENCE "baseten".modification_id_seq CYCLE OWNED BY "baseten".Modification."baseten_modification_id";
-CREATE OR REPLACE FUNCTION "baseten".SetModificationID () RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION "baseten".SetModificationId () RETURNS TRIGGER AS $$
 BEGIN
 	NEW."baseten_modification_id" = nextval ('baseten.modification_id_seq');
 	RETURN NEW;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
-CREATE TRIGGER "setModificationID" BEFORE INSERT ON "baseten".Modification 
-	FOR EACH ROW EXECUTE PROCEDURE "baseten".SetModificationID ();
-GRANT SELECT ON "baseten".Modification TO PUBLIC;
+CREATE TRIGGER "setModificationId" BEFORE INSERT ON "baseten".Modification 
+	FOR EACH ROW EXECUTE PROCEDURE "baseten".SetModificationId ();
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".SetModificationId () FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON SEQUENCE "baseten".modification_id_seq FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON "baseten".Modification FROM PUBLIC;
+GRANT SELECT ON "baseten".Modification TO baseten;
 
 
 CREATE TABLE "baseten".lock (
@@ -293,7 +341,8 @@ CREATE TABLE "baseten".lock (
     "baseten_lock_savepoint_idx" BIGINT NOT NULL,
     PRIMARY KEY ("baseten_lock_backend_pid", "baseten_lock_id")
 );
-GRANT SELECT ON "baseten".lock TO PUBLIC;
+REVOKE ALL PRIVILEGES ON "baseten".lock FROM PUBLIC;
+GRANT SELECT ON "baseten".lock TO baseten;
 
 COMMIT; -- Schema and classes
 
@@ -303,11 +352,16 @@ BEGIN; -- Functions
 CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
     SELECT 0.908::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".Version () TO baseten;
+
 
 
 CREATE OR REPLACE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
     SELECT 0.1::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CompatibilityVersion () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".CompatibilityVersion () TO baseten;
 
 
 -- Clears lock marks for this connection
@@ -317,6 +371,8 @@ CREATE OR REPLACE FUNCTION "baseten".ClearLocks () RETURNS VOID AS $$
         AND "baseten_lock_timestamp" < CURRENT_TIMESTAMP;
     NOTIFY "baseten.ClearedLocks";
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ClearLocks () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ClearLocks () TO basetenmod;
 
 
 -- Step back lock marks
@@ -330,6 +386,8 @@ CREATE OR REPLACE FUNCTION "baseten".LocksStepBack () RETURNS VOID AS $$
             );
     NOTIFY "baseten.ClearedLocks";
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LocksStepBack () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".LocksStepBack () TO basetenmod;
 
 
 -- Returns schemaname.tablename corresponding to the given oid.
@@ -349,6 +407,8 @@ BEGIN
     RETURN name;
 END;
 $$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".TableName (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".TableName (OID) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".TableName1 (OID) RETURNS TEXT AS $$
@@ -366,6 +426,8 @@ BEGIN
     RETURN name;
 END;
 $$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".TableName1 (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".TableName1 (OID) TO baseten;
 
 
 -- Replaces each underscore with two, each period with an underscore 
@@ -373,21 +435,29 @@ $$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
 CREATE OR REPLACE FUNCTION "baseten".SerializedTableName (TEXT) RETURNS TEXT AS $$
     SELECT replace (replace (replace ($1, '_', '__'), '.', '_'), '"', '');
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".SerializedTableName (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".SerializedTableName (TEXT) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".SerializedTableName (OID) RETURNS TEXT AS $$
     SELECT "baseten".SerializedTableName ("baseten".TableName1 ($1));
 $$ STABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".SerializedTableName (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".SerializedTableName (OID) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".ModificationTableName1 (TEXT) RETURNS TEXT AS $$
     SELECT 'modification_' || $1;
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName1 (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName1 (TEXT) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".ModificationTableName1 (OID) RETURNS TEXT AS $$
     SELECT "baseten".ModificationTableName1 ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName1 (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName1 (OID) TO baseten;
 
 
 -- Returns the corresponding table where modifications are stored
@@ -395,40 +465,53 @@ $$ STABLE LANGUAGE SQL;
 CREATE OR REPLACE FUNCTION "baseten".ModificationTableName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ("baseten".ModificationTableName1 ($1));
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName (TEXT) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".ModificationTableName (OID) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ("baseten".ModificationTableName1 ($1));
 $$ STABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName (OID) TO baseten;
 
 
 -- Expects that the given table name is the modification table name
 CREATE OR REPLACE FUNCTION "baseten".ModResultTableName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten_' || "baseten".ModificationTableName1 ($1) || '_result');
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModResultTableName (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModResultTableName (TEXT) TO baseten;
 
 
 -- Expects that the given table name is serialized
 CREATE OR REPLACE FUNCTION "baseten".LockNotifyFunctionName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ('LockNotify_' || $1);
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockNotifyFunctionName (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".LockNotifyFunctionName (TEXT) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".LockNotifyFunctionName (OID) RETURNS TEXT AS $$
     SELECT "baseten".LockNotifyFunctionName ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockNotifyFunctionName (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".LockNotifyFunctionName (OID) TO baseten;
 
 
 -- Expects that the given table name is serialized
 CREATE OR REPLACE FUNCTION "baseten".LockTableName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ('lock_' || $1);
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockTableName (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".LockTableName (TEXT) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".LockTableName (OID) RETURNS TEXT AS $$
     SELECT "baseten".LockTableName ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
-
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockTableName (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".LockTableName (OID) TO baseten;
 
 
 -- Returns the modification rule name associated with the given operation,
@@ -437,6 +520,8 @@ CREATE OR REPLACE FUNCTION "baseten".ModificationRuleName (TEXT)
 RETURNS TEXT AS $$
     SELECT 'basetenModification_' || upper ($1);
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationRuleName (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationRuleName (TEXT) TO baseten;
 
 
 -- Removes tracked modifications which are older than 5 minutes and set the modification timestamps 
@@ -452,7 +537,8 @@ CREATE OR REPLACE FUNCTION "baseten".ModificationTableCleanup () RETURNS VOID AS
     UPDATE "baseten".Modification SET "baseten_modification_timestamp" = timeofday ()::TIMESTAMP (3)
         WHERE "baseten_modification_timestamp" IS NULL AND "baseten_modification_backend_pid" != pg_backend_pid ();
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
-GRANT EXECUTE ON FUNCTION "baseten".ModificationTableCleanup () TO PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableCleanup () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationTableCleanup () TO baseten;
 
 
 -- Removes tracked locks for which a backend no longer exists
@@ -463,7 +549,8 @@ CREATE OR REPLACE FUNCTION "baseten".LockTableCleanup () RETURNS VOID AS $$
             OR ("baseten_lock_backend_pid" NOT IN  (SELECT pid FROM "baseten".running_backend_pids () AS r (pid))) -- Locks have to be owned by a running backend
             OR ("baseten_lock_cleared" = true AND "baseten_lock_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes'); -- Cleared locks older than 5 minutes may be removed
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
-GRANT EXECUTE ON FUNCTION "baseten".LockTableCleanup () TO PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockTableCleanup () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".LockTableCleanup () TO baseten;
 
 
 -- TEXT parameter needs to be the serialized table name
@@ -471,6 +558,8 @@ CREATE OR REPLACE FUNCTION "baseten".ModifyInsertFunctionName (OID)
 RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ('ModifyInsert_' || "baseten".SerializedTableName ($1));
 $$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModifyInsertFunctionName (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModifyInsertFunctionName (OID) TO baseten;
 
 
 -- A trigger function for notifying the front ends and removing old tracked modifications
@@ -479,7 +568,8 @@ BEGIN
     EXECUTE 'NOTIFY ' || quote_ident (baseten.ModificationTableName (TG_ARGV [0]));
     RETURN NEW;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".NotifyForModification () FROM PUBLIC;
 
 
 -- A trigger function for notifying the front ends and removing old tracked locks
@@ -489,7 +579,8 @@ BEGIN
     EXECUTE 'NOTIFY ' || quote_ident (baseten.LockTableName (TG_ARGV [0]));
     RETURN NEW;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".NotifyForLock () FROM PUBLIC;
 
 
 CREATE OR REPLACE FUNCTION "baseten".IsObservingCompatible (OID) RETURNS boolean AS $$
@@ -498,6 +589,8 @@ CREATE OR REPLACE FUNCTION "baseten".IsObservingCompatible (OID) RETURNS boolean
             AND c.relname = "baseten".ModificationTableName1 ($1)
             AND n.nspname = 'baseten');
 $$ STABLE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".IsObservingCompatible (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".IsObservingCompatible (OID) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".VerifyObservingCompatibility (OID) RETURNS VOID AS $$
@@ -510,9 +603,11 @@ BEGIN
     RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".VerifyObservingCompatibility (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".VerifyObservingCompatibility (OID) TO baseten;
 
 
--- A convinience function for observing modifications
+-- A convenience function for observing modifications
 -- Subscribes the caller to receive the approppriate notification
 CREATE OR REPLACE FUNCTION "baseten".ObserveModifications (OID) RETURNS TEXT AS $$
 DECLARE
@@ -525,7 +620,9 @@ BEGIN
     EXECUTE 'LISTEN ' || quote_ident (nname);
     RETURN nname;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ObserveModifications (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ObserveModifications (OID) TO baseten;
 
 
 CREATE OR REPLACE FUNCTION "baseten".StopObservingModifications (OID) RETURNS VOID AS $$
@@ -538,6 +635,8 @@ BEGIN
     RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".StopObservingModifications (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".StopObservingModifications (OID) TO baseten;
 
 
 -- A convenience function for observing locks
@@ -561,6 +660,8 @@ BEGIN
     RETURN nname;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ObserveLocks (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ObserveLocks (OID) TO basetenmod;
 
 
 CREATE OR REPLACE FUNCTION "baseten".StopObservingLocks (OID) RETURNS VOID AS $$
@@ -571,6 +672,8 @@ BEGIN
     RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".StopObservingLocks (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".StopObservingLocks (OID) TO basetenmod;
 
 
 -- Remove the modification tracking table, rules and the trigger
@@ -598,6 +701,7 @@ BEGIN
 --    RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CancelModificationObserving (OID) FROM PUBLIC;
 
 
 -- A helper function
@@ -629,7 +733,7 @@ BEGIN
             'BEGIN                                                                               ' ||
             '    INSERT INTO ' || mtablename                                                       ||
             '        ("baseten_modification_type", ' || array_to_string (fieldnames, ', ') || ') ' ||
-            '       VALUES (\'I\', ' || array_to_string (
+            '       VALUES (''I'', ' || array_to_string (
                         "baseten".array_prepend_each ('NEW.', fieldnames), ', ') || ');          ' || -- f. values
             '    RETURN NEW;                                                                     ' ||
             'END;                                                                                ' ||
@@ -640,6 +744,7 @@ BEGIN
                  funcname || ' ()'; 
         EXECUTE fdecl;
         EXECUTE query;
+        EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || funcname || ' () FROM PUBLIC';
     ELSE
         IF querytype = 'DELETE' THEN
             referencename = 'OLD.';
@@ -657,6 +762,8 @@ BEGIN
     RETURN;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION
+	"baseten".PrepareForModificationObserving1 (TEXT, OID, NAME, NAME [], BOOLEAN) FROM PUBLIC;
 
 
 -- Another helper function
@@ -762,10 +869,15 @@ BEGIN
         '    SELECT * FROM ' || ntname || '(true, $1);                                               ' ||
         '$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;                                         ';
     EXECUTE fdecl;
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP) FROM PUBLIC';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (TIMESTAMP) FROM PUBLIC';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP) TO baseten';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (TIMESTAMP) TO baseten';
         
     RETURN;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving2 (OID, TEXT) FROM PUBLIC;
 
 
 -- Creates a table for tracking modifications to the given table.
@@ -784,6 +896,7 @@ DECLARE
     pkeyfnames  TEXT;
     lfname      TEXT;
     fcode       TEXT;
+    fargs       TEXT;
     iitems      TEXT [];
     i           INTEGER;
     isview      BOOLEAN;        -- Is the object a view?
@@ -814,7 +927,8 @@ BEGIN
         || ' ("baseten_lock_relid" OID NOT NULL DEFAULT ' || toid || ', '
         || pkey_decl || ')'
         || ' INHERITS ("baseten".Lock)';
-    EXECUTE 'GRANT SELECT ON ' || ltablename || ' TO PUBLIC';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON ' || ltablename || ' FROM PUBLIC';
+    EXECUTE 'GRANT SELECT ON ' || ltablename || ' TO baseten';
 
     -- Trigger for the _lock_ table
     EXECUTE 'CREATE TRIGGER "basetenLockRow" AFTER INSERT ON ' || ltablename
@@ -830,9 +944,11 @@ BEGIN
         || ' VALUES (' || array_to_string (iitems, ', ') || ');'
         || ' NOTIFY ' || quote_ident (ltablename) || ';';
     -- FIXME: add a check to the function to ensure that the connection is autocommitting
-    EXECUTE 'CREATE OR REPLACE FUNCTION ' || lfname 
-        || ' (CHAR (1), BIGINT, ' || array_to_string (pkeyfields.type, ', ') || ')'
-        || ' RETURNS VOID AS $$ ' || fcode || ' $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER';        
+    fargs := ' (CHAR (1), BIGINT, ' || array_to_string (pkeyfields.type, ', ') || ')';
+    EXECUTE 'CREATE OR REPLACE FUNCTION ' || lfname || fargs || ' '
+        || ' RETURNS VOID AS $$ ' || fcode || ' $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || lfname || fargs || ' FROM PUBLIC';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION '         || lfname || fargs || ' TO basetenmod';
         
     -- Modifications
     EXECUTE 'CREATE TABLE ' 
@@ -840,7 +956,8 @@ BEGIN
         || ' ("baseten_modification_relid" OID NOT NULL DEFAULT ' || toid || ', '
         || pkey_decl || ')'
         || ' INHERITS ("baseten".Modification)';
-    EXECUTE 'GRANT SELECT ON ' || mtablename || ' TO PUBLIC';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON ' || mtablename || ' FROM PUBLIC';
+    EXECUTE 'GRANT SELECT ON ' || mtablename || ' TO baseten';
     
     -- Triggers for the _modification_ table
     EXECUTE 
@@ -861,6 +978,7 @@ BEGIN
     RETURN rval;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving (OID) FROM PUBLIC;
 
-
+GRANT baseten TO basetenmod;
 COMMIT; -- Functions
