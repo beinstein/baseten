@@ -44,7 +44,7 @@
 - (void) setUp
 {
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://tsnorri@localhost/basetentest"]];
+        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     entity = [context entityForTable: @"test"];
     MKCAssertNotNil (entity);
 }

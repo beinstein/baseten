@@ -1,4 +1,4 @@
---
+﻿--
 -- BaseTenModifications.sql
 -- BaseTen
 --
@@ -40,6 +40,7 @@ BEGIN; -- Schema, helper functions and classes
 
 CREATE SCHEMA "baseten";
 COMMENT ON SCHEMA "baseten" IS 'Schema used by BaseTen. Please use the provided functions to edit.';
+GRANT USAGE ON SCHEMA "baseten" TO PUBLIC;
 
 CREATE TEMPORARY SEQUENCE "basetenlocksequence";
 
@@ -101,7 +102,7 @@ $$ VOLATILE LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION "baseten".LockNextId () RETURNS BIGINT AS $$
     SELECT nextval ('basetenlocksequence');
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 
 
 CREATE TYPE "baseten".TableType AS (
@@ -110,7 +111,7 @@ CREATE TYPE "baseten".TableType AS (
 );
 
 
-CREATE FUNCTION "baseten".TableType (OID, TEXT) RETURNS "baseten".TableType AS $$
+CREATE OR REPLACE FUNCTION "baseten".TableType (OID, TEXT) RETURNS "baseten".TableType AS $$
     SELECT $1, $2;
 $$ IMMUTABLE LANGUAGE SQL;
 
@@ -256,11 +257,12 @@ INNER JOIN pg_class c1 ON (c1.oid = r.src)
 INNER JOIN pg_class c2 ON (c2.oid = r.dst)
 INNER JOIN pg_namespace n1 ON (n1.oid = c1.relnamespace)
 INNER JOIN pg_namespace n2 ON (n2.oid = c2.relnamespace);
+GRANT SELECT ON "baseten".relationships TO PUBLIC;
 
 
 -- For modification tracking
 CREATE TABLE "baseten".Modification (
-    "baseten_modification_id" SERIAL PRIMARY KEY,
+    "baseten_modification_id" INTEGER PRIMARY KEY,
     "baseten_modification_relid" OID NOT NULL,
     "baseten_modification_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NULL DEFAULT NULL,
     "baseten_modification_insert_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL 
@@ -268,8 +270,17 @@ CREATE TABLE "baseten".Modification (
     "baseten_modification_type" CHAR NOT NULL,
     "baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
 );
+CREATE SEQUENCE "baseten".modification_id_seq CYCLE OWNED BY "baseten".Modification."baseten_modification_id";
+CREATE OR REPLACE FUNCTION "baseten".SetModificationID () RETURNS TRIGGER AS $$
+BEGIN
+	NEW."baseten_modification_id" = nextval ('baseten.modification_id_seq');
+	RETURN NEW;
+END;
+$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+CREATE TRIGGER "setModificationID" BEFORE INSERT ON "baseten".Modification 
+	FOR EACH ROW EXECUTE PROCEDURE "baseten".SetModificationID ();
+GRANT SELECT ON "baseten".Modification TO PUBLIC;
 
-ALTER SEQUENCE "baseten"."modification_baseten_modification_id_seq" CYCLE;
 
 CREATE TABLE "baseten".lock (
     "baseten_lock_backend_pid"   INTEGER NOT NULL DEFAULT pg_backend_pid (),
@@ -282,6 +293,7 @@ CREATE TABLE "baseten".lock (
     "baseten_lock_savepoint_idx" BIGINT NOT NULL,
     PRIMARY KEY ("baseten_lock_backend_pid", "baseten_lock_id")
 );
+GRANT SELECT ON "baseten".lock TO PUBLIC;
 
 COMMIT; -- Schema and classes
 
@@ -289,7 +301,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.907::NUMERIC;
+    SELECT 0.908::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 
 
@@ -304,7 +316,7 @@ CREATE OR REPLACE FUNCTION "baseten".ClearLocks () RETURNS VOID AS $$
     WHERE "baseten_lock_backend_pid" = pg_backend_pid ()
         AND "baseten_lock_timestamp" < CURRENT_TIMESTAMP;
     NOTIFY "baseten.ClearedLocks";
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 
 
 -- Step back lock marks
@@ -317,7 +329,7 @@ CREATE OR REPLACE FUNCTION "baseten".LocksStepBack () RETURNS VOID AS $$
              WHERE "baseten_lock_backend_pid" = pg_backend_pid ()
             );
     NOTIFY "baseten.ClearedLocks";
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 
 
 -- Returns schemaname.tablename corresponding to the given oid.
@@ -336,7 +348,7 @@ BEGIN
     END IF;
     RETURN name;
 END;
-$$ STABLE LANGUAGE PLPGSQL;
+$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION "baseten".TableName1 (OID) RETURNS TEXT AS $$
@@ -353,7 +365,7 @@ BEGIN
     END IF;
     RETURN name;
 END;
-$$ STABLE LANGUAGE PLPGSQL;
+$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
 
 
 -- Replaces each underscore with two, each period with an underscore 
@@ -418,6 +430,7 @@ CREATE OR REPLACE FUNCTION "baseten".LockTableName (OID) RETURNS TEXT AS $$
 $$ STABLE LANGUAGE SQL;
 
 
+
 -- Returns the modification rule name associated with the given operation,
 -- which should be one of insert, update and delete
 CREATE OR REPLACE FUNCTION "baseten".ModificationRuleName (TEXT)
@@ -438,7 +451,8 @@ CREATE OR REPLACE FUNCTION "baseten".ModificationTableCleanup () RETURNS VOID AS
         WHERE "baseten_modification_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes';
     UPDATE "baseten".Modification SET "baseten_modification_timestamp" = timeofday ()::TIMESTAMP (3)
         WHERE "baseten_modification_timestamp" IS NULL AND "baseten_modification_backend_pid" != pg_backend_pid ();
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationTableCleanup () TO PUBLIC;
 
 
 -- Removes tracked locks for which a backend no longer exists
@@ -448,7 +462,8 @@ CREATE OR REPLACE FUNCTION "baseten".LockTableCleanup () RETURNS VOID AS $$
         WHERE ("baseten_lock_timestamp" < pg_postmaster_start_time ()) -- Locks cannot be older than postmaster
             OR ("baseten_lock_backend_pid" NOT IN  (SELECT pid FROM "baseten".running_backend_pids () AS r (pid))) -- Locks have to be owned by a running backend
             OR ("baseten_lock_cleared" = true AND "baseten_lock_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes'); -- Cleared locks older than 5 minutes may be removed
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+GRANT EXECUTE ON FUNCTION "baseten".LockTableCleanup () TO PUBLIC;
 
 
 -- TEXT parameter needs to be the serialized table name
@@ -464,7 +479,7 @@ BEGIN
     EXECUTE 'NOTIFY ' || quote_ident (baseten.ModificationTableName (TG_ARGV [0]));
     RETURN NEW;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
 
 
 -- A trigger function for notifying the front ends and removing old tracked locks
@@ -474,7 +489,7 @@ BEGIN
     EXECUTE 'NOTIFY ' || quote_ident (baseten.LockTableName (TG_ARGV [0]));
     RETURN NEW;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION "baseten".IsObservingCompatible (OID) RETURNS boolean AS $$
@@ -482,7 +497,7 @@ CREATE OR REPLACE FUNCTION "baseten".IsObservingCompatible (OID) RETURNS boolean
         WHERE c.relnamespace = n.oid 
             AND c.relname = "baseten".ModificationTableName1 ($1)
             AND n.nspname = 'baseten');
-$$ STABLE LANGUAGE SQL;
+$$ STABLE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION "baseten".VerifyObservingCompatibility (OID) RETURNS VOID AS $$
@@ -510,7 +525,7 @@ BEGIN
     EXECUTE 'LISTEN ' || quote_ident (nname);
     RETURN nname;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION "baseten".StopObservingModifications (OID) RETURNS VOID AS $$
@@ -545,7 +560,7 @@ BEGIN
     EXECUTE 'LISTEN ' || quote_ident (nname);
     RETURN nname;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
 
 
 CREATE OR REPLACE FUNCTION "baseten".StopObservingLocks (OID) RETURNS VOID AS $$
@@ -603,24 +618,25 @@ BEGIN
     mtablename := "baseten".ModificationTableName (tableoid);
     querytype := upper (querytype);
     
-    -- With views rules may be used, since values corresponding to the primary key have to be
+    -- With views, triggers cannot be used.
+    -- Instead, rules may be used, since values corresponding to the primary key have to be
     -- specified on insert and sequences are not used.
     IF querytype = 'INSERT' AND false = isview THEN
         funcname := "baseten".ModifyInsertFunctionName (tableoid);
         -- Trigger functions cannot be written in SQL
         fdecl :=
-            'CREATE OR REPLACE FUNCTION  ' || funcname || ' () RETURNS TRIGGER AS $$            ' ||
-            'BEGIN                                                                              ' ||
-            '    INSERT INTO ' || mtablename                                                      ||
-            '        ("baseten_modification_type", ' || array_to_string (fieldnames, ', ') || ')     ' ||
+            'CREATE OR REPLACE FUNCTION  ' || funcname || ' () RETURNS TRIGGER AS $$             ' ||
+            'BEGIN                                                                               ' ||
+            '    INSERT INTO ' || mtablename                                                       ||
+            '        ("baseten_modification_type", ' || array_to_string (fieldnames, ', ') || ') ' ||
             '       VALUES (\'I\', ' || array_to_string (
-                        "baseten".array_prepend_each ('NEW.', fieldnames), ', ') || '); ' ||-- f. values
-            '    RETURN NEW;                                                                    ' ||
-            'END;                                                                               ' ||
-            '$$ VOLATILE LANGUAGE PLPGSQL';
+                        "baseten".array_prepend_each ('NEW.', fieldnames), ', ') || ');          ' || -- f. values
+            '    RETURN NEW;                                                                     ' ||
+            'END;                                                                                ' ||
+            '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER';
         query := 
-            'CREATE TRIGGER ' || "baseten".ModificationRuleName ('INSERT')                             ||
-            '    AFTER INSERT ON ' || tablename || ' FOR EACH ROW EXECUTE PROCEDURE             ' || 
+            'CREATE TRIGGER ' || "baseten".ModificationRuleName ('INSERT')                         ||
+            '    AFTER INSERT ON ' || tablename || ' FOR EACH ROW EXECUTE PROCEDURE              ' || 
                  funcname || ' ()'; 
         EXECUTE fdecl;
         EXECUTE query;
@@ -630,12 +646,12 @@ BEGIN
         END IF;
         
         query := 
-            'CREATE RULE ' || "baseten".ModificationRuleName (querytype) || ' AS ON ' || querytype     ||
-            '   TO ' || tablename || ' DO ALSO INSERT '                                           ||
-            '   INTO ' || "baseten".ModificationTableName (tableoid)                                 ||
-            '   ("baseten_modification_type",' || array_to_string (fieldnames, ', ') || ')'            ||
-            '   VALUES (''' || substring (querytype from 1 for 1) || ''','                        ||
-                array_to_string ("baseten".array_prepend_each (referencename, fieldnames), ', ') || ')';
+            'CREATE RULE ' || "baseten".ModificationRuleName (querytype) || ' AS ON ' || querytype ||
+            '   TO ' || tablename || ' DO ALSO INSERT '                                            ||
+            '   INTO ' || "baseten".ModificationTableName (tableoid)                               ||
+            '   ("baseten_modification_type", ' || array_to_string (fieldnames, ', ') || ')'       ||
+            '   VALUES (''' || substring (querytype from 1 for 1) || ''','                         ||
+                array_to_string ("baseten".array_prepend_each (referencename, fieldnames), ', ')   || ')';
         EXECUTE query;
     END IF;
     RETURN;
@@ -657,36 +673,36 @@ BEGIN
     ntname      := "baseten".ModificationTableName (tableoid);
     restname    := "baseten".ModResultTableName (tableoid);
     fdecl       := 
-        'CREATE OR REPLACE FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP)                       ' ||
-        'RETURNS SETOF ' || ntname || ' AS $$                                                   ' ||
-        'DECLARE                                                                                ' ||
-        '   should_clean ALIAS FOR $1;                                                          ' ||
-        '   earliest_date ALIAS FOR $2;                                                         ' ||        
-        '   row ' || ntname || '%ROWTYPE;                                                       ' ||
-        'BEGIN                                                                                  ' ||
-        '    BEGIN                                                                              ' ||
-        '        CREATE TEMPORARY TABLE ' || restname || '                                      ' ||
-        '            (LIKE ' || ntname || ' EXCLUDING DEFAULTS) ON COMMIT DELETE ROWS;          ' ||
-        '    EXCEPTION WHEN OTHERS THEN                                                         ' ||
-        '    END;                                                                               ' ||
-        '    DELETE FROM ' || restname || ';                                                    ' ||
+        'CREATE OR REPLACE FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP)                            ' ||
+        'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
+        'DECLARE                                                                                     ' ||
+        '   should_clean ALIAS FOR $1;                                                               ' ||
+        '   earliest_date ALIAS FOR $2;                                                              ' ||        
+        '   row ' || ntname || '%ROWTYPE;                                                            ' ||
+        'BEGIN                                                                                       ' ||
+        '    BEGIN                                                                                   ' ||
+        '        CREATE TEMPORARY TABLE ' || restname || '                                           ' ||
+        '            (LIKE ' || ntname || ' EXCLUDING DEFAULTS) ON COMMIT DELETE ROWS;               ' ||
+        '    EXCEPTION WHEN OTHERS THEN                                                              ' ||
+        '    END;                                                                                    ' ||
+        '    DELETE FROM ' || restname || ';                                                         ' ||
         
         -- Remove unneeded rows
-        '    IF true = should_clean THEN                                                        ' ||
-        '        PERFORM "baseten".ModificationTableCleanup ();                        ' ||
-        '    END IF;                                                                            ' ||
+        '    IF true = should_clean THEN                                                             ' ||
+        '        PERFORM "baseten".ModificationTableCleanup ();                                      ' ||
+        '    END IF;                                                                                 ' ||
         
         -- Only add rows that have been deleted
-        '    INSERT INTO ' || restname || ' SELECT DISTINCT ON (' || pkeyfnames || ') * FROM    ' ||
-        '    (                                                                                  ' ||
-        '        SELECT * FROM ' || ntname || '                                                 ' ||
+        '    INSERT INTO ' || restname || ' SELECT DISTINCT ON (' || pkeyfnames || ') * FROM         ' ||
+        '    (                                                                                       ' ||
+        '        SELECT * FROM ' || ntname || '                                                      ' ||
         '            WHERE "baseten_modification_type" = ''D'' AND                                   ' ||
         '                ("baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp) ' ||
         '                 OR "baseten_modification_timestamp" IS NULL                                ' ||
-        '                )                                                                      ' ||
+        '                )                                                                           ' ||
         '            ORDER BY "baseten_modification_timestamp" DESC,                                 ' ||
         '                "baseten_modification_insert_timestamp" DESC                                ' ||
-        '    ) AS sd;                                                                           ' ||
+        '    ) AS sd;                                                                                ' ||
         
         -- DEBUG
         --'RAISE NOTICE ''k'';' ||
@@ -696,55 +712,55 @@ BEGIN
         --CREATE TABLE l (LIKE "baseten.modification_public_test");
     
         -- Only add rows that have not been deleted    
-        '   INSERT INTO ' || restname || ' SELECT DISTINCT ON (' || pkeyfnames || ') * FROM     ' ||
-        '   (                                                                                   ' ||
-        '       SELECT m.* FROM ' || ntname || ' m                                              ' ||
-        '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                 ' ||
+        '   INSERT INTO ' || restname || ' SELECT DISTINCT ON (' || pkeyfnames || ') * FROM          ' ||
+        '   (                                                                                        ' ||
+        '       SELECT m.* FROM ' || ntname || ' m                                                   ' ||
+        '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                      ' ||
         '           WHERE m."baseten_modification_type" = ''I'' AND                                  ' ||
         '               (r."baseten_modification_id" IS NULL OR                                      ' ||
-        '                    m."baseten_modification_timestamp" > r."baseten_modification_timestamp"      ' ||
-        '               ) AND                                                                   ' ||
+        '                    m."baseten_modification_timestamp" > r."baseten_modification_timestamp" ' ||
+        '               ) AND                                                                        ' ||
         '               (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp)' ||
         '                OR m."baseten_modification_timestamp" IS NULL                               ' ||
-        '               )                                                                       ' ||
+        '               )                                                                            ' ||
         '           ORDER BY "baseten_modification_timestamp" DESC,                                  ' ||
         '                "baseten_modification_insert_timestamp" DESC                                ' ||
-        '   ) AS si;                                                                            ' ||
+        '   ) AS si;                                                                                 ' ||
 
         -- DEBUG
         --'RAISE NOTICE ''l'';' ||
         --'INSERT INTO l SELECT * FROM ' || restname || ';' ||
         
         -- Only add rows that haven't got an entry already
-        '   INSERT INTO ' || restname || ' SELECT DISTINCT ON (' || pkeyfnames || ') * FROM     ' ||
-        '   (                                                                                   ' ||
-        '       SELECT m.* FROM ' || ntname || ' m                                              ' ||
-        '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                 ' ||
+        '   INSERT INTO ' || restname || ' SELECT DISTINCT ON (' || pkeyfnames || ') * FROM          ' ||
+        '   (                                                                                        ' ||
+        '       SELECT m.* FROM ' || ntname || ' m                                                   ' ||
+        '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                      ' ||
         '           WHERE m."baseten_modification_type" = ''U'' AND                                  ' ||
         '               r."baseten_modification_id" IS NULL AND                                      ' ||
         '               (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp)' ||
         '                OR m."baseten_modification_timestamp" IS NULL                               ' ||
-        '               )                                                                       ' ||
+        '               )                                                                            ' ||
         '           ORDER BY "baseten_modification_timestamp" DESC,                                  ' ||
         '               "baseten_modification_insert_timestamp" DESC                                 ' ||
-        '   ) AS su;                                                                            ' ||
+        '   ) AS su;                                                                                 ' ||
     
         -- Now there should be only one modification per id
-        '   FOR row IN SELECT * from ' || restname || ' ORDER BY                               ' ||
-        '       "baseten_modification_type" ASC,                                                    ' ||
-        '       "baseten_modification_timestamp" ASC,                                               ' ||
-        '       "baseten_modification_insert_timestamp" ASC LOOP                                    ' ||
-        '       RETURN NEXT row;                                                               ' ||
-        '   END LOOP;                                                                          ' ||
-        '   RETURN;                                                                            ' ||
-        'END;                                                                                   ' ||
-        '$$ VOLATILE LANGUAGE PLPGSQL;                                                          ' ;
+        '   FOR row IN SELECT * from ' || restname || ' ORDER BY                                     ' ||
+        '       "baseten_modification_type" ASC,                                                     ' ||
+        '       "baseten_modification_timestamp" ASC,                                                ' ||
+        '       "baseten_modification_insert_timestamp" ASC LOOP                                     ' ||
+        '       RETURN NEXT row;                                                                     ' ||
+        '   END LOOP;                                                                                ' ||
+        '   RETURN;                                                                                  ' ||
+        'END;                                                                                        ' ||
+        '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;                                     ' ;
     EXECUTE fdecl;
     fdecl :=
-        'CREATE OR REPLACE FUNCTION ' || ntname || ' (TIMESTAMP)                                ' ||
-        'RETURNS SETOF ' || ntname || ' AS $$                                                   ' ||
-        '    SELECT * FROM ' || ntname || '(true, $1);                                          ' ||
-        '$$ VOLATILE LANGUAGE SQL;                                                              ';
+        'CREATE OR REPLACE FUNCTION ' || ntname || ' (TIMESTAMP)                                     ' ||
+        'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
+        '    SELECT * FROM ' || ntname || '(true, $1);                                               ' ||
+        '$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;                                         ';
     EXECUTE fdecl;
         
     RETURN;
@@ -798,6 +814,7 @@ BEGIN
         || ' ("baseten_lock_relid" OID NOT NULL DEFAULT ' || toid || ', '
         || pkey_decl || ')'
         || ' INHERITS ("baseten".Lock)';
+    EXECUTE 'GRANT SELECT ON ' || ltablename || ' TO PUBLIC';
 
     -- Trigger for the _lock_ table
     EXECUTE 'CREATE TRIGGER "basetenLockRow" AFTER INSERT ON ' || ltablename
@@ -815,7 +832,7 @@ BEGIN
     -- FIXME: add a check to the function to ensure that the connection is autocommitting
     EXECUTE 'CREATE OR REPLACE FUNCTION ' || lfname 
         || ' (CHAR (1), BIGINT, ' || array_to_string (pkeyfields.type, ', ') || ')'
-        || ' RETURNS VOID AS $$ ' || fcode || ' $$ VOLATILE LANGUAGE SQL';        
+        || ' RETURNS VOID AS $$ ' || fcode || ' $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER';        
         
     -- Modifications
     EXECUTE 'CREATE TABLE ' 
@@ -823,12 +840,17 @@ BEGIN
         || ' ("baseten_modification_relid" OID NOT NULL DEFAULT ' || toid || ', '
         || pkey_decl || ')'
         || ' INHERITS ("baseten".Modification)';
+    EXECUTE 'GRANT SELECT ON ' || mtablename || ' TO PUBLIC';
     
-    -- Trigger for the _modification_ table
+    -- Triggers for the _modification_ table
     EXECUTE 
         'CREATE TRIGGER "basetenModifyTable" AFTER INSERT ON ' || mtablename ||
         '   FOR EACH STATEMENT EXECUTE PROCEDURE ' ||
         '   "baseten".NotifyForModification (''' || stablename || ''')';
+    EXECUTE
+    	'CREATE TRIGGER "setModificationID" BEFORE INSERT ON ' || mtablename ||
+		'   FOR EACH ROW EXECUTE PROCEDURE "baseten".SetModificationID ()';
+
 
     PERFORM "baseten".PrepareForModificationObserving1 ('insert', toid, tname, pkeyfields.fname, isview);
     PERFORM "baseten".PrepareForModificationObserving1 ('update', toid, tname, pkeyfields.fname, isview);

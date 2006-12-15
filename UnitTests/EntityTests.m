@@ -37,7 +37,7 @@
 - (void) testHash
 {
     BXDatabaseContext* ctx = [BXDatabaseContext contextWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://tsnorri@localhost/basetentest"]];
+        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
 
     BXEntityDescription* e1 = [ctx entityForTable: @"test2" inSchema: @"fkeytest"];
     BXEntityDescription* e2 = [ctx entityForTable: @"test2" inSchema: @"fkeytest"];

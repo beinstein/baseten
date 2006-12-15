@@ -47,7 +47,7 @@
 - (void) setUp
 {
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://tsnorri@localhost/basetentest"]];
+        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context setAutocommits: NO];
     entity = [[context entityForTable: @"test"] retain];
     MKCAssertNotNil (context);
@@ -104,7 +104,7 @@
     
     //Create an object into the array using another connection
     BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://tsnorri@localhost/basetentest"]];
+        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context setAutocommits: NO];
     MKCAssertNotNil (context2);
     

@@ -46,32 +46,32 @@
 - (void) testConnect1
 {
     
-    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://tsnorri@localhost/basetentest"]]);
+    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]]);
     MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
 }
 
 - (void) testConnect2
 {
-    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://tsnorri@localhost/basetentest/"]]);
+    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest/"]]);
     MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
 }
  
 - (void) testConnectFail1
 {
-    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://tsnorri@localhost/anonexistantdatabase"]]);
+    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]]);
     MKCAssertThrows ([ctx connectIfNeeded: nil]);
 }
  
 - (void) testConnectFail2
 {
     MKCAssertNoThrow ([ctx setDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://tsnorri@localhost/basetentest/a/malformed/database/uri"]]);
+        [NSURL URLWithString: @"pgsql://user@localhost/basetentest/a/malformed/database/uri"]]);
     MKCAssertThrows ([ctx connectIfNeeded: nil]);
 }
 
 - (void) testConnectFail3
 {
-    MKCAssertThrows ([ctx setDatabaseURI: [NSURL URLWithString: @"invalid://tsnorri@localhost/invalid"]]);
+    MKCAssertThrows ([ctx setDatabaseURI: [NSURL URLWithString: @"invalid://user@localhost/invalid"]]);
 }
 
 @end

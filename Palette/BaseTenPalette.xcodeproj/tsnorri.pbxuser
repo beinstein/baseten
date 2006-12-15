@@ -112,11 +112,10 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 187283810;
-			PBXWorkspaceStateSaveDate = 187283810;
+			PBXPerProjectTemplateStateSaveDate = 187647061;
+			PBXWorkspaceStateSaveDate = 187647061;
 		};
 		perUserProjectItems = {
-			5328BEF90B29B6DD003E5264 /* PBXTextBookmark */ = 5328BEF90B29B6DD003E5264 /* PBXTextBookmark */;
 			5328BF260B29B871003E5264 /* PBXTextBookmark */ = 5328BF260B29B871003E5264 /* PBXTextBookmark */;
 			5328BF270B29B871003E5264 /* PBXBookmark */ = 5328BF270B29B871003E5264 /* PBXBookmark */;
 			5328BF280B29B871003E5264 /* PBXBookmark */ = 5328BF280B29B871003E5264 /* PBXBookmark */;
@@ -130,15 +129,12 @@
 			5328BF310B29B871003E5264 /* PBXBookmark */ = 5328BF310B29B871003E5264 /* PBXBookmark */;
 			5328BF320B29B871003E5264 /* PBXTextBookmark */ = 5328BF320B29B871003E5264 /* PBXTextBookmark */;
 			5328BF350B29B871003E5264 /* PBXTextBookmark */ = 5328BF350B29B871003E5264 /* PBXTextBookmark */;
-			5328C0100B29B9D7003E5264 /* PBXTextBookmark */ = 5328C0100B29B9D7003E5264 /* PBXTextBookmark */;
 			5328C0130B29B9D7003E5264 /* PBXTextBookmark */ = 5328C0130B29B9D7003E5264 /* PBXTextBookmark */;
 			5328C0180B29BA02003E5264 /* PBXTextBookmark */ = 5328C0180B29BA02003E5264 /* PBXTextBookmark */;
-			5328C0190B29BA02003E5264 /* PBXTextBookmark */ = 5328C0190B29BA02003E5264 /* PBXTextBookmark */;
 			5328C01B0B29BA02003E5264 /* PBXTextBookmark */ = 5328C01B0B29BA02003E5264 /* PBXTextBookmark */;
-			5328C01C0B29BA02003E5264 /* PBXTextBookmark */ = 5328C01C0B29BA02003E5264 /* PBXTextBookmark */;
 			5328C0200B29BA06003E5264 /* PBXTextBookmark */ = 5328C0200B29BA06003E5264 /* PBXTextBookmark */;
 			5328C0230B29BA0F003E5264 /* PBXTextBookmark */ = 5328C0230B29BA0F003E5264 /* PBXTextBookmark */;
-			5328C0250B29BA0F003E5264 /* PBXTextBookmark */ = 5328C0250B29BA0F003E5264 /* PBXTextBookmark */;
+			537F07F40B2F447C005565FA /* PBXTextBookmark */ = 537F07F40B2F447C005565FA /* PBXTextBookmark */;
 		};
 		sourceControlManager = 5328BE580B29B5E7003E5264 /* Source Control */;
 		userBuildSettings = {
@@ -175,14 +171,6 @@
 		name = "Project Breakpoints";
 		objects = (
 		);
-	};
-	5328BEF90B29B6DD003E5264 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		comments = "error: BaseTenAppKit/BaseTenAppKit.h: No such file or directory";
-		fRef = 0259C578FE90428111CA0C5A /* BaseTenPalette.m */;
-		rLen = 1;
-		rLoc = 30;
-		rType = 1;
 	};
 	5328BF260B29B871003E5264 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -284,26 +272,12 @@
 		vrLen = 1653;
 		vrLoc = 0;
 	};
-	5328C0100B29B9D7003E5264 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 0259C57BFE90428111CA0C5A /* BXDatabaseContextInspector.h */;
-		name = "BXDatabaseContextInspector.h: 17";
-		rLen = 0;
-		rLoc = 666;
-		rType = 0;
-		vrLen = 814;
-		vrLoc = 253;
-	};
 	5328C0120B29B9D7003E5264 /* BaseTen_Prefix.pch */ = {
 		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = BaseTen_Prefix.pch;
 		path = "/Users/tsnorri/Checkout/BaseTen-internal/Dependencies/BaseTen/Sources/BaseTen_Prefix.pch";
 		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {986, 512}}";
-			sepNavSelRange = "{1123, 7}";
-			sepNavVisRect = "{{0, 240}, {986, 272}}";
-		};
 	};
 	5328C0130B29B9D7003E5264 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -325,26 +299,6 @@
 		vrLen = 538;
 		vrLoc = 592;
 	};
-	5328C0190B29BA02003E5264 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		comments = "Copying Sources/BXEntityDescription.h";
-		fRef = 5328C01A0B29BA02003E5264 /* BXEntityDescription.h */;
-		rLen = 0;
-		rLoc = 0;
-		rType = 1;
-	};
-	5328C01A0B29BA02003E5264 /* BXEntityDescription.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = BXEntityDescription.h;
-		path = "/Users/tsnorri/Checkout/BaseTen-internal/Dependencies/BaseTen/Sources/BXEntityDescription.h";
-		sourceTree = "<absolute>";
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {886, 1424}}";
-			sepNavSelRange = "{425, 0}";
-			sepNavVisRect = "{{0, 0}, {886, 491}}";
-		};
-	};
 	5328C01B0B29BA02003E5264 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 5328C0120B29B9D7003E5264 /* BaseTen_Prefix.pch */;
@@ -354,22 +308,6 @@
 		rType = 0;
 		vrLen = 538;
 		vrLoc = 592;
-	};
-	5328C01C0B29BA02003E5264 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 5328C01D0B29BA02003E5264 /* BXEntityDescription.h */;
-		name = "(null): 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 665;
-		vrLoc = 0;
-	};
-	5328C01D0B29BA02003E5264 /* BXEntityDescription.h */ = {
-		isa = PBXFileReference;
-		name = BXEntityDescription.h;
-		path = "/Users/tsnorri/Checkout/BaseTen-internal/Dependencies/BaseTen/Sources/BXEntityDescription.h";
-		sourceTree = "<absolute>";
 	};
 	5328C0200B29BA06003E5264 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -393,22 +331,7 @@
 	};
 	5328C0240B29BA0F003E5264 /* BXEntityDescription.h */ = {
 		isa = PBXFileReference;
-		name = BXEntityDescription.h;
-		path = "/Users/tsnorri/Checkout/BaseTen-internal/Dependencies/BaseTen/Sources/BXEntityDescription.h";
-		sourceTree = "<absolute>";
-	};
-	5328C0250B29BA0F003E5264 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 5328C0260B29BA0F003E5264 /* BXEntityDescription.h */;
-		name = "(null): 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 665;
-		vrLoc = 0;
-	};
-	5328C0260B29BA0F003E5264 /* BXEntityDescription.h */ = {
-		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.c.h;
 		name = BXEntityDescription.h;
 		path = "/Users/tsnorri/Checkout/BaseTen-internal/Dependencies/BaseTen/Sources/BXEntityDescription.h";
 		sourceTree = "<absolute>";
@@ -419,6 +342,22 @@
 			sepNavSelRange = "{358, 0}";
 			sepNavVisRect = "{{0, 0}, {985, 715}}";
 		};
+	};
+	537F07F40B2F447C005565FA /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 537F07F50B2F447C005565FA /* BXEntityDescription.h */;
+		name = "(null): 13";
+		rLen = 0;
+		rLoc = 425;
+		rType = 0;
+		vrLen = 1223;
+		vrLoc = 0;
+	};
+	537F07F50B2F447C005565FA /* BXEntityDescription.h */ = {
+		isa = PBXFileReference;
+		name = BXEntityDescription.h;
+		path = "/Users/tsnorri/Checkout/BaseTen-internal/Dependencies/BaseTen/Sources/BXEntityDescription.h";
+		sourceTree = "<absolute>";
 	};
 	8D1AC9600486D14A00FE50C9 /* BaseTenPalette */ = {
 		activeExec = 0;
