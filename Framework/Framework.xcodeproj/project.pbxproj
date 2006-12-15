@@ -40,6 +40,12 @@
 		530323C5088062270024E7EF /* NDRunLoopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 530323C3088062270024E7EF /* NDRunLoopMessenger.h */; };
 		530323C6088062270024E7EF /* NDRunLoopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 530323C4088062270024E7EF /* NDRunLoopMessenger.m */; };
 		531746A7095C07E00098D3D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; };
+		53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
+		53298DF20B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */; };
+		53298DF30B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DF10B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m */; };
+		53298E0F0B330EFB00DE7CC8 /* PGTSACLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */; };
+		53298E100B330EFB00DE7CC8 /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */; };
 		532BF12E0A3717BA002E6BFE /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
 		532C9B4B09DDAEDD00E42701 /* PGTSModificationNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 532C9B4909DDAEDD00E42701 /* PGTSModificationNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		532C9B4C09DDAEDD00E42701 /* PGTSModificationNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 532C9B4A09DDAEDD00E42701 /* PGTSModificationNotifier.m */; };
@@ -216,7 +222,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 5361BC280B319D6600C9F387 /* PostgreSQL-8.2.0 */;
+			remoteGlobalIDString = 5361BC280B319D6600C9F387;
 			remoteInfo = "PostgreSQL-8.2.0";
 		};
 		53BD9A070A5C7CB4001C950C /* PBXContainerItemProxy */ = {
@@ -257,6 +263,12 @@
 		5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = ../Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = SOURCE_ROOT; };
 		531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JaguarCompatibility.xcodeproj; path = ../JaguarCompatibility/JaguarCompatibility.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5325EAD70A1B2EF600FEA842 /* postgresql */ = {isa = PBXFileReference; lastKnownFileType = folder; name = postgresql; path = "PGTS-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
+		53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTSRoleDescription.h; sourceTree = "<group>"; };
+		53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTSRoleDescription.m; sourceTree = "<group>"; };
+		53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTSAbstractObjectDescription.h; sourceTree = "<group>"; };
+		53298DF10B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTSAbstractObjectDescription.m; sourceTree = "<group>"; };
+		53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTSACLItem.h; sourceTree = "<group>"; };
+		53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTSACLItem.m; sourceTree = "<group>"; };
 		532C9B4909DDAEDD00E42701 /* PGTSModificationNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSModificationNotifier.h; path = Sources/PGTSModificationNotifier.h; sourceTree = "<group>"; };
 		532C9B4A09DDAEDD00E42701 /* PGTSModificationNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSModificationNotifier.m; path = Sources/PGTSModificationNotifier.m; sourceTree = "<group>"; };
 		53353A400896D05A003EE146 /* PGTSDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSDataSource.h; path = Sources/PGTSDataSource.h; sourceTree = "<group>"; };
@@ -501,6 +513,8 @@
 			children = (
 				53F923BC08B1372F00759909 /* PGTSAbstractInfo.h */,
 				53F923BD08B1372F00759909 /* PGTSAbstractInfo.m */,
+				53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */,
+				53298DF10B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m */,
 				53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */,
 				53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */,
 				5359784E08AF669B000CAC2B /* PGTSDatabaseInfo.h */,
@@ -517,6 +531,10 @@
 				53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */,
 				5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */,
 				5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */,
+				53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */,
+				53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */,
+				53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */,
+				53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */,
 			);
 			name = Metadata;
 			sourceTree = "<group>";
@@ -637,6 +655,9 @@
 				536B892F0A518E4A00379C00 /* PGTSExceptions.h in Headers */,
 				537FB1F80A76218E00441E2E /* TSRunloopMessenger.h in Headers */,
 				5335671D0ABA015A00F3EE1D /* PGTSWriteDelegateProtocol.h in Headers */,
+				53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */,
+				53298DF20B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h in Headers */,
+				53298E0F0B330EFB00DE7CC8 /* PGTSACLItem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -921,6 +942,9 @@
 				5359557F0A514DEE0008793A /* PGTSSchemaDescriptor.m in Sources */,
 				536B89300A518E4A00379C00 /* PGTSExceptions.m in Sources */,
 				537FB1F90A76218E00441E2E /* TSRunloopMessenger.m in Sources */,
+				53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */,
+				53298DF30B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m in Sources */,
+				53298E100B330EFB00DE7CC8 /* PGTSACLItem.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

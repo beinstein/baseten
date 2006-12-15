@@ -1,5 +1,5 @@
 //
-// PGTSDatabaseInfo.h
+// PGTSRoleDescription.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,33 +26,46 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractInfo.h>
-#import <PGTS/postgresql/libpq-fe.h> 
+#import "PGTSRoleDescription.h"
 
 
-@class PGTSTableInfo;
-@class PGTSTypeInfo;
-@class TSIndexDictionary;
-@class PGTSConnectionPoolItem;
+@implementation PGTSRoleDescription
 
-
-@interface PGTSDatabaseInfo : PGTSAbstractInfo 
+- (id) init
 {
-    TSIndexDictionary* tables;
-    TSIndexDictionary* types;
-    NSMutableDictionary* schemas;
-    PGTSConnectionPoolItem* poolItem;
-    NSString* connectionPoolKey;
-    NSMutableDictionary* roles;
+    if ((self = [super init]))
+    {
+        roles = [[TSIndexDictionary alloc] init];
+    }
+    return self;
 }
 
-- (PGTSTableInfo *) tableInfoForTableWithOid: (Oid) anOid;
-- (PGTSTableInfo *) tableInfoForTableNamed: (NSString *) tableName inSchemaNamed: (NSString *) schemaName;
-- (PGTSTypeInfo *) typeInfoForTypeWithOid: (Oid) anOid;
-- (BOOL) schemaExists: (NSString *) schemaName;
-- (NSString *) connectionPoolKey;
-- (void) setConnectionPoolKey: (NSString *) aKey;
-- (void) updateTableCache: (PGTSTableInfo *) table;
+- (void) dealloc
+{
+    [roles release];
+    [super dealloc];
+}
+
+- (void) addRole: (PGTSRoleDescription *) aRole
+{
+    [roles setObject: aRole atIndex: [aRole oid]];
+}
+
+- (BOOL) hasMember: (PGTSRoleDescription *) aRole
+{
+    BOOL rval = NO;
+    if (NSNotFound != [roles objectAtIndex: [aRole oid]])
+        rval = YES;
+    else
+    {
+        TSEnumerate (currentRole, e, [roles objectEnumerator])
+        {
+            rval = [currentRole hasMember: aRole];
+            if (YES == rval)
+                break;
+        }
+    }
+    return rval;
+}
 
 @end

@@ -84,6 +84,7 @@
         tables = [[TSIndexDictionary alloc] init];
         types  = [[TSIndexDictionary alloc] init];
         schemas = [[NSMutableDictionary alloc] init];
+        roles = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -97,6 +98,7 @@
     [types release];
     [schemas release];
     [connectionPoolKey release];
+    [roles release];
     [super dealloc];
 }
 
