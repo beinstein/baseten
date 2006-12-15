@@ -8,14 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		13EB9DBE07DE0F1E00EB933A /* InterfaceBuilder.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 13EB9DBD07DE0F1E00EB933A /* InterfaceBuilder.framework */; };
-		5328BF8A0B29B882003E5264 /* BaseTenAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5328BE990B29B622003E5264 /* BaseTenAppKit.framework */; };
-		5328BF8D0B29B88F003E5264 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5328BEA10B29B62D003E5264 /* BaseTen.framework */; };
 		5329830B0A1523720026165D /* BXSynchronizedArrayControllerInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5329830A0A1523720026165D /* BXSynchronizedArrayControllerInspector.m */; };
 		5330FE240B04AF1100CB6F23 /* Palette5.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5330FD400B04A7C200CB6F23 /* Palette5.icns */; };
 		53432AF40B0338DC0080A8E9 /* BXArrayController.png in Resources */ = {isa = PBXBuildFile; fileRef = 53432AF30B0338DC0080A8E9 /* BXArrayController.png */; };
 		534692010A77C2690067E3A9 /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 534692000A77C2690067E3A9 /* ExceptionHandling.framework */; };
 		5382FB330A14DB7900C005AE /* DBSyncArrayControllerInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 5382FB310A14DB7900C005AE /* DBSyncArrayControllerInspector.nib */; };
 		538716F60A14EAAA0038F793 /* BaseTenPalette.nib in Resources */ = {isa = PBXBuildFile; fileRef = 538716EF0A14EAAA0038F793 /* BaseTenPalette.nib */; };
+		53D9743B0B32FEB000999160 /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5328BEA10B29B62D003E5264 /* BaseTen.framework */; };
+		53D9743C0B32FEBA00999160 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5328BE990B29B622003E5264 /* BaseTenAppKit.framework */; };
+		53D974480B32FF5300999160 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5328BEA10B29B62D003E5264 /* BaseTen.framework */; };
+		53D9744C0B32FF5B00999160 /* BaseTenAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5328BE990B29B622003E5264 /* BaseTenAppKit.framework */; };
 		53FC2F830B039AF300414387 /* BXDatabaseObject.png in Resources */ = {isa = PBXBuildFile; fileRef = 53FC2F820B039AF300414387 /* BXDatabaseObject.png */; };
 		54D33B2906778E3300C9C163 /* IBPalette.ibclassdescription in Resources */ = {isa = PBXBuildFile; fileRef = 54D33B2806778E3300C9C163 /* IBPalette.ibclassdescription */; };
 		8D1AC9670486D14A00FE50C9 /* DatabaseCtxInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 0259C57EFE90428111CA0C5A /* DatabaseCtxInspector.nib */; };
@@ -65,12 +67,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		5342CFD60A74F9C30066192A /* Copy Frameworks */ = {
+		53D974370B32FE9C00999160 /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				53D9743B0B32FEB000999160 /* BaseTen.framework in Copy Frameworks */,
+				53D9743C0B32FEBA00999160 /* BaseTenAppKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -112,8 +116,8 @@
 				8D1AC9700486D14A00FE50C9 /* Cocoa.framework in Frameworks */,
 				13EB9DBE07DE0F1E00EB933A /* InterfaceBuilder.framework in Frameworks */,
 				534692010A77C2690067E3A9 /* ExceptionHandling.framework in Frameworks */,
-				5328BF8A0B29B882003E5264 /* BaseTenAppKit.framework in Frameworks */,
-				5328BF8D0B29B88F003E5264 /* BaseTen.framework in Frameworks */,
+				53D974480B32FF5300999160 /* BaseTen.framework in Frameworks */,
+				53D9744C0B32FF5B00999160 /* BaseTenAppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,7 +236,7 @@
 			buildConfigurationList = C056398308A954F8003078D8 /* Build configuration list for PBXNativeTarget "BaseTenPalette" */;
 			buildPhases = (
 				2B9419320B1EF09B004ACEB7 /* Copy Per Project Build Dir Items */,
-				5342CFD60A74F9C30066192A /* Copy Frameworks */,
+				53D974370B32FE9C00999160 /* Copy Frameworks */,
 				8D1AC9660486D14A00FE50C9 /* Resources */,
 				8D1AC96A0486D14A00FE50C9 /* Sources */,
 				8D1AC96E0486D14A00FE50C9 /* Frameworks */,
@@ -331,7 +335,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nBASE_TEN_FRAMEWORK=\"$PROJECT_DIR/../Dependencies/BaseTen/build/$CONFIGURATION/BaseTen.framework\"\n\nif [ -e \"$BASE_TEN_FRAMEWORK\" ] && [ \"$BASE_TEN_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTen.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTen.framework\"\n\tcp -pfR \"$BASE_TEN_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\nBASE_TEN_APPKIT_FRAMEWORK=\"$PROJECT_DIR/../Dependencies/BaseTen/BaseTenAppKit/build/$CONFIGURATION/BaseTenAppKit.framework\"\n\nif [ -e \"$BASE_TEN_APPKIT_FRAMEWORK\" ] && [ \"$BASE_TEN_APPKIT_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\"\n\tcp -pfR \"$BASE_TEN_APPKIT_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\n";
+			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nBASE_TEN_FRAMEWORK=\"$PROJECT_DIR/../build/$BUILD_STYLE/BaseTen.framework\"\nls -d \"$BASE_TEN_FRAMEWORK\"\nls -d \"$BUILT_PRODUCTS_DIR/BaseTen.framework\"\n\nif [ -e \"$BASE_TEN_FRAMEWORK\" ] && [ \"$BASE_TEN_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTen.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTen.framework\"\n\tcp -pfR \"$BASE_TEN_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\nBASE_TEN_APPKIT_FRAMEWORK=\"$PROJECT_DIR/../BaseTenAppKit/build/$BUILD_STYLE/BaseTenAppKit.framework\"\n\nif [ -e \"$BASE_TEN_APPKIT_FRAMEWORK\" ] && [ \"$BASE_TEN_APPKIT_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\"\n\tcp -pfR \"$BASE_TEN_APPKIT_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\n";
 		};
 		2B97F24E0B2085A40003368B /* Set Palette Icon */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -451,6 +455,12 @@
 				);
 				DEPLOYMENT_LOCATION = YES;
 				DSTROOT = /;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(FRAMEWORK_SEARCH_PATHS)",
+					"$(BUILT_PRODUCTS_DIR)",
+					"../Build/$(BUILD_STYLE)",
+					"../BaseTenAppKit/Build/$(BUILD_STYLE)",
+				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
