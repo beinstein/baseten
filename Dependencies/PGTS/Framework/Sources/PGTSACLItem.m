@@ -27,6 +27,7 @@
 //
 
 #import "PGTSACLItem.h"
+#import "PGTSRoleDescription.h"
 
 
 @implementation PGTSACLItem
@@ -57,6 +58,11 @@
         [role release];
         role = [aRole retain];
     }
+}
+
+- (enum PGTSACLItemPrivilege) privileges
+{
+    return privileges;
 }
 
 @end
