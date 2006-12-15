@@ -31,6 +31,7 @@
 #import <PGTS/PGTSFunctions.h>
 #import <PGTS/PGTSConnection.h>
 #import <PGTS/PGTSAdditions.h>
+#import <TSDataTypes/TSDataTypes.h>
 
 /** 
  * Abstract base class for database class objects

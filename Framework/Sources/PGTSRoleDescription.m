@@ -26,7 +26,10 @@
 // $Id$
 //
 
+#import <TSDataTypes/TSDataTypes.h>
+#import <PGTS/postgresql/libpq-fe.h> 
 #import "PGTSRoleDescription.h"
+#import "PGTSFunctions.h"
 
 
 @implementation PGTSRoleDescription
@@ -54,7 +57,7 @@
 - (BOOL) hasMember: (PGTSRoleDescription *) aRole
 {
     BOOL rval = NO;
-    if (NSNotFound != [roles objectAtIndex: [aRole oid]])
+    if (nil != [roles objectAtIndex: [aRole oid]])
         rval = YES;
     else
     {

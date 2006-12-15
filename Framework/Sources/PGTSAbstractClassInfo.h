@@ -27,8 +27,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/PGTSAbstractObjectDescription.h>
 #import <PGTS/postgresql/libpq-fe.h> 
+
+@class TSIndexDictionary;
 
 
 @interface PGTSAbstractClassInfo : PGTSAbstractObjectDescription

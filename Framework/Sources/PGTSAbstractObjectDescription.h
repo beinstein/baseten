@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/postgresql/libpq-fe.h> 
 
 
 @interface PGTSAbstractObjectDescription : PGTSAbstractInfo 
