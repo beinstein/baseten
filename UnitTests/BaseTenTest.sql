@@ -29,27 +29,27 @@ CREATE TABLE test (
 
 CREATE VIEW test_v AS SELECT * FROM test;
 
-CREATE TABLE pkeytest (
-    id INTEGER PRIMARY KEY,
+CREATE TABLE "Pkeytest" (
+    "Id" INTEGER PRIMARY KEY,
     value VARCHAR (255) NULL
 );
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON test TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON test_v TO baseten_test_user;
-GRANT SELECT, INSERT, UPDATE, DELETE ON pkeytest TO baseten_test_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON "Pkeytest" TO baseten_test_user;
 GRANT UPDATE, SELECT ON test_id_seq TO baseten_test_user;
 
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n
-    WHERE c.relname IN ('test', 'pkeytest') AND n.nspname = 'public' AND c.relnamespace = n.oid;
+    WHERE c.relname IN ('test', 'Pkeytest') AND n.nspname = 'public' AND c.relnamespace = n.oid;
 
 INSERT INTO public.test DEFAULT VALUES;
 INSERT INTO public.test DEFAULT VALUES;
 INSERT INTO public.test DEFAULT VALUES;
 INSERT INTO public.test DEFAULT VALUES;
 
-INSERT INTO pkeytest VALUES (1, 'a');
-INSERT INTO pkeytest VALUES (2, 'b');
-INSERT INTO pkeytest VALUES (3, 'c');
+INSERT INTO "Pkeytest" VALUES (1, 'a');
+INSERT INTO "Pkeytest" VALUES (2, 'b');
+INSERT INTO "Pkeytest" VALUES (3, 'c');
 
 
 CREATE SCHEMA fkeytest;

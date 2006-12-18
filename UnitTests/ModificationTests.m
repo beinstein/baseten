@@ -51,29 +51,29 @@
 
 - (void) testPkeyModification
 {    
-    BXEntityDescription* pkeytest = [context entityForTable: @"pkeytest"];
+    BXEntityDescription* pkeytest = [context entityForTable: @"Pkeytest"];
     NSError* error = nil;
     MKCAssertNotNil (context);
     MKCAssertNotNil (pkeytest);
     
     NSArray* res = [context executeFetchForEntity: pkeytest
-                                    withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
+                                    withPredicate: [NSPredicate predicateWithFormat: @"Id = 1"]
                                             error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (res);
     
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    MKCAssertEquals ([[object valueForKey: @"id"] intValue], 1);
+    MKCAssertEquals ([[object valueForKey: @"Id"] intValue], 1);
     MKCAssertEqualObjects ([object valueForKey: @"value"], @"a");
     
-    [object setValue: [NSNumber numberWithInt: 4] forKey: @"id"];
-    MKCAssertEquals ([[object valueForKey: @"id"] intValue], 4);
+    [object setValue: [NSNumber numberWithInt: 4] forKey: @"Id"];
+    MKCAssertEquals ([[object valueForKey: @"Id"] intValue], 4);
     [object setValue: @"d" forKey: @"value"];
     
     res = [[context executeFetchForEntity: pkeytest withPredicate: nil error: &error]
         sortedArrayUsingDescriptors: [NSArray arrayWithObject: 
-            [[[NSSortDescriptor alloc] initWithKey: @"id" ascending: YES] autorelease]]];
+            [[[NSSortDescriptor alloc] initWithKey: @"Id" ascending: YES] autorelease]]];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (res);
 
@@ -82,7 +82,7 @@
     {
         int number = i + 2;
         object = [res objectAtIndex: i];
-        MKCAssertEquals ([[object valueForKey: @"id"] intValue], number);
+        MKCAssertEquals ([[object valueForKey: @"Id"] intValue], number);
         NSString* value = [NSString stringWithFormat: @"%c", 'a' + number - 1];
         MKCAssertEqualObjects ([object valueForKey: @"value"], value);
     }

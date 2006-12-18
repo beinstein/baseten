@@ -1224,15 +1224,15 @@ static unsigned int SavepointIndex ()
         //Lock type
         NSString* format = nil;
         if ((willDelete))
-            format = @"SELECT %@ ('D', %u, %@) FROM %@ WHERE %@";
+            format = @"SELECT %@ ('D', %u, \"%@\") FROM %@ WHERE %@";
         else
-            format = @"SELECT %@ ('U', %u, %@) FROM %@ WHERE %@";
+            format = @"SELECT %@ ('U', %u, \"%@\") FROM %@ WHERE %@";
         
         //Get and sort the primary key fields and execute the query
         NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSString* query = [NSString stringWithFormat: format, funcname, SavepointIndex(),
-            [pkeyFNames componentsJoinedByString: @", "], [entity BXPGQualifiedName: notifyConnection], whereClause];
+            [pkeyFNames componentsJoinedByString: @"\", \""], [entity BXPGQualifiedName: notifyConnection], whereClause];
         //FIXME: error handling?
         [notifyConnection executeQuery: query parameterArray: parameters];
     }
