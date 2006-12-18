@@ -1507,4 +1507,5 @@ static unsigned int SavepointIndex ()
     if (0 < [ids count])
         [context deletedObjectsFromDatabase: ids];
 }
+
 @end

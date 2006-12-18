@@ -87,7 +87,7 @@
        notificationName: (NSString *) notificationName
 {
     [[NSNotificationCenter defaultCenter] removeObserver: anObject name: notificationName object: tableInfo];
-    [observedTables removeObject: anObject];
+    [observedTables removeObject: tableInfo];
     [self removeNotificationIfNeeded: tableInfo];
 }
 
