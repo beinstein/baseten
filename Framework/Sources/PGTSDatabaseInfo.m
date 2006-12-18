@@ -26,12 +26,13 @@
 // $Id$
 //
 
-#import <PGTS/PGTSDatabaseInfo.h>
-#import <PGTS/PGTSTypeInfo.h>
-#import <PGTS/PGTSTableInfo.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSAdditions.h>
+#import "PGTSDatabaseInfo.h"
+#import "PGTSTypeInfo.h"
+#import "PGTSTableInfo.h"
+#import "PGTSResultSet.h"
+#import "PGTSConnection.h"
+#import "PGTSAdditions.h"
+#import "PGTSFunctions.h"
 #import <TSDataTypes/TSDataTypes.h>
 
 
@@ -119,7 +120,10 @@
     PGTSTableInfo* rval = [[schemas objectForKey: schemaName] objectForKey: tableName];
     if (nil == rval)
     {
-        NSString* queryString = @"SELECT c.oid AS oid, c.relnamespace AS schemaoid FROM pg_class c, pg_namespace n WHERE c.relname = $1 AND n.nspname = $2";
+        NSString* queryString = 
+        @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, r.rolname "
+        " FROM pg_class c, pg_namespace n, pg_roles r "
+        " WHERE c.relowner = r.oid AND c.relname = $1 AND n.nspname = $2";
         PGTSResultSet* res = [connection executeQuery: queryString parameters: tableName, schemaName];
         if (0 < [res countOfRows])
         {
@@ -127,7 +131,14 @@
             rval = [self tableInfoForTableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
             [rval setName: tableName];
             [rval setSchemaOid: [[res valueForKey: @"schemaoid"] PGTSOidValue]];
+
+            PGTSRoleDescription* role = [[connection databaseInfo] roleNamed: [res valueForKey: @"rolname"]
+                                                                         oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
+            [rval setOwner: role];
+            
             [rval setSchemaName: schemaName];
+            TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
+                [rval addACLItem: currentACLItem];
             [self updateTableCache: rval];
         }
     }
@@ -161,6 +172,39 @@
         [connectionPoolKey release];
         aKey = [connectionPoolKey retain];
     }
+}
+
+- (PGTSRoleDescription *) roleNamed: (NSString *) aName
+{
+    return [self roleNamed: aName oid: InvalidOid];
+}
+
+- (PGTSRoleDescription *) roleNamed: (NSString *) originalName oid: (Oid) oid
+{
+    id aName = originalName;
+    if (nil == aName)
+        aName = [NSNull null];
+    
+    id rval = [roles objectForKey: aName];
+    if (nil == rval)
+    {
+        if (nil != originalName && InvalidOid == oid)
+        {
+            NSString* query = @"SELECT oid FROM pg_roles WHERE rolname = $1";
+            PGTSResultSet* res = [connection executeQuery: query parameters: aName];
+            if (0 < [res countOfRows])
+            {
+                [res advanceRow];
+                oid = [[res valueForKey: @"oid"] PGTSOidValue];
+            }
+        }
+        
+        rval = [[[PGTSRoleDescription alloc] init] autorelease];
+        [rval setOid: oid];
+        [rval setName: aName];
+        [roles setObject: rval forKey: aName];        
+    }
+    return rval;
 }
 
 @end

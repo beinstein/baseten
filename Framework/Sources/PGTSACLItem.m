@@ -36,33 +36,52 @@
 {
     if ((self = [super init]))
     {
-        privileges = kPGTSPrivilegeNone;
+        mPrivileges = kPGTSPrivilegeNone;
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [role release];
+    [mRole release];
+    [mGrantingRole release];
     [super dealloc];
 }
 
 - (PGTSRoleDescription *) role
 {
-    return role; 
+    return mRole;
 }
 
 - (void) setRole: (PGTSRoleDescription *) aRole
 {
-    if (role != aRole) {
-        [role release];
-        role = [aRole retain];
+    if (mRole != aRole) {
+        [mRole release];
+        mRole = [aRole retain];
+    }
+}
+
+- (PGTSRoleDescription *) grantingRole
+{
+    return mGrantingRole; 
+}
+
+- (void) setGrantingRole: (PGTSRoleDescription *) aGrantingRole
+{
+    if (mGrantingRole != aGrantingRole) {
+        [mGrantingRole release];
+        mGrantingRole = [aGrantingRole retain];
     }
 }
 
 - (enum PGTSACLItemPrivilege) privileges
 {
-    return privileges;
+    return mPrivileges;
+}
+
+- (void) setPrivileges: (enum PGTSACLItemPrivilege) anEnum
+{
+    mPrivileges = anEnum;
 }
 
 @end

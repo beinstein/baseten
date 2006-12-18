@@ -36,10 +36,11 @@
 #import "PGTSTypeInfo.h"
 #import "PGTSFieldInfo.h"
 #import "PGTSDatabaseInfo.h"
+#import "PGTSACLItem.h"
 
 
-//FIXME: This really has to be removed. The function is included in libpq bundled with PostgreSQL 8.0.8 and 8.1.4
-#define PQescapeStringConn( conn, to, from, length, error ) PQescapeString( to, from, length )
+//A workaround for libpq versions earlier than 8.0.8 and 8.1.4
+//#define PQescapeStringConn( conn, to, from, length, error ) PQescapeString( to, from, length )
 
 
 
@@ -340,6 +341,8 @@ strtof (const char * restrict nptr, char ** restrict endptr);
         if (nil == deserializationDictionary)
             deserializationDictionary = [NSDictionary PGTSDeserializationDictionary];
         Class elementClass = [deserializationDictionary objectForKey: [elementType name]];
+        if (Nil == elementClass)
+            elementClass = [NSData class];
         
         size_t length = strlen (value);
         unsigned int objectBaseIndex = 0;
@@ -593,5 +596,98 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     s.width = p.x;
     s.height = p.y;
     return [NSValue valueWithSize: s];
+}
+@end
+
+@implementation PGTSACLItem (PGTSAdditions)
++ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
+{        
+    //Role and privileges are separated by an equals sign
+    id rval = nil;
+    char* grantingRole = value;
+    char* role = strsep (&grantingRole, "=");
+    char* privileges = strsep (&grantingRole, "/");
+    
+    //Zero-length but not NULL
+    NSAssert (NULL != privileges && NULL != role && NULL != grantingRole, @"Unable to parse privileges.");
+    
+    //Role is zero-length if the privileges are for PUBLIC
+    rval = [[[PGTSACLItem alloc] init] autorelease];
+    if (0 != strlen (role))
+    {
+        PGTSDatabaseInfo* database = [[res connection] databaseInfo];
+        
+        //Remove "group " from beginning
+        if (role == strstr (role, "group "))
+            role = &role [6]; //6 == strlen ("group ");
+        if (grantingRole == strstr (role, "group "))
+            grantingRole = &grantingRole [6];
+        
+        [rval setRole: [database roleNamed: [NSString stringWithUTF8String: role]]];
+        [rval setGrantingRole: [database roleNamed: [NSString stringWithUTF8String: grantingRole]]];
+    }
+    
+    //Parse the privileges
+    enum PGTSACLItemPrivilege userPrivileges = kPGTSPrivilegeNone;
+    enum PGTSACLItemPrivilege grantOption = kPGTSPrivilegeNone;
+    for (unsigned int i = 0, length = strlen (privileges); i < length; i++)
+    {
+        switch (privileges [i])
+        {
+            case 'r': //SELECT
+                userPrivileges |= kPGTSPrivilegeSelect;
+                grantOption = kPGTSPrivilegeSelectGrant;
+                break;
+            case 'w': //UPDATE
+                userPrivileges |= kPGTSPrivilegeUpdate;
+                grantOption = kPGTSPrivilegeUpdateGrant;
+                break;
+            case 'a': //INSERT
+                userPrivileges |= kPGTSPrivilegeInsert;
+                grantOption = kPGTSPrivilegeInsertGrant;
+                break;
+            case 'd': //DELETE
+                userPrivileges |= kPGTSPrivilegeDelete;
+                grantOption = kPGTSPrivilegeDeleteGrant;
+                break;
+            case 'x': //REFERENCES
+                userPrivileges |= kPGTSPrivilegeReferences;
+                grantOption = kPGTSPrivilegeReferencesGrant;
+                break;
+            case 't': //TRIGGER
+                userPrivileges |= kPGTSPrivilegeTrigger;
+                grantOption = kPGTSPrivilegeTriggerGrant;
+                break;
+            case 'X': //EXECUTE
+                userPrivileges |= kPGTSPrivilegeExecute;
+                grantOption = kPGTSPrivilegeExecuteGrant;
+                break;
+            case 'U': //USAGE
+                userPrivileges |= kPGTSPrivilegeUsage;
+                grantOption = kPGTSPrivilegeUsageGrant;
+                break;
+            case 'C': //CREATE
+                userPrivileges |= kPGTSPrivilegeCreate;
+                grantOption = kPGTSPrivilegeCreateGrant;
+                break;
+            case 'c': //CONNECT
+                userPrivileges |= kPGTSPrivilegeConnect;
+                grantOption = kPGTSPrivilegeConnectGrant;
+                break;
+            case 'T': //TEMPORARY
+                userPrivileges |= kPGTSPrivilegeTemporary;
+                grantOption = kPGTSPrivilegeTemporaryGrant;
+                break;
+            case '*': //Grant option
+                userPrivileges |= grantOption;
+                grantOption = kPGTSPrivilegeNone;
+                break;
+            default:
+                break;
+        }
+    }
+    [rval setPrivileges: userPrivileges];
+    
+    return rval;    
 }
 @end

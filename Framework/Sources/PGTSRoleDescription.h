@@ -37,8 +37,9 @@
 {
     TSIndexDictionary* roles;
 }
+@end
 
-- (void) addRole: (PGTSRoleDescription *) aRole;
+
+@interface PGTSRoleDescription (Queries)
 - (BOOL) hasMember: (PGTSRoleDescription *) aRole;
-
 @end

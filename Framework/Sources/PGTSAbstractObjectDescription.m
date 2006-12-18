@@ -50,4 +50,9 @@
     oid = anOid;
 }
 
+- (BOOL) isEqual: (id) anObject
+{
+    return ([anObject oid] == oid && [super isEqual: anObject]); 
+}
+
 @end
