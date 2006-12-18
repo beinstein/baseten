@@ -46,6 +46,8 @@
     <string>NSString</string>
     <key>int2vector</key>
     <string>NSArray</string>
+    <key>aclitem</key>
+    <string>PGTSACLItem</string>
     
     <!-- Array types -->
     <key>_abstime</key>

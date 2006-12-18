@@ -26,11 +26,15 @@
 // $Id$
 //
 
-#import <PGTS/PGTSAbstractClassInfo.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSAdditions.h>
+#import "PGTSAbstractClassInfo.h"
+#import "PGTSResultSet.h"
+#import "PGTSFunctions.h"
+#import "PGTSConnection.h"
+#import "PGTSAdditions.h"
+#import "PGTSConstants.h"
+#import "PGTSRoleDescription.h"
+#import "PGTSACLItem.h"
+#import "PGTSDatabaseInfo.h"
 #import <TSDataTypes/TSDataTypes.h>
 
 /** 
@@ -74,6 +78,24 @@
     }
 }
 
+- (void) addACLItem: (PGTSACLItem *) item
+{
+    [aclItems setObject: item atIndex: [[item role] oid]];
+}
+
+- (PGTSRoleDescription *) owner
+{
+    return owner; 
+}
+
+- (void) setOwner: (PGTSRoleDescription *) anOwner
+{
+    if (owner != anOwner) {
+        [owner release];
+        owner = [anOwner retain];
+    }
+}
+
 @end
 
 
@@ -98,15 +120,24 @@
 {
     if (nil == name)
     {
-        PGTSResultSet* res = [connection executeQuery: @"SELECT relname, n.oid, nspname FROM pg_class c, pg_namespace n "
-                                                        "WHERE c.oid = $1 AND c.relnamespace = n.oid"
-                                           parameters: PGTSOidAsObject (oid)];
+        NSString* query = 
+        @"SELECT c.relname, c.relacl, c.relowner, n.oid, n.nspname, r.rolname "
+        " FROM pg_class c, pg_namespace n, pg_roles r "
+        " WHERE c.relnamespace = n.oid AND r.oid = c.relowner AND c.oid = $1";
+        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
         if (0 < [res numberOfRowsAffected])
         {
             [res advanceRow];
-            [self setName:  [res valueForFieldNamed: @"relname"]];
-            [self setSchemaName: [res valueForFieldNamed: @"nspname"]];
-            [self setSchemaOid: [[res valueForFieldNamed: @"oid"] PGTSOidValue]];
+            [self setName:  [res valueForKey: @"relname"]];
+            [self setSchemaName: [res valueForKey: @"nspname"]];
+            [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+            
+            PGTSRoleDescription* role = [[connection databaseInfo] roleNamed: [res valueForKey: @"rolname"]
+                                                                         oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
+            [self setOwner: role];
+            
+            TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
+                [self addACLItem: currentACLItem];
         }
     }
     return name;
@@ -117,6 +148,40 @@
     if (nil == name)
         [self name];
     return [NSString stringWithFormat: @"\"%@\".\"%@\"", schemaName, name];
+}
+
+- (BOOL) role: (PGTSRoleDescription *) aRole 
+ hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege
+{
+    if (nil == name)
+        [self name];
+    
+    //First try the user's privileges, then PUBLIC's and last different groups'.
+    //The owner has all the privileges.
+    BOOL rval = (owner == aRole || [owner isEqual: aRole]);
+    if (NO == rval)
+        (0 != (aPrivilege & [[aclItems objectAtIndex: [aRole oid]] privileges]));
+    if (NO == rval)
+        rval = (0 != (aPrivilege & [[aclItems objectAtIndex: kPGTSPUBLICOid] privileges]));
+    if (NO == rval)
+    {
+        TSEnumerate (currentItem, e, [aclItems objectEnumerator])
+        {
+            if (aPrivilege & [currentItem privileges] && [[currentItem role] hasMember: aRole])
+            {
+                rval = YES;
+                break;
+            }
+        }
+    }
+    return rval;
+}
+
+- (NSArray *) ACLItems
+{
+    if (nil == name)
+        [self name];
+    return [aclItems allObjects];
 }
 
 @end

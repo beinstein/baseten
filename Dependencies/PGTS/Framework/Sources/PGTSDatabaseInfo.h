@@ -35,6 +35,7 @@
 @class PGTSTypeInfo;
 @class TSIndexDictionary;
 @class PGTSConnectionPoolItem;
+@class PGTSRoleDescription;
 
 
 @interface PGTSDatabaseInfo : PGTSAbstractInfo 
@@ -54,5 +55,7 @@
 - (NSString *) connectionPoolKey;
 - (void) setConnectionPoolKey: (NSString *) aKey;
 - (void) updateTableCache: (PGTSTableInfo *) table;
+- (PGTSRoleDescription *) roleNamed: (NSString *) name;
+- (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 
 @end

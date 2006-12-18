@@ -36,6 +36,8 @@
 #define PGTS_EXPORT extern
 #endif
 
+#define kPGTSPUBLICOid InvalidOid
+
 
 PGTS_EXPORT NSDictionary* kPGTSDefaultConnectionDictionary;
 

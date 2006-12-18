@@ -30,18 +30,13 @@
 #import <PGTS/postgresql/libpq-fe.h> 
 #import "PGTSRoleDescription.h"
 #import "PGTSFunctions.h"
+#import "PGTSResultSet.h"
+#import "PGTSConnection.h"
+#import "PGTSAdditions.h"
+#import "PGTSDatabaseInfo.h"
 
 
 @implementation PGTSRoleDescription
-
-- (id) init
-{
-    if ((self = [super init]))
-    {
-        roles = [[TSIndexDictionary alloc] init];
-    }
-    return self;
-}
 
 - (void) dealloc
 {
@@ -49,14 +44,28 @@
     [super dealloc];
 }
 
-- (void) addRole: (PGTSRoleDescription *) aRole
-{
-    [roles setObject: aRole atIndex: [aRole oid]];
-}
+@end
+
+
+@implementation PGTSRoleDescription (Queries)
 
 - (BOOL) hasMember: (PGTSRoleDescription *) aRole
 {
     BOOL rval = NO;
+    
+    if (nil == roles)
+    {
+        roles = [[TSIndexDictionary alloc] init];
+        NSString* query = @"SELECT r.oid, r.rolname FROM pg_roles r INNER JOIN pg_authid a WHERE r.oid = a.member AND a.roleid = $1";
+        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
+        while ([res advanceRow])
+        {
+            Oid memberOid = [[res valueForKey: @"oid"] PGTSOidValue];
+            PGTSRoleDescription* role = [[connection databaseInfo] roleNamed: [res valueForKey: @"rolname"] oid: memberOid];
+            [roles setObject: role atIndex: memberOid];
+        }
+    }
+    
     if (nil != [roles objectAtIndex: [aRole oid]])
         rval = YES;
     else

@@ -31,6 +31,8 @@
 #import <PGTS/postgresql/libpq-fe.h> 
 
 @class TSIndexDictionary;
+@class PGTSRoleDescription;
+@class PGTSACLItem;
 
 
 @interface PGTSAbstractClassInfo : PGTSAbstractObjectDescription
@@ -38,10 +40,13 @@
     Oid schemaOid;
     NSString* schemaName;
     TSIndexDictionary* aclItems;
+    PGTSRoleDescription* owner;
 }
 - (void) setSchemaOid: (Oid) anOid;
 - (void) setSchemaName: (NSString *) anString;
-
+- (void) addACLItem: (PGTSACLItem *) item;
+- (PGTSRoleDescription *) owner;
+- (void) setOwner: (PGTSRoleDescription *) anOwner;
 @end
 
 
@@ -50,4 +55,7 @@
 - (Oid) schemaOid;
 - (NSString *) schemaName;
 - (NSString *) qualifiedName;
+- (BOOL) role: (PGTSRoleDescription *) aRole 
+ hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege;
+- (NSArray *) ACLItems;
 @end

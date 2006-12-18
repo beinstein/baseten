@@ -33,12 +33,16 @@
 
 @interface PGTSACLItem : NSObject 
 {
-    PGTSRoleDescription* role;
-    enum PGTSACLItemPrivilege privileges;
+    PGTSRoleDescription* mRole;
+    PGTSRoleDescription* mGrantingRole;
+    enum PGTSACLItemPrivilege mPrivileges;
 }
 
 - (enum PGTSACLItemPrivilege) privileges;
+- (void) setPrivileges: (enum PGTSACLItemPrivilege) privileges;
 - (PGTSRoleDescription *) role;
 - (void) setRole: (PGTSRoleDescription *) aRole;
+- (PGTSRoleDescription *) grantingRole;
+- (void) setGrantingRole: (PGTSRoleDescription *) aGrantingRole;
 
 @end
