@@ -86,6 +86,7 @@
 - (void) removeObserver: (id) anObject table: (PGTSTableInfo *) tableInfo 
        notificationName: (NSString *) notificationName
 {
+    [[tableInfo retain] autorelease];
     [[NSNotificationCenter defaultCenter] removeObserver: anObject name: notificationName object: tableInfo];
     [observedTables removeObject: tableInfo];
     [self removeNotificationIfNeeded: tableInfo];
