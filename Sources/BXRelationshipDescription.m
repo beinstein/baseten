@@ -138,6 +138,8 @@ NullArray (unsigned int count)
     return [self resolveFrom: object to: nil error: error];
 }
 
+//FIXME: targetEntity is probably always [[[object objectID] entity] targetForRelationship: self]
+//unless it's nil, which is resolved in the method.
 - (id) resolveFrom: (BXDatabaseObject *) object to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     id rval = nil;
@@ -264,13 +266,24 @@ NullArray (unsigned int count)
 - (NSString *) nameFromEntity: (BXEntityDescription *) entity
 {
     NSString* rval = nil;
-    if ([self srcEntity] == entity || [self dstEntity] == entity)
+    if ([self srcEntity] == entity || 
+        [self dstEntity] == entity || 
+        [entity hasAncestor: [self srcEntity]] || 
+        [entity hasAncestor: [self dstEntity]])
+    {
         rval = [self name];
+    }
     return rval;
 }
 
-//FIXME: the three methods below should probably use correspondingProperties.
-- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error;
+//FIXME: the four methods below should probably use correspondingProperties.
+- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
+{
+    [self addObjects: objectSet referenceFrom: refObject to: [self srcEntity] error: error];
+}
+
+- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
+                 to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 {
     NSAssert (nil != refObject, @"Expected refObject not to be nil");
     BXEntityDescription* refEntity = [[refObject objectID] entity];
@@ -280,7 +293,7 @@ NullArray (unsigned int count)
         //to-many
         NSArray* values = [refObject objectsForKeys: dstProperties];
         NSArray* keys = [srcProperties valueForKey: @"name"];
-        [[refObject databaseContext] executeUpdateEntity: [self srcEntity] 
+        [[refObject databaseContext] executeUpdateEntity: targetEntity
                                           withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
                                                predicate: [objectSet BXOrPredicateForObjects]
                                                    error: error];

@@ -373,7 +373,7 @@ static NSMutableSet* gViewEntities;
 
 /**
  * Mark the entity as a view.
- * The database contect cannot read this information from the database. The primary key also needs
+ * The database context cannot read this information from the database. The primary key also needs
  * to be set manually.
  * \see -           setPrimaryKeyFields:
  * \param           entities          NSSet containing the entities.
@@ -387,6 +387,7 @@ static NSMutableSet* gViewEntities;
         mViewEntities = [entities retain];
         [gViewEntities addObject: self];
         [mViewEntities makeObjectsPerformSelector: @selector (addDependentView:) withObject: self];
+        rval = YES;
     }
     return rval;
 }
@@ -409,6 +410,11 @@ static NSMutableSet* gViewEntities;
     return mDependentViewEntities;
 }
 
+/** 
+ * Make a relationship return objects from a view. 
+ * \param viewEntity The target view or nil to reset.
+ * \param relationshipName Name of the relationship.
+ */
 - (void) setTargetView: (BXEntityDescription *) viewEntity 
   forRelationshipNamed: (NSString *) relationshipName
 {
@@ -451,16 +457,33 @@ static NSMutableSet* gViewEntities;
         [mDependentViewEntities addObject: viewEntity];
 }
 
+//FIXME: Consider moving the recursion to -[BXDatabaseContext relationshipsByNameWithEntity:entity:]
 - (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName
-                                                context: (BXDatabaseContext *) context
+                                             context: (BXDatabaseContext *) context
 {
-    //FIXME: this might cause cached objects to be ignored.
-    if (NO == mHasAllRelationships)
+    id rval = nil;
+    if (nil == mViewEntities)
     {
-        mHasAllRelationships = YES;
-        [context relationshipsByNameWithEntity: self entity: nil];
+        //FIXME: this might cause cached objects to be ignored.
+        if (NO == mHasAllRelationships)
+        {
+            mHasAllRelationships = YES;
+            [context relationshipsByNameWithEntity: self entity: nil];
+        }
+        rval = [mRelationships objectForKey: aName];
     }
-    return [mRelationships objectForKey: aName];
+    else
+    {
+        //If this entity is a view, enumerate the tables the view is based on and
+        //try to find the correct relationship.
+        TSEnumerate (currentViewEntity, e, [mViewEntities objectEnumerator])
+        {
+            rval = [currentViewEntity relationshipNamed: aName context: context];
+            if (nil != rval)
+                break;
+        }
+    }
+    return rval;
 }
 
 - (void) cacheRelationship: (id <BXRelationshipDescription>) relationship
@@ -500,33 +523,41 @@ static NSMutableSet* gViewEntities;
     return [mTargetViews objectForKey: [rel nameFromEntity: self]];
 }
 
+/**
+ * \internal
+ * Property descriptions for table columns that correspond to view columns.
+ * Retrieving property descriptions is done by comparing property or column names; 
+ * columns in views need to have the same names as in tables. We iterate through 
+ * the given properties and compare their names first to primary key field names, 
+ * then others.
+ * \param properties Properties in a view that is based on this table.
+ */
 - (NSArray *) correspondingProperties: (NSArray *) properties
 {
-    //First check if we are eligible
-    id rval = properties;
+    id rval = nil;
     
     if (0 < [properties count])
     {
         //First check if we are eligible
         if ([[[properties objectAtIndex: 0] entity] isEqual: self])
         {
+            rval = properties;            
 #ifndef NS_BLOCK_ASSERTIONS
             TSEnumerate (currentField, e, [properties objectEnumerator])
             {
                 if (! ([mPkeyFields containsObject: currentField] ||
-                       [mFields containsObject: currentField]))
+                       [mFields containsObject: currentField] ||
+                       nil == mFields))
                 {
                     rval = nil;
                     break;
                 }
             }
 #endif
-            
-            rval = properties;            
         }
         else
         {
-            //If not, give the corresponding properties
+            //If not, give the corresponding properties.
             rval = [NSMutableArray arrayWithCapacity: [properties count]];
             NSArray* fNames = [mFields valueForKey: @"name"];
             NSArray* pkeyFNames = [mPkeyFields valueForKey: @"name"];
@@ -539,7 +570,7 @@ static NSMutableSet* gViewEntities;
                 if (NSNotFound != (index = [pkeyFNames indexOfObject: propertyName]))
                     prop = [mPkeyFields objectAtIndex: index];
                 else if (NSNotFound != (index = [fNames indexOfObject: propertyName]))
-                    prop = [mFields  objectAtIndex: index];
+                    prop = [mFields objectAtIndex: index];
                 else if (nil == mFields) 
                 {
                     //If fields haven't been received yet, we can risk making a nonexistent property
@@ -562,7 +593,7 @@ static NSMutableSet* gViewEntities;
 - (BOOL) hasAncestor: (BXEntityDescription *) entity
 {
     BOOL rval = NO;
-    if ([entity isView])
+    if ([self isView])
     {
         NSSet* parents = [self entitiesBasedOn];
         if ([parents containsObject: entity])

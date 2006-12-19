@@ -83,7 +83,18 @@
     MKCAssertEqualObjects ([mtmtest1v name], @"mtmtest1_v");
     MKCAssertEqualObjects ([mtmtest2v name], @"mtmtest2_v");
     
-    //FIXME: the view entities should be told what they are
+    //Tell the view entities what they are
+    [test1v viewIsBasedOnEntities: [NSSet setWithObject: test1]];
+    [test2v viewIsBasedOnEntities: [NSSet setWithObject: test2]];
+    [ototest1v viewIsBasedOnEntities: [NSSet setWithObject: ototest1]];
+    [ototest2v viewIsBasedOnEntities: [NSSet setWithObject: ototest2]];
+    [mtmtest1v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest1]];
+    [mtmtest2v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest2]];
+    
+    NSArray* pkeyfields = [NSArray arrayWithObject: @"id"];
+    NSArray* viewEntities = [NSArray arrayWithObjects: test1v, test2v, ototest1v, ototest2v, mtmtest1v, mtmtest2v, nil];
+    TSEnumerate (currentEntity, e, [viewEntities objectEnumerator])
+        [currentEntity setPrimaryKeyFields: pkeyfields];
 }
 
 - (void) tearDown
@@ -92,25 +103,35 @@
     context = nil;
 }
 
-
-//FIXME: make each of the tests a method which accepts one or two entity arguments
-//Then make tests for tables and views which call these methods
-
 - (void) testMTO
+{
+    [self many: test2 toOne: nil];
+}
+
+- (void) testMTOView
+{
+    [self many: test2v toOne: test1v];
+}
+
+- (void) many: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     NSError* error = nil;
     for (int i = 1; i <= 3; i++)
     {
         NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", i];
         MKCAssertNotNil (predicate);
-        NSArray* res = [context executeFetchForEntity: test2
+        NSArray* res = [context executeFetchForEntity: manyEntity
                                         withPredicate: predicate
                                                 error: &error];
         MKCAssertNil (error);
         MKCAssertTrue (1 == [res count]);
     
+        [manyEntity setTargetView: oneEntity forRelationshipNamed: @"fkt1"];
         BXDatabaseObject* object = [res objectAtIndex: 0];
         BXDatabaseObject* foreignObject = [object valueForKey: @"fkt1"];
+
+        //See that the object has the given entity
+        MKCAssertTrue ([[object objectID] entity] == manyEntity);
         
         //The row with id == 3 has null value for the foreign key
         if (3 == i)
@@ -121,6 +142,8 @@
         else
         {
             MKCAssertNotNil (foreignObject);
+            //See that the object has the given entity
+            MKCAssertTrue (nil == oneEntity || [[foreignObject objectID] entity] == oneEntity);
             MKCAssertTrue ([@"11" isEqualToString: [foreignObject valueForKey: @"value"]]);
             MKCAssertTrue ([@"11" isEqualToString: [object valueForKeyPath: @"fkt1.value"]]);
         }
@@ -129,63 +152,88 @@
 
 - (void) testOTM
 {
-    NSError* error = nil;
-    NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
-    MKCAssertNotNil (predicate);
-    NSArray* res = [context executeFetchForEntity: test1
-                                    withPredicate: predicate
-                                            error: &error];
-    MKCAssertNil (error);
-    MKCAssertTrue (1 == [res count]);
-    BXDatabaseObject* object = [res objectAtIndex: 0];
-
-    NSDictionary* rels = [context relationshipsByNameWithEntity: test2 entity: test1];
-    MKCAssertTrue (0 < [rels count]);
-    id <BXRelationshipDescription> rel = [rels objectForKey: @"fkt1"];
-    MKCAssertNotNil (rel);
-    MKCAssertTrue ([rel isToManyFromEntity: test1]);
-    
-    NSArray* foreignObjects = [rel resolveFrom: object error: &error];
-    MKCAssertNil (error);
-    MKCAssertTrue (2 == [foreignObjects count]);
-    NSArray* values = [foreignObjects valueForKey: @"value"];
-    MKCAssertTrue ([values containsObject: @"21"]);
-    MKCAssertTrue ([values containsObject: @"22"]);
+    [self one: test1 toMany: nil];
 }
 
-- (void) testOTM2
+- (void) testOTMView
+{
+    [self one: test1v toMany: test2v];
+}
+
+- (void) one: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity
 {
     NSError* error = nil;
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
     MKCAssertNotNil (predicate);
-    NSArray* res = [context executeFetchForEntity: test1
+    NSArray* res = [context executeFetchForEntity: oneEntity
                                     withPredicate: predicate
                                             error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
 
-    NSArray* foreignObjects = [object valueForKey: @"fkt1"];
+    //See that the object has the given entity
+    MKCAssertTrue ([[object objectID] entity] == oneEntity);
+    
+    //-[BXDatabaseContext relationshipsByNameWithEntity:entity:] doesn't 
+    //currently search the relationships recursively
+    id <BXRelationshipDescription> rel = nil;
+    if ([manyEntity isView] || [oneEntity isView])
+        rel = [manyEntity relationshipNamed: @"fkt1" context: context];
+    else
+    {
+        NSDictionary* rels = [context relationshipsByNameWithEntity: manyEntity entity: oneEntity];
+        MKCAssertTrue (0 < [rels count]);
+        rel = [rels objectForKey: @"fkt1"];
+    }
+    MKCAssertNotNil (rel);
+    MKCAssertTrue ([rel isToManyFromEntity: oneEntity]);
+        
+    [oneEntity setTargetView: manyEntity forRelationshipNamed: @"fkt1"];
+    NSArray* foreignObjects = [rel resolveFrom: object to: [oneEntity targetForRelationship: rel] error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (2 == [foreignObjects count]);
     NSArray* values = [foreignObjects valueForKey: @"value"];
     MKCAssertTrue ([values containsObject: @"21"]);
+    MKCAssertTrue ([values containsObject: @"22"]);    
+    //See that the objects have the given entities
+    TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
+        MKCAssertTrue (nil == manyEntity || [[currentObject objectID] entity] == manyEntity);
+
+    foreignObjects = [object valueForKey: @"fkt1"];
+    MKCAssertNil (error);
+    MKCAssertTrue (2 == [foreignObjects count]);
+    values = [foreignObjects valueForKey: @"value"];
+    MKCAssertTrue ([values containsObject: @"21"]);
     MKCAssertTrue ([values containsObject: @"22"]);
+    //See that the objects have the given entities
+    TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
+        MKCAssertTrue (nil == manyEntity || [[currentObject objectID] entity] == manyEntity);
 }
 
 - (void) testOTO
 {
+    [self one: ototest1 toOne: ototest2];
+}
+
+- (void) testOTOView
+{
+    [self one: ototest1v toOne: ototest2v];
+}
+
+- (void) one: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
+{
     NSError* error = nil;
-    NSDictionary* rels = [context relationshipsByNameWithEntity: ototest1 entity: ototest2];
+    NSDictionary* rels = [context relationshipsByNameWithEntity: entity1 entity: entity2];
     MKCAssertTrue (0 < [rels count]);
     id <BXRelationshipDescription> foobar = [rels objectForKey: @"bar"];
     MKCAssertNotNil (foobar);
-    MKCAssertEqualObjects ([foobar nameFromEntity: ototest2], @"foo");
+    MKCAssertEqualObjects ([foobar nameFromEntity: entity2], @"foo");
     MKCAssertTrue ([foobar isOneToOne]);
-    MKCAssertFalse ([foobar isToManyFromEntity: ototest1]);
-    MKCAssertFalse ([foobar isToManyFromEntity: ototest2]);
+    MKCAssertFalse ([foobar isToManyFromEntity: entity1]);
+    MKCAssertFalse ([foobar isToManyFromEntity: entity2]);
 
-    NSArray* res = [context executeFetchForEntity: ototest1 
+    NSArray* res = [context executeFetchForEntity: entity1 
                                     withPredicate: [NSPredicate predicateWithFormat: @"1 <= id && id <= 2"]
                                             error: &error];
     MKCAssertNil (error);
@@ -204,20 +252,31 @@
         MKCAssertNil (error);
         MKCAssertEqualObjects (object, object2);
         MKCAssertEqualObjects (object2, object3);
-        
+
+        //See that the objects have the given entities
+        MKCAssertTrue ([[object  objectID] entity] == entity1);
+        MKCAssertTrue ([[object2 objectID] entity] == entity1);
+        MKCAssertTrue ([[object3 objectID] entity] == entity1);
+        MKCAssertTrue ([[foreignObject  objectID] entity] == entity2);
+        MKCAssertTrue ([[foreignObject2 objectID] entity] == entity2);
+
         NSNumber* value = [object valueForKey: @"id"];
         NSNumber* value2 = [foreignObject valueForKey: @"id"];
         MKCAssertFalse ([value isEqual: value2]);
     }
     
-    res = [context executeFetchForEntity: ototest2
+    res = [context executeFetchForEntity: entity2
                            withPredicate: [NSPredicate predicateWithFormat: @"id = 3"]
                                    error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
     MKCAssertNil ([object valueForKey: @"foo"]);
+    MKCAssertTrue ([[object objectID] entity] == entity2);
 }
+
+//FIXME: make each of the tests a method which accepts one or two entity arguments
+//Then make tests for tables and views which call these methods
 
 - (void) testMTM
 {

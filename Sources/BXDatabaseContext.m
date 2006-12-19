@@ -1016,7 +1016,10 @@ extern void BXInit ()
  * \name Convenience methods for getting relationship descriptions.
  */
 //@{
-/** Relationships between given entities. */
+/** 
+ * Relationships between given entities. 
+ * Only relationships between tables are returned.
+ */
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
                                           entity: (BXEntityDescription *) anotherEntity
 {
@@ -1025,7 +1028,10 @@ extern void BXInit ()
                                          types: kBXRelationshipUndefined];
 }
 
-/** Relationships of a specific type between given entities. */
+/** 
+ * Relationships of a specific type between given entities. 
+ * Only relationships between tables are returned.
+ */
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
                                           entity: (BXEntityDescription *) anotherEntity
                                            types: (enum BXRelationshipType) bitmap

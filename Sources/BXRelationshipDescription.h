@@ -55,4 +55,7 @@
 - (void) setDSTProperties: (NSArray *) anArray;
 - (BXEntityDescription *) srcEntity;
 - (BXEntityDescription *) dstEntity;
+
+- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
+                 to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 @end

@@ -97,7 +97,6 @@
 
 - (id) resolveFrom: (BXDatabaseObject *) object to: (BXEntityDescription *) givenDST error: (NSError **) error
 {
-    
     //srcEntity is the helper table in both relationships
     BXEntityDescription* entity = [[object objectID] entity];
     BXEntityDescription* dstEntity = nil;

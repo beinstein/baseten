@@ -171,16 +171,16 @@
 {
     //FIXME: make this a little bit better (userInfo etc.)
     [[BXException exceptionWithName: NSInternalInconsistencyException 
-                                      reason: @"Attempted to treat a to-one relationship as a to-many one."
-                                    userInfo: nil] raise];
+                             reason: @"Attempted to treat a to-one relationship as a to-many one."
+                           userInfo: nil] raise];
 }
 
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject error: (NSError **) error
 {
     //FIXME: make this a little bit better (userInfo etc.)
     [[BXException exceptionWithName: NSInternalInconsistencyException 
-                                      reason: @"Attempted to treat a to-one relationship as a to-many one."
-                                    userInfo: nil] raise];    
+                             reason: @"Attempted to treat a to-one relationship as a to-many one."
+                           userInfo: nil] raise];    
 }
 
 @end
