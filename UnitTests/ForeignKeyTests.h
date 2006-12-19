@@ -51,5 +51,6 @@
 - (void) many: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
 - (void) one: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity;
 - (void) one: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2;
+- (void) many: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2;
 
 @end

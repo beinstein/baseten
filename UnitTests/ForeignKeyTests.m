@@ -293,13 +293,23 @@
     MKCAssertTrue ([[object objectID] entity] == entity2);
 }
 
-//FIXME: make each of the tests a method which accepts one or two entity arguments
-//Then make tests for tables and views which call these methods
-
 - (void) testMTM
 {
+    [self many: mtmtest1 toMany: mtmtest2];
+}
+
+- (void) testMTMView
+{
+    [self many: mtmtest1v toMany: mtmtest2v];
+}
+
+- (void) many: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2
+{
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"mtmrel1"];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"mtmrel1"];
+    
     NSError* error = nil;
-    NSArray* res = [context executeFetchForEntity: mtmtest1 withPredicate: nil error: &error];
+    NSArray* res = [context executeFetchForEntity: entity1 withPredicate: nil error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (4 == [res count]);
     
@@ -308,17 +318,21 @@
     
     TSEnumerate (object, e, [res objectEnumerator])
     {
+        MKCAssertTrue ([[object objectID] entity] == entity1);
+        
         NSSet* foreignObjects = [object valueForKey: @"mtmrel1"];
         MKCAssertNotNil (foreignObjects);
         if ([@"d1" isEqualToString: [object valueForKey: @"value1"]])
         {
             MKCAssertTrue (1 == [foreignObjects count]);
             BXDatabaseObject* foreignObject = [foreignObjects anyObject];
-            
+            MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
+
             MKCAssertEqualObjects ([foreignObject valueForKey: @"value2"], @"d2");
             NSSet* objects = [foreignObject valueForKey: @"mtmrel1"];
             MKCAssertTrue (1 == [objects count]);
             BXDatabaseObject* backRef = [objects anyObject];
+            MKCAssertTrue ([[backRef objectID] entity] == entity1);
             MKCAssertEqualObjects ([backRef valueForKey: @"value1"], @"d1");
         }
         else
@@ -330,16 +344,23 @@
             
             TSEnumerate (foreignObject, e, [foreignObjects objectEnumerator])
             {
+                MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
                 NSArray* objects = [foreignObject valueForKey: @"mtmrel1"];
                 MKCAssertNotNil (objects);
                 MKCAssertTrue (3 == [objects count]);
                 
                 NSSet* values1 = [objects valueForKey: @"value1"];
                 MKCAssertEqualObjects (values1, expected1);
+                
+                TSEnumerate (backRef, e, [objects objectEnumerator])
+                    MKCAssertTrue ([[backRef objectID] entity] == entity1);
             }
         }
     }
 }
+
+//FIXME: make each of the tests a method which accepts one or two entity arguments
+//Then make tests for tables and views which call these methods
 
 - (void) testModMTO
 {

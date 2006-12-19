@@ -185,7 +185,19 @@
 
 - (NSString *) nameFromEntity: (BXEntityDescription *) entity
 {
-    NSAssert ([[self entities] containsObject: entity], nil);
+#ifndef NS_BLOCK_ASSERTIONS
+    if (NO == [[self entities] containsObject: entity])
+    {
+        BOOL ok = NO;
+        TSEnumerate (currentEntity, e, [[self entities] objectEnumerator])
+        {
+            ok = [entity hasAncestor: currentEntity];
+            if (YES == ok)
+                break;
+        }
+        NSAssert2 (YES == ok, @"Expected %@ to be one of %@ or to have one of them as an ancestor.", entity, [self entities]);
+    }
+#endif
     return [self name];
 }
 
