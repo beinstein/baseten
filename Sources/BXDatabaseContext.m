@@ -41,6 +41,7 @@
 #import "BXDatabaseObject.h"
 #import "BXEntityDescription.h"
 #import "BXDatabaseObjectID.h"
+#import "BXDatabaseObjectIDPrivate.h"
 #import "BXConstants.h"
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXException.h"

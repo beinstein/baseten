@@ -28,6 +28,7 @@
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseObjectID.h"
+#import "BXDatabaseObjectIDPrivate.h"
 #import "BXConstants.h"
 #import "BXDatabaseContext.h"
 #import "BXException.h"

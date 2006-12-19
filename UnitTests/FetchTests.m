@@ -30,6 +30,7 @@
 #import "MKCSenTestCaseAdditions.h"
 
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXDatabaseObjectIDPrivate.h>
 
 
 @interface BXDatabaseObject (BXKVC)

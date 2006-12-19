@@ -1,5 +1,5 @@
 //
-// BXDatabaseObjectID.h
+// BXDatabaseObjectIDPrivate.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,39 +26,20 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <BaseTen/BXConstants.h>
-
 @class BXEntityDescription;
-@class BXDatabaseContext;
 @class BXPropertyDescription;
 
-@interface BXDatabaseObjectID : NSObject {
-    BOOL                        mRegistered;
-    unsigned int                mHash;
-    NSURL*                      mURIRepresentation;
-    BXEntityDescription*     mEntity;
-    NSMutableDictionary*        mPkeyFValues;
-    enum BXModificationType  mLastModificationType;
-}
-- (BXEntityDescription *) entity;
-- (NSURL *) URIRepresentation;
-- (NSPredicate *) predicate;
+#import <Foundation/Foundation.h>
+#import <BaseTen/BXDatabaseObjectID.h>
 
-- (BOOL) isEqual: (id) anObject;
 
-- (NSArray *) primaryKeyFields;
-- (NSDictionary *) primaryKeyFieldValues;
+@interface BXDatabaseObjectID (PrivateMethods)
++ (id) IDWithEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) aDict;
+- (id) initWithURI: (NSURL *) anURI;
+- (id) initWithEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) aDict;
 
-- (id) objectForKey: (id) aKey;
-- (id) objectsForKeys: (NSArray *) keys;
+- (void) setLastModificationType: (enum BXModificationType) aType;
+- (enum BXModificationType) lastModificationType;
+- (void) replaceValuesWith: (NSDictionary *) aDict;
+- (BXPropertyDescription *) propertyNamed: (NSString *) aName;
 @end
-
-
-@interface BXDatabaseObjectID (NSCoding) <NSCoding>
-@end
-
-
-@interface BXDatabaseObjectID (NSCopying) <NSCopying>
-@end
-

@@ -27,6 +27,7 @@
 //
 
 #import <BaseTen/BXDatabaseObjectID.h>
+#import <BaseTen/BXDatabaseObjectIDPrivate.h>
 #import <BaseTen/BXDatabaseAdditions.h>
 #import <BaseTen/BXEntityDescription.h>
 #import <BaseTen/BXDatabaseContext.h>
@@ -53,139 +54,6 @@ static TSNonRetainedObjectSet* gObjectIDs;
         tooLate = YES;
         gObjectIDs = [[TSNonRetainedObjectSet alloc] init];
     }
-}
-
-/** \name Creating object IDs */
-//@{
-/** A convenience method */
-+ (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) aDict
-{
-    return [[[self class] alloc] initWithEntity: aDesc primaryKeyFields: aDict];
-}
-
-/** 
- * The designated initializer.
- * \param   aDesc   The entity.
- * \param   aDict   An NSDictionary in which the keys are BXPropertyDescriptions.
- * \throw   NSException named NSInternalInconsistencyException in case some of the required 
- *          parameters were missing or invalid.
- */
-- (id) initWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) aDict
-{
-    if ((self = [super init]))
-    {
-        if (nil == aDesc || 0 == [aDict count])
-        {
-            //FIXME: also check that the keys are BXPropertyDescriptions.
-            NSString* reason = @"Primary key values were not set.";
-            if (nil == aDesc)
-                reason = @"Entity was nil.";
-            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                self,   kBXObjectIDKey,
-                aDesc,  kBXEntityDescriptionKey,
-                aDict,  kBXPrimaryKeyFieldsKey,
-                nil];
-            NSException* exception = [NSException exceptionWithName: NSInternalInconsistencyException
-                                                             reason: reason
-                                                           userInfo: userInfo];
-            [exception raise];
-        }
-        
-        mRegistered = NO;
-        mHash = 0;
-        mEntity = [aDesc copy];
-        mPkeyFValues = [aDict mutableCopy];
-        mLastModificationType = kBXNoModification;
-        
-        //Only single instance allowed
-        id anID = [gObjectIDs member: self];
-        NSAssert2 ([gObjectIDs containsObject: self] ? nil != anID : YES, 
-                   @"gObjectIDs contains the current objectID but it could not be found."
-                   " \n\tself: \t%@ \n\tgObjectIDs: \t%@",
-                   self, gObjectIDs);
-        if (nil == anID)
-        {
-            [gObjectIDs addObject: self];
-            mRegistered = YES;
-            [mEntity registerObjectID: self];
-        }
-        else
-        {
-            [self release];
-            self = [anID retain];
-        }
-    }
-    return self;
-}
-
-/** Create an object identifier from an NSURL */
-- (id) initWithURI: (NSURL *) anURI
-{
-    NSString* absoluteURI = [anURI absoluteString];
-    NSString* query = [anURI query];
-    NSString* path = [anURI path];
-    
-    NSArray* pathComponents = [path pathComponents];
-    unsigned int count = [pathComponents count];
-    NSString* tableName = [pathComponents objectAtIndex: count - 1];
-    NSString* schemaName = [pathComponents objectAtIndex: count - 2];
-    NSString* dbAddress = [absoluteURI substringToIndex: [absoluteURI length] - ([tableName length] + 1 + [query length])];
-    BXEntityDescription* entityDesc = [BXEntityDescription entityWithURI: [NSURL URLWithString: dbAddress]
-                                                                         table: tableName
-                                                                      inSchema: schemaName];
-    
-    NSMutableDictionary* pkeyDict = [NSMutableDictionary dictionary];
-    NSScanner* queryScanner = [NSScanner scannerWithString: query];
-    while (NO == [queryScanner isAtEnd])
-    {
-        NSString* key = nil;
-        NSString* type = nil;
-        id value = nil;
-        
-        [queryScanner scanUpToString: @"," intoString: &key];
-        [queryScanner scanString: @"," intoString: NULL];
-        [queryScanner scanUpToString: @"=" intoString: &type];
-        [queryScanner scanString: @"=" intoString: NULL];
-        
-        unichar c = [type characterAtIndex: 0];
-        switch (c)
-        {
-            case 's':
-                [queryScanner scanUpToString: @"&" intoString: &value];
-                break;
-            case 'n':
-            {
-                NSDecimal dec;
-                [queryScanner scanDecimal: &dec];
-                value = [NSDecimalNumber decimalNumberWithDecimal: dec];
-                break;
-            }
-            case 'd':
-            default:
-            {
-                NSString* encodedString = nil;
-                [queryScanner scanUpToString: @"&" intoString: &encodedString];
-                NSData* archivedData = [encodedString BXURLDecodedData];
-                value = [NSUnarchiver unarchiveObjectWithData: archivedData];
-                break;
-            }
-        }
-        BXPropertyDescription* propertyDesc = [BXPropertyDescription propertyWithName: key entity: entityDesc];
-        [pkeyDict setObject: value forKey: propertyDesc];
-        
-        [queryScanner scanUpToString: @"&" intoString: NULL];
-        [queryScanner scanString: @"&" intoString: NULL];
-    }
-    return [self initWithEntity: entityDesc
-               primaryKeyFields: pkeyDict];
-}
-//@}
-
-- (id) init
-{
-    //We need either an URI or an entity and primary key fields
-    [self release];
-    return nil;
 }
 
 - (NSString *) description
@@ -447,6 +315,145 @@ static TSNonRetainedObjectSet* gObjectIDs;
 
 
 @implementation BXDatabaseObjectID (PrivateMethods)
+
+/** 
+ * \internal
+ * \name Creating object IDs */
+//@{
+/** A convenience method */
++ (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) aDict
+{
+    return [[[self class] alloc] initWithEntity: aDesc primaryKeyFields: aDict];
+}
+
+/** 
+ * \internal
+ * The designated initializer.
+ * \param   aDesc   The entity.
+ * \param   aDict   An NSDictionary in which the keys are BXPropertyDescriptions.
+ * \throw   NSException named NSInternalInconsistencyException in case some of the required 
+ *          parameters were missing or invalid.
+ */
+- (id) initWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) aDict
+{
+    if ((self = [super init]))
+    {
+        if (nil == aDesc || 0 == [aDict count])
+        {
+            //FIXME: also check that the keys are BXPropertyDescriptions.
+            NSString* reason = @"Primary key values were not set.";
+            if (nil == aDesc)
+                reason = @"Entity was nil.";
+            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                self,   kBXObjectIDKey,
+                aDesc,  kBXEntityDescriptionKey,
+                aDict,  kBXPrimaryKeyFieldsKey,
+                nil];
+            NSException* exception = [NSException exceptionWithName: NSInternalInconsistencyException
+                                                             reason: reason
+                                                           userInfo: userInfo];
+            [exception raise];
+        }
+        
+        mRegistered = NO;
+        mHash = 0;
+        mEntity = [aDesc copy];
+        mPkeyFValues = [aDict mutableCopy];
+        mLastModificationType = kBXNoModification;
+        
+        //Only single instance allowed
+        id anID = [gObjectIDs member: self];
+        NSAssert2 ([gObjectIDs containsObject: self] ? nil != anID : YES, 
+                   @"gObjectIDs contains the current objectID but it could not be found."
+                   " \n\tself: \t%@ \n\tgObjectIDs: \t%@",
+                   self, gObjectIDs);
+        if (nil == anID)
+        {
+            [gObjectIDs addObject: self];
+            mRegistered = YES;
+            [mEntity registerObjectID: self];
+        }
+        else
+        {
+            [self release];
+            self = [anID retain];
+        }
+    }
+    return self;
+}
+
+/** 
+ * \internal
+ * Create an object identifier from an NSURL 
+ */
+- (id) initWithURI: (NSURL *) anURI
+{
+    NSString* absoluteURI = [anURI absoluteString];
+    NSString* query = [anURI query];
+    NSString* path = [anURI path];
+    
+    NSArray* pathComponents = [path pathComponents];
+    unsigned int count = [pathComponents count];
+    NSString* tableName = [pathComponents objectAtIndex: count - 1];
+    NSString* schemaName = [pathComponents objectAtIndex: count - 2];
+    NSString* dbAddress = [absoluteURI substringToIndex: [absoluteURI length] - ([tableName length] + 1 + [query length])];
+    BXEntityDescription* entityDesc = [BXEntityDescription entityWithURI: [NSURL URLWithString: dbAddress]
+                                                                   table: tableName
+                                                                inSchema: schemaName];
+    
+    NSMutableDictionary* pkeyDict = [NSMutableDictionary dictionary];
+    NSScanner* queryScanner = [NSScanner scannerWithString: query];
+    while (NO == [queryScanner isAtEnd])
+    {
+        NSString* key = nil;
+        NSString* type = nil;
+        id value = nil;
+        
+        [queryScanner scanUpToString: @"," intoString: &key];
+        [queryScanner scanString: @"," intoString: NULL];
+        [queryScanner scanUpToString: @"=" intoString: &type];
+        [queryScanner scanString: @"=" intoString: NULL];
+        
+        unichar c = [type characterAtIndex: 0];
+        switch (c)
+        {
+            case 's':
+                [queryScanner scanUpToString: @"&" intoString: &value];
+                break;
+            case 'n':
+            {
+                NSDecimal dec;
+                [queryScanner scanDecimal: &dec];
+                value = [NSDecimalNumber decimalNumberWithDecimal: dec];
+                break;
+            }
+            case 'd':
+            default:
+            {
+                NSString* encodedString = nil;
+                [queryScanner scanUpToString: @"&" intoString: &encodedString];
+                NSData* archivedData = [encodedString BXURLDecodedData];
+                value = [NSUnarchiver unarchiveObjectWithData: archivedData];
+                break;
+            }
+        }
+        BXPropertyDescription* propertyDesc = [BXPropertyDescription propertyWithName: key entity: entityDesc];
+        [pkeyDict setObject: value forKey: propertyDesc];
+        
+        [queryScanner scanUpToString: @"&" intoString: NULL];
+        [queryScanner scanString: @"&" intoString: NULL];
+    }
+    return [self initWithEntity: entityDesc
+               primaryKeyFields: pkeyDict];
+}
+//@}
+
+- (id) init
+{
+    //We need either an URI or an entity and primary key fields
+    [self release];
+    return nil;
+}
 
 - (void) replaceValuesWith: (NSDictionary *) aDict
 {

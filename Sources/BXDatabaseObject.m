@@ -34,6 +34,7 @@
 #import "BXDatabaseContext.h"
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseObjectID.h"
+#import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXEntityDescription.h"
 #import "BXConstants.h"

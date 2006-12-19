@@ -45,6 +45,7 @@
 		5339AB950A7542ED00994B1A /* BXException.h in Headers */ = {isa = PBXBuildFile; fileRef = 5339AB910A7542EC00994B1A /* BXException.h */; };
 		5339AB960A7542ED00994B1A /* BXException.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339AB920A7542EC00994B1A /* BXException.m */; };
 		533A91590A0B5AAC00E46C4E /* BXAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B872800A0A4CEC007315BC /* BXAbstractDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5347BB520B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53596CB90A37147C009C39E9 /* BaseTen.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADD8309ED21EF004A13C3 /* BaseTen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53596CBA0A37147C009C39E9 /* BXDatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301300B09D437030037C485 /* BXDatabaseContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53596CBB0A37147D009C39E9 /* BXDatabaseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 5301300C09D437030037C485 /* BXDatabaseContext.m */; };
@@ -226,6 +227,7 @@
 		533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectStatusInfo.m; path = Sources/BXObjectStatusInfo.m; sourceTree = "<group>"; };
 		5339AB910A7542EC00994B1A /* BXException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXException.h; path = Sources/BXException.h; sourceTree = "<group>"; };
 		5339AB920A7542EC00994B1A /* BXException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXException.m; path = Sources/BXException.m; sourceTree = "<group>"; };
+		5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectIDPrivate.h; path = Sources/BXDatabaseObjectIDPrivate.h; sourceTree = "<group>"; };
 		53596CF50A3714AC009C39E9 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xml; name = datatypeassociations.plist; path = Dependencies/PGTS/Framework/datatypeassociations.plist; sourceTree = "<group>"; };
 		5368D60F0A3711C800D136DC /* BaseTen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537E98370AAF538B00542F9C /* BXContainerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXContainerProxy.h; path = Sources/BXContainerProxy.h; sourceTree = "<group>"; };
@@ -343,6 +345,7 @@
 				530132D709D45F9B0037C485 /* BXDatabaseObject.h */,
 				530132D809D45F9B0037C485 /* BXDatabaseObject.m */,
 				5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */,
+				5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */,
 				5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */,
 				533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */,
 				533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */,
@@ -484,6 +487,7 @@
 				537E98810AAF71D000542F9C /* BXSetRelationProxy.h in Headers */,
 				53B3F38E0AD63A95003E807B /* BXSetHelperTableRelationProxy.h in Headers */,
 				53A75FF00B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */,
+				5347BB520B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
