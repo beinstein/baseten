@@ -980,5 +980,5 @@ END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving (OID) FROM PUBLIC;
 
-GRANT baseten TO basetenuser;
+GRANT basetenread TO basetenuser;
 COMMIT; -- Functions
