@@ -38,12 +38,11 @@ static TSNonRetainedObjectSet* gObjectIDs;
 
 
 /**
-    A unique identifier for a database object
-
-    This class is not thread-safe, i.e. 
-    if methods of a BXDatabaseObjectID instance will be called from 
-    different threads the result is undefined.
-*/
+ * A unique identifier for a database object.
+ * This class is not thread-safe, i.e. 
+ * if methods of a BXDatabaseObjectID instance will be called from 
+ * different threads the result is undefined.
+ */
 @implementation BXDatabaseObjectID
 
 + (void) initialize
