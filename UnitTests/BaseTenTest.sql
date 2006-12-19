@@ -52,9 +52,9 @@ INSERT INTO "Pkeytest" VALUES (2, 'b');
 INSERT INTO "Pkeytest" VALUES (3, 'c');
 
 
-CREATE SCHEMA fkeytest;
-GRANT USAGE ON SCHEMA fkeytest TO PUBLIC;
-SET search_path TO fkeytest;
+CREATE SCHEMA "Fkeytest";
+GRANT USAGE ON SCHEMA "Fkeytest" TO PUBLIC;
+SET search_path TO "Fkeytest";
 
 -- A simple many-to-one relationship
 CREATE TABLE test1 (
@@ -190,7 +190,7 @@ SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_names
     WHERE c.relname IN (
             'test1', 'test2', 'ototest1', 'ototest2', 'mtmtest1', 'mtmtest2', 'mtmrel1',
             'mtocollectiontest1', 'mtocollectiontest2'
-        ) AND n.nspname = 'fkeytest' AND c.relnamespace = n.oid;
+        ) AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 
 SET search_path TO public;

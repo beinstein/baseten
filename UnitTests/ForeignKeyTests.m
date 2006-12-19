@@ -43,12 +43,12 @@
     [context setLogsQueries: NO];
     MKCAssertNotNil (context);
     
-    test1 = [context entityForTable: @"test1" inSchema: @"fkeytest"];
-    test2 = [context entityForTable: @"test2" inSchema: @"fkeytest"];
-    ototest1 = [context entityForTable: @"ototest1" inSchema: @"fkeytest"];
-    ototest2 = [context entityForTable: @"ototest2" inSchema: @"fkeytest"];
-    mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"fkeytest"];
-    mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"fkeytest"];
+    test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest"];
+    test2 = [context entityForTable: @"test2" inSchema: @"Fkeytest"];
+    ototest1 = [context entityForTable: @"ototest1" inSchema: @"Fkeytest"];
+    ototest2 = [context entityForTable: @"ototest2" inSchema: @"Fkeytest"];
+    mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"Fkeytest"];
+    mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"Fkeytest"];
 
     MKCAssertNotNil (test1);
     MKCAssertNotNil (test2);
@@ -63,12 +63,12 @@
     MKCAssertEqualObjects ([mtmtest1 name], @"mtmtest1");
     MKCAssertEqualObjects ([mtmtest2 name], @"mtmtest2");
 
-    test1v = [context entityForTable: @"test1_v" inSchema: @"fkeytest"];
-    test2v = [context entityForTable: @"test2_v" inSchema: @"fkeytest"];
-    ototest1v = [context entityForTable: @"ototest1_v" inSchema: @"fkeytest"];
-    ototest2v = [context entityForTable: @"ototest2_v" inSchema: @"fkeytest"];
-    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"fkeytest"];
-    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"fkeytest"];
+    test1v = [context entityForTable: @"test1_v" inSchema: @"Fkeytest"];
+    test2v = [context entityForTable: @"test2_v" inSchema: @"Fkeytest"];
+    ototest1v = [context entityForTable: @"ototest1_v" inSchema: @"Fkeytest"];
+    ototest2v = [context entityForTable: @"ototest2_v" inSchema: @"Fkeytest"];
+    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest"];
+    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest"];
     
     MKCAssertNotNil (test1v);
     MKCAssertNotNil (test2v);

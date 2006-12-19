@@ -43,8 +43,8 @@
     [context setLogsQueries: NO];
     MKCAssertNotNil (context);
     
-    mtocollectiontest1 = [context entityForTable: @"mtocollectiontest1" inSchema: @"fkeytest"];
-    mtocollectiontest2 = [context entityForTable: @"mtocollectiontest2" inSchema: @"fkeytest"];
+    mtocollectiontest1 = [context entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest"];
+    mtocollectiontest2 = [context entityForTable: @"mtocollectiontest2" inSchema: @"Fkeytest"];
     MKCAssertNotNil (mtocollectiontest1);
     MKCAssertNotNil (mtocollectiontest2);
     MKCAssertEqualObjects ([mtocollectiontest1 name], @"mtocollectiontest1");
