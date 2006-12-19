@@ -1036,6 +1036,8 @@ extern void BXInit ()
                                           entity: (BXEntityDescription *) anotherEntity
                                            types: (enum BXRelationshipType) bitmap
 {
+    NSLog (@"RelationshipsByNameWithEntity:entity:types");
+    
     //Normalize
     if (nil == anEntity)
     {

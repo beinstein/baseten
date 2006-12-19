@@ -418,6 +418,7 @@ static NSMutableSet* gViewEntities;
 - (void) setTargetView: (BXEntityDescription *) viewEntity 
   forRelationshipNamed: (NSString *) relationshipName
 {
+    //FIXME: This should be an exception rather than assertion
     NSAssert1 (nil == viewEntity || [viewEntity isView], 
                @"Expected to receive a view entity or nil (%@)", viewEntity);
     
@@ -492,8 +493,11 @@ static NSMutableSet* gViewEntities;
                @"Attempt to cache a relationship which this entity is not part of. \n\tEntity: %@ \n\tRelationship: %@",
                self, relationship);
     
+    //One-to-one and many-to-many replace many-to-one
     NSString* relname = [relationship nameFromEntity: self];
-    [mRelationships setObject: relationship forKey: relname];
+    id oldRelationship = [mRelationships objectForKey: relname];
+    if (nil == oldRelationship || [relationship isOneToOne] || [relationship isManyToMany])
+        [mRelationships setObject: relationship forKey: relname];
 }
 
 - (void) setFields: (NSArray *) aFields

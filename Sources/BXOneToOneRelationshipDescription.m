@@ -66,10 +66,13 @@
 
 - (int) isToManyFromEntity: (BXEntityDescription *) entity
 {
+#if 0
     int rval = -1;
     if ([relationship1 srcEntity] == entity || [relationship2 srcEntity] == entity)
         rval = 0;
     return rval;
+#endif
+    return 0;
 }
 
 - (id) resolveFrom: (BXDatabaseObject *) object error: (NSError **) error
@@ -145,6 +148,10 @@
     if ([relationship1 srcEntity] == entity)
         rval = [relationship1 name];
     else if ([relationship2 srcEntity] == entity)
+        rval = [relationship2 name];
+    else if ([entity hasAncestor: [relationship1 srcEntity]])
+        rval = [relationship1 name];
+    else if ([entity hasAncestor: [relationship2 srcEntity]])
         rval = [relationship2 name];
     
     return rval;

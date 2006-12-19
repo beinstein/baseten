@@ -105,7 +105,7 @@
 
 - (void) testMTO
 {
-    [self many: test2 toOne: nil];
+    [self many: test2 toOne: test1];
 }
 
 - (void) testMTOView
@@ -126,7 +126,7 @@
         MKCAssertNil (error);
         MKCAssertTrue (1 == [res count]);
     
-        [manyEntity setTargetView: oneEntity forRelationshipNamed: @"fkt1"];
+        [manyEntity setTargetView: ([oneEntity isView] ? oneEntity : nil) forRelationshipNamed: @"fkt1"];
         BXDatabaseObject* object = [res objectAtIndex: 0];
         BXDatabaseObject* foreignObject = [object valueForKey: @"fkt1"];
 
@@ -143,7 +143,7 @@
         {
             MKCAssertNotNil (foreignObject);
             //See that the object has the given entity
-            MKCAssertTrue (nil == oneEntity || [[foreignObject objectID] entity] == oneEntity);
+            MKCAssertTrue ([[foreignObject objectID] entity] == oneEntity);
             MKCAssertTrue ([@"11" isEqualToString: [foreignObject valueForKey: @"value"]]);
             MKCAssertTrue ([@"11" isEqualToString: [object valueForKeyPath: @"fkt1.value"]]);
         }
@@ -152,7 +152,7 @@
 
 - (void) testOTM
 {
-    [self one: test1 toMany: nil];
+    [self one: test1 toMany: test2];
 }
 
 - (void) testOTMView
@@ -189,7 +189,7 @@
     MKCAssertNotNil (rel);
     MKCAssertTrue ([rel isToManyFromEntity: oneEntity]);
         
-    [oneEntity setTargetView: manyEntity forRelationshipNamed: @"fkt1"];
+    [oneEntity setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"fkt1"];
     NSArray* foreignObjects = [rel resolveFrom: object to: [oneEntity targetForRelationship: rel] error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (2 == [foreignObjects count]);
@@ -198,7 +198,7 @@
     MKCAssertTrue ([values containsObject: @"22"]);    
     //See that the objects have the given entities
     TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
-        MKCAssertTrue (nil == manyEntity || [[currentObject objectID] entity] == manyEntity);
+        MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 
     foreignObjects = [object valueForKey: @"fkt1"];
     MKCAssertNil (error);
@@ -208,7 +208,7 @@
     MKCAssertTrue ([values containsObject: @"22"]);
     //See that the objects have the given entities
     TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
-        MKCAssertTrue (nil == manyEntity || [[currentObject objectID] entity] == manyEntity);
+        MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 }
 
 - (void) testOTO
@@ -224,9 +224,21 @@
 - (void) one: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
 {
     NSError* error = nil;
-    NSDictionary* rels = [context relationshipsByNameWithEntity: entity1 entity: entity2];
-    MKCAssertTrue (0 < [rels count]);
-    id <BXRelationshipDescription> foobar = [rels objectForKey: @"bar"];
+    
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"bar"];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"foo"];
+    
+    //-[BXDatabaseContext relationshipsByNameWithEntity:entity:] doesn't 
+    //currently search the relationships recursively
+    id <BXRelationshipDescription> foobar = nil;
+    if ([entity1 isView] || [entity2 isView])
+        foobar = [entity1 relationshipNamed: @"bar" context: context];
+    else
+    {
+        NSDictionary* rels = [context relationshipsByNameWithEntity: entity1 entity: entity2];
+        MKCAssertTrue (0 < [rels count]);
+        foobar = [rels objectForKey: @"bar"];
+    }    
     MKCAssertNotNil (foobar);
     MKCAssertEqualObjects ([foobar nameFromEntity: entity2], @"foo");
     MKCAssertTrue ([foobar isOneToOne]);
@@ -243,13 +255,19 @@
         BXDatabaseObject* object = [res objectAtIndex: i];
         
         BXDatabaseObject* foreignObject  = [object valueForKey: @"bar"];
-        BXDatabaseObject* foreignObject2 = [foobar resolveFrom: object error: &error];
+        BXDatabaseObject* foreignObject2 = [foobar resolveFrom: object to: entity2 error: &error];
         MKCAssertNil (error);
-        MKCAssertEqualObjects (foreignObject, foreignObject2);
         
         BXDatabaseObject* object2 = [foreignObject valueForKey: @"foo"];
-        BXDatabaseObject* object3 = [foobar resolveFrom: foreignObject error: &error];
+        BXDatabaseObject* object3 = [foobar resolveFrom: foreignObject to: entity1 error: &error];
         MKCAssertNil (error);
+        
+        MKCAssertTrue ([[foreignObject  objectID] entity] == entity2);
+        MKCAssertTrue ([[foreignObject2 objectID] entity] == entity2);
+        MKCAssertTrue ([[object  objectID] entity] == entity1);
+        MKCAssertTrue ([[object2 objectID] entity] == entity1);
+        MKCAssertTrue ([[object3 objectID] entity] == entity1);
+        MKCAssertEqualObjects (foreignObject, foreignObject2);
         MKCAssertEqualObjects (object, object2);
         MKCAssertEqualObjects (object2, object3);
 

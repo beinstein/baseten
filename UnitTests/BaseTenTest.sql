@@ -91,15 +91,14 @@ CREATE TABLE ototest1 (
     id INTEGER PRIMARY KEY
 );
 
-CREATE VIEW ototest1_v AS SELECT * FROM ototest1;
-
 CREATE TABLE ototest2 (
     id INTEGER PRIMARY KEY,
     r1 INTEGER CONSTRAINT foo REFERENCES ototest1 (id)
 );
 
-CREATE VIEW ototest2_v AS SELECT * FROM ototest2;
 ALTER TABLE ototest1 ADD COLUMN r2 INTEGER CONSTRAINT bar REFERENCES ototest2 (id);
+CREATE VIEW ototest1_v AS SELECT * FROM ototest1;
+CREATE VIEW ototest2_v AS SELECT * FROM ototest2;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1 TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1_v TO baseten_test_user;
