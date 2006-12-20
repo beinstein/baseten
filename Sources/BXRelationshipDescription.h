@@ -58,4 +58,6 @@
 
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                  to: (BXEntityDescription *) targetEntity error: (NSError **) error;
+- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
+                    to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 @end

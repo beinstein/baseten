@@ -90,4 +90,5 @@
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject error: (NSError **) error;
 /** Set either a to-one or a to-many relationship's target depending on the relationship type and the reference object. */
 - (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error;
+- (NSArray *) subrelationships;
 @end

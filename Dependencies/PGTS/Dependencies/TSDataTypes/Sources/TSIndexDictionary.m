@@ -143,4 +143,15 @@ static int IndexCmp (const void *a, const void *b)
     return NSAllMapTableValues (map);
 }
 
+- (unsigned int) indexOfObject: (id) anObject
+{
+    TSIndexEnumerator* e = [self indexEnumerator];
+    unsigned int currentIndex = 0;
+    while (NSNotFound != (currentIndex = [e nextIndex]))
+    {
+        if ([[self objectAtIndex: currentIndex] isEqual: anObject])
+            break;
+    }
+    return currentIndex;
+}
 @end

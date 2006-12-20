@@ -51,6 +51,9 @@
     MKCAssertEqualObjects ([mtocollectiontest2 name], @"mtocollectiontest2");
 }
 
+//FIXME: make each of the tests a method which accepts one or two entity arguments
+//Then make tests for tables and views which call these methods
+
 - (void) testModMTOCollection
 {
     NSError* error = nil;

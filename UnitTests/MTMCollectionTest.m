@@ -51,6 +51,9 @@
     MKCAssertEqualObjects ([mtmtest2 name], @"mtmtest2");
 }
 
+//FIXME: make each of the tests a method which accepts one or two entity arguments
+//Then make tests for tables and views which call these methods
+
 - (void) testModMTM
 {
     //Once again, try to modify an object and see if another object receives the modification.

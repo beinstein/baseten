@@ -41,6 +41,7 @@
     NSDate* lastCheck;
     BOOL observesSelfGenerated;
     NSArray* sentNotifications;
+    id delegate;
 }
 
 - (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
@@ -60,5 +61,8 @@
 
 - (PGTSConnection *) connection;
 - (void) setConnection: (PGTSConnection *) aConnection;
+
+- (BOOL) shouldHandleNotification: (NSNotification *) notification;
+- (void) setDelegate: (id) anObject;
 
 @end

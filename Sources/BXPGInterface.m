@@ -330,7 +330,7 @@ static unsigned int SavepointIndex ()
         }
         
         //Commit only if autocommitting
-        [self internalCommit];
+        [self internalCommit];        
     }
     @catch (PGTSQueryException* exception)
     {
@@ -563,7 +563,9 @@ static unsigned int SavepointIndex ()
         NSAssert2 (nil == lockedObjectID || [objectIDs containsObject: lockedObjectID], 
                    @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
                    objectID, lockedObjectID);
-        [self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
+        //Notify only if we are not updating a view.
+        if (NO == [entity isView])
+            [self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
                 
         //Send the UPDATE query
         queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@", 
@@ -573,12 +575,7 @@ static unsigned int SavepointIndex ()
         //Commit only if autocommitting
         [self internalCommit]; 
         rval = objectIDs;
-        
-#if 0
-        [self setLockedKey: nil];
-        [self setLockedObjectID: nil];                
-#endif
-        
+                
         //Check if pkey was updated
         NSDictionary* pkeyDict = nil;
         if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
@@ -681,19 +678,16 @@ static unsigned int SavepointIndex ()
         NSAssert2 (nil == lockedObjectID || [objectIDs containsObject: lockedObjectID], 
                    @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
                    objectID, lockedObjectID);
-        [self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];
+        //Notify only if we are not updating a view.
+        if (NO == [entity isView])
+            [self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];
         
         NSString* queryString = [NSString stringWithFormat: @"DELETE FROM %@ WHERE %@", name, whereClause];
         [connection executeQuery: queryString parameterArray: parameters];
         
         //Commit only if autocommitting
         [self internalCommit]; 
-        rval = objectIDs;
-              
-#if 0
-        [self setLockedKey: nil];
-        [self setLockedObjectID: nil];                
-#endif
+        rval = objectIDs;              
     }
     @catch (BXException* exception)
     {
@@ -1231,6 +1225,10 @@ static unsigned int SavepointIndex ()
         
         //Get and sort the primary key fields and execute the query
         NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
+        //For views, again. This might not be as safe as above.
+        if (nil == pkeyFields)
+            pkeyFields = [entity primaryKeyFields];
+        NSAssert (nil != pkeyFields, @"Expected to know the primary key.");
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSString* query = [NSString stringWithFormat: format, funcname, SavepointIndex(),
             [pkeyFNames componentsJoinedByString: @"\", \""], [entity BXPGQualifiedName: notifyConnection], whereClause];
@@ -1508,5 +1506,4 @@ static unsigned int SavepointIndex ()
     if (0 < [ids count])
         [context deletedObjectsFromDatabase: ids];
 }
-
 @end

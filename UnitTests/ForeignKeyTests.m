@@ -359,30 +359,43 @@
     }
 }
 
-//FIXME: make each of the tests a method which accepts one or two entity arguments
-//Then make tests for tables and views which call these methods
-
 - (void) testModMTO
 {
+    [self modMany: test2 toOne: test1];
+}
+
+- (void) testModMTOView
+{
+    [self modMany: test2v toOne: test1v];
+}
+
+- (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
+{
+    [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: @"fkt1"];
+    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"fkt1"];
+
     //Change reference in foreignObject from id=1 to id=2
     NSError* error = nil;
     BOOL autocommits = [context autocommits];
     [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
     
-    NSArray* res = [context executeFetchForEntity: test2 
+    NSArray* res = [context executeFetchForEntity: manyEntity
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                             error: &error];
     MKCAssertNotNil (res);
     STAssertNil (error, [error localizedDescription]);
+    MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* foreignObject = [res objectAtIndex: 0];
-    
-    res = [context executeFetchForEntity: test1
+    MKCAssertTrue ([[foreignObject objectID] entity] == manyEntity);
+
+    res = [context executeFetchForEntity: oneEntity
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 2"]
                                             error: &error];
     STAssertNil (error, [error localizedDescription]);
+    MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    
+    MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
     MKCAssertFalse ([[foreignObject valueForKey: @"fkt1"] isEqual: object]);
     [foreignObject setValue: object forKey: @"fkt1"];
@@ -394,26 +407,43 @@
 
 - (void) testModOTM
 {
-    //Create and object to test1 and add referencing objects to test2
+    [self modOne: test1 toMany: test2];
+}
+
+//FIXME: Enable this after INSERT... RETURNING modifications have been made.
+#if 0
+- (void) testModOTMView
+{
+    [self modOne: test1v toMany: test2v];
+}
+#endif
+
+- (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity
+{
+    //Create an object to oneEntity and add referencing objects to manyEntity
     NSError* error = nil;
     
     BOOL autocommits = [context autocommits];
     [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
     
-    BXDatabaseObject* object = [context createObjectForEntity: test1 withFieldValues: nil error: &error];
+    [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: @"fkt1"];
+    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"fkt1"];
+    
+    BXDatabaseObject* object = [context createObjectForEntity: oneEntity withFieldValues: nil error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (object);
-    
     STAssertTrue (0 == [[object valueForKey: @"fkt1"] count], [[object valueForKey: @"fkt1"] description]);
+    MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
     const int count = 2;
     NSMutableSet* foreignObjects = [NSMutableSet setWithCapacity: count];
     for (int i = 0; i < count; i++)
     {
-        BXDatabaseObject* foreignObject = [context createObjectForEntity: test2 withFieldValues: nil error: &error];
+        BXDatabaseObject* foreignObject = [context createObjectForEntity: manyEntity withFieldValues: nil error: &error];
         STAssertNil (error, [error localizedDescription]);
         MKCAssertNotNil (foreignObject);
+        MKCAssertTrue ([[foreignObject objectID] entity] == manyEntity);
         [foreignObjects addObject: foreignObject];
     }
     MKCAssertTrue (count == [foreignObjects count]);
@@ -431,29 +461,50 @@
 
 - (void) testModOTO
 {
-    //Change a reference in ototest1 and ototest2
+    [self modOne: ototest1 toOne: ototest2];
+}
+
+- (void) testModOTOView
+{
+    [self modOne: ototest1v toOne: ototest2v];
+}
+
+- (void) modOne: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
+{
+    //Change a reference in entity1 and entity2
+    
+    MKCAssertTrue ([[entity1 relationshipNamed: @"bar" context: context] isOneToOne]);
+    MKCAssertTrue ([[entity2 relationshipNamed: @"foo" context: context] isOneToOne]);
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"bar"];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"foo"];
+    
     NSError* error = nil;
     BOOL autocommits = [context autocommits];
+    BOOL logs = [context logsQueries];
     [context setAutocommits: NO];
+    [context setLogsQueries: YES];
     MKCAssertTrue (NO == [context autocommits]);
 
-    NSArray* res = [context executeFetchForEntity: ototest1
+    NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                             error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
+    MKCAssertTrue ([[object objectID] entity] == entity1);
     
-    res = [context executeFetchForEntity: ototest2
+    res = [context executeFetchForEntity: entity2
                            withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                    error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* foreignObject1 = [res objectAtIndex: 0];
+    MKCAssertTrue ([[foreignObject1 objectID] entity] == entity2);
     
     BXDatabaseObject* foreignObject2 = [object valueForKey: @"bar"];
     MKCAssertFalse ([foreignObject1 isEqual: foreignObject2]);
     MKCAssertFalse (foreignObject1 == foreignObject2);
+    MKCAssertTrue ([[foreignObject2 objectID] entity] == entity2);
     
     [object setValue: foreignObject1 forKey: @"bar"];
     NSNumber* n1 = [NSNumber numberWithInt: 1];
@@ -466,6 +517,7 @@
 
     [context rollback];
     [context setAutocommits: autocommits];
+    [context setLogsQueries: logs];
 }
     
 @end

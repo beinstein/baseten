@@ -190,4 +190,8 @@
                            userInfo: nil] raise];    
 }
 
+- (NSArray *) subrelationships
+{
+    return [NSArray arrayWithObjects: relationship1, relationship2, nil];
+}
 @end

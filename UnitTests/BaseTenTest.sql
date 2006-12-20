@@ -61,19 +61,25 @@ CREATE TABLE test1 (
     id SERIAL PRIMARY KEY,
     value VARCHAR (255) NULL
 );
-GRANT USAGE ON SEQUENCE test1_id_seq TO PUBLIC;
-
 CREATE VIEW test1_v AS SELECT * FROM test1;
+CREATE RULE "insert_test1" AS ON INSERT TO test1_v DO INSTEAD 
+    INSERT INTO test1 (value) VALUES (NEW.value) RETURNING *;
+CREATE RULE "update_test1" AS ON UPDATE TO test1_v DO INSTEAD 
+    UPDATE test1 SET id = NEW.id, value = NEW.value WHERE id = OLD.id;
 
 CREATE TABLE test2 (
     id SERIAL PRIMARY KEY,
     value VARCHAR (255) NULL,
     fkt1id INTEGER CONSTRAINT fkt1 REFERENCES test1 (id)
 );
-GRANT USAGE ON SEQUENCE test2_id_seq TO PUBLIC;
-
 CREATE VIEW test2_v AS SELECT * FROM test2;
+CREATE RULE "insert_test2" AS ON INSERT TO test2_v DO INSTEAD
+    INSERT INTO test2 (value, fkt1id) VALUES (NEW.value, NEW.fkt1id) RETURNING *;
+CREATE RULE "update_test2" AS ON UPDATE TO test2_v DO INSTEAD 
+    UPDATE test2 SET id = NEW.id, value = NEW.value, fkt1id = NEW.fkt1id WHERE id = OLD.id;
 
+GRANT USAGE ON SEQUENCE test1_id_seq TO PUBLIC;
+GRANT USAGE ON SEQUENCE test2_id_seq TO PUBLIC;
 GRANT SELECT, INSERT, UPDATE, DELETE ON test1 TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON test1_v TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON test2 TO baseten_test_user;
@@ -95,10 +101,17 @@ CREATE TABLE ototest2 (
     id INTEGER PRIMARY KEY,
     r1 INTEGER CONSTRAINT foo REFERENCES ototest1 (id)
 );
-
 ALTER TABLE ototest1 ADD COLUMN r2 INTEGER CONSTRAINT bar REFERENCES ototest2 (id);
 CREATE VIEW ototest1_v AS SELECT * FROM ototest1;
 CREATE VIEW ototest2_v AS SELECT * FROM ototest2;
+CREATE RULE "insert_ototest1" AS ON INSERT TO ototest1_v DO INSTEAD
+    INSERT INTO ototest1 DEFAULT VALUES RETURNING *;
+CREATE RULE "insert_ototest2" AS ON INSERT TO ototest2_v DO INSTEAD
+    INSERT INTO ototest2 (r1) VALUES (NEW.r1) RETURNING *;
+CREATE RULE "update_ototest1" AS ON UPDATE TO ototest1_v DO INSTEAD 
+    UPDATE ototest1 SET id = NEW.id, r2 = NEW.r2 WHERE id = OLD.id;
+CREATE RULE "update_ototest2" AS ON UPDATE TO ototest2_v DO INSTEAD 
+    UPDATE ototest2 SET id = NEW.id, r1 = NEW.r1 WHERE id = OLD.id;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1 TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1_v TO baseten_test_user;
@@ -122,6 +135,10 @@ CREATE TABLE mtmtest1 (
 GRANT USAGE ON SEQUENCE mtmtest1_id_seq TO PUBLIC;
 
 CREATE VIEW mtmtest1_v AS SELECT * FROM mtmtest1;
+CREATE RULE "insert_mtmtest1" AS ON INSERT TO mtmtest1_v DO INSTEAD
+    INSERT INTO mtmtest1 (value1) VALUES (NEW.value1) RETURNING *;
+CREATE RULE "update_mtmtest1" AS ON UPDATE TO mtmtest1_v DO INSTEAD 
+    UPDATE mtmtest1 SET id = NEW.id, value1 = NEW.value1 WHERE id = OLD.id;
 
 CREATE TABLE mtmtest2 (
     id SERIAL PRIMARY KEY,
@@ -130,6 +147,10 @@ CREATE TABLE mtmtest2 (
 GRANT USAGE ON SEQUENCE mtmtest2_id_seq TO PUBLIC;
 
 CREATE VIEW mtmtest2_v AS SELECT * FROM mtmtest2;
+CREATE RULE "insert_mtmtest2" AS ON INSERT TO mtmtest2_v DO INSTEAD
+    INSERT INTO mtmtest2 (value2) VALUES (NEW.value2) RETURNING *;
+CREATE RULE "update_mtmtest2" AS ON UPDATE TO mtmtest2_v DO INSTEAD 
+    UPDATE mtmtest2 SET id = NEW.id, value2 = NEW.value2 WHERE id = OLD.id;
 
 CREATE TABLE mtmrel1 (
     id1 INTEGER REFERENCES mtmtest1 (id),

@@ -121,13 +121,16 @@ NullArray (unsigned int count)
 - (int) isToManyFromEntity: (BXEntityDescription *) entity
 {
     //Many-to-one
-    //FIXME: to support views, this should check ancestors as well with the -hasAncestor: method
     int rval = -1;
     if (0 < [srcProperties count])
     {
         if ([self srcEntity] == entity)
             rval = 0;
         else if ([self dstEntity] == entity)
+            rval = 1;
+        else if ([entity hasAncestor: [self srcEntity]])
+            rval = 0;
+        else if ([entity hasAncestor: [self dstEntity]])
             rval = 1;
     }
     return rval;
@@ -302,16 +305,24 @@ NullArray (unsigned int count)
 
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
 {
+    [self removeObjects: objectSet referenceFrom: refObject to: [self srcEntity] error: error];
+}
+
+- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
+                    to: (BXEntityDescription *) targetEntity error: (NSError **) error
+{
     NSAssert (nil != refObject, @"Expected refObject not to be nil");
     BXDatabaseObjectID* refID = [refObject objectID];
     BXEntityDescription* refEntity = [refID entity];
+    if (nil == targetEntity)
+        targetEntity = [self srcEntity];
     NSAssert (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
 
     //to-many
     //Remove objects by setting fkey columns to null. If the objectSet was nil, then remove all objects.
-    NSPredicate* predicate = [NSPredicate BXAndPredicateWithProperties: srcProperties
-                                                     matchingProperties: [refObject objectsForKeys: dstProperties]
-                                                                   type: NSEqualToPredicateOperatorType];
+    NSPredicate* predicate = [NSPredicate BXAndPredicateWithProperties: [targetEntity correspondingProperties: srcProperties]
+                                                    matchingProperties: [refObject objectsForKeys: dstProperties]
+                                                                  type: NSEqualToPredicateOperatorType];
     if (nil != objectSet)
     {
         predicate = [NSCompoundPredicate andPredicateWithSubpredicates: [NSArray arrayWithObjects:
@@ -319,7 +330,7 @@ NullArray (unsigned int count)
     }
     NSArray* keys = [srcProperties valueForKey: @"name"];
     NSArray* updatedValues = NullArray ([keys count]);
-    [[refObject databaseContext] executeUpdateEntity: [self srcEntity]
+    [[refObject databaseContext] executeUpdateEntity: targetEntity
                                       withDictionary: [NSDictionary dictionaryWithObjects: updatedValues forKeys: keys]
                                            predicate: predicate
                                                error: error];
@@ -340,7 +351,9 @@ NullArray (unsigned int count)
             //to-one
             NSAssert ([target isKindOfClass: [BXDatabaseObject class]], 
                       @"Expected to receive an object target for a to-one relationship.");
-            NSAssert ([updatedEntity isEqual: refEntity], @"Expected to be modifying the correct entity.");
+            NSAssert ([refEntity isView] || [updatedEntity isEqual: refEntity], @"Expected to be modifying the correct entity.");
+            //This is needed for views.
+            updatedEntity = refEntity;
             values = [target objectsForKeys: dstProperties];
             predicate = [[refObject objectID] predicate];
             break;
@@ -350,9 +363,13 @@ NullArray (unsigned int count)
                 target = [NSSet setWithObject: target];
             if (nil != target)
                 values = [refObject objectsForKeys: dstProperties];
+                
+            //Again, this is needed for views
+            if (nil != target)
+                updatedEntity = [[[target anyObject] objectID] entity];
             predicate = [target BXOrPredicateForObjects];
             //All other rows will be updated not to have the value in referencing fields.
-            [self removeObjects: nil referenceFrom: refObject error: error];
+            [self removeObjects: nil referenceFrom: refObject to: updatedEntity error: error];
             break;
         case -1:
         default:
@@ -363,7 +380,7 @@ NullArray (unsigned int count)
     {
         if (nil == values)
             values = NullArray ([dstProperties count]);
-    
+        
         NSDictionary* change = [NSDictionary dictionaryWithObjects: values forKeys: updatedKeys];
         [[refObject databaseContext] executeUpdateEntity: updatedEntity
                                           withDictionary: change
@@ -372,4 +389,8 @@ NullArray (unsigned int count)
     }
 }
 
+- (NSArray *) subrelationships
+{
+    return nil;
+}
 @end
