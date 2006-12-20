@@ -35,6 +35,7 @@
 #import "PGTSConstants.h"
 #import "PGTSTableInfo.h"
 #import "PGTSDatabaseInfo.h"
+#import "PGTSConnectionDelegate.h"
 
 
 //FIXME: change this so that being connection specific is actually enforced
@@ -178,6 +179,29 @@
         [connection release];
         connection = [aConnection retain];
     }
+}
+
+- (BOOL) shouldHandleNotification: (NSNotification *) notification
+{
+    BOOL rval = NO;
+    if (nil == delegate)
+    {
+        NSDictionary* userInfo = [notification userInfo];
+        NSNumber* backendPID = [NSNumber numberWithInt: [connection backendPID]];
+        if (observesSelfGenerated || NO == [[userInfo objectForKey: kPGTSBackendPIDKey] isEqualToNumber: backendPID])
+            rval = YES;
+    }
+    else
+    {
+        rval = [delegate PGTSNotifierShouldHandleNotification: notification
+                                             fromTableWithOid: [notificationNames indexOfObject: [notification name]]];
+    }
+    return rval;
+}
+
+- (void) setDelegate: (id) anObject
+{
+    delegate = anObject; 
 }
 
 @end

@@ -48,6 +48,7 @@
 - (unsigned int *) indexVectorSortedByValue;
 - (unsigned int *) indexVectorSortedByValueUsingFunction: (int (*)(const void *, const void *)) compar;
 - (void) makeObjectsPerformSelector: (SEL) aSelector withObject: (id) anObject;
+- (unsigned int) indexOfObject: (id) anObject;
 
 @end
 

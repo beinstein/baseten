@@ -130,11 +130,9 @@
 
 - (void) handleNotification: (NSNotification *) notification
 {
-    NSAssert (nil != connection, nil);
-    NSDictionary* userInfo = [notification userInfo];
-    NSNumber* backendPID = [NSNumber numberWithInt: [connection backendPID]];
-    if (observesSelfGenerated || NO == [[userInfo objectForKey: kPGTSBackendPIDKey] isEqualToNumber: backendPID])
+    if ([self shouldHandleNotification: notification])
     {
+        NSAssert (nil != connection, nil);
         [self checkInModificationTableNamed: [notification name]];
     }
 }

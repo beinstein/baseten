@@ -27,6 +27,7 @@
 //
 
 #import <PGTS/PGTSConstants.h>
+#import <PGTS/postgresql/libpq-fe.h>
 
 /** See PGTSConstants.h */
 /** See PGTSConstants.m */
@@ -79,4 +80,9 @@ PGTS_EXPORT SEL kPGTSDidReconnectSelector;
 
 /** Formal part of the protocol */
 @protocol PGTSConnectionDelegate <NSObject>
+@end
+
+
+@interface NSObject (PGTSNotifierDelegate)
+- (BOOL) PGTSNotifierShouldHandleNotification: (NSNotification *) notification fromTableWithOid: (Oid) oid;
 @end

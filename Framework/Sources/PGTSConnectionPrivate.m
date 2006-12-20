@@ -403,7 +403,6 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
         
         if (YES == rval && CONNECTION_OK == connectionStatus)
         {
-            LogQuery (@"Connected to backend %d", [self backendPID]);
             PQsetnonblocking (connection, 0); //We don't want to call PQsendquery etc. multiple times
             PQsetClientEncoding (connection, "UNICODE"); //Use UTF-8
             //FIXME: set other things, such as the date format, as well
@@ -433,14 +432,9 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     NSLog (@"workerEnd");
 }
 
-- (void) logQuery: (id) format, ...
+- (void) logQuery: (NSString *) query parameters: (NSArray *) parameters
 {
-    va_list ap; 
-    va_start (ap, format);
-    fprintf (stdout, "(%p) ", self);
-    vfprintf (stdout, [[format description] UTF8String], ap);
-    fprintf (stdout, "\n");
-    va_end (ap);
+    fprintf (stdout, "(%p) %s %s\n", self, [[query description] UTF8String], [[parameters description] UTF8String]);
 }
 
 - (void) logNotice: (id) anObject
