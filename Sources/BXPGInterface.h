@@ -64,6 +64,7 @@ enum BXPGQueryState
 
 @interface BXPropertyDescription (BXPGInterfaceAdditions)
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context;
+- (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
 @end
 
 

@@ -410,13 +410,10 @@
     [self modOne: test1 toMany: test2];
 }
 
-//FIXME: Enable this after INSERT... RETURNING modifications have been made.
-#if 0
 - (void) testModOTMView
 {
     [self modOne: test1v toMany: test2v];
 }
-#endif
 
 - (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity
 {

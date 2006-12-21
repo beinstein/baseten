@@ -92,6 +92,11 @@ static unsigned int SavepointIndex ()
 @end
 
 
+@interface NSArray (BXPGInterfaceAdditions)
+- (NSArray *) BXPGEscapedNames: (PGTSConnection *) connection;
+@end
+
+
 @implementation NSString (BXPGAdditions)
 - (NSArray *) BXPGKeyPathComponents
 {
@@ -121,8 +126,13 @@ static unsigned int SavepointIndex ()
 @implementation BXPropertyDescription (BXPGInterfaceAdditions)
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
 {
-    return [NSString stringWithFormat: @"%@.\"%@\"", 
-        [[self entity] BXPGQualifiedName: connection], [[self name] PGTSEscapedString: connection]];
+    return [NSString stringWithFormat: @"%@.%@", 
+        [[self entity] BXPGQualifiedName: connection], [self BXPGEscapedName: connection]];
+}
+
+- (NSString *) BXPGEscapedName: (PGTSConnection *) connection
+{
+    return [NSString stringWithFormat: @"\"%@\"", [[self name] PGTSEscapedString: connection]];
 }
 
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context
@@ -132,6 +142,22 @@ static unsigned int SavepointIndex ()
     return [self BXPGQualifiedName: connection];
 }
 @end
+
+
+@implementation NSArray (BXPGInterfaceAdditions)
+- (NSArray *) BXPGEscapedNames: (PGTSConnection *) connection
+{
+    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [self count]];
+    TSEnumerate (currentDesc, e, [self objectEnumerator])
+    {
+        NSAssert ([currentDesc isKindOfClass: [BXPropertyDescription class]],
+                  @"Expected to have only BXPropertyDescriptions.");
+        [rval addObject: [currentDesc BXPGEscapedName: connection]];
+    }
+    return rval;
+}
+@end
+
 
 
 @implementation PGTSForeignKeyDescription (BXPGInterfaceAdditions)
@@ -280,57 +306,39 @@ static unsigned int SavepointIndex ()
     PGTSResultSet* res = nil;
     id rval = nil;
     NSArray* fields = [valueDict allKeys];
-    NSArray* fieldNames = [fields valueForKey: @"name"];
+    NSArray* fieldNames = [fields BXPGEscapedNames: connection];
     NSArray* fieldValues = [valueDict objectsForKeys: fields notFoundMarker: nil];
     
     NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
     @try
     {
+        [self validateEntity: entity];
+        
         //If we are not autocommitting create a savepoint. Otherwise isolate until the created object has been retrieved.
         [self internalBegin];
         
         //Make the query
         NSString* queryFormat = nil;
         if (0 == [valueDict count])
-            queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ DEFAULT VALUES", [entity BXPGQualifiedName: connection]];
+            queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ DEFAULT VALUES RETURNING %%@", [entity BXPGQualifiedName: connection]];
         else
         {
-            queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ (%@) VALUES (%@)",
+            queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ (%@) VALUES (%@) RETURNING %%@",
                 [entity BXPGQualifiedName: connection], (nil == fieldNames ? @"" : [fieldNames componentsJoinedByString: @", "]), 
                 [NSString PGTSFieldAliases: [fieldNames count]]];
         }
-        
+        queryFormat = [NSString stringWithFormat: queryFormat, [[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
         res = [connection executeQuery: queryFormat parameterArray: fieldValues];
         
         //Get the modification
-        NSDictionary* lastModification = [self lastModificationForEntity: entity];
-        PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
-        NSSet* pkeyFields = [[table primaryKey] fields];
-        NSMutableArray* pkeyProperties = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
-        NSMutableArray* pkeyValues = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
-        NSDictionary* row = [lastModification valueForKey: kPGTSRowKey];
-        TSEnumerate (currentField, e, [pkeyFields objectEnumerator])
-        {
-            NSString* name = [currentField name];
-            [pkeyProperties addObject: [BXPropertyDescription propertyWithName: name entity: entity]];
-            [pkeyValues addObject: [row objectForKey: name]];
-        }
-        
-        NSPredicate* predicate = [NSCompoundPredicate BXAndPredicateWithProperties: pkeyProperties
-                                                                 matchingProperties: pkeyValues
-                                                                               type: NSEqualToPredicateOperatorType];
-        
-        if (nil != predicate)
-        {
-            NSArray* results = [self executeFetchForEntity: entity withPredicate: predicate 
-                                           returningFaults: NO excludingFields: nil 
-                                                     class: aClass error: error];
-            if (0 < [results count])
-                rval = [results objectAtIndex: 0];
-        }
-        
+        [res setRowClass: aClass];
+        [res advanceRow];
+        rval = [res currentRowAsObject];
+        NSAssert (YES == [rval registerWithContext: context entity: entity], @"Expected the newly created object not to be in memory yet.");
+        [rval faultKey: nil];
+
         //Commit only if autocommitting
-        [self internalCommit];        
+        [self internalCommit];
     }
     @catch (PGTSQueryException* exception)
     {
