@@ -9,7 +9,7 @@
 	<key>CFBundleIconFile</key>
 	<string>Palette5</string>
 	<key>CFBundleIdentifier</key>
-	<string>fi.karppinen.BaseTen.IBPalette</string>
+	<string>fi.karppinen.BaseTen.BaseTenPalette</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

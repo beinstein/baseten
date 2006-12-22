@@ -39,7 +39,7 @@
 
 /**
  * \page postgreSQLInstallation PostgreSQL installation
- * \li Get the latest PostgreSQL source release from http://www.postgresql.org/ftp/source. I used 8.1.4.
+ * \li Get the latest PostgreSQL source release from http://www.postgresql.org/ftp/source. I used 8.2.
  * \li Uncompress postgresql and run configure script
  * \li Configure, make, [sudo] make install. No special options are required, so e.g. 
  *     \c <tt>./configure --prefix=/opt/local/postgresql</tt> is enough.
