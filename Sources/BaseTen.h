@@ -39,39 +39,29 @@
 
 /**
  * \page postgreSQLInstallation PostgreSQL installation
- * \li Get the latest PostgreSQL source release from http://www.postgresql.org/ftp/source. I used 8.2.
- * \li Uncompress postgresql and run configure script
- * \li Configure, make, [sudo] make install. No special options are required, so e.g. 
- *     \c <tt>./configure --prefix=/opt/local/postgresql</tt> is enough.
- * \li It's usually a good idea to create separate user & group for PostgreSQL. Find unused GID & UID by running:\n
+ * \li Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.
+ * \li Uncompress, configure, make, [sudo] make install. No special options are required, so 
+ *     \c <tt>./configure && make && sudo make install</tt> is enough.
+ * \li It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.\n
+ * \li Make <tt>mysql</tt> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
  *     <tt>
- *         nireport / /users name uid\n
- *         nireport / /users name gui
+ *         sudo chown -R mysql:mysql /usr/local/pgsql\n
+ *         sudo -u mysql -s
  *     </tt>
- *     We'll assume that UID & GID 201 was unused.
- * \li Create PostgreSQL user & group:\n
+ * \li Initialize the PostgreSQL database folder. We'll use en_US.UTF-8 as the default locale:\n
+ *     <tt>/usr/local/pgsql/bin/initdb --locale en_US.UTF-8 -D /usr/local/pgsql/data</tt>
+ * \li Launch the PostgreSQL server itself:\n
  *     <tt>
- *         sudo niutil -create / /groups/postgres\n
- *         sudo niutil -createprop / /groups/postgres gid 201\n
- *         sudo niutil -create / /users/postgres\n
- *         sudo niutil -createprop / /users/postgres uid 201\n
- *         sudo niutil -createprop / /users/postgres gid 201\n
- *         sudo niutil -createprop / /users/postgres home /opt/local/postgresql\n
- *         sudo niutil -createprop / /users/postgres shell /bin/bash
+ *        /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data\n
+ *         -l /usr/local/pgsql/data/pg.log start
  *     </tt>
- * \li Make data directory for PG & chown it:\n
+ * \li Create a superuser account for yourself. This way, you don't have to sudo to mysql to create new databases and users.\n
+ *     <tt>/usr/local/pgsql/bin/createuser <your-short-user-name></tt>
+ * \li Exit the <tt>mysql</tt> sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
  *     <tt>
- *         sudo mkdir /opt/local/postgresql/data\n
- *         sudo chown -R postgres:postgres /opt/local/postgresql\n
- *         su - postgres
+ *        exit\n
+ *        /usr/local/pgsql/bin/createdb <your-short-user-name>
  *     </tt>
- * \li Init PG database. We'll use UTF-8 as default encoding for the template database here, 
- *     and en_US.UTF-8 locale as default locale:
- *     <tt>/opt/local/postgresql/bin/initdb --encoding UTF-8 --locale en_US.UTF-8 -D /opt/local/postgresql/data</tt>
- * \li Launch the PG server itself (postmaster):
- *     <tt>/opt/local/postgresql/bin/postmaster -D /opt/local/postgresql/data > /opt/local/postgresql/postgresql.log 2>&1 &</tt>
- * \li Create your database.
- *     <tt>/opt/local/postgresql/bin/createdb myDB</tt>
  */
  
 /**
@@ -80,13 +70,13 @@
  *     first cancel modification observing, then rename the table and finally prepare it again.
  * \li Changing tables' primary keys after having them prepared for modification observing will not work. Use the method 
  *     described above.
- * \li Practically all public classes are not thread-safe, so thread safety must be enforced externally if it's required.
+ * \li Practically all public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
  *     Furthermore, all queries should be performed from the main thread. Exceptions to this are BXDatabaseObject 
  *     and BXDatabaseObjectID the thread-safe methods of which have been documented.
  * \li NSCoding has not been implemented for BXDatabaseObject.
  * \li BaseTen is currently suitable for inserting small data sets into the database. 
  *     Insertion of larger data sets (thousands of objects) takes considerable amount of time and 
- *     may cause 'out of shared memory' errors if executed without autocommit flag.
+ *     may cause 'out of shared memory' errors if executed without the autocommit flag.
  *     Fetching large data sets should be fast enough.  
  * \li Timestamp parsing causes accuracy to be lost, if timestamp's precision is greater than 3. Workaround is to cast 
  *     timestamps to timestamp (3) using views or otherwise. This concerns timestamps with time zones as well.
