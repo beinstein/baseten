@@ -90,11 +90,6 @@
     return rval;
 }
 
-- (id) resolveFrom: (BXDatabaseObject *) object error: (NSError **) error
-{
-    return [self resolveFrom: object to: nil error: error];
-}
-
 - (id) resolveFrom: (BXDatabaseObject *) object to: (BXEntityDescription *) givenDST error: (NSError **) error
 {
     //srcEntity is the helper table in both relationships
@@ -133,6 +128,11 @@
         }
     }
     
+    //FIXME: this is a bit of a kludge, since entities should be validated by the database interface.
+    //Perhaps the db interface should have the method -correspondingProperties:.
+    BXDatabaseContext* context = [object databaseContext];
+    [context validateEntity: entity];
+    [context validateEntity: dstEntity];
     //Make the join using predicates: src --> helper --> dst
     //Use values only in place of src
     NSPredicate* helperToSRCPredicate = 
@@ -149,7 +149,6 @@
         [NSArray arrayWithObjects: helperToSRCPredicate, helperToDSTPredicate, nil]];
     
     //Finally execute the query
-    BXDatabaseContext* context = [object databaseContext];
     id rval = [context executeFetchForEntity: dstEntity
                                withPredicate: compound
                              returningFaults: YES
@@ -232,12 +231,13 @@
 {
     //FIXME: come up with a better way to handle the error
     //FIXME: this should be inside a transaction
-    [self removeObjects: nil referenceFrom: refObject error: error];
+    [self removeObjects: nil referenceFrom: refObject to: nil error: error];
     if (NULL == error || NULL != *error)
-        [self addObjects: collection referenceFrom: refObject error: error];
+        [self addObjects: collection referenceFrom: refObject to: nil error: error];
 }
 
-- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
+- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject
+                 to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     //FIXME: add view support
     NORMALIZE_NAMES (refObject, refRel, targetRel);
@@ -274,7 +274,8 @@
     }
 }
 
-- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
+- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject
+                    to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     //FIXME: add view support
     NORMALIZE_NAMES (refObject, refRel, targetRel);

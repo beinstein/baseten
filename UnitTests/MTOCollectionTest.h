@@ -35,6 +35,11 @@
     BXDatabaseContext* context;
     BXEntityDescription* mtocollectiontest1;
     BXEntityDescription* mtocollectiontest2;
+    BXEntityDescription* mtocollectiontest1v;
+    BXEntityDescription* mtocollectiontest2v;
 }
+
+- (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
+- (void) modMany2: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
 
 @end

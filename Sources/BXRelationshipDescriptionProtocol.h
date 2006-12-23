@@ -52,18 +52,6 @@
 - (NSString *) nameFromEntity: (BXEntityDescription *) entity;
 /**
  * Resolve the relationship from the given object.
- * \param       object      The object which is used as the source. Objects from the destination entity
- *                          will be returned.
- * \param       error       If an error occurs, the error parameter will be set. If NULL, an BXException will be
- *                          raised on error.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *                          and the query failed.
- * \return                  Either a BXDatabaseObject or an NSArray of them, if the relationship 
- *                          is to-many from the given object.
- */
-- (id) resolveFrom: (BXDatabaseObject *) object error: (NSError **) error;
-/**
- * Resolve the relationship from the given object.
  * Returned objects are from the target entity, which should be a view that is based on an entity this relationship
  * knows of.
  * \param       object       The object which is used as the source. Objects from the destination entity
@@ -85,9 +73,11 @@
 - (NSSet *) entities;
 
 /** Add objects to a to-many relationship. */
-- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject error: (NSError **) error;
+- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
+                 to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 /** Remove objects from a to-many relationship. */
-- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject error: (NSError **) error;
+- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject
+                    to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 /** Set either a to-one or a to-many relationship's target depending on the relationship type and the reference object. */
 - (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error;
 - (NSArray *) subrelationships;

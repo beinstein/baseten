@@ -74,7 +74,7 @@
     [anInvocation invokeWithTarget: mContainer];
 }
 
-- (void) BXAddedObjects: (NSNotification *) notification
+- (void) addedObjects: (NSNotification *) notification
 {
     if (NO == mChanging)
     {
@@ -105,7 +105,7 @@
         [mContainer addObject: currentObject];
 }
 
-- (void) BXDeletedObjects: (NSNotification *) notification
+- (void) deletedObjects: (NSNotification *) notification
 {
     if (NO == mChanging)
     {
@@ -131,7 +131,7 @@
         [mContainer removeObject: currentObject];
 }
 
-- (void) BXUpdatedObjects: (NSNotification *) notification
+- (void) updatedObjects: (NSNotification *) notification
 {
     if (NO == mChanging)
     {
@@ -203,9 +203,9 @@
         NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
         [nc removeObserver: self];
         
-        SEL addSelector = @selector (BXAddedObjects:);
-        SEL delSelector = @selector (BXDeletedObjects:);
-        SEL updSelector = @selector (BXUpdatedObjects:);
+        SEL addSelector = @selector (addedObjects:);
+        SEL delSelector = @selector (deletedObjects:);
+        SEL updSelector = @selector (updatedObjects:);
     
         [nc addObserver: self selector: addSelector name: kBXInsertNotification object: entity];
         [nc addObserver: self selector: delSelector name: kBXDeleteNotification object: entity];                    

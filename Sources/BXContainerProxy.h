@@ -53,8 +53,8 @@
 - (void) addedObjectsWithIDs: (NSArray *) ids;
 - (void) removedObjectsWithIDs: (NSArray *) ids;
 - (void) updatedObjectsWithIDs: (NSArray *) ids;
-- (void) BXAddedObjects: (NSNotification *) notification;
-- (void) BXDeletedObjects: (NSNotification *) notification;
-- (void) BXUpdatedObjects: (NSNotification *) notification;
+- (void) addedObjects: (NSNotification *) notification;
+- (void) deletedObjects: (NSNotification *) notification;
+- (void) updatedObjects: (NSNotification *) notification;
 
 @end

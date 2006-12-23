@@ -1337,4 +1337,8 @@ extern void BXInit ()
     return objectIDs;
 }
 
+- (void) validateEntity: (BXEntityDescription *) entity
+{
+    [mDatabaseInterface validateEntity: entity];
+}
 @end

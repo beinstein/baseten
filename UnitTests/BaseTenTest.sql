@@ -188,16 +188,29 @@ INSERT INTO mtmrel1 (id1, id2) VALUES (4, 4);
 CREATE TABLE mtocollectiontest1 (
     id SERIAL PRIMARY KEY
 );
-GRANT USAGE ON mtocollectiontest1_id_seq TO PUBLIC;
+CREATE VIEW mtocollectiontest1_v AS SELECT * FROM mtocollectiontest1;
+CREATE RULE "insert_mtocollectiontest1" AS ON INSERT TO mtocollectiontest1_v DO INSTEAD
+    INSERT INTO mtocollectiontest1 DEFAULT VALUES RETURNING *;
+CREATE RULE "update_mtocollectiontest1" AS ON UPDATE TO mtocollectiontest1_v DO INSTEAD 
+    UPDATE mtocollectiontest1 SET id = NEW.id WHERE id = OLD.id;
 
 CREATE TABLE mtocollectiontest2 (
     id SERIAL PRIMARY KEY,
     mid INTEGER CONSTRAINT m REFERENCES mtocollectiontest1 (id)
 );
+CREATE VIEW mtocollectiontest2_v AS SELECT * FROM mtocollectiontest2;
+CREATE RULE "insert_mtocollectiontest2" AS ON INSERT TO mtocollectiontest2_v DO INSTEAD
+    INSERT INTO mtocollectiontest2 DEFAULT VALUES RETURNING *;
+CREATE RULE "update_mtocollectiontest2" AS ON UPDATE TO mtocollectiontest2_v DO INSTEAD 
+    UPDATE mtocollectiontest2 SET id = NEW.id, mid = NEW.mid WHERE id = OLD.id;
+
+GRANT USAGE ON mtocollectiontest1_id_seq TO PUBLIC;
 GRANT USAGE ON mtocollectiontest2_id_seq TO PUBLIC;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON mtocollectiontest1 TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON mtocollectiontest2 TO baseten_test_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON mtocollectiontest1_v TO baseten_test_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON mtocollectiontest2_v TO baseten_test_user;
 
 INSERT INTO mtocollectiontest1 DEFAULT VALUES;
 INSERT INTO mtocollectiontest1 DEFAULT VALUES;

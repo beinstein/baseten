@@ -384,6 +384,7 @@ static NSMutableSet* gViewEntities;
     BOOL rval = NO;
     if (nil == mViewEntities)
     {
+        NSAssert (NO == [entities containsObject: self], @"A view cannot be based on itself.");
         mViewEntities = [entities retain];
         [gViewEntities addObject: self];
         [mViewEntities makeObjectsPerformSelector: @selector (addDependentView:) withObject: self];
@@ -562,6 +563,7 @@ static NSMutableSet* gViewEntities;
         else
         {
             //If not, give the corresponding properties.
+            NSAssert (nil != mFields, @"Expected to know fileds.");
             rval = [NSMutableArray arrayWithCapacity: [properties count]];
             NSArray* fNames = [mFields valueForKey: @"name"];
             NSArray* pkeyFNames = [mPkeyFields valueForKey: @"name"];

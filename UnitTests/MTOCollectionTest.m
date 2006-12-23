@@ -40,7 +40,7 @@
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context setAutocommits: NO];
-    [context setLogsQueries: NO];
+    [context setLogsQueries: YES];
     MKCAssertNotNil (context);
     
     mtocollectiontest1 = [context entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest"];
@@ -49,20 +49,41 @@
     MKCAssertNotNil (mtocollectiontest2);
     MKCAssertEqualObjects ([mtocollectiontest1 name], @"mtocollectiontest1");
     MKCAssertEqualObjects ([mtocollectiontest2 name], @"mtocollectiontest2");
+    
+    mtocollectiontest1v = [context entityForTable: @"mtocollectiontest1_v" inSchema: @"Fkeytest"];
+    mtocollectiontest2v = [context entityForTable: @"mtocollectiontest2_v" inSchema: @"Fkeytest"];
+    MKCAssertNotNil (mtocollectiontest1v);
+    MKCAssertNotNil (mtocollectiontest2v);
+    MKCAssertEqualObjects ([mtocollectiontest1v name], @"mtocollectiontest1_v");
+    MKCAssertEqualObjects ([mtocollectiontest2v name], @"mtocollectiontest2_v");
+    [mtocollectiontest1v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest1]];
+    [mtocollectiontest2v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest2]];
+    [mtocollectiontest1v setPrimaryKeyFields: [[mtocollectiontest1 primaryKeyFields] valueForKey: @"name"]];
+    [mtocollectiontest2v setPrimaryKeyFields: [[mtocollectiontest2 primaryKeyFields] valueForKey: @"name"]];
 }
 
-//FIXME: make each of the tests a method which accepts one or two entity arguments
-//Then make tests for tables and views which call these methods
-
 - (void) testModMTOCollection
+{
+    [self modMany: mtocollectiontest2 toOne: mtocollectiontest1];
+}
+
+- (void) testModMTOCollectionView
+{
+    [self modMany: mtocollectiontest2v toOne: mtocollectiontest1v];
+}
+
+- (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     NSError* error = nil;
     BOOL autocommits = [context autocommits];
     [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
     
+    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"m"];
+    [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"m"];
+    
     //Execute a fetch
-    NSArray* res = [context executeFetchForEntity: mtocollectiontest1
+    NSArray* res = [context executeFetchForEntity: oneEntity
                                     withPredicate: nil error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (2 == [res count]);
@@ -75,14 +96,15 @@
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);
-    
+    MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
+
     //Remove the referenced objects
     [object setValue: nil forKey: @"m"];
     MKCAssertTrue (0 == [foreignObjects count]);
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     //Get the objects from the second table
-    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: mtocollectiontest2
+    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: manyEntity
                                                             withPredicate: nil error: &error]];
     MKCAssertNil (error);
     MKCAssertTrue (3 == [objects2 count]);
@@ -100,13 +122,26 @@
 
 - (void) testModMTOCollection2
 {
+    [self modMany2: mtocollectiontest2 toOne: mtocollectiontest1];
+}
+
+- (void) testModMTOCollectionView2
+{
+    [self modMany2: mtocollectiontest2v toOne: mtocollectiontest1v];
+}
+
+- (void) modMany2: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
+{
     NSError* error = nil;
     BOOL autocommits = [context autocommits];
     [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
 
+    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"m"];
+    [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"m"];
+
     //Execute a fetch
-    NSArray* res = [context executeFetchForEntity: mtocollectiontest1
+    NSArray* res = [context executeFetchForEntity: oneEntity
                                     withPredicate: nil error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (2 == [res count]);
@@ -118,6 +153,10 @@
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);
+    MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
+    MKCAssertTrue ([[object objectID] entity] == oneEntity);
+    MKCAssertTrue (0 == [foreignObjects count]  || [[[foreignObjects  anyObject] objectID] entity] == manyEntity);
+    MKCAssertTrue (0 == [foreignObjects2 count] || [[[foreignObjects2 anyObject] objectID] entity] == manyEntity);
  
     //Remove the referenced objects (another means than in the previous method)
     [foreignObjects removeAllObjects];
@@ -125,7 +164,7 @@
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     //Get the objects from the second table
-    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: mtocollectiontest2
+    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: manyEntity
                                                             withPredicate: nil error: &error]];
     MKCAssertNil (error);
     MKCAssertTrue (3 == [objects2 count]);
@@ -149,3 +188,4 @@
 }
 
 @end
+ 

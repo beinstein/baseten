@@ -136,17 +136,13 @@ NullArray (unsigned int count)
     return rval;
 }
 
-- (id) resolveFrom: (BXDatabaseObject *) object error: (NSError **) error
-{
-    return [self resolveFrom: object to: nil error: error];
-}
-
 //FIXME: targetEntity is probably always [[[object objectID] entity] targetForRelationship: self]
 //unless it's nil, which is resolved in the method.
 - (id) resolveFrom: (BXDatabaseObject *) object to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     id rval = nil;
     BXEntityDescription* entity = [[object objectID] entity];    
+    BXDatabaseContext* context = [object databaseContext];
     
     //Decide, what kind of query will be sent
     BOOL manyToOne = NO;
@@ -175,20 +171,27 @@ NullArray (unsigned int count)
         {
             if (nil == targetEntity)
                 targetEntity = [self dstEntity];
+            //FIXME: a bit kludgy
+            [context validateEntity: targetEntity];
             NSArray* properties = [targetEntity correspondingProperties: [self dstProperties]];
 
             //Many (one)-to-one
             NSDictionary* primaryKeyFields = [NSDictionary dictionaryWithObjects: values forKeys: properties];
             BXDatabaseObjectID* anID = [BXDatabaseObjectID IDWithEntity: targetEntity primaryKeyFields: primaryKeyFields];
         
-            rval = [[object databaseContext] objectWithID: anID error: error];
+            rval = [context objectWithID: anID error: error];
         }
     }
     else if (YES == oneToMany)
     {
+        //FIXME: a bit kludgy
+        [context validateEntity: entity];
         NSArray* values = [object objectsForKeys: [entity correspondingProperties: [self dstProperties]]];
         if (nil == targetEntity)
             targetEntity = [self srcEntity];
+        //FIXME: this is a bit of a kludge, since entities should be validated by the database interface.
+        //Perhaps the db interface should have the method -correspondingProperties:.
+        [context validateEntity: targetEntity];
         NSArray* properties = [targetEntity correspondingProperties: [self srcProperties]];
 
         //one-to-many
@@ -196,12 +199,12 @@ NullArray (unsigned int count)
                                                                  matchingProperties: properties
                                                                                type: NSEqualToPredicateOperatorType];
         
-        rval = [[object databaseContext] executeFetchForEntity: targetEntity
-                                                 withPredicate: predicate
-                                               returningFaults: YES
-                                               excludingFields: nil
-                                                 returnedClass: [BXSetRelationProxy class]
-                                                         error: error];
+        rval = [context executeFetchForEntity: targetEntity
+                                withPredicate: predicate
+                              returningFaults: YES
+                              excludingFields: nil
+                                returnedClass: [BXSetRelationProxy class]
+                                        error: error];
         [rval setFilterPredicate: predicate];
         [rval setRelationship: self];
         [rval setReferenceObject: object];
@@ -279,15 +282,12 @@ NullArray (unsigned int count)
     return rval;
 }
 
-//FIXME: the four methods below should probably use correspondingProperties.
-- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
-{
-    [self addObjects: objectSet referenceFrom: refObject to: [self srcEntity] error: error];
-}
-
+//FIXME: the three methods below should probably use correspondingProperties.
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                  to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 {
+    if (nil == targetEntity)
+        targetEntity = [self srcEntity];
     NSAssert (nil != refObject, @"Expected refObject not to be nil");
     BXEntityDescription* refEntity = [[refObject objectID] entity];
     NSAssert (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
@@ -303,14 +303,11 @@ NullArray (unsigned int count)
     }
 }
 
-- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
-{
-    [self removeObjects: objectSet referenceFrom: refObject to: [self srcEntity] error: error];
-}
-
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                     to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
+    if (nil == targetEntity)
+        targetEntity = [self srcEntity];
     NSAssert (nil != refObject, @"Expected refObject not to be nil");
     BXDatabaseObjectID* refID = [refObject objectID];
     BXEntityDescription* refEntity = [refID entity];

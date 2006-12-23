@@ -75,11 +75,6 @@
     return 0;
 }
 
-- (id) resolveFrom: (BXDatabaseObject *) object error: (NSError **) error
-{
-    return [self resolveFrom: object to: nil error: error];
-}
-
 - (id) resolveFrom: (BXDatabaseObject *) object to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     id rval = nil;
@@ -174,7 +169,8 @@
     }    
 }
 
-- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject error: (NSError **) error
+- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
+                 to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     //FIXME: make this a little bit better (userInfo etc.)
     [[BXException exceptionWithName: NSInternalInconsistencyException 
@@ -182,7 +178,8 @@
                            userInfo: nil] raise];
 }
 
-- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject error: (NSError **) error
+- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject
+                    to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     //FIXME: make this a little bit better (userInfo etc.)
     [[BXException exceptionWithName: NSInternalInconsistencyException 

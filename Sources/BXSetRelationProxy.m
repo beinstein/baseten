@@ -29,6 +29,8 @@
 #import "BXSetRelationProxy.h"
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXDatabaseAdditions.h"
+#import "BXDatabaseObjectID.h"
+#import "BXDatabaseObject.h"
 
 
 //Sadly, this is needed to receive the set proxy
@@ -109,15 +111,19 @@
     {
         case NSKeyValueChangeInsertion:
         {
-            [mRelationship addObjects: [change objectForKey: NSKeyValueChangeNewKey]
+            NSSet* objects = [change objectForKey: NSKeyValueChangeNewKey];
+            [mRelationship addObjects: objects
                         referenceFrom: mReferenceObject
+                                   to: [[[objects anyObject] objectID] entity]
                                 error: NULL];
             break;
         }
         case NSKeyValueChangeRemoval:
         {
-            [mRelationship removeObjects: [change objectForKey: NSKeyValueChangeOldKey]
+            NSSet* objects = [change objectForKey: NSKeyValueChangeOldKey];
+            [mRelationship removeObjects: objects
                            referenceFrom: mReferenceObject
+                                      to: [[[objects anyObject] objectID] entity]
                                    error: NULL];
             break;
         }

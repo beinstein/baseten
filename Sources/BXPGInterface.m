@@ -983,16 +983,12 @@ static unsigned int SavepointIndex ()
     return NO;
 }
 
-@end
-
-
-@implementation BXPGInterface (Helpers)
 /**
- * \internal
+* \internal
  * Check that the entity exists.
  * Also tell the entity about the pkey and other fields.
  */
-- (PGTSTableInfo *) validateEntity: (BXEntityDescription *) entity
+- (id) validateEntity: (BXEntityDescription *) entity
 {
     PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
     PGTSTableInfo* tableInfo = [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
@@ -1026,8 +1022,8 @@ static unsigned int SavepointIndex ()
             if (nil == pkey)
             {
                 NSString* message = BXLocalizedString (@"noPrimaryKeyFmt", 
-                                                        @"There was no primary key for table %@ in schema %@.", 
-                                                        @"Error description format string");
+                                                       @"There was no primary key for table %@ in schema %@.", 
+                                                       @"Error description format string");
                 message = [NSString stringWithFormat: message, [tableInfo schemaName], [tableInfo name]];
                 NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                     self, kBXDatabaseContextKey,
@@ -1047,7 +1043,7 @@ static unsigned int SavepointIndex ()
                 TSEnumerate (currentFName, e, [pkeyFNames objectEnumerator])
                 {
                     BXPropertyDescription* desc = 
-                        [BXPropertyDescription propertyWithName: currentFName entity: entity];
+                    [BXPropertyDescription propertyWithName: currentFName entity: entity];
                     [pkeyPropertyDescs addObject: desc];
                 }
                 
@@ -1076,7 +1072,10 @@ static unsigned int SavepointIndex ()
     }
     return tableInfo;
 }
+@end
 
+
+@implementation BXPGInterface (Helpers)
 - (BOOL) observeIfNeeded: (BXEntityDescription *) entity
 {
     BOOL rval = NO;
@@ -1336,15 +1335,21 @@ static unsigned int SavepointIndex ()
 	}
 	
     NSError* placeholder = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];
-
-    NSAssert (NULL != error, @"Expected error to be set (was NULL)");
-    *error = placeholder;
+    
+    //NSAssert (NULL != error, @"Expected error to be set (was NULL)");
+    if (NULL == error)
+        [exception raise];
+    else
+        *error = placeholder;
 }
 
 - (void) packError: (NSError **) error exception: (NSException *) exception
 {
-    NSAssert (NULL != error, @"Expected error to be set (was NULL)");
-    *error = [[exception userInfo] objectForKey: kBXErrorKey];
+    //NSAssert (NULL != error, @"Expected error to be set (was NULL)");
+    if (NULL == error)
+        [exception raise];
+    else
+        *error = [[exception userInfo] objectForKey: kBXErrorKey];
 }
 
 - (NSDictionary *) lastModificationForEntity: (BXEntityDescription *) entity

@@ -103,4 +103,5 @@
 - (void) undo;
 //@}
 
+- (id) validateEntity: (BXEntityDescription *) entity;
 @end

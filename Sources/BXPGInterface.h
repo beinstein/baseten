@@ -121,7 +121,6 @@ enum BXPGQueryState
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey;
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey
                              status: (enum BXObjectStatus *) status;
-- (PGTSTableInfo *) validateEntity: (BXEntityDescription *) entity;
 @end
 
 

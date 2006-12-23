@@ -60,4 +60,5 @@ extern void BXInit ();
                            entity: (BXEntityDescription *) entity
                         predicate: (NSPredicate *) predicate
                             error: (NSError **) error;
+- (void) validateEntity: (BXEntityDescription *) anEntity;
 @end
