@@ -80,6 +80,7 @@
 - (void) unregisterObject: (BXDatabaseObject *) anObject;
 - (BXDatabaseObject *) registeredObjectWithID: (BXDatabaseObjectID *) objectID;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs;
+- (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs nullObjects: (BOOL) returnNullObjects;
 
 - (NSUndoManager *) undoManager;
 - (BOOL) setUndoManager: (NSUndoManager *) aManager;

@@ -263,7 +263,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
 
 /**
  * Primary key field values for the given keys.
- * At the moment calls NSDictionary's objectsForKeys:notFoundMarker: with nil as the second argument.
+ * At the moment calls NSDictionary's objectsForKeys:notFoundMarker: with the NSNull object as the second argument.
  * This method is thread-safe.
  * \param       keys        An NSArray of BXPropertyDescriptions
  */
@@ -272,7 +272,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
     id rval = nil;
     @synchronized (mPkeyFValues)
     {
-        rval = [mPkeyFValues objectsForKeys: keys notFoundMarker: nil];
+        rval = [mPkeyFValues objectsForKeys: keys notFoundMarker: [NSNull null]];
     }
     return rval;
 }
@@ -491,4 +491,13 @@ static TSNonRetainedObjectSet* gObjectIDs;
     return mLastModificationType;
 }
 
+- (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view
+{
+    NSAssert1 ([view isView], @"Expected given entity (%@) to be a view.", view);
+    
+    NSArray* keys = [view primaryKeyFields];
+    NSArray* myKeys = [[self entity] correspondingProperties: keys];
+    NSArray* values = [self objectsForKeys: myKeys];
+    return [[self class] IDWithEntity: view primaryKeyFields: [NSDictionary dictionaryWithObjects: values forKeys: keys]];
+}
 @end

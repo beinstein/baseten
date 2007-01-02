@@ -105,9 +105,6 @@
     
     [object setValue: value forKey: @"value"];
     [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
-    //FIXME: this doesn't work because in handleNotification: we check for backendPID.
-    //consider removing the check but also take the consequences into account. Will there be 
-    //unnecessary queries? In which situations?
     MKCAssertTrue ([viewObject isFaultKey: nil]);
     MKCAssertEqualObjects ([viewObject valueForKey: @"value"], value);
     

@@ -58,8 +58,8 @@
     MKCAssertEqualObjects ([mtocollectiontest2v name], @"mtocollectiontest2_v");
     [mtocollectiontest1v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest1]];
     [mtocollectiontest2v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest2]];
-    [mtocollectiontest1v setPrimaryKeyFields: [[mtocollectiontest1 primaryKeyFields] valueForKey: @"name"]];
-    [mtocollectiontest2v setPrimaryKeyFields: [[mtocollectiontest2 primaryKeyFields] valueForKey: @"name"]];
+    [mtocollectiontest1v setPrimaryKeyFields: [NSArray arrayWithObject: @"id"]];
+    [mtocollectiontest2v setPrimaryKeyFields: [NSArray arrayWithObject: @"id"]];
 }
 
 - (void) testModMTOCollection

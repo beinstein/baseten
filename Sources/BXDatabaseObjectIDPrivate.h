@@ -42,4 +42,5 @@
 - (enum BXModificationType) lastModificationType;
 - (void) replaceValuesWith: (NSDictionary *) aDict;
 - (BXPropertyDescription *) propertyNamed: (NSString *) aName;
+- (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view;
 @end
