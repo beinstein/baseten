@@ -45,6 +45,7 @@
 - (id) BXInitWithArray: (NSMutableArray *) anArray;
 - (BXDatabaseContext *) context;
 - (void) setDatabaseContext: (BXDatabaseContext *) aContext;
+- (NSPredicate *) filterPredicate;
 - (void) setFilterPredicate: (NSPredicate *) aPredicate;
 - (void) setEntity: (BXEntityDescription *) anEntity;
 

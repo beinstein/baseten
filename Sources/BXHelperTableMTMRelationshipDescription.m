@@ -30,6 +30,7 @@
 #import "BXHelperTableMTMRelationshipDescription.h"
 #import "BXRelationshipDescription.h"
 #import "BXEntityDescription.h"
+#import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseAdditions.h"
@@ -39,18 +40,6 @@
 #import "BXSetRelationProxy.h"
 #import "BXSetHelperTableRelationProxy.h"
 
-
-#define NORMALIZE_NAMES( REF_OBJECT, REF_REL, TARGET_REL )          \
-    /* Normalize */                                                 \
-    /* reference <- helper table -> targets */                      \
-    /*    dst            src          dst   */                      \
-    BXRelationshipDescription* REF_REL = relationship1;          \
-    BXRelationshipDescription* TARGET_REL = relationship2;       \
-    if ([TARGET_REL dstEntity] == [[REF_OBJECT objectID] entity])   \
-    {                                                               \
-        REF_REL = relationship2;                                    \
-        TARGET_REL = relationship1;                                 \
-    }
 
 //FIXME: when requested, create a mutable array proxy to which objects from the helper table get added.
 //This way modifications to the helper table get notified.
@@ -72,6 +61,25 @@
         relationship2 = [r2 retain];
     }
     return self;
+}
+
+/**
+ * \internal
+ * Normalize.
+ * reference <- helper table -> targets
+ *    dst            src          dst
+ */
+- (void) normalizeNames: (BXDatabaseObject *) refObject from: (BXRelationshipDescription **) refRel to: (BXRelationshipDescription **) targetRel
+{
+    *refRel = relationship1;
+    *targetRel = relationship2;
+    BXEntityDescription* dstEntity = [*targetRel dstEntity];
+    BXEntityDescription* refEntity = [[refObject objectID] entity];
+    if (dstEntity == refEntity || [refEntity hasAncestor: dstEntity])
+    {
+        *refRel = relationship2;
+        *targetRel = relationship1;
+    }
 }
 
 - (void) dealloc
@@ -156,7 +164,6 @@
                                returnedClass: [BXSetHelperTableRelationProxy class]
                                        error: error];
     [rval setRelationship: self];
-    [rval setFilterPredicate: compound];
     [rval setEntity: [helperToSRC srcEntity]];
     [rval setMainEntity: dstEntity];
     [rval setFilterPredicate: helperToSRCPredicate];
@@ -239,8 +246,9 @@
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject
                  to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
-    //FIXME: add view support
-    NORMALIZE_NAMES (refObject, refRel, targetRel);
+    BXRelationshipDescription* refRel = nil;
+    BXRelationshipDescription* targetRel = nil;
+    [self normalizeNames: refObject from: &refRel to: &targetRel];
     BXDatabaseContext* context = [refObject databaseContext];
     
     //Get the properties used in the helper table
@@ -277,8 +285,9 @@
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject
                     to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
-    //FIXME: add view support
-    NORMALIZE_NAMES (refObject, refRel, targetRel);
+    BXRelationshipDescription* refRel = nil;
+    BXRelationshipDescription* targetRel = nil;
+    [self normalizeNames: refObject from: &refRel to: &targetRel];
     
     //To remove the relationship, we need to collect those tuples that have
     //refObject's fkey values and any target object's fkey values.
@@ -288,8 +297,8 @@
         NSArray* keys = [refRel srcProperties];
         NSArray* values = [refObject objectsForKeys: [refRel dstProperties]];
         predicate = [NSPredicate BXAndPredicateWithProperties: keys
-                                            matchingProperties: values
-                                                          type: NSEqualToPredicateOperatorType];
+                                           matchingProperties: values
+                                                         type: NSEqualToPredicateOperatorType];
     }
     //Then add the alternatives from target objects.
     if (0 < [objectSet count])

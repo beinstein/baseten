@@ -49,12 +49,30 @@
     MKCAssertNotNil (mtmtest2);
     MKCAssertEqualObjects ([mtmtest1 name], @"mtmtest1");
     MKCAssertEqualObjects ([mtmtest2 name], @"mtmtest2");
+    
+    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest"];
+    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest"];
+    MKCAssertNotNil (mtmtest1v);
+    MKCAssertNotNil (mtmtest2v);
+    MKCAssertEqualObjects ([mtmtest1v name], @"mtmtest1_v");
+    MKCAssertEqualObjects ([mtmtest2v name], @"mtmtest2_v");
+    [mtmtest1v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest1]];
+    [mtmtest2v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest2]];
+    [mtmtest1v setPrimaryKeyFields: [[mtmtest1 primaryKeyFields] valueForKey: @"name"]];
+    [mtmtest2v setPrimaryKeyFields: [[mtmtest2 primaryKeyFields] valueForKey: @"name"]];    
 }
 
-//FIXME: make each of the tests a method which accepts one or two entity arguments
-//Then make tests for tables and views which call these methods
-
 - (void) testModMTM
+{
+    [self modMany: mtmtest1 toMany: mtmtest2];
+}
+
+- (void) testModMTMView
+{
+    [self modMany: mtmtest1v toMany: mtmtest2v];
+}
+
+- (void) modMany: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2
 {
     //Once again, try to modify an object and see if another object receives the modification.
     //This time, use a many-to-many relationship.
@@ -64,8 +82,11 @@
     [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
     
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"mtmrel1"];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"mtmrel1"];
+
     //Execute a fetch
-    NSArray* res = [context executeFetchForEntity: mtmtest1
+    NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: nil error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (4 == [res count]);
@@ -88,7 +109,7 @@
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     //Get the objects from the second table
-    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: mtmtest2
+    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: entity2
                                                             withPredicate: [NSPredicate predicateWithFormat:  @"value2 != 'd2'"]
                                                                     error: &error]];
     MKCAssertNil (error);

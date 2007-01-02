@@ -49,5 +49,6 @@
 - (BXRelationshipDescription *) relationship2;
 - (void) setRelationship1: (BXRelationshipDescription *) aRelationship;
 - (void) setRelationship2: (BXRelationshipDescription *) aRelationship;
+- (void) normalizeNames: (BXDatabaseObject *) refObject from: (BXRelationshipDescription **) refRel to: (BXRelationshipDescription **) targetRel;
 
 @end

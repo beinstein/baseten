@@ -37,6 +37,7 @@
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXEntityDescription.h"
+#import "BXEntityDescriptionPrivate.h"
 #import "BXConstants.h"
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXPropertyDescription.h"

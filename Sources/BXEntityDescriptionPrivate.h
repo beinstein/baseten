@@ -1,5 +1,5 @@
 //
-// MTMCollectionTest.h
+// BXEntityDescriptionPrivate.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,19 +26,21 @@
 // $Id$
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <Foundation/Foundation.h>
+#import <BaseTen/BXEntityDescription.h>
+
 @class BXDatabaseContext;
-@class BXEntityDescription;
+@class BXDatabaseObjectID;
+@protocol BXRelationshipDescription;
 
-@interface MTMCollectionTest : SenTestCase 
-{
-    BXDatabaseContext* context;
-    BXEntityDescription* mtmtest1;
-    BXEntityDescription* mtmtest2;    
-    BXEntityDescription* mtmtest1v;
-    BXEntityDescription* mtmtest2v;    
-}
-
-- (void) modMany: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2;
-
+@interface BXEntityDescription (PrivateMethods)
+- (void) addDependentView: (BXEntityDescription *) viewEntity;
+- (void) setFields: (NSArray *) fieldArray;
+- (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context;
+- (void) cacheRelationship: (id <BXRelationshipDescription>) relationship;
+- (void) registerObjectID: (BXDatabaseObjectID *) anID;
+- (void) unregisterObjectID: (BXDatabaseObjectID *) anID;
+- (BXEntityDescription *) targetForRelationship: (id <BXRelationshipDescription>) rel;
+- (NSArray *) correspondingProperties: (NSArray *) properties;
+- (BOOL) hasAncestor: (BXEntityDescription *) entity;
 @end

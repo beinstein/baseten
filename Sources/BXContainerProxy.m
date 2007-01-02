@@ -184,6 +184,11 @@
     }
 }
 
+- (NSPredicate *) filterPredicate;
+{
+    return mFilterPredicate;
+}
+
 - (void) setFilterPredicate: (NSPredicate *) aFilterPredicate
 {
     if (mFilterPredicate != aFilterPredicate) 

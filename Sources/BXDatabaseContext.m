@@ -40,6 +40,7 @@
 #import "BXPGInterface.h"
 #import "BXDatabaseObject.h"
 #import "BXEntityDescription.h"
+#import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXConstants.h"

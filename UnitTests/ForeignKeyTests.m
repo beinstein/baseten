@@ -28,6 +28,7 @@
 
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEntityDescriptionPrivate.h>
 
 #import "ForeignKeyTests.h"
 #import "MKCSenTestCaseAdditions.h"

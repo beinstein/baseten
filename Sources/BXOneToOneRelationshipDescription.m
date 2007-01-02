@@ -30,6 +30,7 @@
 #import "BXOneToOneRelationshipDescription.h"
 #import "BXRelationshipDescription.h"
 #import "BXEntityDescription.h"
+#import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectID.h"
 #import "BXException.h"

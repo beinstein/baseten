@@ -73,16 +73,3 @@
   forRelationshipNamed: (NSString *) relationshipName;
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
 @end
-
-
-@interface BXEntityDescription (PrivateMethods)
-- (void) addDependentView: (BXEntityDescription *) viewEntity;
-- (void) setFields: (NSArray *) fieldArray;
-- (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context;
-- (void) cacheRelationship: (id <BXRelationshipDescription>) relationship;
-- (void) registerObjectID: (BXDatabaseObjectID *) anID;
-- (void) unregisterObjectID: (BXDatabaseObjectID *) anID;
-- (BXEntityDescription *) targetForRelationship: (id <BXRelationshipDescription>) rel;
-- (NSArray *) correspondingProperties: (NSArray *) properties;
-- (BOOL) hasAncestor: (BXEntityDescription *) entity;
-@end

@@ -67,6 +67,7 @@
     NSMutableArray* rval = [NSMutableArray array];
     NSMutableArray* otherHelperIDs = nil;
     
+    //Iterate two times if ids that don't pass the filter should be added to otherObjectIDs
     unsigned int count = 1;
     if (nil != otherObjectIDs)
     {
@@ -89,7 +90,7 @@
                 NSDictionary* pkfvalues = [NSDictionary dictionaryWithObjects: helperValues
                                                                       forKeys: mMainEntityProperties];
                 BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: mMainEntity
-                                                                 primaryKeyFields: pkfvalues];
+                                                               primaryKeyFields: pkfvalues];
                 [targetArrays [i] addObject: objectID];
             }
         }

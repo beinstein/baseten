@@ -27,6 +27,7 @@
 //
 
 #import "BXEntityDescription.h"
+#import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
 #import "BXRelationshipDescriptionProtocol.h"

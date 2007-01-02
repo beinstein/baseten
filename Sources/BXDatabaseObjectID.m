@@ -26,13 +26,14 @@
 // $Id$
 //
 
-#import <BaseTen/BXDatabaseObjectID.h>
-#import <BaseTen/BXDatabaseObjectIDPrivate.h>
-#import <BaseTen/BXDatabaseAdditions.h>
-#import <BaseTen/BXEntityDescription.h>
-#import <BaseTen/BXDatabaseContext.h>
-#import <BaseTen/BXInterface.h>
-#import <BaseTen/BXPropertyDescription.h>
+#import "BXDatabaseObjectID.h"
+#import "BXDatabaseObjectIDPrivate.h"
+#import "BXDatabaseAdditions.h"
+#import "BXEntityDescription.h"
+#import "BXEntityDescriptionPrivate.h"
+#import "BXDatabaseContext.h"
+#import "BXInterface.h"
+#import "BXPropertyDescription.h"
 
 
 static TSNonRetainedObjectSet* gObjectIDs;

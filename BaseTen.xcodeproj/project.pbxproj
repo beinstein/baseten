@@ -87,6 +87,7 @@
 		5383CD1309F57EA40044D8B6 /* BXDatabaseObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = 5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */; };
 		5383CEA909F5809E0044D8B6 /* BXDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53933EF609EBD082001D00BB /* BXInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 53933EF409EBD082001D00BB /* BXInterface.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		539EE9F20B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53A75FEF0B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */; };
 		53A75FF00B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53AE2C9A0B1721A4000E6EF1 /* BaseTen.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53AE2C990B1721A4000E6EF1 /* BaseTen.icns */; };
@@ -240,6 +241,7 @@
 		5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectID.m; path = Sources/BXDatabaseObjectID.m; sourceTree = "<group>"; };
 		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
+		539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXEntityDescriptionPrivate.h; path = Sources/BXEntityDescriptionPrivate.h; sourceTree = "<group>"; };
 		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
 		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseTen.icns; sourceTree = "<group>"; };
 		53B86FF20A0A1D2A007315BC /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
@@ -425,6 +427,7 @@
 				53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */,
 				53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */,
 				533229E40A024C2500BDB151 /* BXEntityDescription.h */,
+				539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */,
 				533229E30A024C2500BDB151 /* BXEntityDescription.m */,
 				531C84C80A63EFC8001AFBC4 /* BXRelationshipDescriptionProtocol.h */,
 				531C82F80A63EC01001AFBC4 /* Relationships */,
@@ -488,6 +491,7 @@
 				53B3F38E0AD63A95003E807B /* BXSetHelperTableRelationProxy.h in Headers */,
 				53A75FF00B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */,
 				5347BB520B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h in Headers */,
+				539EE9F20B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
