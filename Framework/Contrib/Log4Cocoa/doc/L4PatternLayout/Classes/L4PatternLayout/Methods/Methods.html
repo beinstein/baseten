@@ -1,0 +1,242 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+    "http://www.w3.org/TR/1998/REC-html40-19980424/loose.dtd">
+<html><style type="text/css"><!--.var {background:#ffffff; color:#000000;}.string {background: #ffffff; color:#891315;}.keyword {background:#ffffff; color:#761550;}.char {background: #ffffff; color:#0000ff;}.number {background: #ffffff; color:#0000ff;}.function {background:#ffffff; color:#000000;}.param {background:#ffffff; color:#000000;}.comment {background:#ffffff; color:#236e25}.preprocessor {background:#ffffff; color:#236e25}.type {background:#ffffff; color:#761550;}a:link {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #0000ff;}a:visited {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #0000ff;}a:visited:hover {text-decoration: underline; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #ff6600;}a:active {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #ff6600;}a:hover {text-decoration: underline; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #ff6600;}h4 {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: tiny; font-weight: bold;}body {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: 10pt;}--></style><head>
+    <title>Methods</title>
+	 <meta name="generator" content="HeaderDoc">
+</head><body bgcolor="#ffffff">
+<h1><font face="Geneva,Arial,Helvtica">Methods</font></h1><br>
+<a name="HeaderDoc_methods"></a>
+<dl>
+<dt><tt><a href="Methods.html#init" target="doc">init</a></tt></dt>
+<dd>Initializes an L4PatternLayout with the default conversion pattern, %m%n
+</dd>
+<dt><tt><a href="Methods.html#initWithConversionPattern:" target="doc">initWithConversionPattern:</a></tt></dt>
+<dd>Initializes an L4PatternLayout with a custom conversion pattern
+</dd>
+<dt><tt><a href="Methods.html#initWithConversionPattern" target="doc">initWithConversionPattern</a></tt></dt>
+<dd>Initializes an L4PatternLayout with a custom conversion pattern
+</dd>
+<dt><tt><a href="Methods.html#format:" target="doc">format:</a></tt></dt>
+<dd>Uses this class's conversion pattern to format logging messages
+</dd>
+<dt><tt><a href="Methods.html#format" target="doc">format</a></tt></dt>
+<dd>Uses this class's conversion pattern to format logging messages
+</dd>
+<dt><tt><a href="Methods.html#conversionPattern" target="doc">conversionPattern</a></tt></dt>
+<dd>Returns the pattern layout's conversion pattern
+</dd>
+<dt><tt><a href="Methods.html#setConversionPattern:" target="doc">setConversionPattern:</a></tt></dt>
+<dd>Sets the pattern layout's conversion pattern
+</dd>
+<dt><tt><a href="Methods.html#setConversionPattern" target="doc">setConversionPattern</a></tt></dt>
+<dd>Sets the pattern layout's conversion pattern
+</dd>
+<dt><tt><a href="Methods.html#parserDelegate" target="doc">parserDelegate</a></tt></dt>
+<dd>Returns the pattern layout's parser delegate object
+</dd>
+<dt><tt><a href="Methods.html#setParserDelegate:" target="doc">setParserDelegate:</a></tt></dt>
+<dd>Sets the optional parser delegate object for this pattern layout
+</dd>
+<dt><tt><a href="Methods.html#setParserDelegate" target="doc">setParserDelegate</a></tt></dt>
+<dd>Sets the optional parser delegate object for this pattern layout
+</dd>
+<dt><tt><a href="Methods.html#converterDelegate" target="doc">converterDelegate</a></tt></dt>
+<dd>Returns the pattern layout's converter delegate object
+</dd>
+<dt><tt><a href="Methods.html#setConverterDelegate:" target="doc">setConverterDelegate:</a></tt></dt>
+<dd>Sets the optional converter delegate object for this pattern layout
+</dd>
+<dt><tt><a href="Methods.html#setConverterDelegate" target="doc">setConverterDelegate</a></tt></dt>
+<dd>Sets the optional converter delegate object for this pattern layout
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::conversionPattern --><a name="//apple_ref/occ/instm/L4PatternLayout/conversionPattern"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="conversionPattern">conversionPattern</a></h2>
+</td></tr></table><hr><dl>Returns the pattern layout's conversion pattern
+
+</dl><blockquote><pre>( <font class="type">NSString</font> <font class="type">*</font>) <font class="function"><b>conversionPattern</b></font>;<br></pre></blockquote>
+<dl><dt><i>method result</i></dt><dd>The pattern layout's conversion pattern
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::converterDelegate --><a name="//apple_ref/occ/instm/L4PatternLayout/converterDelegate"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="converterDelegate">converterDelegate</a></h2>
+</td></tr></table><hr><dl>Returns the pattern layout's converter delegate object
+
+</dl><blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>converterDelegate</b></font>;<br></pre></blockquote>
+<dl><dt><i>method result</i></dt><dd>The pattern layout's converter delegate
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::format --><a name="//apple_ref/occ/instm/L4PatternLayout/format"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="format">format</a></h2>
+</td></tr></table><hr><dl>Uses this class's conversion pattern to format logging messages
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/format:" -->format:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">NSString</font> <font class="type">*</font>) <font class="function"><b>format</b></font>:<br>        (<font class="type">L4LoggingEvent</font> <font class="type">*</font>) <font class="param">event</font>;<br></pre></blockquote>
+<p>Throws an <code>L4InvalidSpecifierException</code> if the pattern layout's conversion pattern contains an invalid conversion specifier.
+<br><br>
+Throws an <code>L4NoConversionPatternException</code> if the pattern layout's conversion pattern is nil.  This should only happen if you have code like the following:
+<br><br>
+		<pre>
+			<code>
+				[patternLayout setConversionPattern: nil];
+			</code>
+</pre>
+<br><br>
+Throws an <code>L4InvalidBraceClauseException</code> when a conversion specifier's brace clause is invalid for any reason. 
+</p>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::format: --><a name="//apple_ref/occ/instm/L4PatternLayout/format:"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="format:">format:</a></h2>
+</td></tr></table><hr><dl>Uses this class's conversion pattern to format logging messages
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/format" -->format<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">NSString</font> <font class="type">*</font>) <font class="function"><b>format</b></font>:<br>        (<font class="type">L4LoggingEvent</font> <font class="type">*</font>) <font class="param">event</font>;<br></pre></blockquote>
+<p>Throws an <code>L4InvalidSpecifierException</code> if the pattern layout's conversion pattern contains an invalid conversion specifier.
+<br><br>
+Throws an <code>L4NoConversionPatternException</code> if the pattern layout's conversion pattern is nil.  This should only happen if you have code like the following:
+<br><br>
+		<pre>
+			<code>
+				[patternLayout setConversionPattern: nil];
+			</code>
+</pre>
+<br><br>
+Throws an <code>L4InvalidBraceClauseException</code> when a conversion specifier's brace clause is invalid for any reason. 
+</p>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>event</em></tt></dt><dd>A logging event that contains information that the layout needs to format the logging message</dd>
+</dl>
+</blockquote>
+<dl><dt><i>method result</i></dt><dd>A formatted logging message that adheres to the L4PatternLayout's conversion pattern
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::init --><a name="//apple_ref/occ/instm/L4PatternLayout/init"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="init">init</a></h2>
+</td></tr></table><hr><dl>Initializes an L4PatternLayout with the default conversion pattern, %m%n
+
+</dl><blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>init</b></font>;<br></pre></blockquote>
+<p>Calls initWthConversionPattern: with the string defined by <code>L4PatternLayoutDefaultConversionPattern</code>
+</p>
+<dl><dt><i>method result</i></dt><dd>A newly initialized L4PatternLayout object
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::initWithConversionPattern --><a name="//apple_ref/occ/instm/L4PatternLayout/initWithConversionPattern"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="initWithConversionPattern">initWithConversionPattern</a></h2>
+</td></tr></table><hr><dl>Initializes an L4PatternLayout with a custom conversion pattern
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/initWithConversionPattern:" -->initWithConversionPattern:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>initWithConversionPattern</b></font>:<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">cp</font>;<br></pre></blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::initWithConversionPattern: --><a name="//apple_ref/occ/instm/L4PatternLayout/initWithConversionPattern:"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="initWithConversionPattern:">initWithConversionPattern:</a></h2>
+</td></tr></table><hr><dl>Initializes an L4PatternLayout with a custom conversion pattern
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/initWithConversionPattern" -->initWithConversionPattern<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>initWithConversionPattern</b></font>:<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">cp</font>;<br></pre></blockquote>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>cp</em></tt></dt><dd>The custom conversion pattern</dd>
+</dl>
+</blockquote>
+<dl><dt><i>method result</i></dt><dd>A newly initialized L4PatternLayout object
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::parserDelegate --><a name="//apple_ref/occ/instm/L4PatternLayout/parserDelegate"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="parserDelegate">parserDelegate</a></h2>
+</td></tr></table><hr><dl>Returns the pattern layout's parser delegate object
+
+</dl><blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>parserDelegate</b></font>;<br></pre></blockquote>
+<dl><dt><i>method result</i></dt><dd>The pattern layout's parser delegate
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::setConversionPattern --><a name="//apple_ref/occ/instm/L4PatternLayout/setConversionPattern"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setConversionPattern">setConversionPattern</a></h2>
+</td></tr></table><hr><dl>Sets the pattern layout's conversion pattern
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/setConversionPattern:" -->setConversionPattern:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setConversionPattern</b></font>:<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">cp</font>;<br></pre></blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::setConversionPattern: --><a name="//apple_ref/occ/instm/L4PatternLayout/setConversionPattern:"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setConversionPattern:">setConversionPattern:</a></h2>
+</td></tr></table><hr><dl>Sets the pattern layout's conversion pattern
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/setConversionPattern" -->setConversionPattern<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setConversionPattern</b></font>:<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">cp</font>;<br></pre></blockquote>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>cp</em></tt></dt><dd>The new conversion pattern</dd>
+</dl>
+</blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::setConverterDelegate --><a name="//apple_ref/occ/instm/L4PatternLayout/setConverterDelegate"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setConverterDelegate">setConverterDelegate</a></h2>
+</td></tr></table><hr><dl>Sets the optional converter delegate object for this pattern layout
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/setConverterDelegate:" -->setConverterDelegate:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setConverterDelegate</b></font>:<br>        (<font class="type">id</font> ) <font class="param">cd</font>;<br></pre></blockquote>
+<p>When the pattern layout formats logging messages, it first takes the conversion pattern and parses it into token strings.  Then, it takes each token string and converts it into the corresponding part of the final formatted message.  You can provide a converter delegate to override or extend how a pattern layout converts its token strings.  By default, the pattern layout does nothing to literal string tokens and converts format specifiers as explained in the description of this class.
+<br><br>
+The converter delegate must respond to the convertTokenString:withLoggingEvent:intoString: method.
+</p>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::setConverterDelegate: --><a name="//apple_ref/occ/instm/L4PatternLayout/setConverterDelegate:"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setConverterDelegate:">setConverterDelegate:</a></h2>
+</td></tr></table><hr><dl>Sets the optional converter delegate object for this pattern layout
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/setConverterDelegate" -->setConverterDelegate<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setConverterDelegate</b></font>:<br>        (<font class="type">id</font> ) <font class="param">cd</font>;<br></pre></blockquote>
+<p>When the pattern layout formats logging messages, it first takes the conversion pattern and parses it into token strings.  Then, it takes each token string and converts it into the corresponding part of the final formatted message.  You can provide a converter delegate to override or extend how a pattern layout converts its token strings.  By default, the pattern layout does nothing to literal string tokens and converts format specifiers as explained in the description of this class.
+<br><br>
+The converter delegate must respond to the convertTokenString:withLoggingEvent:intoString: method.
+</p>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>cd</em></tt></dt><dd>The new converter delegate</dd>
+</dl>
+</blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::setParserDelegate --><a name="//apple_ref/occ/instm/L4PatternLayout/setParserDelegate"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setParserDelegate">setParserDelegate</a></h2>
+</td></tr></table><hr><dl>Sets the optional parser delegate object for this pattern layout
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/setParserDelegate:" -->setParserDelegate:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setParserDelegate</b></font>:<br>        (<font class="type">id</font> ) <font class="param">pd</font>;<br></pre></blockquote>
+<p>When the pattern layout formats logging messages, it first takes the conversion pattern and parses it into token strings.  You can provide a parser delegate to override how a pattern layout parses the conversion pattern into token strings.  By default, the pattern layout divides the conversion pattern into a series of literal strings and format specifiers.
+<br><br>
+The parser delegate must respond to the parseConversionPattern:intoArray: method.
+</p>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4PatternLayout::setParserDelegate: --><a name="//apple_ref/occ/instm/L4PatternLayout/setParserDelegate:"></a>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setParserDelegate:">setParserDelegate:</a></h2>
+</td></tr></table><hr><dl>Sets the optional parser delegate object for this pattern layout
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4PatternLayout/setParserDelegate" -->setParserDelegate<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setParserDelegate</b></font>:<br>        (<font class="type">id</font> ) <font class="param">pd</font>;<br></pre></blockquote>
+<p>When the pattern layout formats logging messages, it first takes the conversion pattern and parses it into token strings.  You can provide a parser delegate to override how a pattern layout parses the conversion pattern into token strings.  By default, the pattern layout divides the conversion pattern into a series of literal strings and format specifiers.
+<br><br>
+The parser delegate must respond to the parseConversionPattern:intoArray: method.
+</p>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>pd</em></tt></dt><dd>The new parser delegate</dd>
+</dl>
+</blockquote>
+<dl></dl>
+<p>(Last Updated 03/14/2004)
+</p></body></html>

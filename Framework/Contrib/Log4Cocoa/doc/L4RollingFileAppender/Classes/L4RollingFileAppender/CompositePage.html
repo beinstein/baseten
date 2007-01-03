@@ -1,0 +1,224 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+    "http://www.w3.org/TR/1998/REC-html40-19980424/loose.dtd">
+<html><style type="text/css"><!--.var {background:#ffffff; color:#000000;}.string {background: #ffffff; color:#891315;}.keyword {background:#ffffff; color:#761550;}.char {background: #ffffff; color:#0000ff;}.number {background: #ffffff; color:#0000ff;}.function {background:#ffffff; color:#000000;}.param {background:#ffffff; color:#000000;}.comment {background:#ffffff; color:#236e25}.preprocessor {background:#ffffff; color:#236e25}.type {background:#ffffff; color:#761550;}a:link {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #0000ff;}a:visited {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #0000ff;}a:visited:hover {text-decoration: underline; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #ff6600;}a:active {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #ff6600;}a:hover {text-decoration: underline; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: small; color: #ff6600;}h4 {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: tiny; font-weight: bold;}body {text-decoration: none; font-family: lucida grande, geneva, helvetica, arial, sans-serif; font-size: 10pt;}--></style><head>
+    <title>L4RollingFileAppender</title>
+	 <meta name="generator" content="HeaderDoc">
+</head><body bgcolor="#ffffff">
+<h1><font face="Geneva,Arial,Helvtica">L4RollingFileAppender</font></h1><br>
+<h2>Discussion</h2>
+This class allows you to automatically create up to a number of backup log files when the log file reaches a specified size.  This class is a subclass of L4FileAppender.
+<hr><br><h2>Methods</h2>
+<a name="HeaderDoc_methods"></a>
+<dl>
+<dt><tt><a href="CompositePage.html#init" target="_top">init</a></tt></dt>
+<dd>This method initializes a new instance of the L4RollingFileAppender class.
+</dd>
+<dt><tt><a href="CompositePage.html#initWithLayout:fileName:" target="_top">initWithLayout:fileName:</a></tt></dt>
+<dd>This method initialized a new instance of this class with the specified layout and file path
+</dd>
+<dt><tt><a href="CompositePage.html#initWithLayout" target="_top">initWithLayout</a></tt></dt>
+<dd>This method initialized a new instance of this class with the specified layout and file path
+</dd>
+<dt><tt><a href="CompositePage.html#initWithLayout:fileName:append:" target="_top">initWithLayout:fileName:append:</a></tt></dt>
+<dd>This method initialized a new instance of this class with the specified layout, file path, and append option
+</dd>
+<dt><tt><a href="CompositePage.html#initWithLayout" target="_top">initWithLayout</a></tt></dt>
+<dd>This method initialized a new instance of this class with the specified layout, file path, and append option
+</dd>
+<dt><tt><a href="CompositePage.html#maxBackupIndex" target="_top">maxBackupIndex</a></tt></dt>
+<dd>Returns the maximum number of backup files that will be created when the initial log file rolls over.
+</dd>
+<dt><tt><a href="CompositePage.html#setMaxBackupIndex:" target="_top">setMaxBackupIndex:</a></tt></dt>
+<dd>Set the maximum number of backup files to keep around.
+<br><br>
+The maxBackupIndex determines how many backup files are kept before the oldest is erased. This method takes a positive integer value. If set to zero, then there will be no backup files and the log file will be truncated when it reaches maxFileSize.
+</dd>
+<dt><tt><a href="CompositePage.html#setMaxBackupIndex" target="_top">setMaxBackupIndex</a></tt></dt>
+<dd>Set the maximum number of backup files to keep around.
+<br><br>
+The maxBackupIndex determines how many backup files are kept before the oldest is erased. This method takes a positive integer value. If set to zero, then there will be no backup files and the log file will be truncated when it reaches maxFileSize.
+</dd>
+<dt><tt><a href="CompositePage.html#maximumFileSize" target="_top">maximumFileSize</a></tt></dt>
+<dd>Returns the maximum file size allowed for log files.  If the file grows larger than this, it will be backed up and any additional logging statements will be written to a new file.
+</dd>
+<dt><tt><a href="CompositePage.html#setMaximumFileSize:" target="_top">setMaximumFileSize:</a></tt></dt>
+<dd>Sets the maximum file size allowed for log files.
+</dd>
+<dt><tt><a href="CompositePage.html#setMaximumFileSize" target="_top">setMaximumFileSize</a></tt></dt>
+<dd>Sets the maximum file size allowed for log files.
+</dd>
+<dt><tt><a href="CompositePage.html#rollOver" target="_top">rollOver</a></tt></dt>
+<dd>Explicitly rolls a file over.
+</dd>
+<dt><tt><a href="CompositePage.html#subAppend:" target="_top">subAppend:</a></tt></dt>
+<dd></dd>
+<dt><tt><a href="CompositePage.html#subAppend" target="_top">subAppend</a></tt></dt>
+<dd></dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::init -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="init">init</a></h2>
+</td></tr></table><hr><dl>This method initializes a new instance of the L4RollingFileAppender class.
+
+</dl><blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>init</b></font>;<br></pre></blockquote>
+<p>This method calls <code>initWithLayout:fileName:append:</code>, with the default values: nil, nil, and YES respectively.
+</p>
+<dl><dt><i>method result</i></dt><dd>An initialized instance of this class
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::initWithLayout -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="initWithLayout">initWithLayout</a></h2>
+</td></tr></table><hr><dl>This method initialized a new instance of this class with the specified layout, file path, and append option
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/initWithLayout:fileName:append:" -->initWithLayout:fileName:append:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>initWithLayout</b></font>:<br>        (<font class="type">L4Layout</font> <font class="type">*</font>) <font class="param">aLayout</font><br>    <font class="function"><b>fileName</b></font> :<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">aName</font><br>    <font class="function"><b>append</b></font> :<br>        (<font class="type">BOOL</font> ) <font class="param">append</font>;<br><font class="function"><b>/</b></font><font class="param">/</font> <font class="param">throws</font> <font class="function"><b>IOException</b></font><br></pre></blockquote>
+<p>This is the class's designated initializer.
+</p>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::initWithLayout -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="initWithLayout">initWithLayout</a></h2>
+</td></tr></table><hr><dl>This method initialized a new instance of this class with the specified layout and file path
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/initWithLayout:fileName:" -->initWithLayout:fileName:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>initWithLayout</b></font>:<br>        (<font class="type">L4Layout</font> <font class="type">*</font>) <font class="param">aLayout</font><br>    <font class="function"><b>fileName</b></font> :<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">aName</font>;<br><font class="function"><b>/</b></font><font class="param">/</font> <font class="param">throws</font> <font class="function"><b>IOException</b></font><br></pre></blockquote>
+<p>This method calls <code>initWithLayout:fileName:append:</code>, with the values: aLayout, aName, and YES respectively.
+</p>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::initWithLayout:fileName: -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="initWithLayout:fileName:">initWithLayout:fileName:</a></h2>
+</td></tr></table><hr><dl>This method initialized a new instance of this class with the specified layout and file path
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/initWithLayout" -->initWithLayout<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>initWithLayout</b></font>:<br>        (<font class="type">L4Layout</font> <font class="type">*</font>) <font class="param">aLayout</font><br>    <font class="function"><b>fileName</b></font> :<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">aName</font>;<br><font class="function"><b>/</b></font><font class="param">/</font> <font class="param">throws</font> <font class="function"><b>IOException</b></font><br></pre></blockquote>
+<p>This method calls <code>initWithLayout:fileName:append:</code>, with the values: aLayout, aName, and YES respectively.
+</p>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>aLayout</em></tt></dt><dd>The layout object you want this appender to have.</dd>
+<dt><tt><em>aName</em></tt></dt><dd>The file path of the initial file you want created.  Backup files have the same name, but with the backup file number appended to it (See the <code>rollOver</code> method).</dd>
+</dl>
+</blockquote>
+<dl><dt><i>method result</i></dt><dd>An initialized instance of this class
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::initWithLayout:fileName:append: -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="initWithLayout:fileName:append:">initWithLayout:fileName:append:</a></h2>
+</td></tr></table><hr><dl>This method initialized a new instance of this class with the specified layout, file path, and append option
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/initWithLayout" -->initWithLayout<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">id</font> ) <font class="function"><b>initWithLayout</b></font>:<br>        (<font class="type">L4Layout</font> <font class="type">*</font>) <font class="param">aLayout</font><br>    <font class="function"><b>fileName</b></font> :<br>        (<font class="type">NSString</font> <font class="type">*</font>) <font class="param">aName</font><br>    <font class="function"><b>append</b></font> :<br>        (<font class="type">BOOL</font> ) <font class="param">append</font>;<br><font class="function"><b>/</b></font><font class="param">/</font> <font class="param">throws</font> <font class="function"><b>IOException</b></font><br></pre></blockquote>
+<p>This is the class's designated initializer.
+</p>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>aLayout</em></tt></dt><dd>The layout object you want this appender to have.</dd>
+<dt><tt><em>aName</em></tt></dt><dd>The file path of the initial file you want created.  Backup files have the same name, but with the backup file number appended to it (See the <code>rollOver</code> method).</dd>
+<dt><tt><em>append</em></tt></dt><dd>YES = log output should be appended to the file.  NO = the file's previous contents should be overwritten.</dd>
+</dl>
+</blockquote>
+<dl><dt><i>method result</i></dt><dd>An initialized instance of this class
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::maxBackupIndex -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="maxBackupIndex">maxBackupIndex</a></h2>
+</td></tr></table><hr><dl>Returns the maximum number of backup files that will be created when the initial log file rolls over.
+
+</dl><blockquote><pre>( <font class="type">unsigned</font> <font class="type">int</font> ) <font class="function"><b>maxBackupIndex</b></font>;<br></pre></blockquote>
+<dl><dt><i>method result</i></dt><dd>The maximum number of backup files that will be created when the initial log file rolls over.
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::maximumFileSize -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="maximumFileSize">maximumFileSize</a></h2>
+</td></tr></table><hr><dl>Returns the maximum file size allowed for log files.  If the file grows larger than this, it will be backed up and any additional logging statements will be written to a new file.
+
+</dl><blockquote><pre>( <font class="type">unsigned</font> <font class="type">long</font> <font class="type">long</font> ) <font class="function"><b>maximumFileSize</b></font>;<br></pre></blockquote>
+<dl><dt><i>method result</i></dt><dd>The maximum file size allowed for log files (in bytes)
+</dd>
+</dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::rollOver -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="rollOver">rollOver</a></h2>
+</td></tr></table><hr><dl>Explicitly rolls a file over.
+
+</dl><blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>rollOver</b></font>;<br></pre></blockquote>
+<p>If maxBackupIndex is positive, then files {File.1, ..., File.MaxBackupIndex -1} are renamed to {File.2, ..., File.MaxBackupIndex}. Moreover, File is renamed File.1 and closed. A new file is created to receive further log output.
+<br><br>
+If maxBackupIndex is equal to zero, then the File is truncated with no backup files created.
+</p>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::setMaxBackupIndex -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setMaxBackupIndex">setMaxBackupIndex</a></h2>
+</td></tr></table><hr><dl>Set the maximum number of backup files to keep around.
+<br><br>
+The maxBackupIndex determines how many backup files are kept before the oldest is erased. This method takes a positive integer value. If set to zero, then there will be no backup files and the log file will be truncated when it reaches maxFileSize.
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/setMaxBackupIndex:" -->setMaxBackupIndex:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setMaxBackupIndex</b></font>:<br>        (<font class="type">unsigned</font> <font class="type">int</font> ) <font class="param">mbi</font>;<br></pre></blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::setMaxBackupIndex: -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setMaxBackupIndex:">setMaxBackupIndex:</a></h2>
+</td></tr></table><hr><dl>Set the maximum number of backup files to keep around.
+<br><br>
+The maxBackupIndex determines how many backup files are kept before the oldest is erased. This method takes a positive integer value. If set to zero, then there will be no backup files and the log file will be truncated when it reaches maxFileSize.
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/setMaxBackupIndex" -->setMaxBackupIndex<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setMaxBackupIndex</b></font>:<br>        (<font class="type">unsigned</font> <font class="type">int</font> ) <font class="param">mbi</font>;<br></pre></blockquote>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>mbi</em></tt></dt><dd>The maximum number of backup files that will be created</dd>
+</dl>
+</blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::setMaximumFileSize -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setMaximumFileSize">setMaximumFileSize</a></h2>
+</td></tr></table><hr><dl>Sets the maximum file size allowed for log files.
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/setMaximumFileSize:" -->setMaximumFileSize:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setMaximumFileSize</b></font>:<br>        (<font class="type">unsigned</font> <font class="type">long</font> <font class="type">long</font> ) <font class="param">mfs</font>;<br></pre></blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender::setMaximumFileSize: -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="setMaximumFileSize:">setMaximumFileSize:</a></h2>
+</td></tr></table><hr><dl>Sets the maximum file size allowed for log files.
+
+</dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occ/instm/L4RollingFileAppender/setMaximumFileSize" -->setMaximumFileSize<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>setMaximumFileSize</b></font>:<br>        (<font class="type">unsigned</font> <font class="type">long</font> <font class="type">long</font> ) <font class="param">mfs</font>;<br></pre></blockquote>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>mfs</em></tt></dt><dd>The maximum file size allowed for log files (in bytes)</dd>
+</dl>
+</blockquote>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender(__ProtectedMethods)::subAppend -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="subAppend">subAppend</a></h2>
+</td></tr></table><hr><dl></dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occCat/instm/L4RollingFileAppender(__ProtectedMethods)/subAppend:" -->subAppend:<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>subAppend</b></font>:<br>        (<font class="type">L4LoggingEvent</font> <font class="type">*</font>) <font class="param">event</font>;<br></pre></blockquote>
+<p>This method overrides the implementation in L4WriterAppender.  It checks if the maximum file size has been exceeded.  If so, it rolls the file over according to the maxBackupIndex setting.
+</p>
+<dl></dl>
+<hr><!-- headerDoc=instm; name=L4RollingFileAppender(__ProtectedMethods)::subAppend: -->
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="subAppend:">subAppend:</a></h2>
+</td></tr></table><hr><dl></dl><b>See Also:</b><dl>
+<dt><!-- a logicalPath="//apple_ref/occCat/instm/L4RollingFileAppender(__ProtectedMethods)/subAppend" -->subAppend<!-- /a --></dt><dd></dd></dl>
+<blockquote><pre>( <font class="type">void</font> ) <font class="function"><b>subAppend</b></font>:<br>        (<font class="type">L4LoggingEvent</font> <font class="type">*</font>) <font class="param">event</font>;<br></pre></blockquote>
+<p>This method overrides the implementation in L4WriterAppender.  It checks if the maximum file size has been exceeded.  If so, it rolls the file over according to the maxBackupIndex setting.
+</p>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>event</em></tt></dt><dd>An L4LoggingEvent that contains logging specific information</dd>
+</dl>
+</blockquote>
+<dl></dl>
+<p>(Last Updated 4/29/2004)
+</p></body></html>
