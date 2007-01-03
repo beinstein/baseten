@@ -146,6 +146,7 @@
 		53BA50960880501D00BFAFB5 /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53BA50990880501E00BFAFB5 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53BEBC5B08805EDE00EF494D /* PGTS_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 32DBCF5E0370ADEE00C91783 /* PGTS_Prefix.pch */; };
+		53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */; };
 		53D72FE70A51A4B6000E47A7 /* libTSDataTypes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 531B02680A51A1EA006AEF08 /* libTSDataTypes.a */; };
 		53D72FF30A51A5CB000E47A7 /* libTSDataTypes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 531B02680A51A1EA006AEF08 /* libTSDataTypes.a */; };
 		53D9B38A08B5256700ADB959 /* PGTSAbstractClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -176,27 +177,6 @@
 			remoteGlobalIDString = 531977540B15C2B6000FA952;
 			remoteInfo = libpq/psql/headers;
 		};
-		53193DCD0A36CD01009747BC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53EC467C09586CE900D22FE5;
-			remoteInfo = JaguarCompatibility;
-		};
-		53193DCF0A36CD01009747BC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D5B49B6048680CD000E48DA;
-			remoteInfo = JaguarCompatibilityBundle;
-		};
-		53193F960A36CD1F009747BC /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 53EC467B09586CE900D22FE5;
-			remoteInfo = JaguarCompatibility;
-		};
 		531B02650A51A1EA006AEF08 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */;
@@ -211,26 +191,47 @@
 			remoteGlobalIDString = 53BF4A350A36F6680065845D;
 			remoteInfo = "Static archive";
 		};
-		53608D420A5C94CD005212A7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 534CF7DA095C8EB700BF3440 /* UnitTests.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 534CFCD0095CE11A00BF3440;
-			remoteInfo = UnitTestsStatic;
-		};
-		5361BC4C0B31A3E800C9F387 /* PBXContainerItemProxy */ = {
+		53C1DF890B4BD50B007947D8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 5361BC280B319D6600C9F387;
 			remoteInfo = "PostgreSQL-8.2.0";
 		};
-		53BD9A070A5C7CB4001C950C /* PBXContainerItemProxy */ = {
+		53D044150B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 53BD9A030A5C7CB4001C950C /* TSDataTypesUnitTests.xcodeproj */;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53174802095C148D0098D3D5;
-			remoteInfo = UnitTestsStatic;
+			remoteGlobalIDString = 530EC0030B4BCDB100DFC1CA /* libLog4Cocoa.a */;
+			remoteInfo = libLog4Cocoa;
+		};
+		53D044170B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53C1DF180B4BD429007947D8 /* AllTests */;
+			remoteInfo = "AllTests (Upgraded)";
+		};
+		53D044190B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53C1DF1F0B4BD429007947D8 /* Documentation */;
+			remoteInfo = "Documentation (Upgraded)";
+		};
+		53D0441B0B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 530EBD140B4BBFAE00DFC1CA /* Log4Cocoa.framework */;
+			remoteInfo = Log4Cocoa;
+		};
+		53D044200B4C1E0D00DB9308 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */;
+			remoteInfo = libLog4Cocoa;
 		};
 		53F524D50A51A28900E7DDC4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -261,7 +262,6 @@
 		530323C3088062270024E7EF /* NDRunLoopMessenger.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = NDRunLoopMessenger.h; path = Contrib/NDRunLoopMessenger.h; sourceTree = "<group>"; };
 		530323C4088062270024E7EF /* NDRunLoopMessenger.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = NDRunLoopMessenger.m; path = Contrib/NDRunLoopMessenger.m; sourceTree = "<group>"; };
 		5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = ../Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = SOURCE_ROOT; };
-		531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = JaguarCompatibility.xcodeproj; path = ../JaguarCompatibility/JaguarCompatibility.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5325EAD70A1B2EF600FEA842 /* postgresql */ = {isa = PBXFileReference; lastKnownFileType = folder; name = postgresql; path = "PGTS-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSRoleDescription.h; path = Sources/PGTSRoleDescription.h; sourceTree = "<group>"; };
 		53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSRoleDescription.m; path = Sources/PGTSRoleDescription.m; sourceTree = "<group>"; };
@@ -279,7 +279,6 @@
 		533A6AF209DEE51700D28AB0 /* PGTSConstants.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSConstants.h; path = Sources/PGTSConstants.h; sourceTree = "<group>"; };
 		534C024B096054EA00BF3440 /* PGTSConnectionPoolItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnectionPoolItem.h; path = Sources/PGTSConnectionPoolItem.h; sourceTree = "<group>"; };
 		534C024C096054EA00BF3440 /* PGTSConnectionPoolItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSConnectionPoolItem.m; path = Sources/PGTSConnectionPoolItem.m; sourceTree = "<group>"; };
-		534CF7DA095C8EB700BF3440 /* UnitTests.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = UnitTests.xcodeproj; path = ../UnitTests/UnitTests.xcodeproj; sourceTree = SOURCE_ROOT; };
 		534CFECB095DCCDC00BF3440 /* Kerberos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kerberos.framework; path = /System/Library/Frameworks/Kerberos.framework; sourceTree = "<absolute>"; };
 		53594D1B0B13711300378707 /* libpq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpq.a; path = "PGTS-PostgreSQL/universal/lib/libpq.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSchemaDescriptor.h; path = Sources/PGTSSchemaDescriptor.h; sourceTree = "<group>"; };
@@ -330,7 +329,7 @@
 		53BA4FF508804EA000BFAFB5 /* PGTS.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTS.h; path = Sources/PGTS.h; sourceTree = "<group>"; };
 		53BA503708804F9A00BFAFB5 /* PGTS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PGTS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		53BA503E08804FBC00BFAFB5 /* psql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = psql; path = "PGTS-PostgreSQL/universal/bin/psql"; sourceTree = BUILT_PRODUCTS_DIR; };
-		53BD9A030A5C7CB4001C950C /* TSDataTypesUnitTests.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypesUnitTests.xcodeproj; path = ../Dependencies/TSDataTypes/UnitTests/TSDataTypesUnitTests.xcodeproj; sourceTree = SOURCE_ROOT; };
+		53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Log4Cocoa.xcodeproj; path = Contrib/Log4Cocoa/Log4Cocoa.xcodeproj; sourceTree = "<group>"; };
 		53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSAbstractClassInfo.h; path = Sources/PGTSAbstractClassInfo.h; sourceTree = "<group>"; };
 		53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSAbstractClassInfo.m; path = Sources/PGTSAbstractClassInfo.m; sourceTree = "<group>"; };
 		53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTypeInfo.h; path = Sources/PGTSTypeInfo.h; sourceTree = "<group>"; };
@@ -360,6 +359,7 @@
 				53D72FF30A51A5CB000E47A7 /* libTSDataTypes.a in Frameworks */,
 				53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */,
 				53594D1C0B13711300378707 /* libpq.a in Frameworks */,
+				53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -430,9 +430,7 @@
 			isa = PBXGroup;
 			children = (
 				5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */,
-				53BD9A030A5C7CB4001C950C /* TSDataTypesUnitTests.xcodeproj */,
-				531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */,
-				534CF7DA095C8EB700BF3440 /* UnitTests.xcodeproj */,
+				53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */,
 				53BA503E08804FBC00BFAFB5 /* psql */,
 				53594D1B0B13711300378707 /* libpq.a */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
@@ -468,15 +466,6 @@
 			name = ConnectionPool;
 			sourceTree = "<group>";
 		};
-		53193DC90A36CD01009747BC /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				53193DCE0A36CD01009747BC /* JaguarCompatibility.framework */,
-				53193DD00A36CD01009747BC /* JaguarCompatibility.bundle */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		531B02600A51A1EA006AEF08 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -498,14 +487,6 @@
 				53E0D1C808979FF300501E8E /* PGTSMutableResultRow.m */,
 			);
 			name = WriteDelegate;
-			sourceTree = "<group>";
-		};
-		534CF7DB095C8EB700BF3440 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				53608D430A5C94CD005212A7 /* UnitTestsStatic.octest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		5359784908AF660F000CAC2B /* Metadata */ = {
@@ -582,10 +563,13 @@
 			name = Connection;
 			sourceTree = "<group>";
 		};
-		53BD9A040A5C7CB4001C950C /* Products */ = {
+		53D0440F0B4C1DFD00DB9308 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				53BD9A080A5C7CB4001C950C /* UnitTestsStatic.octest */,
+				53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */,
+				53D044180B4C1DFD00DB9308 /* AllTests */,
+				53D0441A0B4C1DFD00DB9308 /* Documentation */,
+				53D0441C0B4C1DFD00DB9308 /* Log4Cocoa.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -717,7 +701,8 @@
 			);
 			dependencies = (
 				53F524D60A51A28900E7DDC4 /* PBXTargetDependency */,
-				5361BC4D0B31A3E800C9F387 /* PBXTargetDependency */,
+				53D044210B4C1E0D00DB9308 /* PBXTargetDependency */,
+				53C1DF8A0B4BD50B007947D8 /* PBXTargetDependency */,
 			);
 			name = "Static archive";
 			productName = "Static archive";
@@ -741,7 +726,6 @@
 			);
 			dependencies = (
 				2B6D85980B1DCC55008DE4E2 /* PBXTargetDependency */,
-				53193F970A36CD1F009747BC /* PBXTargetDependency */,
 			);
 			name = Framework;
 			productName = PGTS;
@@ -760,20 +744,12 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 53193DC90A36CD01009747BC /* Products */;
-					ProjectRef = 531740DA0958AB340098D3D5 /* JaguarCompatibility.xcodeproj */;
+					ProductGroup = 53D0440F0B4C1DFD00DB9308 /* Products */;
+					ProjectRef = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 				},
 				{
 					ProductGroup = 531B02600A51A1EA006AEF08 /* Products */;
 					ProjectRef = 5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */;
-				},
-				{
-					ProductGroup = 53BD9A040A5C7CB4001C950C /* Products */;
-					ProjectRef = 53BD9A030A5C7CB4001C950C /* TSDataTypesUnitTests.xcodeproj */;
-				},
-				{
-					ProductGroup = 534CF7DB095C8EB700BF3440 /* Products */;
-					ProjectRef = 534CF7DA095C8EB700BF3440 /* UnitTests.xcodeproj */;
 				},
 			);
 			targets = (
@@ -786,20 +762,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		53193DCE0A36CD01009747BC /* JaguarCompatibility.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = JaguarCompatibility.framework;
-			remoteRef = 53193DCD0A36CD01009747BC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		53193DD00A36CD01009747BC /* JaguarCompatibility.bundle */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = JaguarCompatibility.bundle;
-			remoteRef = 53193DCF0A36CD01009747BC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		531B02660A51A1EA006AEF08 /* TSDataTypes.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -814,18 +776,32 @@
 			remoteRef = 531B02670A51A1EA006AEF08 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		53608D430A5C94CD005212A7 /* UnitTestsStatic.octest */ = {
+		53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = UnitTestsStatic.octest;
-			remoteRef = 53608D420A5C94CD005212A7 /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libLog4Cocoa.a;
+			remoteRef = 53D044150B4C1DFD00DB9308 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		53BD9A080A5C7CB4001C950C /* UnitTestsStatic.octest */ = {
+		53D044180B4C1DFD00DB9308 /* AllTests */ = {
 			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = UnitTestsStatic.octest;
-			remoteRef = 53BD9A070A5C7CB4001C950C /* PBXContainerItemProxy */;
+			fileType = "compiled.mach-o.executable";
+			path = AllTests;
+			remoteRef = 53D044170B4C1DFD00DB9308 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53D0441A0B4C1DFD00DB9308 /* Documentation */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = Documentation;
+			remoteRef = 53D044190B4C1DFD00DB9308 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53D0441C0B4C1DFD00DB9308 /* Log4Cocoa.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Log4Cocoa.framework;
+			remoteRef = 53D0441B0B4C1DFD00DB9308 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -991,15 +967,15 @@
 			target = 531977540B15C2B6000FA952 /* PostgreSQL-8.1.5 */;
 			targetProxy = 2B6D85970B1DCC55008DE4E2 /* PBXContainerItemProxy */;
 		};
-		53193F970A36CD1F009747BC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = JaguarCompatibility;
-			targetProxy = 53193F960A36CD1F009747BC /* PBXContainerItemProxy */;
-		};
-		5361BC4D0B31A3E800C9F387 /* PBXTargetDependency */ = {
+		53C1DF8A0B4BD50B007947D8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5361BC280B319D6600C9F387 /* PostgreSQL-8.2.0 */;
-			targetProxy = 5361BC4C0B31A3E800C9F387 /* PBXContainerItemProxy */;
+			targetProxy = 53C1DF890B4BD50B007947D8 /* PBXContainerItemProxy */;
+		};
+		53D044210B4C1E0D00DB9308 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libLog4Cocoa;
+			targetProxy = 53D044200B4C1E0D00DB9308 /* PBXContainerItemProxy */;
 		};
 		53F524D60A51A28900E7DDC4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

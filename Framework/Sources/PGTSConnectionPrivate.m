@@ -32,13 +32,14 @@
 #import <sys/types.h>
 #import <sys/time.h>
 #import <unistd.h>
-#import <PGTS/TSRunloopMessenger.h>
-#import <PGTS/PGTSConnectionPrivate.h>
-#import <PGTS/PGTSConstants.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSConnectionDelegate.h>
-#import <PGTS/PGTSConnectionPool.h>
-#import <PGTS/PGTSExceptions.h>
+#import "TSRunloopMessenger.h"
+#import "PGTSConnectionPrivate.h"
+#import "PGTSConstants.h"
+#import "PGTSFunctions.h"
+#import "PGTSConnectionDelegate.h"
+#import "PGTSConnectionPool.h"
+#import "PGTSExceptions.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 static NSNotification* 
@@ -255,7 +256,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
 @implementation PGTSConnection (ProxyMethods)
 
 /**
-* Send query dispatch status to the delegate
+ * Send query dispatch status to the delegate
  * Afterwards collect the results and send them as well
  */
 - (void) sendDispatchStatusToDelegate: (int) status forQuery: (NSString *) queryString
@@ -335,7 +336,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     }
     socket = nil;
 
-    NSLog (@"Worker: exiting");
+    log4Debug (@"Worker: exiting");
     workerProxy = nil;
     returningWorkerProxy = nil;
     [threadPool release];    
@@ -358,7 +359,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     int bsdSocket = PQsocket (connection);
     
     if (bsdSocket <= 0)
-        PGTSLog (@"Unable to get connection socket from libpq");
+        log4Error (@"Unable to get connection socket from libpq");
     else
     {
         if (YES == reset)
@@ -429,28 +430,28 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
 - (void) workerEnd
 {
     //A dummy method to cause some action in the run loop.
-    NSLog (@"workerEnd");
+    log4Debug (@"workerEnd");
 }
 
 - (void) logQuery: (NSString *) query parameters: (NSArray *) parameters
 {
-    fprintf (stdout, "(%p) %s %s\n", self, [[query description] UTF8String], [[parameters description] UTF8String]);
+    log4Info (@"(%p) %s %s\n", self, query, parameters);
 }
 
 - (void) logNotice: (id) anObject
 {
-    fprintf (stdout, "(%p) *** %s", self, [[anObject description] UTF8String]);
+    log4Info (@"(%p) NOTICE: %s", self, anObject);
 }
 
 - (void) logNotification: (id) anObject
 {
-    //fprintf (stdout, "(%p) *** NOTIFY: %s\n", self, [[anObject description] UTF8String]);
+    log4Debug (@"(%p) *** NOTIFY: %s\n", self, anObject);
 }
 
 /** Called when data is available from the libpq socket */
 - (void) dataAvailableFromLib: (NSNotification *) aNotification
 {
-    //PGTSLog (@"worker: availableData thread: %p", [NSThread currentThread]);
+    log4Debug (@"worker: availableData thread: %p", [NSThread currentThread]);
     [connectionLock lock];
     PQconsumeInput (connection);
     [self postPGnotifications];
@@ -465,7 +466,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     {
         NSNotification* notification = PGTSExtractPgNotification (self, pgNotification);
         [self logNotification: [notification name]];
-        PGTSLog (@"Posting notification: %@", notification);
+        log4Debug (@"Posting notification: %@", notification);
         [postgresNotificationCenter performSelectorOnMainThread: @selector (postNotification:)
                                                      withObject: notification
                                                   waitUntilDone: NO];
@@ -491,7 +492,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
                 NS_ENDHANDLER
         }
             connectionStatus = tempStatus;
-            PGTSLog (@"ConnectionStatus: %d", connectionStatus);
+            log4Debug (@"ConnectionStatus: %d", connectionStatus);
             if (YES == allowKVO) [self didChangeValueForKey: @"connectionStatus"];
     }
 }

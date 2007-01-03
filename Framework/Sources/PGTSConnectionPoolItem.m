@@ -26,11 +26,11 @@
 // $Id$
 //
 
-#import <PGTS/PGTSConnectionPoolItem.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSConstants.h>
-#import <PGTS/PGTSDatabaseInfo.h>
-
+#import "PGTSConnectionPoolItem.h"
+#import "PGTSFunctions.h"
+#import "PGTSConstants.h"
+#import "PGTSDatabaseInfo.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 /**
  * Package containing database information and open connections.
@@ -86,7 +86,7 @@
  */
 - (void) addConnection: (PGTSConnection *) connection
 {
-    PGTSLog (@"item: %@ (%p) addConnection: %@ (%p)", self, self, connection, connection);
+    log4Debug (@"item: %@ (%p) addConnection: %@ (%p)", self, self, connection, connection);
     [connections addObject: connection];
     NSDictionary* userInfo = [NSDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
     [[NSNotificationCenter defaultCenter] postNotificationName: kPGTSConnectionPoolItemDidAddConnectionNotification
@@ -98,7 +98,7 @@
  */
 - (void) removeConnection: (PGTSConnection *) connection
 {
-    PGTSLog (@"item: %@ (%p) removeConnection: %@ (%p)", self, self, connection, connection);
+    log4Debug (@"item: %@ (%p) removeConnection: %@ (%p)", self, self, connection, connection);
     [connections removeObject: connection];
     NSDictionary* userInfo = [NSDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
     [[NSNotificationCenter defaultCenter] postNotificationName: kPGTSConnectionPoolItemDidRemoveConnectionNotification

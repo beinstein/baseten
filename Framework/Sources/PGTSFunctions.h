@@ -35,16 +35,8 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
      nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
 
 
-#ifdef LOG_ERRORS
-#define PGTSLog(...) PGTSLog2 (__FILE__, __LINE__, __VA_ARGS__)
-#else
-#define PGTSLog(...) 
-#endif
-
-
 extern inline id PGTSOidAsObject (Oid o);
 extern void PGTSInit ();
-extern void PGTSLog2 (char* path, int line, NSString* format, ...);
 extern void PGTSNoticeProcessor (void* sender, const char* message);
 extern NSString* PGTSModificationName (unichar type);
 extern NSString* PGTSLockOperation (unichar type);

@@ -36,7 +36,7 @@
 #import "PGTSTableInfo.h"
 #import "PGTSDatabaseInfo.h"
 #import "PGTSConnectionDelegate.h"
-
+#import <Log4Cocoa/Log4Cocoa.h>
 
 //FIXME: change this so that being connection specific is actually enforced
 
@@ -126,7 +126,7 @@
                 
         PGTSResultSet* res = [connection executeQuery: query
                                            parameters: PGTSOidAsObject (oid)];
-        PGTSLog (@"Notification query res: %@", res);
+        log4Debug (@"Notification query res: %@", res);
         if (YES == [res querySucceeded])
         {
             rval = YES;
@@ -138,7 +138,7 @@
 #endif
             [notificationNames setObject: nname atIndex: oid];
             
-            PGTSLog (@"Notification name: %@", nname);
+            log4Debug (@"Notification name: %@", nname);
             [connection startListening: self forNotification: nname
                               selector: @selector (handleNotification:) sendQuery: NO];
         }
