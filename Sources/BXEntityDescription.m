@@ -620,9 +620,4 @@ static NSMutableSet* gViewEntities;
     return rval;
 }
 
-- (void) count
-{
-    NSLog (@"debug");
-}
-
 @end

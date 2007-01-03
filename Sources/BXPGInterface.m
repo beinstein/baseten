@@ -31,6 +31,7 @@
 #import <PGTSTiger/PGTSTiger.h>
 #import <TSDataTypes/TSDataTypes.h>
 #import <Foundation/Foundation.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
 #import "BXPGInterface.h"
 #import "BXDatabaseObject.h"
@@ -56,7 +57,8 @@
 #define BXAssert2( ASSERTION, MESSAGE, ARG1, ARG2 )   if (!( ASSERTION )) BXHandleError( __FILE__, __LINE__, [NSString stringWithFormat: MESSAGE, ARG1, ARG2] )
 static void BXHandleError (char* file, int line, NSString* message)
 {
-    NSLog (@"*** Assertion failed in %s line %d", file, line);
+    //FIXME: write some c functions in Log4Cocoa (L4CLogger.h) and change this to use one of them
+    fprintf (stderr, "Assertion failed in %s line %d", file, line);
     if (nil != message)
         fprintf (stderr, "\t%s\n", [message UTF8String]);
 }
@@ -291,8 +293,7 @@ static unsigned int SavepointIndex ()
                 notifyConnection = connection;
                 connection = tempConnection;
 
-                fprintf (stdout, "*** notifyConnection is %p, backend %d\n", 
-                         notifyConnection, [notifyConnection backendPID]);                
+                log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
             }
         }
     }
@@ -728,7 +729,7 @@ static unsigned int SavepointIndex ()
         }
         @catch (id exception)
         {
-            NSLog (@"Warning: exception caught during ROLLBACK: %@", exception);
+            log4Error (@"Exception caught during ROLLBACK: %@", exception);
         }
     }
 }

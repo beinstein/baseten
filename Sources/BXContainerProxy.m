@@ -30,6 +30,7 @@
 #import "BXDatabaseContext.h"
 #import "BXConstants.h"
 #import "BXDatabaseAdditions.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 @implementation BXContainerProxy
@@ -82,7 +83,7 @@
         BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
         if (mContext == sendingContext)
         {
-            NSLog (@"Added objects");
+            log4Debug (@"Added objects");
             
             NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];        
             [self addedObjectsWithIDs: ids];
@@ -113,7 +114,7 @@
         BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
         if (mContext == sendingContext)
         {        
-            NSLog (@"Deleted objects");
+            log4Debug (@"Deleted objects");
             NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
             [self removedObjectsWithIDs: ids];
         }
@@ -139,7 +140,7 @@
         BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
         if (mContext == sendingContext)
         {
-            NSLog (@"Updated objects");
+            log4Debug (@"Updated objects");
             
             NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
             [self updatedObjectsWithIDs: ids];

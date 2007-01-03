@@ -40,6 +40,7 @@
 #import <limits.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 #import <TSDataTypes/TSDataTypes.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 #import "PGTSResultSet.h"
 #import "PGTSResultSetPrivate.h"
 #import "PGTSAdditions.h"
@@ -512,7 +513,7 @@ static unsigned int _serial;
 
 - (void) logError
 {
-    fprintf (stderr, "*** Result error: %s\n", PQresultErrorMessage (result));
+    log4Info (@"Result error: %s", PQresultErrorMessage (result));
 }
 
 @end

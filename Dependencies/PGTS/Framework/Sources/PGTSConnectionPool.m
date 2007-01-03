@@ -26,11 +26,11 @@
 // $Id$
 //
 
-#import <PGTS/PGTSConnectionPool.h>
-#import <PGTS/PGTSConnectionPoolItem.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSDatabaseInfo.h>
-
+#import "PGTSConnectionPool.h"
+#import "PGTSConnectionPoolItem.h"
+#import "PGTSFunctions.h"
+#import "PGTSDatabaseInfo.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 /** \cond */
 static void
@@ -194,7 +194,7 @@ ConnectionPoolTerminate ()
  */
 - (void) removeConnection: (PGTSConnection *) conn
 {
-    PGTSLog (@"pool removeConnection: %@ (%p)", conn, conn);
+    log4Debug (@"pool removeConnection: %@ (%p)", conn, conn);
     NSString* key = [conn connectionPoolKey];
     PGTSConnectionPoolItem* item = [pool objectForKey: key];
     [item removeConnection: conn];

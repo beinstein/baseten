@@ -29,6 +29,7 @@
 
 #import <Foundation/Foundation.h>
 #import <TSDataTypes/TSDataTypes.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 #import <PGTS/postgresql/libpq-fe.h>
 #import "PGTSModificationNotifier.h"
 #import "PGTSNotifier.h"
@@ -102,7 +103,7 @@
 - (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
     notificationName: (NSString *) notificationName
 {
-    PGTSLog (@"addObserver: %@ name: %@", anObject, notificationName);
+    log4Debug (@"addObserver: %@ name: %@", anObject, notificationName);
     BOOL rval =  [self addObserver: anObject selector: aSelector 
                             table: tableInfo notificationName: notificationName 
                 notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveModifications ($1) AS nname" ];

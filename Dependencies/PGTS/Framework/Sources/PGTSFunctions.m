@@ -36,19 +36,6 @@
 
 
 void 
-PGTSLog2 (char* path, int line, NSString* format, ...)
-{
-    va_list ap;
-    va_start (ap, format);
-    
-    fprintf (stderr, "PGTS (%s:%d): ", basename (path), line);
-    NSLogv (format, ap);
-    
-    va_end (ap);    
-}
-
-
-void 
 PGTSInit ()
 {   
     static int tooLate = 0;

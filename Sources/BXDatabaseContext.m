@@ -31,6 +31,7 @@
 #import <PGTS/PGTSFunctions.h>
 #import <stdlib.h>
 #import <string.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
@@ -171,7 +172,7 @@ extern void BXInit ()
     [mObjects release];
     [mUndoManager release];
     [mModifiedObjectIDs release];
-    NSLog (@"Deallocating BXDatabaseContext");
+    log4Debug (@"Deallocating BXDatabaseContext");
     [super dealloc];
 }
 
@@ -1082,7 +1083,7 @@ extern void BXInit ()
                                           entity: (BXEntityDescription *) anotherEntity
                                            types: (enum BXRelationshipType) bitmap
 {
-    NSLog (@"RelationshipsByNameWithEntity:entity:types");
+    log4Debug (@"RelationshipsByNameWithEntity:entity:types");
     
     //Normalize
     if (nil == anEntity)

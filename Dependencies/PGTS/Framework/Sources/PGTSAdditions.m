@@ -37,6 +37,7 @@
 #import "PGTSFieldInfo.h"
 #import "PGTSDatabaseInfo.h"
 #import "PGTSACLItem.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 //A workaround for libpq versions earlier than 8.0.8 and 8.1.4
@@ -294,7 +295,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 @implementation NSData (PGTSAdditions)
 //TODO: -PGTSParameterLength:
-//Pitääkö käyttää funktiota htonl tai vastaavaa?
+//Should we use htonl?
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
 	size_t resultLength = 0;
@@ -302,7 +303,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 	
 	if (NULL == unescaped)
 	{
-		NSLog(@"-[%@ %@] ERROR! PQunescapeBytea failed.", [self className], NSStringFromSelector(_cmd)); // TODO! Handle error better?
+		log4Error (@"PQunescapeBytea failed for characters: %s", value); //FIXME: Handle error?
 		return nil;
 	}
 	

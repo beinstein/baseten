@@ -36,17 +36,18 @@
 
 #define USE_ASSERTIONS 1
 
-#import <PGTS/PGTSConnectionPrivate.h>
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSResultSetPrivate.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/PGTSConnectionPool.h>
-#import <PGTS/PGTSConstants.h>
-#import <PGTS/PGTSConnectionDelegate.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSDatabaseInfo.h>
+#import "PGTSConnectionPrivate.h"
+#import "PGTSConnection.h"
+#import "PGTSResultSetPrivate.h"
+#import "PGTSResultSet.h"
+#import "PGTSAdditions.h"
+#import "PGTSConnectionPool.h"
+#import "PGTSConstants.h"
+#import "PGTSConnectionDelegate.h"
+#import "PGTSFunctions.h"
+#import "PGTSDatabaseInfo.h"
 #import <TSDataTypes/TSDataTypes.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 /** \cond */
@@ -215,7 +216,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
     [connectionString release];
     [initialCommands release];
     
-    NSLog (@"Deallocating db connection: %p", self);
+    log4Debug (@"Deallocating db connection: %p", self);
     [super dealloc];
 }
 
@@ -435,7 +436,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 #define SetIf( VALUE, KEY ) if ((VALUE)) [connectionDict setObject: VALUE forKey: KEY];
 - (BOOL) setConnectionURL: (NSURL *) url
 {
-    NSLog (@"url: %@", url);
+    log4Debug (@"Connection URL: %@", url);
     BOOL rval = NO;
     if (0 == [@"pgsql" caseInsensitiveCompare: [url scheme]])
     {
