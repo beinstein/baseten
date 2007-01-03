@@ -35,6 +35,7 @@
 #import "L4Logger.h"
 #import "L4PreprocessorStatics.h"
 #import "L4NSObjectAdditions.h"
+#import "L4Configurator.h"
 
 static L4Level *_fatal = nil;
 static L4Level *_error = nil;
@@ -45,11 +46,12 @@ static NSLock *_loggerLock = nil;
 
 id objc_msgSend(id self, SEL op, ...);
 
-void log4Log(id object, int line, char *file, char *method,
+void log4Log(id object, int line, char *file, const char *method,
               SEL sel, BOOL isAssertion, BOOL assertion, 
               id exception, id message, ...)
 {
     NSString *combinedMessage;
+    file = ((strrchr (file, '/') ?: file - 1) + 1);
     if ( [message isKindOfClass:[NSString class]] )
     {
         va_list args;
@@ -468,6 +470,20 @@ void log4Log(id object, int line, char *file, char *method,
               debug: (id) aMessage
           exception: (NSException *) e
 {
+    //Configure if it hasn't been already done.
+    {
+        id appender = nil;
+        id aLogger = nil;
+        for (aLogger = self; aLogger != nil; aLogger = [aLogger parent] )
+        {
+            appender = [aLogger aai];
+            if (nil != appender)
+                break;
+        }
+        if (nil == appender)
+            [L4Configurator autoConfigure];
+    }
+    
     // Check repository threshold level
     //
     if([repository isDisabled: [_debug intValue]])

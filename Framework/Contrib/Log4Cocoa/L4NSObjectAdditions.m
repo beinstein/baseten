@@ -42,17 +42,20 @@
 
 @implementation NSObject(L4CocoaMethods)
 
-#warning "Remember to remove logger implementations, we're going to be more paranoid and rename then l4Logger."
-
-+ (L4Logger *) logger
++ (L4Logger *) l4Logger
 {
     return [L4LogManager loggerForClass: (Class) self];
 }
 
-- (L4Logger *) logger
+- (L4Logger *) l4Logger
 {
     return [L4LogManager loggerForClass: [self class]];
 }
+
+@end
+
+
+@implementation NSProxy (L4CocoaMethods)
 
 + (L4Logger *) l4Logger
 {

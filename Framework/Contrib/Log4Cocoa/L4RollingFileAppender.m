@@ -38,6 +38,12 @@
 
 const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024 * 10);
 
+@interface L4RollingFileAppender (__PrivateMethods)
+
+- (void)_renameLogFile: (unsigned int)backupIndex;
+
+@end
+
 @implementation L4RollingFileAppender
 
 - (id) init
@@ -126,12 +132,6 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
 	// use the superclass's subAppend
 	[super subAppend: event];
 }
-
-@end
-
-@interface L4RollingFileAppender (__PrivateMethods)
-
-- (void)_renameLogFile: (unsigned int)backupIndex;
 
 @end
 

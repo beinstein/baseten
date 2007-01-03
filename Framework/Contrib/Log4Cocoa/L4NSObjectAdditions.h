@@ -42,8 +42,7 @@
 @end
 
 /******
- * Convience methods for all NSObject classes.
- * ### TODO - I should do the same thing for NSProxy???
+ * Convience methods for all NSObject and NSProxy classes.
  */
 
 /*****
@@ -54,16 +53,17 @@
  */
 @interface NSObject (L4CocoaMethods)
 
-#warning "Remember to remove logger methods, we're going to be more paranoid and rename then l4Logger."
-
-+ (L4Logger *) logger;
-- (L4Logger *) logger;
-
 + (L4Logger *) l4Logger;
 - (L4Logger *) l4Logger;
 
 @end
 
+@interface NSProxy (L4CocoaMethods)
+
++ (L4Logger *) l4Logger;
+- (L4Logger *) l4Logger;
+
+@end
 /*****
 
 CODE TO ADD TO YOUR BASE CLASS .h file declarations

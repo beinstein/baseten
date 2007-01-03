@@ -36,6 +36,11 @@
 
 #define LINE_BREAK_SEPERATOR_KEY @"LINE_BREAK_SEPERATOR_KEY"
 
+extern NSString* const L4ConfigurationFilePath;
+extern NSString* const L4ConfigurationFileName;
+
+@class L4Logger;
+
 @interface L4Configurator : NSObject {
 
 }
@@ -43,9 +48,13 @@
 + (void) initialize;
 
 + (void) basicConfiguration;
++ (void) autoConfigure;
 + (id) propertyForKey: (NSString *) aKey;
 
 + (void) resetLineBreakChar;
 + (NSData *) lineBreakChar;
+
++ (void) parseConfiguration: (NSDictionary *) dict logger: (L4Logger *) logger;
++ (NSString *) configurationFilePath;
 
 @end

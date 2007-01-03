@@ -37,6 +37,10 @@
 #import "L4Level.h"
 #import "L4ConsoleAppender.h"
 #import "L4Layout.h"
+#import <stdlib.h>
+
+NSString* const L4ConfigurationFilePath = @"L4ConfigurationFilePath";
+NSString* const L4ConfigurationFileName = @"Log4CocoaConfiguration";
 
 static NSData *lineBreakChar;
 
@@ -53,14 +57,99 @@ static NSData *lineBreakChar;
 
 + (void) basicConfiguration
 {
-    [[L4Logger rootLogger] setLevel: [L4Level debug]];
-    [[L4Logger rootLogger] addAppender:
-        [[L4ConsoleAppender alloc] initStandardOutWithLayout: [L4Layout simpleLayout]]];
+    L4Logger* rootLogger = [L4Logger rootLogger];
+    id appender = [[[L4ConsoleAppender alloc] initStandardOutWithLayout: [L4Layout simpleLayout]] autorelease];
+    [rootLogger addAppender: appender];
+#if BUILD_CONFIGURATION == Release
+    [rootLogger setLevel: [L4Level error]];
+#else
+    [rootLogger setLevel: [L4Level info]];
+#endif
 }
 
 + (void) autoConfigure
 {
     // [[NSFileManager defaultManager] currentDirectoryPath];
+    NSString* path = [self configurationFilePath];
+    if (nil == path)
+        [self basicConfiguration];
+    else
+    {
+        L4Logger* rootLogger = [L4Logger rootLogger];
+        NSDictionary* configuration = [NSDictionary dictionaryWithContentsOfFile: path];
+        [self parseConfiguration: [configuration objectForKey: @"DefaultConfiguration"] logger: rootLogger];
+        
+        //Add a basic appender in case one wasn't configured
+        if (0 < [[rootLogger allAppendersArray] count])
+            [self basicConfiguration];
+        
+        NSEnumerator* e = nil;
+        id currentKey = nil;
+        NSDictionary* dict = nil;
+        
+        {
+            dict = [configuration objectForKey: @"ConfigurationByClass"];
+            e = [dict keyEnumerator];
+            while ((currentKey = [e nextObject]))
+            {
+                L4Logger* logger = [L4Logger loggerForClass: NSClassFromString (currentKey)];
+                [self parseConfiguration: [dict objectForKey: currentKey] logger: logger];
+            }
+        }
+        
+        {
+            dict = [configuration objectForKey: @"ConfigurationByName"];
+            e = [dict keyEnumerator];
+            while ((currentKey = [e nextObject]))
+            {
+                L4Logger* logger = [L4Logger loggerForName: currentKey];
+                [self parseConfiguration: [dict objectForKey: currentKey] logger: logger];
+            }
+        }
+    }
+}
+
++ (void) parseConfiguration: (NSDictionary *) dict logger: (L4Logger *) logger
+{
+    //Set the level
+    NSString* level = [dict objectForKey: @"Level"];
+    SEL levelSelector = NSSelectorFromString (level);
+    if (NULL == levelSelector)
+    {
+#if BUILD_CONFIGURATION == Release
+        levelSelector = @selector (error);
+#else
+        levelSelector = @selector (info);
+#endif
+    }
+    [logger setLevel: [L4Level performSelector: levelSelector]];
+}
+
+/**
+ * Look up a configuration file.
+ * First check an environment variable, then the user defaults and finally the resources folder.
+ */
++ (NSString *) configurationFilePath
+{
+    NSFileManager* fm = [NSFileManager defaultManager];
+    NSString* path = nil;
+    
+    char* envPath = getenv ("Log4CocoaConfigurationFile");
+    if (NULL != envPath)
+    {
+        path = [NSString stringWithUTF8String: envPath];
+        if (nil != path && [fm fileExistsAtPath: path])
+            return path;
+    }
+    
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    path = [defaults objectForKey: L4ConfigurationFilePath];
+    if (nil != path && [fm fileExistsAtPath: path])
+        return path;
+    
+    path = [[NSBundle mainBundle] pathForResource: L4ConfigurationFileName ofType: @"plist"];
+    
+    return path;
 }
 
 + (id) propertyForKey: (NSString *) aKey
