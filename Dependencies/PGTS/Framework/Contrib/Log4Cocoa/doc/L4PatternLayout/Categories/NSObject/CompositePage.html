@@ -1,0 +1,30 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+    "http://www.w3.org/TR/1998/REC-html40-19980424/loose.dtd">
+<html><style type="text/css"><!--a:link {text-decoration: none; font-family: Verdana, Geneva, Helvetica, Arial, sans-serif; font-size: small}a:visited {text-decoration: none; font-family: Verdana, Geneva, Helvetica, Arial, sans-serif; font-size: small}a:active {text-decoration: none; font-family: Verdana, Geneva, Helvetica, Arial, sans-serif; font-size: small}a:hover {text-decoration: underline; font-family: Verdana, Geneva, Helvetica, Arial, sans-serif; font-size: small}h4 {text-decoration: none; font-family: Verdana,Geneva,Arial,Helvetica,sans-serif; size: tiny; font-weight: bold}--></style><head>
+    <title>NSObject</title>
+	 <meta name="generator" content="HeaderDoc">
+</head><body bgcolor="#ffffff">
+<h1><font face="Geneva,Arial,Helvtica">NSObject</font></h1><br>
+<h2>Abstract</h2>
+Declares methods that an L4PatternLayout's converter delegate must implement.
+<h2>Discussion</h2>
+(L4PatternLayoutConverterDelegate)
+<hr><br><h2>Methods</h2>
+<hr>
+<table border="0"  cellpadding="2" cellspacing="2" width="300"><tr><td valign="top" height="12" colspan="5"><h2><a name="convertTokenString:withLoggingEvent:intoString:">convertTokenString:withLoggingEvent:intoString:</a></h2>
+</td></tr></table><hr>Allows an object to override or extend how an L4PatternLayout converts its token strings into pieces of the final formatted logging message
+<br>
+<blockquote><pre><tt>- (BOOL)<B>convertTokenString:</B>(NSString*)<I>token</I> <B>withLoggingEvent:</B>(L4LoggingEvent*)<I>logEvent</I> <B>intoString:</B>(NSString**)<I>convertedString;</I> </tt><br>
+</pre></blockquote>
+<h5><font face="Lucida Grande,Helvetica,Arial">Parameter Descriptions</font></h5>
+<blockquote>
+<dl>
+<dt><tt><em>token</em></tt></dt><dd>The token string to convert</dd>
+<dt><tt><em>logEvent</em></tt></dt><dd>An L4LoggingEvent that contains information about the current logging request</dd>
+<dt><tt><em>convertedString</em></tt></dt><dd>A reference to an NSString that will contain the result of the token string's conversion upon exiting the method</dd>
+</dl>
+</blockquote>
+<i>method result:</i> Return YES to indicate that you have converted the token string.  Return NO to let the pattern layout's default behavior attempt to convert it.
+
+<p>(Last Updated 2004-03-14)
+</p></body></html>
