@@ -10,6 +10,15 @@
 #import "L4Layout.h"
 #import <math.h>
 
+
+@interface L4DailyRollingFileAppender (__PrivateMethods)
+
+- (NSCalendarDate*)_lastRolloverDate;
+- (void)_setLastRolloverDate: (NSDate*)date;
+- (void)_rollOver;
+
+@end
+
 @implementation L4DailyRollingFileAppender
 
 - (id)init
@@ -63,13 +72,6 @@
 
 @end
 
-@interface L4DailyRollingFileAppender (__PrivateMethods)
-
-- (NSCalendarDate*)_lastRolloverDate;
-- (void)_setLastRolloverDate: (NSDate*)date;
-- (void)_rollOver;
-
-@end
 
 @implementation L4DailyRollingFileAppender (__PrivateMethods)
 

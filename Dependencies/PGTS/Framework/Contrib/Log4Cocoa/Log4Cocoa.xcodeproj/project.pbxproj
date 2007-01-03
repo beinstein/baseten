@@ -1,0 +1,1096 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		530EBCD40B4BBFAE00DFC1CA /* L4AppenderAttachableImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404802A96C6901000102 /* L4AppenderAttachableImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCD50B4BBFAE00DFC1CA /* L4AppenderProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404A02A96C6901000102 /* L4AppenderProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCD60B4BBFAE00DFC1CA /* L4AppenderSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404B02A96C6901000102 /* L4AppenderSkeleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCD70B4BBFAE00DFC1CA /* L4ConsoleAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404E02A96C6901000102 /* L4ConsoleAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCD80B4BBFAE00DFC1CA /* L4FileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405002A96C6901000102 /* L4FileAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCD90B4BBFAE00DFC1CA /* L4Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405202A96C6901000102 /* L4Filter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCDA0B4BBFAE00DFC1CA /* L4Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405402A96C6901000102 /* L4Layout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCDB0B4BBFAE00DFC1CA /* L4RollingFileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405602A96C6901000102 /* L4RollingFileAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCDC0B4BBFAE00DFC1CA /* L4WriterAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405802A96C6901000102 /* L4WriterAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCDD0B4BBFAE00DFC1CA /* L4Level.h in Headers */ = {isa = PBXBuildFile; fileRef = F591406C02A96C8701000102 /* L4Level.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCDE0B4BBFAE00DFC1CA /* L4Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = F591406E02A96C8701000102 /* L4Logger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCDF0B4BBFAE00DFC1CA /* L4LoggerProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407002A96C8701000102 /* L4LoggerProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE00B4BBFAE00DFC1CA /* L4LoggerStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407102A96C8701000102 /* L4LoggerStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE10B4BBFAE00DFC1CA /* L4LoggingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407402A96C8701000102 /* L4LoggingEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE20B4BBFAE00DFC1CA /* L4LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407602A96C8701000102 /* L4LogManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE30B4BBFAE00DFC1CA /* Log4Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = F591408402A96CA101000102 /* Log4Cocoa.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE40B4BBFAE00DFC1CA /* L4RootLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE209E02AF03EE01000102 /* L4RootLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE50B4BBFAE00DFC1CA /* L4RendererMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE20A202AF071001000102 /* L4RendererMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE60B4BBFAE00DFC1CA /* L4DefaultRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE20AA02AF27FE01000102 /* L4DefaultRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE70B4BBFAE00DFC1CA /* L4LogLog.h in Headers */ = {isa = PBXBuildFile; fileRef = F642026C02AFF63301653044 /* L4LogLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE80B4BBFAE00DFC1CA /* L4NSObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F642027002B03EE001653044 /* L4NSObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCE90B4BBFAE00DFC1CA /* L4Configurator.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24F702B3CCEB01000102 /* L4Configurator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCEA0B4BBFAE00DFC1CA /* L4ErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24FB02B45E6E01000102 /* L4ErrorHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCEB0B4BBFAE00DFC1CA /* L4SimpleLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24FF02B45E9F01000102 /* L4SimpleLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCEC0B4BBFAE00DFC1CA /* L4PatternLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAFC003101357013DC353 /* L4PatternLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCED0B4BBFAE00DFC1CA /* L4CLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E38662033CD46C01000102 /* L4CLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCEE0B4BBFAE00DFC1CA /* L4PreprocessorStatics.h in Headers */ = {isa = PBXBuildFile; fileRef = F5842785035E7B0F01000102 /* L4PreprocessorStatics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCEF0B4BBFAE00DFC1CA /* L4DailyRollingFileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE3DCE80640C96700000103 /* L4DailyRollingFileAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EBCF10B4BBFAE00DFC1CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+		530EBCF20B4BBFAE00DFC1CA /* readme.txt in Resources */ = {isa = PBXBuildFile; fileRef = F5DEFB2F0351704B01000102 /* readme.txt */; };
+		530EBCF40B4BBFAE00DFC1CA /* L4AppenderAttachableImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404902A96C6901000102 /* L4AppenderAttachableImpl.m */; };
+		530EBCF50B4BBFAE00DFC1CA /* L4AppenderSkeleton.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404C02A96C6901000102 /* L4AppenderSkeleton.m */; };
+		530EBCF60B4BBFAE00DFC1CA /* L4ConsoleAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404F02A96C6901000102 /* L4ConsoleAppender.m */; };
+		530EBCF70B4BBFAE00DFC1CA /* L4FileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405102A96C6901000102 /* L4FileAppender.m */; };
+		530EBCF80B4BBFAE00DFC1CA /* L4Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405302A96C6901000102 /* L4Filter.m */; };
+		530EBCF90B4BBFAE00DFC1CA /* L4Layout.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405502A96C6901000102 /* L4Layout.m */; };
+		530EBCFA0B4BBFAE00DFC1CA /* L4RollingFileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405702A96C6901000102 /* L4RollingFileAppender.m */; };
+		530EBCFB0B4BBFAE00DFC1CA /* L4WriterAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405902A96C6901000102 /* L4WriterAppender.m */; };
+		530EBCFC0B4BBFAE00DFC1CA /* L4Level.m in Sources */ = {isa = PBXBuildFile; fileRef = F591406D02A96C8701000102 /* L4Level.m */; };
+		530EBCFD0B4BBFAE00DFC1CA /* L4Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = F591406F02A96C8701000102 /* L4Logger.m */; };
+		530EBCFE0B4BBFAE00DFC1CA /* L4LoggerStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407202A96C8701000102 /* L4LoggerStore.m */; };
+		530EBCFF0B4BBFAE00DFC1CA /* L4LoggingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407502A96C8701000102 /* L4LoggingEvent.m */; };
+		530EBD000B4BBFAE00DFC1CA /* L4LogManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407702A96C8701000102 /* L4LogManager.m */; };
+		530EBD010B4BBFAE00DFC1CA /* L4RootLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE209F02AF03EE01000102 /* L4RootLogger.m */; };
+		530EBD020B4BBFAE00DFC1CA /* L4RendererMap.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE20A302AF071001000102 /* L4RendererMap.m */; };
+		530EBD030B4BBFAE00DFC1CA /* L4DefaultRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE20AB02AF27FE01000102 /* L4DefaultRenderer.m */; };
+		530EBD040B4BBFAE00DFC1CA /* L4LogLog.m in Sources */ = {isa = PBXBuildFile; fileRef = F642026D02AFF63301653044 /* L4LogLog.m */; };
+		530EBD050B4BBFAE00DFC1CA /* L4NSObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F642027102B03EE001653044 /* L4NSObjectAdditions.m */; };
+		530EBD060B4BBFAE00DFC1CA /* L4Configurator.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD24F802B3CCEB01000102 /* L4Configurator.m */; };
+		530EBD070B4BBFAE00DFC1CA /* L4ErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD24FC02B45E6E01000102 /* L4ErrorHandler.m */; };
+		530EBD080B4BBFAE00DFC1CA /* L4SimpleLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD250002B45E9F01000102 /* L4SimpleLayout.m */; };
+		530EBD090B4BBFAE00DFC1CA /* L4PatternLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAFC103101357013DC353 /* L4PatternLayout.m */; };
+		530EBD0A0B4BBFAE00DFC1CA /* L4CLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E38663033CD46C01000102 /* L4CLogger.m */; };
+		530EBD0B0B4BBFAE00DFC1CA /* L4DailyRollingFileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE3DCE90640C96700000103 /* L4DailyRollingFileAppender.m */; };
+		530EBD0D0B4BBFAE00DFC1CA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		530EC0070B4BCDE600DFC1CA /* Log4Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = F591408402A96CA101000102 /* Log4Cocoa.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0080B4BCDE700DFC1CA /* L4PreprocessorStatics.h in Headers */ = {isa = PBXBuildFile; fileRef = F5842785035E7B0F01000102 /* L4PreprocessorStatics.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0090B4BCDE700DFC1CA /* L4NSObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F642027002B03EE001653044 /* L4NSObjectAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC00A0B4BCDE700DFC1CA /* L4NSObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F642027102B03EE001653044 /* L4NSObjectAdditions.m */; };
+		530EC00B0B4BCDE800DFC1CA /* L4Configurator.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24F702B3CCEB01000102 /* L4Configurator.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC00C0B4BCDE900DFC1CA /* L4Configurator.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD24F802B3CCEB01000102 /* L4Configurator.m */; };
+		530EC00D0B4BCDEC00DFC1CA /* L4CLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E38663033CD46C01000102 /* L4CLogger.m */; };
+		530EC0140B4BCE1500DFC1CA /* L4Level.h in Headers */ = {isa = PBXBuildFile; fileRef = F591406C02A96C8701000102 /* L4Level.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0150B4BCE1600DFC1CA /* L4LoggerProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407002A96C8701000102 /* L4LoggerProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0160B4BCE1600DFC1CA /* L4Level.m in Sources */ = {isa = PBXBuildFile; fileRef = F591406D02A96C8701000102 /* L4Level.m */; };
+		530EC0170B4BCE1700DFC1CA /* L4Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = F591406E02A96C8701000102 /* L4Logger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0180B4BCE1700DFC1CA /* L4Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = F591406F02A96C8701000102 /* L4Logger.m */; };
+		530EC0190B4BCE1800DFC1CA /* L4RootLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE209E02AF03EE01000102 /* L4RootLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC01A0B4BCE1800DFC1CA /* L4RootLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE209F02AF03EE01000102 /* L4RootLogger.m */; };
+		530EC01B0B4BCE1900DFC1CA /* L4LoggerStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407102A96C8701000102 /* L4LoggerStore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC01C0B4BCE1900DFC1CA /* L4LoggerStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407202A96C8701000102 /* L4LoggerStore.m */; };
+		530EC01D0B4BCE1A00DFC1CA /* L4LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407602A96C8701000102 /* L4LogManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC01E0B4BCE1B00DFC1CA /* L4LogManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407702A96C8701000102 /* L4LogManager.m */; };
+		530EC03C0B4BCE1E00DFC1CA /* L4LoggingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407402A96C8701000102 /* L4LoggingEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC03D0B4BCE1E00DFC1CA /* L4LoggingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407502A96C8701000102 /* L4LoggingEvent.m */; };
+		530EC03E0B4BCE1F00DFC1CA /* L4RendererMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE20A202AF071001000102 /* L4RendererMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC03F0B4BCE2000DFC1CA /* L4RendererMap.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE20A302AF071001000102 /* L4RendererMap.m */; };
+		530EC0400B4BCE2000DFC1CA /* L4DefaultRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE20AA02AF27FE01000102 /* L4DefaultRenderer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0410B4BCE2100DFC1CA /* L4DefaultRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE20AB02AF27FE01000102 /* L4DefaultRenderer.m */; };
+		530EC0420B4BCE2100DFC1CA /* L4LogLog.h in Headers */ = {isa = PBXBuildFile; fileRef = F642026C02AFF63301653044 /* L4LogLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0430B4BCE2200DFC1CA /* L4LogLog.m in Sources */ = {isa = PBXBuildFile; fileRef = F642026D02AFF63301653044 /* L4LogLog.m */; };
+		530EC0440B4BCE2300DFC1CA /* L4CLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E38662033CD46C01000102 /* L4CLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0450B4BCE2400DFC1CA /* L4AppenderProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404A02A96C6901000102 /* L4AppenderProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0460B4BCE2500DFC1CA /* L4AppenderAttachableImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404802A96C6901000102 /* L4AppenderAttachableImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0470B4BCE2600DFC1CA /* L4AppenderAttachableImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404902A96C6901000102 /* L4AppenderAttachableImpl.m */; };
+		530EC0480B4BCE2600DFC1CA /* L4AppenderSkeleton.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404C02A96C6901000102 /* L4AppenderSkeleton.m */; };
+		530EC0490B4BCE2700DFC1CA /* L4AppenderSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404B02A96C6901000102 /* L4AppenderSkeleton.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC04A0B4BCE2900DFC1CA /* L4ConsoleAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404E02A96C6901000102 /* L4ConsoleAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC04B0B4BCE2900DFC1CA /* L4ConsoleAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404F02A96C6901000102 /* L4ConsoleAppender.m */; };
+		530EC04C0B4BCE2C00DFC1CA /* L4FileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405002A96C6901000102 /* L4FileAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC04D0B4BCE2D00DFC1CA /* L4FileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405102A96C6901000102 /* L4FileAppender.m */; };
+		530EC04E0B4BCE2D00DFC1CA /* L4RollingFileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405602A96C6901000102 /* L4RollingFileAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC04F0B4BCE2F00DFC1CA /* L4RollingFileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405702A96C6901000102 /* L4RollingFileAppender.m */; };
+		530EC0500B4BCE2F00DFC1CA /* L4WriterAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405802A96C6901000102 /* L4WriterAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0510B4BCE3000DFC1CA /* L4WriterAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405902A96C6901000102 /* L4WriterAppender.m */; };
+		530EC0520B4BCE3100DFC1CA /* L4ErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24FB02B45E6E01000102 /* L4ErrorHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0530B4BCE3200DFC1CA /* L4ErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD24FC02B45E6E01000102 /* L4ErrorHandler.m */; };
+		530EC0540B4BCE3300DFC1CA /* L4DailyRollingFileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE3DCE80640C96700000103 /* L4DailyRollingFileAppender.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0550B4BCE3300DFC1CA /* L4DailyRollingFileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE3DCE90640C96700000103 /* L4DailyRollingFileAppender.m */; };
+		530EC0560B4BCE3500DFC1CA /* L4Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405202A96C6901000102 /* L4Filter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0570B4BCE3500DFC1CA /* L4Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405302A96C6901000102 /* L4Filter.m */; };
+		530EC0580B4BCE3600DFC1CA /* L4Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405402A96C6901000102 /* L4Layout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC0590B4BCE3700DFC1CA /* L4Layout.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405502A96C6901000102 /* L4Layout.m */; };
+		530EC05A0B4BCE3800DFC1CA /* L4SimpleLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24FF02B45E9F01000102 /* L4SimpleLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC05B0B4BCE3800DFC1CA /* L4SimpleLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD250002B45E9F01000102 /* L4SimpleLayout.m */; };
+		530EC05C0B4BCE3900DFC1CA /* L4PatternLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAFC003101357013DC353 /* L4PatternLayout.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		530EC05D0B4BCE3B00DFC1CA /* L4PatternLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAFC103101357013DC353 /* L4PatternLayout.m */; };
+		53C1DECE0B4BD429007947D8 /* AllTests_Prefix.h in Headers */ = {isa = PBXBuildFile; fileRef = C4965D2F0465C75A0065302B /* AllTests_Prefix.h */; };
+		53C1DECF0B4BD429007947D8 /* AllTests.h in Headers */ = {isa = PBXBuildFile; fileRef = C4965D8E0465C84D0065302B /* AllTests.h */; };
+		53C1DED00B4BD429007947D8 /* L4LevelTest.h in Headers */ = {isa = PBXBuildFile; fileRef = C4965DFD0465CA120065302B /* L4LevelTest.h */; };
+		53C1DED10B4BD429007947D8 /* L4Level.h in Headers */ = {isa = PBXBuildFile; fileRef = F591406C02A96C8701000102 /* L4Level.h */; };
+		53C1DED20B4BD429007947D8 /* Log4Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = F591408402A96CA101000102 /* Log4Cocoa.h */; };
+		53C1DED30B4BD429007947D8 /* L4PreprocessorStatics.h in Headers */ = {isa = PBXBuildFile; fileRef = F5842785035E7B0F01000102 /* L4PreprocessorStatics.h */; };
+		53C1DED40B4BD429007947D8 /* L4NSObjectAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = F642027002B03EE001653044 /* L4NSObjectAdditions.h */; };
+		53C1DED50B4BD429007947D8 /* L4Configurator.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24F702B3CCEB01000102 /* L4Configurator.h */; };
+		53C1DED60B4BD429007947D8 /* L4LoggerProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407002A96C8701000102 /* L4LoggerProtocols.h */; };
+		53C1DED70B4BD429007947D8 /* L4Logger.h in Headers */ = {isa = PBXBuildFile; fileRef = F591406E02A96C8701000102 /* L4Logger.h */; };
+		53C1DED80B4BD429007947D8 /* L4RootLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE209E02AF03EE01000102 /* L4RootLogger.h */; };
+		53C1DED90B4BD429007947D8 /* L4LoggerStore.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407102A96C8701000102 /* L4LoggerStore.h */; };
+		53C1DEDA0B4BD429007947D8 /* L4LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407602A96C8701000102 /* L4LogManager.h */; };
+		53C1DEDB0B4BD429007947D8 /* L4LoggingEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407402A96C8701000102 /* L4LoggingEvent.h */; };
+		53C1DEDC0B4BD429007947D8 /* L4RendererMap.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE20A202AF071001000102 /* L4RendererMap.h */; };
+		53C1DEDD0B4BD429007947D8 /* L4DefaultRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BE20AA02AF27FE01000102 /* L4DefaultRenderer.h */; };
+		53C1DEDE0B4BD429007947D8 /* L4LogLog.h in Headers */ = {isa = PBXBuildFile; fileRef = F642026C02AFF63301653044 /* L4LogLog.h */; };
+		53C1DEDF0B4BD429007947D8 /* L4CLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E38662033CD46C01000102 /* L4CLogger.h */; };
+		53C1DEE00B4BD429007947D8 /* L4PatternLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAFC003101357013DC353 /* L4PatternLayout.h */; };
+		53C1DEE10B4BD429007947D8 /* L4SimpleLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24FF02B45E9F01000102 /* L4SimpleLayout.h */; };
+		53C1DEE20B4BD429007947D8 /* L4Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405402A96C6901000102 /* L4Layout.h */; };
+		53C1DEE30B4BD429007947D8 /* L4Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405202A96C6901000102 /* L4Filter.h */; };
+		53C1DEE40B4BD429007947D8 /* L4ErrorHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24FB02B45E6E01000102 /* L4ErrorHandler.h */; };
+		53C1DEE50B4BD429007947D8 /* L4WriterAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405802A96C6901000102 /* L4WriterAppender.h */; };
+		53C1DEE60B4BD429007947D8 /* L4RollingFileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405602A96C6901000102 /* L4RollingFileAppender.h */; };
+		53C1DEE70B4BD429007947D8 /* L4FileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591405002A96C6901000102 /* L4FileAppender.h */; };
+		53C1DEE80B4BD429007947D8 /* L4ConsoleAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404E02A96C6901000102 /* L4ConsoleAppender.h */; };
+		53C1DEE90B4BD429007947D8 /* L4AppenderSkeleton.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404B02A96C6901000102 /* L4AppenderSkeleton.h */; };
+		53C1DEEA0B4BD429007947D8 /* L4AppenderAttachableImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404802A96C6901000102 /* L4AppenderAttachableImpl.h */; };
+		53C1DEEB0B4BD429007947D8 /* L4AppenderProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404A02A96C6901000102 /* L4AppenderProtocols.h */; };
+		53C1DEEC0B4BD429007947D8 /* L4PatternLayoutTest.h in Headers */ = {isa = PBXBuildFile; fileRef = FD65A28C0606832A00000102 /* L4PatternLayoutTest.h */; };
+		53C1DEED0B4BD429007947D8 /* L4FileAppenderTest.h in Headers */ = {isa = PBXBuildFile; fileRef = FDDBBD27063F3693002C41E2 /* L4FileAppenderTest.h */; };
+		53C1DEEE0B4BD429007947D8 /* L4RollingFileAppenderTest.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE3DCCB06405BD700000103 /* L4RollingFileAppenderTest.h */; };
+		53C1DEEF0B4BD429007947D8 /* L4DailyRollingFileAppender.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE3DCE80640C96700000103 /* L4DailyRollingFileAppender.h */; };
+		53C1DEF00B4BD429007947D8 /* L4DailyRollingFileAppenderTest.h in Headers */ = {isa = PBXBuildFile; fileRef = FDE3DCEE0640D85A00000103 /* L4DailyRollingFileAppenderTest.h */; };
+		53C1DEF20B4BD429007947D8 /* test_main.m in Sources */ = {isa = PBXBuildFile; fileRef = C4965D350465C8150065302B /* test_main.m */; };
+		53C1DEF30B4BD429007947D8 /* AllTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4965D8F0465C84D0065302B /* AllTests.m */; };
+		53C1DEF40B4BD429007947D8 /* L4LevelTest.m in Sources */ = {isa = PBXBuildFile; fileRef = C4965DFE0465CA120065302B /* L4LevelTest.m */; };
+		53C1DEF50B4BD429007947D8 /* L4Level.m in Sources */ = {isa = PBXBuildFile; fileRef = F591406D02A96C8701000102 /* L4Level.m */; };
+		53C1DEF60B4BD429007947D8 /* L4NSObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F642027102B03EE001653044 /* L4NSObjectAdditions.m */; };
+		53C1DEF70B4BD429007947D8 /* L4Configurator.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD24F802B3CCEB01000102 /* L4Configurator.m */; };
+		53C1DEF80B4BD429007947D8 /* L4Logger.m in Sources */ = {isa = PBXBuildFile; fileRef = F591406F02A96C8701000102 /* L4Logger.m */; };
+		53C1DEF90B4BD429007947D8 /* L4RootLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE209F02AF03EE01000102 /* L4RootLogger.m */; };
+		53C1DEFA0B4BD429007947D8 /* L4LoggerStore.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407202A96C8701000102 /* L4LoggerStore.m */; };
+		53C1DEFB0B4BD429007947D8 /* L4LogManager.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407702A96C8701000102 /* L4LogManager.m */; };
+		53C1DEFC0B4BD429007947D8 /* L4LoggingEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = F591407502A96C8701000102 /* L4LoggingEvent.m */; };
+		53C1DEFD0B4BD429007947D8 /* L4RendererMap.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE20A302AF071001000102 /* L4RendererMap.m */; };
+		53C1DEFE0B4BD429007947D8 /* L4DefaultRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE20AB02AF27FE01000102 /* L4DefaultRenderer.m */; };
+		53C1DEFF0B4BD429007947D8 /* L4LogLog.m in Sources */ = {isa = PBXBuildFile; fileRef = F642026D02AFF63301653044 /* L4LogLog.m */; };
+		53C1DF000B4BD429007947D8 /* L4CLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E38663033CD46C01000102 /* L4CLogger.m */; };
+		53C1DF010B4BD429007947D8 /* L4PatternLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAFC103101357013DC353 /* L4PatternLayout.m */; };
+		53C1DF020B4BD429007947D8 /* L4SimpleLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD250002B45E9F01000102 /* L4SimpleLayout.m */; };
+		53C1DF030B4BD429007947D8 /* L4Layout.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405502A96C6901000102 /* L4Layout.m */; };
+		53C1DF040B4BD429007947D8 /* L4Filter.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405302A96C6901000102 /* L4Filter.m */; };
+		53C1DF050B4BD429007947D8 /* L4ErrorHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD24FC02B45E6E01000102 /* L4ErrorHandler.m */; };
+		53C1DF060B4BD429007947D8 /* L4WriterAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405902A96C6901000102 /* L4WriterAppender.m */; };
+		53C1DF070B4BD429007947D8 /* L4RollingFileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405702A96C6901000102 /* L4RollingFileAppender.m */; };
+		53C1DF080B4BD429007947D8 /* L4FileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591405102A96C6901000102 /* L4FileAppender.m */; };
+		53C1DF090B4BD429007947D8 /* L4ConsoleAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404F02A96C6901000102 /* L4ConsoleAppender.m */; };
+		53C1DF0A0B4BD429007947D8 /* L4AppenderSkeleton.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404C02A96C6901000102 /* L4AppenderSkeleton.m */; };
+		53C1DF0B0B4BD429007947D8 /* L4AppenderAttachableImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404902A96C6901000102 /* L4AppenderAttachableImpl.m */; };
+		53C1DF0C0B4BD429007947D8 /* L4PatternLayoutTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FD65A28D0606832A00000102 /* L4PatternLayoutTest.m */; };
+		53C1DF0D0B4BD429007947D8 /* L4FileAppenderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FDDBBD28063F3693002C41E2 /* L4FileAppenderTest.m */; };
+		53C1DF0E0B4BD429007947D8 /* L4RollingFileAppenderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE3DCCC06405BD700000103 /* L4RollingFileAppenderTest.m */; };
+		53C1DF0F0B4BD429007947D8 /* L4DailyRollingFileAppender.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE3DCE90640C96700000103 /* L4DailyRollingFileAppender.m */; };
+		53C1DF100B4BD429007947D8 /* L4DailyRollingFileAppenderTest.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE3DCEF0640D85A00000103 /* L4DailyRollingFileAppenderTest.m */; };
+		53C1DF120B4BD429007947D8 /* ObjcUnit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C4965D320465C7B30065302B /* ObjcUnit.framework */; };
+		53C1DF130B4BD429007947D8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		530EBD130B4BBFAE00DFC1CA /* Info-Log4Cocoa__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Info-Log4Cocoa__Upgraded_.plist"; sourceTree = "<group>"; };
+		530EBD140B4BBFAE00DFC1CA /* Log4Cocoa.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Log4Cocoa.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		530EC0030B4BCDB100DFC1CA /* libLog4Cocoa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLog4Cocoa.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		53C1DF180B4BD429007947D8 /* AllTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AllTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		53C1DF1F0B4BD429007947D8 /* Documentation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Documentation; sourceTree = BUILT_PRODUCTS_DIR; };
+		C4965D2F0465C75A0065302B /* AllTests_Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllTests_Prefix.h; sourceTree = "<group>"; };
+		C4965D320465C7B30065302B /* ObjcUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = file; name = ObjcUnit.framework; path = /Library/Frameworks/ObjcUnit.framework; sourceTree = "<absolute>"; };
+		C4965D350465C8150065302B /* test_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = test_main.m; sourceTree = "<group>"; };
+		C4965D8E0465C84D0065302B /* AllTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllTests.h; sourceTree = "<group>"; };
+		C4965D8F0465C84D0065302B /* AllTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AllTests.m; sourceTree = "<group>"; };
+		C4965DFD0465CA120065302B /* L4LevelTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L4LevelTest.h; sourceTree = "<group>"; };
+		C4965DFE0465CA120065302B /* L4LevelTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = L4LevelTest.m; sourceTree = "<group>"; };
+		F5842785035E7B0F01000102 /* L4PreprocessorStatics.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4PreprocessorStatics.h; sourceTree = "<group>"; };
+		F591404802A96C6901000102 /* L4AppenderAttachableImpl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4AppenderAttachableImpl.h; sourceTree = "<group>"; };
+		F591404902A96C6901000102 /* L4AppenderAttachableImpl.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4AppenderAttachableImpl.m; sourceTree = "<group>"; };
+		F591404A02A96C6901000102 /* L4AppenderProtocols.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4AppenderProtocols.h; sourceTree = "<group>"; };
+		F591404B02A96C6901000102 /* L4AppenderSkeleton.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4AppenderSkeleton.h; sourceTree = "<group>"; };
+		F591404C02A96C6901000102 /* L4AppenderSkeleton.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4AppenderSkeleton.m; sourceTree = "<group>"; };
+		F591404E02A96C6901000102 /* L4ConsoleAppender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4ConsoleAppender.h; sourceTree = "<group>"; };
+		F591404F02A96C6901000102 /* L4ConsoleAppender.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4ConsoleAppender.m; sourceTree = "<group>"; };
+		F591405002A96C6901000102 /* L4FileAppender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4FileAppender.h; sourceTree = "<group>"; };
+		F591405102A96C6901000102 /* L4FileAppender.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4FileAppender.m; sourceTree = "<group>"; };
+		F591405202A96C6901000102 /* L4Filter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4Filter.h; sourceTree = "<group>"; };
+		F591405302A96C6901000102 /* L4Filter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4Filter.m; sourceTree = "<group>"; };
+		F591405402A96C6901000102 /* L4Layout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4Layout.h; sourceTree = "<group>"; };
+		F591405502A96C6901000102 /* L4Layout.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4Layout.m; sourceTree = "<group>"; };
+		F591405602A96C6901000102 /* L4RollingFileAppender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4RollingFileAppender.h; sourceTree = "<group>"; };
+		F591405702A96C6901000102 /* L4RollingFileAppender.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4RollingFileAppender.m; sourceTree = "<group>"; };
+		F591405802A96C6901000102 /* L4WriterAppender.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4WriterAppender.h; sourceTree = "<group>"; };
+		F591405902A96C6901000102 /* L4WriterAppender.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4WriterAppender.m; sourceTree = "<group>"; };
+		F591406C02A96C8701000102 /* L4Level.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4Level.h; sourceTree = "<group>"; };
+		F591406D02A96C8701000102 /* L4Level.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4Level.m; sourceTree = "<group>"; };
+		F591406E02A96C8701000102 /* L4Logger.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4Logger.h; sourceTree = "<group>"; };
+		F591406F02A96C8701000102 /* L4Logger.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4Logger.m; sourceTree = "<group>"; };
+		F591407002A96C8701000102 /* L4LoggerProtocols.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4LoggerProtocols.h; sourceTree = "<group>"; };
+		F591407102A96C8701000102 /* L4LoggerStore.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4LoggerStore.h; sourceTree = "<group>"; };
+		F591407202A96C8701000102 /* L4LoggerStore.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4LoggerStore.m; sourceTree = "<group>"; };
+		F591407402A96C8701000102 /* L4LoggingEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4LoggingEvent.h; sourceTree = "<group>"; };
+		F591407502A96C8701000102 /* L4LoggingEvent.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4LoggingEvent.m; sourceTree = "<group>"; };
+		F591407602A96C8701000102 /* L4LogManager.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4LogManager.h; sourceTree = "<group>"; };
+		F591407702A96C8701000102 /* L4LogManager.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4LogManager.m; sourceTree = "<group>"; };
+		F591408402A96CA101000102 /* Log4Cocoa.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Log4Cocoa.h; sourceTree = "<group>"; };
+		F5AD24F702B3CCEB01000102 /* L4Configurator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4Configurator.h; sourceTree = "<group>"; };
+		F5AD24F802B3CCEB01000102 /* L4Configurator.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4Configurator.m; sourceTree = "<group>"; };
+		F5AD24FB02B45E6E01000102 /* L4ErrorHandler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4ErrorHandler.h; sourceTree = "<group>"; };
+		F5AD24FC02B45E6E01000102 /* L4ErrorHandler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4ErrorHandler.m; sourceTree = "<group>"; };
+		F5AD24FF02B45E9F01000102 /* L4SimpleLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4SimpleLayout.h; sourceTree = "<group>"; };
+		F5AD250002B45E9F01000102 /* L4SimpleLayout.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4SimpleLayout.m; sourceTree = "<group>"; };
+		F5AEAFC003101357013DC353 /* L4PatternLayout.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4PatternLayout.h; sourceTree = "<group>"; };
+		F5AEAFC103101357013DC353 /* L4PatternLayout.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4PatternLayout.m; sourceTree = "<group>"; };
+		F5BE209E02AF03EE01000102 /* L4RootLogger.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4RootLogger.h; sourceTree = "<group>"; };
+		F5BE209F02AF03EE01000102 /* L4RootLogger.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4RootLogger.m; sourceTree = "<group>"; };
+		F5BE20A202AF071001000102 /* L4RendererMap.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4RendererMap.h; sourceTree = "<group>"; };
+		F5BE20A302AF071001000102 /* L4RendererMap.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4RendererMap.m; sourceTree = "<group>"; };
+		F5BE20AA02AF27FE01000102 /* L4DefaultRenderer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4DefaultRenderer.h; sourceTree = "<group>"; };
+		F5BE20AB02AF27FE01000102 /* L4DefaultRenderer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4DefaultRenderer.m; sourceTree = "<group>"; };
+		F5DEFB2F0351704B01000102 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		F5E38662033CD46C01000102 /* L4CLogger.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4CLogger.h; sourceTree = "<group>"; };
+		F5E38663033CD46C01000102 /* L4CLogger.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4CLogger.m; sourceTree = "<group>"; };
+		F642026C02AFF63301653044 /* L4LogLog.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4LogLog.h; sourceTree = "<group>"; };
+		F642026D02AFF63301653044 /* L4LogLog.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4LogLog.m; sourceTree = "<group>"; };
+		F642027002B03EE001653044 /* L4NSObjectAdditions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4NSObjectAdditions.h; sourceTree = "<group>"; };
+		F642027102B03EE001653044 /* L4NSObjectAdditions.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4NSObjectAdditions.m; sourceTree = "<group>"; };
+		FD320AAD060D49E500C81779 /* buildHeaderDoc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = buildHeaderDoc; sourceTree = "<group>"; };
+		FD65A28C0606832A00000102 /* L4PatternLayoutTest.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = L4PatternLayoutTest.h; sourceTree = "<group>"; };
+		FD65A28D0606832A00000102 /* L4PatternLayoutTest.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = L4PatternLayoutTest.m; sourceTree = "<group>"; };
+		FDDBBD27063F3693002C41E2 /* L4FileAppenderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L4FileAppenderTest.h; sourceTree = "<group>"; };
+		FDDBBD28063F3693002C41E2 /* L4FileAppenderTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = L4FileAppenderTest.m; sourceTree = "<group>"; };
+		FDE3DCCB06405BD700000103 /* L4RollingFileAppenderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L4RollingFileAppenderTest.h; sourceTree = "<group>"; };
+		FDE3DCCC06405BD700000103 /* L4RollingFileAppenderTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = L4RollingFileAppenderTest.m; sourceTree = "<group>"; };
+		FDE3DCE80640C96700000103 /* L4DailyRollingFileAppender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L4DailyRollingFileAppender.h; sourceTree = "<group>"; };
+		FDE3DCE90640C96700000103 /* L4DailyRollingFileAppender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = L4DailyRollingFileAppender.m; sourceTree = "<group>"; };
+		FDE3DCEE0640D85A00000103 /* L4DailyRollingFileAppenderTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = L4DailyRollingFileAppenderTest.h; sourceTree = "<group>"; };
+		FDE3DCEF0640D85A00000103 /* L4DailyRollingFileAppenderTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = L4DailyRollingFileAppenderTest.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		530EBD0C0B4BBFAE00DFC1CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530EBD0D0B4BBFAE00DFC1CA /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		530EC0010B4BCDB100DFC1CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53C1DF110B4BD429007947D8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C1DF120B4BD429007947D8 /* ObjcUnit.framework in Frameworks */,
+				53C1DF130B4BD429007947D8 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				530EBD140B4BBFAE00DFC1CA /* Log4Cocoa.framework */,
+				530EC0030B4BCDB100DFC1CA /* libLog4Cocoa.a */,
+				53C1DF180B4BD429007947D8 /* AllTests */,
+				53C1DF1F0B4BD429007947D8 /* Documentation */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* Log4Cocoa */ = {
+			isa = PBXGroup;
+			children = (
+				F591408402A96CA101000102 /* Log4Cocoa.h */,
+				F5842785035E7B0F01000102 /* L4PreprocessorStatics.h */,
+				F642027002B03EE001653044 /* L4NSObjectAdditions.h */,
+				F642027102B03EE001653044 /* L4NSObjectAdditions.m */,
+				F5AD24F702B3CCEB01000102 /* L4Configurator.h */,
+				F5AD24F802B3CCEB01000102 /* L4Configurator.m */,
+				F5DEA9C202ADC60101000102 /* Logging */,
+				F5DEA9C302ADC60101000102 /* Appending */,
+				F52F1C7C02B0E27E01000102 /* Layouts & Filters */,
+				C4965D340465C7BF0065302B /* Tests */,
+				089C1665FE841158C02AAC07 /* Resources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				FD320AAC060D497A00C81779 /* HeaderDoc Scripts */,
+				034768DFFF38A50411DB9C8B /* Products */,
+				530EBD130B4BBFAE00DFC1CA /* Info-Log4Cocoa__Upgraded_.plist */,
+			);
+			name = Log4Cocoa;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */,
+				1058C7B2FEA5585E11CA2CBB /* Other Frameworks */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		089C1665FE841158C02AAC07 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				F5DEFB2F0351704B01000102 /* readme.txt */,
+				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
+				C4965D320465C7B30065302B /* ObjcUnit.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7B2FEA5585E11CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+				0867D6A5FE840307C02AAC07 /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		C4965D340465C7BF0065302B /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				C4965D2F0465C75A0065302B /* AllTests_Prefix.h */,
+				C4965D350465C8150065302B /* test_main.m */,
+				C4965D8E0465C84D0065302B /* AllTests.h */,
+				C4965D8F0465C84D0065302B /* AllTests.m */,
+				C4965DFD0465CA120065302B /* L4LevelTest.h */,
+				C4965DFE0465CA120065302B /* L4LevelTest.m */,
+				FD65A28C0606832A00000102 /* L4PatternLayoutTest.h */,
+				FD65A28D0606832A00000102 /* L4PatternLayoutTest.m */,
+				FDDBBD27063F3693002C41E2 /* L4FileAppenderTest.h */,
+				FDDBBD28063F3693002C41E2 /* L4FileAppenderTest.m */,
+				FDE3DCCB06405BD700000103 /* L4RollingFileAppenderTest.h */,
+				FDE3DCCC06405BD700000103 /* L4RollingFileAppenderTest.m */,
+				FDE3DCEE0640D85A00000103 /* L4DailyRollingFileAppenderTest.h */,
+				FDE3DCEF0640D85A00000103 /* L4DailyRollingFileAppenderTest.m */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		F52F1C7C02B0E27E01000102 /* Layouts & Filters */ = {
+			isa = PBXGroup;
+			children = (
+				F591405202A96C6901000102 /* L4Filter.h */,
+				F591405302A96C6901000102 /* L4Filter.m */,
+				F591405402A96C6901000102 /* L4Layout.h */,
+				F591405502A96C6901000102 /* L4Layout.m */,
+				F5AD24FF02B45E9F01000102 /* L4SimpleLayout.h */,
+				F5AD250002B45E9F01000102 /* L4SimpleLayout.m */,
+				F5AEAFC003101357013DC353 /* L4PatternLayout.h */,
+				F5AEAFC103101357013DC353 /* L4PatternLayout.m */,
+			);
+			name = "Layouts & Filters";
+			sourceTree = "<group>";
+		};
+		F5DEA9C202ADC60101000102 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				F591407002A96C8701000102 /* L4LoggerProtocols.h */,
+				F591406C02A96C8701000102 /* L4Level.h */,
+				F591406D02A96C8701000102 /* L4Level.m */,
+				F591406E02A96C8701000102 /* L4Logger.h */,
+				F591406F02A96C8701000102 /* L4Logger.m */,
+				F5BE209E02AF03EE01000102 /* L4RootLogger.h */,
+				F5BE209F02AF03EE01000102 /* L4RootLogger.m */,
+				F591407102A96C8701000102 /* L4LoggerStore.h */,
+				F591407202A96C8701000102 /* L4LoggerStore.m */,
+				F591407602A96C8701000102 /* L4LogManager.h */,
+				F591407702A96C8701000102 /* L4LogManager.m */,
+				F591407402A96C8701000102 /* L4LoggingEvent.h */,
+				F591407502A96C8701000102 /* L4LoggingEvent.m */,
+				F5BE20A202AF071001000102 /* L4RendererMap.h */,
+				F5BE20A302AF071001000102 /* L4RendererMap.m */,
+				F5BE20AA02AF27FE01000102 /* L4DefaultRenderer.h */,
+				F5BE20AB02AF27FE01000102 /* L4DefaultRenderer.m */,
+				F642026C02AFF63301653044 /* L4LogLog.h */,
+				F642026D02AFF63301653044 /* L4LogLog.m */,
+				F5E38662033CD46C01000102 /* L4CLogger.h */,
+				F5E38663033CD46C01000102 /* L4CLogger.m */,
+			);
+			name = Logging;
+			sourceTree = "<group>";
+		};
+		F5DEA9C302ADC60101000102 /* Appending */ = {
+			isa = PBXGroup;
+			children = (
+				F591404A02A96C6901000102 /* L4AppenderProtocols.h */,
+				F591404802A96C6901000102 /* L4AppenderAttachableImpl.h */,
+				F591404902A96C6901000102 /* L4AppenderAttachableImpl.m */,
+				F591404B02A96C6901000102 /* L4AppenderSkeleton.h */,
+				F591404C02A96C6901000102 /* L4AppenderSkeleton.m */,
+				F591404E02A96C6901000102 /* L4ConsoleAppender.h */,
+				F591404F02A96C6901000102 /* L4ConsoleAppender.m */,
+				F591405002A96C6901000102 /* L4FileAppender.h */,
+				F591405102A96C6901000102 /* L4FileAppender.m */,
+				F591405602A96C6901000102 /* L4RollingFileAppender.h */,
+				F591405702A96C6901000102 /* L4RollingFileAppender.m */,
+				F591405802A96C6901000102 /* L4WriterAppender.h */,
+				F591405902A96C6901000102 /* L4WriterAppender.m */,
+				F5AD24FB02B45E6E01000102 /* L4ErrorHandler.h */,
+				F5AD24FC02B45E6E01000102 /* L4ErrorHandler.m */,
+				FDE3DCE80640C96700000103 /* L4DailyRollingFileAppender.h */,
+				FDE3DCE90640C96700000103 /* L4DailyRollingFileAppender.m */,
+			);
+			name = Appending;
+			sourceTree = "<group>";
+		};
+		FD320AAC060D497A00C81779 /* HeaderDoc Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				FD320AAD060D49E500C81779 /* buildHeaderDoc */,
+			);
+			name = "HeaderDoc Scripts";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		530EBCD30B4BBFAE00DFC1CA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530EBCD40B4BBFAE00DFC1CA /* L4AppenderAttachableImpl.h in Headers */,
+				530EBCD50B4BBFAE00DFC1CA /* L4AppenderProtocols.h in Headers */,
+				530EBCD60B4BBFAE00DFC1CA /* L4AppenderSkeleton.h in Headers */,
+				530EBCD70B4BBFAE00DFC1CA /* L4ConsoleAppender.h in Headers */,
+				530EBCD80B4BBFAE00DFC1CA /* L4FileAppender.h in Headers */,
+				530EBCD90B4BBFAE00DFC1CA /* L4Filter.h in Headers */,
+				530EBCDA0B4BBFAE00DFC1CA /* L4Layout.h in Headers */,
+				530EBCDB0B4BBFAE00DFC1CA /* L4RollingFileAppender.h in Headers */,
+				530EBCDC0B4BBFAE00DFC1CA /* L4WriterAppender.h in Headers */,
+				530EBCDD0B4BBFAE00DFC1CA /* L4Level.h in Headers */,
+				530EBCDE0B4BBFAE00DFC1CA /* L4Logger.h in Headers */,
+				530EBCDF0B4BBFAE00DFC1CA /* L4LoggerProtocols.h in Headers */,
+				530EBCE00B4BBFAE00DFC1CA /* L4LoggerStore.h in Headers */,
+				530EBCE10B4BBFAE00DFC1CA /* L4LoggingEvent.h in Headers */,
+				530EBCE20B4BBFAE00DFC1CA /* L4LogManager.h in Headers */,
+				530EBCE30B4BBFAE00DFC1CA /* Log4Cocoa.h in Headers */,
+				530EBCE40B4BBFAE00DFC1CA /* L4RootLogger.h in Headers */,
+				530EBCE50B4BBFAE00DFC1CA /* L4RendererMap.h in Headers */,
+				530EBCE60B4BBFAE00DFC1CA /* L4DefaultRenderer.h in Headers */,
+				530EBCE70B4BBFAE00DFC1CA /* L4LogLog.h in Headers */,
+				530EBCE80B4BBFAE00DFC1CA /* L4NSObjectAdditions.h in Headers */,
+				530EBCE90B4BBFAE00DFC1CA /* L4Configurator.h in Headers */,
+				530EBCEA0B4BBFAE00DFC1CA /* L4ErrorHandler.h in Headers */,
+				530EBCEB0B4BBFAE00DFC1CA /* L4SimpleLayout.h in Headers */,
+				530EBCEC0B4BBFAE00DFC1CA /* L4PatternLayout.h in Headers */,
+				530EBCED0B4BBFAE00DFC1CA /* L4CLogger.h in Headers */,
+				530EBCEE0B4BBFAE00DFC1CA /* L4PreprocessorStatics.h in Headers */,
+				530EBCEF0B4BBFAE00DFC1CA /* L4DailyRollingFileAppender.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		530EBFFF0B4BCDB100DFC1CA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530EC0070B4BCDE600DFC1CA /* Log4Cocoa.h in Headers */,
+				530EC0080B4BCDE700DFC1CA /* L4PreprocessorStatics.h in Headers */,
+				530EC0090B4BCDE700DFC1CA /* L4NSObjectAdditions.h in Headers */,
+				530EC00B0B4BCDE800DFC1CA /* L4Configurator.h in Headers */,
+				530EC0140B4BCE1500DFC1CA /* L4Level.h in Headers */,
+				530EC0150B4BCE1600DFC1CA /* L4LoggerProtocols.h in Headers */,
+				530EC0170B4BCE1700DFC1CA /* L4Logger.h in Headers */,
+				530EC0190B4BCE1800DFC1CA /* L4RootLogger.h in Headers */,
+				530EC01B0B4BCE1900DFC1CA /* L4LoggerStore.h in Headers */,
+				530EC01D0B4BCE1A00DFC1CA /* L4LogManager.h in Headers */,
+				530EC03C0B4BCE1E00DFC1CA /* L4LoggingEvent.h in Headers */,
+				530EC03E0B4BCE1F00DFC1CA /* L4RendererMap.h in Headers */,
+				530EC0400B4BCE2000DFC1CA /* L4DefaultRenderer.h in Headers */,
+				530EC0420B4BCE2100DFC1CA /* L4LogLog.h in Headers */,
+				530EC0440B4BCE2300DFC1CA /* L4CLogger.h in Headers */,
+				530EC0450B4BCE2400DFC1CA /* L4AppenderProtocols.h in Headers */,
+				530EC0460B4BCE2500DFC1CA /* L4AppenderAttachableImpl.h in Headers */,
+				530EC0490B4BCE2700DFC1CA /* L4AppenderSkeleton.h in Headers */,
+				530EC04A0B4BCE2900DFC1CA /* L4ConsoleAppender.h in Headers */,
+				530EC04C0B4BCE2C00DFC1CA /* L4FileAppender.h in Headers */,
+				530EC04E0B4BCE2D00DFC1CA /* L4RollingFileAppender.h in Headers */,
+				530EC0500B4BCE2F00DFC1CA /* L4WriterAppender.h in Headers */,
+				530EC0520B4BCE3100DFC1CA /* L4ErrorHandler.h in Headers */,
+				530EC0540B4BCE3300DFC1CA /* L4DailyRollingFileAppender.h in Headers */,
+				530EC0560B4BCE3500DFC1CA /* L4Filter.h in Headers */,
+				530EC0580B4BCE3600DFC1CA /* L4Layout.h in Headers */,
+				530EC05A0B4BCE3800DFC1CA /* L4SimpleLayout.h in Headers */,
+				530EC05C0B4BCE3900DFC1CA /* L4PatternLayout.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53C1DECD0B4BD429007947D8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C1DECE0B4BD429007947D8 /* AllTests_Prefix.h in Headers */,
+				53C1DECF0B4BD429007947D8 /* AllTests.h in Headers */,
+				53C1DED00B4BD429007947D8 /* L4LevelTest.h in Headers */,
+				53C1DED10B4BD429007947D8 /* L4Level.h in Headers */,
+				53C1DED20B4BD429007947D8 /* Log4Cocoa.h in Headers */,
+				53C1DED30B4BD429007947D8 /* L4PreprocessorStatics.h in Headers */,
+				53C1DED40B4BD429007947D8 /* L4NSObjectAdditions.h in Headers */,
+				53C1DED50B4BD429007947D8 /* L4Configurator.h in Headers */,
+				53C1DED60B4BD429007947D8 /* L4LoggerProtocols.h in Headers */,
+				53C1DED70B4BD429007947D8 /* L4Logger.h in Headers */,
+				53C1DED80B4BD429007947D8 /* L4RootLogger.h in Headers */,
+				53C1DED90B4BD429007947D8 /* L4LoggerStore.h in Headers */,
+				53C1DEDA0B4BD429007947D8 /* L4LogManager.h in Headers */,
+				53C1DEDB0B4BD429007947D8 /* L4LoggingEvent.h in Headers */,
+				53C1DEDC0B4BD429007947D8 /* L4RendererMap.h in Headers */,
+				53C1DEDD0B4BD429007947D8 /* L4DefaultRenderer.h in Headers */,
+				53C1DEDE0B4BD429007947D8 /* L4LogLog.h in Headers */,
+				53C1DEDF0B4BD429007947D8 /* L4CLogger.h in Headers */,
+				53C1DEE00B4BD429007947D8 /* L4PatternLayout.h in Headers */,
+				53C1DEE10B4BD429007947D8 /* L4SimpleLayout.h in Headers */,
+				53C1DEE20B4BD429007947D8 /* L4Layout.h in Headers */,
+				53C1DEE30B4BD429007947D8 /* L4Filter.h in Headers */,
+				53C1DEE40B4BD429007947D8 /* L4ErrorHandler.h in Headers */,
+				53C1DEE50B4BD429007947D8 /* L4WriterAppender.h in Headers */,
+				53C1DEE60B4BD429007947D8 /* L4RollingFileAppender.h in Headers */,
+				53C1DEE70B4BD429007947D8 /* L4FileAppender.h in Headers */,
+				53C1DEE80B4BD429007947D8 /* L4ConsoleAppender.h in Headers */,
+				53C1DEE90B4BD429007947D8 /* L4AppenderSkeleton.h in Headers */,
+				53C1DEEA0B4BD429007947D8 /* L4AppenderAttachableImpl.h in Headers */,
+				53C1DEEB0B4BD429007947D8 /* L4AppenderProtocols.h in Headers */,
+				53C1DEEC0B4BD429007947D8 /* L4PatternLayoutTest.h in Headers */,
+				53C1DEED0B4BD429007947D8 /* L4FileAppenderTest.h in Headers */,
+				53C1DEEE0B4BD429007947D8 /* L4RollingFileAppenderTest.h in Headers */,
+				53C1DEEF0B4BD429007947D8 /* L4DailyRollingFileAppender.h in Headers */,
+				53C1DEF00B4BD429007947D8 /* L4DailyRollingFileAppenderTest.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		530EBCD20B4BBFAE00DFC1CA /* Log4Cocoa */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 530EBD0F0B4BBFAE00DFC1CA /* Build configuration list for PBXNativeTarget "Log4Cocoa" */;
+			buildPhases = (
+				530EBCD30B4BBFAE00DFC1CA /* Headers */,
+				530EBCF00B4BBFAE00DFC1CA /* Resources */,
+				530EBCF30B4BBFAE00DFC1CA /* Sources */,
+				530EBD0C0B4BBFAE00DFC1CA /* Frameworks */,
+				530EBD0E0B4BBFAE00DFC1CA /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Log4Cocoa;
+			productInstallPath = "@executable_path/../Frameworks";
+			productName = Log4Cocoa;
+			productReference = 530EBD140B4BBFAE00DFC1CA /* Log4Cocoa.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 530EC0100B4BCE1200DFC1CA /* Build configuration list for PBXNativeTarget "libLog4Cocoa" */;
+			buildPhases = (
+				530EBFFF0B4BCDB100DFC1CA /* Headers */,
+				530EC0000B4BCDB100DFC1CA /* Sources */,
+				530EC0010B4BCDB100DFC1CA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = libLog4Cocoa;
+			productName = libLog4Cocoa;
+			productReference = 530EC0030B4BCDB100DFC1CA /* libLog4Cocoa.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		53C1DECC0B4BD429007947D8 /* AllTests (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53C1DF150B4BD429007947D8 /* Build configuration list for PBXNativeTarget "AllTests (Upgraded)" */;
+			buildPhases = (
+				53C1DECD0B4BD429007947D8 /* Headers */,
+				53C1DEF10B4BD429007947D8 /* Sources */,
+				53C1DF110B4BD429007947D8 /* Frameworks */,
+				53C1DF140B4BD429007947D8 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "AllTests (Upgraded)";
+			productInstallPath = /usr/local/bin;
+			productName = AllTests;
+			productReference = 53C1DF180B4BD429007947D8 /* AllTests */;
+			productType = "com.apple.product-type.tool";
+		};
+		53C1DF1A0B4BD429007947D8 /* Documentation (Upgraded) */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53C1DF1C0B4BD429007947D8 /* Build configuration list for PBXNativeTarget "Documentation (Upgraded)" */;
+			buildPhases = (
+				53C1DF1B0B4BD429007947D8 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Documentation (Upgraded)";
+			productInstallPath = /usr/local/bin;
+			productName = Documentation;
+			productReference = 53C1DF1F0B4BD429007947D8 /* Documentation */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 539EEAA90B4A8793005DDDA5 /* Build configuration list for PBXProject "Log4Cocoa" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* Log4Cocoa */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			targets = (
+				530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */,
+				53C1DECC0B4BD429007947D8 /* AllTests (Upgraded) */,
+				53C1DF1A0B4BD429007947D8 /* Documentation (Upgraded) */,
+				530EBCD20B4BBFAE00DFC1CA /* Log4Cocoa */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		530EBCF00B4BBFAE00DFC1CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530EBCF10B4BBFAE00DFC1CA /* InfoPlist.strings in Resources */,
+				530EBCF20B4BBFAE00DFC1CA /* readme.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		530EBD0E0B4BBFAE00DFC1CA /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53C1DF140B4BD429007947D8 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		53C1DF1B0B4BD429007947D8 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/csh;
+			shellScript = ./buildHeaderDoc;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		530EBCF30B4BBFAE00DFC1CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530EBCF40B4BBFAE00DFC1CA /* L4AppenderAttachableImpl.m in Sources */,
+				530EBCF50B4BBFAE00DFC1CA /* L4AppenderSkeleton.m in Sources */,
+				530EBCF60B4BBFAE00DFC1CA /* L4ConsoleAppender.m in Sources */,
+				530EBCF70B4BBFAE00DFC1CA /* L4FileAppender.m in Sources */,
+				530EBCF80B4BBFAE00DFC1CA /* L4Filter.m in Sources */,
+				530EBCF90B4BBFAE00DFC1CA /* L4Layout.m in Sources */,
+				530EBCFA0B4BBFAE00DFC1CA /* L4RollingFileAppender.m in Sources */,
+				530EBCFB0B4BBFAE00DFC1CA /* L4WriterAppender.m in Sources */,
+				530EBCFC0B4BBFAE00DFC1CA /* L4Level.m in Sources */,
+				530EBCFD0B4BBFAE00DFC1CA /* L4Logger.m in Sources */,
+				530EBCFE0B4BBFAE00DFC1CA /* L4LoggerStore.m in Sources */,
+				530EBCFF0B4BBFAE00DFC1CA /* L4LoggingEvent.m in Sources */,
+				530EBD000B4BBFAE00DFC1CA /* L4LogManager.m in Sources */,
+				530EBD010B4BBFAE00DFC1CA /* L4RootLogger.m in Sources */,
+				530EBD020B4BBFAE00DFC1CA /* L4RendererMap.m in Sources */,
+				530EBD030B4BBFAE00DFC1CA /* L4DefaultRenderer.m in Sources */,
+				530EBD040B4BBFAE00DFC1CA /* L4LogLog.m in Sources */,
+				530EBD050B4BBFAE00DFC1CA /* L4NSObjectAdditions.m in Sources */,
+				530EBD060B4BBFAE00DFC1CA /* L4Configurator.m in Sources */,
+				530EBD070B4BBFAE00DFC1CA /* L4ErrorHandler.m in Sources */,
+				530EBD080B4BBFAE00DFC1CA /* L4SimpleLayout.m in Sources */,
+				530EBD090B4BBFAE00DFC1CA /* L4PatternLayout.m in Sources */,
+				530EBD0A0B4BBFAE00DFC1CA /* L4CLogger.m in Sources */,
+				530EBD0B0B4BBFAE00DFC1CA /* L4DailyRollingFileAppender.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		530EC0000B4BCDB100DFC1CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				530EC00A0B4BCDE700DFC1CA /* L4NSObjectAdditions.m in Sources */,
+				530EC00C0B4BCDE900DFC1CA /* L4Configurator.m in Sources */,
+				530EC00D0B4BCDEC00DFC1CA /* L4CLogger.m in Sources */,
+				530EC0160B4BCE1600DFC1CA /* L4Level.m in Sources */,
+				530EC0180B4BCE1700DFC1CA /* L4Logger.m in Sources */,
+				530EC01A0B4BCE1800DFC1CA /* L4RootLogger.m in Sources */,
+				530EC01C0B4BCE1900DFC1CA /* L4LoggerStore.m in Sources */,
+				530EC01E0B4BCE1B00DFC1CA /* L4LogManager.m in Sources */,
+				530EC03D0B4BCE1E00DFC1CA /* L4LoggingEvent.m in Sources */,
+				530EC03F0B4BCE2000DFC1CA /* L4RendererMap.m in Sources */,
+				530EC0410B4BCE2100DFC1CA /* L4DefaultRenderer.m in Sources */,
+				530EC0430B4BCE2200DFC1CA /* L4LogLog.m in Sources */,
+				530EC0470B4BCE2600DFC1CA /* L4AppenderAttachableImpl.m in Sources */,
+				530EC0480B4BCE2600DFC1CA /* L4AppenderSkeleton.m in Sources */,
+				530EC04B0B4BCE2900DFC1CA /* L4ConsoleAppender.m in Sources */,
+				530EC04D0B4BCE2D00DFC1CA /* L4FileAppender.m in Sources */,
+				530EC04F0B4BCE2F00DFC1CA /* L4RollingFileAppender.m in Sources */,
+				530EC0510B4BCE3000DFC1CA /* L4WriterAppender.m in Sources */,
+				530EC0530B4BCE3200DFC1CA /* L4ErrorHandler.m in Sources */,
+				530EC0550B4BCE3300DFC1CA /* L4DailyRollingFileAppender.m in Sources */,
+				530EC0570B4BCE3500DFC1CA /* L4Filter.m in Sources */,
+				530EC0590B4BCE3700DFC1CA /* L4Layout.m in Sources */,
+				530EC05B0B4BCE3800DFC1CA /* L4SimpleLayout.m in Sources */,
+				530EC05D0B4BCE3B00DFC1CA /* L4PatternLayout.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		53C1DEF10B4BD429007947D8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C1DEF20B4BD429007947D8 /* test_main.m in Sources */,
+				53C1DEF30B4BD429007947D8 /* AllTests.m in Sources */,
+				53C1DEF40B4BD429007947D8 /* L4LevelTest.m in Sources */,
+				53C1DEF50B4BD429007947D8 /* L4Level.m in Sources */,
+				53C1DEF60B4BD429007947D8 /* L4NSObjectAdditions.m in Sources */,
+				53C1DEF70B4BD429007947D8 /* L4Configurator.m in Sources */,
+				53C1DEF80B4BD429007947D8 /* L4Logger.m in Sources */,
+				53C1DEF90B4BD429007947D8 /* L4RootLogger.m in Sources */,
+				53C1DEFA0B4BD429007947D8 /* L4LoggerStore.m in Sources */,
+				53C1DEFB0B4BD429007947D8 /* L4LogManager.m in Sources */,
+				53C1DEFC0B4BD429007947D8 /* L4LoggingEvent.m in Sources */,
+				53C1DEFD0B4BD429007947D8 /* L4RendererMap.m in Sources */,
+				53C1DEFE0B4BD429007947D8 /* L4DefaultRenderer.m in Sources */,
+				53C1DEFF0B4BD429007947D8 /* L4LogLog.m in Sources */,
+				53C1DF000B4BD429007947D8 /* L4CLogger.m in Sources */,
+				53C1DF010B4BD429007947D8 /* L4PatternLayout.m in Sources */,
+				53C1DF020B4BD429007947D8 /* L4SimpleLayout.m in Sources */,
+				53C1DF030B4BD429007947D8 /* L4Layout.m in Sources */,
+				53C1DF040B4BD429007947D8 /* L4Filter.m in Sources */,
+				53C1DF050B4BD429007947D8 /* L4ErrorHandler.m in Sources */,
+				53C1DF060B4BD429007947D8 /* L4WriterAppender.m in Sources */,
+				53C1DF070B4BD429007947D8 /* L4RollingFileAppender.m in Sources */,
+				53C1DF080B4BD429007947D8 /* L4FileAppender.m in Sources */,
+				53C1DF090B4BD429007947D8 /* L4ConsoleAppender.m in Sources */,
+				53C1DF0A0B4BD429007947D8 /* L4AppenderSkeleton.m in Sources */,
+				53C1DF0B0B4BD429007947D8 /* L4AppenderAttachableImpl.m in Sources */,
+				53C1DF0C0B4BD429007947D8 /* L4PatternLayoutTest.m in Sources */,
+				53C1DF0D0B4BD429007947D8 /* L4FileAppenderTest.m in Sources */,
+				53C1DF0E0B4BD429007947D8 /* L4RollingFileAppenderTest.m in Sources */,
+				53C1DF0F0B4BD429007947D8 /* L4DailyRollingFileAppender.m in Sources */,
+				53C1DF100B4BD429007947D8 /* L4DailyRollingFileAppenderTest.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C1667FE841158C02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		530EBD100B4BBFAE00DFC1CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_VERSION = A;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "Info-Log4Cocoa__Upgraded_.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-seg1addr",
+					0x10000000,
+				);
+				PRODUCT_NAME = Log4Cocoa;
+				PROFILING_CODE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wall";
+				WRAPPER_EXTENSION = framework;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		530EBD110B4BBFAE00DFC1CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = "Info-Log4Cocoa__Upgraded_.plist";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = "";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = (
+					"-seg1addr",
+					0x10000000,
+				);
+				PRODUCT_NAME = Log4Cocoa;
+				PROFILING_CODE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = framework;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		530EC0110B4BCE1200DFC1CA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = Log4Cocoa;
+				PRODUCT_NAME = Log4Cocoa;
+				PUBLIC_HEADERS_FOLDER_PATH = Log4Cocoa;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		530EC0120B4BCE1200DFC1CA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G4;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = (
+					"-framework",
+					Foundation,
+				);
+				PREBINDING = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = Log4Cocoa;
+				PRODUCT_NAME = Log4Cocoa;
+				PUBLIC_HEADERS_FOLDER_PATH = Log4Cocoa;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		539EEAAA0B4A8793005DDDA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		539EEAAB0B4A8793005DDDA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		53C1DF160B4BD429007947D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AllTests_Prefix.h;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = AllTests;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		53C1DF170B4BD429007947D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = AllTests_Prefix.h;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = AllTests;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		53C1DF1D0B4BD429007947D8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Documentation;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		53C1DF1E0B4BD429007947D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 3;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Documentation;
+				REZ_EXECUTABLE = YES;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		530EBD0F0B4BBFAE00DFC1CA /* Build configuration list for PBXNativeTarget "Log4Cocoa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				530EBD100B4BBFAE00DFC1CA /* Debug */,
+				530EBD110B4BBFAE00DFC1CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		530EC0100B4BCE1200DFC1CA /* Build configuration list for PBXNativeTarget "libLog4Cocoa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				530EC0110B4BCE1200DFC1CA /* Debug */,
+				530EC0120B4BCE1200DFC1CA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		539EEAA90B4A8793005DDDA5 /* Build configuration list for PBXProject "Log4Cocoa" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				539EEAAA0B4A8793005DDDA5 /* Debug */,
+				539EEAAB0B4A8793005DDDA5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53C1DF150B4BD429007947D8 /* Build configuration list for PBXNativeTarget "AllTests (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53C1DF160B4BD429007947D8 /* Debug */,
+				53C1DF170B4BD429007947D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53C1DF1C0B4BD429007947D8 /* Build configuration list for PBXNativeTarget "Documentation (Upgraded)" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53C1DF1D0B4BD429007947D8 /* Debug */,
+				53C1DF1E0B4BD429007947D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}

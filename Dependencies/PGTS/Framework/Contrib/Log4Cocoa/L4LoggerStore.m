@@ -200,6 +200,8 @@ static NSLock *_storeLock = nil;
 {
     L4Logger *theLogger = nil;
     id theNode;
+    if (nil == aFactory)
+        aFactory = self;
     
 //    [_storeLock lock];  // ### LOCKING
     theNode = [repository objectForKey: aName];

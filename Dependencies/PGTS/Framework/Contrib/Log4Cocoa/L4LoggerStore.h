@@ -60,7 +60,7 @@
 /*******
  * the following are L4LoggerRepository methods
  */
-- (id) initWithRoot: (id) rootLogger;
+- (id) initWithRoot: (L4Logger *) rootLogger;
 
 /******
  * Is the repository disabled for a given level? The answer depends

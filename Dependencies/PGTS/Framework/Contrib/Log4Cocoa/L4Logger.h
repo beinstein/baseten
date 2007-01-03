@@ -60,77 +60,47 @@
  * to do or can't use these macros for some reason.
  */
 
-void log4Log(id object, int line, char *file, char *method,
+void log4Log(id object, int line, char *file, const char *method,
               SEL sel, BOOL isAssertion, BOOL assertion, 
               id exception, id message, ...);
 
 /*
-#define L4_PLAIN(type) self, __LINE__, __FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
-#define L4_EXCEPTION(type, e) self, __LINE__, __FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
-#define L4_ASSERTION(assertion) self, __LINE__, __FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
+#define L4_PLAIN(type) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
+#define L4_EXCEPTION(type, e) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
+#define L4_ASSERTION(assertion) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
 
-#define log4Debug(message, args...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message, ## args)
-#define log4Info(message, args...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message, ## args)
-#define log4Warn(message, args...)  log4Log(L4_PLAIN(warn), message, ## args)
-#define log4Error(message, args...) log4Log(L4_PLAIN(error), message, ## args)
-#define log4Fatal(message, args...) log4Log(L4_PLAIN(fatal), message, ## args)
+#define log4Debug(message, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message, ##__VA_ARGS__)
+#define log4Info(message, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message, ##__VA_ARGS__)
+#define log4Warn(message, ...)  log4Log(L4_PLAIN(warn), message, ##__VA_ARGS__)
+#define log4Error(message, ...) log4Log(L4_PLAIN(error), message, ##__VA_ARGS__)
+#define log4Fatal(message, ...) log4Log(L4_PLAIN(fatal), message, ##__VA_ARGS__)
 
-#define log4DebugWithException(message, e, args...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_EXCEPTION(debug, e), message, ## args)
-#define log4InfoWithException(message, e, args...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_EXCEPTION(info, e), message, ## args)
-#define log4WarnWithException(message, e, args...)  log4Log(L4_EXCEPTION(warn, e), message, ## args)
-#define log4ErrorWithException(message, e, args...) log4Log(L4_EXCEPTION(error, e), message, ## args)
-#define log4FatalWithException(message, e, args...) log4Log(L4_EXCEPTION(fatal, e), message, ## args)
+#define log4DebugWithException(message, e, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_EXCEPTION(debug, e), message, ##__VA_ARGS__)
+#define log4InfoWithException(message, e, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_EXCEPTION(info, e), message, ##__VA_ARGS__)
+#define log4WarnWithException(message, e, ...)  log4Log(L4_EXCEPTION(warn, e), message, ##__VA_ARGS__)
+#define log4ErrorWithException(message, e, ...) log4Log(L4_EXCEPTION(error, e), message, ##__VA_ARGS__)
+#define log4FatalWithException(message, e, ...) log4Log(L4_EXCEPTION(fatal, e), message, ##__VA_ARGS__)
 
-#define log4Assert(assertion, message, args...) log4Log(L4_ASSERTION(assertion), message, ## args)
+#define log4Assert(assertion, message, ...) log4Log(L4_ASSERTION(assertion), message, ##__VA_ARGS__)
 */
 
-#define L4_PLAIN(type) self, __LINE__, __FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
-#define L4_EXCEPTION(type, e) self, __LINE__, __FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
-#define L4_ASSERTION(assertion) self, __LINE__, __FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
+#define L4_PLAIN(type) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
+#define L4_EXCEPTION(type, e) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
+#define L4_ASSERTION(assertion) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
 
-#define log4Debug(message, args...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message, (args))
-#define log4Info(message, args...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message, (args))
-#define log4Warn(message, args...)  log4Log(L4_PLAIN(warn), message, (args))
-#define log4Error(message, args...) log4Log(L4_PLAIN(error), message, (args))
-#define log4Fatal(message, args...) log4Log(L4_PLAIN(fatal), message, (args))
+#define log4Debug(message, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message, ##__VA_ARGS__)
+#define log4Info(message, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message, ##__VA_ARGS__)
+#define log4Warn(message, ...)  log4Log(L4_PLAIN(warn), message, ##__VA_ARGS__)
+#define log4Error(message, ...) log4Log(L4_PLAIN(error), message, ##__VA_ARGS__)
+#define log4Fatal(message, ...) log4Log(L4_PLAIN(fatal), message, ##__VA_ARGS__)
 
-#define log4DebugWithException(message, e, args...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_EXCEPTION(debug, e), message, (args))
-#define log4InfoWithException(message, e, args...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_EXCEPTION(info, e), message, (args))
-#define log4WarnWithException(message, e, args...)  log4Log(L4_EXCEPTION(warn, e), message, (args))
-#define log4ErrorWithException(message, e, args...) log4Log(L4_EXCEPTION(error, e), message, (args))
-#define log4FatalWithException(message, e, args...) log4Log(L4_EXCEPTION(fatal, e), message, (args))
+#define log4DebugWithException(message, e, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_EXCEPTION(debug, e), message, ##__VA_ARGS__)
+#define log4InfoWithException(message, e, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_EXCEPTION(info, e), message, ##__VA_ARGS__)
+#define log4WarnWithException(message, e, ...)  log4Log(L4_EXCEPTION(warn, e), message, ##__VA_ARGS__)
+#define log4ErrorWithException(message, e, ...) log4Log(L4_EXCEPTION(error, e), message, ##__VA_ARGS__)
+#define log4FatalWithException(message, e, ...) log4Log(L4_EXCEPTION(fatal, e), message, ##__VA_ARGS__)
 
-#define log4Assert(assertion, message, args...) log4Log(L4_ASSERTION(assertion), message, (args))
-
-/*****
- * NOTE: THESE FOLLOWING MACROS WILL GO AWAY IN 1.0.  THEY ARE JUST BEING KEPT AROUND FOR
- * TEMPORARY COMATIBILITY REASONS WITH EARLIER PRE-BETA VERSIONS.
- */
-#warning "REMEMBER TO DELETE COMPATIBLITY MACROS IN L4Logger.h"
-//
-#define L4_LOCATION lineNumber: __LINE__ fileName: __FILE__ methodName: __PRETTY_FUNCTION__
-
-#define L4LogDebug  L4_LOCATION debug
-#define L4LogInfo   L4_LOCATION info
-#define L4LogWarn   L4_LOCATION warn
-#define L4LogError  L4_LOCATION error
-#define L4LogFatal  L4_LOCATION fatal
-#define L4LogAssert L4_LOCATION assert
-
-#define L4Debug(message) if([[self l4Logger] isDebugEnabled]) [[self l4Logger] L4LogDebug: message]
-#define L4Info(message)  if([[self l4Logger] isInfoEnabled]) [[self l4Logger] L4LogInfo: message]
-#define L4Warn(message)  [[self l4Logger] L4LogWarn: message]
-#define L4Error(message) [[self l4Logger] L4LogError: message]
-#define L4Fatal(message) [[self l4Logger] L4LogFatal: message]
-
-#define L4DebugWithException(message, e) if([[self l4Logger] isDebugEnabled]) [[self l4Logger] L4LogDebug: message exception: e]
-#define L4InfoWithException(message, e)  if([[self l4Logger] isInfoEnabled]) [[self l4Logger] L4LogInfo: message exception: e]
-#define L4WarnWithException(message, e)  [[self l4Logger] L4LogWarn: message exception: e]
-#define L4ErrorWithException(message, e) [[self l4Logger] L4LogError: message exception: e]
-#define L4FatalWithException(message, e) [[self l4Logger] L4LogFatal: message exception: e]
-
-#define L4Assert(assertion, message) [[self l4Logger] L4LogAssert: assertion log: message]
-
+#define log4Assert(assertion, message, ...) log4Log(L4_ASSERTION(assertion), message, ##__VA_ARGS__)
 
 
 @class L4AppenderAttachableImpl;
