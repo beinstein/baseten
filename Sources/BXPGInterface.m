@@ -565,30 +565,32 @@ static unsigned int SavepointIndex ()
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyFields forKeys: pkeyFNames];        
         NSString* name = [entity BXPGQualifiedName: connection];
+        
+        //Check if pkey should be updated
+        BOOL updatedPkey = NO;
+        NSArray* objectIDs = nil;
+        if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
+        {
+            updatedPkey = YES;
+            objectIDs = [context objectIDsForEntity: entity predicate: predicate error: nil];
+        }
+                
+        //Send the UPDATE query
+        queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@ RETURNING %@", 
+            name, [aDict PGTSSetClauseParameters: parameters], whereClause,
+            [[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
+        PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
 
-        //Lock the row and get the object IDs
-        NSArray* objectIDs = [self lockRowsWithObjectID: objectID entity: entity
-                                    pkeyTranslationDict: translationDict
-                                            whereClause: whereClause parameters: parameters];
-        NSAssert2 (nil == lockedObjectID || [objectIDs containsObject: lockedObjectID], 
-                   @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
-                   objectID, lockedObjectID);
         //Notify only if we are not updating a view.
         if (NO == [entity isView])
             [self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
-                
-        //Send the UPDATE query
-        queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@", 
-            name, [aDict PGTSSetClauseParameters: parameters], whereClause];
-        [connection executeQuery: queryString parameterArray: parameters];
-
+        
         //Commit only if autocommitting
         [self internalCommit]; 
-        rval = objectIDs;
-                
-        //Check if pkey was updated
+        
+        //Handle the result and get new pkey values
         NSDictionary* pkeyDict = nil;
-        if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
+        if (YES == updatedPkey)
         {
             if (1 == [objectIDs count])
             {                
@@ -605,8 +607,22 @@ static unsigned int SavepointIndex ()
                 //we don't check the values from the database.
                 pkeyDict = [aDict BXTranslateUsingKeys: translationDict];
             }
-        }        
-        
+        }
+        else
+        {
+            //Otherwise get the ids from the result
+            NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
+            NSAssert (nil != entity, @"Expected entity not to be nil.");
+            while (([res advanceRow]))
+            {
+                BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields:
+                    [[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict]];
+                [ids addObject: currentID];
+            }
+            rval = ids;
+            objectIDs = ids;
+        }
+                
         //Update the object
         //Also mark the objects locked        
         TSEnumerate (currentID, e, [objectIDs objectEnumerator])
@@ -913,19 +929,24 @@ static unsigned int SavepointIndex ()
 {
     BXDatabaseObjectID* objectID = [anObject objectID];
     BXEntityDescription* entity = [objectID entity];
-    NSString* name = [entity BXPGQualifiedName: connection];
-    NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
-    NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
     
-    //Lock the row
-    [connection sendQuery: [self internalBeginQuery]];
-    state = kBXPGQueryBegun;
-    [connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
-           parameterArray: [ctx objectForKey: kPGTSParametersKey]];
-    state = kBXPGQueryLock;
-    
-    [self setLockedKey: aKey];
-    [self setLockedObjectID: objectID];
+    //There was a strange problem with views in january 2007. This might not be needed in the future.
+    if (NO == [entity isView])
+    {
+        NSString* name = [entity BXPGQualifiedName: connection];
+        NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+        NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
+        
+        //Lock the row
+        [connection sendQuery: [self internalBeginQuery]];
+        state = kBXPGQueryBegun;
+        [connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
+               parameterArray: [ctx objectForKey: kPGTSParametersKey]];
+        state = kBXPGQueryLock;
+        
+        [self setLockedKey: aKey];
+        [self setLockedObjectID: objectID];
+    }
 }
 
 /**

@@ -26,8 +26,6 @@
 -- $Id$
 --
 
-DROP SCHEMA IF EXISTS "baseten" CASCADE;
-
 
 BEGIN;
 CREATE LANGUAGE plpgsql;
@@ -57,6 +55,7 @@ COMMIT;
 
 BEGIN; -- Schema, helper functions and classes
 
+DROP SCHEMA IF EXISTS "baseten" CASCADE;
 CREATE SCHEMA "baseten";
 COMMENT ON SCHEMA "baseten" IS 'Schema used by BaseTen. Please use the provided functions to edit.';
 REVOKE ALL PRIVILEGES ON SCHEMA "baseten" FROM PUBLIC;

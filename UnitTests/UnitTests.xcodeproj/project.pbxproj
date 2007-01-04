@@ -9,14 +9,14 @@
 /* Begin PBXBuildFile section */
 		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
-		539EEBBE0B4ABC17005DDDA5 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
-		539EEC270B4AC09E005DDDA5 /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
-		539EEC280B4AC09F005DDDA5 /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
-		539EEC290B4AC0A0005DDDA5 /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
-		539EEC2A0B4AC0A0005DDDA5 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
-		539EEC2B0B4AC0A1005DDDA5 /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
-		539EEC2C0B4AC0A2005DDDA5 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
-		539EEC2D0B4AC0A3005DDDA5 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
+		53EBA6A40B4D5DCD00277382 /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
+		53EBA6A50B4D5DCE00277382 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
+		53EBA6B20B4D5F1E00277382 /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
+		53EBA6B30B4D5F1F00277382 /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
+		53EBA6B40B4D5F2000277382 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
+		53EBA6B50B4D5F2000277382 /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
+		53EBA6B60B4D5F2100277382 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
+		53EBA6B70B4D5F2200277382 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -224,14 +224,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				539EEBBE0B4ABC17005DDDA5 /* MTOCollectionTest.m in Sources */,
-				539EEC270B4AC09E005DDDA5 /* MTMCollectionTest.m in Sources */,
-				539EEC280B4AC09F005DDDA5 /* ForeignKeyTests.m in Sources */,
-				539EEC290B4AC0A0005DDDA5 /* ModificationTests.m in Sources */,
-				539EEC2A0B4AC0A0005DDDA5 /* EntityTests.m in Sources */,
-				539EEC2B0B4AC0A1005DDDA5 /* CreateTests.m in Sources */,
-				539EEC2C0B4AC0A2005DDDA5 /* FetchTests.m in Sources */,
-				539EEC2D0B4AC0A3005DDDA5 /* ConnectTest.m in Sources */,
+				53EBA6A40B4D5DCD00277382 /* ForeignKeyTests.m in Sources */,
+				53EBA6A50B4D5DCE00277382 /* MTOCollectionTest.m in Sources */,
+				53EBA6B20B4D5F1E00277382 /* MTMCollectionTest.m in Sources */,
+				53EBA6B30B4D5F1F00277382 /* ModificationTests.m in Sources */,
+				53EBA6B40B4D5F2000277382 /* EntityTests.m in Sources */,
+				53EBA6B50B4D5F2000277382 /* CreateTests.m in Sources */,
+				53EBA6B60B4D5F2100277382 /* FetchTests.m in Sources */,
+				53EBA6B70B4D5F2200277382 /* ConnectTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
