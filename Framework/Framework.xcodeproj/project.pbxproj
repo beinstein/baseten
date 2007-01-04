@@ -202,35 +202,35 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 530EC0030B4BCDB100DFC1CA /* libLog4Cocoa.a */;
+			remoteGlobalIDString = 530EC0030B4BCDB100DFC1CA;
 			remoteInfo = libLog4Cocoa;
 		};
 		53D044170B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53C1DF180B4BD429007947D8 /* AllTests */;
+			remoteGlobalIDString = 53C1DF180B4BD429007947D8;
 			remoteInfo = "AllTests (Upgraded)";
 		};
 		53D044190B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53C1DF1F0B4BD429007947D8 /* Documentation */;
+			remoteGlobalIDString = 53C1DF1F0B4BD429007947D8;
 			remoteInfo = "Documentation (Upgraded)";
 		};
 		53D0441B0B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 530EBD140B4BBFAE00DFC1CA /* Log4Cocoa.framework */;
+			remoteGlobalIDString = 530EBD140B4BBFAE00DFC1CA;
 			remoteInfo = Log4Cocoa;
 		};
 		53D044200B4C1E0D00DB9308 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */;
+			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA;
 			remoteInfo = libLog4Cocoa;
 		};
 		53F524D50A51A28900E7DDC4 /* PBXContainerItemProxy */ = {
