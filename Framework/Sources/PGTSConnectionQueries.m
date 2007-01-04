@@ -338,7 +338,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
    messageDelegate: (BOOL) messageDelegate
 {
     int rval = 0;
-    int nParams = [parameters count];
+    int nParams = MIN ([parameters count], [queryString PGTSParameterCount]);
     const char** paramValues  = calloc (nParams, sizeof (char *));
     Oid*   paramTypes   = calloc (nParams, sizeof (Oid));
     int*   paramLengths = calloc (nParams, sizeof (int));
