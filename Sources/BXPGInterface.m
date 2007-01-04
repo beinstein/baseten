@@ -467,7 +467,7 @@ static unsigned int SavepointIndex ()
             {
                 NSDictionary* pkey = [currentLock BXTranslateUsingKeys: translationDict];
                 BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
-                                                                 primaryKeyFields: pkey];
+                                                               primaryKeyFields: pkey];
                 BXDatabaseObject* object = [context registeredObjectWithID: objectID];
                 [object setLockedForKey: nil]; //TODO: set the key accordingly
             }
@@ -1221,7 +1221,7 @@ static unsigned int SavepointIndex ()
         {
             NSDictionary* pkey = [[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict];
             BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
-                                                             primaryKeyFields: pkey];
+                                                           primaryKeyFields: pkey];
             [objectIDs addObject: objectID];
         }            
         rval = objectIDs;

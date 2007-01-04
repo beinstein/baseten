@@ -76,7 +76,7 @@ CREATE VIEW test2_v AS SELECT * FROM test2;
 CREATE RULE "insert_test2" AS ON INSERT TO test2_v DO INSTEAD
     INSERT INTO test2 (value, fkt1id) VALUES (NEW.value, NEW.fkt1id) RETURNING *;
 CREATE RULE "update_test2" AS ON UPDATE TO test2_v DO INSTEAD 
-    UPDATE test2 SET id = NEW.id, value = NEW.value, fkt1id = NEW.fkt1id WHERE id = OLD.id;
+    UPDATE test2 SET id = NEW.id, value = NEW.value, fkt1id = NEW.fkt1id WHERE id = OLD.id RETURNING *;
 
 GRANT USAGE ON SEQUENCE test1_id_seq TO PUBLIC;
 GRANT USAGE ON SEQUENCE test2_id_seq TO PUBLIC;
@@ -109,9 +109,9 @@ CREATE RULE "insert_ototest1" AS ON INSERT TO ototest1_v DO INSTEAD
 CREATE RULE "insert_ototest2" AS ON INSERT TO ototest2_v DO INSTEAD
     INSERT INTO ototest2 (r1) VALUES (NEW.r1) RETURNING *;
 CREATE RULE "update_ototest1" AS ON UPDATE TO ototest1_v DO INSTEAD 
-    UPDATE ototest1 SET id = NEW.id, r2 = NEW.r2 WHERE id = OLD.id;
+    UPDATE ototest1 SET id = NEW.id, r2 = NEW.r2 WHERE id = OLD.id RETURNING *;
 CREATE RULE "update_ototest2" AS ON UPDATE TO ototest2_v DO INSTEAD 
-    UPDATE ototest2 SET id = NEW.id, r1 = NEW.r1 WHERE id = OLD.id;
+    UPDATE ototest2 SET id = NEW.id, r1 = NEW.r1 WHERE id = OLD.id RETURNING *;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1 TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1_v TO baseten_test_user;
@@ -202,7 +202,7 @@ CREATE VIEW mtocollectiontest2_v AS SELECT * FROM mtocollectiontest2;
 CREATE RULE "insert_mtocollectiontest2" AS ON INSERT TO mtocollectiontest2_v DO INSTEAD
     INSERT INTO mtocollectiontest2 DEFAULT VALUES RETURNING *;
 CREATE RULE "update_mtocollectiontest2" AS ON UPDATE TO mtocollectiontest2_v DO INSTEAD 
-    UPDATE mtocollectiontest2 SET id = NEW.id, mid = NEW.mid WHERE id = OLD.id;
+    UPDATE mtocollectiontest2 SET id = NEW.id, mid = NEW.mid WHERE id = OLD.id RETURNING *;
 
 GRANT USAGE ON mtocollectiontest1_id_seq TO PUBLIC;
 GRANT USAGE ON mtocollectiontest2_id_seq TO PUBLIC;
