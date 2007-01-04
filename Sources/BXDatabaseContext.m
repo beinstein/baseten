@@ -1216,7 +1216,9 @@ extern void BXInit ()
 - (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectStatus) status
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
-    [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];
+    //There was a strange problem with views in january 2007. This might not be needed in the future.
+    if (NO == [[[object objectID] entity] isView])
+        [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];
     
 }
 

@@ -374,7 +374,7 @@ static unsigned int SavepointIndex ()
         NSArray* fields = [entity fields];
         
         //Execute the query
-        NSAssert (nil != pkeyfields, nil);
+        NSAssert (nil != pkeyfields, @"Expected pkeyfields not to be nil.");
         {
             unsigned int count = [pkeyfields count];
             NSMutableArray* pkeyQNames = [NSMutableArray arrayWithCapacity: count];            

@@ -26,9 +26,7 @@
 -- $Id$
 --
 
-BEGIN;
-DROP SCHEMA "baseten" CASCADE;
-COMMIT;
+DROP SCHEMA IF EXISTS "baseten" CASCADE;
 
 
 BEGIN;
@@ -37,12 +35,10 @@ COMMIT;
 
 
 -- Groups for BaseTen users
-BEGIN;
-DROP ROLE basetenread;
-COMMIT;
-BEGIN;
-DROP ROLE basetenuser;
-COMMIT;
+DROP ROLE IF EXISTS basetenread;
+DROP ROLE IF EXISTS basetenuser;
+
+
 BEGIN;
 CREATE ROLE basetenread WITH
 	INHERIT
@@ -310,8 +306,7 @@ CREATE TABLE "baseten".Modification (
     "baseten_modification_id" INTEGER PRIMARY KEY,
     "baseten_modification_relid" OID NOT NULL,
     "baseten_modification_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NULL DEFAULT NULL,
-    "baseten_modification_insert_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL 
-        DEFAULT timeofday ()::TIMESTAMP (3) WITHOUT TIME ZONE,
+    "baseten_modification_insert_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
     "baseten_modification_type" CHAR NOT NULL,
     "baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
 );
@@ -334,8 +329,7 @@ CREATE TABLE "baseten".lock (
     "baseten_lock_backend_pid"   INTEGER NOT NULL DEFAULT pg_backend_pid (),
     "baseten_lock_id"            BIGINT NOT NULL DEFAULT "baseten".LockNextId (),
     "baseten_lock_relid"         OID NOT NULL,
-    "baseten_lock_timestamp"     TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL 
-                            DEFAULT (timeofday ()::TIMESTAMP (3) WITHOUT TIME ZONE),
+    "baseten_lock_timestamp"     TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
     "baseten_lock_query_type"    CHAR (1) NOT NULL DEFAULT 'U',  -- U == UPDATE, D == DELETE
     "baseten_lock_cleared"       BOOLEAN NOT NULL DEFAULT FALSE,
     "baseten_lock_savepoint_idx" BIGINT NOT NULL,
@@ -350,7 +344,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.908::NUMERIC;
+    SELECT 0.909::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
@@ -534,7 +528,7 @@ GRANT EXECUTE ON FUNCTION "baseten".ModificationRuleName (TEXT) TO basetenread;
 CREATE OR REPLACE FUNCTION "baseten".ModificationTableCleanup () RETURNS VOID AS $$
     DELETE FROM "baseten".Modification 
         WHERE "baseten_modification_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes';
-    UPDATE "baseten".Modification SET "baseten_modification_timestamp" = timeofday ()::TIMESTAMP (3)
+    UPDATE "baseten".Modification SET "baseten_modification_timestamp" = clock_timestamp ()
         WHERE "baseten_modification_timestamp" IS NULL AND "baseten_modification_backend_pid" != pg_backend_pid ();
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableCleanup () FROM PUBLIC;

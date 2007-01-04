@@ -435,17 +435,18 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
 
 - (void) logQuery: (NSString *) query parameters: (NSArray *) parameters
 {
-    log4Info (@"(%p) %s %s\n", self, query, parameters);
+    printf ("(%p) %s %s\n", self, [[query description] UTF8String], [[parameters description] UTF8String]);
+    //log4Info (@"(%p) %@ %@\n", self, query, parameters);
 }
 
 - (void) logNotice: (id) anObject
 {
-    log4Info (@"(%p) NOTICE: %s", self, anObject);
+    log4Info (@"(%p) NOTICE: %@", self, anObject);
 }
 
 - (void) logNotification: (id) anObject
 {
-    log4Debug (@"(%p) *** NOTIFY: %s\n", self, anObject);
+    log4Debug (@"(%p) *** NOTIFY: %@\n", self, anObject);
 }
 
 /** Called when data is available from the libpq socket */
