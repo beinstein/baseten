@@ -131,7 +131,8 @@
 
 @interface BXDatabaseContext (HelperMethods)
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
-- (NSMutableSet *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
+- (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
+- (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName;

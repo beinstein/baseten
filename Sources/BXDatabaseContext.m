@@ -1028,10 +1028,14 @@ extern void BXInit ()
     }
 }
 
-- (NSMutableSet *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
+- (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
 {
-    NSArray* res = [self executeFetchForEntity: anEntity withPredicate: nil returningFaults: YES error: error];
-    return [NSMutableSet setWithArray: [res valueForKey: @"objectID"]];
+    return [self objectIDsForEntity: anEntity predicate: nil error: error];
+}
+
+- (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error
+{
+    return [[self executeFetchForEntity: anEntity withPredicate: predicate returningFaults: YES error: error] valueForKey: @"objectID"];
 }
 
 - (NSArray *) keyPathComponents: (NSString *) keyPath
@@ -1216,10 +1220,7 @@ extern void BXInit ()
 - (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectStatus) status
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
-    //There was a strange problem with views in january 2007. This might not be needed in the future.
-    if (NO == [[[object objectID] entity] isView])
-        [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];
-    
+    [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];    
 }
 
 /**
