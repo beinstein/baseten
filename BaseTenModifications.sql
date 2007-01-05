@@ -149,14 +149,37 @@ REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".TableType (OID, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".TableType (OID, TEXT) TO basetenread;
 
 
+CREATE TABLE "baseten".ViewPrimaryKey (
+    nspname NAME NOT NULL,
+    relname NAME NOT NULL,
+    attname NAME NOT NULL,
+    PRIMARY KEY (nspname, relname, attname)
+);
+
+
 CREATE VIEW "baseten".PrimaryKey AS
-    SELECT a.attrelid AS oid, a.attname AS fieldname, t.typname AS type
-        FROM pg_attribute a, pg_constraint c, pg_type t 
-        WHERE c.conrelid = a.attrelid 
-            AND a.attnum = ANY (c.conkey)
-            AND a.atttypid = t.oid
-            AND c.contype = 'p'
-        ORDER BY oid ASC, a.attnum ASC;
+    SELECT * FROM (
+        SELECT a.attrelid AS oid, cl.relkind, n.nspname, cl.relname, a.attnum, a.attname AS fieldname, t.typname AS type
+            FROM pg_attribute a, pg_constraint co, pg_type t, pg_class cl, pg_namespace n
+            WHERE co.conrelid = a.attrelid 
+                AND a.attnum = ANY (co.conkey)
+                AND a.atttypid = t.oid
+                AND co.contype = 'p'
+                AND cl.oid = a.attrelid
+                AND n.oid = cl.relnamespace
+                AND cl.relkind = 'r'
+        UNION
+        SELECT c.oid AS oid, c.relkind, n.nspname, c.relname, a.attnum, vpkey.attname AS fieldname, t.typname AS type
+            FROM "baseten".ViewPrimaryKey vpkey, pg_attribute a, pg_type t, pg_namespace n, pg_class c
+            WHERE vpkey.nspname = n.nspname
+                AND vpkey.relname = c.relname
+                AND c.relnamespace = n.oid
+                AND a.attname = vpkey.attname
+                AND a.attrelid = c.oid
+                AND a.atttypid = t.oid
+                AND c.relkind = 'v'
+    ) r
+    ORDER BY oid ASC, attnum ASC;
 REVOKE ALL PRIVILEGES ON "baseten".PrimaryKey FROM PUBLIC;
 GRANT SELECT ON "baseten".PrimaryKey TO basetenread;
 
@@ -681,13 +704,10 @@ BEGIN
     EXECUTE 'DROP FUNCTION ' || "baseten".ModifyInsertFunctionName (tableoid) || ' () CASCADE';
     EXECUTE 'DROP FUNCTION ' || mtablename || ' (bool, timestamp) CASCADE';
     -- Cascades to rules and triggers
-    EXECUTE 'DROP TABLE ' || "baseten".LockTableName (tableoid) || ' CASCADE';
-    EXECUTE 'DROP TABLE ' || mtablename || ' CASCADE';
-    BEGIN
-        -- This might not exist
-        EXECUTE 'DROP TABLE ' || "baseten".ModResultTableName (tableoid) || ' CASCADE';
-    EXCEPTION WHEN OTHERS THEN
-    END;
+    EXECUTE 'DROP TABLE IF EXISTS ' || "baseten".LockTableName (tableoid) || ' CASCADE';
+    EXECUTE 'DROP TABLE IF EXISTS ' || mtablename || ' CASCADE';
+    -- This might not exist
+    EXECUTE 'DROP TABLE IF EXISTS ' || "baseten".ModResultTableName (tableoid) || ' CASCADE';
     rval := ROW (tableoid, tablename)::"baseten".TableType;
     RETURN rval;
 --EXCEPTION WHEN OTHERS THEN
@@ -878,12 +898,13 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving2 (OI
 -- Also, rules and a trigger are created to track the changes.
 CREATE OR REPLACE FUNCTION "baseten".PrepareForModificationObserving (OID) RETURNS "baseten".TableType AS $marker$
 DECLARE
-    toid        ALIAS FOR $1;   -- Table OID
+    toid        ALIAS FOR $1;   -- Relation OID
     pkeyfields  RECORD;
     pkey_decl   TEXT;           -- Declaration for creating fields corresponding to the primary key
     query       TEXT;
-    tname       TEXT;           -- Object name
-    stablename  TEXT;           -- Serialized object name
+    tkind       CHAR;           -- Relation kind
+    tname       TEXT;           -- Relation name
+    stablename  TEXT;           -- Serialized relation name
     mtablename  TEXT;           -- Modification table name
     ltablename  TEXT;           -- Lock table name
     pkeyfnames  TEXT;
@@ -904,12 +925,14 @@ BEGIN
     
     SELECT INTO pkeyfields "baseten".array_accum (
         quote_ident (fieldname)) AS fname, 
-        "baseten".array_accum (quote_ident (type)) AS type 
-        FROM "baseten".PrimaryKey WHERE oid = toid GROUP BY oid;
+        "baseten".array_accum (quote_ident (type)) AS type,
+        relkind
+        FROM "baseten".PrimaryKey WHERE oid = toid GROUP BY oid, relkind;
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'Primary key is required for table %', tname;
+        RAISE EXCEPTION 'Primary key is required for relation %', tname;
     END IF;
 
+    tkind = pkeyfields.relkind;
     pkeyfnames = array_to_string (pkeyfields.fname, ', ');
     pkey_decl = array_to_string (
         "baseten".array_cat_each (pkeyfields.fname, pkeyfields.type, ' '), ', ');
