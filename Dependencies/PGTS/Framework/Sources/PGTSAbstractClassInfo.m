@@ -121,13 +121,14 @@
     if (nil == name)
     {
         NSString* query = 
-        @"SELECT c.relname, c.relacl, c.relowner, n.oid, n.nspname, r.rolname "
+        @"SELECT c.relname, c.relacl, c.relowner, c.relkind, n.oid, n.nspname, r.rolname "
         " FROM pg_class c, pg_namespace n, pg_roles r "
         " WHERE c.relnamespace = n.oid AND r.oid = c.relowner AND c.oid = $1";
         PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
         if (0 < [res numberOfRowsAffected])
         {
             [res advanceRow];
+            relkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
             [self setName:  [res valueForKey: @"relname"]];
             [self setSchemaName: [res valueForKey: @"nspname"]];
             [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];
@@ -182,6 +183,13 @@
     if (nil == name)
         [self name];
     return [aclItems allObjects];
+}
+
+- (char) kind
+{
+    if (nil == name)
+        [self name];
+    return relkind;
 }
 
 @end

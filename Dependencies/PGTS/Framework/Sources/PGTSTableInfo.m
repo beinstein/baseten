@@ -26,15 +26,15 @@
 // $Id$
 //
 
-#import <PGTS/PGTSTableInfo.h>
-#import <PGTS/PGTSFieldInfo.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSIndexInfo.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/PGTSDatabaseInfo.h>
-#import <PGTS/PGTSForeignKeyDescription.h>
+#import "PGTSTableInfo.h"
+#import "PGTSFieldInfo.h"
+#import "PGTSFunctions.h"
+#import "PGTSIndexInfo.h"
+#import "PGTSResultSet.h"
+#import "PGTSConnection.h"
+#import "PGTSAdditions.h"
+#import "PGTSDatabaseInfo.h"
+#import "PGTSForeignKeyDescription.h"
 #import <TSDataTypes/TSDataTypes.h>
 
 
@@ -183,43 +183,71 @@
 {
     if (nil == uniqueIndexes)
     {
-        //c.oid is unique
-        NSString* query = @"SELECT relname AS name, indexrelid AS oid, "
-                           "indisprimary, indnatts, indkey::INTEGER[] FROM pg_index, pg_class c "
-                           "WHERE indisunique = true AND indrelid = $1 AND indexrelid = c.oid "
-                           "ORDER BY indisprimary DESC";
-        PGTSResultSet* res =  [connection executeQuery: query
-                                            parameters: PGTSOidAsObject (oid)];
-        unsigned int count = [res numberOfRowsAffected];
-        if (0 < count)
+        switch ([self kind])
         {
-            NSMutableArray* indexes = [NSMutableArray arrayWithCapacity: count];
-            while (([res advanceRow]))
+            case 'r':
             {
-                PGTSIndexInfo* currentIndex = [[PGTSIndexInfo alloc] initWithConnection: connection];
-                [indexes addObject: currentIndex];
-                [currentIndex release];
-                
-                //Some attributes from the result set
-                [currentIndex setName: [res valueForFieldNamed: @"name"]];
-                [currentIndex setOid: [[res valueForFieldNamed: @"oid"] PGTSOidValue]];
-                [currentIndex setPrimaryKey: [[res valueForFieldNamed: @"indisprimary"] intValue]];
-                                    
-                //Get the field indexes and set the fields
-                NSMutableSet* indexFields = [NSMutableSet setWithCapacity: 
-                    [[res valueForFieldNamed: @"indnatts"] unsignedIntValue]];
-                TSEnumerate (currentFieldIndex, e, [[res valueForFieldNamed: @"indkey"] objectEnumerator])
+                //c.oid is unique
+                NSString* query = @"SELECT relname AS name, indexrelid AS oid, "
+                "indisprimary, indnatts, indkey::INTEGER[] FROM pg_index, pg_class c "
+                "WHERE indisunique = true AND indrelid = $1 AND indexrelid = c.oid "
+                "ORDER BY indisprimary DESC";
+                PGTSResultSet* res =  [connection executeQuery: query
+                                                    parameters: PGTSOidAsObject (oid)];
+                unsigned int count = [res numberOfRowsAffected];
+                if (0 < count)
                 {
-                    int index = [currentFieldIndex intValue];
-                    if (index > 0)
-                        [indexFields addObject: [self fieldInfoForFieldAtIndex: index]];
+                    NSMutableArray* indexes = [NSMutableArray arrayWithCapacity: count];
+                    while (([res advanceRow]))
+                    {
+                        PGTSIndexInfo* currentIndex = [[PGTSIndexInfo alloc] initWithConnection: connection];
+                        [indexes addObject: currentIndex];
+                        [currentIndex release];
+                        
+                        //Some attributes from the result set
+                        [currentIndex setName: [res valueForFieldNamed: @"name"]];
+                        [currentIndex setOid: [[res valueForFieldNamed: @"oid"] PGTSOidValue]];
+                        [currentIndex setPrimaryKey: [[res valueForFieldNamed: @"indisprimary"] intValue]];
+                        
+                        //Get the field indexes and set the fields
+                        NSMutableSet* indexFields = [NSMutableSet setWithCapacity: 
+                            [[res valueForFieldNamed: @"indnatts"] unsignedIntValue]];
+                        TSEnumerate (currentFieldIndex, e, [[res valueForFieldNamed: @"indkey"] objectEnumerator])
+                        {
+                            int index = [currentFieldIndex intValue];
+                            if (index > 0)
+                                [indexFields addObject: [self fieldInfoForFieldAtIndex: index]];
+                        }
+                        [currentIndex setTable: self];
+                        [currentIndex setFields: indexFields];
+                        
+                        [currentIndex setSchemaOid: schemaOid];
+                    }
+                    [self setUniqueIndexes: indexes];
                 }
-                [currentIndex setTable: self];
-                [currentIndex setFields: indexFields];
-                
-                [currentIndex setSchemaOid: schemaOid];
             }
-            [self setUniqueIndexes: indexes];
+            case 'v':
+            {
+                //This requires the primarykey view
+                NSString* query = @"SELECT \"" PGTS_SCHEMA_NAME "\".array_accum (attnum) AS attnum "
+                " FROM \"" PGTS_SCHEMA_NAME "\".primarykey WHERE oid = $1 GROUP BY oid";
+                PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
+                if (NO == [res advanceRow])
+                    [self setUniqueIndexes: [NSArray array]];
+                else
+                {
+                    PGTSIndexInfo* index = [[PGTSIndexInfo alloc] initWithConnection: connection];
+                    NSMutableSet* indexFields = [NSMutableSet set];
+                    TSEnumerate (currentFieldIndex, e, [[res valueForFieldNamed: @"attnum"] objectEnumerator])
+                        [indexFields addObject: [self fieldInfoForFieldAtIndex: [currentFieldIndex intValue]]];
+                    [index setPrimaryKey: YES];
+                    [index setFields: indexFields];
+                    [index setTable: self];
+                    [self setUniqueIndexes: [NSArray arrayWithObject: index]];
+                }
+            }
+            default:
+                break;
         }
     }
     return uniqueIndexes;
