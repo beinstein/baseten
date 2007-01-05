@@ -41,6 +41,7 @@
     NSString* schemaName;
     TSIndexDictionary* aclItems;
     PGTSRoleDescription* owner;
+    char relkind;
 }
 - (void) setSchemaOid: (Oid) anOid;
 - (void) setSchemaName: (NSString *) anString;
@@ -58,4 +59,5 @@
 - (BOOL) role: (PGTSRoleDescription *) aRole 
  hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege;
 - (NSArray *) ACLItems;
+- (char) kind;
 @end
