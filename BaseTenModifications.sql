@@ -701,8 +701,8 @@ DECLARE
     rval "baseten".TableType;
 BEGIN    
     mtablename := "baseten".ModificationTableName (tableoid);
-    EXECUTE 'DROP FUNCTION ' || "baseten".ModifyInsertFunctionName (tableoid) || ' () CASCADE';
-    EXECUTE 'DROP FUNCTION ' || mtablename || ' (bool, timestamp) CASCADE';
+    EXECUTE 'DROP FUNCTION IF EXISTS ' || "baseten".ModifyInsertFunctionName (tableoid) || ' () CASCADE';
+    EXECUTE 'DROP FUNCTION IF EXISTS ' || mtablename || ' (bool, timestamp) CASCADE';
     -- Cascades to rules and triggers
     EXECUTE 'DROP TABLE IF EXISTS ' || "baseten".LockTableName (tableoid) || ' CASCADE';
     EXECUTE 'DROP TABLE IF EXISTS ' || mtablename || ' CASCADE';
