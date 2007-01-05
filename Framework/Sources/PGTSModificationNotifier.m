@@ -154,7 +154,7 @@
         addition = @"" PGTS_SCHEMA_NAME "_modification_backend_pid != $2";
     
     NSString* query = [NSString stringWithFormat: 
-        @" SELECT * FROM %@ ($1::timestamp) WHERE %@", modificationTableName, addition];
+        @"SELECT * FROM %@ ($1::timestamp) WHERE %@", modificationTableName, addition];
     PGTSResultSet* res = [connection executeQuery: query parameters: lastCheck, backendPID];
     
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
