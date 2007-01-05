@@ -521,10 +521,8 @@ static unsigned int SavepointIndex ()
     NSArray* rval = nil;
     @try
     {   
-        //Begin a transaction
-        if (nil == lockedObjectID)
-            [self internalBegin];
-        else
+        //Check for a previously locked row
+        if (nil != lockedObjectID)
         {
             NSAssert2 (nil == objectID || objectID == lockedObjectID, 
                        @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
@@ -543,8 +541,6 @@ static unsigned int SavepointIndex ()
                 BXAssert0 (YES == runLoopRan);
             }
         }
-        BXAssert2 (PQTRANS_INTRANS == [connection transactionStatus], @"Expected to have a transaction (was: %d, expected: %d)",
-                   [connection transactionStatus], PQTRANS_INTRANS);
                 
         if (nil != objectID)
         {
@@ -572,6 +568,7 @@ static unsigned int SavepointIndex ()
         if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
         {
             updatedPkey = YES;
+            [self internalBegin];
             objectIDs = [context objectIDsForEntity: entity predicate: predicate error: nil];
         }
                 
@@ -585,7 +582,7 @@ static unsigned int SavepointIndex ()
         if (NO == [entity isView])
             [self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
         
-        //Commit only if autocommitting
+        //This should be safe even if we didn't have a transaction.
         [self internalCommit]; 
         
         //Handle the result and get new pkey values
@@ -1003,6 +1000,8 @@ static unsigned int SavepointIndex ()
 
 - (BOOL) messagesForViewModifications
 {
+    //FIXME: At the moment this means 
+    //"Messages for view modifications that originate from the tables the view is based on."
     return NO;
 }
 
@@ -1407,13 +1406,12 @@ static unsigned int SavepointIndex ()
         {
             PGTSTableInfo* tableInfo = [[connection databaseInfo] tableInfoForTableWithOid: 
                 [[currentRow valueForKey: relidKey] PGTSOidValue]];
-            NSArray* pkeyFNames = [[[[tableInfo primaryKey] fields] allObjects] valueForKey: @"name"];
-            //FIXME: use PropertyDescription instead of name
-            NSMutableDictionary* pkeyValues = [NSMutableDictionary dictionaryWithCapacity: [pkeyFNames count]];
-            
             BXEntityDescription* desc = [context entityForTable: [tableInfo name] inSchema: [tableInfo schemaName]];
-            TSEnumerate (currentFName, e, [pkeyFNames objectEnumerator])
-                [pkeyValues setValue: [currentRow valueForKey: currentFName] forKey: [BXPropertyDescription propertyWithName: currentFName entity: desc]];
+            NSArray* pkeyFields = [desc primaryKeyFields];
+            NSMutableDictionary* pkeyValues = [NSMutableDictionary dictionaryWithCapacity: [pkeyFields count]];
+            
+            TSEnumerate (currentField, e, [pkeyFields objectEnumerator])
+                [pkeyValues setValue: [currentRow valueForKey: [currentField name]] forKey: currentField];
             [ids addObject: [BXDatabaseObjectID IDWithEntity: desc primaryKeyFields: pkeyValues]];
         }
         if (NULL != status)
@@ -1533,7 +1531,7 @@ static unsigned int SavepointIndex ()
 {
     NSArray* ids = [self notificationObjectIDs: notification relidKey: @"baseten_modification_relid"];
     if (0 < [ids count])
-        [context updatedObjectsInDatabase: ids];
+        [context updatedObjectsInDatabase: ids faultObjects: YES];
 }
 
 - (void) rowsDeleted: (NSNotification *) notification

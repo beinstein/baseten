@@ -641,7 +641,8 @@ extern void BXInit ()
 - (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error
 {
     NSError* localError = nil;
-    BOOL rval = [mDatabaseInterface fireFault: anObject key: aKey error: &localError];
+    //Always fetch all keys when firing a fault
+    BOOL rval = [mDatabaseInterface fireFault: anObject key: nil error: &localError];
     BXHandleError (error, localError);
     return rval;
 
@@ -815,9 +816,8 @@ extern void BXInit ()
 
 @implementation BXDatabaseContext (DBInterfaces)
 
-- (void) updatedObjectsInDatabase: (NSArray *) objectIDs
+- (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
 {
-    //FIXME: this method should have another argument that would specify whether to fault the non-view object or not.
     if (0 < [objectIDs count])
     {
         BXEntityDescription* entity = [[objectIDs objectAtIndex: 0] entity];
@@ -826,7 +826,8 @@ extern void BXInit ()
         if (0 < [objects count])
         {
             //Fault the objects and send the notification
-            [objects makeObjectsPerformSelector: @selector (faultKey:) withObject: nil];
+            if (YES == shouldFault)
+                [objects makeObjectsPerformSelector: @selector (faultKey:) withObject: nil];
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                 objectIDs, kBXObjectIDsKey,
                 objects, kBXObjectsKey,
@@ -853,7 +854,7 @@ extern void BXInit ()
                         [viewIDs addObject: partialID];
                 }
                 
-                [self updatedObjectsInDatabase: viewIDs];
+                [self updatedObjectsInDatabase: viewIDs faultObjects: YES];
             }
         }        
     }
@@ -1308,7 +1309,7 @@ extern void BXInit ()
         //If autocommit is on, the update notification will be received immediately.
         //It won't be handled, though, since it originates from the same connection.
         //Therefore, we need to notify about the change.
-        [self updatedObjectsInDatabase: objectIDs];
+        [self updatedObjectsInDatabase: objectIDs faultObjects: NO];
 
         if (NO == [mDatabaseInterface autocommits])
         {
@@ -1323,8 +1324,7 @@ extern void BXInit ()
             //Undo manager does things in reverse order
             [mUndoManager beginUndoGrouping];
             //Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
-            [[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs];
-            [[mUndoManager prepareWithInvocationTarget: self] faultKeys: [aDict allKeys] inObjectsWithIDs: objectIDs];
+            [[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
             [[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
             TSEnumerate (currentID, e, [objectIDs objectEnumerator])
             {

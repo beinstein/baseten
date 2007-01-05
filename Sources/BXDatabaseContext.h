@@ -122,7 +122,7 @@
 
 @interface BXDatabaseContext (DBInterfaces)
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
-- (void) updatedObjectsInDatabase: (NSArray *) objectIDs;
+- (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectStatus) status;
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
