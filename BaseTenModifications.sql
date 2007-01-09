@@ -33,6 +33,7 @@ COMMIT;
 
 
 -- Groups for BaseTen users
+DROP SCHEMA IF EXISTS "baseten" CASCADE;
 DROP ROLE IF EXISTS basetenread;
 DROP ROLE IF EXISTS basetenuser;
 
@@ -55,7 +56,6 @@ COMMIT;
 
 BEGIN; -- Schema, helper functions and classes
 
-DROP SCHEMA IF EXISTS "baseten" CASCADE;
 CREATE SCHEMA "baseten";
 COMMENT ON SCHEMA "baseten" IS 'Schema used by BaseTen. Please use the provided functions to edit.';
 REVOKE ALL PRIVILEGES ON SCHEMA "baseten" FROM PUBLIC;
@@ -159,7 +159,7 @@ CREATE TABLE "baseten".ViewPrimaryKey (
 
 CREATE VIEW "baseten".PrimaryKey AS
     SELECT * FROM (
-        SELECT a.attrelid AS oid, cl.relkind, n.nspname, cl.relname, a.attnum, a.attname AS fieldname, t.typname AS type
+        SELECT a.attrelid AS oid, cl.relkind, n.nspname, cl.relname, a.attnum, a.attname AS attname, t.typname AS type
             FROM pg_attribute a, pg_constraint co, pg_type t, pg_class cl, pg_namespace n
             WHERE co.conrelid = a.attrelid 
                 AND a.attnum = ANY (co.conkey)
@@ -366,7 +366,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.909::NUMERIC;
+    SELECT 0.910::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
@@ -374,7 +374,7 @@ GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
 
 
 CREATE OR REPLACE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
-    SELECT 0.1::NUMERIC;
+    SELECT 0.11::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CompatibilityVersion () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".CompatibilityVersion () TO basetenread;
@@ -924,7 +924,7 @@ BEGIN
     SELECT INTO isview 'v' = relkind FROM pg_class WHERE oid = toid;
     
     SELECT INTO pkeyfields "baseten".array_accum (
-        quote_ident (fieldname)) AS fname, 
+        quote_ident (attname)) AS fname, 
         "baseten".array_accum (quote_ident (type)) AS type,
         relkind
         FROM "baseten".PrimaryKey WHERE oid = toid GROUP BY oid, relkind;
