@@ -48,6 +48,7 @@
 - (void) addACLItem: (PGTSACLItem *) item;
 - (PGTSRoleDescription *) owner;
 - (void) setOwner: (PGTSRoleDescription *) anOwner;
+- (void) setKind: (char) kind;
 @end
 
 

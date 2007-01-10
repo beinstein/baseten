@@ -70,6 +70,7 @@
     [schemaName release];
     [foreignKeys release];
     [referencingForeignKeys release];
+    [relationOidsBasedOn release];
     [super dealloc];
 }
 
@@ -95,6 +96,20 @@
 - (void) setFieldCount: (unsigned int) anInt
 {
     fieldCount = anInt;
+}
+
+- (NSArray *) relationOidsBasedOn
+{
+    return relationOidsBasedOn; 
+}
+
+- (void) setRelationOidsBasedOn: (NSArray *) aRelationOidsBasedOn
+{
+    if (relationOidsBasedOn != aRelationOidsBasedOn) 
+    {
+        [relationOidsBasedOn release];
+        relationOidsBasedOn = [aRelationOidsBasedOn retain];
+    }
 }
 
 - (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource
@@ -297,7 +312,7 @@
         "c.conname AS name, "
         "c.conrelid AS oid, "           //Source table's OID
         "c.conkey AS sources, "         //Constrained columns
-        "c.confkey AS references "       //Referenced columns
+        "c.confkey AS references "      //Referenced columns
         "FROM pg_constraint c "
         "WHERE c.contype = 'f' AND "    //Foreign keys
         "c.confrelid = $1 ";            //Reference's OID
@@ -308,6 +323,21 @@
             [referencingForeignKeys unionSet: [self foreignKeySetWithResult: res selfAsSource: NO]];
     }
     return referencingForeignKeys;
+}
+
+- (NSArray *) relationOidsBasedOn
+{
+    if ('v' == [self kind] && nil == relationOidsBasedOn)
+    {
+        NSString* query = @"SELECT reloid FROM \"" PGTS_SCHEMA_NAME "\".viewdependencies WHERE viewoid = $1";
+        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
+        NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
+        while (([res advanceRow]))
+            [oids addObject: [res valueForKey: @"reloid"]];
+        
+        [self setRelationOidsBasedOn: oids];
+    }
+    return relationOidsBasedOn;
 }
 
 @end

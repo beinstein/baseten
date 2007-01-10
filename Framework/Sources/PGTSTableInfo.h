@@ -48,12 +48,15 @@
     NSMutableSet* foreignKeys;
     BOOL hasReferencingForeignKeys;
     NSMutableSet* referencingForeignKeys;
+
+    NSArray* relationOidsBasedOn;
 }
 
 - (void) setDatabase: (PGTSDatabaseInfo *) aDatabase;
 - (PGTSDatabaseInfo *) database;
 - (void) setUniqueIndexes: (NSArray *) anArray;
 - (void) setFieldCount: (unsigned int) anInt;
+- (void) setRelationOidsBasedOn: (NSArray *) anArray;
 
 - (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource;
 @end
@@ -65,4 +68,5 @@
 - (NSArray *) allFields;
 - (NSSet *) foreignKeys;
 - (NSSet *) referencingForeignKeys;
+- (NSArray *) relationOidsBasedOn;
 @end
