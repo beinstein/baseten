@@ -52,22 +52,28 @@
 
 - (void) awakeFromNib
 {
+    NSError* error = nil;
     if (nil == mEntityDescription)
-        [self setEntityDescription: [databaseContext entityForTable: mTableName inSchema: mSchemaName]];
-    //Set the custom class name.
-    if (nil != mDBObjectClassName)
-        [mEntityDescription setDatabaseObjectClass: NSClassFromString (mDBObjectClassName)];    
+        [self setEntityDescription: [databaseContext entityForTable: mTableName inSchema: mSchemaName error: &error]];
     
-    NSWindow* aWindow = [self BXWindow];
-    [databaseContext setUndoManager: [aWindow undoManager]];
-        
-    if (YES == mFetchesOnAwake)
+    if (nil != error)
+        [self BXHandleError: error];
+    else
     {
-        [aWindow makeKeyAndOrderFront: nil];
-        [self fetch: nil];
+        //Set the custom class name.
+        if (nil != mDBObjectClassName)
+            [mEntityDescription setDatabaseObjectClass: NSClassFromString (mDBObjectClassName)];    
+        
+        NSWindow* aWindow = [self BXWindow];
+        [databaseContext setUndoManager: [aWindow undoManager]];
+        
+        if (YES == mFetchesOnAwake)
+        {
+            [aWindow makeKeyAndOrderFront: nil];
+            [self fetch: nil];
+        }
     }
-    
-   [super awakeFromNib];
+    [super awakeFromNib];
 }
 
 - (BXDatabaseContext *) BXDatabaseContext
@@ -184,11 +190,19 @@
             
             if (nil != mEntityDescription)
             {
+                NSError* error = nil;
+                
                 //Also set the entity description, since the database URI has changed.
                 BXEntityDescription* entityDescription = [databaseContext entityForTable: [mEntityDescription name] 
-                                                                                inSchema: [mEntityDescription schemaName]];
-                [entityDescription setDatabaseObjectClass: [mEntityDescription databaseObjectClass]];
-                [self setEntityDescription: mEntityDescription];
+                                                                                inSchema: [mEntityDescription schemaName]
+                                                                                   error: &error];
+                if (nil != error)
+                    [self BXHandleError: error];
+                else
+                {
+                    [entityDescription setDatabaseObjectClass: [mEntityDescription databaseObjectClass]];
+                    [self setEntityDescription: mEntityDescription];
+                }
             }
 		}
     }

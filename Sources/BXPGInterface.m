@@ -1125,6 +1125,8 @@ static unsigned int SavepointIndex ()
                 BXEntityDescription* dependentEntity = [context entityForTable: [dependentTable name] 
                                                                       inSchema: [dependentTable schemaName]
                                                                          error: error];
+                
+                //FIXME: this probably should be done only if needed. If we obsereve a view that references three tables, we get four notifications for each modification.
                 [self validateEntity: dependentEntity error: error];
                 [dependentEntities addObject: dependentEntity];
             }
@@ -1180,7 +1182,9 @@ static unsigned int SavepointIndex ()
                                                      selector: @selector (notifyConnectionWillClose:)
                                                          name: kPGTSWillDisconnectNotification 
                                                        object: notifyConnection];
-            
+      
+            //FIXME: reconsider this. Do we need the notifications in all cases from dependent relations? Also, -validateEntity: already seems to be recursive.
+#if 0
             if (YES == [entity isView])
             {
                 //Throws on error
@@ -1191,6 +1195,7 @@ static unsigned int SavepointIndex ()
                         break;
                 }
             }
+#endif
             
             rval = (nil == *error);
         }
