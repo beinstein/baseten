@@ -41,6 +41,8 @@
     NSMutableDictionary*        mPkeyFValues;
     enum BXModificationType  mLastModificationType;
 }
+- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError *) error;
+
 - (BXEntityDescription *) entity;
 - (NSURL *) URIRepresentation;
 - (NSPredicate *) predicate;

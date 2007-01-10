@@ -46,7 +46,6 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 
 
 @interface NSURL (BXDatabaseAdditions)
-- (BXDatabaseObjectID *) BXDatabaseObjectID;
 - (unsigned int) BXHash;
 @end
 
@@ -116,3 +115,4 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 @interface NSSet (BXDatabaseAdditions)
 - (NSPredicate *) BXOrPredicateForObjects;
 @end
+

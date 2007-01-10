@@ -51,10 +51,12 @@
     return u;
 }
 
+#if 0
 - (BXDatabaseObjectID *) BXDatabaseObjectID
 {
     return [[[BXDatabaseObjectID alloc] initWithURI: self] autorelease];
 }
+#endif
 
 @end
 

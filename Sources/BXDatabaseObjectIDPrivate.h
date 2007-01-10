@@ -35,7 +35,6 @@
 
 @interface BXDatabaseObjectID (PrivateMethods)
 + (id) IDWithEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) aDict;
-- (id) initWithURI: (NSURL *) anURI;
 - (id) initWithEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) aDict;
 
 - (void) setLastModificationType: (enum BXModificationType) aType;
