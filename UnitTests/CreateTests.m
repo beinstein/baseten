@@ -49,7 +49,7 @@
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context setAutocommits: NO];
-    entity = [[context entityForTable: @"test"] retain];
+    entity = [[context entityForTable: @"test" error: nil] retain];
     MKCAssertNotNil (context);
     MKCAssertNotNil (entity);
 }

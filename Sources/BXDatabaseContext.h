@@ -134,13 +134,15 @@
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
-- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName;
-- (BXEntityDescription *) entityForTable: (NSString *) tableName;
-- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
-                                          entity: (BXEntityDescription *) anotherEntity;
+- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;
+- (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error;
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
                                           entity: (BXEntityDescription *) anotherEntity
-                                           types: (enum BXRelationshipType) bitmap;
+                                           error: (NSError **) error;
+- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
+                                          entity: (BXEntityDescription *) anotherEntity
+                                           types: (enum BXRelationshipType) bitmap
+                                           error: (NSError **) error;
 @end
 
 

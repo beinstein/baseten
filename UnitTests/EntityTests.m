@@ -39,8 +39,8 @@
     BXDatabaseContext* ctx = [BXDatabaseContext contextWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
 
-    BXEntityDescription* e1 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest"];
-    BXEntityDescription* e2 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest"];
+    BXEntityDescription* e1 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
+    BXEntityDescription* e2 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
 
     NSSet* container3 = [NSSet setWithObject: e1];
     MKCAssertNotNil ([container3 member: e1]);
@@ -51,12 +51,12 @@
     MKCAssertEqualObjects (e1, e2);
     
     NSArray* container = [NSArray arrayWithObjects: 
-        [ctx entityForTable: @"mtmrel1" inSchema: @"Fkeytest"],
-        [ctx entityForTable: @"mtmtest1" inSchema: @"Fkeytest"],
-        [ctx entityForTable: @"mtmtest2" inSchema: @"Fkeytest"],
-        [ctx entityForTable: @"ototest1" inSchema: @"Fkeytest"],
-        [ctx entityForTable: @"ototest2" inSchema: @"Fkeytest"],
-        [ctx entityForTable: @"test1" inSchema: @"Fkeytest"],
+        [ctx entityForTable: @"mtmrel1"  inSchema: @"Fkeytest" error: nil],
+        [ctx entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil],
+        [ctx entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil],
+        [ctx entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil],
+        [ctx entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil],
+        [ctx entityForTable: @"test1"    inSchema: @"Fkeytest" error: nil],
         nil];
     NSSet* container2 = [NSSet setWithArray: container];
 

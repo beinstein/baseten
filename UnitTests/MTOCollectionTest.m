@@ -43,23 +43,25 @@
     [context setLogsQueries: YES];
     MKCAssertNotNil (context);
     
-    mtocollectiontest1 = [context entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest"];
-    mtocollectiontest2 = [context entityForTable: @"mtocollectiontest2" inSchema: @"Fkeytest"];
+    mtocollectiontest1 = [context entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest" error: nil];
+    mtocollectiontest2 = [context entityForTable: @"mtocollectiontest2" inSchema: @"Fkeytest" error: nil];
     MKCAssertNotNil (mtocollectiontest1);
     MKCAssertNotNil (mtocollectiontest2);
     MKCAssertEqualObjects ([mtocollectiontest1 name], @"mtocollectiontest1");
     MKCAssertEqualObjects ([mtocollectiontest2 name], @"mtocollectiontest2");
     
-    mtocollectiontest1v = [context entityForTable: @"mtocollectiontest1_v" inSchema: @"Fkeytest"];
-    mtocollectiontest2v = [context entityForTable: @"mtocollectiontest2_v" inSchema: @"Fkeytest"];
+    mtocollectiontest1v = [context entityForTable: @"mtocollectiontest1_v" inSchema: @"Fkeytest" error: nil];
+    mtocollectiontest2v = [context entityForTable: @"mtocollectiontest2_v" inSchema: @"Fkeytest" error: nil];
     MKCAssertNotNil (mtocollectiontest1v);
     MKCAssertNotNil (mtocollectiontest2v);
     MKCAssertEqualObjects ([mtocollectiontest1v name], @"mtocollectiontest1_v");
     MKCAssertEqualObjects ([mtocollectiontest2v name], @"mtocollectiontest2_v");
+#if 0
     [mtocollectiontest1v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest1]];
     [mtocollectiontest2v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest2]];
     [mtocollectiontest1v setPrimaryKeyFields: [NSArray arrayWithObject: @"id"]];
     [mtocollectiontest2v setPrimaryKeyFields: [NSArray arrayWithObject: @"id"]];
+#endif
 }
 
 - (void) testModMTOCollection

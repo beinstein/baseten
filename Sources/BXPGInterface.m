@@ -52,10 +52,10 @@
 
 
 //FIXME: these should be non-blockable assertions and the definitions should be somewhere else
-#define BXAssert0( ASSERTION )                        if (!( ASSERTION )) BXHandleError( __FILE__, __LINE__, nil )
-#define BXAssert( ASSERTION, MESSAGE )                if (!( ASSERTION )) BXHandleError( __FILE__, __LINE__, MESSAGE )
-#define BXAssert2( ASSERTION, MESSAGE, ARG1, ARG2 )   if (!( ASSERTION )) BXHandleError( __FILE__, __LINE__, [NSString stringWithFormat: MESSAGE, ARG1, ARG2] )
-static void BXHandleError (char* file, int line, NSString* message)
+#define BXAssert0( ASSERTION )                        if (!( ASSERTION )) BXHandleAssertionError( __FILE__, __LINE__, nil )
+#define BXAssert( ASSERTION, MESSAGE )                if (!( ASSERTION )) BXHandleAssertionError( __FILE__, __LINE__, MESSAGE )
+#define BXAssert2( ASSERTION, MESSAGE, ARG1, ARG2 )   if (!( ASSERTION )) BXHandleAssertionError( __FILE__, __LINE__, [NSString stringWithFormat: MESSAGE, ARG1, ARG2] )
+static void BXHandleAssertionError (char* file, int line, NSString* message)
 {
     //FIXME: write some c functions in Log4Cocoa (L4CLogger.h) and change this to use one of them
     fprintf (stderr, "Assertion failed in %s line %d", file, line);
@@ -310,14 +310,18 @@ static unsigned int SavepointIndex ()
     NSArray* fields = [valueDict allKeys];
     NSArray* fieldNames = [fields BXPGEscapedNames: connection];
     NSArray* fieldValues = [valueDict objectsForKeys: fields notFoundMarker: nil];
-    
+
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
     @try
     {
-        [self validateEntity: entity];
+        //This is needed if the entity is passed from one context to another.
+        [self validateEntity: entity error: error];
         
+#if 0
         //If we are not autocommitting create a savepoint. Otherwise isolate until the created object has been retrieved.
         [self internalBegin];
+#endif
         
         //Make the query
         NSString* queryFormat = nil;
@@ -339,8 +343,10 @@ static unsigned int SavepointIndex ()
         NSAssert (YES == [rval registerWithContext: context entity: entity], @"Expected the newly created object not to be in memory yet.");
         [rval faultKey: nil];
 
+#if 0
         //Commit only if autocommitting
         [self internalCommit];
+#endif
     }
     @catch (PGTSQueryException* exception)
     {
@@ -360,11 +366,12 @@ static unsigned int SavepointIndex ()
 {
     NSMutableArray* rows = nil;
     NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
-    
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+
     //Begin the exception handling context, since the metadata queries might also fail
     @try
     {
-        PGTSTableInfo* tableInfo = [self validateEntity: entity];
+        PGTSTableInfo* tableInfo = [self tableForEntity: entity];
         
         //Get the primary key
         NSArray* pkeyfields = [entity primaryKeyFields];
@@ -488,6 +495,7 @@ static unsigned int SavepointIndex ()
 - (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error
 {
     BOOL rval = NO;
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     @try
     {
         BXDatabaseObjectID* objectID = [anObject objectID];
@@ -516,6 +524,7 @@ static unsigned int SavepointIndex ()
 {
     NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
     NSAssert (objectID || entity, @"Expected to be called either with the objectID or with an entity.");
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     NSString* queryString = nil;
     
     NSArray* rval = nil;
@@ -547,7 +556,8 @@ static unsigned int SavepointIndex ()
             predicate = [objectID predicate];
             entity = [objectID entity];
         }
-        [self validateEntity: entity];
+        //This is needed if the entity is passed from one context to another.
+        [self validateEntity: entity error: error];
         
         NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
         NSString* whereClause = [predicate PGTSWhereClauseWithContext: ctx];
@@ -561,15 +571,21 @@ static unsigned int SavepointIndex ()
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyFields forKeys: pkeyFNames];        
         NSString* name = [entity BXPGQualifiedName: connection];
-        
+
+        if (NO == autocommits)
+            [self internalBegin];
+
         //Check if pkey should be updated
         BOOL updatedPkey = NO;
         NSArray* objectIDs = nil;
         if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
         {
+            if (YES == autocommits)
+                [self internalBegin];
             updatedPkey = YES;
-            [self internalBegin];
-            objectIDs = [context objectIDsForEntity: entity predicate: predicate error: nil];
+            
+            //FIXME: Since we are reading committed changes, we should SELECT the object IDs FOR UPDATE here.
+            objectIDs = [context objectIDsForEntity: entity predicate: predicate error: error];
         }
                 
         //Send the UPDATE query
@@ -666,6 +682,7 @@ static unsigned int SavepointIndex ()
     NSArray* rval = nil;
     NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
     NSAssert (objectID || entity, @"Expected to be called either with an objectID or with an entity.");
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     @try
     {
         if (nil == lockedObjectID)
@@ -683,7 +700,8 @@ static unsigned int SavepointIndex ()
             entity = [objectID entity];
             predicate = [objectID predicate];
         }
-        [self validateEntity: entity];
+        //This is needed if the entity is passed from one context to another.
+        [self validateEntity: entity error: error];
 
         NSString* name = [entity BXPGQualifiedName: connection];
         NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
@@ -750,6 +768,7 @@ static unsigned int SavepointIndex ()
 - (BOOL) save: (NSError **) error
 {
     BOOL rval = NO;
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     if ([self connected] && PQTRANS_INTRANS == [connection transactionStatus])
     {
         NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
@@ -778,8 +797,11 @@ static unsigned int SavepointIndex ()
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) srcEntity
                                           entity: (BXEntityDescription *) givenDSTEntity
                                            types: (enum BXRelationshipType) typeBitmap
+                                           error: (NSError **) error
 {    
+    //FIXME: Some errors might not be handled. Set the error parameter when required.
     NSAssert (nil != srcEntity, nil);
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     
     NSMutableArray* types = [NSMutableArray arrayWithObject: @"t"];
     if (typeBitmap == kBXRelationshipUndefined || typeBitmap & kBXRelationshipOneToOne)
@@ -860,9 +882,11 @@ static unsigned int SavepointIndex ()
                 NSMutableArray* srcProperties = nil;
                 NSMutableArray* dstProperties = nil;
                 BXEntityDescription* srcEntity = [context entityForTable: [res valueForKey: @"srcrelname"]
-                                                                   inSchema: [res valueForKey: @"srcnspname"]];
+                                                                inSchema: [res valueForKey: @"srcnspname"]
+                                                                   error: error];
                 BXEntityDescription* dstEntity = [context entityForTable: [res valueForKey: @"dstrelname"]
-                                                                   inSchema: [res valueForKey: @"dstnspname"]];
+                                                                inSchema: [res valueForKey: @"dstnspname"]
+                                                                   error: error];
                 {
                     NSArray* srcFNames = [res valueForKey: @"srcfnames"];
                     srcProperties = [NSMutableArray arrayWithCapacity: [srcFNames count]];                
@@ -1006,12 +1030,14 @@ static unsigned int SavepointIndex ()
 }
 
 /**
-* \internal
+ * \internal
  * Check that the entity exists.
  * Also tell the entity about the pkey and other fields.
  */
-- (id) validateEntity: (BXEntityDescription *) entity
+- (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+
     PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
     PGTSTableInfo* tableInfo = [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
     if (nil == tableInfo)
@@ -1020,20 +1046,16 @@ static unsigned int SavepointIndex ()
             BXLocalizedString (@"tableNotFound", @"Table %@ was not found in schema %@.", @"Error message for fetch"),
             [entity name], [entity schemaName]];
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
-            localizedError, NSLocalizedFailureReasonErrorKey,
-            localizedError, NSLocalizedRecoverySuggestionErrorKey,
-            context, kBXDatabaseContextKey,
-            entity, kBXEntityDescriptionKey,
+            BXSafeObj (localizedError), NSLocalizedFailureReasonErrorKey,
+            BXSafeObj (localizedError), NSLocalizedRecoverySuggestionErrorKey,
+            BXSafeObj (context),        kBXDatabaseContextKey,
+            BXSafeObj (entity),         kBXEntityDescriptionKey,
             BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
             nil];
-        NSError* placeholder = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity 
-                                               userInfo: userInfo];
-        [[placeholder BXExceptionWithName: @""] raise];
+        *error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
     }
     else
-    {
-        [self observeIfNeeded: entity];
-        
+    {        
         //Get the primary key
         NSArray* pkeyfields = [entity primaryKeyFields];
         if (nil == pkeyfields)
@@ -1048,14 +1070,13 @@ static unsigned int SavepointIndex ()
                                                        @"Error description format string");
                 message = [NSString stringWithFormat: message, [tableInfo schemaName], [tableInfo name]];
                 NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    self, kBXDatabaseContextKey,
-                    entity, kBXEntityDescriptionKey,
+                    self,                kBXDatabaseContextKey,
+                    BXSafeObj (entity),  kBXEntityDescriptionKey,
                     BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                    message, NSLocalizedFailureReasonErrorKey,
-                    message, NSLocalizedRecoverySuggestionErrorKey,
+                    BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+                    BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
                     nil];
-                NSError* placeholder = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoPrimaryKey userInfo: userInfo];
-                [[placeholder BXExceptionWithName: @""] raise];
+                *error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoPrimaryKey userInfo: userInfo];
             }
             else
             {
@@ -1091,6 +1112,28 @@ static unsigned int SavepointIndex ()
             }
             [entity setFields: propertyDescs];
         }
+        
+        //If the entity is a view, set the dependent entities.
+        if ('v' == [tableInfo kind] && nil == [entity entitiesBasedOn])
+        {
+            NSArray* oidsBasedOn = [tableInfo relationOidsBasedOn];
+            NSMutableSet* dependentEntities = [NSMutableSet setWithCapacity: [oidsBasedOn count]];
+            TSEnumerate (currentOid, e, [oidsBasedOn objectEnumerator])
+            {
+                Oid oid = [currentOid PGTSOidValue];
+                PGTSTableInfo* dependentTable = [database tableInfoForTableWithOid: oid]; 
+                BXEntityDescription* dependentEntity = [context entityForTable: [dependentTable name] 
+                                                                      inSchema: [dependentTable schemaName]
+                                                                         error: error];
+                [self validateEntity: dependentEntity error: error];
+                [dependentEntities addObject: dependentEntity];
+            }
+            [entity viewIsBasedOnEntities: dependentEntities];
+        }
+        
+        if (nil != *error) tableInfo = nil;
+        [self observeIfNeeded: entity error: error];
+        if (nil != *error) tableInfo = nil;
     }
     return tableInfo;
 }
@@ -1098,8 +1141,9 @@ static unsigned int SavepointIndex ()
 
 
 @implementation BXPGInterface (Helpers)
-- (BOOL) observeIfNeeded: (BXEntityDescription *) entity
+- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error
 {
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     BOOL rval = NO;
     if (nil == modificationNotifier)
     {
@@ -1136,35 +1180,36 @@ static unsigned int SavepointIndex ()
                                                      selector: @selector (notifyConnectionWillClose:)
                                                          name: kPGTSWillDisconnectNotification 
                                                        object: notifyConnection];
-            rval = YES;
-        }
-        @catch (PGTSQueryException* exception)
-        {
+            
             if (YES == [entity isView])
             {
                 //Throws on error
                 TSEnumerate (currentEntity, e, [[entity entitiesBasedOn] objectEnumerator])
-                    [self observeIfNeeded: currentEntity];
-                rval = YES;
+                {
+                    [self observeIfNeeded: currentEntity error: error];
+                    if (nil != *error)
+                        break;
+                }
             }
-            else
-            {
-                NSString* localizedError = BXLocalizedString (@"observingErrorFmt", 
-                                                               @"Table %@ in schema %@ has not been prepared for modification observing.", 
-                                                               @"Error description format");
-                localizedError = [NSString stringWithFormat: localizedError, [entity name], [entity schemaName]];
-                NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    context, kBXDatabaseContextKey,
-                    entity, kBXEntityDescriptionKey,
-                    BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                    localizedError, NSLocalizedFailureReasonErrorKey,
-                    localizedError, NSLocalizedRecoverySuggestionErrorKey,
-                    nil];
-                NSError* error = [NSError errorWithDomain: kBXErrorDomain
-                                                     code: kBXErrorObservingFailed
-                                                 userInfo: userInfo];
-                @throw [error BXExceptionWithName: kBXPGUnableToObserveModificationsException];
-            }
+            
+            rval = (nil == *error);
+        }
+        @catch (PGTSQueryException* exception)
+        {
+            NSString* message = BXLocalizedString (@"observingErrorFmt", 
+                                                   @"Table %@ in schema %@ has not been prepared for modification observing.", 
+                                                   @"Error description format");
+            message = [NSString stringWithFormat: message, [entity name], [entity schemaName]];
+            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                BXSafeObj (context), kBXDatabaseContextKey,
+                BXSafeObj (entity),  kBXEntityDescriptionKey,
+                BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+                BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+                BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
+                nil];
+            *error = [NSError errorWithDomain: kBXErrorDomain
+                                         code: kBXErrorObservingFailed
+                                     userInfo: userInfo];
         }
     }
     return rval;
@@ -1254,9 +1299,6 @@ static unsigned int SavepointIndex ()
         
         //Get and sort the primary key fields and execute the query
         NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
-        //For views, again. This might not be as safe as above.
-        if (nil == pkeyFields)
-            pkeyFields = [entity primaryKeyFields];
         NSAssert (nil != pkeyFields, @"Expected to know the primary key.");
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSString* query = [NSString stringWithFormat: format, funcname, SavepointIndex(),
@@ -1377,7 +1419,9 @@ static unsigned int SavepointIndex ()
 - (NSDictionary *) lastModificationForEntity: (BXEntityDescription *) entity
 {
     id rval = nil;
-    if (YES == [self observeIfNeeded: entity])
+    NSError* localError = nil;
+    //FIXME: handle the error.
+    if (nil != [self validateEntity: entity error: &localError])
     {
         PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
         //Now use the real connection since we need the last modification from its viewpoint
@@ -1406,7 +1450,7 @@ static unsigned int SavepointIndex ()
         {
             PGTSTableInfo* tableInfo = [[connection databaseInfo] tableInfoForTableWithOid: 
                 [[currentRow valueForKey: relidKey] PGTSOidValue]];
-            BXEntityDescription* desc = [context entityForTable: [tableInfo name] inSchema: [tableInfo schemaName]];
+            BXEntityDescription* desc = [context entityForTable: [tableInfo name] inSchema: [tableInfo schemaName] error: NULL];
             NSArray* pkeyFields = [desc primaryKeyFields];
             NSMutableDictionary* pkeyValues = [NSMutableDictionary dictionaryWithCapacity: [pkeyFields count]];
             
@@ -1428,6 +1472,17 @@ static unsigned int SavepointIndex ()
     return ids;
 }
 
+- (PGTSTableInfo *) tableForEntity: (BXEntityDescription *) entity
+{
+    PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
+    return [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
+}
+
+- (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error
+{
+    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    return [context entityForTable: [table name] inSchema: [table schemaName] error: error];
+}
 @end
 
 

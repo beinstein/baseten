@@ -46,7 +46,7 @@
 {
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    entity = [context entityForTable: @"test"];
+    entity = [context entityForTable: @"test" error: nil];
     MKCAssertNotNil (entity);
 }
 
@@ -76,10 +76,12 @@
     [context setAutocommits: YES];
     [context setLogsQueries: YES];
 
-    BXEntityDescription* viewEntity = [context entityForTable: @"test_v"];
+    BXEntityDescription* viewEntity = [context entityForTable: @"test_v" error: nil];
+#if 0
     [viewEntity viewIsBasedOnEntities: [NSSet setWithObject: entity]];
     [viewEntity setPrimaryKeyFields: [NSArray arrayWithObject:
         [BXPropertyDescription propertyWithName: @"id" entity: viewEntity]]];
+#endif
     
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = 1"];
     MKCAssertNotNil (predicate);
@@ -120,7 +122,7 @@
     [context setLogsQueries: YES];
     [context connectIfNeeded: nil];
     
-    BXEntityDescription* multicolumnpkey = [context entityForTable: @"multicolumnpkey"];
+    BXEntityDescription* multicolumnpkey = [context entityForTable: @"multicolumnpkey" error: nil];
     MKCAssertNotNil (multicolumnpkey);
     NSArray* multicolumnpkeys = [context executeFetchForEntity: multicolumnpkey withPredicate: nil error: &error];
     MKCAssertNotNil (multicolumnpkeys);

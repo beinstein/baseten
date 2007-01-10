@@ -28,6 +28,7 @@
 
 @class BXEntityDescription;
 
+
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXRelationshipDescription.h"
 #import "BXPropertyDescription.h"
@@ -144,6 +145,7 @@ NullArray (unsigned int count)
     id rval = nil;
     BXEntityDescription* entity = [[object objectID] entity];    
     BXDatabaseContext* context = [object databaseContext];
+    NSError* localError = nil;
     
     //Decide, what kind of query will be sent
     BOOL manyToOne = NO;
@@ -172,27 +174,34 @@ NullArray (unsigned int count)
         {
             if (nil == targetEntity)
                 targetEntity = [self dstEntity];
+#if 0
             //FIXME: a bit kludgy
             [context validateEntity: targetEntity];
+#endif
             NSArray* properties = [targetEntity correspondingProperties: [self dstProperties]];
 
             //Many (one)-to-one
             NSDictionary* primaryKeyFields = [NSDictionary dictionaryWithObjects: values forKeys: properties];
             BXDatabaseObjectID* anID = [BXDatabaseObjectID IDWithEntity: targetEntity primaryKeyFields: primaryKeyFields];
         
-            rval = [context objectWithID: anID error: error];
+            rval = [context objectWithID: anID error: &localError];
+            BXHandleError (error, localError);
         }
     }
     else if (YES == oneToMany)
     {
+#if 0
         //FIXME: a bit kludgy
         [context validateEntity: entity];
+#endif
         NSArray* values = [object objectsForKeys: [entity correspondingProperties: [self dstProperties]]];
         if (nil == targetEntity)
             targetEntity = [self srcEntity];
+#if 0
         //FIXME: this is a bit of a kludge, since entities should be validated by the database interface.
         //Perhaps the db interface should have the method -correspondingProperties:.
         [context validateEntity: targetEntity];
+#endif
         NSArray* properties = [targetEntity correspondingProperties: [self srcProperties]];
 
         //one-to-many
@@ -205,7 +214,8 @@ NullArray (unsigned int count)
                               returningFaults: YES
                               excludingFields: nil
                                 returnedClass: [BXSetRelationProxy class]
-                                        error: error];
+                                        error: &localError];
+        BXHandleError (error, localError);
         [rval setFilterPredicate: predicate];
         [rval setRelationship: self];
         [rval setReferenceObject: object];
@@ -287,6 +297,7 @@ NullArray (unsigned int count)
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                  to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 {
+    NSError* localError = nil;
     if (nil == targetEntity)
         targetEntity = [self srcEntity];
     NSAssert (nil != refObject, @"Expected refObject not to be nil");
@@ -300,13 +311,15 @@ NullArray (unsigned int count)
         [[refObject databaseContext] executeUpdateEntity: targetEntity
                                           withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
                                                predicate: [objectSet BXOrPredicateForObjects]
-                                                   error: error];
+                                                   error: &localError];
+        BXHandleError (error, localError);
     }
 }
 
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                     to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
+    NSError* localError = nil;
     if (nil == targetEntity)
         targetEntity = [self srcEntity];
     NSAssert (nil != refObject, @"Expected refObject not to be nil");
@@ -331,7 +344,8 @@ NullArray (unsigned int count)
     [[refObject databaseContext] executeUpdateEntity: targetEntity
                                       withDictionary: [NSDictionary dictionaryWithObjects: updatedValues forKeys: keys]
                                            predicate: predicate
-                                               error: error];
+                                               error: &localError];
+    BXHandleError (error, localError);
 }
 
 - (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
@@ -343,6 +357,7 @@ NullArray (unsigned int count)
     NSArray* updatedKeys = [srcProperties valueForKey: @"name"];
     NSArray* values = nil;
     NSPredicate* predicate = nil;
+    NSError* localError = nil;
     switch ([self isToManyFromEntity: refEntity])
     {
         case 0:
@@ -367,14 +382,15 @@ NullArray (unsigned int count)
                 updatedEntity = [[[target anyObject] objectID] entity];
             predicate = [target BXOrPredicateForObjects];
             //All other rows will be updated not to have the value in referencing fields.
-            [self removeObjects: nil referenceFrom: refObject to: updatedEntity error: error];
+            [self removeObjects: nil referenceFrom: refObject to: updatedEntity error: &localError];
+            BXHandleError (error, localError);
             break;
         case -1:
         default:
             NSAssert (NO , @"Expected the relationship to be defined for this accessor");
     }
     
-    if (nil == *error)
+    if (nil == localError)
     {
         if (nil == values)
             values = NullArray ([dstProperties count]);
@@ -383,7 +399,8 @@ NullArray (unsigned int count)
         [[refObject databaseContext] executeUpdateEntity: updatedEntity
                                           withDictionary: change
                                                predicate: predicate
-                                                   error: error];
+                                                   error: &localError];
+        BXHandleError (error, localError);
     }
 }
 

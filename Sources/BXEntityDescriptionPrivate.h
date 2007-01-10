@@ -36,7 +36,7 @@
 @interface BXEntityDescription (PrivateMethods)
 - (void) addDependentView: (BXEntityDescription *) viewEntity;
 - (void) setFields: (NSArray *) fieldArray;
-- (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context;
+- (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context error: (NSError **) error;
 - (void) cacheRelationship: (id <BXRelationshipDescription>) relationship;
 - (void) registerObjectID: (BXDatabaseObjectID *) anID;
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID;

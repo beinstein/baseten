@@ -489,7 +489,7 @@ ParseSelector (SEL aSelector, NSString** key)
                 NSAssert (nil != mContext, nil);
                 NSError* error = nil;
                 BXEntityDescription* entity = [mObjectID entity];
-                id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext];
+                id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
                 //Don't cache the results to prevent a retain cycle.
                 rval = [rel resolveFrom: self to: [entity targetForRelationship: rel] error: &error];
                 if (nil != error)
@@ -540,7 +540,7 @@ ParseSelector (SEL aSelector, NSString** key)
         {
             //Unknown key; try foreign keys
             BXEntityDescription* entity = [mObjectID entity];
-            id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext];
+            id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
             if (nil == rel)
             {
                 //No such foreign key

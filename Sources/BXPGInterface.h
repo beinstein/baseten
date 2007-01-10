@@ -93,7 +93,7 @@ enum BXPGQueryState
 
 
 @interface BXPGInterface (Helpers)
-- (BOOL) observeIfNeeded: (BXEntityDescription *) entity;
+- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error;
 - (NSArray *) lockRowsWithObjectID: (BXDatabaseObjectID *) objectID 
                             entity: (BXEntityDescription *) entity
                        whereClause: (NSString *) whereClause
@@ -121,6 +121,9 @@ enum BXPGQueryState
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey;
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey
                              status: (enum BXObjectStatus *) status;
+
+- (PGTSTableInfo *) tableForEntity: (BXEntityDescription *) entity;
+- (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error;
 @end
 
 

@@ -105,6 +105,7 @@
     BXEntityDescription* dstEntity = nil;
     BXRelationshipDescription* helperToSRC = relationship1;
     BXRelationshipDescription* helperToDST = relationship2;
+    NSError* localError = nil;
     
     //Normalize
     {
@@ -136,11 +137,13 @@
         }
     }
     
+    BXDatabaseContext* context = [object databaseContext];
+#if 0
     //FIXME: this is a bit of a kludge, since entities should be validated by the database interface.
     //Perhaps the db interface should have the method -correspondingProperties:.
-    BXDatabaseContext* context = [object databaseContext];
     [context validateEntity: entity];
     [context validateEntity: dstEntity];
+#endif
     //Make the join using predicates: src --> helper --> dst
     //Use values only in place of src
     NSPredicate* helperToSRCPredicate = 
@@ -162,7 +165,8 @@
                              returningFaults: YES
                              excludingFields: nil
                                returnedClass: [BXSetHelperTableRelationProxy class]
-                                       error: error];
+                                       error: &localError];
+    BXHandleError (error, localError);
     [rval setRelationship: self];
     [rval setEntity: [helperToSRC srcEntity]];
     [rval setMainEntity: dstEntity];
@@ -250,6 +254,7 @@
     BXRelationshipDescription* targetRel = nil;
     [self normalizeNames: refObject from: &refRel to: &targetRel];
     BXDatabaseContext* context = [refObject databaseContext];
+    NSError* localError = nil;
     
     //Get the properties used in the helper table
     NSArray* refHProperties = [refRel srcProperties];
@@ -269,7 +274,7 @@
     TSEnumerate (currentTarget, e, [objectSet objectEnumerator])
     {
         //FIXME: we should have a transaction.
-        if (NULL != error && NULL != *error)
+        if (NULL != localError)
             break;
         
         if (refPropCount < [values count])
@@ -278,13 +283,15 @@
     
         [context createObjectForEntity: [refRel srcEntity]
                        withFieldValues: [NSDictionary dictionaryWithObjects: values forKeys: keys]
-                                 error: error];
+                                 error: &localError];
     }
+    BXHandleError (error, localError);
 }
 
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject
                     to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
+    NSError* localError = nil;
     BXRelationshipDescription* refRel = nil;
     BXRelationshipDescription* targetRel = nil;
     [self normalizeNames: refObject from: &refRel to: &targetRel];
@@ -322,7 +329,8 @@
     //Finally, delete from the helper table
     [[refObject databaseContext] executeDeleteFromEntity: [targetRel srcEntity]
                                            withPredicate: predicate
-                                                   error: error];
+                                                   error: &localError];
+    BXHandleError (error, localError);
 }
 
 - (NSArray *) subrelationships

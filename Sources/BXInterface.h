@@ -92,7 +92,8 @@
 
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) srcEntity
                                           entity: (BXEntityDescription *) givenDSTEntity
-                                           types: (enum BXRelationshipType) typeBitmap;
+                                           types: (enum BXRelationshipType) typeBitmap
+                                           error: (NSError **) error;
 
 /** \name Transactions */
 //@{
@@ -103,5 +104,5 @@
 - (void) undo;
 //@}
 
-- (id) validateEntity: (BXEntityDescription *) entity;
+- (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 @end

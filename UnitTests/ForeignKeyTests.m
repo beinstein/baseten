@@ -44,12 +44,12 @@
     [context setLogsQueries: NO];
     MKCAssertNotNil (context);
     
-    test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest"];
-    test2 = [context entityForTable: @"test2" inSchema: @"Fkeytest"];
-    ototest1 = [context entityForTable: @"ototest1" inSchema: @"Fkeytest"];
-    ototest2 = [context entityForTable: @"ototest2" inSchema: @"Fkeytest"];
-    mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"Fkeytest"];
-    mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"Fkeytest"];
+    test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
+    test2 = [context entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
+    ototest1 = [context entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil];
+    ototest2 = [context entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil];
+    mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
+    mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
 
     MKCAssertNotNil (test1);
     MKCAssertNotNil (test2);
@@ -64,12 +64,12 @@
     MKCAssertEqualObjects ([mtmtest1 name], @"mtmtest1");
     MKCAssertEqualObjects ([mtmtest2 name], @"mtmtest2");
 
-    test1v = [context entityForTable: @"test1_v" inSchema: @"Fkeytest"];
-    test2v = [context entityForTable: @"test2_v" inSchema: @"Fkeytest"];
-    ototest1v = [context entityForTable: @"ototest1_v" inSchema: @"Fkeytest"];
-    ototest2v = [context entityForTable: @"ototest2_v" inSchema: @"Fkeytest"];
-    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest"];
-    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest"];
+    test1v = [context entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil];
+    test2v = [context entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil];
+    ototest1v = [context entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil];
+    ototest2v = [context entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil];
+    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
+    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
     
     MKCAssertNotNil (test1v);
     MKCAssertNotNil (test2v);
@@ -85,6 +85,7 @@
     MKCAssertEqualObjects ([mtmtest2v name], @"mtmtest2_v");
     
     //Tell the view entities what they are
+#if 0
     [test1v viewIsBasedOnEntities: [NSSet setWithObject: test1]];
     [test2v viewIsBasedOnEntities: [NSSet setWithObject: test2]];
     [ototest1v viewIsBasedOnEntities: [NSSet setWithObject: ototest1]];
@@ -96,6 +97,7 @@
     NSArray* viewEntities = [NSArray arrayWithObjects: test1v, test2v, ototest1v, ototest2v, mtmtest1v, mtmtest2v, nil];
     TSEnumerate (currentEntity, e, [viewEntities objectEnumerator])
         [currentEntity setPrimaryKeyFields: pkeyfields];
+#endif
 }
 
 - (void) tearDown
@@ -180,10 +182,10 @@
     //currently search the relationships recursively
     id <BXRelationshipDescription> rel = nil;
     if ([manyEntity isView] || [oneEntity isView])
-        rel = [manyEntity relationshipNamed: @"fkt1" context: context];
+        rel = [manyEntity relationshipNamed: @"fkt1" context: context error: nil];
     else
     {
-        NSDictionary* rels = [context relationshipsByNameWithEntity: manyEntity entity: oneEntity];
+        NSDictionary* rels = [context relationshipsByNameWithEntity: manyEntity entity: oneEntity error: nil];
         MKCAssertTrue (0 < [rels count]);
         rel = [rels objectForKey: @"fkt1"];
     }
@@ -233,10 +235,10 @@
     //currently search the relationships recursively
     id <BXRelationshipDescription> foobar = nil;
     if ([entity1 isView] || [entity2 isView])
-        foobar = [entity1 relationshipNamed: @"bar" context: context];
+        foobar = [entity1 relationshipNamed: @"bar" context: context error: nil];
     else
     {
-        NSDictionary* rels = [context relationshipsByNameWithEntity: entity1 entity: entity2];
+        NSDictionary* rels = [context relationshipsByNameWithEntity: entity1 entity: entity2 error: nil];
         MKCAssertTrue (0 < [rels count]);
         foobar = [rels objectForKey: @"bar"];
     }    
@@ -377,8 +379,6 @@
 
     //Change reference in foreignObject from id=1 to id=2
     NSError* error = nil;
-    BOOL autocommits = [context autocommits];
-    [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
     
     NSArray* res = [context executeFetchForEntity: manyEntity
@@ -403,7 +403,6 @@
     MKCAssertEqualObjects ([foreignObject valueForKey: @"fkt1"], object);
     
     [context rollback];
-    [context setAutocommits: autocommits];
 }
 
 - (void) testModOTM
@@ -471,8 +470,8 @@
 {
     //Change a reference in entity1 and entity2
     
-    MKCAssertTrue ([[entity1 relationshipNamed: @"bar" context: context] isOneToOne]);
-    MKCAssertTrue ([[entity2 relationshipNamed: @"foo" context: context] isOneToOne]);
+    MKCAssertTrue ([[entity1 relationshipNamed: @"bar" context: context error: nil] isOneToOne]);
+    MKCAssertTrue ([[entity2 relationshipNamed: @"foo" context: context error: nil] isOneToOne]);
     [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"bar"];
     [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"foo"];
     

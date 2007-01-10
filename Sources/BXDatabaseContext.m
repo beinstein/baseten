@@ -50,6 +50,7 @@
 #import "BXContainerProxy.h"
 #import "BXArrayProxy.h"
 
+#undef BXHandleError
 #define BXHandleError( ERROR, LOCAL_ERROR ) \
     if ( nil != LOCAL_ERROR ) { if ( NULL != ERROR ) *(NSError **)ERROR = LOCAL_ERROR; else [self handleError: LOCAL_ERROR]; }
             
@@ -1049,18 +1050,26 @@ extern void BXInit ()
  */
 //@{
 /** Entity for a table in a given schema */
-- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName
+- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error
 {
-    return [BXEntityDescription entityWithURI: mDatabaseURI
-                                           table: tableName
-                                        inSchema: schemaName];
+    NSError* localError = nil;
+    BXEntityDescription* rval =  [BXEntityDescription entityWithURI: mDatabaseURI
+                                                              table: tableName
+                                                           inSchema: schemaName];
+    [self connectIfNeeded: &localError];
+    BXHandleError (error, localError);
+    [mDatabaseInterface validateEntity: rval error: &localError];
+    BXHandleError (error, localError);
+
+    return rval;
 }
 
 /** Entity for a table in the default schema */
-- (BXEntityDescription *) entityForTable: (NSString *) tableName
+- (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error
 {
     return [self entityForTable: tableName
-                       inSchema: nil];
+                       inSchema: nil
+                          error: error];
 }
 //@}
 
@@ -1074,10 +1083,12 @@ extern void BXInit ()
  */
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
                                           entity: (BXEntityDescription *) anotherEntity
+                                           error: (NSError **) error
 {
     return [self relationshipsByNameWithEntity: anEntity
                                         entity: anotherEntity
-                                         types: kBXRelationshipUndefined];
+                                         types: kBXRelationshipUndefined
+                                         error: error];
 }
 
 /** 
@@ -1087,6 +1098,7 @@ extern void BXInit ()
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
                                           entity: (BXEntityDescription *) anotherEntity
                                            types: (enum BXRelationshipType) bitmap
+                                           error: (NSError **) error
 {
     log4Debug (@"RelationshipsByNameWithEntity:entity:types");
     
@@ -1107,7 +1119,9 @@ extern void BXInit ()
     BXHandleError (NULL, localError);
     id relationships = [mDatabaseInterface relationshipsByNameWithEntity: anEntity
                                                                   entity: anotherEntity
-                                                                   types: bitmap];
+                                                                   types: bitmap
+                                                                   error: &localError];
+    BXHandleError (error, localError);
     TSEnumerate (currentRel, e, [relationships objectEnumerator])
     {
         TSEnumerate (currentEntity, e, [[currentRel entities] objectEnumerator])
@@ -1387,8 +1401,4 @@ extern void BXInit ()
     return objectIDs;
 }
 
-- (void) validateEntity: (BXEntityDescription *) entity
-{
-    [mDatabaseInterface validateEntity: entity];
-}
 @end

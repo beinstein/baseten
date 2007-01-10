@@ -51,7 +51,7 @@
 
 - (void) testPkeyModification
 {    
-    BXEntityDescription* pkeytest = [context entityForTable: @"Pkeytest"];
+    BXEntityDescription* pkeytest = [context entityForTable: @"Pkeytest" error: nil];
     NSError* error = nil;
     MKCAssertNotNil (context);
     MKCAssertNotNil (pkeytest);
@@ -92,7 +92,7 @@
 
 - (void) testMassUpdateAndDelete
 {
-    BXEntityDescription* updatetest = [context entityForTable: @"updatetest"];
+    BXEntityDescription* updatetest = [context entityForTable: @"updatetest" error: nil];
     NSError* error = nil;
     
     NSArray* res = [context executeFetchForEntity: updatetest withPredicate: nil

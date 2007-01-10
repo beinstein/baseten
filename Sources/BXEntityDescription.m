@@ -463,6 +463,7 @@ static NSMutableSet* gViewEntities;
 //FIXME: Consider moving the recursion to -[BXDatabaseContext relationshipsByNameWithEntity:entity:]
 - (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName
                                              context: (BXDatabaseContext *) context
+                                               error: (NSError **) error
 {
     id rval = nil;
     if (nil == mViewEntities)
@@ -471,7 +472,7 @@ static NSMutableSet* gViewEntities;
         if (NO == mHasAllRelationships)
         {
             mHasAllRelationships = YES;
-            [context relationshipsByNameWithEntity: self entity: nil];
+            [context relationshipsByNameWithEntity: self entity: nil error: error];
         }
         rval = [mRelationships objectForKey: aName];
     }
@@ -481,8 +482,8 @@ static NSMutableSet* gViewEntities;
         //try to find the correct relationship.
         TSEnumerate (currentViewEntity, e, [mViewEntities objectEnumerator])
         {
-            rval = [currentViewEntity relationshipNamed: aName context: context];
-            if (nil != rval)
+            rval = [currentViewEntity relationshipNamed: aName context: context error: error];
+            if (nil != rval || (NULL != error && nil != *error))
                 break;
         }
     }

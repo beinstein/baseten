@@ -184,6 +184,23 @@ REVOKE ALL PRIVILEGES ON "baseten".PrimaryKey FROM PUBLIC;
 GRANT SELECT ON "baseten".PrimaryKey TO basetenread;
 
 
+CREATE VIEW "baseten".viewdependencies AS 
+	SELECT DISTINCT d1.refobjid AS viewoid, n1.oid AS viewnamespace, n1.nspname AS viewnspname, c1.relname AS viewrelname, 
+		d2.refobjid AS reloid, c2.relkind AS relkind, n2.oid AS relnamespace, n2.nspname AS relnspname, c2.relname AS relname 
+	FROM pg_depend d1
+	INNER JOIN pg_rewrite r ON r.oid = d1.objid AND r.ev_class = d1.refobjid AND rulename = '_RETURN'
+	INNER JOIN pg_depend d2 ON r.oid = d2.objid AND d2.refobjid <> d1.refobjid AND d2.deptype = 'n'
+	INNER JOIN pg_class c1 ON c1.oid = d1.refobjid AND c1.relkind = 'v'
+	INNER JOIN pg_class c2 ON c2.oid = d2.refobjid
+	INNER JOIN pg_namespace n1 ON n1.oid = c1.relnamespace
+	INNER JOIN pg_namespace n2 ON n2.oid = c2.relnamespace
+	INNER JOIN pg_class c3 ON c3.oid = d1.classid AND c3.relname = 'pg_rewrite'
+	INNER JOIN pg_class c4 ON c4.oid = d1.refclassid AND c4.relname = 'pg_class'
+	WHERE d1.deptype = 'n';
+REVOKE ALL PRIVILEGES ON "baseten".viewdependencies FROM PUBLIC;
+GRANT SELECT ON "baseten".viewdependencies TO basetenread;
+
+
 -- Constraint names
 -- Helps joining to queries on pg_constraint
 -- Order of columns is probably not guaranteed

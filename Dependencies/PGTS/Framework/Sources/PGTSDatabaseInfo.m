@@ -121,7 +121,7 @@
     if (nil == rval)
     {
         NSString* queryString = 
-        @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, r.rolname "
+        @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname "
         " FROM pg_class c, pg_namespace n, pg_roles r "
         " WHERE c.relowner = r.oid AND c.relname = $1 AND n.nspname = $2";
         PGTSResultSet* res = [connection executeQuery: queryString parameters: tableName, schemaName];
@@ -130,6 +130,7 @@
             [res advanceRow];
             rval = [self tableInfoForTableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
             [rval setName: tableName];
+            [rval setKind: [[res valueForKey: @"relkind"] characterAtIndex: 0]];
             [rval setSchemaOid: [[res valueForKey: @"schemaoid"] PGTSOidValue]];
 
             PGTSRoleDescription* role = [[connection databaseInfo] roleNamed: [res valueForKey: @"rolname"]

@@ -96,6 +96,11 @@
     }
 }
 
+- (void) setKind: (char) kind
+{
+    relkind = kind;
+}
+
 @end
 
 
