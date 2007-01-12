@@ -446,13 +446,6 @@ static NSMutableSet* gViewEntities;
 }
 //@}
 
-- (void) remove
-{
-	[gEntities removeObject: self];
-	[gViewEntities removeObject: self];
-	[self dealloc];
-}
-
 - (void) setViewEntities: (NSSet *) aSet
 {
 	if (aSet != mViewEntities)
