@@ -124,13 +124,7 @@ static NSArray* gManuallyNotifiedKeys;
 		predicateString = @"";
 	[fetchPredicateTextView setString:predicateString];
 	
-	[avoidsEmptySelectionButton setEnabled: ok];
-    [preservesSelectionButton setEnabled: ok];
-    [selectsInsertedButton setEnabled: ok];
-    [multipleValuesMarkerButton setEnabled: ok];
-    [clearsFilterPredicateButton setEnabled: ok];
     [fetchesOnAwakeButton setEnabled: ok];
-	
 	
     [contextWarningField setHidden: ok];
     [schemaNameField setEnabled: ok];

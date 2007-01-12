@@ -79,12 +79,6 @@ NSImage* gBXDatabaseContextImage = nil;
      *                withView:aView];
      */
     
-    //Resize the context image
-    NSImage* contextImage = [self imageNamed: @"BaseTen"];
-    //[contextImage setScalesWhenResized: YES];
-    [contextImage setSize: NSMakeSize (48.0, 48.0)];
-    [contextButton setImage: contextImage];
-    
     context = [[BXDatabaseContext alloc] init];
     arrayController = [[BXSynchronizedArrayController alloc] init];
     

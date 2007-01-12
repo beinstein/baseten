@@ -9,7 +9,7 @@
 	<key>NibFile</key><string>BaseTenPalette</string>
 
 		<!-- a tiff file name for icon used for palette -->
-	<key>Icon</key><string>BaseTen</string>
+	<key>Icon</key><string>BXDatabaseObject</string>
 
 		<!-- Tool Tips string for the palette icon -->
 	<key>ToolTips</key><string>BaseTenPalette</string>
