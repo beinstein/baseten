@@ -25,13 +25,13 @@ extern unichar ISO8601ParserDefaultTimeSeparatorCharacter;
 @interface NSCalendarDate(ISO8601Parsing)
 
 //This method is the one that does all the work. All the others are convenience methods.
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str strictly:(BOOL)strict getRange:(out NSRange *)outRange;
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str strictly:(BOOL)strict;
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str strictly:(BOOL)strict getRange:(out NSRange *)outRange;
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str strictly:(BOOL)strict;
 
 //Strictly: NO.
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep getRange:(out NSRange *)outRange;
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep;
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str getRange:(out NSRange *)outRange;
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str;
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep getRange:(out NSRange *)outRange;
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep;
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str getRange:(out NSRange *)outRange;
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str;
 
 @end

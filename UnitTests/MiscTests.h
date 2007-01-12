@@ -1,5 +1,5 @@
 //
-// BXArrayProxy.m
+// MiscTests.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -23,38 +23,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id$
+// $Id: CreateTests.m 85 2007-01-12 13:08:00Z tuukka.norri@karppinen.fi $
 //
 
-#import "BXArrayProxy.h"
-#import "BXDatabaseContext.h"
-#import "BXConstants.h"
+#import <SenTestingKit/SenTestingKit.h>
+@class BXDatabaseContext;
 
-
-@implementation BXArrayProxy
-
-- (id) BXInitWithArray: (NSMutableArray *) anArray
-{
-    if ((self = [super BXInitWithArray: anArray]))
-    {
-        mContainer = [anArray retain];
-        mNonMutatingClass = [NSArray class];
-        mIsMutable = NO;
-    }
-    return self;
-}
-
-- (void) handleAddedObjects: (NSArray *) objectArray
-{
-	//FIXME: remove this
-	if (1 < [objectArray count])
-		NSLog (@"bug");
-    [mContainer addObjectsFromArray: objectArray];
-}
-
-- (void) handleRemovedObjects: (NSArray *) objectArray
-{
-    [mContainer removeObjectsInArray: objectArray];
+@interface MiscTests : SenTestCase {
+    BXDatabaseContext* ctx;
 }
 
 @end

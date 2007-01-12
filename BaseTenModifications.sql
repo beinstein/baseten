@@ -342,23 +342,13 @@ GRANT SELECT ON "baseten".relationships TO basetenread;
 
 -- For modification tracking
 CREATE TABLE "baseten".Modification (
-    "baseten_modification_id" INTEGER PRIMARY KEY,
+    "baseten_modification_id" BIGSERIAL PRIMARY KEY,
     "baseten_modification_relid" OID NOT NULL,
-    "baseten_modification_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NULL DEFAULT NULL,
-    "baseten_modification_insert_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
+    "baseten_modification_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
+    "baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
     "baseten_modification_type" CHAR NOT NULL,
     "baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
 );
-CREATE SEQUENCE "baseten".modification_id_seq CYCLE OWNED BY "baseten".Modification."baseten_modification_id";
-CREATE OR REPLACE FUNCTION "baseten".SetModificationId () RETURNS TRIGGER AS $$
-BEGIN
-	NEW."baseten_modification_id" = nextval ('baseten.modification_id_seq');
-	RETURN NEW;
-END;
-$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
-CREATE TRIGGER "setModificationId" BEFORE INSERT ON "baseten".Modification 
-	FOR EACH ROW EXECUTE PROCEDURE "baseten".SetModificationId ();
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".SetModificationId () FROM PUBLIC;
 REVOKE ALL PRIVILEGES ON SEQUENCE "baseten".modification_id_seq FROM PUBLIC;
 REVOKE ALL PRIVILEGES ON "baseten".Modification FROM PUBLIC;
 GRANT SELECT ON "baseten".Modification TO basetenread;
@@ -368,7 +358,7 @@ CREATE TABLE "baseten".lock (
     "baseten_lock_backend_pid"   INTEGER NOT NULL DEFAULT pg_backend_pid (),
     "baseten_lock_id"            BIGINT NOT NULL DEFAULT "baseten".LockNextId (),
     "baseten_lock_relid"         OID NOT NULL,
-    "baseten_lock_timestamp"     TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
+    "baseten_lock_timestamp"     TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
     "baseten_lock_query_type"    CHAR (1) NOT NULL DEFAULT 'U',  -- U == UPDATE, D == DELETE
     "baseten_lock_cleared"       BOOLEAN NOT NULL DEFAULT FALSE,
     "baseten_lock_savepoint_idx" BIGINT NOT NULL,
@@ -810,11 +800,11 @@ BEGIN
     ntname      := "baseten".ModificationTableName (tableoid);
     restname    := "baseten".ModResultTableName (tableoid);
     fdecl       := 
-        'CREATE OR REPLACE FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP)                            ' ||
+        'CREATE OR REPLACE FUNCTION ' || ntname || ' (BOOLEAN, BIGINT)                               ' ||
         'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
         'DECLARE                                                                                     ' ||
         '   should_clean ALIAS FOR $1;                                                               ' ||
-        '   earliest_date ALIAS FOR $2;                                                              ' ||        
+        '   last_id ALIAS FOR $2;                                                                    ' ||        
         '   row ' || ntname || '%ROWTYPE;                                                            ' ||
         'BEGIN                                                                                       ' ||
         '    BEGIN                                                                                   ' ||
@@ -834,11 +824,10 @@ BEGIN
         '    (                                                                                       ' ||
         '        SELECT * FROM ' || ntname || '                                                      ' ||
         '            WHERE "baseten_modification_type" = ''D'' AND                                   ' ||
-        '                ("baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp) ' ||
+        '                ("baseten_modification_id" > COALESCE ($2, 0)                               ' ||
         '                 OR "baseten_modification_timestamp" IS NULL                                ' ||
         '                )                                                                           ' ||
-        '            ORDER BY "baseten_modification_timestamp" DESC,                                 ' ||
-        '                "baseten_modification_insert_timestamp" DESC                                ' ||
+        '            ORDER BY "baseten_modification_id" DESC                                         ' ||
         '    ) AS sd;                                                                                ' ||
         
         -- DEBUG
@@ -854,14 +843,13 @@ BEGIN
         '       SELECT m.* FROM ' || ntname || ' m                                                   ' ||
         '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                      ' ||
         '           WHERE m."baseten_modification_type" = ''I'' AND                                  ' ||
-        '               (r."baseten_modification_id" IS NULL OR                                      ' ||
-        '                    m."baseten_modification_timestamp" > r."baseten_modification_timestamp" ' ||
+        --'               (r."baseten_modification_id" IS NULL OR                                      ' ||
+        '               (                                                                            ' ||
+        '                    m."baseten_modification_id" > r."baseten_modification_id"               ' ||
         '               ) AND                                                                        ' ||
-        '               (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp)' ||
-        '                OR m."baseten_modification_timestamp" IS NULL                               ' ||
+        '               (m."baseten_modification_id" > COALESCE ($2, 0)'                             ' ||
         '               )                                                                            ' ||
-        '           ORDER BY "baseten_modification_timestamp" DESC,                                  ' ||
-        '                "baseten_modification_insert_timestamp" DESC                                ' ||
+        '           ORDER BY "baseten_modification_id" DESC                                          ' ||
         '   ) AS si;                                                                                 ' ||
 
         -- DEBUG
@@ -874,19 +862,17 @@ BEGIN
         '       SELECT m.* FROM ' || ntname || ' m                                                   ' ||
         '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                      ' ||
         '           WHERE m."baseten_modification_type" = ''U'' AND                                  ' ||
-        '               r."baseten_modification_id" IS NULL AND                                      ' ||
-        '               (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp)' ||
+        --'               r."baseten_modification_id" IS NULL AND                                      ' ||
+        '               (m."baseten_modification_id" > COALESCE ($2, 0)                              ' ||
         '                OR m."baseten_modification_timestamp" IS NULL                               ' ||
         '               )                                                                            ' ||
-        '           ORDER BY "baseten_modification_timestamp" DESC,                                  ' ||
-        '               "baseten_modification_insert_timestamp" DESC                                 ' ||
+        '           ORDER BY "baseten_modification_id" DESC                                          ' ||
         '   ) AS su;                                                                                 ' ||
     
-        -- Now there should be only one modification per id
+        -- Now there should be only one modification per pkey
         '   FOR row IN SELECT * from ' || restname || ' ORDER BY                                     ' ||
         '       "baseten_modification_type" ASC,                                                     ' ||
-        '       "baseten_modification_timestamp" ASC,                                                ' ||
-        '       "baseten_modification_insert_timestamp" ASC LOOP                                     ' ||
+        '       "baseten_modification_id" ASC LOOP                                                   ' ||
         '       RETURN NEXT row;                                                                     ' ||
         '   END LOOP;                                                                                ' ||
         '   RETURN;                                                                                  ' ||
@@ -894,15 +880,15 @@ BEGIN
         '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;                                     ' ;
     EXECUTE fdecl;
     fdecl :=
-        'CREATE OR REPLACE FUNCTION ' || ntname || ' (TIMESTAMP)                                     ' ||
+        'CREATE OR REPLACE FUNCTION ' || ntname || ' (BIGINT)                                        ' ||
         'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
         '    SELECT * FROM ' || ntname || '(true, $1);                                               ' ||
         '$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;                                         ';
     EXECUTE fdecl;
-    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP) FROM PUBLIC';
-    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (TIMESTAMP) FROM PUBLIC';
-    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP) TO basetenread';
-    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (TIMESTAMP) TO basetenread';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (BOOLEAN, BIGINT) FROM PUBLIC';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (BIGINT) FROM PUBLIC';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (BOOLEAN, BIGINT) TO basetenread';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (BIGINT) TO basetenread';
         
     RETURN;
 END;

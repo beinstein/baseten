@@ -61,6 +61,8 @@
     [entity release];
 }
 
+#if 0
+
 - (void) testCreate
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
@@ -73,6 +75,8 @@
     [context rollback];
     [pool release];
 }
+
+#endif
 
 - (void) testCreateCustom
 {
@@ -96,7 +100,7 @@
     NSError* error = nil;
     NSArray* array = nil;
     array = [context executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
-                                    updateAutomatically: YES error: &error];
+					   updateAutomatically: YES error: &error];
         
     MKCAssertNil (error);
     MKCAssertNotNil (array);
@@ -111,12 +115,14 @@
     BXDatabaseObject* object = [context2 createObjectForEntity: entity withFieldValues: nil error: &error];
     MKCAssertNil (error);
     MKCAssertNotNil (object);
-    
+	NSLog (@"id: %@", [object valueForKey: @"id"]);
+
     //Commit the modification so we can see some results
     [context2 save: &error];
     MKCAssertNil (error);
     
     //Wait for the notification
+	[context setLogsQueries: YES];
     [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
     MKCAssertEquals ([array count], count + 1);
     

@@ -1,5 +1,5 @@
 //
-// BXArrayProxy.m
+// MiscTests.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -23,38 +23,42 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id$
+// $Id: CreateTests.m 85 2007-01-12 13:08:00Z tuukka.norri@karppinen.fi $
 //
 
-#import "BXArrayProxy.h"
-#import "BXDatabaseContext.h"
-#import "BXConstants.h"
+#import <BaseTen/BaseTen.h>
+#import "MiscTests.h"
+#import "MKCSenTestCaseAdditions.h"
 
 
-@implementation BXArrayProxy
+@implementation MiscTests
 
-- (id) BXInitWithArray: (NSMutableArray *) anArray
+- (void) setUp
 {
-    if ((self = [super BXInitWithArray: anArray]))
-    {
-        mContainer = [anArray retain];
-        mNonMutatingClass = [NSArray class];
-        mIsMutable = NO;
-    }
-    return self;
+    ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
+	[ctx setAutocommits: NO];
 }
 
-- (void) handleAddedObjects: (NSArray *) objectArray
+- (void) tearDown
 {
-	//FIXME: remove this
-	if (1 < [objectArray count])
-		NSLog (@"bug");
-    [mContainer addObjectsFromArray: objectArray];
+    [ctx release];
 }
 
-- (void) handleRemovedObjects: (NSArray *) objectArray
+- (void) testDate
 {
-    [mContainer removeObjectsInArray: objectArray];
+	NSError* error = nil;
+	BXEntityDescription* entity = [ctx entityForTable: @"datetest" error: &error];
+	MKCAssertNil (error);
+	
+	NSArray* res = [ctx executeFetchForEntity: entity withPredicate: nil error: &error];
+	MKCAssertNil (error);
+	
+	NSCalendarDate* date = [[res objectAtIndex: 0] date];
+	NSCalendarDate* refDate = [NSCalendarDate dateWithString: @"2007-01-12 16:18:56"
+											  calendarFormat: @"%2Y-%2m-%2d %2H:%2M:%2S"];
+	refDate = [refDate addTimeInterval: 0.682369];
+	[refDate setTimeZone: [NSTimeZone timeZoneWithAbbreviation: @"EET"]];
+	MKCAssertEqualObjects (date, refDate);
 }
 
 @end
