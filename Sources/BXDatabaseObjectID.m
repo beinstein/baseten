@@ -61,7 +61,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
  * Create an object identifier from an NSURL
  * Note that this is not the designated initializer.
  */
-- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError *) error
+- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error
 {
     id rval = nil;
     NSError* localError = nil;

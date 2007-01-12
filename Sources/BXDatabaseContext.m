@@ -257,6 +257,11 @@ extern void BXInit ()
     BXHandleError (error, localError);
 }
 
+- (BOOL) isConnected
+{
+	return [mDatabaseInterface connected];
+}
+
 - (BOOL) hasSeenEntity: (BXEntityDescription *) entity
 {
     return [mSeenEntities containsObject: entity];
@@ -1088,6 +1093,8 @@ extern void BXInit ()
 		BXHandleError (error, localError);
 		[mDatabaseInterface validateEntity: rval error: &localError];
 		BXHandleError (error, localError);
+		if (nil != localError)
+			rval = nil;
 	}
 
     return rval;

@@ -41,7 +41,6 @@
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context setAutocommits: NO];
-    [context setLogsQueries: NO];
     MKCAssertNotNil (context);
     
     test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
@@ -57,12 +56,6 @@
     MKCAssertNotNil (ototest2);
     MKCAssertNotNil (mtmtest1);
     MKCAssertNotNil (mtmtest2);
-    MKCAssertEqualObjects ([test1 name], @"test1");
-    MKCAssertEqualObjects ([test2 name], @"test2");
-    MKCAssertEqualObjects ([ototest1 name], @"ototest1");
-    MKCAssertEqualObjects ([ototest2 name], @"ototest2");
-    MKCAssertEqualObjects ([mtmtest1 name], @"mtmtest1");
-    MKCAssertEqualObjects ([mtmtest2 name], @"mtmtest2");
 
     test1v = [context entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil];
     test2v = [context entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil];
@@ -77,27 +70,6 @@
     MKCAssertNotNil (ototest2v);
     MKCAssertNotNil (mtmtest1v);
     MKCAssertNotNil (mtmtest2v);
-    MKCAssertEqualObjects ([test1v name], @"test1_v");
-    MKCAssertEqualObjects ([test2v name], @"test2_v");
-    MKCAssertEqualObjects ([ototest1v name], @"ototest1_v");
-    MKCAssertEqualObjects ([ototest2v name], @"ototest2_v");
-    MKCAssertEqualObjects ([mtmtest1v name], @"mtmtest1_v");
-    MKCAssertEqualObjects ([mtmtest2v name], @"mtmtest2_v");
-    
-    //Tell the view entities what they are
-#if 0
-    [test1v viewIsBasedOnEntities: [NSSet setWithObject: test1]];
-    [test2v viewIsBasedOnEntities: [NSSet setWithObject: test2]];
-    [ototest1v viewIsBasedOnEntities: [NSSet setWithObject: ototest1]];
-    [ototest2v viewIsBasedOnEntities: [NSSet setWithObject: ototest2]];
-    [mtmtest1v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest1]];
-    [mtmtest2v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest2]];
-    
-    NSArray* pkeyfields = [NSArray arrayWithObject: @"id"];
-    NSArray* viewEntities = [NSArray arrayWithObjects: test1v, test2v, ototest1v, ototest2v, mtmtest1v, mtmtest2v, nil];
-    TSEnumerate (currentEntity, e, [viewEntities objectEnumerator])
-        [currentEntity setPrimaryKeyFields: pkeyfields];
-#endif
 }
 
 - (void) tearDown
@@ -420,10 +392,6 @@
     //Create an object to oneEntity and add referencing objects to manyEntity
     NSError* error = nil;
     
-    BOOL autocommits = [context autocommits];
-    [context setAutocommits: NO];
-    MKCAssertTrue (NO == [context autocommits]);
-    
     [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: @"fkt1"];
     [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"fkt1"];
     
@@ -453,7 +421,6 @@
     MKCAssertEqualObjects (referencedObjects, foreignObjects);
 
     [context rollback];
-    [context setAutocommits: autocommits];
 }
 
 - (void) testModOTO
@@ -476,12 +443,6 @@
     [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"foo"];
     
     NSError* error = nil;
-    BOOL autocommits = [context autocommits];
-    BOOL logs = [context logsQueries];
-    [context setAutocommits: NO];
-    [context setLogsQueries: YES];
-    MKCAssertTrue (NO == [context autocommits]);
-
     NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                             error: &error];
@@ -513,8 +474,6 @@
     MKCAssertFalse ([n1 isEqual: [foreignObject2 valueForKey: @"id"]]);
 
     [context rollback];
-    [context setAutocommits: autocommits];
-    [context setLogsQueries: logs];
 }
     
 @end

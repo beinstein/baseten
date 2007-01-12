@@ -105,7 +105,7 @@
     //Create an object into the array using another connection
     BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
+    [context2 setAutocommits: NO];
     MKCAssertNotNil (context2);
     
     BXDatabaseObject* object = [context2 createObjectForEntity: entity withFieldValues: nil error: &error];

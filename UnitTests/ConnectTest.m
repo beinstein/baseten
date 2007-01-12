@@ -36,6 +36,7 @@
 - (void) setUp
 {
     ctx = [[BXDatabaseContext alloc] init];
+	[ctx setAutocommits: NO];
 }
 
 - (void) tearDown

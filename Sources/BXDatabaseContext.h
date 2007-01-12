@@ -63,6 +63,7 @@
 - (id) initWithDatabaseURI: (NSURL *) uri;
 - (void) setDatabaseURI: (NSURL *) uri;
 - (NSURL *) databaseURI;
+- (BOOL) isConnected;
 
 - (BOOL) hasSeenEntity: (BXEntityDescription *) anEntity;
 - (NSSet *) seenEntities;

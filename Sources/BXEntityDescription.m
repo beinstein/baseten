@@ -70,73 +70,6 @@ static NSMutableSet* gViewEntities;
     }
 }
 
-/**
- * \name Retrieving an entity description
- */
-//@{
-/**
- * Create the entity.
- * \param       anURI   The database URI
- * \param       tName   Table name
- * \param       sName   Schema name
- */
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
-{
-    return [[[self alloc] initWithURI: anURI table: tName inSchema: sName] autorelease];
-}
-
-/**
- * Create the entity using the default schema.
- * \param       anURI   The database URI
- * \param       tName   Table name
- */
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName
-{
-    return [self entityWithURI: anURI table: tName inSchema: nil];
-}
-
-/**
- * The designated initializer.
- * Create the entity.
- * \param       anURI   The database URI
- * \param       tName   Table name
- * \param       sName   Schema name
- */
-- (id) initWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
-{
-    if ((self = [super initWithName: tName]))
-    {
-        mDatabaseObjectClass = [BXDatabaseObject class];
-        if (nil == sName)
-            sName = @"public";
-        NSAssert (nil != anURI, nil);
-        mDatabaseURI = [anURI copy];
-        mSchemaName = [sName copy];
-        
-        id anObject = [gEntities member: self];
-        NSAssert2 ([gEntities containsObject: self] ? nil != anObject : YES, 
-                   @"gEntities contains the current entity but it could not be found."
-                   " \n\tself: \t%@ \n\tgEntities: \t%@",
-                   self, gEntities);
-        if (nil == anObject)
-        {
-            [gEntities addObject: self];
-            mRelationships = [[NSMutableDictionary alloc] init];
-            mDependentViewEntities = [[NSMutableSet alloc] init];
-            mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
-            mTargetViews = [[NSMutableDictionary alloc] init];
-            mHasAllRelationships = NO;
-        }
-        else
-        {
-            [self dealloc];
-            self = [anObject retain];
-        }
-    }
-    return self;
-}
-//@}
-
 - (id) init
 {
     //This initializer should not be used
@@ -441,6 +374,84 @@ static NSMutableSet* gViewEntities;
 
 
 @implementation BXEntityDescription (PrivateMethods)
+
+/**
+ * \internal
+ * \name Retrieving an entity description
+ */
+//@{
+/**
+ * \internal
+ * Create the entity.
+ * \param       anURI   The database URI
+ * \param       tName   Table name
+ * \param       sName   Schema name
+ */
++ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
+{
+    return [[[self alloc] initWithURI: anURI table: tName inSchema: sName] autorelease];
+}
+
+/**
+ * \internal
+ * Create the entity using the default schema.
+ * \param       anURI   The database URI
+ * \param       tName   Table name
+ */
++ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName
+{
+    return [self entityWithURI: anURI table: tName inSchema: nil];
+}
+
+/**
+ * \internal
+ * The designated initializer.
+ * Create the entity.
+ * \param       anURI   The database URI
+ * \param       tName   Table name
+ * \param       sName   Schema name
+ */
+- (id) initWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
+{
+    if ((self = [super initWithName: tName]))
+    {
+        mDatabaseObjectClass = [BXDatabaseObject class];
+        if (nil == sName)
+            sName = @"public";
+        NSAssert (nil != anURI, nil);
+        mDatabaseURI = [anURI copy];
+        mSchemaName = [sName copy];
+        
+        id anObject = [gEntities member: self];
+        NSAssert2 ([gEntities containsObject: self] ? nil != anObject : YES, 
+                   @"gEntities contains the current entity but it could not be found."
+                   " \n\tself: \t%@ \n\tgEntities: \t%@",
+                   self, gEntities);
+        if (nil == anObject)
+        {
+            [gEntities addObject: self];
+            mRelationships = [[NSMutableDictionary alloc] init];
+            mDependentViewEntities = [[NSMutableSet alloc] init];
+            mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
+            mTargetViews = [[NSMutableDictionary alloc] init];
+            mHasAllRelationships = NO;
+        }
+        else
+        {
+            [self dealloc];
+            self = [anObject retain];
+        }
+    }
+    return self;
+}
+//@}
+
+- (void) remove
+{
+	[gEntities removeObject: self];
+	[gViewEntities removeObject: self];
+	[self dealloc];
+}
 
 - (void) setViewEntities: (NSSet *) aSet
 {

@@ -34,11 +34,72 @@
 
 @implementation EntityTests
 
+- (void) setUp
+{
+	ctx = [[BXDatabaseContext contextWithDatabaseURI: 
+        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]] retain];
+	[ctx setAutocommits: NO];
+}
+
+- (void) tearDown
+{
+	[ctx release];
+}
+
+- (void) testValidName
+{
+	NSError* error = nil;
+	NSString* schemaName = @"Fkeytest";
+	NSString* entityName = @"mtocollectiontest1";
+	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
+	MKCAssertNil (error);
+	MKCAssertNotNil (entity);
+	MKCAssertEqualObjects ([entity name], entityName);
+	MKCAssertEqualObjects ([entity schemaName], schemaName);
+}
+
+- (void) testInvalidName
+{
+	NSError* error = nil;
+	NSString* schemaName = @"public";
+	NSString* entityName = @"aNonExistentTable";
+	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
+	MKCAssertNotNil (error);
+	MKCAssertNil (entity);
+}
+
+- (void) testValidation
+{
+	NSError* error = nil;
+	BXEntityDescription* entity = [ctx entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest" error: &error];
+	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
+	
+	//The entity should be validated
+	MKCAssertNotNil ([entity fields]);
+	MKCAssertNotNil ([entity primaryKeyFields]);	
+}
+
+- (void) testLazyValidation
+{
+	NSError* error = nil;
+	NSString* entityName = @"mtocollectiontest1";
+	NSString* schemaName = @"Fkeytest";
+	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
+	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
+	
+	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [ctx databaseURI]];
+	MKCAssertFalse ([ctx2 isConnected]);
+	BXEntityDescription* entity2 = [ctx2 entityForTable: entityName inSchema: schemaName error: &error];
+	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
+	MKCAssertTrue (entity == entity2);
+	
+	//Now the entity should be validated lazily
+	MKCAssertFalse ([ctx2 isConnected]);
+	MKCAssertNil (error);
+}
+
 - (void) testHash
 {
-    BXDatabaseContext* ctx = [BXDatabaseContext contextWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-
     BXEntityDescription* e1 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
     BXEntityDescription* e2 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
 

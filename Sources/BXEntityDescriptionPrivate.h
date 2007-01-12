@@ -34,6 +34,10 @@
 @protocol BXRelationshipDescription;
 
 @interface BXEntityDescription (PrivateMethods)
++ (id) entityWithURI: (NSURL *) anURI table: (NSString *) eName;
++ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
+- (id) initWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
+- (void) remove;
 - (void) addDependentView: (BXEntityDescription *) viewEntity;
 - (void) setFields: (NSArray *) fieldArray;
 - (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context error: (NSError **) error;

@@ -47,21 +47,11 @@
     mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
     MKCAssertNotNil (mtmtest1);
     MKCAssertNotNil (mtmtest2);
-    MKCAssertEqualObjects ([mtmtest1 name], @"mtmtest1");
-    MKCAssertEqualObjects ([mtmtest2 name], @"mtmtest2");
     
     mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
     mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
     MKCAssertNotNil (mtmtest1v);
     MKCAssertNotNil (mtmtest2v);
-    MKCAssertEqualObjects ([mtmtest1v name], @"mtmtest1_v");
-    MKCAssertEqualObjects ([mtmtest2v name], @"mtmtest2_v");
-#if 0
-    [mtmtest1v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest1]];
-    [mtmtest2v viewIsBasedOnEntities: [NSSet setWithObject: mtmtest2]];
-    [mtmtest1v setPrimaryKeyFields: [[mtmtest1 primaryKeyFields] valueForKey: @"name"]];
-    [mtmtest2v setPrimaryKeyFields: [[mtmtest2 primaryKeyFields] valueForKey: @"name"]];    
-#endif
 }
 
 - (void) testModMTM

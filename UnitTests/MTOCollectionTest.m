@@ -40,28 +40,17 @@
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context setAutocommits: NO];
-    [context setLogsQueries: YES];
     MKCAssertNotNil (context);
     
     mtocollectiontest1 = [context entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest" error: nil];
     mtocollectiontest2 = [context entityForTable: @"mtocollectiontest2" inSchema: @"Fkeytest" error: nil];
     MKCAssertNotNil (mtocollectiontest1);
     MKCAssertNotNil (mtocollectiontest2);
-    MKCAssertEqualObjects ([mtocollectiontest1 name], @"mtocollectiontest1");
-    MKCAssertEqualObjects ([mtocollectiontest2 name], @"mtocollectiontest2");
     
     mtocollectiontest1v = [context entityForTable: @"mtocollectiontest1_v" inSchema: @"Fkeytest" error: nil];
     mtocollectiontest2v = [context entityForTable: @"mtocollectiontest2_v" inSchema: @"Fkeytest" error: nil];
     MKCAssertNotNil (mtocollectiontest1v);
     MKCAssertNotNil (mtocollectiontest2v);
-    MKCAssertEqualObjects ([mtocollectiontest1v name], @"mtocollectiontest1_v");
-    MKCAssertEqualObjects ([mtocollectiontest2v name], @"mtocollectiontest2_v");
-#if 0
-    [mtocollectiontest1v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest1]];
-    [mtocollectiontest2v viewIsBasedOnEntities: [NSSet setWithObject: mtocollectiontest2]];
-    [mtocollectiontest1v setPrimaryKeyFields: [NSArray arrayWithObject: @"id"]];
-    [mtocollectiontest2v setPrimaryKeyFields: [NSArray arrayWithObject: @"id"]];
-#endif
 }
 
 - (void) testModMTOCollection
@@ -77,9 +66,6 @@
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     NSError* error = nil;
-    BOOL autocommits = [context autocommits];
-    [context setAutocommits: NO];
-    MKCAssertTrue (NO == [context autocommits]);
     
     [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"m"];
     [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"m"];
@@ -119,7 +105,6 @@
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     [context rollback];
-    [context setAutocommits: autocommits];
 }
 
 - (void) testModMTOCollection2
@@ -135,9 +120,6 @@
 - (void) modMany2: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     NSError* error = nil;
-    BOOL autocommits = [context autocommits];
-    [context setAutocommits: NO];
-    MKCAssertTrue (NO == [context autocommits]);
 
     [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"m"];
     [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"m"];
@@ -186,7 +168,6 @@
     MKCAssertTrue ([mock isEqualToSet: foreignObjects2]);
     
     [context rollback];
-    [context setAutocommits: autocommits];
 }
 
 @end

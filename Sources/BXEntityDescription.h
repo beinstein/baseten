@@ -51,9 +51,6 @@
 }
 
 + (NSSet *) views;
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) eName;
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
-- (id) initWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (NSURL *) databaseURI;
 - (NSString *) schemaName;
 - (BOOL) isEqual: (id) anObject;

@@ -1,5 +1,5 @@
 //
-// BXDatabaseObjectID.h
+// ObjectIDTests.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,41 +26,13 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <BaseTen/BXConstants.h>
+#import <SenTestingKit/SenTestingKit.h>
 
-@class BXEntityDescription;
+
 @class BXDatabaseContext;
-@class BXPropertyDescription;
 
-@interface BXDatabaseObjectID : NSObject {
-    BOOL                        mRegistered;
-    unsigned int                mHash;
-    NSURL*                      mURIRepresentation;
-    BXEntityDescription*     mEntity;
-    NSMutableDictionary*        mPkeyFValues;
-    enum BXModificationType  mLastModificationType;
+@interface ObjectIDTests : SenTestCase {
+	BXDatabaseContext* ctx;
 }
-- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error;
 
-- (BXEntityDescription *) entity;
-- (NSURL *) URIRepresentation;
-- (NSPredicate *) predicate;
-
-- (BOOL) isEqual: (id) anObject;
-
-- (NSArray *) primaryKeyFields;
-- (NSDictionary *) primaryKeyFieldValues;
-
-- (id) objectForKey: (id) aKey;
-- (id) objectsForKeys: (NSArray *) keys;
 @end
-
-
-@interface BXDatabaseObjectID (NSCoding) <NSCoding>
-@end
-
-
-@interface BXDatabaseObjectID (NSCopying) <NSCopying>
-@end
-

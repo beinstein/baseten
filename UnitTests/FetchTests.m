@@ -46,6 +46,7 @@
 {
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
+	[context setAutocommits: NO];
     entity = [context entityForTable: @"test" error: nil];
     MKCAssertNotNil (entity);
 }
@@ -74,7 +75,6 @@
     NSString* value = @"value";
     NSString* oldValue = nil;
     [context setAutocommits: YES];
-    [context setLogsQueries: YES];
 
     BXEntityDescription* viewEntity = [context entityForTable: @"test_v" error: nil];
 #if 0
@@ -119,7 +119,6 @@
 - (void) testMultiColumnPkey
 {
     NSError* error = nil;
-    [context setLogsQueries: YES];
     [context connectIfNeeded: nil];
     
     BXEntityDescription* multicolumnpkey = [context entityForTable: @"multicolumnpkey" error: nil];
