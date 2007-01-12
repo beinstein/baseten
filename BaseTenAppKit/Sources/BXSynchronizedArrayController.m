@@ -184,27 +184,25 @@
         [databaseContext release];
         databaseContext = ctx;
 		
-		if (nil != databaseContext)
-		{
+	if (nil != databaseContext)
+	{
             [databaseContext retain];
             
-            if (nil != mEntityDescription)
+            NSError* error = nil;
+            
+            //Also set the entity description, since the database URI has changed.
+            BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
+                                                                            inSchema: [self schemaName]
+                                                                               error: &error];
+            if (nil != error)
+                [self BXHandleError: error];
+            else
             {
-                NSError* error = nil;
+                [entityDescription setDatabaseObjectClass: NSClassFromString([self databaseObjectClassName])];
                 
-                //Also set the entity description, since the database URI has changed.
-                BXEntityDescription* entityDescription = [databaseContext entityForTable: [mEntityDescription name] 
-                                                                                inSchema: [mEntityDescription schemaName]
-                                                                                   error: &error];
-                if (nil != error)
-                    [self BXHandleError: error];
-                else
-                {
-                    [entityDescription setDatabaseObjectClass: [mEntityDescription databaseObjectClass]];
-                    [self setEntityDescription: mEntityDescription];
-                }
+                [self setEntityDescription: entityDescription];
             }
-		}
+	}
     }
 }
 
