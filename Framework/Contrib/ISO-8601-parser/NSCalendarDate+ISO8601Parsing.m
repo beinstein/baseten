@@ -165,7 +165,7 @@ static BOOL is_leap_year(unsigned year) {
  * //Day only of implied week
  *  -W-d
  */
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str strictly:(BOOL)strict timeSeparator:(unichar)timeSep getRange:(out NSRange *)outRange {
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str strictly:(BOOL)strict timeSeparator:(unichar)timeSep getRange:(out NSRange *)outRange {
 	NSCalendarDate *now = [NSCalendarDate calendarDate];
 	unsigned
 		//Date
@@ -571,8 +571,9 @@ static BOOL is_leap_year(unsigned year) {
 													day:day
 												   hour:hour
 												 minute:minute
-												 second:second
+												 second:0
 											   timeZone:timeZone];
+					date = [date addTimeInterval: second];
 					break;
 
 				case week:;
@@ -593,7 +594,7 @@ static BOOL is_leap_year(unsigned year) {
 													day:1
 												   hour:hour
 												 minute:minute
-												 second:second
+												 second:0
 											   timeZone:timeZone];
 					date = [date dateByAddingYears:0
 											months:0
@@ -601,6 +602,7 @@ static BOOL is_leap_year(unsigned year) {
 											 hours:0
 										   minutes:0
 										   seconds:0];
+					date = [date addTimeInterval: second];
 					break;
 			}
 		}
@@ -617,24 +619,24 @@ static BOOL is_leap_year(unsigned year) {
 	return date;
 }
 
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str {
-	return [self calendarDateWithString:str strictly:NO getRange:NULL];
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str {
+	return [self ISO8601CalendarDateWithString:str strictly:NO getRange:NULL];
 }
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str strictly:(BOOL)strict {
-	return [self calendarDateWithString:str strictly:strict getRange:NULL];
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str strictly:(BOOL)strict {
+	return [self ISO8601CalendarDateWithString:str strictly:strict getRange:NULL];
 }
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str strictly:(BOOL)strict getRange:(out NSRange *)outRange {
-	return [self calendarDateWithString:str strictly:strict timeSeparator:ISO8601ParserDefaultTimeSeparatorCharacter getRange:NULL];
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str strictly:(BOOL)strict getRange:(out NSRange *)outRange {
+	return [self ISO8601CalendarDateWithString:str strictly:strict timeSeparator:ISO8601ParserDefaultTimeSeparatorCharacter getRange:NULL];
 }
 
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep getRange:(out NSRange *)outRange {
-	return [self calendarDateWithString:str strictly:NO timeSeparator:timeSep getRange:outRange];
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep getRange:(out NSRange *)outRange {
+	return [self ISO8601CalendarDateWithString:str strictly:NO timeSeparator:timeSep getRange:outRange];
 }
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep {
-	return [self calendarDateWithString:str strictly:NO timeSeparator:timeSep getRange:NULL];
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str timeSeparator:(unichar)timeSep {
+	return [self ISO8601CalendarDateWithString:str strictly:NO timeSeparator:timeSep getRange:NULL];
 }
-+ (NSCalendarDate *)calendarDateWithString:(NSString *)str getRange:(out NSRange *)outRange {
-	return [self calendarDateWithString:str strictly:NO timeSeparator:ISO8601ParserDefaultTimeSeparatorCharacter getRange:outRange];
++ (NSCalendarDate *)ISO8601CalendarDateWithString:(NSString *)str getRange:(out NSRange *)outRange {
+	return [self ISO8601CalendarDateWithString:str strictly:NO timeSeparator:ISO8601ParserDefaultTimeSeparatorCharacter getRange:outRange];
 }
 
 @end

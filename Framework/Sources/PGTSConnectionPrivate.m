@@ -407,6 +407,12 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
             PQsetnonblocking (connection, 0); //We don't want to call PQsendquery etc. multiple times
             PQsetClientEncoding (connection, "UNICODE"); //Use UTF-8
             //FIXME: set other things, such as the date format, as well
+			PGresult* res = PQexec (connection, "SET datestyle TO 'ISO, DMY'");
+			if (NULL == res || PGRES_COMMAND_OK != PQresultStatus (res))
+			{
+				log4Error (@"Could not set the datestyle parameter. Response: %s (%s)", 
+						   PQresStatus (PQresultStatus (res)), PQresultErrorMessage (res));
+			}
             PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
 
             socket = [[NSFileHandle alloc] initWithFileDescriptor: bsdSocket];
