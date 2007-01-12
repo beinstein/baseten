@@ -171,8 +171,9 @@ extern void BXInit ()
     [mDatabaseURI release];
     [mSeenEntities release];
     [mObjects release];
-    [mUndoManager release];
     [mModifiedObjectIDs release];
+    [mUndoManager release];
+	[mLazilyValidatedEntities release];
     log4Debug (@"Deallocating BXDatabaseContext");
     [super dealloc];
 }
@@ -817,6 +818,20 @@ extern void BXInit ()
 
 @implementation BXDatabaseContext (DBInterfaces)
 
+- (void) connectedToDatabase: (NSError **) error
+{
+	NSError* localError = nil;
+	TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
+	{
+		[mDatabaseInterface validateEntity: currentEntity error: &localError];
+		if (nil != localError)
+			break;
+		[mLazilyValidatedEntities removeObject: currentEntity];
+	}
+
+	BXHandleError (error, localError);
+}
+
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
 {
     if (0 < [objectIDs count])
@@ -1056,10 +1071,24 @@ extern void BXInit ()
     BXEntityDescription* rval =  [BXEntityDescription entityWithURI: mDatabaseURI
                                                               table: tableName
                                                            inSchema: schemaName];
-    [self connectIfNeeded: &localError];
-    BXHandleError (error, localError);
-    [mDatabaseInterface validateEntity: rval error: &localError];
-    BXHandleError (error, localError);
+	
+	//If the entity was decoded, it might have enough information at this point.
+	//Validation takes then place in fetch etc. methods.
+	if (NO == [mDatabaseInterface connected] 
+		&& nil != [rval fields] && nil != [rval primaryKeyFields])
+	{
+		if (nil == mLazilyValidatedEntities)
+			mLazilyValidatedEntities = [[NSMutableSet alloc] init];
+		
+		[mLazilyValidatedEntities addObject: rval];
+	}
+	else
+	{
+		[self connectIfNeeded: &localError];
+		BXHandleError (error, localError);
+		[mDatabaseInterface validateEntity: rval error: &localError];
+		BXHandleError (error, localError);
+	}
 
     return rval;
 }
@@ -1145,7 +1174,7 @@ extern void BXInit ()
 
 - (id) initWithCoder: (NSCoder *) decoder
 {
-    if ((self = [super init]))
+	if (([self init]))
     {
         [self setDatabaseURI: [decoder decodeObjectForKey: @"databaseURI"]];
         [self setLogsQueries: [decoder decodeBoolForKey: @"logsQueries"]];

@@ -253,9 +253,8 @@ static unsigned int SavepointIndex ()
     [super dealloc];
 }
 
-- (BOOL) connectIfNeeded: (NSError **) error
+- (void) connectIfNeeded: (NSError **) error
 {
-    BOOL ok = NO;
     NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     if (nil == connection)
     {
@@ -279,7 +278,6 @@ static unsigned int SavepointIndex ()
         }
         else
         {
-            ok = YES;
             if (YES == autocommits)
                 notifyConnection = [connection retain];
             else
@@ -295,9 +293,10 @@ static unsigned int SavepointIndex ()
 
                 log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
             }
+			
+			[context connectedToDatabase: error];
         }
     }
-    return ok;
 }
 
 - (id) createObjectForEntity: (BXEntityDescription *) entity 

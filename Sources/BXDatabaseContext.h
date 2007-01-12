@@ -45,7 +45,7 @@
 
 @interface BXDatabaseContext : NSObject
 {
-    id <BXInterface>             mDatabaseInterface;
+    id <BXInterface>                mDatabaseInterface;
     NSURL*                          mDatabaseURI;
     NSMutableSet*                   mSeenEntities;
     TSNonRetainedObjectDictionary*  mObjects;
@@ -54,6 +54,7 @@
     BOOL                            mLogsQueries;
     BOOL                            mAutocommits;
     BOOL                            mDeallocating;
+	NSMutableSet*                   mLazilyValidatedEntities;
 }
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
 + (Class) interfaceClassForScheme: (NSString *) scheme;
@@ -121,6 +122,7 @@
 
 
 @interface BXDatabaseContext (DBInterfaces)
+- (void) connectedToDatabase: (NSError **) error;
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;

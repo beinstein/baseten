@@ -43,4 +43,5 @@
 - (BXEntityDescription *) targetForRelationship: (id <BXRelationshipDescription>) rel;
 - (NSArray *) correspondingProperties: (NSArray *) properties;
 - (BOOL) hasAncestor: (BXEntityDescription *) entity;
+- (void) setViewEntities: (NSSet *) aSet;
 @end

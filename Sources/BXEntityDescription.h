@@ -34,7 +34,7 @@
 @class BXDatabaseContext;
 @class BXDatabaseObjectID;
 
-@interface BXEntityDescription : BXAbstractDescription <NSCopying>
+@interface BXEntityDescription : BXAbstractDescription <NSCopying, NSCoding>
 {
     NSURL*                  mDatabaseURI;
     NSString*               mSchemaName;

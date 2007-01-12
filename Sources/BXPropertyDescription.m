@@ -62,7 +62,7 @@
 {
     if ((self = [super initWithName: aName]))
     {
-        NSAssert (nil != anEntity, nil);
+        NSAssert (nil != anEntity, @"Expected entity not to be nil.");
         mEntity = anEntity; //Weak since entities are not released anyway
     }
     return self;
@@ -84,6 +84,19 @@
 - (id) copyWithZone: (NSZone *) zone
 {
     return [self retain];
+}
+
+- (id) initWithCoder: (NSCoder *) decoder
+{
+	[self initWithName: [decoder decodeObjectForKey: @"name"]
+				entity: [decoder decodeObjectForKey: @"entity"]];
+	return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *) coder
+{
+	[coder encodeObject: mName forKey: @"name"];
+	[coder encodeObject: mEntity forKey: @"entity"];
 }
 
 - (unsigned int) hash

@@ -31,7 +31,7 @@
 
 @class BXEntityDescription;
 
-@interface BXPropertyDescription : BXAbstractDescription <NSCopying>
+@interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSCoding>
 {
     BXEntityDescription* mEntity;
 }

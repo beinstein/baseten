@@ -182,25 +182,18 @@ static NSMutableSet* gViewEntities;
 
 - (id) initWithCoder: (NSCoder *) decoder
 {
-    NSString* eName = [decoder decodeObjectForKey: @"name"];
-    NSString* sName = [decoder decodeObjectForKey: @"schemaName"];
-    NSURL* uri = [decoder decodeObjectForKey: @"databaseURI"];
-    id rval = [[[self class] alloc] initWithURI: uri table: eName inSchema: sName]; // FIXME! Initialize self, not a new object
+    NSURL* databaseURI = [decoder decodeObjectForKey: @"databaseURI"];
+    NSString* schemaName = [decoder decodeObjectForKey: @"schemaName"];
+    NSString* name = [decoder decodeObjectForKey: @"name"];
+    id rval = [self initWithURI: databaseURI table: name inSchema: schemaName];
     
     Class cls = NSClassFromString ([decoder decodeObjectForKey: @"databaseObjectClassName"]);
     if (Nil != cls)
         [rval setDatabaseObjectClass: cls];
- 	
-#if 0
-    NSArray* pkey = [decoder decodeObjectForKey: @"pkeyFields"];
-    if (nil != pkey)
-        [rval setPrimaryKeyFields: pkey];
-    
-    NSSet* vEntities = [decoder decodeObjectForKey: @"viewEntities"];
-    if (nil != vEntities)
-        [rval viewIsBasedOnEntities: vEntities];
-#endif
-        
+		
+	[self setPrimaryKeyFields: [decoder decodeObjectForKey: @"pkeyFields"]];
+	[self setFields: [decoder decodeObjectForKey: @"fields"]];
+ 	        
     return rval;
 }
 
@@ -210,10 +203,8 @@ static NSMutableSet* gViewEntities;
     [encoder encodeObject: mSchemaName forKey: @"schemaName"];
     [encoder encodeObject: mDatabaseURI forKey: @"databaseURI"];
     [encoder encodeObject: NSStringFromClass (mDatabaseObjectClass) forKey: @"databaseObjectClassName"];
-#if 0
-    [encoder encodeObject: mPkeyFields forKey: @"pkeyFields"];
-    [encoder encodeObject: mViewEntities forKey: @"viewEntities"];
-#endif
+	[encoder encodeObject: mPkeyFields forKey: @"pkeyFields"];
+	[encoder encodeObject: mFields forKey: @"fields"];
 }
 
 - (id) copyWithZone: (NSZone *) zone
@@ -450,6 +441,15 @@ static NSMutableSet* gViewEntities;
 
 
 @implementation BXEntityDescription (PrivateMethods)
+
+- (void) setViewEntities: (NSSet *) aSet
+{
+	if (aSet != mViewEntities)
+	{
+		[mViewEntities release];
+		mViewEntities = [aSet retain];
+	}
+}
 
 - (void) addDependentView: (BXEntityDescription *) viewEntity
 {

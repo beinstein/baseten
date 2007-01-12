@@ -1,4 +1,4 @@
-DROP DATABASE basetentest;
+DROP DATABASE IF EXISTS basetentest;
 CREATE DATABASE basetentest ENCODING 'UNICODE';
 \connect basetentest
 
