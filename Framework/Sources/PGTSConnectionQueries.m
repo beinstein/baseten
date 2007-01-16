@@ -26,11 +26,11 @@
 // $Id$
 //
 
-#import <PGTS/PGTSConnection.h>
 #import <PGTS/PGTSConstants.h>
+#import <PGTS/PGTSResultSetPrivate.h>
+#import <PGTS/PGTSConnection.h>
 #import <PGTS/PGTSConnectionPrivate.h>
 #import <PGTS/PGTSConnectionDelegate.h>
-#import <PGTS/PGTSResultSetPrivate.h>
 #import <PGTS/PGTSAdditions.h>
 #import <PGTS/PGTSFunctions.h>
 #import <PGTS/PGTSConnectionDelegate.h>

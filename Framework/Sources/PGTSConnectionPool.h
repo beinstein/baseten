@@ -26,10 +26,10 @@
 // $Id$
 //
 
+@class PGTSConnectionPoolItem;
+
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTSConnection.h>
-
-@class PGTSConnectionPoolItem;
 
 /* 
   TODO: make PGTSConnectionPool substitute deallocated connections 

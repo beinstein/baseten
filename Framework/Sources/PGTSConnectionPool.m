@@ -26,8 +26,8 @@
 // $Id$
 //
 
-#import "PGTSConnectionPool.h"
 #import "PGTSConnectionPoolItem.h"
+#import "PGTSConnectionPool.h"
 #import "PGTSFunctions.h"
 #import "PGTSDatabaseInfo.h"
 #import <Log4Cocoa/Log4Cocoa.h>

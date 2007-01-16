@@ -189,7 +189,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     }
 }
 
-- (PGTSResultSet *) resultFromProxy: (PGTSConnection *) proxy status: (int) status
+- (PGTSResultSet *) resultFromProxy: (volatile PGTSConnection *) proxy status: (int) status
 {
     PGTSResultSet* res = nil;
     if (YES == failedToSendQuery)
@@ -321,24 +321,25 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     id runLoopMessenger  = [TSRunloopMessenger runLoopMessengerForCurrentRunLoop];
     workerProxy          = [runLoopMessenger target: self withResult: NO];
     returningWorkerProxy = [runLoopMessenger target: self withResult: YES];
-    
+
     //Prevent the run loop from exiting immediately
     [runLoop addPort: [NSPort port] forMode: mode];
     
     [threadStartLock unlock];
     
+	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     while (haveInputSources && shouldContinueThread)
     {
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
         haveInputSources = [runLoop runMode: mode
                                  beforeDate: [NSDate distantFuture]];
-        [pool release];
+		[pool drain];
     }
-    socket = nil;
-
-    log4Debug (@"Worker: exiting");
-    workerProxy = nil;
+	workerProxy = nil;
     returningWorkerProxy = nil;
+    socket = nil;
+	[pool release];
+	
+    log4Debug (@"Worker: exiting");
     [threadPool release];    
     
     [workerThreadLock unlock];
@@ -429,7 +430,9 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
 
 - (void) workerEnd
 {
-    //A dummy method to cause some action in the run loop.
+    //Setting the variable from the main thread isn't enough;
+	//we also need to cause some action in worker's run loop by invoking this method.
+	shouldContinueThread = NO;
     log4Debug (@"workerEnd");
 }
 
