@@ -48,38 +48,43 @@ typedef void SSL;
     unsigned int exceptionTable;
 
     @protected
-	PGconn* connection;
-    NSLock* connectionLock;
-    struct timeval timeout;
-    NSString* connectionString;
-    volatile ConnStatusType connectionStatus;
-    volatile BOOL messageDelegateAfterConnecting;
+	PGconn* connection;			//Deallocated in disconnect
+    PGcancel* cancelRequest;	//Deallocated in disconnect
     
-    NSFileHandle* socket;
-    NSLock* asyncConnectionLock;
-    NSLock* workerThreadLock;
-    volatile BOOL shouldContinueThread;
-    volatile BOOL threadRunning;
-    volatile BOOL failedToSendQuery;
-    PGTSConnection *mainProxy, *returningMainProxy;
-    PGTSConnection *workerProxy, *returningWorkerProxy;
+    NSFileHandle* socket;											//Deallocated in workerThreadMain
+    volatile PGTSConnection *workerProxy, *returningWorkerProxy;	//Deallocated in workerThreadMain
+	volatile PGTSConnection *mainProxy, *returningMainProxy;		//Deallocated in endWorkerThread
+	
+    PGTSDatabaseInfo* databaseInfo; //Weak
+	Class resultSetClass;			//Weak
+    id delegate;					//Weak
 
     NSNotificationCenter* postgresNotificationCenter;
     NSCountedSet* notificationCounts;
     NSMutableDictionary* notificationAssociations;
 
-    PGcancel* cancelRequest;
-    PGTSDatabaseInfo* databaseInfo;
+	NSLock* connectionLock;	
+    NSLock* asyncConnectionLock;
+    NSLock* workerThreadLock;
+	
+    NSString* connectionString;
     TSObjectTagDictionary* parameterCounts;
     NSMutableDictionary* deserializationDictionary;
-    BOOL connectsAutomatically;
+    NSString* initialCommands;
+
+	BOOL connectsAutomatically;
     BOOL reconnectsAutomatically;
     BOOL overlooksFailedQueries;
     BOOL delegateProcessesNotices;
+
+	volatile ConnStatusType connectionStatus;
+    struct timeval timeout;
+
     volatile BOOL logsQueries;
-    NSString* initialCommands;
-    Class resultSetClass;        
-    id delegate;
+	volatile BOOL shouldContinueThread;
+    volatile BOOL threadRunning;
+    volatile BOOL failedToSendQuery;
+    volatile BOOL messageDelegateAfterConnecting;
 }
 
 + (PGTSConnection *) connection;

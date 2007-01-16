@@ -26,8 +26,8 @@
 // $Id$
 //
 
-#import <PGTS/PGTSConnection.h>
 #import <PGTS/PGTSResultSet.h>
+#import <PGTS/PGTSConnection.h>
 #import <PGTS/PGTSConnectionDelegate.h>
 
 
@@ -49,7 +49,7 @@
 - (void) raiseExceptionForMissingSelector: (SEL) aSelector;
 - (void) handleNotice: (NSString *) message;
 - (void) sendFinishedConnectingMessage: (ConnStatusType) status reconnect: (BOOL) reconnected;
-- (PGTSResultSet *) resultFromProxy: (PGTSConnection *) proxy status: (int) status;
+- (PGTSResultSet *) resultFromProxy: (volatile PGTSConnection *) proxy status: (int) status;
 - (int) sendResultsToDelegate: (int) status;
 - (void) handleFailedQuery;
 @end

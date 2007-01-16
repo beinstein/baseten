@@ -198,22 +198,21 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 
 - (void) dealloc
 {
-    //FIXME: this method needs a check.
     [self disconnect];
     //Wait for the other thread to end
     [self endWorkerThread];
     
-    [connectionLock release];
-    
-    [workerThreadLock release];
-    [asyncConnectionLock release];
-    
-    [postgresNotificationCenter release];
+	[postgresNotificationCenter release];
     [notificationCounts release];
     [notificationAssociations release];
-    
-    [parameterCounts release];
+	
+    [connectionLock release];
+    [asyncConnectionLock release];
+    [workerThreadLock release];
+        
     [connectionString release];
+    [parameterCounts release];
+	[deserializationDictionary release];
     [initialCommands release];
     
     log4Debug (@"Deallocating db connection: %p", self);
@@ -277,13 +276,20 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
  */
 - (void) endWorkerThread
 {
-    messageDelegateAfterConnecting = NO;
-    [asyncConnectionLock lock];
-    [asyncConnectionLock unlock];
-    shouldContinueThread = NO;
-    [workerProxy workerEnd];
-    [workerThreadLock lock];
-    [workerThreadLock unlock];    
+	if (YES == shouldContinueThread)
+	{
+		messageDelegateAfterConnecting = NO;
+		[asyncConnectionLock lock];
+		[asyncConnectionLock unlock];
+		[workerProxy workerEnd];
+		[workerThreadLock lock];
+		[workerThreadLock unlock];
+		
+		[mainProxy release];
+		[returningMainProxy release];
+		mainProxy = nil;
+		returningMainProxy = nil;
+	}
 }
 
 

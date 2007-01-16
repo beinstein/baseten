@@ -51,6 +51,7 @@
     MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
 }
 
+#if 0
 - (void) testConnect2
 {
     MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest/"]]);
@@ -74,5 +75,6 @@
 {
     MKCAssertThrows ([ctx setDatabaseURI: [NSURL URLWithString: @"invalid://user@localhost/invalid"]]);
 }
+#endif
 
 @end

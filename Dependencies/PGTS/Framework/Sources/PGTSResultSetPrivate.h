@@ -26,6 +26,8 @@
 // $Id$
 //
 
+#import <PGTS/PGTSResultSet.h>
+
 @interface PGTSResultSet (PrivateMethods)
 + (id) resultWithPGresult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
 - (id) initWithResult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
