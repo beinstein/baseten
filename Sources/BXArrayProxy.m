@@ -46,9 +46,6 @@
 
 - (void) handleAddedObjects: (NSArray *) objectArray
 {
-	//FIXME: remove this
-	if (1 < [objectArray count])
-		NSLog (@"bug");
     [mContainer addObjectsFromArray: objectArray];
 }
 

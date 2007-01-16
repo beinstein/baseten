@@ -33,7 +33,7 @@
 	<key>text</key>
 	<string>NSString</string>
 	<key>timestamp</key>
-	<string>NSCalendarDate</string>
+	<string>NSDate</string>
 	<key>timestamptz</key>
 	<string>NSCalendarDate</string>
 	<key>tinterval</key>

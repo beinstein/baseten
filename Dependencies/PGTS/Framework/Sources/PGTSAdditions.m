@@ -37,7 +37,6 @@
 #import "PGTSFieldInfo.h"
 #import "PGTSDatabaseInfo.h"
 #import "PGTSACLItem.h"
-#import "NSCalendarDate+ISO8601Parsing.h"
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
@@ -67,17 +66,6 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @implementation NSObject (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
-	if (YES == [[NSObject class] isSubclassOfClass: self])
-	{
-		log4Warn (@"newForPGTSResultSet: was called in NSObject. "
-				  "Perhaps type %@ doesn't have an entry in datatypeassociations.plist?", 
-				  [typeInfo name]);
-	}
-	else
-	{
-		log4Error (@"NSObject's newForPGTSResultSet: was called instead of %@'s for type %@. "
-				   "The method should be overriden in the subclass.", self, [typeInfo name]);
-	}
     return nil;
 }
 
@@ -457,27 +445,49 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 
+@implementation NSDate (PGTSAdditions)
+- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+{
+    return [[self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S.%F"
+                                       timeZone: [NSTimeZone localTimeZone]
+                                         locale: nil] PGTSParameterLength: length connection: connection];
+}
+
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
+{
+    NSMutableString* dateString = [NSMutableString stringWithUTF8String: value];
+    switch ([dateString length])
+    {
+        //PostgreSQL seems to count significant numbers in its timestamp,
+        //which Foundation is unable to interpret
+        case 19:
+            [dateString appendString: @".00"];
+        case 22:
+            [dateString appendString: @"0"];
+        case 23:
+        default:
+            break;
+    }
+    id rval = [NSCalendarDate dateWithString: dateString
+                              calendarFormat: @"%Y-%m-%d %H:%M:%S.%F"];
+    NSAssert (nil != rval, @"Failed matching string to date format");
+    return [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate]];
+}
+@end
+
+
 @implementation NSCalendarDate (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
-	id rval = [[self class] ISO8601CalendarDateWithString: [NSString stringWithUTF8String: value]
-												 strictly: YES];
-    NSAssert1 (nil != rval, @"Failed to match the string to date format: %s", value);
-	return rval;
+    id rval = [[self class] dateWithString: [NSString stringWithUTF8String: value]
+                            calendarFormat: @"%Y-%m-%d %H:%M:%S+%z"];
+    NSAssert (nil != rval, @"Failed matching string to date format");
+    return rval;
 }
 
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-	NSTimeInterval interval = [self timeIntervalSince1970];
-	double i = 0.0;
-	interval = modf (interval, &i);
-	char* stringRep = NULL;
-	asprintf (&stringRep, "%.6f", interval);
-    NSString* description = [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S.%%s%z"];
-	description = [NSString stringWithFormat: description, &stringRep [2]];
-	free (stringRep);
-	
-	NSLog (@"date: %@", description);
+    NSString* description = [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S%z"];
     return [description PGTSParameterLength: length connection: connection];
 }
 @end

@@ -307,16 +307,5 @@ INSERT INTO person_address VALUES (1, 'Mannerheimintie 1');
 INSERT INTO person VALUES (1, 'nzhuk', 1, 1);
 
 
-CREATE TABLE datetest (
-    id SERIAL PRIMARY KEY,
-    date TIMESTAMP WITH TIME ZONE
-);
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n 
-    WHERE c.relnamespace = n.oid AND c.relname = 'datetest' AND n.nspname = 'public'; 
-GRANT SELECT, INSERT, UPDATE, DELETE on datetest to baseten_test_user;
-GRANT USAGE ON SEQUENCE datetest_id_seq TO baseten_test_user;
-INSERT INTO datetest (date) VALUES ('2007-01-12 16:18:56.682369+02');
-
-
 COMMIT;
 
