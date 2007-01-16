@@ -154,10 +154,6 @@
 		53D9B4C808B5492C00ADB959 /* PGTSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53D9B4C908B5492C00ADB959 /* PGTSTypeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B4C708B5492C00ADB959 /* PGTSTypeInfo.m */; };
 		53D9B52D08B553A900ADB959 /* datatypeassociations.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53D9B52C08B553A900ADB959 /* datatypeassociations.plist */; };
-		53DE4FCA0B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DE4FC60B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.m */; };
-		53DE4FCB0B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DE4FC70B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.h */; };
-		53DE4FCC0B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DE4FC80B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.m */; };
-		53DE4FCD0B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.h in Headers */ = {isa = PBXBuildFile; fileRef = 53DE4FC90B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.h */; };
 		53E0D1C908979FF300501E8E /* PGTSMutableResultRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E0D1C708979FF300501E8E /* PGTSMutableResultRow.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53E0D1CA08979FF300501E8E /* PGTSMutableResultRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E0D1C808979FF300501E8E /* PGTSMutableResultRow.m */; };
 		53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
@@ -339,10 +335,6 @@
 		53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTypeInfo.h; path = Sources/PGTSTypeInfo.h; sourceTree = "<group>"; };
 		53D9B4C708B5492C00ADB959 /* PGTSTypeInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSTypeInfo.m; path = Sources/PGTSTypeInfo.m; sourceTree = "<group>"; };
 		53D9B52C08B553A900ADB959 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xml; path = datatypeassociations.plist; sourceTree = "<group>"; };
-		53DE4FC60B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = "NSCalendarDate+ISO8601Parsing.m"; path = "Contrib/ISO-8601-parser/NSCalendarDate+ISO8601Parsing.m"; sourceTree = "<group>"; };
-		53DE4FC70B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "NSCalendarDate+ISO8601Unparsing.h"; path = "Contrib/ISO-8601-parser/NSCalendarDate+ISO8601Unparsing.h"; sourceTree = "<group>"; };
-		53DE4FC80B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = "NSCalendarDate+ISO8601Unparsing.m"; path = "Contrib/ISO-8601-parser/NSCalendarDate+ISO8601Unparsing.m"; sourceTree = "<group>"; };
-		53DE4FC90B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "NSCalendarDate+ISO8601Parsing.h"; path = "Contrib/ISO-8601-parser/NSCalendarDate+ISO8601Parsing.h"; sourceTree = "<group>"; };
 		53E0D1C708979FF300501E8E /* PGTSMutableResultRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSMutableResultRow.h; path = Sources/PGTSMutableResultRow.h; sourceTree = "<group>"; };
 		53E0D1C808979FF300501E8E /* PGTSMutableResultRow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSMutableResultRow.m; path = Sources/PGTSMutableResultRow.m; sourceTree = "<group>"; };
 		53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
@@ -430,8 +422,6 @@
 				5359784908AF660F000CAC2B /* Metadata */,
 				53D9B37E08B5251C00ADB959 /* Result */,
 				53353A590896D174003EE146 /* WriteDelegate */,
-				53DE4FBE0B57CE1000A15759 /* RunLoopMessenger */,
-				53DE4FCE0B57CE3A00A15759 /* ISO 8601 Parser */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -587,6 +577,10 @@
 		53D9B37D08B5250C00ADB959 /* Other */ = {
 			isa = PBXGroup;
 			children = (
+				530323C3088062270024E7EF /* NDRunLoopMessenger.h */,
+				530323C4088062270024E7EF /* NDRunLoopMessenger.m */,
+				537FB1F60A76218E00441E2E /* TSRunloopMessenger.h */,
+				537FB1F70A76218E00441E2E /* TSRunloopMessenger.m */,
 				53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */,
 				53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */,
 				536B892D0A518E4A00379C00 /* PGTSExceptions.h */,
@@ -606,28 +600,6 @@
 				53BA4FE308804EA000BFAFB5 /* PGTSResultSetPrivate.h */,
 			);
 			name = Result;
-			sourceTree = "<group>";
-		};
-		53DE4FBE0B57CE1000A15759 /* RunLoopMessenger */ = {
-			isa = PBXGroup;
-			children = (
-				530323C3088062270024E7EF /* NDRunLoopMessenger.h */,
-				530323C4088062270024E7EF /* NDRunLoopMessenger.m */,
-				537FB1F60A76218E00441E2E /* TSRunloopMessenger.h */,
-				537FB1F70A76218E00441E2E /* TSRunloopMessenger.m */,
-			);
-			name = RunLoopMessenger;
-			sourceTree = "<group>";
-		};
-		53DE4FCE0B57CE3A00A15759 /* ISO 8601 Parser */ = {
-			isa = PBXGroup;
-			children = (
-				53DE4FC90B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.h */,
-				53DE4FC60B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.m */,
-				53DE4FC70B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.h */,
-				53DE4FC80B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.m */,
-			);
-			name = "ISO 8601 Parser";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -670,8 +642,6 @@
 				53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */,
 				53298DF20B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h in Headers */,
 				53298E0F0B330EFB00DE7CC8 /* PGTSACLItem.h in Headers */,
-				53DE4FCB0B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.h in Headers */,
-				53DE4FCD0B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -951,8 +921,6 @@
 				53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */,
 				53298DF30B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m in Sources */,
 				53298E100B330EFB00DE7CC8 /* PGTSACLItem.m in Sources */,
-				53DE4FCA0B57CE3800A15759 /* NSCalendarDate+ISO8601Parsing.m in Sources */,
-				53DE4FCC0B57CE3800A15759 /* NSCalendarDate+ISO8601Unparsing.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
