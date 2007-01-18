@@ -46,6 +46,7 @@
     BXEntityDescription* ototest2v;
     BXEntityDescription* mtmtest1v;
     BXEntityDescription* mtmtest2v;
+	BXEntityDescription* mtmrel1;
 }
 
 - (void) many: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
@@ -55,5 +56,6 @@
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
 - (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity;
 - (void) modOne: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2;
+- (void) MTMHelper: (BXEntityDescription *) entity;
 
 @end

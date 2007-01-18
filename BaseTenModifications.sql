@@ -311,8 +311,8 @@ FROM (
     SELECT
         NULL::OID as conoid,
         ARRAY [m1.conoid, m2.conoid] AS refconoids,
-        c.relname AS srcname,
-        c.relname AS dstname,
+        m2.srcname AS srcname,
+        m1.srcname AS dstname,
         m1.dst AS src, m2.dst AS dst,
         m1.src AS helper,
         m1.dstfields AS srcfields,

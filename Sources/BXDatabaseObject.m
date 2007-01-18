@@ -490,10 +490,10 @@ ParseSelector (SEL aSelector, NSString** key)
                 NSError* error = nil;
                 BXEntityDescription* entity = [mObjectID entity];
                 id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
+                if (nil != error) [self queryFailed: error];
                 //Don't cache the results to prevent a retain cycle.
                 rval = [rel resolveFrom: self to: [entity targetForRelationship: rel] error: &error];
-                if (nil != error)
-                    [self queryFailed: error];
+                if (nil != error) [self queryFailed: error];
                 break;
             }
             default:

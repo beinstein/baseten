@@ -63,6 +63,7 @@
     ototest2v = [context entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil];
     mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
     mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
+	mtmrel1 = [context entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil];
     
     MKCAssertNotNil (test1v);
     MKCAssertNotNil (test2v);
@@ -70,6 +71,7 @@
     MKCAssertNotNil (ototest2v);
     MKCAssertNotNil (mtmtest1v);
     MKCAssertNotNil (mtmtest2v);
+	MKCAssertNotNil (mtmrel1);
 }
 
 - (void) tearDown
@@ -280,8 +282,8 @@
 
 - (void) many: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2
 {
-    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"mtmrel1"];
-    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"mtmrel1"];
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"foreignobject"];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"object"];
     
     NSError* error = nil;
     NSArray* res = [context executeFetchForEntity: entity1 withPredicate: nil error: &error];
@@ -295,7 +297,7 @@
     {
         MKCAssertTrue ([[object objectID] entity] == entity1);
         
-        NSSet* foreignObjects = [object valueForKey: @"mtmrel1"];
+        NSSet* foreignObjects = [object valueForKey: @"foreignobject"];
         MKCAssertNotNil (foreignObjects);
         if ([@"d1" isEqualToString: [object valueForKey: @"value1"]])
         {
@@ -304,7 +306,7 @@
             MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
 
             MKCAssertEqualObjects ([foreignObject valueForKey: @"value2"], @"d2");
-            NSSet* objects = [foreignObject valueForKey: @"mtmrel1"];
+            NSSet* objects = [foreignObject valueForKey: @"object"];
             MKCAssertTrue (1 == [objects count]);
             BXDatabaseObject* backRef = [objects anyObject];
             MKCAssertTrue ([[backRef objectID] entity] == entity1);
@@ -320,7 +322,7 @@
             TSEnumerate (foreignObject, e, [foreignObjects objectEnumerator])
             {
                 MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
-                NSArray* objects = [foreignObject valueForKey: @"mtmrel1"];
+                NSArray* objects = [foreignObject valueForKey: @"object"];
                 MKCAssertNotNil (objects);
                 MKCAssertTrue (3 == [objects count]);
                 
@@ -474,6 +476,33 @@
     MKCAssertFalse ([n1 isEqual: [foreignObject2 valueForKey: @"id"]]);
 
     [context rollback];
+}
+
+- (void) testMTMHelper
+{
+	[self MTMHelper: mtmtest1];
+}
+
+- (void) testMTMHelperView
+{
+	[self MTMHelper: mtmtest1v];
+}
+
+- (void) MTMHelper: (BXEntityDescription *) entity
+{
+	NSError* error = nil;
+	NSArray* res = [context executeFetchForEntity: entity
+									withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
+											error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	BXDatabaseObject* object = [res objectAtIndex: 0];
+	NSSet* helperObjects = [object valueForKey: @"mtmrel1"];
+	MKCAssertTrue (3 == [helperObjects count]);
+	TSEnumerate (currentObject, e, [helperObjects objectEnumerator])
+	{
+		MKCAssertTrue ([[currentObject objectID] entity] == mtmrel1);
+		MKCAssertTrue (1 == [[currentObject valueForKey: @"id1"] intValue]);
+	}
 }
     
 @end

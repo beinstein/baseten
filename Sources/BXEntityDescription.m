@@ -32,6 +32,7 @@
 #import "BXDatabaseContext.h"
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXPropertyDescription.h"
+#import "BXRelationshipDescription.h"
 
 #import <TSDataTypes/TSDataTypes.h>
 
@@ -504,7 +505,13 @@ static NSMutableSet* gViewEntities;
     NSString* relname = [relationship nameFromEntity: self];
     id oldRelationship = [mRelationships objectForKey: relname];
     if (nil == oldRelationship || [relationship isOneToOne] || [relationship isManyToMany])
+	{
         [mRelationships setObject: relationship forKey: relname];
+		
+		//FIXME: this is a hack.
+		if (1 == [relationship isToManyFromEntity: self] && NO == [relationship isManyToMany])
+			[mRelationships setObject: relationship forKey: [(BXRelationshipDescription *) relationship alternativeNameFromEntity: self]];
+	}
 }
 
 - (void) setFields: (NSArray *) aFields

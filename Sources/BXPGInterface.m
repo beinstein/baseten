@@ -808,7 +808,7 @@ static unsigned int SavepointIndex ()
     if (typeBitmap == kBXRelationshipUndefined || typeBitmap & kBXRelationshipManyToMany)
         [types addObject: @"m"];
     
-    //FIXME: this could be a stored procedure, function or something
+    //FIXME: this could be a stored procedure or something
     NSString* query = nil;
     if (nil == givenDSTEntity)
     {
@@ -848,6 +848,8 @@ static unsigned int SavepointIndex ()
     NSMutableDictionary* manyToOne = [NSMutableDictionary dictionary];
     while ([res advanceRow])
     {
+		if (nil != *error) break;
+		
         unichar type = [[res valueForKey: @"type"] characterAtIndex: 0];
         Class relationshipClass = Nil;
         switch (type)
@@ -883,9 +885,25 @@ static unsigned int SavepointIndex ()
                 BXEntityDescription* srcEntity = [context entityForTable: [res valueForKey: @"srcrelname"]
                                                                 inSchema: [res valueForKey: @"srcnspname"]
                                                                    error: error];
+				if (nil != *error)
+				{
+					//Continue we were not able to observe the entity.
+					if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
+						*error = nil;
+					break;
+				}
+				
                 BXEntityDescription* dstEntity = [context entityForTable: [res valueForKey: @"dstrelname"]
                                                                 inSchema: [res valueForKey: @"dstnspname"]
                                                                    error: error];
+				if (nil != *error)
+				{
+					//Continue we were not able to observe the entity.
+					if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
+						*error = nil;
+					break;
+				}
+				
                 {
                     NSArray* srcFNames = [res valueForKey: @"srcfnames"];
                     srcProperties = [NSMutableArray arrayWithCapacity: [srcFNames count]];                
@@ -893,8 +911,8 @@ static unsigned int SavepointIndex ()
                     TSEnumerate (currentFName, e, [srcFNames objectEnumerator])
                     {
                         BXPropertyDescription* desc = 
-                        [BXPropertyDescription propertyWithName: currentFName
-                                                            entity: srcEntity];
+							[BXPropertyDescription propertyWithName: currentFName
+															 entity: srcEntity];
                         [srcProperties addObject: desc];
                     }
                     
@@ -907,7 +925,7 @@ static unsigned int SavepointIndex ()
                         
                         BXPropertyDescription* desc = 
                         [BXPropertyDescription propertyWithName: currentFName
-                                                            entity: dstEntity];
+														 entity: dstEntity];
                         [dstProperties addObject: desc];
                     }
                 }
@@ -924,17 +942,22 @@ static unsigned int SavepointIndex ()
                 //Add the object. At this point rval contains only MTO's, 
                 //so if we are adding a foreign key from any other table than srcEntity,
                 //we only need to check that there isn't one with the same name yet.
-                if (YES == [[res valueForKey: @"should_add_m"] boolValue])
+				BOOL shouldAdd = [[res valueForKey: @"should_add_m"] boolValue];
+                if (YES == shouldAdd || nil == [rval objectForKey: relationName])
                     [rval setObject: rel forKey: relationName];
-                else if (nil == [rval objectForKey: relationName])
-                    [rval setObject: rel forKey: relationName];
-                    
+				
+				//Also add many-to-one relationships with alternative names.
+				NSString* altname = [res valueForKey: @"srcrelname"];
+                if (YES == shouldAdd || nil == [rval objectForKey: altname])
+					[rval setObject: rel forKey: altname];
+				
                 break;
             }
             default:
                 break;
         }
-    }    
+    }
+	if (nil != *error) rval = nil;
     return rval;
 }
 

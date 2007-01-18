@@ -293,6 +293,21 @@ NullArray (unsigned int count)
     return rval;
 }
 
+//FIXME: the naming thing should be rethought.
+- (NSString *) alternativeNameFromEntity: (BXEntityDescription *) entity
+{
+    NSString* rval = nil;
+    if ([self srcEntity] == entity || 
+        [entity hasAncestor: [self srcEntity]] || 
+        [self dstEntity] == entity || 
+        [entity hasAncestor: [self dstEntity]])
+    {
+        rval = [[self srcEntity] name];
+    }
+    return rval;
+}
+
+
 //FIXME: the three methods below should probably use correspondingProperties.
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                  to: (BXEntityDescription *) targetEntity error: (NSError **) error;
