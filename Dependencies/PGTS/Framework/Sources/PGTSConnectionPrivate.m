@@ -327,17 +327,16 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     
     [threadStartLock unlock];
     
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     while (haveInputSources && shouldContinueThread)
     {
+		NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
         haveInputSources = [runLoop runMode: mode
                                  beforeDate: [NSDate distantFuture]];
-		[pool drain];
+		[pool release];
     }
 	workerProxy = nil;
     returningWorkerProxy = nil;
     socket = nil;
-	[pool release];
 	
     log4Debug (@"Worker: exiting");
     [threadPool release];    
