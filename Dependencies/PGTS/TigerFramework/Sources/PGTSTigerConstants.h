@@ -30,3 +30,4 @@
 extern NSString* const kPGTSUnsupportedPredicateOperatorTypeException;
 extern NSString* const kPGTSParametersKey;
 extern NSString* const kPGTSParameterIndexKey;
+extern NSString* const kPGTSExpressionParametersVerbatimKey;

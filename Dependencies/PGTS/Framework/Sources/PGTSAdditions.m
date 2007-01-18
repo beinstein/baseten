@@ -53,10 +53,6 @@ strtoll (const char * restrict nptr, char ** restrict endptr, int base);
 float
 strtof (const char * restrict nptr, char ** restrict endptr);
 
-@interface NSObject (PGTSAdditionsPrivate)
-- (char *) PGTSParameterLength: (int *) length;
-@end
-
 
 @interface NSDictionary (PGTSAdditionsPrivate)
 - (NSArray *) PGTSParameters1: (NSMutableArray *) parameters;
@@ -71,13 +67,27 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    return [self PGTSParameterLength: length];
+	if (NULL != length)
+		*length = 0;
+	return NULL;
 }
 
-- (char *) PGTSParameterLength: (int *) length
+- (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection
 {
-    *length = 0;
-    return NULL;
+	NSString* rval = nil;
+	int length = 0;
+	char* charParameter = [self PGTSParameterLength: &length connection: connection];
+	if (NULL != charParameter)
+	{
+		PGconn* pgConn = [connection pgConnection];
+		char* escapedParameter = calloc (1 + 2 * length, sizeof (char));
+		PQescapeStringConn (pgConn, escapedParameter, charParameter, length, NULL);
+		const char* clientEncoding = PQparameterStatus (pgConn, "client_encoding");
+		NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
+		rval = [[[NSString alloc] initWithBytesNoCopy: escapedParameter length: strlen (escapedParameter)
+											 encoding: NSUTF8StringEncoding freeWhenDone: YES] autorelease];
+	}
+	return rval;
 }
 @end
 
@@ -223,8 +233,10 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     return [NSString stringWithUTF8String: value];
 }
 
-- (char *) PGTSParameterLength: (int *) length
+- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
+	const char* clientEncoding = PQparameterStatus ([connection pgConnection], "client_encoding");
+	NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
     const char* rval = [self UTF8String];
     if (NULL != length)
         *length = strlen (rval);
@@ -314,7 +326,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 	return data;
 }
 
-- (char *) PGTSParameterLength: (int *) length
+- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
     const char* rval = [self bytes];
     if (NULL != length)
@@ -506,9 +518,9 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @implementation NSNumber (PGTSAdditions)
-- (char *) PGTSParameterLength: (int *) length
+- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    return [[self description] PGTSParameterLength: length];
+    return [[self description] PGTSParameterLength: length connection: connection];
 }
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo

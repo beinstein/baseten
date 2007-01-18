@@ -49,6 +49,7 @@
 @interface NSObject (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo;
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
+- (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection;
 @end
 
 @interface NSArray (PGTSAdditions)

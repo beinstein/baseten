@@ -33,9 +33,16 @@
 #import <PGTS/PGTSFunctions.h>
 #import <PGTS/PGTSConstants.h>
 
+//FIXME: since the where clause methods produce an expression which could be used elsewhere as well, the methods should be renamed.
+
 @implementation NSPredicate (PGTSAdditions)
 
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
+{
+	return [self PGTSExpressionWithObject: nil context: context];
+}
+
+- (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
     NSString* rval = nil;
     Class tpClass = NSClassFromString (@"NSTruePredicate");
@@ -44,7 +51,7 @@
         rval = @"(true)";
     else if (nil != fpClass && [self isKindOfClass: fpClass])
         rval = @"(false)";
-    //Otherwise return nil since we override this method anyway
+	//Otherwise we return nil since this method gets overridden anyway.
     return rval;
 }
 @end
@@ -52,12 +59,17 @@
 @implementation NSCompoundPredicate (PGTSAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
 {
-    NSAssert (nil != [context objectForKey: kPGTSConnectionKey], @"Did you remember to set connection to kPGTSConnectionKey in context?");
+	return [self PGTSExpressionWithObject: nil context: context];
+}
+
+- (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
+{
+    NSAssert1 (nil != [context objectForKey: kPGTSConnectionKey], @"Did you remember to set connection to %@ in context?", kPGTSConnectionKey);
     NSString* rval = nil;
     NSArray* subpredicates = [self subpredicates];
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [subpredicates count]];
     TSEnumerate (currentPredicate, e, [subpredicates objectEnumerator])
-        [parts addObject: [currentPredicate PGTSWhereClauseWithContext: context]];
+        [parts addObject: [currentPredicate PGTSExpressionWithObject: anObject context: context]];
     
     NSString* glue = nil;
     NSCompoundPredicateType type = [self compoundPredicateType];
@@ -86,10 +98,15 @@
 @implementation NSComparisonPredicate (PGTSAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
 {
+	return [self PGTSExpressionWithObject: nil context: context];
+}
+
+- (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
+{
     NSString* rval = [NSString stringWithFormat: @"(%@) %@ (%@)",
-        [[self leftExpression] PGTSValueWithObject: nil context: context], 
+        [[self leftExpression] PGTSValueWithObject: anObject context: context], 
         [self PGTSOperator], 
-        [[self rightExpression] PGTSValueWithObject: nil context: context]];
+        [[self rightExpression] PGTSValueWithObject: anObject context: context]];
     return rval;
 }
 

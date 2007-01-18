@@ -32,3 +32,4 @@
 NSString* const kPGTSUnsupportedPredicateOperatorTypeException = @"kPGTSUnsupportedPredicateOperatorTypeException";
 NSString* const kPGTSParametersKey = @"kPGTSParametersKey";
 NSString* const kPGTSParameterIndexKey = @"kPGTSParameterIndexKey";
+NSString* const kPGTSExpressionParametersVerbatimKey = @"kPGTSExpressionParametersVerbatimKey";
