@@ -35,4 +35,5 @@
 
 @interface NSPredicate (PGTSAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context;
+- (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context;
 @end

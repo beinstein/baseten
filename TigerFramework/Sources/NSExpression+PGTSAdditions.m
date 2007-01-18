@@ -26,13 +26,13 @@
 // $Id$
 //
 
-#import <PGTS/PGTSConstants.h>
+#import <PGTS/PGTS.h>
 
 #import "NSExpression+PGTSAdditions.h"
 #import "PGTSTigerConstants.h"
 
 
-@interface NSObject (PGTSAdditions)
+@interface NSObject (PGTSTigerAdditions)
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context;
 @end
 
@@ -41,31 +41,40 @@ static NSString*
 AddParameter (id parameter, NSMutableDictionary* context)
 {
     NSCAssert (nil != context, @"Expected context not to be nil");
-    
-    //First increment the parameter index. We start from zero, since indexing in
-    //NSArray is zero-based. The kPGTSParameterIndexKey will have the total count
-    //of parameters, however.
-    NSNumber* indexObject = [context objectForKey: kPGTSParameterIndexKey];
-    if (nil == indexObject)
-    {
-        indexObject = [NSNumber numberWithInt: 0];
-    }
-    int index = [indexObject intValue];
-    [context setObject: [NSNumber numberWithInt: index + 1] forKey: kPGTSParameterIndexKey];
-    
-    NSMutableArray* parameters = [context objectForKey: kPGTSParametersKey];
-    if (nil == parameters)
-    {
-        parameters = [NSMutableArray array];
-        [context setObject: parameters forKey: kPGTSParametersKey];
-    }
-    [parameters insertObject: parameter atIndex: index];
-    
-    //Return the index used in the query
-    int count = index + 1;
-    NSCAssert4 ([parameters count] == count, @"Expected count to be %d, was %d.\n\tparameter:\t%@ \n\tcontext:\t%@", 
-                [parameters count], count, parameter, context);
-    return [NSString stringWithFormat: @"$%d", count];
+    NSString* rval = nil;
+	if (YES == [[context objectForKey: kPGTSExpressionParametersVerbatimKey] boolValue])
+	{
+		PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
+		rval = [NSString stringWithFormat: @"'%@'", [parameter PGTSEscapedObjectParameter: connection]];
+	}
+	else
+	{
+		//First increment the parameter index. We start from zero, since indexing in
+		//NSArray is zero-based. The kPGTSParameterIndexKey will have the total count
+		//of parameters, however.
+		NSNumber* indexObject = [context objectForKey: kPGTSParameterIndexKey];
+		if (nil == indexObject)
+		{
+			indexObject = [NSNumber numberWithInt: 0];
+		}
+		int index = [indexObject intValue];
+		[context setObject: [NSNumber numberWithInt: index + 1] forKey: kPGTSParameterIndexKey];
+		
+		NSMutableArray* parameters = [context objectForKey: kPGTSParametersKey];
+		if (nil == parameters)
+		{
+			parameters = [NSMutableArray array];
+			[context setObject: parameters forKey: kPGTSParametersKey];
+		}
+		[parameters insertObject: parameter atIndex: index];
+		
+		//Return the index used in the query
+		int count = index + 1;
+		NSCAssert4 ([parameters count] == count, @"Expected count to be %d, was %d.\n\tparameter:\t%@ \n\tcontext:\t%@", 
+					[parameters count], count, parameter, context);
+		rval = [NSString stringWithFormat: @"$%d", count];
+	}
+	return rval;
 }
 
 
@@ -91,6 +100,7 @@ AddParameter (id parameter, NSMutableDictionary* context)
 - (id) PGTSValueWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
     id rval = nil;
+	NSExpression* keyPathExpression = self;
     switch ([self expressionType])
     {
         case NSConstantValueExpressionType:
@@ -106,15 +116,26 @@ AddParameter (id parameter, NSMutableDictionary* context)
             
         case NSEvaluatedObjectExpressionType:
         case NSVariableExpressionType:
-            //default behavior
-            rval = AddParameter ([self expressionValueWithObject: anObject context: context], context);
-            break;
+		{
+            //default behavior unless the expression evaluates into a key path expression
+			id evaluated = [self expressionValueWithObject: anObject context: context];
+			if (! ([evaluated isKindOfClass: [NSExpression class]] && [evaluated expressionType] == NSKeyPathExpressionType))
+			{
+				rval = AddParameter (evaluated, context);
+				break;
+			}
+			else
+			{
+				keyPathExpression = evaluated;
+				//Fall through
+			}
+		}
             
         case NSKeyPathExpressionType:
         {
             //database.table.field
             //Simple dividing into components for now
-            NSArray* components = [[[self keyPath] componentsSeparatedByString: @"."] valueForKey: @"PGTSQuotedString"];
+            NSArray* components = [[[keyPathExpression keyPath] componentsSeparatedByString: @"."] valueForKey: @"PGTSQuotedString"];
             rval = [components componentsJoinedByString: @"."];
             break;
         }   
@@ -131,6 +152,29 @@ AddParameter (id parameter, NSMutableDictionary* context)
             break;
     }
     return rval;
+}
+
+- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+{
+	id objectValue = nil;
+	switch ([self expressionType])
+	{
+		case NSConstantValueExpressionType:
+			objectValue = [self constantValue];
+			break;
+			
+		case NSEvaluatedObjectExpressionType:
+			objectValue = [self keyPath];
+			break;
+			
+		case NSVariableExpressionType:
+		case NSKeyPathExpressionType:
+		case NSFunctionExpressionType:
+		default:
+			break;
+	}
+	
+	return [objectValue PGTSParameterLength: length connection: connection];
 }
 
 @end

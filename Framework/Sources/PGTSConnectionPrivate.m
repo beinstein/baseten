@@ -406,6 +406,8 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
         {
             PQsetnonblocking (connection, 0); //We don't want to call PQsendquery etc. multiple times
             PQsetClientEncoding (connection, "UNICODE"); //Use UTF-8
+			PQexec (connection, "SET standard_conforming_strings TO true");
+			PQexec (connection, "SET datestyle TO 'ISO, YMD'");
             //FIXME: set other things, such as the date format, as well
             PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
 
