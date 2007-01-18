@@ -307,5 +307,12 @@ INSERT INTO person_address VALUES (1, 'Mannerheimintie 1');
 INSERT INTO person VALUES (1, 'nzhuk', 1, 1);
 
 
+CREATE TABLE ♨ (id SERIAL PRIMARY KEY, value VARCHAR (255));
+SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n
+	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname = '♨';
+
+INSERT INTO ♨ (value) VALUES ('test1');
+INSERT INTO ♨ (value) VALUES ('test2');
+INSERT INTO ♨ (value) VALUES ('test3');
 COMMIT;
 
