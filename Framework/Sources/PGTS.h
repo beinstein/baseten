@@ -28,13 +28,13 @@
 
 
 #import <PGTS/PGTSConstants.h>
+#import <PGTS/PGTSResultSet.h>
+#import <PGTS/PGTSResultRow.h>
+#import <PGTS/PGTSResultRowProtocol.h>
 #import <PGTS/PGTSConnection.h>
 #import <PGTS/PGTSConnectionDelegate.h>
 #import <PGTS/PGTSConnectionPool.h>
 #import <PGTS/PGTSConnectionPoolItem.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSResultRow.h>
-#import <PGTS/PGTSResultRowProtocol.h>
 #import <PGTS/PGTSAdditions.h>
 #import <PGTS/PGTSModificationNotifier.h>
 #import <PGTS/PGTSLockNotifier.h>
