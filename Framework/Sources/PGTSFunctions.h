@@ -40,3 +40,4 @@ extern void PGTSInit ();
 extern void PGTSNoticeProcessor (void* sender, const char* message);
 extern NSString* PGTSModificationName (unichar type);
 extern NSString* PGTSLockOperation (unichar type);
+extern int PGTSVerifySSLSertificate (int preverify_ok, void* x509_ctx);

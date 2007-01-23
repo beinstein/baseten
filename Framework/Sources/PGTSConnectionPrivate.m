@@ -32,6 +32,7 @@
 #import <sys/types.h>
 #import <sys/time.h>
 #import <unistd.h>
+#import <openssl/ssl.h>
 #import "TSRunloopMessenger.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSConstants.h"
@@ -392,6 +393,18 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
                     
                 case PGRES_POLLING_WRITING:
                 default:
+#ifdef USE_SSL
+					if (CONNECTION_SSL_CONTINUE == PQstatus (conn))
+					{
+						SSL* ssl = PQgetSSL (conn);
+						NSAssert (NULL != ssl, @"Expected ssl struct not to be NULL.");
+						SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLCertificate);
+						//We have this hack since the cert callback cannot have a void* argument.
+						//SSL_get_ex_new_index probably doesn't help here since the index might change across SSL structures.
+						SSL_set_msg_callback_arg (ssl, self);
+					}
+#endif
+					
                     selectStatus = select (bsdSocket + 1, NULL, &mask, NULL, &ltimeout);
                     break;
             } //switch
