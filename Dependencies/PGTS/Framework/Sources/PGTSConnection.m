@@ -121,11 +121,19 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 	return [[[[self class] alloc] init] autorelease];
 }
 
-- (id) init
++ (void) initialize
 {
-    //This might not get called when using the static library
-    PGTSInit ();
-    
+	static BOOL tooLate = NO;
+	if (!tooLate)
+	{
+		tooLate = YES;
+		//This should have been the +initialize method from the start.
+		PGTSInit ();
+	}
+}
+
+- (id) init
+{    
     if ((self = [super init]))
     {
         connection = NULL;
@@ -786,7 +794,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 	return PQbackendPID (connection);
 }
 
-- (SSL *) sslStruct
+- (void *) sslStruct
 {
 #ifdef USE_SSL
 	return PQgetssl (connection);

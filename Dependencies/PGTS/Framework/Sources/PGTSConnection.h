@@ -30,10 +30,6 @@
 #import <sys/time.h>
 #import <PGTS/postgresql/libpq-fe.h>
 
-#ifndef USE_SSL
-typedef void SSL;
-#endif
-
 
 
 @class PGTSResultSet;
@@ -159,7 +155,7 @@ typedef void SSL;
 - (int) serverVersion;
 - (NSString *) errorMessage;
 - (int) backendPID;
-- (SSL *) sslStruct;
+- (void *) sslStruct;
 @end
 
 

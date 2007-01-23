@@ -28,6 +28,8 @@
 
 #import <libgen.h>
 #import <Foundation/Foundation.h>
+#import <openssl/x509.h>
+#import <openssl/ssl.h>
 #import "postgresql/libpq-fe.h"
 #import "PGTSFunctions.h"
 #import "PGTSConstants.h"
@@ -146,4 +148,13 @@ PGTSLockOperation (unichar type)
             break;
     }
     return lockOperation;
+}
+
+int
+PGTSVerifySSLSertificate (int preverify_ok, void* x509_ctx)
+{
+    SSL* ssl = X509_STORE_CTX_get_ex_data ((X509_STORE_CTX *) x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
+	PGTSConnection* connection = ssl->msg_callback_arg;
+	connection = nil;
+	return preverify_ok;
 }

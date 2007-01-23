@@ -98,6 +98,8 @@
 		53B86FFA0A0A1D6F007315BC /* BXPropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B86FFB0A0A1D6F007315BC /* BXPropertyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */; };
 		53B872830A0A4CEC007315BC /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
+		53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8010B666C3B00C3D20A /* libcrypto.dylib */; };
+		53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8120B666C7900C3D20A /* libssl.dylib */; };
 		53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
 		53E11A270A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -250,6 +252,8 @@
 		53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPropertyDescription.m; path = Sources/BXPropertyDescription.m; sourceTree = "<group>"; };
 		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
+		53DBE8010B666C3B00C3D20A /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
+		53DBE8120B666C7900C3D20A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
 		53E11A250A791A8D00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
 		53F77DA20A3806580058F7D6 /* basic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = basic.xcconfig; path = xcconfig/basic.xcconfig; sourceTree = SOURCE_ROOT; };
 		53F77DA30A3806580058F7D6 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = xcconfig/debug.xcconfig; sourceTree = SOURCE_ROOT; };
@@ -273,6 +277,8 @@
 				5314B1A60A371968001D8F54 /* Foundation.framework in Frameworks */,
 				531B00DA0A519FD4006AEF08 /* libPGTSTiger.a in Frameworks */,
 				53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */,
+				53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */,
+				53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,6 +325,8 @@
 				530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
+				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
+				53DBE8120B666C7900C3D20A /* libssl.dylib */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

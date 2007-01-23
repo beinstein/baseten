@@ -1,0 +1,95 @@
+
+ libpq.patch
+ BaseTen
+
+ Copyright (C) 2006 Marko Karppinen & Co. LLC.
+
+ Before using this software, please review the available licensing options
+ by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+ us at sales@karppinen.fi. Without an additional license, this software
+ may be distributed only in compliance with the GNU General Public License.
+
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License, version 2.0,
+ as published by the Free Software Foundation.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+ $Id$
+
+diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c
+--- postgresql-8.2.1/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
++++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c	2007-01-23 16:26:52.000000000 +0200
+@@ -1305,13 +1305,17 @@
+ 		case CONNECTION_SSL_STARTUP:
+ 			{
+ #ifdef USE_SSL
+-				PostgresPollingStatusType pollres;
+-
+ 				/*
+ 				 * On first time through, get the postmaster's response to our
+ 				 * SSL negotiation packet.
+ 				 */
+-				if (conn->ssl == NULL)
++				if (conn->ssl != NULL)
++                {
++                    /* We shouldn't end up here */
++                    conn->status = CONNECTION_SSL_CONTINUE;
++                    return PGRES_POLLING_WRITING;
++                }
++                else
+ 				{
+ 					/*
+ 					 * We use pqReadData here since it has the logic to
+@@ -1344,6 +1348,9 @@
+ 						/* Do one-time setup; this creates conn->ssl */
+ 						if (pqsecure_initialize(conn) == -1)
+ 							goto error_return;
++
++                        conn->status = CONNECTION_SSL_CONTINUE;
++                        return PGRES_POLLING_WRITING; //Is this correct?
+ 					}
+ 					else if (SSLok == 'N')
+ 					{
+@@ -1390,10 +1397,18 @@
+ 					}
+ 				}
+ 
++#else							/* !USE_SSL */
++				/* can't get here */
++				goto error_return;
++#endif   /* USE_SSL */
++            }
++        case CONNECTION_SSL_CONTINUE:
++            {
++#ifdef USE_SSL
+ 				/*
+ 				 * Begin or continue the SSL negotiation process.
+ 				 */
+-				pollres = pqsecure_open_client(conn);
++				PostgresPollingStatusType pollres = pqsecure_open_client(conn);
+ 				if (pollres == PGRES_POLLING_OK)
+ 				{
+ 					/* SSL handshake done, ready to send startup packet */
+diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h
+--- postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-01-23 16:36:58.000000000 +0200
+@@ -53,7 +53,9 @@
+ 								 * backend startup. */
+ 	CONNECTION_SETENV,			/* Negotiating environment. */
+ 	CONNECTION_SSL_STARTUP,		/* Negotiating SSL. */
+-	CONNECTION_NEEDED			/* Internal state: connect() needed */
++	CONNECTION_NEEDED,			/* Internal state: connect() needed */
++    CONNECTION_SSL_CONTINUE
++
+ } ConnStatusType;
+ 
+ typedef enum
