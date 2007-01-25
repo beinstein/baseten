@@ -27,8 +27,16 @@
 
 diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c
 --- postgresql-8.2.1/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
-+++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c	2007-01-23 16:26:52.000000000 +0200
-@@ -1305,13 +1305,17 @@
++++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c	2007-01-25 11:52:27.000000000 +0200
+@@ -998,6 +998,7 @@
+ 
+ 			/* Special cases: proceed without waiting. */
+ 		case CONNECTION_SSL_STARTUP:
++        case CONNECTION_SSL_CONTINUE:
+ 		case CONNECTION_NEEDED:
+ 			break;
+ 
+@@ -1305,13 +1306,17 @@
  		case CONNECTION_SSL_STARTUP:
  			{
  #ifdef USE_SSL
@@ -49,17 +57,17 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-ts
  				{
  					/*
  					 * We use pqReadData here since it has the logic to
-@@ -1344,6 +1348,9 @@
+@@ -1344,6 +1349,9 @@
  						/* Do one-time setup; this creates conn->ssl */
  						if (pqsecure_initialize(conn) == -1)
  							goto error_return;
 +
 +                        conn->status = CONNECTION_SSL_CONTINUE;
-+                        return PGRES_POLLING_WRITING; //Is this correct?
++                        return pqsecure_prepare_client (conn);
  					}
  					else if (SSLok == 'N')
  					{
-@@ -1390,10 +1397,18 @@
+@@ -1390,10 +1398,18 @@
  					}
  				}
  
@@ -79,6 +87,45 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-ts
  				if (pollres == PGRES_POLLING_OK)
  				{
  					/* SSL handshake done, ready to send startup packet */
+diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-secure.c postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-secure.c
+--- postgresql-8.2.1/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
++++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-secure.c	2007-01-25 11:21:24.000000000 +0200
+@@ -193,10 +193,10 @@
+ }
+ 
+ /*
+- *	Attempt to negotiate secure session.
++ *  Set conn->ssl.
+  */
+ PostgresPollingStatusType
+-pqsecure_open_client(PGconn *conn)
++pqsecure_prepare_client(PGconn *conn)
+ {
+ #ifdef USE_SSL
+ 	/* First time through? */
+@@ -221,7 +221,21 @@
+ 		 * detect whether client_cert_cb() has stored a message.
+ 		 */
+ 		resetPQExpBuffer(&conn->errorMessage);
+-	}
++    }
++    return PGRES_POLLING_WRITING; //Is this correct?
++#else
++	/* shouldn't get here */
++	return PGRES_POLLING_FAILED;
++#endif
++}
++
++/*
++ *	Attempt to negotiate secure session.
++ */
++PostgresPollingStatusType
++pqsecure_open_client(PGconn *conn)
++{
++#ifdef USE_SSL
+ 	/* Begin or continue the actual handshake */
+ 	return open_client_SSL(conn);
+ #else
 diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h
 --- postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
 +++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-01-23 16:36:58.000000000 +0200
@@ -93,3 +140,15 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h postgresql-8.2.1-tsno
  } ConnStatusType;
  
  typedef enum
+diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-int.h postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-int.h
+--- postgresql-8.2.1/src/interfaces/libpq/libpq-int.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-int.h	2007-01-25 11:33:41.000000000 +0200
+@@ -485,6 +485,7 @@
+ 
+ extern int	pqsecure_initialize(PGconn *);
+ extern void pqsecure_destroy(void);
++extern PostgresPollingStatusType pqsecure_prepare_client(PGconn *);
+ extern PostgresPollingStatusType pqsecure_open_client(PGconn *);
+ extern void pqsecure_close(PGconn *);
+ extern ssize_t pqsecure_read(PGconn *, void *ptr, size_t len);
+
