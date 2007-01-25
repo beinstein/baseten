@@ -1,5 +1,5 @@
 //
-// PGTSFunctions.h
+// PGTSSertificateVerificationDelegate.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,18 +26,11 @@
 // $Id$
 //
 
-#import <PGTS/postgresql/libpq-fe.h>
+#import <Foundation/Foundation.h>
 
+@interface PGTSSertificateVerificationDelegate : NSObject 
+{
+	NSMutableArray* mPolicies;
+}
 
-#undef TSEnumerate
-#define TSEnumerate( LOOP_VAR, ENUMERATOR_VAR, ENUMERATION )  \
-for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
-     nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
-
-
-extern inline id PGTSOidAsObject (Oid o);
-extern void PGTSInit ();
-extern void PGTSNoticeProcessor (void* sender, const char* message);
-extern NSString* PGTSModificationName (unichar type);
-extern NSString* PGTSLockOperation (unichar type);
-extern int PGTSSSLConnectionExIndex ();
+@end

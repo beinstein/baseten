@@ -50,6 +50,9 @@
 		5303239E088061EA0024E7EF /* PGTSConnectionQueries.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDC08804EA000BFAFB5 /* PGTSConnectionQueries.m */; };
 		530323C5088062270024E7EF /* NDRunLoopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 530323C3088062270024E7EF /* NDRunLoopMessenger.h */; };
 		530323C6088062270024E7EF /* NDRunLoopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 530323C4088062270024E7EF /* NDRunLoopMessenger.m */; };
+		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
+		5312665D0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h */; };
+		5312665E0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m */; };
 		531746A7095C07E00098D3D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
@@ -241,7 +244,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 53DBE6EA0B661CE800C3D20A /* PostgreSQL-8.2.1 */;
+			remoteGlobalIDString = 53DBE6EA0B661CE800C3D20A;
 			remoteInfo = "PostgreSQL-8.2.1";
 		};
 		53F524D50A51A28900E7DDC4 /* PBXContainerItemProxy */ = {
@@ -273,6 +276,9 @@
 		530323C3088062270024E7EF /* NDRunLoopMessenger.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = NDRunLoopMessenger.h; path = Contrib/NDRunLoopMessenger.h; sourceTree = "<group>"; };
 		530323C4088062270024E7EF /* NDRunLoopMessenger.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = NDRunLoopMessenger.m; path = Contrib/NDRunLoopMessenger.m; sourceTree = "<group>"; };
 		5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = ../Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = SOURCE_ROOT; };
+		531266130B68E28100637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
+		5312665B0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSertificateVerificationDelegate.h; path = Sources/PGTSSertificateVerificationDelegate.h; sourceTree = "<group>"; };
+		5312665C0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSSertificateVerificationDelegate.m; path = Sources/PGTSSertificateVerificationDelegate.m; sourceTree = "<group>"; };
 		5325EAD70A1B2EF600FEA842 /* postgresql */ = {isa = PBXFileReference; lastKnownFileType = folder; name = postgresql; path = "PGTS-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSRoleDescription.h; path = Sources/PGTSRoleDescription.h; sourceTree = "<group>"; };
 		53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSRoleDescription.m; path = Sources/PGTSRoleDescription.m; sourceTree = "<group>"; };
@@ -371,6 +377,7 @@
 				53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */,
 				53594D1C0B13711300378707 /* libpq.a in Frameworks */,
 				53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */,
+				531266140B68E28100637EDA /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -449,6 +456,7 @@
 				534CFECB095DCCDC00BF3440 /* Kerberos.framework */,
 				53A422880981B84C003C3A24 /* libcrypto.dylib */,
 				53F4F5100A370F16004913AF /* libssl.dylib */,
+				531266130B68E28100637EDA /* Security.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -596,6 +604,8 @@
 				53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */,
 				536B892D0A518E4A00379C00 /* PGTSExceptions.h */,
 				536B892E0A518E4A00379C00 /* PGTSExceptions.m */,
+				5312665B0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h */,
+				5312665C0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -653,6 +663,7 @@
 				53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */,
 				53298DF20B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h in Headers */,
 				53298E0F0B330EFB00DE7CC8 /* PGTSACLItem.h in Headers */,
+				5312665D0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -895,7 +906,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "my_build_dir=\"$BUILT_PRODUCTS_DIR\"/PGTS-PostgreSQL\nversion=\"8.2.1\"\npostgresql_source_file=\"postgresql-base-${version}.tar.bz2\"\npostgresql_root=\"${my_build_dir}/postgresql-${version}\"\n\nfunction extract\n{\n    # Extract the sources\n    if [ ! -d \"$postgresql_root\" ]\n    then\n        if [ -e \"$postgresql_root\" ]\n        then\n            echo \"A file named ${postgresql_root} exists and is not a folder. Exiting.\"\n            exit 1\n        fi\n        gnutar -jxf \"$postgresql_source_file\" -C \"$my_build_dir\"\n\t   patch -p0 -d \"$my_build_dir\" < \"$SRCROOT\"/libpq.patch\n    fi\n}\n\nfunction build\n{\n    ptype=`uname -p`\n    my_host=\n    my_target=\"$1\"\n    if [ -z \"$my_target\" ]\n    then\n        my_target=\"$ptype\"\n    fi\n\n\tunset CC\n\tunset CPP\n\tunset CFLAGS\n\tunset CPPFLAGS\n\tunset CXXFLAGS\n\tunset LDFLAGS\n\n    if [ \"powerpc\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch ppc\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk\"\n\n        if [ \"i386\" = \"$ptype\" ]\n        then\n            my_host=\"--host=powerpc-apple-darwin8.6.0\"\n        fi\n    elif [ \"i386\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch i386\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk\"\n\n        if [ \"powerpc\" = \"$ptype\" ]\n        then\n            my_host=\"--host=i386-apple-darwin8.6.0\"\n        fi\n    else\n        echo \"Unsupported architecture $my_target\"\n        exit 1\n    fi\n\n    pushd \"$postgresql_root\"\n\tmake distclean 2> /dev/null\n\techo \"Configure options: $my_host --with-bonjour --disable-shared \\\n    \t--without-zlib --without-readline --prefix=$my_build_dir/$my_target\"\n    ./configure $my_host --with-bonjour --disable-shared \\\n    \t--without-zlib --without-readline --prefix=$my_build_dir/\"$my_target\"\n    make clean 2> /dev/null\n\n    mkdir -p ../\"$my_target\"\n\n\t## PG 8.2 doesn't like to be built piece by piece.\n\tmake -j 4 2> /dev/null\n\n    for x in src/include src/interfaces/libpq src/bin/psql\n    do\n        pushd \"$x\"\n        make install\n        popd\n    done\n    \n    popd\n}\n\nif [ ! -e \"$my_build_dir\"/universal/lib/libpq.a ] || \\\n   [ ! -e \"$my_build_dir\"/universal/bin/psql ] ||\n   [ ! -e \"$my_build_dir\"/postgresql ]\nthen\n\tmkdir -p \"$my_build_dir\"\n\tpushd \"$SRCROOT\"/Contrib/PostgreSQL\n\textract\n\n\tif [ ! -e \"$my_build_dir\"/powerpc/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/powerpc/bin/psql ]\n\tthen\n\t    build powerpc\n\tfi\n\n\tif [ ! -e \"$my_build_dir\"/i386/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/i386/bin/psql ]\n\tthen\n\t    build i386\n\tfi\n\n\tmkdir -p \"$my_build_dir\"/universal/bin\n\tmkdir -p \"$my_build_dir\"/universal/lib\n\tfor file in lib/libpq.a bin/psql\n\tdo\n\t    lipo -create -output \"$my_build_dir\"/universal/\"$file\" \\\n\t\t\t\"$my_build_dir\"/i386/\"$file\" \\\n\t\t\t\"$my_build_dir\"/powerpc/\"$file\"\n\tdone\n\tcp -R \"$my_build_dir\"/powerpc/include \"$my_build_dir\"/postgresql\n\t\"$postgresql_root\"/configure --version | head -n 1 > \"$my_build_dir\"/VERSION\n\n\tpopd\nfi\nexit 0\n";
+			shellScript = "my_build_dir=\"$BUILT_PRODUCTS_DIR\"/PGTS-PostgreSQL\nversion=\"8.2.1\"\npostgresql_source_file=\"postgresql-base-${version}.tar.bz2\"\npostgresql_root=\"${my_build_dir}/postgresql-${version}\"\n\nfunction extract\n{\n    # Extract the sources\n    if [ ! -d \"$postgresql_root\" ]\n    then\n        if [ -e \"$postgresql_root\" ]\n        then\n            echo \"A file named ${postgresql_root} exists and is not a folder. Exiting.\"\n            exit 1\n        fi\n        gnutar -jxf \"$postgresql_source_file\" -C \"$my_build_dir\"\n\t   patch -p0 -d \"$my_build_dir\" < \"$SRCROOT\"/libpq.patch\n    fi\n}\n\nfunction build\n{\n    ptype=`uname -p`\n    my_host=\n    my_target=\"$1\"\n    if [ -z \"$my_target\" ]\n    then\n        my_target=\"$ptype\"\n    fi\n\n\tunset CC\n\tunset CPP\n\tunset CFLAGS\n\tunset CPPFLAGS\n\tunset CXXFLAGS\n\tunset LDFLAGS\n\n    if [ \"powerpc\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch ppc\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk\"\n\n        if [ \"i386\" = \"$ptype\" ]\n        then\n            my_host=\"--host=powerpc-apple-darwin8.6.0\"\n        fi\n    elif [ \"i386\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch i386\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk\"\n\n        if [ \"powerpc\" = \"$ptype\" ]\n        then\n            my_host=\"--host=i386-apple-darwin8.6.0\"\n        fi\n    else\n        echo \"Unsupported architecture $my_target\"\n        exit 1\n    fi\n\n    pushd \"$postgresql_root\"\n    make distclean 2> /dev/null\n\n    if [ \"Debug\" = \"$BUILD_STYLE\" ]\n    then\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl --enable-debug \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared --enable-debug \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    else\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    fi\n\n    make clean 2> /dev/null\n\n    mkdir -p ../\"$my_target\"\n\n\t## PG 8.2 doesn't like to be built piece by piece.\n\tmake -j 4 2> /dev/null\n\n    for x in src/include src/interfaces/libpq src/bin/psql\n    do\n        pushd \"$x\"\n        make install\n        popd\n    done\n    \n    popd\n}\n\nif [ ! -e \"$my_build_dir\"/universal/lib/libpq.a ] || \\\n   [ ! -e \"$my_build_dir\"/universal/bin/psql ] ||\n   [ ! -e \"$my_build_dir\"/postgresql ]\nthen\n\tmkdir -p \"$my_build_dir\"\n\tpushd \"$SRCROOT\"/Contrib/PostgreSQL\n\textract\n\n\tif [ ! -e \"$my_build_dir\"/powerpc/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/powerpc/bin/psql ]\n\tthen\n\t    build powerpc\n\tfi\n\n\tif [ ! -e \"$my_build_dir\"/i386/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/i386/bin/psql ]\n\tthen\n\t    build i386\n\tfi\n\n\tmkdir -p \"$my_build_dir\"/universal/bin\n\tmkdir -p \"$my_build_dir\"/universal/lib\n\tfor file in lib/libpq.a bin/psql\n\tdo\n\t    lipo -create -output \"$my_build_dir\"/universal/\"$file\" \\\n\t\t\t\"$my_build_dir\"/i386/\"$file\" \\\n\t\t\t\"$my_build_dir\"/powerpc/\"$file\"\n\tdone\n\tcp -R \"$my_build_dir\"/powerpc/include \"$my_build_dir\"/postgresql\n\t\"$postgresql_root\"/configure --version | head -n 1 > \"$my_build_dir\"/VERSION\n\n\tpopd\nfi\nexit 0\n";
 		};
 		53E70DBE09824820001785B2 /* Framework Symlink */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -946,6 +957,7 @@
 				53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */,
 				53298DF30B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m in Sources */,
 				53298E100B330EFB00DE7CC8 /* PGTSACLItem.m in Sources */,
+				5312665E0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -18,6 +18,7 @@
 		530132E409D460230037C485 /* BXPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 530132E209D460230037C485 /* BXPGInterface.m */; };
 		53067E7409F59FEC00749ED0 /* BXDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */; };
 		530ADD8409ED21EF004A13C3 /* BaseTen.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADD8309ED21EF004A13C3 /* BaseTen.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		531266E50B68F9CA00637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266E40B68F9CA00637EDA /* Security.framework */; };
 		5314B1A60A371968001D8F54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		531B00DA0A519FD4006AEF08 /* libPGTSTiger.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 536B8AAD0A519D5B00379C00 /* libPGTSTiger.a */; };
 		531C82EB0A63EBD9001AFBC4 /* BXOneToOneRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 531C82E90A63EBD9001AFBC4 /* BXOneToOneRelationshipDescription.h */; };
@@ -214,6 +215,7 @@
 		53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseAdditions.m; path = Sources/BXDatabaseAdditions.m; sourceTree = "<group>"; };
 		530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PGTSTiger.xcodeproj; path = Dependencies/PGTS/TigerFramework/PGTSTiger.xcodeproj; sourceTree = "<group>"; };
 		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
+		531266E40B68F9CA00637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		531C82E90A63EBD9001AFBC4 /* BXOneToOneRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXOneToOneRelationshipDescription.h; path = Sources/BXOneToOneRelationshipDescription.h; sourceTree = "<group>"; };
 		531C82EA0A63EBD9001AFBC4 /* BXOneToOneRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOneToOneRelationshipDescription.m; path = Sources/BXOneToOneRelationshipDescription.m; sourceTree = "<group>"; };
 		531C82F20A63EBF6001AFBC4 /* BXHelperTableMTMRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXHelperTableMTMRelationshipDescription.h; path = Sources/BXHelperTableMTMRelationshipDescription.h; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 				53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */,
 				53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */,
 				53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */,
+				531266E50B68F9CA00637EDA /* Security.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,6 +330,7 @@
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
 				53DBE8120B666C7900C3D20A /* libssl.dylib */,
+				531266E40B68F9CA00637EDA /* Security.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

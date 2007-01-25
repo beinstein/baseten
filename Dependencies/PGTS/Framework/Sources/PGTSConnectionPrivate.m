@@ -33,6 +33,8 @@
 #import <sys/time.h>
 #import <unistd.h>
 #import <openssl/ssl.h>
+#import <Log4Cocoa/Log4Cocoa.h>
+#import "postgresql/libpq-fe.h"
 #import "TSRunloopMessenger.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSConstants.h"
@@ -40,8 +42,12 @@
 #import "PGTSConnectionDelegate.h"
 #import "PGTSConnectionPool.h"
 #import "PGTSExceptions.h"
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "PGTSFunctions.h"
 
+
+static int sslConnectionExIndex = -1;
+
+extern int PGTSVerifySSLSertificate (int preverify_ok, X509_STORE_CTX* x509_ctx);
 
 static NSNotification* 
 PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
@@ -58,6 +64,13 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
     return notification;
 }
 
+int
+PGTSSSLConnectionExIndex ()
+{
+	if (-1 == sslConnectionExIndex)
+		sslConnectionExIndex = SSL_get_ex_new_index (0, NULL, NULL, NULL, NULL);
+	return sslConnectionExIndex;
+}
 
 @interface NSObject (PGTSKeyValueObserving)
 + (BOOL) automaticallyNotifiesObserversForKey: (NSString *) key;
@@ -363,6 +376,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
         log4Error (@"Unable to get connection socket from libpq");
     else
     {
+		sslSetUp = NO;
         if (YES == reset)
         {
             [socket closeFile];
@@ -378,7 +392,18 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
             FD_SET (bsdSocket, &mask);
             selectStatus = 0;
             pollingStatus = pollFunction (connection);
-            
+
+#ifdef USE_SSL
+			if (NO == sslSetUp && CONNECTION_SSL_CONTINUE == PQstatus (connection))
+			{
+				sslSetUp = YES;
+				SSL* ssl = PQgetssl (connection);
+				NSAssert (NULL != ssl, @"Expected ssl struct not to be NULL.");
+				SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLSertificate);
+				SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex(), self);
+			}
+#endif
+			
             switch (pollingStatus)
             {
                 case PGRES_POLLING_OK:
@@ -392,19 +417,7 @@ PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
                     break;
                     
                 case PGRES_POLLING_WRITING:
-                default:
-#ifdef USE_SSL
-					if (CONNECTION_SSL_CONTINUE == PQstatus (conn))
-					{
-						SSL* ssl = PQgetSSL (conn);
-						NSAssert (NULL != ssl, @"Expected ssl struct not to be NULL.");
-						SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLCertificate);
-						//We have this hack since the cert callback cannot have a void* argument.
-						//SSL_get_ex_new_index probably doesn't help here since the index might change across SSL structures.
-						SSL_set_msg_callback_arg (ssl, self);
-					}
-#endif
-					
+                default:					
                     selectStatus = select (bsdSocket + 1, NULL, &mask, NULL, &ltimeout);
                     break;
             } //switch
