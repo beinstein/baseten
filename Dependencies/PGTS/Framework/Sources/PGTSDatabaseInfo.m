@@ -123,7 +123,7 @@
         NSString* queryString = 
         @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname "
         " FROM pg_class c, pg_namespace n, pg_roles r "
-        " WHERE c.relowner = r.oid AND c.relname = $1 AND n.nspname = $2";
+        " WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";
         PGTSResultSet* res = [connection executeQuery: queryString parameters: tableName, schemaName];
         if (0 < [res countOfRows])
         {
