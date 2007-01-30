@@ -121,6 +121,8 @@ strtof (const char * restrict nptr, char ** restrict endptr);
             else
                 [dict setObject: class forKey: key];
         }
+
+        initialized = YES;
     }
     return dict;
 }
