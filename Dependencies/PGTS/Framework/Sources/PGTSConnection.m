@@ -46,6 +46,7 @@
 #import "PGTSConnectionDelegate.h"
 #import "PGTSFunctions.h"
 #import "PGTSDatabaseInfo.h"
+#import "PGTSCertificateVerificationDelegate.h"
 #import <TSDataTypes/TSDataTypes.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 
@@ -76,6 +77,8 @@ struct exceptionAssociation
 
 /** \endcond */
 
+
+static id <PGTSCertificateVerificationDelegate> defaultCertDelegate = nil;
 
 /**
  * Return the result of the given accessor as an NSString
@@ -129,6 +132,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 		tooLate = YES;
 		//This should have been the +initialize method from the start.
 		PGTSInit ();
+		defaultCertDelegate = [[PGTSCertificateVerificationDelegate alloc] init];
 	}
 }
 
@@ -165,6 +169,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
         failedToSendQuery = NO;
         initialCommands = nil;
         //databaseInfo is set after the connection has been made
+		certificateVerificationDelegate = defaultCertDelegate;
         
         exceptionTable = 0;
         [self setDelegate: nil];        
@@ -664,6 +669,18 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 - (BOOL) logsQueries
 {
     return logsQueries;
+}
+
+- (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate
+{
+	return certificateVerificationDelegate;
+}
+
+- (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject
+{
+	certificateVerificationDelegate = anObject;
+	if (nil == certificateVerificationDelegate)
+		certificateVerificationDelegate = defaultCertDelegate;
 }
 @end
 

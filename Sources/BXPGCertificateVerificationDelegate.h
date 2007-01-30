@@ -1,8 +1,8 @@
 //
-// PGTS.h
+// BXPGCertificateVerificationDelegate.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -26,28 +26,15 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
+#import <PGTS/PGTS.h>
+#import <BaseTen/BaseTen.h>
 
-#import <PGTS/PGTSConstants.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSResultRow.h>
-#import <PGTS/PGTSResultRowProtocol.h>
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSConnectionDelegate.h>
-#import <PGTS/PGTSConnectionPool.h>
-#import <PGTS/PGTSConnectionPoolItem.h>
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/PGTSModificationNotifier.h>
-#import <PGTS/PGTSLockNotifier.h>
-#import <PGTS/PGTSExceptions.h>
-#import <PGTS/PGTSCertificateVerificationDelegate.h>
 
-#import <PGTS/PGTSAbstractInfo.h>
-#import <PGTS/PGTSAbstractClassInfo.h>
-#import <PGTS/PGTSDatabaseInfo.h>
-#import <PGTS/PGTSIndexInfo.h>
-#import <PGTS/PGTSTableInfo.h>
-#import <PGTS/PGTSTypeInfo.h>
-#import <PGTS/PGTSFieldInfo.h>
-#import <PGTS/PGTSForeignKeyDescription.h>
+@interface BXPGCertificateVerificationDelegate : PGTSCertificateVerificationDelegate 
+{
+	@public
+	BXDatabaseContext* mContext;
+}
 
-#import <PGTS/postgresql/libpq-fe.h>
+@end

@@ -124,6 +124,9 @@ enum BXPGQueryState
 
 - (PGTSTableInfo *) tableForEntity: (BXEntityDescription *) entity;
 - (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error;
+
+- (void) prepareConnection;
+- (void) checkConnectionStatus: (NSError **) error;
 @end
 
 

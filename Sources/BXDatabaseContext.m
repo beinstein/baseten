@@ -32,6 +32,7 @@
 #import <stdlib.h>
 #import <string.h>
 #import <Log4Cocoa/Log4Cocoa.h>
+#import <BaseTenAppKit/BXDatabaseContextAdditions.h>
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
@@ -219,42 +220,31 @@ extern void BXInit ()
 - (void) connectIfNeeded: (NSError **) error
 {
     NSError* localError = nil;
-    if (nil == mDatabaseURI)
+    if ([self checkDatabaseURI: &localError])
     {
-        NSString* reason = BXLocalizedString (@"noConnectionURI", @"No connection URI given.", @"Error description");
-        NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
-        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-            title, NSLocalizedDescriptionKey,
-            reason, NSLocalizedFailureReasonErrorKey, 
-            reason, NSLocalizedRecoverySuggestionErrorKey, 
-            self, kBXDatabaseContextKey,
-            nil];
-        localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoDatabaseURI userInfo: userInfo];
-    }
-    else
-    {
-        if (nil == mDatabaseInterface)
+        if (NO == [[self databaseInterface] connected])
         {
-            [self willChangeValueForKey: @"autocommits"];
-            mDatabaseInterface = [[[[self class] interfaceClassForScheme: [mDatabaseURI scheme]] alloc] 
-            initWithContext: self databaseURI: mDatabaseURI];
-            [mDatabaseInterface setAutocommits: mAutocommits];
-            [self didChangeValueForKey: @"autocommits"];
-            [mDatabaseInterface setLogsQueries: mLogsQueries];
-        }
-        if (NO == [mDatabaseInterface connected])
-        {
-            if (nil == mUndoManager)
-                mUndoManager = [[NSUndoManager alloc] init];
-            
-            mSeenEntities = [[NSMutableSet alloc] init];
-            mObjects = [[TSNonRetainedObjectDictionary alloc] init];
-            mModifiedObjectIDs = [[NSMutableSet alloc] init];        
-            
-            [mDatabaseInterface connectIfNeeded: &localError];
+			[self lazyInit];
+			[mDatabaseInterface connect: &localError];
+			
+			if (nil == localError) [self connectedToDatabase: &localError];
         }
     }
     BXHandleError (error, localError);
+}
+
+- (void) connectAsyncIfNeeded
+{
+	NSError* localError = nil;
+	if ([self checkDatabaseURI: &localError])
+	{
+		if (NO == [[self databaseInterface] connected])
+		{
+			[self lazyInit];
+			[mDatabaseInterface connectAsync: &localError];
+		}
+	}
+	//FIXME: post notification in case of an error
 }
 
 - (BOOL) isConnected
@@ -438,6 +428,20 @@ extern void BXInit ()
 - (void) handleError: (NSError *) anError
 {
     [[anError BXExceptionWithName: kBXExceptionUnhandledError] raise];
+}
+
+- (void) setModalWindow: (NSWindow *) aWindow
+{
+	if (aWindow != mModalWindow)
+	{
+		[mModalWindow release];
+		mModalWindow = [aWindow retain];
+	}
+}
+
+- (void) setPolicyDelegate: (id) anObject
+{
+	mPolicyDelegate = anObject;
 }
 
 @end
@@ -825,16 +829,19 @@ extern void BXInit ()
 
 - (void) connectedToDatabase: (NSError **) error
 {
-	NSError* localError = nil;
-	TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
+	NSAssert1 (NULL != error, @"Expected error to be set (was %p).", error);
+	if (nil == *error)
 	{
-		[mDatabaseInterface validateEntity: currentEntity error: &localError];
-		if (nil != localError)
-			break;
-		[mLazilyValidatedEntities removeObject: currentEntity];
+		TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
+		{
+			[mDatabaseInterface validateEntity: currentEntity error: error];
+			if (nil != error)
+				break;
+			[mLazilyValidatedEntities removeObject: currentEntity];
+		}
 	}
-
-	BXHandleError (error, localError);
+	
+	if (nil != *error) [self handleError: *error];
 }
 
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
@@ -1435,6 +1442,85 @@ extern void BXInit ()
     }
     BXHandleError (error, localError);
     return objectIDs;
+}
+
+- (BOOL) checkDatabaseURI: (NSError **) error
+{
+	BOOL rval = YES;
+	NSAssert (nil != error, @"Expected error not to be nil.");
+	if (nil == mDatabaseURI)
+	{
+		rval = NO;
+		NSString* reason = BXLocalizedString (@"noConnectionURI", @"No connection URI given.", @"Error description");
+		NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+			title, NSLocalizedDescriptionKey,
+			reason, NSLocalizedFailureReasonErrorKey, 
+			reason, NSLocalizedRecoverySuggestionErrorKey, 
+			self, kBXDatabaseContextKey,
+			nil];
+		*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoDatabaseURI userInfo: userInfo];
+	}
+	return rval;
+}
+
+- (id <BXInterface>) databaseInterface
+{
+	if (nil == mDatabaseInterface)
+	{
+		[self willChangeValueForKey: @"autocommits"];
+		mDatabaseInterface = [[[[self class] interfaceClassForScheme: [mDatabaseURI scheme]] alloc] 
+            initWithContext: self databaseURI: mDatabaseURI];
+		[mDatabaseInterface setAutocommits: mAutocommits];
+		[self didChangeValueForKey: @"autocommits"];
+		[mDatabaseInterface setLogsQueries: mLogsQueries];
+	}
+	return mDatabaseInterface;
+}
+
+- (void) lazyInit
+{
+	if (nil == mUndoManager)
+		mUndoManager = [[NSUndoManager alloc] init];
+	
+	if (nil == mSeenEntities)
+		mSeenEntities = [[NSMutableSet alloc] init];
+	
+	if (nil == mObjects)
+		mObjects = [[TSNonRetainedObjectDictionary alloc] init];
+	
+	if (nil == mModifiedObjectIDs)
+		mModifiedObjectIDs = [[NSMutableSet alloc] init];        
+}
+
+- (BOOL) handleInvalidTrust: (NSValue *) value
+{
+	BOOL rval = NO;
+	struct trustResult trustResult;
+	[value getValue: &trustResult];
+	SecTrustRef trust = trustResult.trust;
+	SecTrustResultType result = trustResult.result;
+	
+	enum BXCertificatePolicy policy = [mPolicyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
+	switch (policy)
+	{			
+		case kBXCertificatePolicyAllow:
+			rval = YES;
+			break;
+			
+		case kBXCertificatePolicyDisplayTrustPanel:
+			//This is in BaseTenAppKit framework.
+			rval = [self displayPanelForTrust: trust];
+			break;
+
+		case kBXCertificatePolicyDeny:
+		case kBXCertificatePolicyUndefined:
+		default:
+			break;
+	}
+	
+	CFRelease (trust);
+	return rval;
 }
 
 @end

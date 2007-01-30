@@ -83,7 +83,8 @@
 
 /** \name Connecting to the database */
 //@{
-- (void) connectIfNeeded: (NSError **) error;
+- (void) connect: (NSError **) error;
+- (void) connectAsync: (NSError **) error;
 //@}
 
 - (NSArray *) keyPathComponents: (NSString *) keyPath;

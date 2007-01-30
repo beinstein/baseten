@@ -23,6 +23,8 @@
 		537E484D0A14B7BA00A22080 /* BXSynchronizedArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */; };
 		537E4A6E0A14C82200A22080 /* BaseTenAppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53AE2CB80B1721F2000E6EF1 /* BaseTen.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */; };
+		53D0D15B0B6F896200D2D101 /* BXDatabaseContextAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53D0D15C0B6F896200D2D101 /* BXDatabaseContextAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -74,6 +76,8 @@
 		537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit.h; path = Sources/BaseTenAppKit.h; sourceTree = "<group>"; };
 		537E4A860A14C91800A22080 /* BaseTenAppKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTenAppKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTen.icns; path = ../BaseTen.icns; sourceTree = SOURCE_ROOT; };
+		53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextAdditions.h; path = Sources/BXDatabaseContextAdditions.h; sourceTree = "<group>"; };
+		53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextAdditions.m; path = Sources/BXDatabaseContextAdditions.m; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,6 +144,8 @@
 				53438E550A384FE500BEDCFF /* BXController.m */,
 				537E484A0A14B7BA00A22080 /* BXSynchronizedArrayController.h */,
 				537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */,
+				53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */,
+				53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */,
 				53726DAD0A30E8FD0086BB60 /* Transformers */,
 			);
 			name = Classes;
@@ -200,6 +206,7 @@
 				53438E2B0A384EE600BEDCFF /* NSController+BXAppKitAdditions.h in Headers */,
 				53438E560A384FE500BEDCFF /* BXController.h in Headers */,
 				5303D6000A39E6CD00917C22 /* BXControllerProtocol.h in Headers */,
+				53D0D15B0B6F896200D2D101 /* BXDatabaseContextAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,6 +328,7 @@
 				53726D860A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m in Sources */,
 				53438E2C0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m in Sources */,
 				53438E570A384FE500BEDCFF /* BXController.m in Sources */,
+				53D0D15C0B6F896200D2D101 /* BXDatabaseContextAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 //
-// PGTS.h
+// PGTSCertificateVerificationDelegate.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,28 +26,20 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
+#import <PGTS/PGTSCertificateVerificationDelegateProtocol.h>
+#import <Security/Security.h>
+#import <openssl/ssl.h>
 
-#import <PGTS/PGTSConstants.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSResultRow.h>
-#import <PGTS/PGTSResultRowProtocol.h>
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSConnectionDelegate.h>
-#import <PGTS/PGTSConnectionPool.h>
-#import <PGTS/PGTSConnectionPoolItem.h>
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/PGTSModificationNotifier.h>
-#import <PGTS/PGTSLockNotifier.h>
-#import <PGTS/PGTSExceptions.h>
-#import <PGTS/PGTSCertificateVerificationDelegate.h>
 
-#import <PGTS/PGTSAbstractInfo.h>
-#import <PGTS/PGTSAbstractClassInfo.h>
-#import <PGTS/PGTSDatabaseInfo.h>
-#import <PGTS/PGTSIndexInfo.h>
-#import <PGTS/PGTSTableInfo.h>
-#import <PGTS/PGTSTypeInfo.h>
-#import <PGTS/PGTSFieldInfo.h>
-#import <PGTS/PGTSForeignKeyDescription.h>
+@interface PGTSCertificateVerificationDelegate : NSObject <PGTSCertificateVerificationDelegate>
+{
+	NSMutableArray* mPolicies;
+}
 
-#import <PGTS/postgresql/libpq-fe.h>
+- (CSSM_CERT_TYPE) x509Version: (X509 *) x509Cert;
+- (SecTrustRef) copyTrustFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx;
+- (SecCertificateRef) copyCertificateFromX509: (X509 *) opensslCert bioOutput: (BIO *) bioOutput;
+- (NSArray *) policies;
+
+@end

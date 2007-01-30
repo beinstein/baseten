@@ -253,50 +253,17 @@ static unsigned int SavepointIndex ()
     [super dealloc];
 }
 
-- (void) connectIfNeeded: (NSError **) error
+- (void) connect: (NSError **) error
 {
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
-    if (nil == connection)
-    {
-        connection = [[PGTSConnection connection] retain];
-        [connection setLogsQueries: logsQueries];
-        [connection setConnectionURL: databaseURI];
-        [connection setDelegate: self];
-        [connection setOverlooksFailedQueries: NO];
-        [connection connect];
-        if (CONNECTION_OK != [connection connectionStatus])
-        {
-            NSString* errorMessage = [connection errorMessage];
-            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                errorMessage, NSLocalizedFailureReasonErrorKey,
-                errorMessage, NSLocalizedRecoverySuggestionErrorKey,
-                errorMessage, kBXErrorMessageKey,
-                BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                nil];
-            *error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionFailed
-                                     userInfo: userInfo];
-        }
-        else
-        {
-            if (YES == autocommits)
-                notifyConnection = [connection retain];
-            else
-            {
-                //Switch the connections since database metadata is cached and the first connection 
-                //to the database gets to be used with the metadata system
-                //We want to use notifyConnection with the metadata
-                PGTSConnection* tempConnection = [connection disconnectedCopy];
-                [tempConnection setLogsQueries: logsQueries];
-                [tempConnection connect];
-                notifyConnection = connection;
-                connection = tempConnection;
+	[self prepareConnection];
+	[connection connect];
+	[self checkConnectionStatus: error];
+}
 
-                log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
-            }
-			
-			[context connectedToDatabase: error];
-        }
-    }
+- (void) connectAsync: (NSError **) error
+{
+	[self prepareConnection];
+	[connection connectAsync];
 }
 
 - (id) createObjectForEntity: (BXEntityDescription *) entity 
@@ -1509,6 +1476,53 @@ static unsigned int SavepointIndex ()
 {
     NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     return [context entityForTable: [table name] inSchema: [table schemaName] error: error];
+}
+
+- (void) prepareConnection
+{
+    if (nil == connection)
+    {
+        connection = [[PGTSConnection connection] retain];
+        [connection setLogsQueries: logsQueries];
+        [connection setConnectionURL: databaseURI];
+        [connection setDelegate: self];
+        [connection setOverlooksFailedQueries: NO];
+	}
+}
+
+- (void) checkConnectionStatus: (NSError **) error
+{
+	NSAssert1 (NULL != error, @"Expected error to be set (was %p).", error);
+	if (CONNECTION_OK != [connection connectionStatus])
+	{
+		NSString* errorMessage = [connection errorMessage];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+			errorMessage, NSLocalizedFailureReasonErrorKey,
+			errorMessage, NSLocalizedRecoverySuggestionErrorKey,
+			errorMessage, kBXErrorMessageKey,
+			BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+			nil];
+		*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionFailed
+		   						 userInfo: userInfo];
+	}
+	else
+	{
+		if (YES == autocommits)
+			notifyConnection = [connection retain];
+		else
+		{
+			//Switch the connections since database metadata is cached and the first connection 
+			//to the database gets to be used with the metadata system
+			//We want to use notifyConnection with the metadata
+			PGTSConnection* tempConnection = [connection disconnectedCopy];
+			[tempConnection setLogsQueries: logsQueries];
+			[tempConnection connect];
+			notifyConnection = connection;
+			connection = tempConnection;
+			
+			log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
+		}
+	}
 }
 @end
 

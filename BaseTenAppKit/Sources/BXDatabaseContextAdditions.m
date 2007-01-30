@@ -1,5 +1,5 @@
 //
-// PGTSSertificateVerificationDelegate.h
+// BXDatabaseContextAdditions.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,11 +26,18 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
+#import "BXDatabaseContextAdditions.h"
+#import <SecurityInterface/SecurityInterface.h>
 
-@interface PGTSSertificateVerificationDelegate : NSObject 
+
+@implementation BXDatabaseContext (BaseTenAppKitAdditions)
+
+- (BOOL) displayPanelForTrust: (SecTrustRef) trust
 {
-	NSMutableArray* mPolicies;
+	NSModalSession session = [NSApp beginModalSessionForWindow: mModalWindow];
+	int rval = [[SFCertificateTrustPanel sharedCertificateTrustPanel] runModalForTrust: trust message: nil];
+	[NSApp endModalSession: session];
+	return NSOKButton == rval;
 }
 
 @end

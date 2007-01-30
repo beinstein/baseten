@@ -36,6 +36,7 @@
 #import "PGTSConstants.h"
 #import "PGTSConnectionDelegate.h"
 #import "PGTSConnectionPrivate.h"
+#import "PGTSCertificateVerificationDelegate.h"
 
 
 void 
@@ -154,78 +155,17 @@ PGTSLockOperation (unichar type)
     return lockOperation;
 }
 
-
-inline CSSM_CERT_TYPE
-x509Version (X509* x509Cert)
-{
-	CSSM_CERT_TYPE rval = CSSM_CERT_X_509v3;
-	switch (X509_get_version (x509Cert))
-	{
-		case 1:
-			rval = CSSM_CERT_X_509v1;
-			break;
-		case 2:
-			rval = CSSM_CERT_X_509v2;
-			break;
-		case 3:
-		default:
-			break;
-	}
-	return rval;
-}
-
-inline SecCertificateRef
-SecCertificateFromX509 (X509* opensslCert, BIO* bioOutput)
-{
-	SecCertificateRef cert = NULL;
-	if (i2d_X509_bio (bioOutput, opensslCert))
-	{
-		BUF_MEM* bioBuffer = NULL;
-		BIO_get_mem_ptr (bioOutput, &bioBuffer);
-		
-		OSStatus status = SecCertificateCreateFromData ((void *) bioBuffer->data, x509Version (opensslCert), CSSM_CERT_ENCODING_DER, &cert);
-		status = noErr;
-	}
-	return cert;
-}
-
 /**
  * \internal
  * Verify an X.509 certificate.
- * Get the X.509 certificate from OpenSSL, encode it in DER format and let Security framework parse it again.
- * This way, we can use the Keychain to verify the certificate, since a CA trusted by the OS or the user
- * might have signed it or the user could have stored the certificate earlier. The preverification result
- * is ignored because it rejects certificates from CAs unknown to OpenSSL. 
  */
 int
-PGTSVerifySSLSertificate (int preverify_ok, void* x509_ctx)
+PGTSVerifySSLCertificate (int preverify_ok, void* x509_ctx)
 {
-	return preverify_ok;
-#if 0 
-	int rval = 0;
+	//FIXME: this function should have a run loop, if possible, and run it until the result has been received.
+	//This way, we can use ordinary Cocoa sheets.
 	SSL* ssl = X509_STORE_CTX_get_ex_data ((X509_STORE_CTX *) x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
 	PGTSConnection* connection = SSL_get_ex_data (ssl, PGTSSSLConnectionExIndex ());
-	
-	//FIXME: move these into the delegate object and make the API such that X509 structure can also be used
-	//when verifying.
-	BIO* bioOutput = BIO_new (BIO_s_mem ());
-	
-	int count = M_sk_num (x509_ctx->untrusted);
-	NSMutableArray* certs = [NSMutableArray arrayWithCapacity: count + 1];
-	SecCertificateRef serverCert = CertificateFromX509 (x509_ctx->cert, bioOutput);
-	[certs addObject: serverCert];
-	
-	for (int i = 0; i < count; i++)
-	{
-		BIO_reset (bioOutput);
-		SecCertificateRef chainCert = CertificateFromX509 (M_sk_value (x509_ctx->untrusted, i));
-		[certs addObject: chainCert];
-	}
-	
-	SecTrustRef trust = NULL;
-	OSStatus status = SecTrustCreateWithCertificates (certs,<#CFTypeRef policies#>, &trust);
-
-	BIO_free (bioOutput);
+	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLConnection: x509_ctx preverifyStatus: preverify_ok]);
 	return rval;
-#endif
 }

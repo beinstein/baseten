@@ -32,6 +32,13 @@
 extern void BXInit ();
 
 
+struct trustResult
+{
+	SecTrustRef trust;
+	SecTrustResultType result;
+};
+
+
 @interface BXDatabaseContext (PrivateMethods)
 /* Moved from the context. */
 - (BOOL) executeUpdateObject: (BXDatabaseObject *) anObject key: (id) aKey value: (id) aValue error: (NSError **) error;
@@ -60,4 +67,9 @@ extern void BXInit ();
                            entity: (BXEntityDescription *) entity
                         predicate: (NSPredicate *) predicate
                             error: (NSError **) error;
+- (BOOL) checkDatabaseURI: (NSError **) error;
+- (id <BXInterface>) databaseInterface;
+- (void) lazyInit;
+- (BOOL) handleInvalidTrust: (NSValue *) value;
+
 @end

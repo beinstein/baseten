@@ -79,3 +79,11 @@ enum BXRelationshipType
     kBXRelationshipOneToMany     = (1 << 2),
     kBXRelationshipManyToMany    = (1 << 3)
 };
+
+enum BXCertificatePolicy
+{
+	kBXCertificatePolicyUndefined			= (1 << 0),
+	kBXCertificatePolicyAllow				= (1 << 1),
+	kBXCertificatePolicyDeny				= (1 << 2),
+	kBXCertificatePolicyDisplayTrustPanel	= (1 << 3)
+};

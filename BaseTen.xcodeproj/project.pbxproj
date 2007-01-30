@@ -99,6 +99,9 @@
 		53B86FFA0A0A1D6F007315BC /* BXPropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B86FFB0A0A1D6F007315BC /* BXPropertyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */; };
 		53B872830A0A4CEC007315BC /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
+		53D0D17C0B6F8A6800D2D101 /* BXPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */; };
+		53D0D19E0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */; };
 		53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8010B666C3B00C3D20A /* libcrypto.dylib */; };
 		53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8120B666C7900C3D20A /* libssl.dylib */; };
 		53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
@@ -254,6 +257,9 @@
 		53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPropertyDescription.m; path = Sources/BXPropertyDescription.m; sourceTree = "<group>"; };
 		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
+		53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPolicyDelegate.h; path = Sources/BXPolicyDelegate.h; sourceTree = "<group>"; };
+		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
+		53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGCertificateVerificationDelegate.m; path = Sources/BXPGCertificateVerificationDelegate.m; sourceTree = "<group>"; };
 		53DBE8010B666C3B00C3D20A /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53DBE8120B666C7900C3D20A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
 		53E11A250A791A8D00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
@@ -353,9 +359,8 @@
 				5301300B09D437030037C485 /* BXDatabaseContext.h */,
 				53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */,
 				5301300C09D437030037C485 /* BXDatabaseContext.m */,
+				53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */,
 				53933EF409EBD082001D00BB /* BXInterface.h */,
-				530132E109D460230037C485 /* BXPGInterface.h */,
-				530132E209D460230037C485 /* BXPGInterface.m */,
 				530132D709D45F9B0037C485 /* BXDatabaseObject.h */,
 				530132D809D45F9B0037C485 /* BXDatabaseObject.m */,
 				5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */,
@@ -367,6 +372,7 @@
 				5301302709D43A450037C485 /* BXConstants.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
+				53D0D1980B6F908A00D2D101 /* PostgreSQL Interface */,
 				53B8730F0A0A53D9007315BC /* Descriptions */,
 				537E983E0AAF539E00542F9C /* Automatically-updating containers */,
 			);
@@ -447,6 +453,17 @@
 			name = Descriptions;
 			sourceTree = "<group>";
 		};
+		53D0D1980B6F908A00D2D101 /* PostgreSQL Interface */ = {
+			isa = PBXGroup;
+			children = (
+				530132E109D460230037C485 /* BXPGInterface.h */,
+				530132E209D460230037C485 /* BXPGInterface.m */,
+				53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */,
+				53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */,
+			);
+			name = "PostgreSQL Interface";
+			sourceTree = "<group>";
+		};
 		53F523520A51A24D00E7DDC4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -504,6 +521,8 @@
 				53A75FF00B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */,
 				5347BB520B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h in Headers */,
 				539EE9F20B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h in Headers */,
+				53D0D17C0B6F8A6800D2D101 /* BXPolicyDelegate.h in Headers */,
+				53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -765,6 +784,7 @@
 				537E986A0AAF57E100542F9C /* BXSetProxy.m in Sources */,
 				537E98820AAF71D000542F9C /* BXSetRelationProxy.m in Sources */,
 				53B3F38F0AD63A96003E807B /* BXSetHelperTableRelationProxy.m in Sources */,
+				53D0D19E0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

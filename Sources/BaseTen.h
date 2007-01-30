@@ -35,6 +35,7 @@
 #import <BaseTen/BXDatabaseObjectID.h>
 #import <BaseTen/BXRelationshipDescriptionProtocol.h>
 #import <BaseTen/BXException.h>
+#import <BaseTen/BXPolicyDelegate.h>
 
 
 /**

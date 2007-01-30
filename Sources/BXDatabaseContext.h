@@ -32,6 +32,12 @@
 #define IBAction void
 #endif
 
+#ifndef IBOutlet
+#define IBOutlet
+#endif
+
+@class NSWindow;
+
 
 @protocol BXInterface;
 @protocol BXObjectAsynchronousLocking;
@@ -55,6 +61,10 @@
     BOOL                            mAutocommits;
     BOOL                            mDeallocating;
 	NSMutableSet*                   mLazilyValidatedEntities;
+	BOOL							mConnectingAsync;
+	
+	IBOutlet NSWindow*				mModalWindow;
+	IBOutlet id						mPolicyDelegate;
 }
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
 + (Class) interfaceClassForScheme: (NSString *) scheme;
@@ -76,7 +86,9 @@
 
 - (BOOL) logsQueries;
 - (void) setLogsQueries: (BOOL) aBool;
+
 - (void) connectIfNeeded: (NSError **) error;
+- (void) connectAsyncIfNeeded;
 
 - (BOOL) registerObject: (BXDatabaseObject *) anObject;
 - (void) unregisterObject: (BXDatabaseObject *) anObject;
@@ -91,6 +103,9 @@
 - (void) redoInvocations: (NSArray *) invocations;
 
 - (void) handleError: (NSError *) anError;
+
+- (void) setModalWindow: (NSWindow *) aWindow;
+- (void) setPolicyDelegate: (id) anObject;
 @end
 
 
