@@ -51,8 +51,8 @@
 		530323C5088062270024E7EF /* NDRunLoopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 530323C3088062270024E7EF /* NDRunLoopMessenger.h */; };
 		530323C6088062270024E7EF /* NDRunLoopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 530323C4088062270024E7EF /* NDRunLoopMessenger.m */; };
 		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
-		5312665D0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h */; };
-		5312665E0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m */; };
+		5312665D0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5312665E0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */; };
 		531746A7095C07E00098D3D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
@@ -161,6 +161,9 @@
 		53BA50990880501E00BFAFB5 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53BEBC5B08805EDE00EF494D /* PGTS_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 32DBCF5E0370ADEE00C91783 /* PGTS_Prefix.pch */; };
 		53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */; };
+		53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
+		53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
+		53D0D0590B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53D72FE70A51A4B6000E47A7 /* libTSDataTypes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 531B02680A51A1EA006AEF08 /* libTSDataTypes.a */; };
 		53D72FF30A51A5CB000E47A7 /* libTSDataTypes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 531B02680A51A1EA006AEF08 /* libTSDataTypes.a */; };
 		53D9B38A08B5256700ADB959 /* PGTSAbstractClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -277,8 +280,8 @@
 		530323C4088062270024E7EF /* NDRunLoopMessenger.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = NDRunLoopMessenger.m; path = Contrib/NDRunLoopMessenger.m; sourceTree = "<group>"; };
 		5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = ../Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = SOURCE_ROOT; };
 		531266130B68E28100637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
-		5312665B0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSertificateVerificationDelegate.h; path = Sources/PGTSSertificateVerificationDelegate.h; sourceTree = "<group>"; };
-		5312665C0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSSertificateVerificationDelegate.m; path = Sources/PGTSSertificateVerificationDelegate.m; sourceTree = "<group>"; };
+		5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCertificateVerificationDelegate.h; path = Sources/PGTSCertificateVerificationDelegate.h; sourceTree = "<group>"; };
+		5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSCertificateVerificationDelegate.m; path = Sources/PGTSCertificateVerificationDelegate.m; sourceTree = "<group>"; };
 		5325EAD70A1B2EF600FEA842 /* postgresql */ = {isa = PBXFileReference; lastKnownFileType = folder; name = postgresql; path = "PGTS-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSRoleDescription.h; path = Sources/PGTSRoleDescription.h; sourceTree = "<group>"; };
 		53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSRoleDescription.m; path = Sources/PGTSRoleDescription.m; sourceTree = "<group>"; };
@@ -347,6 +350,7 @@
 		53BA503708804F9A00BFAFB5 /* PGTS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PGTS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		53BA503E08804FBC00BFAFB5 /* psql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = psql; path = "PGTS-PostgreSQL/universal/bin/psql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Log4Cocoa.xcodeproj; path = Contrib/Log4Cocoa/Log4Cocoa.xcodeproj; sourceTree = "<group>"; };
+		53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PGTSCertificateVerificationDelegateProtocol.h; path = Sources/PGTSCertificateVerificationDelegateProtocol.h; sourceTree = "<group>"; };
 		53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSAbstractClassInfo.h; path = Sources/PGTSAbstractClassInfo.h; sourceTree = "<group>"; };
 		53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSAbstractClassInfo.m; path = Sources/PGTSAbstractClassInfo.m; sourceTree = "<group>"; };
 		53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTypeInfo.h; path = Sources/PGTSTypeInfo.h; sourceTree = "<group>"; };
@@ -378,6 +382,8 @@
 				53594D1C0B13711300378707 /* libpq.a in Frameworks */,
 				53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */,
 				531266140B68E28100637EDA /* Security.framework in Frameworks */,
+				53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */,
+				53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -604,8 +610,9 @@
 				53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */,
 				536B892D0A518E4A00379C00 /* PGTSExceptions.h */,
 				536B892E0A518E4A00379C00 /* PGTSExceptions.m */,
-				5312665B0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h */,
-				5312665C0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m */,
+				53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */,
+				5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */,
+				5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -663,7 +670,8 @@
 				53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */,
 				53298DF20B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h in Headers */,
 				53298E0F0B330EFB00DE7CC8 /* PGTSACLItem.h in Headers */,
-				5312665D0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.h in Headers */,
+				5312665D0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h in Headers */,
+				53D0D0590B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -957,7 +965,7 @@
 				53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */,
 				53298DF30B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m in Sources */,
 				53298E100B330EFB00DE7CC8 /* PGTSACLItem.m in Sources */,
-				5312665E0B68F23C00637EDA /* PGTSSertificateVerificationDelegate.m in Sources */,
+				5312665E0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

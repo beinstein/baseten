@@ -36,6 +36,7 @@
 @class PGTSDatabaseInfo;
 @class TSObjectTagDictionary;
 @protocol PGTSConnectionDelegate;
+@protocol PGTSCertificateVerificationDelegate;
 
 
 @interface PGTSConnection : NSObject 
@@ -68,14 +69,16 @@
     NSMutableDictionary* deserializationDictionary;
     NSString* initialCommands;
 
+	volatile ConnStatusType connectionStatus;
+    struct timeval timeout;
+	
+	id <PGTSCertificateVerificationDelegate> certificateVerificationDelegate;
+
 	BOOL connectsAutomatically;
     BOOL reconnectsAutomatically;
     BOOL overlooksFailedQueries;
     BOOL delegateProcessesNotices;
-
-	volatile ConnStatusType connectionStatus;
-    struct timeval timeout;
-
+	
     volatile BOOL logsQueries;
 	volatile BOOL shouldContinueThread;
     volatile BOOL threadRunning;
@@ -138,6 +141,9 @@
 
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;
+
+- (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
+- (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;
 @end
 
 

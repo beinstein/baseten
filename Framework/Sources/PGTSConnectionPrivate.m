@@ -47,7 +47,7 @@
 
 static int sslConnectionExIndex = -1;
 
-extern int PGTSVerifySSLSertificate (int preverify_ok, X509_STORE_CTX* x509_ctx);
+extern int PGTSVerifySSLCertificate (int preverify_ok, X509_STORE_CTX* x509_ctx);
 
 static NSNotification* 
 PGTSExtractPgNotification (id anObject, PGnotify* pgNotification)
@@ -399,7 +399,7 @@ PGTSSSLConnectionExIndex ()
 				sslSetUp = YES;
 				SSL* ssl = PQgetssl (connection);
 				NSAssert (NULL != ssl, @"Expected ssl struct not to be NULL.");
-				SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLSertificate);
+				SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLCertificate);
 				SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex(), self);
 			}
 #endif

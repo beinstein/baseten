@@ -1,5 +1,5 @@
 //
-// PGTSSertificateVerificationDelegate.h
+// PGTSCertificateVerificationDelegateProtocol.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,11 +26,11 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-
-@interface PGTSSertificateVerificationDelegate : NSObject 
-{
-	NSMutableArray* mPolicies;
-}
-
+@protocol PGTSCertificateVerificationDelegate
+/** 
+ * Should the SSL connection be allowed or not.
+ * This might not be called from the main thread.
+ */
+- (BOOL) PGTSAllowSSLConnection: (void *) sslStruct preverifyStatus: (int) preverifyStatus;
 @end
+
