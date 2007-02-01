@@ -143,7 +143,6 @@ PGTSSSLConnectionExIndex ()
             else
                 [delegate PGTSConnectionEstablished: self];
         }
-        
         else
         {
             [delegate PGTSConnectionFailed: self];
@@ -264,6 +263,20 @@ PGTSSSLConnectionExIndex ()
     }    
 }
 
+- (void) disconnectAndCleanup
+{
+	//N.B. No locking
+	[socket closeFile];
+	[socket release];
+	socket = nil;
+	if (NULL != cancelRequest)
+	{
+		PQfreeCancel (cancelRequest);
+		cancelRequest = NULL;
+	}
+	PQfinish (connection);
+	connection = NULL;
+}	
 @end
 
 

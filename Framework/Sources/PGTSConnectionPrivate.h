@@ -52,6 +52,7 @@
 - (PGTSResultSet *) resultFromProxy: (volatile PGTSConnection *) proxy status: (int) status;
 - (int) sendResultsToDelegate: (int) status;
 - (void) handleFailedQuery;
+- (void) disconnectAndCleanup;
 @end
 
 

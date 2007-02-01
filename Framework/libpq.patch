@@ -1,30 +1,3 @@
-
- libpq.patch
- BaseTen
-
- Copyright (C) 2006 Marko Karppinen & Co. LLC.
-
- Before using this software, please review the available licensing options
- by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
- us at sales@karppinen.fi. Without an additional license, this software
- may be distributed only in compliance with the GNU General Public License.
-
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License, version 2.0,
- as published by the Free Software Foundation.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
- $Id$
-
 diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c
 --- postgresql-8.2.1/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
 +++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c	2007-01-25 11:52:27.000000000 +0200
@@ -89,7 +62,7 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-ts
  					/* SSL handshake done, ready to send startup packet */
 diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-secure.c postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-secure.c
 --- postgresql-8.2.1/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
-+++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-secure.c	2007-01-25 11:21:24.000000000 +0200
++++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-secure.c	2007-02-01 14:35:46.000000000 +0200
 @@ -193,10 +193,10 @@
  }
  
@@ -126,6 +99,14 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-secure.c postgresql-8.2.1-tsn
  	/* Begin or continue the actual handshake */
  	return open_client_SSL(conn);
  #else
+@@ -851,6 +865,7 @@
+ 	if (r <= 0)
+ 	{
+ 		int			err = SSL_get_error(conn->ssl, r);
++        printf ("SSL error: %d\n", err);
+ 
+ 		switch (err)
+ 		{
 diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h
 --- postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
 +++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-01-23 16:36:58.000000000 +0200
@@ -151,4 +132,3 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-int.h postgresql-8.2.1-tsn
  extern PostgresPollingStatusType pqsecure_open_client(PGconn *);
  extern void pqsecure_close(PGconn *);
  extern ssize_t pqsecure_read(PGconn *, void *ptr, size_t len);
-

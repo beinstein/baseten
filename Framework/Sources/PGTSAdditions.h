@@ -77,6 +77,10 @@
 @interface NSCalendarDate (PGTSAdditions)
 @end
 
+@interface NSURL (PGTSAdditions)
+- (NSMutableDictionary *) PGTSConnectionDictionary;
+@end
+
 @interface PGTSAbstractClass : NSObject
 {
 }
