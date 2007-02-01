@@ -54,7 +54,7 @@
  * might have signed it or the user could have stored the certificate earlier. The preverification result
  * is ignored because it rejects certificates from CAs unknown to OpenSSL. 
  */ 
-- (BOOL) PGTSAllowSSLConnection: (void *) x509_ctx preverifyStatus: (int) preverifyStatus
+- (BOOL) PGTSAllowSSLForConnection: (PGTSConnection *) connection context: (void *) x509_ctx preverifyStatus: (int) preverifyStatus
 {
 	BOOL rval = NO;
 	SecTrustResultType result = kSecTrustResultInvalid;
