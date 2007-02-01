@@ -31,4 +31,5 @@
 
 @interface NSObject (BXPolicyDelegate)
 - (enum BXCertificatePolicy) BXDatabaseContext: (BXDatabaseContext *) ctx handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
+- (enum BXSSLMode) BXSSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
 @end

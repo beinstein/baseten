@@ -30,6 +30,7 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import <openssl/x509.h>
+#import <PGTS/PGTSConnectionPrivate.h>
 
 
 @implementation BXPGCertificateVerificationDelegate
@@ -84,7 +85,7 @@
 				i++;
 			}
 			
-			if (ok && i == count && NULL == ++chain)
+			if (ok && i == count && NULL == *(++chain))
 			{
 				//The certificates match; proceed with the connection.
 				rval = YES;
@@ -117,7 +118,7 @@
 			struct trustResult trustResult = {trust, result};
 			CFRetain (trust);
 			NSValue* resultValue = [NSValue valueWithBytes: &trustResult objCType: @encode (struct trustResult)];
-			[mContext performSelectorOnMainThread: @selector (handleUntrustedCertificate:) withObject: resultValue waitUntilDone: NO];
+			[mContext performSelectorOnMainThread: @selector (handleInvalidTrust:) withObject: resultValue waitUntilDone: NO];
 		}
 
 		BXSafeCFRelease (trust);

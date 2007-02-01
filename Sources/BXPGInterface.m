@@ -89,6 +89,14 @@ static unsigned int SavepointIndex ()
     return savepointIndex;
 }
 
+static NSString* SSLMode (enum BXSSLMode mode)
+{
+	NSString* rval = @"require";
+	if (kBXSSLModeDisable == mode)
+		rval = @"disable";
+	return rval;
+}
+
 
 @interface PGTSForeignKeyDescription (BXPGInterfaceAdditions)
 - (BXRelationshipDescription *) BXPGRelationshipFromEntity: (BXEntityDescription *) srcEntity
@@ -258,14 +266,22 @@ static unsigned int SavepointIndex ()
 
 - (void) connect: (NSError **) error
 {
-	[self prepareConnection];
+	enum BXSSLMode mode = [context sslMode];
+	[self prepareConnection: mode];
 	[connection connect];
 	[self checkConnectionStatus: error];
+	
+	if (nil != *error && mode == kBXSSLModePrefer)
+	{
+		[self prepareConnection: kBXSSLModeDisable];
+		[connection connect];
+		[self checkConnectionStatus: error];
+	}
 }
 
 - (void) connectAsync: (NSError **) error
 {
-	[self prepareConnection];
+	[self prepareConnection: [context sslMode]];
 	[connection connectAsync];
 }
 
@@ -1481,18 +1497,22 @@ static unsigned int SavepointIndex ()
     return [context entityForTable: [table name] inSchema: [table schemaName] error: error];
 }
 
-- (void) prepareConnection
+- (void) prepareConnection: (enum BXSSLMode) mode
 {
     if (nil == connection)
     {
         connection = [[PGTSConnection connection] retain];
 		cvDelegate = [[BXPGCertificateVerificationDelegate alloc] init];
-        [connection setLogsQueries: logsQueries];
-        [connection setConnectionURL: databaseURI];
-        [connection setDelegate: self];
+		cvDelegate->mContext = context;
+		[connection setCertificateVerificationDelegate: cvDelegate];				
         [connection setOverlooksFailedQueries: NO];
-		[connection setCertificateVerificationDelegate: cvDelegate];
+		[connection setDelegate: self];
 	}
+	
+	NSMutableDictionary* connectionDict = [databaseURI PGTSConnectionDictionary];
+	[connectionDict setValue: SSLMode (mode) forKey: kPGTSSSLModeKey];
+	[connection setConnectionDictionary: connectionDict];
+	[connection setLogsQueries: logsQueries];
 }
 
 - (void) checkConnectionStatus: (NSError **) error
@@ -1610,12 +1630,13 @@ static unsigned int SavepointIndex ()
 
 - (void) PGTSConnectionFailed: (PGTSConnection *) aConnection
 {
-	NSLog (@"Connection established: %p", aConnection);
+	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorSSLConnectionFailed userInfo: nil];
+	[context connectedToDatabase: NO async: YES error: &error];
 }
 
 - (void) PGTSConnectionEstablished: (PGTSConnection *) aConnection
 {
-	NSLog (@"Connection failed: %p", aConnection);
+	[context connectedToDatabase: YES async: YES error: nil];
 }
 
 - (void) rowsLocked: (NSNotification *) notification

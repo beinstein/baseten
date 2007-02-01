@@ -241,15 +241,21 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 {
     BOOL rval = NO;
     CheckExceptionTable (self, kPGTSRaiseForConnectAsync, messageDelegateAfterConnecting);
-    if (NULL == connection)
-    {
-        const char* conninfo = [connectionString UTF8String];
-        if ((connection = PQconnectStart (conninfo)))
-        {
-            rval = YES;
-            [workerProxy workerPollConnectionResetting: NO];
-        }
-    }
+
+	[connectionLock lock];
+	if (NULL != connection)
+	{
+		PQfinish (connection);
+		connection = NULL;
+	}
+	[connectionLock unlock];
+	
+	const char* conninfo = [connectionString UTF8String];
+	if ((connection = PQconnectStart (conninfo)))
+	{
+		rval = YES;
+		[workerProxy workerPollConnectionResetting: NO];
+	}
     return rval;
 }
 
@@ -320,14 +326,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
        [[PGTSConnectionPool sharedInstance] removeConnection: self];
        
        [connectionLock lock];
-       [socket closeFile];
-       [socket release];
-       socket = nil;
-       if (NULL != cancelRequest)
-           PQfreeCancel (cancelRequest);
-       PQfinish (connection);
-       connection = NULL;
-       
+	   [self disconnectAndCleanup];       
        [connectionLock unlock];
        [nc postNotificationName: kPGTSDidDisconnectNotification object: self];
    }
@@ -452,26 +451,16 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
  * Connection variables.
  */
 //@{
-#define SetIf( VALUE, KEY ) if ((VALUE)) [connectionDict setObject: VALUE forKey: KEY];
 - (BOOL) setConnectionURL: (NSURL *) url
 {
     log4Debug (@"Connection URL: %@", url);
-    BOOL rval = NO;
-    if (0 == [@"pgsql" caseInsensitiveCompare: [url scheme]])
-    {
-        rval = YES;
-        NSMutableDictionary* connectionDict = [NSMutableDictionary dictionary];    
-        
-        NSString* relativePath = [url relativePath];
-        if (1 <= [relativePath length])
-            SetIf ([relativePath substringFromIndex: 1], kPGTSDatabaseNameKey);
-
-        SetIf ([url host], kPGTSHostKey);
-        SetIf ([url user], kPGTSUserNameKey);
-        SetIf ([url password], kPGTSPasswordKey);
-        SetIf ([url port], kPGTSPortKey);
-        [self setConnectionDictionary: connectionDict];
-    }
+	BOOL rval = NO;
+	NSDictionary* connectionDict = [url PGTSConnectionDictionary];
+	if (nil != connectionDict)
+	{
+		[self setConnectionDictionary: connectionDict];
+		rval = YES;
+	}	
     return rval;
 }
 
@@ -724,7 +713,8 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 
 - (BOOL) connected
 {
-    return (NULL != connection && CONNECTION_BAD != [self connectionStatus]);
+	ConnStatusType status = [self connectionStatus];
+    return (NULL != connection && CONNECTION_OK == status);
 }
 
 - (NSString *) databaseName

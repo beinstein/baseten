@@ -34,6 +34,7 @@
 
 - (void) displayPanelForTrust: (SecTrustRef) trust
 {
+	mDisplayingSheet = YES;
 	[[SFCertificateTrustPanel sharedCertificateTrustPanel] beginSheetForWindow: modalWindow modalDelegate: self 
 																didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
 																   contextInfo: NULL trust: trust message: nil];
@@ -41,7 +42,17 @@
 
 - (void) certificateTrustSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
-	if (NSOKButton == returnCode) [self connectAsyncIfNeeded];
+	mDisplayingSheet = NO;
+	if (NSFileHandlingPanelOKButton == returnCode) 
+		[self connectAsyncIfNeeded];
+	else
+	{
+		//FIXME: Create an NSError and set it in userInfo to kBXErrorKey.
+		NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
+																	 object: self 
+																   userInfo: nil];
+		[[NSNotificationCenter defaultCenter] postNotification: notification];
+	}
 }
 
 @end

@@ -184,8 +184,8 @@
         [databaseContext release];
         databaseContext = ctx;
 		
-	if (nil != databaseContext)
-	{
+		if (nil != databaseContext)
+		{
             [databaseContext retain];
             
             NSError* error = nil;
@@ -198,11 +198,11 @@
                 [self BXHandleError: error];
             else
             {
-                [entityDescription setDatabaseObjectClass: NSClassFromString([self databaseObjectClassName])];
+                [entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];
                 
                 [self setEntityDescription: entityDescription];
             }
-	}
+		}
     }
 }
 

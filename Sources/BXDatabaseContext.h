@@ -61,14 +61,17 @@
     TSNonRetainedObjectDictionary*  mObjects;
     NSMutableSet*                   mModifiedObjectIDs;
     NSUndoManager*                  mUndoManager;
-    BOOL                            mLogsQueries;
-    BOOL                            mAutocommits;
-    BOOL                            mDeallocating;
 	NSMutableSet*                   mLazilyValidatedEntities;
-	BOOL							mConnectingAsync;
 	
 	IBOutlet NSWindow*				modalWindow;
 	IBOutlet id						policyDelegate;
+
+    BOOL                            mLogsQueries;
+    BOOL                            mAutocommits;
+    BOOL                            mDeallocating;
+	BOOL							mConnectingAsync;
+	BOOL							mDisplayingSheet;
+	BOOL							mRetryingConnection;
 }
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
 + (Class) interfaceClassForScheme: (NSString *) scheme;
@@ -142,13 +145,14 @@
 
 
 @interface BXDatabaseContext (DBInterfaces)
-- (void) connectedToDatabase: (NSError **) error;
+- (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectStatus) status;
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
 - (void) handleInvalidTrust: (NSValue *) value;
+- (enum BXSSLMode) sslMode;
 @end
 
 

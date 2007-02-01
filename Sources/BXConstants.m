@@ -48,6 +48,8 @@ NSString* const kBXErrorKey = @"kBXErrorKey";
 NSString* const kBXObjectStatusKey = @"kBXObjectStatusKey";
 NSString* const kBXObjectIDKey = @"kBXObjectIDKey";
 NSString* const kBXPrimaryKeyFieldsKey = @"kBXPrimaryKeyFieldsKey";
+NSString* const kBXConnectionSuccessfulNotification = @"kBXConnectionSuccessfulNotification";
+NSString* const kBXConnectionFailedNotification = @"kBXConnectionFailedNotification";
 
 NSString* const kBXErrorDomain = @"kBXErrorDomain";
 NSString* const kBXErrorMessageKey = @"kBXErrorMessageKey";

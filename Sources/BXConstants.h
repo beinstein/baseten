@@ -49,6 +49,8 @@ extern NSString* const kBXObjectStatusKey;
 extern NSString* const kBXObjectIDKey;
 extern NSString* const kBXEntityDescriptionKey;
 extern NSString* const kBXPrimaryKeyFieldsKey;
+extern NSString* const kBXConnectionSuccessfulNotification;
+extern NSString* const kBXConnectionFailedNotification;
 
 extern NSString* const kBXErrorDomain;
 extern NSString* const kBXErrorMessageKey;
@@ -60,7 +62,8 @@ enum BXError
     kBXErrorNoTableForEntity,
     kBXErrorLockNotAcquired,
     kBXErrorNoDatabaseURI,
-    kBXErrorObservingFailed
+    kBXErrorObservingFailed,
+	kBXErrorSSLConnectionFailed
 };
 
 enum BXModificationType
@@ -82,8 +85,16 @@ enum BXRelationshipType
 
 enum BXCertificatePolicy
 {
-	kBXCertificatePolicyUndefined			= (1 << 0),
-	kBXCertificatePolicyAllow				= (1 << 1),
-	kBXCertificatePolicyDeny				= (1 << 2),
-	kBXCertificatePolicyDisplayTrustPanel	= (1 << 3)
+	kBXCertificatePolicyUndefined			= 0,
+	kBXCertificatePolicyAllow,
+	kBXCertificatePolicyDeny,
+	kBXCertificatePolicyDisplayTrustPanel
+};
+
+enum BXSSLMode
+{
+	kBXSSLModeUndefined	= 0,
+	kBXSSLModeRequire,
+	kBXSSLModeDisable,
+	kBXSSLModePrefer
 };

@@ -228,7 +228,7 @@ extern void BXInit ()
 			[mDatabaseInterface connect: &localError];
 			
 			if (nil == localError) 
-				[self connectedToDatabase: &localError];
+				[self connectedToDatabase: YES async: NO error: error];
 			else
 			{
 				[mDatabaseInterface release];
@@ -840,21 +840,69 @@ extern void BXInit ()
 
 @implementation BXDatabaseContext (DBInterfaces)
 
-- (void) connectedToDatabase: (NSError **) error
+- (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 {
-	NSAssert1 (NULL != error, @"Expected error to be set (was %p).", error);
-	if (nil == *error)
+	NSAssert (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
+	
+	if (NO == connected)
 	{
-		TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
+		if (NO == mDisplayingSheet)
 		{
-			[mDatabaseInterface validateEntity: currentEntity error: error];
-			if (nil != error)
-				break;
-			[mLazilyValidatedEntities removeObject: currentEntity];
+			if (NO == mRetryingConnection)
+			{
+				mRetryingConnection = YES;
+				[self connectAsyncIfNeeded];
+			}
+			else
+			{
+				mRetryingConnection = NO;
+				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
+																			 object: self 
+																		   userInfo: [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey]];
+				[[NSNotificationCenter defaultCenter] postNotification: notification];
+			}
 		}
 	}
-	
-	if (nil != *error) [self handleError: *error];
+	else //YES == connected
+	{
+		NSError* localError = nil;
+		if (NULL == error || nil == *error)
+		{
+			TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
+			{
+				[mDatabaseInterface validateEntity: currentEntity error: &localError];
+				if (nil != localError)
+					break;
+				[mLazilyValidatedEntities removeObject: currentEntity];
+			}
+		}
+		
+		if (NO == async)
+		{
+			BXHandleError (error, localError);
+		}
+		else
+		{
+			mRetryingConnection = NO;
+
+			NSNotification* notification = nil;
+			if (nil == localError)
+			{
+				notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification
+															 object: self 
+														   userInfo: nil];			
+				[[NSNotificationCenter defaultCenter] postNotification: notification];
+			}
+			else
+			{
+				//FIXME: what is the state in this case? Connected?
+				notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
+															 object: self
+														   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
+				[[NSNotificationCenter defaultCenter] postNotification: notification];
+			}
+		}
+	}
 }
 
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
@@ -1084,6 +1132,14 @@ extern void BXInit ()
 	
 	CFRelease (trust);
 }
+
+- (enum BXSSLMode) sslMode
+{
+	enum BXSSLMode mode = kBXSSLModeDisable;
+	if (NO == mRetryingConnection)
+		mode = [policyDelegate BXSSLModeForDatabaseContext: self];
+	return (kBXSSLModeUndefined == mode ? kBXSSLModePrefer : mode);
+}
 @end
 
 
@@ -1125,10 +1181,8 @@ extern void BXInit ()
                                                               table: tableName
                                                            inSchema: schemaName];
 	
-	//If the entity was decoded, it might have enough information at this point.
-	//Validation takes then place in fetch etc. methods.
-	if (NO == [mDatabaseInterface connected] 
-		&& nil != [rval fields] && nil != [rval primaryKeyFields])
+	//If we don't have a connection, return an entity which will be validated later.
+	if (NO == [mDatabaseInterface connected])
 	{
 		if (nil == mLazilyValidatedEntities)
 			mLazilyValidatedEntities = [[NSMutableSet alloc] init];
