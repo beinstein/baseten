@@ -30,6 +30,6 @@
 
 
 @interface BXDatabaseContext (BaseTenAppKitAdditions)
-- (BOOL) displayPanelForTrust: (SecTrustRef) trust;
+- (void) displayPanelForTrust: (SecTrustRef) trust;
 
 @end

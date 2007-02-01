@@ -32,7 +32,6 @@
 #import <stdlib.h>
 #import <string.h>
 #import <Log4Cocoa/Log4Cocoa.h>
-#import <BaseTenAppKit/BXDatabaseContextAdditions.h>
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
@@ -50,6 +49,7 @@
 #import "BXException.h"
 #import "BXContainerProxy.h"
 #import "BXArrayProxy.h"
+#import "BXDatabaseContextAdditions.h"
 
 #undef BXHandleError
 #define BXHandleError( ERROR, LOCAL_ERROR ) \
@@ -227,7 +227,13 @@ extern void BXInit ()
 			[self lazyInit];
 			[mDatabaseInterface connect: &localError];
 			
-			if (nil == localError) [self connectedToDatabase: &localError];
+			if (nil == localError) 
+				[self connectedToDatabase: &localError];
+			else
+			{
+				[mDatabaseInterface release];
+				mDatabaseInterface = nil;
+			}
         }
     }
     BXHandleError (error, localError);
@@ -244,7 +250,14 @@ extern void BXInit ()
 			[mDatabaseInterface connectAsync: &localError];
 		}
 	}
-	//FIXME: post notification in case of an error
+	
+	if (nil != localError)
+	{
+		[mDatabaseInterface release];
+		mDatabaseInterface = nil;
+
+		//FIXME: post notification in case of an error
+	}	
 }
 
 - (BOOL) isConnected
@@ -432,16 +445,16 @@ extern void BXInit ()
 
 - (void) setModalWindow: (NSWindow *) aWindow
 {
-	if (aWindow != mModalWindow)
+	if (aWindow != modalWindow)
 	{
-		[mModalWindow release];
-		mModalWindow = [aWindow retain];
+		[modalWindow release];
+		modalWindow = [aWindow retain];
 	}
 }
 
 - (void) setPolicyDelegate: (id) anObject
 {
-	mPolicyDelegate = anObject;
+	policyDelegate = anObject;
 }
 
 @end
@@ -1043,6 +1056,34 @@ extern void BXInit ()
                                                           userInfo: userInfo];
     }
 }
+
+- (void) handleInvalidTrust: (NSValue *) value
+{
+	struct trustResult trustResult;
+	[value getValue: &trustResult];
+	SecTrustRef trust = trustResult.trust;
+	SecTrustResultType result = trustResult.result;
+	
+	enum BXCertificatePolicy policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
+	switch (policy)
+	{			
+		case kBXCertificatePolicyAllow:
+			[self connectAsyncIfNeeded];
+			break;
+			
+		case kBXCertificatePolicyDisplayTrustPanel:
+			//This is in BaseTenAppKit framework.
+			[self displayPanelForTrust: trust];
+			break;
+			
+		case kBXCertificatePolicyDeny:
+		case kBXCertificatePolicyUndefined:
+		default:
+			break;
+	}
+	
+	CFRelease (trust);
+}
 @end
 
 
@@ -1491,36 +1532,6 @@ extern void BXInit ()
 	
 	if (nil == mModifiedObjectIDs)
 		mModifiedObjectIDs = [[NSMutableSet alloc] init];        
-}
-
-- (BOOL) handleInvalidTrust: (NSValue *) value
-{
-	BOOL rval = NO;
-	struct trustResult trustResult;
-	[value getValue: &trustResult];
-	SecTrustRef trust = trustResult.trust;
-	SecTrustResultType result = trustResult.result;
-	
-	enum BXCertificatePolicy policy = [mPolicyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
-	switch (policy)
-	{			
-		case kBXCertificatePolicyAllow:
-			rval = YES;
-			break;
-			
-		case kBXCertificatePolicyDisplayTrustPanel:
-			//This is in BaseTenAppKit framework.
-			rval = [self displayPanelForTrust: trust];
-			break;
-
-		case kBXCertificatePolicyDeny:
-		case kBXCertificatePolicyUndefined:
-		default:
-			break;
-	}
-	
-	CFRelease (trust);
-	return rval;
 }
 
 @end

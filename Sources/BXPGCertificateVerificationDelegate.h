@@ -35,6 +35,13 @@
 {
 	@public
 	BXDatabaseContext* mContext;
+	PGTSConnection* mNotifyConnection;
+	
+	@protected
+	NSString* mConnectionString;
+	X509** mOpenSSLCertificates;
 }
+
+- (void) clearCaches;
 
 @end

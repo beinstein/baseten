@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5303D6000A39E6CD00917C22 /* BXControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		531650C40B72040700785454 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531650C30B72040700785454 /* SecurityInterface.framework */; };
 		5340251D0A2C49FD0016E8D2 /* BXAppKitFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */; };
 		5340251E0A2C49FD0016E8D2 /* BXAppKitFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */; };
 		53438E2B0A384EE600BEDCFF /* NSController+BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */; };
@@ -60,6 +61,7 @@
 		2B8B5E420B20189600EF04F3 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = ../xcconfig/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit_Prefix.pch; path = Sources/BaseTenAppKit_Prefix.pch; sourceTree = "<group>"; };
 		5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXControllerProtocol.h; path = Sources/BXControllerProtocol.h; sourceTree = "<group>"; };
+		531650C30B72040700785454 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = /System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<absolute>"; };
 		5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitFunctions.h; path = Sources/BXAppKitFunctions.h; sourceTree = "<group>"; };
 		5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAppKitFunctions.m; path = Sources/BXAppKitFunctions.m; sourceTree = "<group>"; };
 		53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSController+BXAppKitAdditions.h"; path = "Sources/NSController+BXAppKitAdditions.h"; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 			files = (
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
 				534690590A779BFB0067E3A9 /* BaseTen.framework in Frameworks */,
+				531650C40B72040700785454 /* SecurityInterface.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,6 +123,7 @@
 			children = (
 				537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */,
 				1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */,
+				531650C30B72040700785454 /* SecurityInterface.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

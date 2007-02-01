@@ -43,6 +43,7 @@
 @class PGTSResultSet;
 @class BXDatabaseContext;
 @class BXDatabaseObjectID;
+@class BXPGCertificateVerificationDelegate;
 
 enum BXPGQueryState
 {
@@ -80,14 +81,16 @@ enum BXPGQueryState
     PGTSConnection* notifyConnection;
     PGTSModificationNotifier* modificationNotifier;
     PGTSLockNotifier*  lockNotifier;
-    BOOL autocommits;
-    BOOL logsQueries;
-    BOOL clearedLocks;
-    
+ 	BXPGCertificateVerificationDelegate* cvDelegate;
+   
     enum BXPGQueryState state; /** What kind of query has been sent recently? */
     id <BXObjectAsynchronousLocking> locker;
     NSString* lockedKey;
     BXDatabaseObjectID* lockedObjectID;
+	
+	BOOL autocommits;
+    BOOL logsQueries;
+    BOOL clearedLocks;	
 }
 @end
 

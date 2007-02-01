@@ -166,6 +166,6 @@ PGTSVerifySSLCertificate (int preverify_ok, void* x509_ctx)
 	//This way, we can use ordinary Cocoa sheets.
 	SSL* ssl = X509_STORE_CTX_get_ex_data ((X509_STORE_CTX *) x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
 	PGTSConnection* connection = SSL_get_ex_data (ssl, PGTSSSLConnectionExIndex ());
-	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLConnection: x509_ctx preverifyStatus: preverify_ok]);
+	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
 	return rval;
 }

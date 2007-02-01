@@ -26,11 +26,13 @@
 // $Id$
 //
 
+@class PGTSConnection;
+
 @protocol PGTSCertificateVerificationDelegate
 /** 
  * Should the SSL connection be allowed or not.
  * This might not be called from the main thread.
  */
-- (BOOL) PGTSAllowSSLConnection: (void *) sslStruct preverifyStatus: (int) preverifyStatus;
+- (BOOL) PGTSAllowSSLForConnection: (PGTSConnection *) connection context: (void *) x509_ctx preverifyStatus: (int) preverifyStatus;
 @end
 

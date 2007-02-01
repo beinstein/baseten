@@ -49,6 +49,7 @@
 #import "BXHelperTableMTMRelationshipDescription.h"
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXException.h"
+#import "BXPGCertificateVerificationDelegate.h"
 
 
 //FIXME: these should be non-blockable assertions and the definitions should be somewhere else
@@ -246,7 +247,9 @@ static unsigned int SavepointIndex ()
     [connection setDelegate: nil];
     [connection disconnect];
     [connection endWorkerThread];
-    [connection release];    
+    [connection release];
+	
+	[cvDelegate release];
      
     [locker release];
     [databaseURI release];
@@ -1483,10 +1486,12 @@ static unsigned int SavepointIndex ()
     if (nil == connection)
     {
         connection = [[PGTSConnection connection] retain];
+		cvDelegate = [[BXPGCertificateVerificationDelegate alloc] init];
         [connection setLogsQueries: logsQueries];
         [connection setConnectionURL: databaseURI];
         [connection setDelegate: self];
         [connection setOverlooksFailedQueries: NO];
+		[connection setCertificateVerificationDelegate: cvDelegate];
 	}
 }
 
@@ -1516,6 +1521,8 @@ static unsigned int SavepointIndex ()
 			//We want to use notifyConnection with the metadata
 			PGTSConnection* tempConnection = [connection disconnectedCopy];
 			[tempConnection setLogsQueries: logsQueries];
+			[tempConnection setCertificateVerificationDelegate: cvDelegate];
+			cvDelegate->mNotifyConnection = tempConnection;
 			[tempConnection connect];
 			notifyConnection = connection;
 			connection = tempConnection;
@@ -1601,6 +1608,16 @@ static unsigned int SavepointIndex ()
     }
 }
 
+- (void) PGTSConnectionFailed: (PGTSConnection *) aConnection
+{
+	NSLog (@"Connection established: %p", aConnection);
+}
+
+- (void) PGTSConnectionEstablished: (PGTSConnection *) aConnection
+{
+	NSLog (@"Connection failed: %p", aConnection);
+}
+
 - (void) rowsLocked: (NSNotification *) notification
 {
     enum BXObjectStatus status = kBXObjectNoStatus;
@@ -1636,4 +1653,5 @@ static unsigned int SavepointIndex ()
     if (0 < [ids count])
         [context deletedObjectsFromDatabase: ids];
 }
+
 @end

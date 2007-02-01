@@ -36,6 +36,10 @@
 #define IBOutlet
 #endif
 
+//Hide from Interface Builder
+#define BXHiddenId id
+
+
 @class NSWindow;
 
 
@@ -51,7 +55,7 @@
 
 @interface BXDatabaseContext : NSObject
 {
-    id <BXInterface>                mDatabaseInterface;
+    BXHiddenId <BXInterface>        mDatabaseInterface;
     NSURL*                          mDatabaseURI;
     NSMutableSet*                   mSeenEntities;
     TSNonRetainedObjectDictionary*  mObjects;
@@ -63,8 +67,8 @@
 	NSMutableSet*                   mLazilyValidatedEntities;
 	BOOL							mConnectingAsync;
 	
-	IBOutlet NSWindow*				mModalWindow;
-	IBOutlet id						mPolicyDelegate;
+	IBOutlet NSWindow*				modalWindow;
+	IBOutlet id						policyDelegate;
 }
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
 + (Class) interfaceClassForScheme: (NSString *) scheme;
@@ -144,6 +148,7 @@
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectStatus) status;
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
+- (void) handleInvalidTrust: (NSValue *) value;
 @end
 
 

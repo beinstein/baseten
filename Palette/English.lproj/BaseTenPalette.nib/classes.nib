@@ -1,6 +1,13 @@
 {
     IBClasses = (
         {
+            ACTIONS = {revertDocumentToSaved = id; saveDocument = id; }; 
+            CLASS = BXDatabaseContext; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {modalWindow = NSWindow; policyDelegate = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
             CLASS = BXSynchronizedArrayController; 
             LANGUAGE = ObjC; 
             OUTLETS = {databaseContext = BXDatabaseContext; window = NSWindow; }; 

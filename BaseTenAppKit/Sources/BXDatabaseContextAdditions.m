@@ -27,17 +27,21 @@
 //
 
 #import "BXDatabaseContextAdditions.h"
-#import <SecurityInterface/SecurityInterface.h>
+#import <SecurityInterface/SFCertificateTrustPanel.h>
 
 
 @implementation BXDatabaseContext (BaseTenAppKitAdditions)
 
-- (BOOL) displayPanelForTrust: (SecTrustRef) trust
+- (void) displayPanelForTrust: (SecTrustRef) trust
 {
-	NSModalSession session = [NSApp beginModalSessionForWindow: mModalWindow];
-	int rval = [[SFCertificateTrustPanel sharedCertificateTrustPanel] runModalForTrust: trust message: nil];
-	[NSApp endModalSession: session];
-	return NSOKButton == rval;
+	[[SFCertificateTrustPanel sharedCertificateTrustPanel] beginSheetForWindow: modalWindow modalDelegate: self 
+																didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
+																   contextInfo: NULL trust: trust message: nil];
+}
+
+- (void) certificateTrustSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+	if (NSOKButton == returnCode) [self connectAsyncIfNeeded];
 }
 
 @end

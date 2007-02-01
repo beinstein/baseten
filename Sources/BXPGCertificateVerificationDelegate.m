@@ -29,24 +29,100 @@
 #import "BXPGCertificateVerificationDelegate.h"
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseAdditions.h"
+#import <openssl/x509.h>
 
 
 @implementation BXPGCertificateVerificationDelegate
 
-- (BOOL) PGTSAllowSSLConnection: (void *) x509_ctx preverifyStatus: (int) preverifyStatus
+- (void) dealloc
+{
+	[self clearCaches];
+	[super dealloc];
+}
+
+- (void) clearCaches
+{
+	if (NULL != mOpenSSLCertificates)
+	{
+		X509** chain = mOpenSSLCertificates;
+		while (*(chain++))
+			free (*chain);
+		free (mOpenSSLCertificates);
+		mOpenSSLCertificates = NULL;
+	}
+	[mConnectionString release];	
+	mConnectionString = nil;
+}
+
+- (BOOL) PGTSAllowSSLForConnection: (PGTSConnection *) connection context: (void *) x509_ctx_ptr preverifyStatus: (int) preverifyStatus
 {
 	BOOL rval = NO;
-	SecTrustResultType result = kSecTrustResultInvalid;
-	SecTrustRef trust = [self copyTrustFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx];
-	OSStatus status = SecTrustEvaluate (trust, &result);
-	if (noErr == status && kSecTrustResultProceed == result)
-		rval = YES;
+	X509_STORE_CTX* x509_ctx = (X509_STORE_CTX *) x509_ctx_ptr;
+	
+	if (connection == mNotifyConnection || NULL != mOpenSSLCertificates || nil != mConnectionString)
+	{
+		if ([[connection connectionString] isEqualToString: mConnectionString] &&
+			0 == X509_cmp (*mOpenSSLCertificates, x509_ctx->cert))
+		{
+			//If we have cached values, it means that the context has sent connectAsyncIfNeeded again and wants us to accept the certificate.
+			//Validation for notifyConnection has to succeed on the first try.
+			BOOL ok = YES;
+			X509** chain = mOpenSSLCertificates;
+			int i = 0, count = M_sk_num (x509_ctx->untrusted);
+			while (i < count)
+			{
+				chain++;
+				if (NULL == chain)
+				{
+					ok = NO;
+					break;
+				}
+				
+				ok = (0 == X509_cmp (*chain, (X509 *) M_sk_value (x509_ctx->untrusted, i)));
+				if (!ok)
+					break;
+				i++;
+			}
+			
+			if (ok && i == count && NULL == ++chain)
+			{
+				//The certificates match; proceed with the connection.
+				rval = YES;
+			}
+		}	
+	}
 	else
 	{
-		//FIXME: get the rval somehow
+		//First time through.
+		SecTrustResultType result = kSecTrustResultInvalid;
+		SecTrustRef trust = [self copyTrustFromOpenSSLCertificates: x509_ctx];
+		OSStatus status = SecTrustEvaluate (trust, &result);
+		
+		if (noErr == status && kSecTrustResultProceed == result)
+			rval = YES;
+		else if (NULL == mOpenSSLCertificates && nil == mConnectionString)
+		{
+			//Cache some connection info; the certificates go in a vector.
+			mConnectionString = [[connection connectionString] copy];
+			
+			mOpenSSLCertificates = calloc (2 + (NULL == x509_ctx->untrusted ? 0 : sk_num (x509_ctx->untrusted)), sizeof (X509*));
+			X509** chain = mOpenSSLCertificates;
+			*chain = X509_dup (x509_ctx->cert);
+			for (int i = 0, count = M_sk_num (x509_ctx->untrusted); i < count; i++)
+			{
+				chain++;
+				*chain = X509_dup ((X509 *) M_sk_value (x509_ctx->untrusted, i));
+			}
+			
+			struct trustResult trustResult = {trust, result};
+			CFRetain (trust);
+			NSValue* resultValue = [NSValue valueWithBytes: &trustResult objCType: @encode (struct trustResult)];
+			[mContext performSelectorOnMainThread: @selector (handleUntrustedCertificate:) withObject: resultValue waitUntilDone: NO];
+		}
+
+		BXSafeCFRelease (trust);
 	}
 	
-	BXSafeCFRelease (trust);
 	return rval;
 }
 

@@ -27,6 +27,7 @@
 //
 
 #import <BaseTen/BXConstants.h>
+#import <Security/Security.h>
 
 @interface NSObject (BXPolicyDelegate)
 - (enum BXCertificatePolicy) BXDatabaseContext: (BXDatabaseContext *) ctx handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
