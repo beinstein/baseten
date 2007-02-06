@@ -63,7 +63,8 @@ enum BXError
     kBXErrorLockNotAcquired,
     kBXErrorNoDatabaseURI,
     kBXErrorObservingFailed,
-	kBXErrorSSLConnectionFailed
+	kBXErrorSSLConnectionFailed,
+	kBXErrorObjectNotFound
 };
 
 enum BXModificationType

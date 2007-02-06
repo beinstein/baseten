@@ -777,9 +777,17 @@ extern void BXInit ()
     if (nil == rval)
     {
         NSError* localError = nil;
-        rval = [[self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
-                              withPredicate: [anID predicate] returningFaults: NO error: &localError] objectAtIndex: 0];
-        [rval awakeFromFetch];
+		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
+										 withPredicate: [anID predicate] returningFaults: NO error: &localError];
+		if (0 < [objects count])
+		{
+			rval = [objects objectAtIndex: 0];
+			[rval awakeFromFetch];
+		}
+		else
+		{
+			localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
+		}
         BXHandleError (error, localError);
     }
     return rval;
@@ -1448,6 +1456,11 @@ extern void BXInit ()
                 [rval setDatabaseContext: self];
                 [rval setEntity: entity];
             }
+			else if (0 == [rval count])
+			{
+				//If an automatically updating container wasn't desired, we could also return nil.
+				rval = nil;
+			}
         }
     }
     BXHandleError (error, localError);

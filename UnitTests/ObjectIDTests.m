@@ -71,4 +71,21 @@
 	MKCAssertFalse ([ctx2 isConnected]);
 }
 
+- (void) testInvalidObjectID
+{
+	NSError* error = nil;
+	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=12345" relativeToURL: [ctx databaseURI]];
+	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx error: &error] autorelease];
+	MKCAssertNil (error);
+	
+	[ctx connectIfNeeded: &error];
+	MKCAssertNil (error);
+	
+	BXDatabaseObject* object = [ctx objectWithID: anId error: &error];
+	MKCAssertNil (object);
+	MKCAssertNotNil (error);
+	MKCAssertTrue ([[error domain] isEqualToString: kBXErrorDomain]);
+	MKCAssertTrue ([error code] == kBXErrorObjectNotFound);
+}
+
 @end
