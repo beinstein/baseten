@@ -83,8 +83,11 @@
 	volatile BOOL shouldContinueThread;
     volatile BOOL threadRunning;
     volatile BOOL failedToSendQuery;
+	
     volatile BOOL messageDelegateAfterConnecting;
 	volatile BOOL sslSetUp;
+	BOOL connecting;
+	BOOL connectingAsync;
 }
 
 + (PGTSConnection *) connection;
@@ -144,6 +147,8 @@
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;
+
+- (BOOL) connectingAsync;
 @end
 
 
