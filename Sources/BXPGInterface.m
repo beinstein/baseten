@@ -357,6 +357,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     @try
     {
         PGTSTableInfo* tableInfo = [self tableForEntity: entity];
+        NSAssert (nil != tableInfo, @"Expected tableInfo not to be nil.");
         
         //Get the primary key
         NSArray* pkeyfields = [entity primaryKeyFields];
@@ -1044,7 +1045,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
  */
 - (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    NSAssert (NULL != error, @"Expected error to be set.");
+    NSAssert (nil != notifyConnection, @"Expected notifyConnection to be set.");
 
     PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
     PGTSTableInfo* tableInfo = [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
@@ -1636,7 +1638,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 - (void) PGTSConnectionEstablished: (PGTSConnection *) aConnection
 {
-	[context connectedToDatabase: YES async: YES error: nil];
+    NSError* error = nil;
+    [self checkConnectionStatus: &error];
+	[context connectedToDatabase: YES async: YES error: &error];
 }
 
 - (void) rowsLocked: (NSNotification *) notification

@@ -228,7 +228,7 @@ extern void BXInit ()
 			[mDatabaseInterface connect: &localError];
 			
 			if (nil == localError) 
-				[self connectedToDatabase: YES async: NO error: error];
+				[self connectedToDatabase: YES async: NO error: &localError];
 			else
 			{
 				[mDatabaseInterface release];
@@ -256,7 +256,10 @@ extern void BXInit ()
 		[mDatabaseInterface release];
 		mDatabaseInterface = nil;
 
-		//FIXME: post notification in case of an error
+        NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
+                                                                     object: self
+                                                                   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
+        [[NSNotificationCenter defaultCenter] postNotification: notification];
 	}	
 }
 
@@ -877,11 +880,8 @@ extern void BXInit ()
 			}
 		}
 		
-		if (NO == async)
-		{
-			BXHandleError (error, localError);
-		}
-		else
+        //Error will be handled by the caller if NO == async
+		if (YES == async)
 		{
 			mRetryingConnection = NO;
 
@@ -1139,6 +1139,9 @@ extern void BXInit ()
 	if (NO == mRetryingConnection)
 		mode = [policyDelegate BXSSLModeForDatabaseContext: self];
 	return (kBXSSLModeUndefined == mode ? kBXSSLModePrefer : mode);
+#if 0
+    return kBXSSLModeDisable;
+#endif
 }
 @end
 
