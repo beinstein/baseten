@@ -63,6 +63,7 @@
 	NSError* error = nil;
 	NSString* schemaName = @"public";
 	NSString* entityName = @"aNonExistentTable";
+	[ctx connectIfNeeded: &error];
 	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
 	MKCAssertNotNil (error);
 	MKCAssertNil (entity);
@@ -71,6 +72,7 @@
 - (void) testValidation
 {
 	NSError* error = nil;
+	[ctx connectIfNeeded: &error];
 	BXEntityDescription* entity = [ctx entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest" error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	

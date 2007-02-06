@@ -27,6 +27,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <BaseTen/BXDatabaseContext.h>
+#import <Security/Security.h>
 
 @protocol BXObjectAsynchronousLocking;
 @protocol BXRelationshipDescription;
@@ -34,6 +36,19 @@
 @class BXDatabaseObject;
 @class BXDatabaseObjectID;
 @class BXEntityDescription;
+
+
+@interface BXDatabaseContext (DBInterfaces)
+- (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
+- (void) addedObjectsToDatabase: (NSArray *) objectIDs;
+- (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
+- (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
+- (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectStatus) status;
+- (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
+- (void) handleInvalidTrustAsync: (NSValue *) value;
+- (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
+- (enum BXSSLMode) sslMode;
+@end
 
 
 /**

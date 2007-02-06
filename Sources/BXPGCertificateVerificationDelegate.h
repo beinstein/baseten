@@ -29,12 +29,14 @@
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTS.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXPGInterface.h>
 
 
 @interface BXPGCertificateVerificationDelegate : PGTSCertificateVerificationDelegate 
 {
 	@public
 	BXDatabaseContext* mContext;
+	BXPGInterface* mInterface;
 	PGTSConnection* mNotifyConnection;
 	
 	@protected

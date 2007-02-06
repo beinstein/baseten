@@ -70,5 +70,6 @@ struct trustResult
 - (BOOL) checkDatabaseURI: (NSError **) error;
 - (id <BXInterface>) databaseInterface;
 - (void) lazyInit;
++ (void) loadedAppKitFramework;
 
 @end

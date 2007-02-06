@@ -58,6 +58,7 @@
 
 
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
+static BOOL gHaveAppKitFramework = NO;
 
 
 extern void BXInit ()
@@ -239,7 +240,12 @@ extern void BXInit ()
     BXHandleError (error, localError);
 }
 
-- (void) connectAsyncIfNeeded
+/**
+ * Connect to the database.
+ * After the attempt, either a kBXConnectionSuccessfulNotification or a kBXConnectionFailedNotification
+ * will be posted.
+ */
+- (void) connect
 {
 	NSError* localError = nil;
 	if ([self checkDatabaseURI: &localError])
@@ -854,7 +860,7 @@ extern void BXInit ()
 			if (NO == mRetryingConnection)
 			{
 				mRetryingConnection = YES;
-				[self connectAsyncIfNeeded];
+				[self connect];
 			}
 			else
 			{
@@ -1105,7 +1111,25 @@ extern void BXInit ()
     }
 }
 
-- (void) handleInvalidTrust: (NSValue *) value
+- (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result
+{
+	BOOL rval = NO;
+	enum BXCertificatePolicy policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
+	switch (policy)
+	{			
+		case kBXCertificatePolicyAllow:
+		case kBXCertificatePolicyUndefined:
+			rval = YES;
+			break;
+			
+		case kBXCertificatePolicyDeny:
+		default:
+			break;
+	}
+	return rval;
+}
+
+- (void) handleInvalidTrustAsync: (NSValue *) value
 {
 	struct trustResult trustResult;
 	[value getValue: &trustResult];
@@ -1113,10 +1137,13 @@ extern void BXInit ()
 	SecTrustResultType result = trustResult.result;
 	
 	enum BXCertificatePolicy policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
+	if (gHaveAppKitFramework && kBXCertificatePolicyUndefined == policy)
+		policy = kBXCertificatePolicyDisplayTrustPanel;
+	
 	switch (policy)
 	{			
 		case kBXCertificatePolicyAllow:
-			[self connectAsyncIfNeeded];
+			[self connect];
 			break;
 			
 		case kBXCertificatePolicyDisplayTrustPanel:
@@ -1139,9 +1166,6 @@ extern void BXInit ()
 	if (NO == mRetryingConnection)
 		mode = [policyDelegate BXSSLModeForDatabaseContext: self];
 	return (kBXSSLModeUndefined == mode ? kBXSSLModePrefer : mode);
-#if 0
-    return kBXSSLModeDisable;
-#endif
 }
 @end
 
@@ -1589,6 +1613,11 @@ extern void BXInit ()
 	
 	if (nil == mModifiedObjectIDs)
 		mModifiedObjectIDs = [[NSMutableSet alloc] init];        
+}
+
++ (void) loadedAppKitFramework
+{
+	gHaveAppKitFramework = YES;
 }
 
 @end

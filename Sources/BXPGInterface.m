@@ -271,8 +271,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	[connection connect];
 	[self checkConnectionStatus: error];
 	
-	if (nil != *error && mode == kBXSSLModePrefer)
+	if (NO == invalidCertificate && nil != *error && mode == kBXSSLModePrefer)
 	{
+		*error = nil;
 		[self prepareConnection: kBXSSLModeDisable];
 		[connection connect];
 		[self checkConnectionStatus: error];
@@ -1506,6 +1507,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         connection = [[PGTSConnection connection] retain];
 		cvDelegate = [[BXPGCertificateVerificationDelegate alloc] init];
 		cvDelegate->mContext = context;
+		cvDelegate->mInterface = self;
 		[connection setCertificateVerificationDelegate: cvDelegate];				
         [connection setOverlooksFailedQueries: NO];
 		[connection setDelegate: self];
@@ -1515,6 +1517,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	[connectionDict setValue: SSLMode (mode) forKey: kPGTSSSLModeKey];
 	[connection setConnectionDictionary: connectionDict];
 	[connection setLogsQueries: logsQueries];
+
+	invalidCertificate = NO;
 }
 
 - (void) checkConnectionStatus: (NSError **) error
@@ -1582,6 +1586,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
         [lockedObjectID release];
         lockedObjectID = [aLockedObjectID retain];
     }
+}
+
+- (void) setHasInvalidCertificate: (BOOL) aBool
+{
+	invalidCertificate = aBool;
 }
 
 @end

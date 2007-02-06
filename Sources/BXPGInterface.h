@@ -91,6 +91,7 @@ enum BXPGQueryState
 	BOOL autocommits;
     BOOL logsQueries;
     BOOL clearedLocks;	
+	volatile BOOL invalidCertificate;
 }
 @end
 
@@ -137,4 +138,5 @@ enum BXPGQueryState
 - (void) setLocker: (id <BXObjectAsynchronousLocking>) anObject;
 - (void) setLockedKey: (NSString *) aKey;
 - (void) setLockedObjectID: (BXDatabaseObjectID *) lockedObjectID;
+- (void) setHasInvalidCertificate: (BOOL) aBool;
 @end

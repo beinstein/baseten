@@ -118,6 +118,7 @@ PGTSSSLConnectionExIndex ()
  */
 - (void) finishConnecting
 {
+	connecting = NO;
     if (CONNECTION_OK != connectionStatus)
         [[PGTSConnectionPool sharedInstance] removeConnection: self];
     else

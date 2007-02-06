@@ -30,7 +30,7 @@
 
 NSString* const kBXNoDatabaseURIException = @"kBXNoDatabaseURIException";
 NSString* const kBXExceptionUnhandledError = @"kBXExceptionUnhandledError";
-NSString* const kBXUnsupportedDatabaseException = @"kBXUnsupportedDatabaseNotification";
+NSString* const kBXUnsupportedDatabaseException = @"kBXUnsupportedDatabaseException";
 NSString* const kBXFailedToExecuteQueryException = @"kBXFailedToExecuteQueryException";
 NSString* const kBXPGUnableToObserveModificationsException = @"kBXPGUnableToObserveModificationsException";
 NSString* const kBXDatabaseContextKey = @"kBXContextKey";

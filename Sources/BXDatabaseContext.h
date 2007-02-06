@@ -94,8 +94,8 @@
 - (BOOL) logsQueries;
 - (void) setLogsQueries: (BOOL) aBool;
 
+- (void) connect;
 - (void) connectIfNeeded: (NSError **) error;
-- (void) connectAsyncIfNeeded;
 
 - (BOOL) registerObject: (BXDatabaseObject *) anObject;
 - (void) unregisterObject: (BXDatabaseObject *) anObject;
@@ -141,18 +141,6 @@
 
 - (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error;
 
-@end
-
-
-@interface BXDatabaseContext (DBInterfaces)
-- (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
-- (void) addedObjectsToDatabase: (NSArray *) objectIDs;
-- (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
-- (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
-- (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectStatus) status;
-- (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
-- (void) handleInvalidTrust: (NSValue *) value;
-- (enum BXSSLMode) sslMode;
 @end
 
 

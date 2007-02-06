@@ -30,6 +30,8 @@
 #import "NSController+BXAppKitAdditions.h"
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXDatabaseContextPrivate.h>
+
 
 #define LOG_POSITION() fprintf( stderr, "Now at %s:%d\n", __FILE__, __LINE__ )
 
@@ -37,6 +39,16 @@
 
 
 @implementation BXSynchronizedArrayController
+
++ (void) initialize
+{
+	static BOOL tooLate = NO;
+	if (NO == tooLate)
+	{
+		tooLate = YES;
+		[BXDatabaseContext loadedAppKitFramework];
+	}
+}
 
 - (id) initWithContent: (id) content
 {

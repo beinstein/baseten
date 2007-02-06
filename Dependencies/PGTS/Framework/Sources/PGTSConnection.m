@@ -242,6 +242,12 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
     BOOL rval = NO;
     CheckExceptionTable (self, kPGTSRaiseForConnectAsync, messageDelegateAfterConnecting);
 
+	if (NO == connecting)
+	{
+		connecting = YES;
+		connectingAsync = YES;
+	}
+	
 	[connectionLock lock];
 	if (NULL != connection)
 	{
@@ -256,6 +262,11 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 		rval = YES;
 		[workerProxy workerPollConnectionResetting: NO];
 	}
+	else
+	{
+		connecting = NO;
+	}
+	
     return rval;
 }
 
@@ -278,7 +289,9 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 //@{
 - (ConnStatusType) connect
 {
-    BlockWhileConnecting ([self connectAsync]);    
+	connecting = YES;
+    BlockWhileConnecting ([self connectAsync]);
+	connecting = NO;
     return connectionStatus;
 }
 
@@ -670,6 +683,11 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 	certificateVerificationDelegate = anObject;
 	if (nil == certificateVerificationDelegate)
 		certificateVerificationDelegate = defaultCertDelegate;
+}
+
+- (BOOL) connectingAsync
+{
+	return (connecting && connectingAsync);
 }
 @end
 

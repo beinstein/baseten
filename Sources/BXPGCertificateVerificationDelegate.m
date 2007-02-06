@@ -94,7 +94,7 @@
 	}
 	else
 	{
-		//First time through.
+		//First time through or synchronous.
 		SecTrustResultType result = kSecTrustResultInvalid;
 		SecTrustRef trust = [self copyTrustFromOpenSSLCertificates: x509_ctx];
 		OSStatus status = SecTrustEvaluate (trust, &result);
@@ -104,6 +104,7 @@
 		else if (NULL == mOpenSSLCertificates && nil == mConnectionString)
 		{
 			//Cache some connection info; the certificates go in a vector.
+			//This needs to be done anyway for notifyConnection.
 			mConnectionString = [[connection connectionString] copy];
 			
 			mOpenSSLCertificates = calloc (2 + (NULL == x509_ctx->untrusted ? 0 : sk_num (x509_ctx->untrusted)), sizeof (X509*));
@@ -115,10 +116,18 @@
 				*chain = X509_dup ((X509 *) M_sk_value (x509_ctx->untrusted, i));
 			}
 			
-			struct trustResult trustResult = {trust, result};
-			CFRetain (trust);
-			NSValue* resultValue = [NSValue valueWithBytes: &trustResult objCType: @encode (struct trustResult)];
-			[mContext performSelectorOnMainThread: @selector (handleInvalidTrust:) withObject: resultValue waitUntilDone: NO];
+			if (NO == [connection connectingAsync])
+			{
+				rval = [mContext handleInvalidTrust: trust result: result];
+				[mInterface setHasInvalidCertificate: !rval];
+			}
+			else
+			{				
+				struct trustResult trustResult = {trust, result};
+				CFRetain (trust);
+				NSValue* resultValue = [NSValue valueWithBytes: &trustResult objCType: @encode (struct trustResult)];				
+				[mContext performSelectorOnMainThread: @selector (handleInvalidTrustAsync:) withObject: resultValue waitUntilDone: NO];
+			}
 		}
 
 		BXSafeCFRelease (trust);

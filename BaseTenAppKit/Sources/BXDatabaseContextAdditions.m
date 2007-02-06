@@ -27,6 +27,7 @@
 //
 
 #import "BXDatabaseContextAdditions.h"
+#import <BaseTen/BXDatabaseContextPrivate.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 
 
@@ -35,16 +36,19 @@
 - (void) displayPanelForTrust: (SecTrustRef) trust
 {
 	mDisplayingSheet = YES;
-	[[SFCertificateTrustPanel sharedCertificateTrustPanel] beginSheetForWindow: modalWindow modalDelegate: self 
-																didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
-																   contextInfo: NULL trust: trust message: nil];
+	SFCertificateTrustPanel* panel = [SFCertificateTrustPanel sharedCertificateTrustPanel];
+	NSBundle* appKitBundle = [NSBundle bundleWithPath: @"/System/Library/Frameworks/AppKit.framework"];
+	[panel setAlternateButtonTitle: [appKitBundle localizedStringForKey: @"Cancel" value: @"Cancel" table: @"Common"]];
+	[panel beginSheetForWindow: modalWindow modalDelegate: self 
+				didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
+				   contextInfo: NULL trust: trust message: nil];
 }
 
 - (void) certificateTrustSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
 	mDisplayingSheet = NO;
 	if (NSFileHandlingPanelOKButton == returnCode) 
-		[self connectAsyncIfNeeded];
+		[self connect];
 	else
 	{
 		//FIXME: Create an NSError and set it in userInfo to kBXErrorKey.
