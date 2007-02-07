@@ -779,15 +779,18 @@ extern void BXInit ()
         NSError* localError = nil;
 		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
 										 withPredicate: [anID predicate] returningFaults: NO error: &localError];
-		if (0 < [objects count])
-		{
-			rval = [objects objectAtIndex: 0];
-			[rval awakeFromFetch];
-		}
-		else
-		{
-			localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
-		}
+        if (nil == localError)
+        {
+            if (0 < [objects count])
+            {
+                rval = [objects objectAtIndex: 0];
+                [rval awakeFromFetch];
+            }
+            else
+            {
+                localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
+            }
+        }
         BXHandleError (error, localError);
     }
     return rval;
