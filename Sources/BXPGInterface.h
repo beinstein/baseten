@@ -111,12 +111,6 @@ enum BXPGQueryState
                     whereClause: (NSString *) whereClause
                      parameters: (NSArray *) parameters
                      willDelete: (BOOL) willDelete;
-- (void) internalCommit;
-- (void) internalRollback;
-- (void) internalBegin;
-- (NSString *) internalBeginQuery;
-- (void) internalCommitNoSavepoint: (BOOL) noSavepoint;
-- (void) internalRollbackNoSavepoint: (BOOL) noSavepoint;
 
 - (void) packError: (NSError **) error exception: (NSException *) exception;
 - (void) packPGError: (NSError **) error exception: (PGTSException *) exception;
@@ -139,4 +133,13 @@ enum BXPGQueryState
 - (void) setLockedKey: (NSString *) aKey;
 - (void) setLockedObjectID: (BXDatabaseObjectID *) lockedObjectID;
 - (void) setHasInvalidCertificate: (BOOL) aBool;
+@end
+
+
+@interface BXPGInterface (Transactions)
+- (void) beginIfNeeded;
+- (void) beginSubtransactionIfNeeded;
+- (void) internalRollback;
+- (void) endSubtransactionIfNeeded;
+- (void) internalCommit;
 @end

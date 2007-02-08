@@ -62,6 +62,7 @@
     NSMutableSet*                   mModifiedObjectIDs;
     NSUndoManager*                  mUndoManager;
 	NSMutableSet*                   mLazilyValidatedEntities;
+	NSMutableIndexSet*				mUndoGroupingLevels;
 	
 	IBOutlet NSWindow*				modalWindow;
 	IBOutlet id						policyDelegate;
@@ -105,9 +106,6 @@
 
 - (NSUndoManager *) undoManager;
 - (BOOL) setUndoManager: (NSUndoManager *) aManager;
-
-- (void) undoWithRedoInvocations: (NSArray *) invocations;
-- (void) redoInvocations: (NSArray *) invocations;
 
 - (void) handleError: (NSError *) anError;
 
@@ -170,4 +168,3 @@
 - (IBAction) saveDocument: (id) sender;
 - (IBAction) revertDocumentToSaved: (id) sender;
 @end
-

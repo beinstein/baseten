@@ -71,5 +71,13 @@ struct trustResult
 - (id <BXInterface>) databaseInterface;
 - (void) lazyInit;
 + (void) loadedAppKitFramework;
+@end
 
+
+@interface BXDatabaseContext (Undoing)
+- (void) undoGroupWillClose: (NSNotification *) notification;
+- (BOOL) prepareSavepointIfNeeded: (NSError **) error;
+- (void) undoWithRedoInvocations: (NSArray *) invocations;
+- (void) redoInvocations: (NSArray *) invocations;
+- (void) rollbackToLastSavepoint;
 @end

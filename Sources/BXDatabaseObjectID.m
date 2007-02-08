@@ -351,6 +351,16 @@ static TSNonRetainedObjectSet* gObjectIDs;
     return rval;
 }
 
+- (NSDictionary *) allObjects
+{
+	id rval = nil;
+	@synchronized (mPkeyFValues)
+	{
+		rval = [[mPkeyFValues copy] autorelease];
+	}
+	return rval;
+}
+
 @end
 
 

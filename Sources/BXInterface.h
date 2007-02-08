@@ -115,9 +115,12 @@
 //@{
 - (void) rollback;
 - (BOOL) save: (NSError **) error;
+
 - (void) setAutocommits: (BOOL) aBool;
 - (BOOL) autocommits;
-- (void) undo;
+
+- (BOOL) rollbackToLastSavepoint: (NSError **) error;
+- (BOOL) establishSavepoint: (NSError **) error;
 //@}
 
 - (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;

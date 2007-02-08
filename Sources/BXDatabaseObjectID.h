@@ -54,6 +54,7 @@
 
 - (id) objectForKey: (id) aKey;
 - (id) objectsForKeys: (NSArray *) keys;
+- (NSDictionary *) allObjects;
 @end
 
 

@@ -74,8 +74,8 @@ static NSString* SavepointQuery ()
 static NSString* RollbackToSavepointQuery ()
 {
     NSCAssert (0 < savepointIndex, @"savepointIndex should be greater than zero.");
+	savepointIndex--;
     NSString* rval = [NSString stringWithFormat: @"ROLLBACK TO SAVEPOINT BXPGSavepoint%u", savepointIndex];
-    savepointIndex--;
     return rval;
 }
 
@@ -233,12 +233,15 @@ static NSString* SSLMode (enum BXSSLMode mode)
     TSEnumerate (currentEntity, e, [[context seenEntities] objectEnumerator])
     {
         PGTSTableInfo* tableInfo = [dbInfo tableInfoForTableNamed: [currentEntity name] inSchemaNamed: [currentEntity schemaName]];
-        [modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSInsertModification];
-        [modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSUpdateModification];
-        [modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSDeleteModification];
-        [lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSLockedForUpdate];
-        [lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSLockedForDelete];
-        [lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSUnlockedRowsNotification];
+		if (nil != tableInfo)
+		{
+			[modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSInsertModification];
+			[modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSUpdateModification];
+			[modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSDeleteModification];
+			[lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSLockedForUpdate];
+			[lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSLockedForDelete];
+			[lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSUnlockedRowsNotification];
+		}
     }
     [modificationNotifier release];
     [lockNotifier release];
@@ -301,15 +304,13 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
     @try
     {
+		[self beginIfNeeded];
+		
         //This is needed if the entity is passed from one context to another.
         [self validateEntity: entity error: error];
         
-#if 0
-        //If we are not autocommitting create a savepoint. Otherwise isolate until the created object has been retrieved.
-        [self internalBegin];
-#endif
-        
         //Make the query
+		//FIXME: we should execute the query RETURNING * except for the excluded fields
         NSString* queryFormat = nil;
         if (0 == [valueDict count])
             queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ DEFAULT VALUES RETURNING %%@", [entity BXPGQualifiedName: connection]];
@@ -326,18 +327,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
         [res setRowClass: aClass];
         [res advanceRow];
         rval = [res currentRowAsObject];
-        NSAssert (YES == [rval registerWithContext: context entity: entity], @"Expected the newly created object not to be in memory yet.");
+        [rval registerWithContext: context entity: entity];
         [rval faultKey: nil];
-
-#if 0
-        //Commit only if autocommitting
-        [self internalCommit];
-#endif
     }
     @catch (PGTSQueryException* exception)
     {
         [self packPGError: error exception: exception];
-        [self internalRollback];
     }
     
     return rval;
@@ -543,7 +538,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
             predicate = [objectID predicate];
             entity = [objectID entity];
         }
-        //This is needed if the entity is passed from one context to another.
+
+		[self beginIfNeeded];
+
+		//This is needed if the entity is passed from one context to another.
         [self validateEntity: entity error: error];
         
         NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
@@ -559,16 +557,13 @@ static NSString* SSLMode (enum BXSSLMode mode)
         NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyFields forKeys: pkeyFNames];        
         NSString* name = [entity BXPGQualifiedName: connection];
 
-        if (NO == autocommits)
-            [self internalBegin];
-
         //Check if pkey should be updated
         BOOL updatedPkey = NO;
         NSArray* objectIDs = nil;
         if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
         {
             if (YES == autocommits)
-                [self internalBegin];
+                [self beginSubtransactionIfNeeded];
             updatedPkey = YES;
             
             //FIXME: Since we are reading committed changes, we should SELECT the object IDs FOR UPDATE here.
@@ -585,8 +580,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         if (NO == [entity isView])
             [self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
         
-        //This should be safe even if we didn't have a transaction.
-        [self internalCommit]; 
+        [self endSubtransactionIfNeeded]; 
         
         //Handle the result and get new pkey values
         NSDictionary* pkeyDict = nil;
@@ -651,12 +645,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
     @catch (BXException* exception)
     {
         [self packError: error exception: exception];
-        [self internalRollback];
     }
     @catch (PGTSException* exception)
     {
         [self packPGError: error exception: exception];
-        [self internalRollback];
     }
     return rval;    
 }
@@ -672,8 +664,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     @try
     {
+		//Begin early to prevent the subtransaction
+		[self beginIfNeeded];
+		
         if (nil == lockedObjectID)
-            [self internalBegin];
+            [self beginSubtransactionIfNeeded];
         else
         {
             NSAssert2 (nil == objectID || objectID == lockedObjectID, 
@@ -687,6 +682,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
             entity = [objectID entity];
             predicate = [objectID predicate];
         }
+		
         //This is needed if the entity is passed from one context to another.
         [self validateEntity: entity error: error];
 
@@ -714,18 +710,16 @@ static NSString* SSLMode (enum BXSSLMode mode)
         [connection executeQuery: queryString parameterArray: parameters];
         
         //Commit only if autocommitting
-        [self internalCommit]; 
+        [self endSubtransactionIfNeeded]; 
         rval = objectIDs;              
     }
     @catch (BXException* exception)
     {
         [self packError: error exception: exception];
-        [self internalRollback];
     }
     @catch (PGTSException* exception)
     {
         [self packPGError: error exception: exception];
-        [self internalRollback];
     }
     
     return rval;
@@ -738,12 +732,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
  */
 - (void) rollback
 {
-    if ([self connected] && PQTRANS_IDLE != [connection transactionStatus])
+    if ([self connected])
     {
         NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
         @try
         {
-            [self internalRollbackNoSavepoint: YES];
+            [self internalRollback];
         }
         @catch (id exception)
         {
@@ -756,12 +750,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
 {
     BOOL rval = NO;
     NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
-    if ([self connected] && PQTRANS_INTRANS == [connection transactionStatus])
+    if ([self connected])
     {
         NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
         @try
         {
-            [self internalCommitNoSavepoint: YES];
+            [self internalCommit];
             rval = YES;
         }
         @catch (PGTSQueryException* exception)
@@ -774,11 +768,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
         rval = YES;
     }
     return rval;    
-}
-
-- (void) undo
-{
-    [self internalRollback];
 }
 
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) srcEntity
@@ -969,7 +958,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
         NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
         
         //Lock the row
-        [connection sendQuery: [self internalBeginQuery]];
+		[self beginIfNeeded];
+        [self beginSubtransactionIfNeeded];
         state = kBXPGQueryBegun;
         [connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
                parameterArray: [ctx objectForKey: kPGTSParametersKey]];
@@ -1006,7 +996,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
         if ([self connected])
         {
             NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
-            if (PQTRANS_IDLE != [connection transactionStatus])
+			PGTransactionStatusType status = [connection transactionStatus];
+            if (PQTRANS_IDLE != status)
                 [self internalCommit];
         }
     }
@@ -1150,6 +1141,43 @@ static NSString* SSLMode (enum BXSSLMode mode)
     }
     return tableInfo;
 }
+
+- (BOOL) establishSavepoint: (NSError **) error
+{
+	BOOL rval = NO;
+	NSAssert (NULL != error, @"Expected error to be set.");
+	NSAssert (PQTRANS_INTRANS == [connection transactionStatus], @"Transaction should be in progress.");
+	NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+	@try
+	{
+		[connection executeQuery: SavepointQuery ()];
+		rval = YES;
+	}
+    @catch (PGTSQueryException* exception)
+    {
+        [self packPGError: error exception: exception];
+    }
+	return rval;
+}
+
+- (BOOL) rollbackToLastSavepoint: (NSError **) error
+{
+	BOOL rval = NO;
+	NSAssert (NULL != error, @"Expected error to be set.");
+	NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+	@try
+	{
+		[notifyConnection executeQuery: @"SELECT baseten.LocksStepBack ()"];
+		[connection executeQuery: RollbackToSavepointQuery ()];
+		rval = YES;
+	}
+    @catch (PGTSQueryException* exception)
+    {
+        [self packPGError: error exception: exception];
+    }
+	return rval;
+}
+
 @end
 
 
@@ -1324,84 +1352,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
     }
 }
 
-/** Commit or savepoint depending on autocommit status */
-- (void) internalCommit
-{
-    [self internalCommitNoSavepoint: autocommits];
-}
-
-/** Rollback or rollback to savepoint depending on autocommit status */
-- (void) internalRollback
-{
-    [self internalRollbackNoSavepoint: autocommits];
-}
-
-/**
- * Begin a transaction
- * If not autocommitting, issue a savepoint. Otherwise, begin a transaction but
- * only if we currently don't have one.
- */
-- (void) internalBegin
-{
-    NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
-    NSString* query = [self internalBeginQuery];
-    if (nil != query)
-        [connection executeQuery: query];
-}
-
-/** Get the query which internalBegin would send in the current situation */
-- (NSString *) internalBeginQuery
-{
-    //Both are possible since we might have just committed
-    NSString* rval = @"";
-    if (PQTRANS_IDLE == [connection transactionStatus])
-        rval = @"BEGIN; ";
-    if (NO == autocommits)
-        rval = [rval stringByAppendingString: SavepointQuery ()];
-    return rval;
-}
-
-/** Savepoint is made in internalBeginQuery */
-- (void) internalCommitNoSavepoint: (BOOL) noSavepoint
-{
-    if (YES == noSavepoint && PQTRANS_IDLE != [connection transactionStatus]) //Autocommit etc.
-    {
-        PGTSResultSet* res = nil;
-        if (NO == [self autocommits])
-            res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
-        res = [connection executeQuery: @"COMMIT TRANSACTION;"];
-        ResetSavepointIndex ();
-
-        [self setLockedKey: nil];
-        [self setLockedObjectID: nil];
-    }
-}
-
-- (void) internalRollbackNoSavepoint: (BOOL) noSavepoint
-{
-    //The locked key should be cleared in any case to cope with the situation
-    //where the lock was acquired  after the last savepoint and the same key 
-    //is to be locked again
-    NSAssert1 (PQTRANS_IDLE != [connection transactionStatus], 
-               @"Expected transaction status not to be PQTRANS_IDLE in %p", connection);
-    if (YES == noSavepoint) //Autocommit etc.
-    {
-        PGTSResultSet* res = nil;
-        if (NO == [self autocommits])
-            res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
-        res = [connection executeQuery: @"ROLLBACK TRANSACTION;"];
-        ResetSavepointIndex ();
-
-        [self setLockedKey: nil];
-        [self setLockedObjectID: nil];                
-    }
-    else
-    {
-        [notifyConnection executeQuery: @"SELECT baseten.LocksStepBack ()"];
-        [connection executeQuery: RollbackToSavepointQuery ()];
-    }
-}
-
 - (void) packPGError: (NSError **) error exception: (PGTSException *) exception
 {
     PGTSResultSet* res = [[exception userInfo] objectForKey: kPGTSResultSetKey];
@@ -1560,6 +1510,73 @@ static NSString* SSLMode (enum BXSSLMode mode)
 @end
 
 
+@implementation BXPGInterface (Transactions)
+
+/**
+ * \internal
+ * Begin a transaction.
+ */
+- (void) beginIfNeeded
+{
+	if (NO == autocommits)
+	{
+		PGTransactionStatusType status = [connection transactionStatus];
+		[self beginSubtransactionIfNeeded];
+		if (PQTRANS_IDLE == status)
+			[connection executeQuery: SavepointQuery ()];
+	}
+}
+
+- (void) beginSubtransactionIfNeeded
+{
+	//Exception should get handled by the caller
+	NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+	if (PQTRANS_IDLE == [connection transactionStatus])
+		[connection executeQuery: @"BEGIN"];	
+}
+
+- (void) internalRollback
+{
+    //The locked key should be cleared in any case to cope with the situation
+    //where the lock was acquired  after the last savepoint and the same key 
+    //is to be locked again.
+	if (PQTRANS_IDLE != [connection transactionStatus])
+	{
+		PGTSResultSet* res = nil;
+		res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+		res = [connection executeQuery: @"ROLLBACK"];
+	}
+	ResetSavepointIndex ();
+	
+	[self setLockedKey: nil];
+	[self setLockedObjectID: nil];                
+}
+
+- (void) endSubtransactionIfNeeded
+{
+	if (YES == autocommits)
+		[self internalCommit];
+}
+
+- (void) internalCommit
+{
+	//Exceptions should get handled by the caller.
+	PGTransactionStatusType status = [connection transactionStatus];
+	if (PQTRANS_INTRANS == status || PQTRANS_INERROR == status)
+	{
+		PGTSResultSet* res = nil;
+		res = [notifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+		res = [connection executeQuery: @"COMMIT"];
+	}
+	ResetSavepointIndex ();
+	
+	[self setLockedKey: nil];
+	[self setLockedObjectID: nil];
+}
+
+@end
+
+
 @implementation BXPGInterface (Accessors)
 - (void) setLocker: (id <BXObjectAsynchronousLocking>) anObject
 {
@@ -1616,7 +1633,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     
     if (kBXPGQueryBegun == state && NO == success)
     {
-        [self internalRollback];
+        [self endSubtransactionIfNeeded];
         state = kBXPGQueryIdle;
     }
     else if (kBXPGQueryLock == state)
@@ -1624,7 +1641,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         BXDatabaseObjectID* objectID = [[lockedObjectID retain] autorelease];
         
         if (NO == success)
-            [self internalRollback];
+            [self endSubtransactionIfNeeded];
         else
         {
             NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
