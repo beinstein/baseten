@@ -120,7 +120,6 @@ enum BXPGQueryState
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey
                              status: (enum BXObjectStatus *) status;
 
-- (PGTSTableInfo *) tableForEntity: (BXEntityDescription *) entity;
 - (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error;
 
 - (void) prepareConnection: (enum BXSSLMode) mode;

@@ -88,4 +88,19 @@
 	MKCAssertTrue ([error code] == kBXErrorObjectNotFound);
 }
 
+- (void) testValidObjectID
+{
+	NSError* error = nil;
+	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=1" relativeToURL: [ctx databaseURI]];
+	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx error: &error] autorelease];
+	MKCAssertNil (error);
+	
+	[ctx connectIfNeeded: &error];
+	MKCAssertNil (error);
+	
+	BXDatabaseObject* object = [ctx objectWithID: anId error: &error];
+	MKCAssertNotNil (object);
+	MKCAssertNil (error);	
+}
+
 @end
