@@ -240,6 +240,7 @@
 				8D1AC9660486D14A00FE50C9 /* Resources */,
 				8D1AC96A0486D14A00FE50C9 /* Sources */,
 				8D1AC96E0486D14A00FE50C9 /* Frameworks */,
+				61C4722B0B813CF400CBF5D1 /* Run install_name_tool */,
 				2B97F24E0B2085A40003368B /* Set Palette Icon */,
 			);
 			buildRules = (
@@ -351,6 +352,20 @@
 			shellPath = /bin/sh;
 			shellScript = "BASETEN_PROJECT_DIR=\"$PROJECT_DIR\"/../\n\nICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenPaletteIcon\"\n\n\"$BASETEN_PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenPaletteIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$BASETEN_PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
 		};
+		61C4722B0B813CF400CBF5D1 /* Run install_name_tool */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run install_name_tool";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "BASETEN_FRAMEWORK_PATH=\"../Frameworks/BaseTen.framework/Versions/A/BaseTen\"\nBASETENAPPKIT_FRAMEWORK_PATH=\"../Frameworks/BaseTenAppKit.framework/Versions/A/BaseTenAppKit\"\n\ninstall_name_tool \\\n\t-change \"@executable_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/../../../$BASETEN_FRAMEWORK_PATH\" \\\n\t\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/$BASETENAPPKIT_FRAMEWORK_PATH\"\n\ninstall_name_tool \\\n\t-change \"@executable_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t-change \"@executable_path/$BASETENAPPKIT_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/$BASETENAPPKIT_FRAMEWORK_PATH\" \\\n\t\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -435,7 +450,6 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Palettes";
-				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = BaseTenPalette;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -458,8 +472,8 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS)",
 					"$(BUILT_PRODUCTS_DIR)",
-					"../Build/$(BUILD_STYLE)",
-					"../BaseTenAppKit/Build/$(BUILD_STYLE)",
+					"../build/$(BUILD_STYLE)",
+					"../BaseTenAppKit/build/$(BUILD_STYLE)",
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
@@ -468,10 +482,6 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Palettes";
-				OTHER_LDFLAGS = (
-					"-dylib_file",
-					"@loader_path/../../../BaseTen.framework/Versions/A/BaseTen:$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/BaseTen.framework/Versions/A/BaseTen",
-				);
 				PRODUCT_NAME = BaseTenPalette;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = palette;

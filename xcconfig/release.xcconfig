@@ -6,4 +6,4 @@ GCC_OPTIMIZATION_LEVEL = s
 GCC_ENABLE_FIX_AND_CONTINUE = NO
 ZERO_LINK = NO
 SKIP_INSTALL = YES
-INSTALL_PATH = @loader_path/../Frameworks
+INSTALL_PATH = @executable_path/../Frameworks
