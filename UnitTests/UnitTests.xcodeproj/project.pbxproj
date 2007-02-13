@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		530865920B81B8C70022F812 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
-		530865A70B81B9FC0022F812 /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
 		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
-		53896EA90B81E8040092E1B8 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
-		53896EAA0B81E8050092E1B8 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
-		53896EAB0B81E8060092E1B8 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
-		53896EAC0B81E8070092E1B8 /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
 		53896EAD0B81E8080092E1B8 /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
-		53896EAE0B81E8080092E1B8 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
-		53896EAF0B81E8090092E1B8 /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
+		538971750B82163E0092E1B8 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
+		538971760B82163F0092E1B8 /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
+		538971890B82167A0092E1B8 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
+		5389718A0B82167A0092E1B8 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
+		5389718B0B82167B0092E1B8 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
+		5389718C0B82167B0092E1B8 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
+		5389718D0B82167C0092E1B8 /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
+		5389718E0B82167C0092E1B8 /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
 /* End PBXBuildFile section */
 
@@ -229,15 +229,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				530865920B81B8C70022F812 /* ObjectIDTests.m in Sources */,
-				530865A70B81B9FC0022F812 /* ModificationTests.m in Sources */,
-				53896EA90B81E8040092E1B8 /* ConnectTest.m in Sources */,
-				53896EAA0B81E8050092E1B8 /* EntityTests.m in Sources */,
-				53896EAB0B81E8060092E1B8 /* FetchTests.m in Sources */,
-				53896EAC0B81E8070092E1B8 /* CreateTests.m in Sources */,
 				53896EAD0B81E8080092E1B8 /* ForeignKeyTests.m in Sources */,
-				53896EAE0B81E8080092E1B8 /* MTOCollectionTest.m in Sources */,
-				53896EAF0B81E8090092E1B8 /* MTMCollectionTest.m in Sources */,
+				538971750B82163E0092E1B8 /* MTOCollectionTest.m in Sources */,
+				538971760B82163F0092E1B8 /* MTMCollectionTest.m in Sources */,
+				538971890B82167A0092E1B8 /* ConnectTest.m in Sources */,
+				5389718A0B82167A0092E1B8 /* EntityTests.m in Sources */,
+				5389718B0B82167B0092E1B8 /* ObjectIDTests.m in Sources */,
+				5389718C0B82167B0092E1B8 /* FetchTests.m in Sources */,
+				5389718D0B82167C0092E1B8 /* CreateTests.m in Sources */,
+				5389718E0B82167C0092E1B8 /* ModificationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -774,10 +774,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
     return rval;    
 }
 
-- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) srcEntity
-                                          entity: (BXEntityDescription *) givenDSTEntity
-                                           types: (enum BXRelationshipType) typeBitmap
-                                           error: (NSError **) error
+- (NSArray *) relationshipsWithEntity: (BXEntityDescription *) srcEntity
+							   entity: (BXEntityDescription *) givenDSTEntity
+								types: (enum BXRelationshipType) typeBitmap
+								error: (NSError **) error
 {    
     //FIXME: Some errors might not be handled. Set the error parameter when required.
     NSAssert (nil != srcEntity, nil);
@@ -825,7 +825,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     PGTSResultSet* res = [connection executeQuery: query parameters:
         [srcEntity schemaName], [srcEntity name], types, [givenDSTEntity schemaName], [givenDSTEntity name]];
  
-    NSMutableDictionary* rval = [NSMutableDictionary dictionaryWithCapacity: [res countOfRows]];
+    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [res countOfRows]];
     NSMutableDictionary* manyToOne = [NSMutableDictionary dictionary];
     while ([res advanceRow])
     {
@@ -850,10 +850,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
                 
                 id rel = [relationshipClass relationshipWithRelationship1: [rels objectAtIndex: 0]
                                                             relationship2: [rels objectAtIndex: 1]];
-                NSString* relationName = [res valueForKey: @"srcname"];
+                NSString* relationName = [res valueForKey: @"dstname"];
                 if ('m' == type)
                     [rel setName: relationName];
-                [rval setObject: rel forKey: relationName];
+                [rval addObject: rel];
                 break;
             }
             case 't':
@@ -923,14 +923,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                 //Add the object. At this point rval contains only MTO's, 
                 //so if we are adding a foreign key from any other table than srcEntity,
                 //we only need to check that there isn't one with the same name yet.
-				BOOL shouldAdd = [[res valueForKey: @"should_add_m"] boolValue];
-                if (YES == shouldAdd || nil == [rval objectForKey: relationName])
-                    [rval setObject: rel forKey: relationName];
-				
-				//Also add many-to-one relationships with alternative names.
-				NSString* altname = [res valueForKey: @"srcrelname"];
-                if (YES == shouldAdd || nil == [rval objectForKey: altname])
-					[rval setObject: rel forKey: altname];
+				[rval addObject: rel];
 				
                 break;
             }

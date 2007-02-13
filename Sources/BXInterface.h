@@ -106,10 +106,10 @@
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;
 
-- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) srcEntity
-                                          entity: (BXEntityDescription *) givenDSTEntity
-                                           types: (enum BXRelationshipType) typeBitmap
-                                           error: (NSError **) error;
+- (NSArray *) relationshipsWithEntity: (BXEntityDescription *) srcEntity
+							   entity: (BXEntityDescription *) givenDSTEntity
+								types: (enum BXRelationshipType) typeBitmap
+								error: (NSError **) error;
 
 /** \name Transactions */
 //@{

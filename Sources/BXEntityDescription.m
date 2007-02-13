@@ -509,7 +509,7 @@ static NSMutableSet* gViewEntities;
         [mRelationships setObject: relationship forKey: relname];
 		
 		//FIXME: this is a hack.
-		if (1 == [relationship isToManyFromEntity: self] && NO == [relationship isManyToMany])
+		if (NO == [relationship isOneToOne] && NO == [relationship isManyToMany])
 			[mRelationships setObject: relationship forKey: [(BXRelationshipDescription *) relationship alternativeNameFromEntity: self]];
 	}
 }

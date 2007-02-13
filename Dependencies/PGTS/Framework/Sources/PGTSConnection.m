@@ -190,7 +190,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 }
 
 /**
- * Construct a similiar connection object without actually connecting to the database
+ * Construct a similiar connection object without actually connecting to the database.
  */
 - (id) disconnectedCopy
 {
@@ -233,7 +233,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 }
 
 /**
- * Connect or reconnect asynchronously
+ * Connect or reconnect asynchronously.
  * The delegate is required to respond to some related messages
  */
 //@{

@@ -175,8 +175,8 @@ CREATE RULE "update_mtmtest2" AS ON UPDATE TO mtmtest2_v DO INSTEAD
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE TABLE mtmrel1 (
-    id1 INTEGER CONSTRAINT object REFERENCES mtmtest1 (id),
-    id2 INTEGER CONSTRAINT foreignobject REFERENCES mtmtest2 (id),
+    id1 INTEGER CONSTRAINT foreignobject REFERENCES mtmtest1 (id),
+    id2 INTEGER CONSTRAINT object REFERENCES mtmtest2 (id),
     PRIMARY KEY (id1, id2)
 );
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmrel1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;

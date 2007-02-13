@@ -1369,6 +1369,7 @@ extern void BXInit ()
                                            error: (NSError **) error
 {
     log4Debug (@"RelationshipsByNameWithEntity:entity:types");
+	NSMutableDictionary* rval = nil;
     
     //Normalize
     if (nil == anEntity)
@@ -1385,17 +1386,28 @@ extern void BXInit ()
     NSError* localError = nil;
     [self connectIfNeeded: &localError];
     BXHandleError (NULL, localError);
-    id relationships = [mDatabaseInterface relationshipsByNameWithEntity: anEntity
-                                                                  entity: anotherEntity
-                                                                   types: bitmap
-                                                                   error: &localError];
+    id relationships = [mDatabaseInterface relationshipsWithEntity: anEntity
+															entity: anotherEntity
+															 types: bitmap
+															 error: &localError];
     BXHandleError (error, localError);
-    TSEnumerate (currentRel, e, [relationships objectEnumerator])
-    {
-        TSEnumerate (currentEntity, e, [[currentRel entities] objectEnumerator])
-            [currentEntity cacheRelationship: currentRel];
-    }
-    return relationships;
+	
+	if (nil == localError)
+	{
+		//Rval might lose some objects since the relationships could have same names (MTO in helper tables)
+		//FIXME: does this include most of the names?
+		rval = [NSMutableDictionary dictionaryWithCapacity: [relationships count]];
+		TSEnumerate (currentRel, e, [relationships objectEnumerator])
+		{
+			TSEnumerate (currentEntity, e, [[currentRel entities] objectEnumerator])
+				[currentEntity cacheRelationship: currentRel];
+			
+			NSString* name = [currentRel nameFromEntity: anEntity];
+			if (nil != name)
+				[rval setObject: currentRel forKey: name];
+		}
+	}
+    return rval;
 }
 //@}
 
