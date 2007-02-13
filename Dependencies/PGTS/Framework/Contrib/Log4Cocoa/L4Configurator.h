@@ -54,7 +54,6 @@ extern NSString* const L4ConfigurationFileName;
 + (void) resetLineBreakChar;
 + (NSData *) lineBreakChar;
 
-+ (void) parseConfiguration: (NSDictionary *) dict logger: (L4Logger *) logger;
 + (NSString *) configurationFilePath;
 
 @end

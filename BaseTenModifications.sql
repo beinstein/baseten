@@ -32,13 +32,13 @@ CREATE LANGUAGE plpgsql;
 COMMIT;
 
 
--- Groups for BaseTen users
 DROP SCHEMA IF EXISTS "baseten" CASCADE;
+
+
+-- Groups for BaseTen users
+BEGIN;
 DROP ROLE IF EXISTS basetenread;
 DROP ROLE IF EXISTS basetenuser;
-
-
-BEGIN;
 CREATE ROLE basetenread WITH
 	INHERIT
 	NOSUPERUSER

@@ -140,6 +140,22 @@ void log4Log(id object, int line, char *file, const char *method,
     [super dealloc];
 }
 
+- (void) parseConfiguration: (NSDictionary *) dict
+{
+    //Set the level
+    NSString* aLevel = [dict objectForKey: @"Level"];
+    SEL levelSelector = NSSelectorFromString (aLevel);
+    if (NULL == levelSelector)
+    {
+#if BUILD_CONFIGURATION == Release
+        levelSelector = @selector (error);
+#else
+        levelSelector = @selector (info);
+#endif
+    }
+    [self setLevel: [L4Level performSelector: levelSelector]];
+}
+
 - (BOOL) additivity
 {
     return additive;

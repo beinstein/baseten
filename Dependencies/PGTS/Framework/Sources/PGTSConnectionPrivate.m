@@ -485,7 +485,7 @@ PGTSSSLConnectionExIndex ()
 
 - (void) logNotice: (id) anObject
 {
-    log4Info (@"(%p) NOTICE: %@", self, anObject);
+    log4Info (@"(%p) %@", self, anObject);
 }
 
 - (void) logNotification: (id) anObject

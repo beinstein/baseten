@@ -134,6 +134,7 @@ void log4Log(id object, int line, char *file, const char *method,
 - (L4Level *) level;
 - (void) setLevel: (L4Level *) aLevel; // nil is ok, because then we just pick up the parent's level
 
+- (void) parseConfiguration: (NSDictionary *) dict;
 @end
 
 @interface L4Logger (AppenderRelatedMethods)
