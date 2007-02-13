@@ -42,87 +42,94 @@
 NSString* const L4ConfigurationFilePath = @"L4ConfigurationFilePath";
 NSString* const L4ConfigurationFileName = @"Log4CocoaConfiguration";
 
-static NSData *lineBreakChar;
+static NSData *lineBreakChar = nil;
+static NSRecursiveLock *configurationLock = nil;
+static volatile BOOL haveConfiguration = NO;
 
 @implementation L4Configurator
 
 + (void) initialize
 {
-    // Making sure that we capture the startup time of
-    // this application.  This sanity check is also in
-    // +[L4Logger initialize] too.
-    //
-    [L4LoggingEvent startTime];
+	static BOOL tooLate = NO;
+	if (NO == tooLate)
+	{
+		tooLate = YES;
+		
+		// Making sure that we capture the startup time of
+		// this application.  This sanity check is also in
+		// +[L4Logger initialize] too.
+		//
+		[L4LoggingEvent startTime];
+		
+		configurationLock = [[NSRecursiveLock alloc] init];
+	}
 }
 
 + (void) basicConfiguration
 {
-    L4Logger* rootLogger = [L4Logger rootLogger];
-    id appender = [[[L4ConsoleAppender alloc] initStandardOutWithLayout: [L4Layout simpleLayout]] autorelease];
-    [rootLogger addAppender: appender];
-#if BUILD_CONFIGURATION == Release
-    [rootLogger setLevel: [L4Level error]];
+	[configurationLock lock];
+	if (NO == haveConfiguration)
+	{
+		L4Logger* rootLogger = [L4Logger rootLogger];
+		id appender = [[[L4ConsoleAppender alloc] initStandardOutWithLayout: [L4Layout simpleLayout]] autorelease];
+		[rootLogger addAppender: appender];
+#if defined(RELEASE_BUILD)
+		[rootLogger setLevel: [L4Level error]];
 #else
-    [rootLogger setLevel: [L4Level info]];
+		[rootLogger setLevel: [L4Level info]];
 #endif
+		
+		haveConfiguration = YES;
+	}
+	[configurationLock unlock];
 }
 
 + (void) autoConfigure
 {
-    // [[NSFileManager defaultManager] currentDirectoryPath];
-    NSString* path = [self configurationFilePath];
-    if (nil == path)
-        [self basicConfiguration];
-    else
-    {
-        L4Logger* rootLogger = [L4Logger rootLogger];
-        NSDictionary* configuration = [NSDictionary dictionaryWithContentsOfFile: path];
-        [self parseConfiguration: [configuration objectForKey: @"DefaultConfiguration"] logger: rootLogger];
-        
-        //Add a basic appender in case one wasn't configured
-        if (0 < [[rootLogger allAppendersArray] count])
-            [self basicConfiguration];
-        
-        NSEnumerator* e = nil;
-        id currentKey = nil;
-        NSDictionary* dict = nil;
-        
-        {
-            dict = [configuration objectForKey: @"ConfigurationByClass"];
-            e = [dict keyEnumerator];
-            while ((currentKey = [e nextObject]))
-            {
-                L4Logger* logger = [L4Logger loggerForClass: NSClassFromString (currentKey)];
-                [self parseConfiguration: [dict objectForKey: currentKey] logger: logger];
-            }
-        }
-        
-        {
-            dict = [configuration objectForKey: @"ConfigurationByName"];
-            e = [dict keyEnumerator];
-            while ((currentKey = [e nextObject]))
-            {
-                L4Logger* logger = [L4Logger loggerForName: currentKey];
-                [self parseConfiguration: [dict objectForKey: currentKey] logger: logger];
-            }
-        }
-    }
-}
-
-+ (void) parseConfiguration: (NSDictionary *) dict logger: (L4Logger *) logger
-{
-    //Set the level
-    NSString* level = [dict objectForKey: @"Level"];
-    SEL levelSelector = NSSelectorFromString (level);
-    if (NULL == levelSelector)
-    {
-#if BUILD_CONFIGURATION == Release
-        levelSelector = @selector (error);
-#else
-        levelSelector = @selector (info);
-#endif
-    }
-    [logger setLevel: [L4Level performSelector: levelSelector]];
+	[configurationLock lock];
+	if (NO == haveConfiguration)
+	{		
+		// [[NSFileManager defaultManager] currentDirectoryPath];
+		NSString* path = [self configurationFilePath];
+		if (nil == path)
+			[self basicConfiguration];
+		else
+		{
+			L4Logger* rootLogger = [L4Logger rootLogger];
+			NSDictionary* configuration = [NSDictionary dictionaryWithContentsOfFile: path];
+			[rootLogger parseConfiguration: [configuration objectForKey: @"DefaultConfiguration"]];
+			
+			//Add a basic appender in case one wasn't configured
+			if (0 < [[rootLogger allAppendersArray] count])
+				[self basicConfiguration];
+			
+			NSEnumerator* e = nil;
+			id currentKey = nil;
+			NSDictionary* dict = nil;
+			
+			{
+				dict = [configuration objectForKey: @"ConfigurationByClass"];
+				e = [dict keyEnumerator];
+				while ((currentKey = [e nextObject]))
+				{
+					L4Logger* logger = [L4Logger loggerForClass: NSClassFromString (currentKey)];
+					[logger parseConfiguration: [dict objectForKey: currentKey]];
+				}
+			}
+			
+			{
+				dict = [configuration objectForKey: @"ConfigurationByName"];
+				e = [dict keyEnumerator];
+				while ((currentKey = [e nextObject]))
+				{
+					L4Logger* logger = [L4Logger loggerForName: currentKey];
+					[logger parseConfiguration: [dict objectForKey: currentKey]];
+				}
+			}
+		}
+		haveConfiguration = YES;
+	}
+	[configurationLock unlock];
 }
 
 /**
