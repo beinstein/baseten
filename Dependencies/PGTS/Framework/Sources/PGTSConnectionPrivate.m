@@ -386,7 +386,7 @@ PGTSSSLConnectionExIndex ()
     PostgresPollingStatusType (* pollFunction)(PGconn *) = (reset ? &PQresetPoll : &PQconnectPoll);
     int bsdSocket = PQsocket (connection);
     
-    if (bsdSocket <= 0)
+    if (bsdSocket < 0)
         log4Error (@"Unable to get connection socket from libpq");
     else
     {
@@ -414,7 +414,7 @@ PGTSSSLConnectionExIndex ()
 				SSL* ssl = PQgetssl (connection);
 				NSAssert (NULL != ssl, @"Expected ssl struct not to be NULL.");
 				SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLCertificate);
-				SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex(), self);
+				SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex (), self);
 			}
 #endif
 			
@@ -448,7 +448,7 @@ PGTSSSLConnectionExIndex ()
             PQsetClientEncoding (connection, "UNICODE"); //Use UTF-8
 			PQexec (connection, "SET standard_conforming_strings TO true");
 			PQexec (connection, "SET datestyle TO 'ISO, YMD'");
-            //FIXME: set other things, such as the date format, as well
+            //FIXME: set other things as well?
             PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
 
             socket = [[NSFileHandle alloc] initWithFileDescriptor: bsdSocket];
@@ -485,7 +485,7 @@ PGTSSSLConnectionExIndex ()
 
 - (void) logNotice: (id) anObject
 {
-    log4Info (@"(%p) %@", self, anObject);
+    log4Debug (@"(%p) %@", self, anObject);
 }
 
 - (void) logNotification: (id) anObject

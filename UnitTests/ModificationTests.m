@@ -98,8 +98,8 @@
     NSArray* res = [context executeFetchForEntity: updatetest withPredicate: nil
                                   returningFaults: NO error: &error];
     NSArray* originalResult = res;
-    MKCAssertNotNil (res);
     STAssertNil (error, [error localizedDescription]);
+    MKCAssertNotNil (res);
     MKCAssertTrue (5 == [res count]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"value1"]] count]);
 
