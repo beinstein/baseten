@@ -1,6 +1,6 @@
-diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c
---- postgresql-8.2.1/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
-+++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-connect.c	2007-01-25 11:52:27.000000000 +0200
+diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-connect.c
+--- postgresql-8.2.3/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-connect.c	2007-01-25 11:52:27.000000000 +0200
 @@ -998,6 +998,7 @@
  
  			/* Special cases: proceed without waiting. */
@@ -60,9 +60,9 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-connect.c postgresql-8.2.1-ts
  				if (pollres == PGRES_POLLING_OK)
  				{
  					/* SSL handshake done, ready to send startup packet */
-diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-secure.c postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-secure.c
---- postgresql-8.2.1/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
-+++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/fe-secure.c	2007-02-06 12:37:06.000000000 +0200
+diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-secure.c postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-secure.c
+--- postgresql-8.2.3/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-secure.c	2007-02-06 12:37:06.000000000 +0200
 @@ -193,10 +193,10 @@
  }
  
@@ -99,9 +99,9 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/fe-secure.c postgresql-8.2.1-tsn
  	/* Begin or continue the actual handshake */
  	return open_client_SSL(conn);
  #else
-diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h
---- postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
-+++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-01-23 16:36:58.000000000 +0200
+diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-fe.h
+--- postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-01-23 16:36:58.000000000 +0200
 @@ -53,7 +53,9 @@
  								 * backend startup. */
  	CONNECTION_SETENV,			/* Negotiating environment. */
@@ -113,9 +113,9 @@ diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-fe.h postgresql-8.2.1-tsno
  } ConnStatusType;
  
  typedef enum
-diff -urN postgresql-8.2.1/src/interfaces/libpq/libpq-int.h postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-int.h
---- postgresql-8.2.1/src/interfaces/libpq/libpq-int.h	2006-10-04 03:30:13.000000000 +0300
-+++ postgresql-8.2.1-tsnorri/src/interfaces/libpq/libpq-int.h	2007-01-25 11:33:41.000000000 +0200
+diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-int.h postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-int.h
+--- postgresql-8.2.3/src/interfaces/libpq/libpq-int.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-int.h	2007-01-25 11:33:41.000000000 +0200
 @@ -485,6 +485,7 @@
  
  extern int	pqsecure_initialize(PGconn *);
