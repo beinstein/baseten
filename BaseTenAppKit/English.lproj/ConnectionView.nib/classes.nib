@@ -1,0 +1,31 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                cancelConnecting = id; 
+                cancelLogin = id; 
+                connect = id; 
+                login = id; 
+                showBonjourList = id; 
+                showHostnameView = id; 
+            }; 
+            CLASS = BXConnectionViewManager; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                mBonjourArrayController = NSArrayController; 
+                mBonjourListProgressIndicator = NSProgressIndicator; 
+                mBonjourListView = NSView; 
+                mByHostnameProgressIndicator = NSProgressIndicator; 
+                mHostnameView = NSView; 
+                mPasswordField = NSTextFieldCell; 
+                mRememberPasswordButton = NSButton; 
+                mUsernameField = NSTextFieldCell; 
+                mUsernamePasswordProgressIndicator = NSProgressIndicator; 
+                mUsernamePasswordView = NSView; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}
