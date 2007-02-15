@@ -109,10 +109,10 @@
 	NSError* error = nil;
 	MKCAssertNotNil (ctx2);
 	
-	BXEntityDescription* entity = [ctx entityForTable: @"test" inSchema: @"public" error: &error];
-	id objectArray = [ctx executeFetchForEntity: entity 
-								  withPredicate: [NSPredicate predicateWithFormat: @"id == 1"]
-										  error: &error];
+	BXEntityDescription* entity = [ctx2 entityForTable: @"test" inSchema: @"public" error: &error];
+	id objectArray = [ctx2 executeFetchForEntity: entity 
+						  		   withPredicate: [NSPredicate predicateWithFormat: @"id == 1"]
+								 		   error: &error];
 	STAssertNil (error, [error description]);
 	MKCAssertNotNil (objectArray);
 	
