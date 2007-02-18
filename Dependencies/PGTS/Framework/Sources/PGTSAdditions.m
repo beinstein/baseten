@@ -504,7 +504,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
             rval = [[self class] dateWithString: dateString
                                  calendarFormat: @"%Y-%m-%d %H:%M:%S+%z"];
     }
-    NSAssert (nil != rval, @"Failed matching string to date format");
+    NSAssert1 (nil != rval, @"Failed matching string %@ to date format.", dateString);
     return rval;
 }
 
