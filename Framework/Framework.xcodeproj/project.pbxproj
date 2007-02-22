@@ -223,7 +223,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 538971AF0B821A570092E1B8 /* PostgreSQL-8.2.3 */;
+			remoteGlobalIDString = 538971AF0B821A570092E1B8;
 			remoteInfo = "PostgreSQL-8.2.3";
 		};
 		53D044150B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
