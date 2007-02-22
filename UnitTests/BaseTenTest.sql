@@ -314,5 +314,20 @@ SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_names
 INSERT INTO ♨ (value) VALUES ('test1');
 INSERT INTO ♨ (value) VALUES ('test2');
 INSERT INTO ♨ (value) VALUES ('test3');
+
+
+CREATE TABLE datetest (
+    id SERIAL PRIMARY KEY, 
+    d1 date DEFAULT CURRENT_TIMESTAMP::date, 
+    d2 TIMESTAMP (3) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+GRANT SELECT, INSERT, UPDATE, DELETE ON datetest TO baseten_test_user;
+GRANT USAGE ON SEQUENCE datetest_id_seq TO baseten_test_user;
+SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n
+	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname = 'datetest';
+INSERT INTO datetest DEFAULT VALUES;
+INSERT INTO datetest DEFAULT VALUES;
+INSERT INTO datetest DEFAULT VALUES;
+
 COMMIT;
 

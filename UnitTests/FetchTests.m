@@ -148,4 +148,17 @@
     MKCAssertEqualObjects ([r3 value1], @"thevalue3");
 }
 
+- (void) testDates
+{
+    NSError* error = nil;
+    [context connectIfNeeded: nil];
+    
+    BXEntityDescription* datetest = [context entityForTable: @"datetest" error: nil];
+    MKCAssertNotNil (datetest);
+    NSArray* dateobjects = [context executeFetchForEntity: datetest withPredicate: nil error: &error];
+    STAssertNil (error, [error localizedDescription]);
+    MKCAssertNotNil (dateobjects);
+    MKCAssertTrue (3 == [dateobjects count]);
+}
+
 @end

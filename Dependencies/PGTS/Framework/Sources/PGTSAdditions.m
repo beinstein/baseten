@@ -494,15 +494,18 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     id rval;
-    NSString *dateString = [NSString stringWithUTF8String:value];
+    NSString* dateString = [NSString stringWithUTF8String: value];
     switch ([dateString length])
     {
         case 10:
             rval = [[self class] dateWithString:dateString calendarFormat:@"%Y-%m-%d"];
             break;
         default:
+        {
+            
             rval = [[self class] dateWithString: dateString
-                                 calendarFormat: @"%Y-%m-%d %H:%M:%S+%z"];
+                                 calendarFormat: @"%Y-%m-%d %H:%M:%S.%F+%z"];
+        }
     }
     NSAssert1 (nil != rval, @"Failed matching string %@ to date format.", dateString);
     return rval;
