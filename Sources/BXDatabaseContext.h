@@ -73,6 +73,7 @@
 	BOOL							mConnectingAsync;
 	BOOL							mDisplayingSheet;
 	BOOL							mRetryingConnection;
+    BOOL                            mRetainRegisteredObjects;
 }
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
 + (Class) interfaceClassForScheme: (NSString *) scheme;
@@ -82,6 +83,9 @@
 - (void) setDatabaseURI: (NSURL *) uri;
 - (NSURL *) databaseURI;
 - (BOOL) isConnected;
+
+- (BOOL)retainsRegisteredObjects;
+- (void)setRetainsRegisteredObjects:(BOOL)flag;
 
 - (BOOL) hasSeenEntity: (BXEntityDescription *) anEntity;
 - (NSSet *) seenEntities;

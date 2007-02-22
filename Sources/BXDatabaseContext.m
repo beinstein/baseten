@@ -159,6 +159,7 @@ extern void BXInit ()
         char* logEnv = getenv ("BaseTenLogQueries");
         mLogsQueries = (NULL != logEnv && strcmp ("YES", logEnv));
         mDeallocating = NO;
+        mRetainRegisteredObjects = NO;
     }
     return self;
 }
@@ -167,6 +168,8 @@ extern void BXInit ()
 {
     mDeallocating = YES;
     [self rollback];
+    if (mRetainRegisteredObjects)
+        [mObjects makeObjectsPerformSelector:@selector (release) withObject:nil];
     [mObjects makeObjectsPerformSelector: @selector (BXDatabaseContextWillDealloc) withObject: nil];
     
     [mDatabaseInterface release];
@@ -192,6 +195,23 @@ extern void BXInit ()
         @throw [NSException exceptionWithName: kBXUnsupportedDatabaseException 
                                        reason: nil
                                      userInfo: userInfo];
+    }
+}
+
+- (BOOL)retainsRegisteredObjects
+{
+    return mRetainRegisteredObjects;
+}
+
+- (void)setRetainsRegisteredObjects:(BOOL)flag
+{
+    if (mRetainRegisteredObjects != flag) {
+        mRetainRegisteredObjects = flag;
+        
+        if (mRetainRegisteredObjects)
+            [mObjects makeObjectsPerformSelector:@selector (retain) withObject:nil];
+        else
+            [mObjects makeObjectsPerformSelector:@selector (release) withObject:nil];
     }
 }
 
@@ -340,12 +360,17 @@ extern void BXInit ()
     {
         rval = YES;
         [mObjects setObject: anObject forKey: objectID];
+        if (mRetainRegisteredObjects)
+            [anObject retain];
     }
     return rval;
 }
 
 - (void) unregisterObject: (BXDatabaseObject *) anObject
 {
+    if (mRetainRegisteredObjects) {
+        [[mObjects objectForKey: [anObject objectID]] autorelease];
+    }
     [mObjects removeObjectForKey: [anObject objectID]];
 }
 
