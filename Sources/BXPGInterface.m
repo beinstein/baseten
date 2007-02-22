@@ -550,10 +550,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSString* whereClause = [predicate PGTSWhereClauseWithContext: ctx];
 			NSMutableArray* parameters = [ctx objectForKey: kPGTSParametersKey];
 			if (nil == whereClause)
-			{
 				whereClause = @"(true)";
+            if (nil == parameters)
 				parameters = [NSMutableArray array];
-			}
+
 			NSArray* pkeyFields = [entity primaryKeyFields];
 			NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
 			NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyFields forKeys: pkeyFNames];        
@@ -694,10 +694,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSString* whereClause = [predicate PGTSWhereClauseWithContext: ctx];
 			NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
 			if (nil == whereClause)
-			{
 				whereClause = @"(true)";
+            if (nil == parameters)
 				parameters = [NSMutableArray array];
-			}
 			
 			//Lock the row and get the object IDs
 			NSArray* objectIDs = [self lockRowsWithObjectID: objectID entity: entity 

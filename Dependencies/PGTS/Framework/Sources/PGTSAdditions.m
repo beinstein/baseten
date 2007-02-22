@@ -547,6 +547,11 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 {
     return [self unsignedIntValue];
 }
+
+- (id) PGTSConstantExpressionValue: (NSDictionary *) context
+{
+    return self;
+}
 @end
 
 @implementation PGTSAbstractClass

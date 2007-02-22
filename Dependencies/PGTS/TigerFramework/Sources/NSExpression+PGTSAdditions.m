@@ -27,6 +27,7 @@
 //
 
 #import <PGTS/PGTS.h>
+#import <PGTS/PGTSFunctions.h>
 
 #import "NSExpression+PGTSAdditions.h"
 #import "PGTSTigerConstants.h"
@@ -80,7 +81,7 @@ AddParameter (id parameter, NSMutableDictionary* context)
 
 @implementation NSExpression (PGTSAdditions)
 
-+ (NSMutableDictionary *) PGTSFunctionNameConversionDictionary
++ (NSDictionary *) PGTSAggregateNameConversionDictionary
 {
     static BOOL tooLate = NO;
     static NSMutableDictionary* conversionDictionary = nil;
@@ -97,10 +98,24 @@ AddParameter (id parameter, NSMutableDictionary* context)
     return conversionDictionary;
 }
 
++ (NSDictionary *) PGTSFunctionNameConversionDictionary
+{
+    static BOOL tooLate = NO;
+    static NSMutableDictionary* conversionDictionary = nil;
+    if (NO == tooLate)
+    {
+        conversionDictionary = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
+            @"char_length",     @"length",
+            @"lower",           @"lowercaseString", 
+            @"upper",           @"uppercaseString",
+            nil];
+    }
+    return conversionDictionary;    
+}
+
 - (id) PGTSValueWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
     id rval = nil;
-	NSExpression* keyPathExpression = self;
     switch ([self expressionType])
     {
         case NSConstantValueExpressionType:
@@ -117,33 +132,56 @@ AddParameter (id parameter, NSMutableDictionary* context)
         case NSEvaluatedObjectExpressionType:
         case NSVariableExpressionType:
 		{
-            //default behavior unless the expression evaluates into a key path expression
+            //default behaviour unless the expression evaluates into a key path expression
 			id evaluated = [self expressionValueWithObject: anObject context: context];
-			if (! ([evaluated isKindOfClass: [NSExpression class]] && [evaluated expressionType] == NSKeyPathExpressionType))
+			if ([evaluated isKindOfClass: [NSExpression class]] && [evaluated expressionType] == NSKeyPathExpressionType)
 			{
-				rval = AddParameter (evaluated, context);
-				break;
+                //Simple dividing into components for now
+                NSArray* components = [[[evaluated keyPath] componentsSeparatedByString: @"."] valueForKey: @"PGTSQuotedString"];
+                rval = [components componentsJoinedByString: @"."];
+                break;
 			}
 			else
 			{
-				keyPathExpression = evaluated;
-				//Fall through
+				rval = AddParameter (evaluated, context);
+				break;
 			}
 		}
             
         case NSKeyPathExpressionType:
         {
-            //database.table.field
-            //Simple dividing into components for now
-            NSArray* components = [[[keyPathExpression keyPath] componentsSeparatedByString: @"."] valueForKey: @"PGTSQuotedString"];
+            NSArray* components = [[[self keyPath] componentsSeparatedByString: @"."] valueForKey: @"PGTSQuotedString"];
             rval = [components componentsJoinedByString: @"."];
             break;
-        }   
+            
+            //FIXME: this is for functions, which we don't support.
+#if 0
+            NSString* format = @"%@ (%@)";
+            
+            //The first object is always the parameter
+            NSEnumerator* e = [components objectEnumerator];
+            
+            NSString* parameter = [[anObject keyPath] PGTSQuotedString];
+            NSDictionary* conversionDict = [[self class] PGTSFunctionNameConversionDictionary];
+            TSEnumerate (currentFunction, e, [components objectEnumerator])
+            {
+                NSString* pgFunctionName = [conversionDict objectForKey: currentFunction];
+                if (nil != pgFunctionName)
+                    currentFunction = pgFunctionName;
+                
+                parameter = [NSString stringWithFormat: format, currentFunction, parameter];
+            }
+            
+            rval = parameter;
+            break;
+#endif
+        }
+            
         case NSFunctionExpressionType:
-            //Convert to a function usable with PostgreSQL
+            //Convert to an aggregate function usable with PostgreSQL
             //Throw an exception if unknown
             rval = [NSString stringWithFormat: @"%@ (%@)",
-                [[[self class] PGTSFunctionNameConversionDictionary] valueForKey: [self function]],
+                [[[self class] PGTSAggregateNameConversionDictionary] valueForKey: [self function]],
                 AddParameter ([[self operand] PGTSValueWithObject: anObject context: context], context)];
             break;
             

@@ -208,6 +208,7 @@
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: count];
     for (int i = 0; i < count; i++)
     {
+        //The expression type should not be changed since it affects expression handling in NSExpression+PGTSAdditions.
         NSExpression* lhs = [NSExpression expressionForConstantValue: [properties objectAtIndex: i]];
         NSExpression* rhs = [NSExpression expressionForConstantValue: [otherProperties objectAtIndex: i]];
         [parts addObject: [NSComparisonPredicate predicateWithLeftExpression: lhs
