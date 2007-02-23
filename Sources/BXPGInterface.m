@@ -289,6 +289,36 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	[connection connectAsync];
 }
 
+- (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
+{
+	NSArray* rval = nil;
+	PGTSResultSet* res = [connection executeQuery: queryString];
+	if (YES == [res querySucceeded])
+		rval = [res resultAsArray];
+	else
+	{
+		*error = [NSError errorWithDomain: kBXErrorDomain
+									 code: kBXErrorUnsuccessfulQuery
+								 userInfo: nil];
+	}
+	return rval;
+}
+
+- (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error;
+{
+	int rval = 0;
+	PGTSResultSet* res = [connection executeQuery: commandString];
+	if (YES == [res querySucceeded])
+		rval = [res numberOfRowsAffectedByCommand];
+	else
+	{
+		*error = [NSError errorWithDomain: kBXErrorDomain
+									 code: kBXErrorUnsuccessfulQuery
+								 userInfo: nil];		
+	}
+	return rval;
+}
+
 - (id) createObjectForEntity: (BXEntityDescription *) entity 
              withFieldValues: (NSDictionary *) valueDict
                        class: (Class) aClass 

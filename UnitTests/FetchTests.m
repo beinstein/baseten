@@ -31,6 +31,7 @@
 
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseObjectIDPrivate.h>
+#import <BaseTen/BXDatabaseAdditions.h>
 
 
 @interface BXDatabaseObject (BXKVC)
@@ -158,6 +159,24 @@
     NSArray* dateobjects = [context executeFetchForEntity: datetest withPredicate: nil error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (dateobjects);
+}
+
+- (void) testQuery
+{
+	NSError* error = nil;
+	NSArray* result = [context executeQuery: [NSString stringWithUTF8String: "SELECT * FROM ♨"] error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	MKCAssertTrue (3 == [result count]);
+	TSEnumerate (currentRow, e, [result objectEnumerator])
+		MKCAssertTrue (2 == [currentRow count]);
+}
+
+- (void) testCommand
+{
+	NSError* error = nil;
+	unsigned long long count = [context executeCommand: [NSString stringWithUTF8String: "UPDATE ♨ SET value = 'test'"] error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	MKCAssertTrue (3 == count);
 }
 
 @end

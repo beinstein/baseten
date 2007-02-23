@@ -311,6 +311,8 @@ CREATE TABLE ♨ (id SERIAL PRIMARY KEY, value VARCHAR (255));
 SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n
 	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname = '♨';
 
+GRANT SELECT, INSERT, UPDATE, DELETE ON ♨ TO baseten_test_user;
+GRANT USAGE ON SEQUENCE ♨_id_seq TO baseten_test_user;
 INSERT INTO ♨ (value) VALUES ('test1');
 INSERT INTO ♨ (value) VALUES ('test2');
 INSERT INTO ♨ (value) VALUES ('test3');

@@ -75,6 +75,7 @@
 	BOOL							mRetryingConnection;
     BOOL                            mRetainRegisteredObjects;
 }
+
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
 + (Class) interfaceClassForScheme: (NSString *) scheme;
 
@@ -84,8 +85,8 @@
 - (NSURL *) databaseURI;
 - (BOOL) isConnected;
 
-- (BOOL)retainsRegisteredObjects;
-- (void)setRetainsRegisteredObjects:(BOOL)flag;
+- (BOOL) retainsRegisteredObjects;
+- (void) setRetainsRegisteredObjects:(BOOL)flag;
 
 - (BOOL) hasSeenEntity: (BXEntityDescription *) anEntity;
 - (NSSet *) seenEntities;
@@ -143,6 +144,8 @@
 
 - (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error;
 
+- (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error;
+- (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error;
 @end
 
 

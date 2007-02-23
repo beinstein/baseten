@@ -972,6 +972,28 @@ extern void BXInit ()
     return rval;
 }
 
+- (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
+{
+	NSError* localError = nil;
+	id rval = nil;
+	[self connectIfNeeded: &localError];
+    if (nil == localError)
+		rval = [mDatabaseInterface executeQuery: queryString error: &localError];
+	BXHandleError (error, localError);
+	return rval;
+}
+
+- (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error
+{
+	NSError* localError = nil;
+	unsigned long long rval = 0;
+	[self connectIfNeeded: &localError];
+    if (nil == localError)
+		rval = [mDatabaseInterface executeCommand: commandString error: &localError];
+	BXHandleError (error, localError);
+	return rval;
+}
+
 @end
 
 

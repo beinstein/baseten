@@ -28,7 +28,7 @@
 
 #import "ConnectTest.h"
 #import <BaseTen/BaseTen.h>
-#import "MKCSenTestCaseAdditions.h";
+#import "MKCSenTestCaseAdditions.h"
 
 
 @implementation ConnectTest
