@@ -144,6 +144,7 @@
 
 - (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error;
 
+/* These methods should only be used for purposes which the ones above are not suited. */
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error;
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error;
 @end

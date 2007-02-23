@@ -972,6 +972,12 @@ extern void BXInit ()
     return rval;
 }
 
+/**
+ * Execute a query directly.
+ * This method should only be used when fetching objects and modifying 
+ * them is cumbersome or doesn't accomplish the task.
+ * \return An NSArray of NSDictionaries that correspond to each row.
+ */
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
 {
 	NSError* localError = nil;
@@ -983,6 +989,12 @@ extern void BXInit ()
 	return rval;
 }
 
+/**
+ * Execute a command directly.
+ * This method should only be used when fetching objects and modifying 
+ * them is cumbersome or doesn't accomplish the task.
+ * \return The number of rows affected by the command.
+ */
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error
 {
 	NSError* localError = nil;
