@@ -239,6 +239,10 @@ extern void BXInit ()
     return mDatabaseURI;
 }
 
+/**
+ * Connect to the database.
+ * This method returns after the connection has been made.
+ */
 - (void) connectIfNeeded: (NSError **) error
 {
     NSError* localError = nil;
@@ -263,8 +267,9 @@ extern void BXInit ()
 
 /**
  * Connect to the database.
- * After the attempt, either a kBXConnectionSuccessfulNotification or a kBXConnectionFailedNotification
- * will be posted.
+ * This method returns immediately.
+ * After the attempt, either a kBXConnectionSuccessfulNotification or a 
+ * kBXConnectionFailedNotification will be posted.
  */
 - (void) connect
 {
@@ -290,6 +295,9 @@ extern void BXInit ()
 	}	
 }
 
+/**
+ * Connection status.
+ */
 - (BOOL) isConnected
 {
 	return [mDatabaseInterface connected];
@@ -407,7 +415,7 @@ extern void BXInit ()
 }
 
 /**
- * Query logging.
+ * Query logging to the standard output or the system console.
  * \return          A boolean indicating whether the queries 
  *                  get logged to the standard output or not.
  */
@@ -482,6 +490,10 @@ extern void BXInit ()
 	}
 }
 
+/**
+ * Set a policy delegate.
+ * The delegate object will not be retained.
+ */
 - (void) setPolicyDelegate: (id) anObject
 {
 	policyDelegate = anObject;
@@ -975,7 +987,7 @@ extern void BXInit ()
 /**
  * Execute a query directly.
  * This method should only be used when fetching objects and modifying 
- * them is cumbersome or doesn't accomplish the task.
+ * them is cumbersome or doesn't accomplish the task altogether.
  * \return An NSArray of NSDictionaries that correspond to each row.
  */
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
@@ -992,7 +1004,7 @@ extern void BXInit ()
 /**
  * Execute a command directly.
  * This method should only be used when fetching objects and modifying 
- * them is cumbersome or doesn't accomplish the task.
+ * them is cumbersome or doesn't accomplish the task altogether.
  * \return The number of rows affected by the command.
  */
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error
@@ -1359,7 +1371,7 @@ extern void BXInit ()
 }
 
 /**
- * \name Convenience methods for getting entity descriptions.
+ * \name Convenience methods for getting entity descriptions
  */
 //@{
 /** Entity for a table in a given schema */
@@ -1401,7 +1413,7 @@ extern void BXInit ()
 //@}
 
 /**
- * \name Convenience methods for getting relationship descriptions.
+ * \name Convenience methods for getting relationship descriptions
  */
 //@{
 /** 
@@ -1820,3 +1832,4 @@ extern void BXInit ()
 }
 
 @end
+

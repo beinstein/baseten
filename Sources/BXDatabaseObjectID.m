@@ -400,7 +400,6 @@ static TSNonRetainedObjectSet* gObjectIDs;
 
 
 @implementation BXDatabaseObjectID (PrivateMethods)
-
 /** 
  * \internal
  * \name Creating object IDs */

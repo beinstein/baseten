@@ -149,6 +149,11 @@ ParseSelector (SEL aSelector, NSString** key)
     return mContext;
 }
 
+/**
+ * Test object equality.
+ * Currently objects are considered equal if they are managed by the same database context and
+ * their object IDs are equal.
+ */
 - (BOOL) isEqual: (BXDatabaseObject *) anObject
 {
     BOOL rval = NO;
@@ -187,6 +192,13 @@ ParseSelector (SEL aSelector, NSString** key)
     return rval;
 }
 
+/**
+ * Value or objects from the database.
+ * Look up the value from the cache or ask the database context to fetch it.
+ * Currently this method calls -primitiveValueForKey:.
+ * \param   aKey    A BXPropertyDescription.
+ * \return          An object or an NSArray of BXDatabaseObjects.
+ */
 - (id) objectForKey: (BXPropertyDescription *) aKey
 {
     return [self valueForKey: [aKey name]];
@@ -212,7 +224,7 @@ ParseSelector (SEL aSelector, NSString** key)
     [self setPrimitiveValue: aValue forKey: aKey];
 }
 
-/** The object's id */
+/** The object's ID */
 - (BXDatabaseObjectID *) objectID
 {
     return mObjectID;
@@ -326,7 +338,7 @@ ParseSelector (SEL aSelector, NSString** key)
     TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
     {
         BXPropertyDescription* desc = 
-        [BXPropertyDescription propertyWithName: currentFName entity: entity];
+            [BXPropertyDescription propertyWithName: currentFName entity: entity];
         [rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
     }
     return rval;
@@ -382,7 +394,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
-* A proxy for monitoring the object status.
+ * A proxy for monitoring the object status.
  */
 - (id <BXObjectStatusInfo>) statusInfo
 {
@@ -432,7 +444,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Value from the object's cache.
- * This method is thread-safe. Primary key values should be accessed using the object ID.
+ * This method is thread-safe. Primary key values should be accessed using the object ID instead.
  * \return      The value in question or nil, if it has not been fetched from the database yet.
  */
 - (id) cachedValueForKey: (NSString *) aKey
@@ -511,7 +523,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * Set value for the given key in the database.
+ * Set value for a given key in the database.
  * \param   aVal    The new value.
  * \param   aKey    An NSString.
  */
@@ -570,8 +582,9 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Set multiple values.
- * This is not merely a convenience method; invoking this method is potentially much faster than 
- * repeatedly invoking -setPrimitiveValue:forKey:. For foreign keys, use -setPrimitiveValue:forKey: instead.
+ * This is not merely a convenience method; invoking this is potentially much faster than 
+ * repeatedly using -setPrimitiveValue:forKey:. For foreign keys, -setPrimitiveValue:forKey: 
+ * should be used instead.
  */
 - (void) setPrimitiveValuesForKeysWithDictionary: (NSDictionary *) aDict
 {

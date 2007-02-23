@@ -65,7 +65,7 @@
 	NSMutableIndexSet*				mUndoGroupingLevels;
 	
 	IBOutlet NSWindow*				modalWindow;
-	IBOutlet id						policyDelegate;
+	IBOutlet id                 	policyDelegate;
 
     BOOL                            mLogsQueries;
     BOOL                            mAutocommits;

@@ -29,7 +29,31 @@
 #import <BaseTen/BXConstants.h>
 #import <Security/Security.h>
 
+/**
+ * A protocol for SSL connection delegate.
+ * In the future the delegate might have influence on other policies.
+ */
 @interface NSObject (BXPolicyDelegate)
-- (enum BXCertificatePolicy) BXDatabaseContext: (BXDatabaseContext *) ctx handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
+/**
+ * Policy for invalid trust.
+ * The server certificate will be verified using the system keychain. On failure this 
+ * method will be called. The delegate may then accept or deny the certificate or, in
+ * case the application has been linked to the BaseTenAppKit framework, ask the context
+ * to display a trust panel to the user.
+ * \param ctx     The database context making the connection
+ * \param trust   A trust created from the certificate
+ * \param result  Initial verification result
+ */
+- (enum BXCertificatePolicy) BXDatabaseContext: (BXDatabaseContext *) ctx 
+                            handleInvalidTrust: (SecTrustRef) trust 
+                                        result: (SecTrustResultType) result;
+/**
+ * Secure connection mode for the context.
+ * The mode may be one of require, disable and prefer. In prefer mode,
+ * a secure connection will be attempted. If this fails for other reason
+ * than a certificate verification problem, an insecure connection
+ * will be tried.
+ */
 - (enum BXSSLMode) BXSSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
 @end
+

@@ -66,7 +66,7 @@
  */
  
 /**
- * \page dp1Limitations Limitations in Developer Preview 1
+ * \page dpLimitations Limitations in Developer Preview
  * \li Renaming tables after having them prepared for modification observing will not work. Should tables need to be renamed, 
  *     first cancel modification observing, then rename the table and finally prepare it again.
  * \li Changing tables' primary keys after having them prepared for modification observing will not work. Use the method 
@@ -79,11 +79,9 @@
  *     Insertion of larger data sets (thousands of objects) takes considerable amount of time and 
  *     may cause 'out of shared memory' errors if executed without the autocommit flag.
  *     Fetching large data sets should be fast enough.  
- * \li Timestamp parsing causes accuracy to be lost, if timestamp's precision is greater than 3. Workaround is to cast 
- *     timestamps to timestamp (3) using views or otherwise. This concerns timestamps with time zones as well.
  * \li The query logging system is not very consistent at the moment. Mostly, however, the queries are logged with the 
  *     performing connection object's address prepended.
- * \li Automatically updating collections currently don't post KVO notifications. Instead, one should subscribe to NSNotifications kBXInsertNotification, kBXUpdateNotification and kBXDeleteNotification with the entity description as the notification object.
+ * \li Automatically updating collections currently don't post KVO notifications. Instead of binding, one should subscribe to NSNotifications kBXInsertNotification, kBXUpdateNotification and kBXDeleteNotification with the entity description as the notification object.
  */
 
 /**
@@ -173,7 +171,7 @@
  * 
  * INSERT INTO person VALUES (1, 'nzhuk', 1, 1);
  *
- * INSERT INTO person_address VALUES (1, 'Hämeentie 94');
+ * INSERT INTO person_address VALUES (1, 'Mannerheimintie 1');
  * </code>
  *
  * A BXSynchronizedArrayController may be used to provide the contents of the <tt>person</tt> table to an NSTableView.
