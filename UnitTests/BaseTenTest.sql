@@ -319,7 +319,7 @@ INSERT INTO ♨ (value) VALUES ('test3');
 CREATE TABLE datetest (
     id SERIAL PRIMARY KEY, 
     d1 date DEFAULT CURRENT_TIMESTAMP::date, 
-    d2 TIMESTAMP (3) WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    d2 TIMESTAMP (6) WITH TIME ZONE DEFAULT clock_timestamp ()
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON datetest TO baseten_test_user;
 GRANT USAGE ON SEQUENCE datetest_id_seq TO baseten_test_user;

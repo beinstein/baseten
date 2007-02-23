@@ -10,14 +10,6 @@
 		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
 		53F0A2F00B8DE6D900FCD3AA /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
-		53F0A5350B8DF06D00FCD3AA /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
-		53F0A5360B8DF06D00FCD3AA /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
-		53F0A5370B8DF06E00FCD3AA /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
-		53F0A5380B8DF06F00FCD3AA /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
-		53F0A5390B8DF07000FCD3AA /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
-		53F0A53A0B8DF07100FCD3AA /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
-		53F0A53B0B8DF07200FCD3AA /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
-		53F0A53C0B8DF07300FCD3AA /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -230,14 +222,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				53F0A2F00B8DE6D900FCD3AA /* FetchTests.m in Sources */,
-				53F0A5350B8DF06D00FCD3AA /* ConnectTest.m in Sources */,
-				53F0A5360B8DF06D00FCD3AA /* EntityTests.m in Sources */,
-				53F0A5370B8DF06E00FCD3AA /* ObjectIDTests.m in Sources */,
-				53F0A5380B8DF06F00FCD3AA /* CreateTests.m in Sources */,
-				53F0A5390B8DF07000FCD3AA /* ModificationTests.m in Sources */,
-				53F0A53A0B8DF07100FCD3AA /* ForeignKeyTests.m in Sources */,
-				53F0A53B0B8DF07200FCD3AA /* MTOCollectionTest.m in Sources */,
-				53F0A53C0B8DF07300FCD3AA /* MTMCollectionTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

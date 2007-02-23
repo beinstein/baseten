@@ -158,7 +158,6 @@
     NSArray* dateobjects = [context executeFetchForEntity: datetest withPredicate: nil error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (dateobjects);
-    MKCAssertTrue (3 == [dateobjects count]);
 }
 
 @end
