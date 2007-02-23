@@ -318,7 +318,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
 	size_t resultLength = 0;
-	unsigned char *unescaped = PQunescapeBytea((unsigned char*)value, &resultLength);
+	unsigned char *unescaped = PQunescapeBytea ((unsigned char*) value, &resultLength);
 	
 	if (NULL == unescaped)
 	{
@@ -327,9 +327,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 	}
 	
     NSData *data = [[self class] dataWithBytes: unescaped length: resultLength];
-	
-	PQfreemem(unescaped);
-	
+	PQfreemem (unescaped);
 	return data;
 }
 
@@ -484,13 +482,21 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
-    char* datetime = value;
+	log4Debug (@"Given value: %s", value);
+	
+	size_t length = strlen (value) + 1;
+    char* datetime = alloca (length);
+	strlcpy (datetime, value, length);
+	
     double interval = 0.0;
+	char* subseconds = NULL;
+	
+	NSAssert ('.' == datetime [19], @"FIXME: remove this.");
     if ('.' == datetime [19])
     {
         datetime [19] = '\0';
-        size_t length = strlen (&datetime [20]) + 1;
-        char* subseconds = alloca (2 + length);
+        length = strlen (&datetime [20]) + 1;
+        subseconds = alloca (2 + length);
         strlcpy (&subseconds [2], &datetime [20], length);
         subseconds [0] = '0';
         subseconds [1] = '.';
@@ -500,9 +506,15 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     NSMutableString* dateString = [NSString stringWithUTF8String: datetime];
     id rval = [NSCalendarDate dateWithString: dateString
                               calendarFormat: @"%Y-%m-%d %H:%M:%S"];
-    
+    rval = [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate] + interval];
     NSAssert (nil != rval, @"Failed matching string to date format");
-    return [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate] + interval];
+#ifndef NS_BLOCK_ASSERTIONS
+	double integralPart = 0.0;
+	NSAssert2 (NULL == subseconds || 0.0 < modf ([rval timeIntervalSince1970], &integralPart),
+			   @"Expected date to have a fractional part (timestamp: %f, subseconds: %s)",
+			   [rval timeIntervalSince1970], subseconds);
+#endif
+    return rval;
 }
 @end
 
@@ -511,7 +523,8 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     id rval = nil;
-    if (10 == strlen (value))
+	size_t length = strlen (value);
+    if (10 == length)
     {
         NSString* dateString = [NSString stringWithUTF8String: value];
         rval = [[self class] dateWithString: dateString calendarFormat: @"%Y-%m-%d"];
@@ -522,7 +535,9 @@ strtof (const char * restrict nptr, char ** restrict endptr);
         char tzmarker = '\0';
         char* timezone = NULL;
         char* subseconds = NULL;
-        char* datetime = value;
+		length++;
+		char* datetime = alloca (length);
+		strlcpy (datetime, value, length);
         
         switch (datetime [19])
         {
