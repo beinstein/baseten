@@ -44,11 +44,6 @@
     return self;
 }
 
-- (void) handleAddedObjects: (NSArray *) objectArray
-{
-    [mContainer addObjectsFromArray: objectArray];
-}
-
 - (void) handleRemovedObjects: (NSArray *) objectArray
 {
     [mContainer removeObjectsInArray: objectArray];

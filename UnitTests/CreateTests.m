@@ -31,7 +31,6 @@
 #import <BaseTen/BaseTen.h>
 #import <Foundation/Foundation.h>
 
-
 @interface TestObject : BXDatabaseObject
 {
 }
@@ -92,11 +91,11 @@
 }
 
 - (void) testCreateAndDeleteWithArray
-{
+{	
     NSError* error = nil;
     NSArray* array = nil;
     array = [context executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
-                                    updateAutomatically: YES error: &error];
+					   updateAutomatically: YES error: &error];
         
     MKCAssertNil (error);
     MKCAssertNotNil (array);

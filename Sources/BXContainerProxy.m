@@ -82,10 +82,9 @@
         NSDictionary* userInfo = [notification userInfo];
         BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
         if (mContext == sendingContext)
-        {
-            log4Debug (@"Added objects");
-            
+        {            
             NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];        
+            log4Debug (@"Adding object ids: %@", ids);
             [self addedObjectsWithIDs: ids];
         }
     }
@@ -94,16 +93,20 @@
 - (void) addedObjectsWithIDs: (NSArray *) ids
 {    
     NSArray* objects = [mContext faultsWithIDs: ids];
+	log4Debug (@"Adding objects: %@", objects);
     if (nil != mFilterPredicate)
         objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
-    
     [self handleAddedObjects: objects];
+    log4Debug (@"Contents after adding: %@", mContainer);
 }
 
 - (void) handleAddedObjects: (NSArray *) objectArray
 {
     TSEnumerate (currentObject, e, [objectArray objectEnumerator])
-        [mContainer addObject: currentObject];
+	{
+		if (NO == [mContainer containsObject: currentObject])
+			[mContainer addObject: currentObject];
+	}
 }
 
 - (void) deletedObjects: (NSNotification *) notification
@@ -114,8 +117,8 @@
         BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
         if (mContext == sendingContext)
         {        
-            log4Debug (@"Deleted objects");
             NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
+            log4Debug (@"Removing object ids: %@", ids);
             [self removedObjectsWithIDs: ids];
         }
     }
@@ -124,6 +127,7 @@
 - (void) removedObjectsWithIDs: (NSArray *) ids
 {
     [self handleRemovedObjects: [mContext registeredObjectsWithIDs: ids]];
+    log4Debug (@"Contents after removal: %@", mContainer);
 }
 
 - (void) handleRemovedObjects: (NSArray *) objectArray
@@ -140,9 +144,8 @@
         BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
         if (mContext == sendingContext)
         {
-            log4Debug (@"Updated objects");
-            
             NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
+            log4Debug (@"Updating for object ids: %@", ids);
             [self updatedObjectsWithIDs: ids];
         }
     }
@@ -167,8 +170,13 @@
         addedObjects   = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: removedObjects];
     }
     
+	log4Debug (@"Removing:\t%@", removedObjects);
+	log4Debug (@"Adding:\t%@", addedObjects);
+	
     [self handleRemovedObjects: removedObjects];
     [self handleAddedObjects: addedObjects];
+	
+	log4Debug (@"Count after operation:\t%d", [mContainer count]);
 }
 
 - (BXDatabaseContext *) context

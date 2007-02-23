@@ -344,8 +344,8 @@ GRANT SELECT ON "baseten".relationships TO basetenread;
 CREATE TABLE "baseten".Modification (
     "baseten_modification_id" INTEGER PRIMARY KEY,
     "baseten_modification_relid" OID NOT NULL,
-    "baseten_modification_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NULL DEFAULT NULL,
-    "baseten_modification_insert_timestamp" TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
+    "baseten_modification_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
+    "baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
     "baseten_modification_type" CHAR NOT NULL,
     "baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
 );
@@ -368,7 +368,7 @@ CREATE TABLE "baseten".lock (
     "baseten_lock_backend_pid"   INTEGER NOT NULL DEFAULT pg_backend_pid (),
     "baseten_lock_id"            BIGINT NOT NULL DEFAULT "baseten".LockNextId (),
     "baseten_lock_relid"         OID NOT NULL,
-    "baseten_lock_timestamp"     TIMESTAMP (3) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
+    "baseten_lock_timestamp"     TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
     "baseten_lock_query_type"    CHAR (1) NOT NULL DEFAULT 'U',  -- U == UPDATE, D == DELETE
     "baseten_lock_cleared"       BOOLEAN NOT NULL DEFAULT FALSE,
     "baseten_lock_savepoint_idx" BIGINT NOT NULL,
@@ -383,7 +383,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.910::NUMERIC;
+    SELECT 0.911::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;

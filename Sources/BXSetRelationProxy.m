@@ -151,7 +151,10 @@
 - (void) handleAddedObjects: (NSArray *) objectArray
 {
     TSEnumerate (currentObject, e, [objectArray objectEnumerator])
-        [mOriginalContainer addObject: currentObject];
+	{
+		if (NO == [mOriginalContainer containsObject: currentObject])
+			[mOriginalContainer addObject: currentObject];
+	}
 }
 
 - (void) handleRemovedObjects: (NSArray *) objectArray
