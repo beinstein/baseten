@@ -237,8 +237,13 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-	const char* clientEncoding = PQparameterStatus ([connection pgConnection], "client_encoding");
-	NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
+    if (nil == connection)
+        log4Warn (@"Connection pointer was nil.");
+    else
+    {
+        const char* clientEncoding = PQparameterStatus ([connection pgConnection], "client_encoding");
+        NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
+    }
     const char* rval = [self UTF8String];
     if (NULL != length)
         *length = strlen (rval);
@@ -462,30 +467,42 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @implementation NSDate (PGTSAdditions)
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    return [[self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S.%F"
-                                       timeZone: [NSTimeZone localTimeZone]
-                                         locale: nil] PGTSParameterLength: length connection: connection];
+    NSMutableString* rval = [NSMutableString stringWithString: 
+        [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"
+                                   timeZone: [NSTimeZone localTimeZone]
+                                     locale: nil]];
+    double integralPart = 0.0;
+    double subseconds = modf ([self timeIntervalSinceReferenceDate], &integralPart);
+    
+    char* fractionalPart = NULL;
+    asprintf (&fractionalPart, "%-.6f", fabs (subseconds));
+    [rval appendFormat: @"%s", &fractionalPart [1]];
+    free (fractionalPart);
+    
+    return [rval PGTSParameterLength: length connection: connection];
 }
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
-    NSMutableString* dateString = [NSMutableString stringWithUTF8String: value];
-    switch ([dateString length])
+    char* datetime = value;
+    double interval = 0.0;
+    if ('.' == datetime [19])
     {
-        //PostgreSQL seems to count significant numbers in its timestamp,
-        //which Foundation is unable to interpret
-        case 19:
-            [dateString appendString: @".00"];
-        case 22:
-            [dateString appendString: @"0"];
-        case 23:
-        default:
-            break;
+        datetime [19] = '\0';
+        size_t length = strlen (&datetime [20]) + 1;
+        char* subseconds = alloca (2 + length);
+        strlcpy (&subseconds [2], &datetime [20], length);
+        subseconds [0] = '0';
+        subseconds [1] = '.';
+        interval = strtod (subseconds, NULL);
     }
+    
+    NSMutableString* dateString = [NSString stringWithUTF8String: datetime];
     id rval = [NSCalendarDate dateWithString: dateString
-                              calendarFormat: @"%Y-%m-%d %H:%M:%S.%F"];
+                              calendarFormat: @"%Y-%m-%d %H:%M:%S"];
+    
     NSAssert (nil != rval, @"Failed matching string to date format");
-    return [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate]];
+    return [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate] + interval];
 }
 @end
 
@@ -493,28 +510,104 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @implementation NSCalendarDate (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
-    id rval;
-    NSString* dateString = [NSString stringWithUTF8String: value];
-    switch ([dateString length])
+    id rval = nil;
+    if (10 == strlen (value))
     {
-        case 10:
-            rval = [[self class] dateWithString:dateString calendarFormat:@"%Y-%m-%d"];
-            break;
-        default:
+        NSString* dateString = [NSString stringWithUTF8String: value];
+        rval = [[self class] dateWithString: dateString calendarFormat: @"%Y-%m-%d"];
+    }
+    else
+    {
+        BOOL shouldContinue = YES;
+        char tzmarker = '\0';
+        char* timezone = NULL;
+        char* subseconds = NULL;
+        char* datetime = value;
+        
+        switch (datetime [19])
         {
+            case '+':
+            case '-':
+                tzmarker = datetime [19];
+                timezone = &datetime [20];
+                break;
+            case '.':
+            {
+                subseconds = &datetime [20];
+                
+                unsigned int i = 0;
+                while (isdigit (subseconds [i]))
+                    i++;
+                
+                tzmarker = subseconds [i];
+                subseconds [i] = '\0';
+                timezone = &subseconds [i + 1];
+                break;
+            }
+            default:
+                shouldContinue = NO;
+                break;
+        }
+        datetime [19] = '\0';
+        
+        if (YES == shouldContinue)
+        {
+            NSString* dateString = [NSString stringWithUTF8String: datetime];
+            NSCalendarDate* date = [[self class] dateWithString: dateString
+                                                 calendarFormat: @"%Y-%m-%d %H:%M:%S"];
             
-            rval = [[self class] dateWithString: dateString
-                                 calendarFormat: @"%Y-%m-%d %H:%M:%S.%F+%z"];
+            double interval = 0.0;
+            if (NULL != subseconds)
+            {
+                size_t length = strlen (subseconds) + 1;
+                char* subseconds2 = alloca (2 + length);
+                strlcpy (&subseconds2 [2], subseconds, length);
+                subseconds2 [0] = '0';
+                subseconds2 [1] = '.';
+                interval = strtod (subseconds2, NULL);
+                date = [date addTimeInterval: interval];
+            }
+            
+            if (NULL != timezone)
+            {
+                int secondsFromGMT = 0;
+                char* minutes = NULL;
+                if (':' == timezone [2])
+                {
+                    timezone [2] = '\0';
+                    minutes = &timezone [3];
+                    secondsFromGMT += 60 * strtol (minutes, NULL, 10);
+                }                
+                secondsFromGMT += 60 * 60 * strtol (timezone, NULL, 10);
+                
+                if ('-' == tzmarker)
+                    secondsFromGMT *= -1;
+                
+                [date setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: secondsFromGMT]];
+            }
+            
+            rval = date;
         }
     }
-    NSAssert1 (nil != rval, @"Failed matching string %@ to date format.", dateString);
+    
+    NSAssert1 (nil != rval, @"Failed matching string %s to date format.", value);
     return rval;
 }
 
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    NSString* description = [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S%z"];
-    return [description PGTSParameterLength: length connection: connection];
+    NSMutableString* rval = [NSMutableString stringWithString: [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"]];
+    double integralPart = 0.0;
+    double subseconds = modf ([self timeIntervalSinceReferenceDate], &integralPart);
+    
+    char* fractionalPart = NULL;
+    asprintf (&fractionalPart, "%-.6f", fabs (subseconds));
+    [rval appendFormat: @"%s", &fractionalPart [1]];
+    free (fractionalPart);
+    
+    int seconds = [[self timeZone] secondsFromGMT];
+    [rval appendFormat: @"%+.2d:%.2d", seconds / (60 * 60), abs ((seconds % (60 * 60)) / 60)];
+    return [rval PGTSParameterLength: length connection: connection];
 }
 @end
 
