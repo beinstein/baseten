@@ -60,7 +60,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @implementation NSObject (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     return nil;
 }
@@ -230,7 +230,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @implementation NSString (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     return [NSString stringWithUTF8String: value];
 }
@@ -315,7 +315,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @implementation NSData (PGTSAdditions)
 //TODO: -PGTSParameterLength:
 //Should we use htonl?
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
 	size_t resultLength = 0;
 	unsigned char *unescaped = PQunescapeBytea ((unsigned char*) value, &resultLength);
@@ -347,7 +347,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation NSArray (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     id rval = [NSMutableArray array];
     //Used with typeInfo: argument later
@@ -480,7 +480,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     return [rval PGTSParameterLength: length connection: connection];
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
 	log4Debug (@"Given value: %s", value);
 	
@@ -491,7 +491,6 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     double interval = 0.0;
 	char* subseconds = NULL;
 	
-	NSAssert ('.' == datetime [19], @"FIXME: remove this.");
     if ('.' == datetime [19])
     {
         datetime [19] = '\0';
@@ -520,7 +519,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @implementation NSCalendarDate (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     id rval = nil;
 	size_t length = strlen (value);
@@ -628,7 +627,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @implementation NSDecimalNumber (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     NSDecimal decimal;
     NSString* stringValue = [NSString stringWithUTF8String: value];
@@ -645,7 +644,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     return [[self description] PGTSParameterLength: length connection: connection];
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     return [NSNumber numberWithLongLong: strtoll (value, NULL, 10)];
 }
@@ -680,7 +679,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSFloat (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     return [NSNumber numberWithFloat: strtof (value, NULL)];
 }
@@ -690,7 +689,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSDouble (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     return [NSNumber numberWithDouble: strtod (value, NULL)];
 }
@@ -700,7 +699,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSBool (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     BOOL boolValue = (value [0] == 't' ? YES : NO);
     return [NSNumber numberWithBool: boolValue];
@@ -711,7 +710,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSPoint (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     NSPoint returnPoint;
     NSString* pointString = [NSString stringWithUTF8String: value];
@@ -728,7 +727,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSSize (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     NSPoint p = NSZeroPoint;
     [[PGTSPoint newForPGTSResultSet: set withCharacters: value typeInfo: typeInfo] getValue: &p];
@@ -740,11 +739,13 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSACLItem (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {        
     //Role and privileges are separated by an equals sign
     id rval = nil;
-    char* grantingRole = value;
+	size_t length = strlen (value) + 1;
+    char* grantingRole = alloca (length);
+	strlcpy (grantingRole, value, length);
     char* role = strsep (&grantingRole, "=");
     char* privileges = strsep (&grantingRole, "/");
     
