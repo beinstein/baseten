@@ -1,8 +1,8 @@
 //
-// BXConnectionPanel.h
+// BXPanel.h
 // BaseTen
 //
-// Copyright (C) 2007 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,26 +27,17 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <BaseTenAppKit/BXPanel.h>
-#import <BaseTenAppKit/BXConnectionViewManager.h>
 
-@interface BXConnectionPanel : BXPanel
-{    
-    //Retained
-	BXConnectionViewManager*	mViewManager;
-    NSPanel*                    mAuxiliaryPanel;
-    
-	BOOL						mDisplayedAsSheet;
-    BOOL                        mDisplayingAuxiliarySheet;
+
+@interface BXPanel : NSPanel 
+{
+    id							mPanelDelegate;
+	SEL							mPanelDidEndSelector;
+	void*						mPanelContextInfo;    
 }
 
-+ (id) connectionPanel;
-- (void) setConnectionViewManager: (BXConnectionViewManager *) anObject;
-- (BOOL) displayedAsSheet;
-- (void) setDatabaseContext: (BXDatabaseContext *) ctx;
-- (BXDatabaseContext *) databaseContext;
-@end
+- (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
+				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo;
+- (void) sheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo;
 
-
-@interface BXConnectionPanel (BXConnectionViewManagerDelegate) <BXConnectionViewManagerDelegate>
 @end

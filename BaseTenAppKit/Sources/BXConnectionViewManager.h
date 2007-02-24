@@ -37,6 +37,7 @@
 - (void) BXShowBonjourListView: (NSView *) aView;
 - (void) BXHandleError: (NSError *) error;
 - (void) BXBeginConnecting;
+- (void) BXCancelConnecting;
 @end
 
 

@@ -97,25 +97,8 @@ static NSArray* gManuallyNotifiedKeys = nil;
 		mDisplayedAsSheet = YES;
     [self didChangeValueForKey: @"displayedAsSheet"];
 	
-	mPanelDidEndSelector = didEndSelector;
-	mPanelDelegate = modalDelegate;
-	mPanelContextInfo = contextInfo;
-	[NSApp beginSheet: self modalForWindow: docWindow modalDelegate: self 
-	   didEndSelector: @selector (sheetDidEnd:returnCode:contextInfo:) 
-		  contextInfo: NULL];
-}
-
-- (void) sheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
-{
-	if (NULL != mPanelDidEndSelector)
-	{
-		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: mPanelDidEndSelector];
-		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
-		[invocation setArgument: &self atIndex: 2];
-		[invocation setArgument: &returnCode atIndex: 3];
-		[invocation setArgument: &mPanelContextInfo atIndex: 4];
-		[invocation invoke];
-	}
+    [super beginSheetModalForWindow: docWindow modalDelegate: modalDelegate
+                     didEndSelector: didEndSelector contextInfo: contextInfo];
 }
 
 - (void) auxiliarySheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
@@ -200,5 +183,15 @@ static NSArray* gManuallyNotifiedKeys = nil;
         [NSApp endSheet: mAuxiliaryPanel];
         [mAuxiliaryPanel close];
     }
+}
+
+- (void) BXCancelConnecting
+{
+    NSPanel* panel = self;
+    if (YES == mDisplayingAuxiliarySheet)
+        panel = mAuxiliaryPanel;
+
+    [NSApp endSheet: mAuxiliaryPanel];
+    [mAuxiliaryPanel close];
 }
 @end

@@ -1,5 +1,5 @@
 //
-// BaseTenAppKit.h
+// BXPanel.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,7 +26,33 @@
 // $Id$
 //
 
-#import <BaseTenAppKit/BXSynchronizedArrayController.h>
-#import <BaseTenAppKit/BXObjectStatusToColorTransformer.h>
-#import <BaseTenAppKit/BXConnectionPanel.h>
-#import <BaseTenAppKit/BXAuthenticationPanel.h>
+#import "BXPanel.h"
+
+
+@implementation BXPanel
+
+- (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
+				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo
+{	
+	mPanelDidEndSelector = didEndSelector;
+	mPanelDelegate = modalDelegate;
+	mPanelContextInfo = contextInfo;
+	[NSApp beginSheet: self modalForWindow: docWindow modalDelegate: self 
+	   didEndSelector: @selector (sheetDidEnd:returnCode:contextInfo:) 
+		  contextInfo: NULL];
+}
+
+- (void) sheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+	if (NULL != mPanelDidEndSelector)
+	{
+		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: mPanelDidEndSelector];
+		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
+		[invocation setArgument: &self atIndex: 2];
+		[invocation setArgument: &returnCode atIndex: 3];
+		[invocation setArgument: &mPanelContextInfo atIndex: 4];
+		[invocation invoke];
+	}
+}
+
+@end

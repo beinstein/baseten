@@ -32,6 +32,10 @@
 		53D0D15C0B6F896200D2D101 /* BXDatabaseContextAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */; };
 		53E906630B845BBB008CEA4B /* ConnectionView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53E906610B845BBB008CEA4B /* ConnectionView.nib */; };
 		53E907750B849F07008CEA4B /* AuthenticationView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53E907730B849F07008CEA4B /* AuthenticationView.nib */; };
+		53E9BABE0B90949200DDB9BE /* BXAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9BABC0B90949200DDB9BE /* BXAuthenticationPanel.h */; };
+		53E9BABF0B90949200DDB9BE /* BXAuthenticationPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */; };
+		53E9BB0A0B909EA000DDB9BE /* BXPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9BB080B909EA000DDB9BE /* BXPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53E9BB0B0B909EA000DDB9BE /* BXPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9BB090B909EA000DDB9BE /* BXPanel.m */; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 /* End PBXBuildFile section */
@@ -92,6 +96,10 @@
 		53E906A60B84686E008CEA4B /* BXConnectionViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConnectionViewManager.h; path = Sources/BXConnectionViewManager.h; sourceTree = "<group>"; };
 		53E906A70B84686E008CEA4B /* BXConnectionViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXConnectionViewManager.m; path = Sources/BXConnectionViewManager.m; sourceTree = "<group>"; };
 		53E907740B849F07008CEA4B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/AuthenticationView.nib; sourceTree = "<group>"; };
+		53E9BABC0B90949200DDB9BE /* BXAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAuthenticationPanel.h; path = Sources/BXAuthenticationPanel.h; sourceTree = "<group>"; };
+		53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAuthenticationPanel.m; path = Sources/BXAuthenticationPanel.m; sourceTree = "<group>"; };
+		53E9BB080B909EA000DDB9BE /* BXPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPanel.h; path = Sources/BXPanel.h; sourceTree = "<group>"; };
+		53E9BB090B909EA000DDB9BE /* BXPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPanel.m; path = Sources/BXPanel.m; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -158,7 +166,7 @@
 				53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */,
 				53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */,
 				531060190B905E44009329AD /* NSController Subclasses */,
-				5310601A0B905E59009329AD /* Connection Panel */,
+				5310601A0B905E59009329AD /* Panels */,
 				53726DAD0A30E8FD0086BB60 /* Transformers */,
 			);
 			name = Classes;
@@ -198,15 +206,19 @@
 			name = "NSController Subclasses";
 			sourceTree = "<group>";
 		};
-		5310601A0B905E59009329AD /* Connection Panel */ = {
+		5310601A0B905E59009329AD /* Panels */ = {
 			isa = PBXGroup;
 			children = (
-				53E906590B845A30008CEA4B /* BXConnectionPanel.h */,
-				53E9065A0B845A30008CEA4B /* BXConnectionPanel.m */,
 				53E906A60B84686E008CEA4B /* BXConnectionViewManager.h */,
 				53E906A70B84686E008CEA4B /* BXConnectionViewManager.m */,
+				53E9BB080B909EA000DDB9BE /* BXPanel.h */,
+				53E9BB090B909EA000DDB9BE /* BXPanel.m */,
+				53E906590B845A30008CEA4B /* BXConnectionPanel.h */,
+				53E9065A0B845A30008CEA4B /* BXConnectionPanel.m */,
+				53E9BABC0B90949200DDB9BE /* BXAuthenticationPanel.h */,
+				53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */,
 			);
-			name = "Connection Panel";
+			name = Panels;
 			sourceTree = "<group>";
 		};
 		53726DAD0A30E8FD0086BB60 /* Transformers */ = {
@@ -247,6 +259,8 @@
 				53D0D15B0B6F896200D2D101 /* BXDatabaseContextAdditions.h in Headers */,
 				531060D60B906BDA009329AD /* BXConnectionViewManager.h in Headers */,
 				5310617E0B907628009329AD /* BXConnectionPanel.h in Headers */,
+				53E9BABE0B90949200DDB9BE /* BXAuthenticationPanel.h in Headers */,
+				53E9BB0A0B909EA000DDB9BE /* BXPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -358,6 +372,8 @@
 				53D0D15C0B6F896200D2D101 /* BXDatabaseContextAdditions.m in Sources */,
 				531060D50B906BD9009329AD /* BXConnectionViewManager.m in Sources */,
 				5310617D0B907627009329AD /* BXConnectionPanel.m in Sources */,
+				53E9BABF0B90949200DDB9BE /* BXAuthenticationPanel.m in Sources */,
+				53E9BB0B0B909EA000DDB9BE /* BXPanel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

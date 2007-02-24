@@ -61,7 +61,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
     if ((self = [super init]))
     {
-        [gConnectionViewNib instantiateNibWithOwner: self topLevelObjects: nil];
+        [gConnectionViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
     }
     return self;
 }
@@ -234,7 +234,9 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
 	[self willChangeValueForKey: @"isConnecting"];
 	mIsConnecting = NO;
-	[self didChangeValueForKey: @"isConnecting"];	
+	[self didChangeValueForKey: @"isConnecting"];
+    
+    [mDelegate BXCancelConnecting];
 }
 
 - (IBAction) showBonjourList: (id) sender

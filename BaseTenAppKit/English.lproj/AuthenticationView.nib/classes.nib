@@ -1,4 +1,17 @@
 {
-    IBClasses = ({CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }); 
+    IBClasses = (
+        {
+            CLASS = BXAuthenticationPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                mPasswordAuthenticationView = NSView; 
+                mPasswordField = NSSecureTextFieldCell; 
+                mRememberInKeychainButton = NSButton; 
+                mUsernameField = NSTextFieldCell; 
+            }; 
+            SUPERCLASS = NSPanel; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
     IBVersion = 1; 
 }

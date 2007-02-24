@@ -1,8 +1,8 @@
 //
-// BXConnectionPanel.h
+// BXAuthenticationPanel.h
 // BaseTen
 //
-// Copyright (C) 2007 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -28,25 +28,25 @@
 
 #import <Cocoa/Cocoa.h>
 #import <BaseTenAppKit/BXPanel.h>
-#import <BaseTenAppKit/BXConnectionViewManager.h>
 
-@interface BXConnectionPanel : BXPanel
-{    
-    //Retained
-	BXConnectionViewManager*	mViewManager;
-    NSPanel*                    mAuxiliaryPanel;
+
+@interface BXAuthenticationPanel : BXPanel 
+{
+    //Top-level objects
+    IBOutlet NSView*                mPasswordAuthenticationView;
     
-	BOOL						mDisplayedAsSheet;
-    BOOL                        mDisplayingAuxiliarySheet;
+    IBOutlet NSTextFieldCell*       mUsernameField;
+    IBOutlet NSSecureTextFieldCell* mPasswordField;
+    IBOutlet NSButton*              mRememberInKeychainButton;
+        
+    BOOL                            mIsAuthenticating;
 }
 
-+ (id) connectionPanel;
-- (void) setConnectionViewManager: (BXConnectionViewManager *) anObject;
-- (BOOL) displayedAsSheet;
-- (void) setDatabaseContext: (BXDatabaseContext *) ctx;
-- (BXDatabaseContext *) databaseContext;
+- (BOOL) isAuthenticating;
 @end
 
 
-@interface BXConnectionPanel (BXConnectionViewManagerDelegate) <BXConnectionViewManagerDelegate>
+@interface BXAuthenticationPanel (IBActions)
+- (IBAction) authenticate: (id) sender;
+- (IBAction) cancelAuthentication: (id) sender;
 @end
