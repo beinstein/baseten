@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		5303D6000A39E6CD00917C22 /* BXControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		531060D50B906BD9009329AD /* BXConnectionViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E906A70B84686E008CEA4B /* BXConnectionViewManager.m */; };
+		531060D60B906BDA009329AD /* BXConnectionViewManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E906A60B84686E008CEA4B /* BXConnectionViewManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5310617D0B907627009329AD /* BXConnectionPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9065A0B845A30008CEA4B /* BXConnectionPanel.m */; };
+		5310617E0B907628009329AD /* BXConnectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E906590B845A30008CEA4B /* BXConnectionPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		531650C40B72040700785454 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531650C30B72040700785454 /* SecurityInterface.framework */; };
 		5340251D0A2C49FD0016E8D2 /* BXAppKitFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */; };
 		5340251E0A2C49FD0016E8D2 /* BXAppKitFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */; };
@@ -241,6 +245,8 @@
 				53438E560A384FE500BEDCFF /* BXController.h in Headers */,
 				5303D6000A39E6CD00917C22 /* BXControllerProtocol.h in Headers */,
 				53D0D15B0B6F896200D2D101 /* BXDatabaseContextAdditions.h in Headers */,
+				531060D60B906BDA009329AD /* BXConnectionViewManager.h in Headers */,
+				5310617E0B907628009329AD /* BXConnectionPanel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,6 +356,8 @@
 				53438E2C0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m in Sources */,
 				53438E570A384FE500BEDCFF /* BXController.m in Sources */,
 				53D0D15C0B6F896200D2D101 /* BXDatabaseContextAdditions.m in Sources */,
+				531060D50B906BD9009329AD /* BXConnectionViewManager.m in Sources */,
+				5310617D0B907627009329AD /* BXConnectionPanel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

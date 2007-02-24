@@ -27,15 +27,20 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <BaseTenAppKit/BXConnectionViewManager>
+#import <BaseTenAppKit/BXConnectionViewManager.h>
 
-@interface BXConnectionPanel : NSPanel <BXConnectionViewManagerDelegate>
+@interface BXConnectionPanel : NSPanel
 {
-	id							mSheetDelegate;
-	SEL							mSheetDidEndSelector;
-	void*						mSheetContextInfo;
+	id							mPanelDelegate;
+	SEL							mPanelDidEndSelector;
+	void*						mPanelContextInfo;
+    
+    //Retained
 	BXConnectionViewManager*	mViewManager;
+    NSPanel*                    mAuxiliaryPanel;
+    
 	BOOL						mDisplayedAsSheet;
+    BOOL                        mDisplayingAuxiliarySheet;
 }
 
 + (id) connectionPanel;
@@ -45,5 +50,8 @@
 - (BOOL) displayedAsSheet;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXDatabaseContext *) databaseContext;
+@end
 
+
+@interface BXConnectionPanel (BXConnectionViewManagerDelegate) <BXConnectionViewManagerDelegate>
 @end

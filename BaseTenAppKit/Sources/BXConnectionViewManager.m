@@ -28,9 +28,58 @@
 
 #import "BXConnectionViewManager.h"
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXDatabaseAdditions.h>
+
+
+static NSNib* gConnectionViewNib = nil;
+static NSArray* gManuallyNotifiedKeys = nil;
 
 
 @implementation BXConnectionViewManager
+
++ (void) initialize
+{
+    static BOOL tooLate = NO;
+    if (NO == tooLate)
+    {
+        tooLate = YES;
+        gConnectionViewNib = [[NSNib alloc] initWithNibNamed: @"ConnectionView" 
+                                                      bundle: [NSBundle bundleForClass: self]];
+        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: @"isConnecting", @"useHostname", nil];
+    }
+}
+
++ (BOOL) automaticallyNotifiesObserversForKey: (NSString *) aKey
+{
+    BOOL rval = NO;
+    if (NO == [gManuallyNotifiedKeys containsObject: aKey])
+        rval = [super automaticallyNotifiesObserversForKey: aKey];
+    return rval;
+}
+
+- (id) init
+{
+    if ((self = [super init]))
+    {
+        [gConnectionViewNib instantiateNibWithOwner: self topLevelObjects: nil];
+    }
+    return self;
+}
+
+- (void) dealloc
+{
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+    
+    //Top level objects
+	[mBonjourListView release];
+	[mByHostnameView release];
+	[mBonjourArrayController release];
+        
+	[mNetServiceBrowser release];
+	[mDatabaseContext release];
+    
+	[super dealloc];
+}
 
 - (BOOL) canConnect
 {
@@ -48,35 +97,24 @@
 	return mShowsOtherButton;
 }
 
+- (BOOL) useHostname
+{
+    return mUseHostname;
+}
+
 - (void) setShowsOtherButton: (BOOL) aBool
 {
 	mShowsOtherButton = aBool;
-}
-
-- (void) sheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
-{
-	//Just to make sure that there won't be any invalid pointers around.
-	[mAuxiliaryPanel release];
-	mAuxiliaryPanel = nil;
 }
 
 - (void) startDiscovery
 {
 	if (nil == mNetServiceBrowser)
 	{
-		mNetServiceBrowser = [[mNetServiceBrowser alloc] init];
+		mNetServiceBrowser = [[NSNetServiceBrowser alloc] init];
 		[mNetServiceBrowser setDelegate: self];
 	}
 	[mNetServiceBrowser searchForBrowsableDomains];
-}
-
-- (void) dealloc
-{
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
-	[mNetServiceBrowser release];
-	[mAuxiliaryPanel release];
-	[mDatabaseContext release];
-	[super dealloc];
 }
 
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx
@@ -89,7 +127,7 @@
 		
 		[mDatabaseContext release];
 		mDatabaseContext = [ctx retain];
-		
+	
 		[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: mDatabaseContext];
 		[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionFailedNotification object: mDatabaseContext];
 	}
@@ -103,6 +141,23 @@
 - (NSView *) bonjourListView
 {
 	return mBonjourListView;
+}
+
+- (NSView *) byHostnameView
+{
+    return mByHostnameView;
+}
+
+- (void) setDelegate: (id <BXConnectionViewManagerDelegate>) anObject
+{
+    mDelegate = anObject;
+}
+
+- (void) endConnecting: (NSNotification *) notification
+{
+    [self willChangeValueForKey: @"isConnecting"];
+    mIsConnecting = NO;
+    [self didChangeValueForKey: @"isConnecting"];    
 }
 
 @end
@@ -132,62 +187,72 @@
 	[self willChangeValueForKey: @"isConnecting"];
 	mIsConnecting = YES;
 	[self didChangeValueForKey: @"isConnecting"];
-	
-	if (nil != mAuxiliaryPanel)
-	{
-		[NSApp endSheet: mAuxiliaryPanel];
-		[mAuxiliaryPanel close];
-	}
-		
-	[mDatabaseContext connect];
+    
+    NSURL* databaseURI = nil;
+    if (YES == mUseHostname)
+    {
+        NSString* schema = @"pgsql://";
+        NSString* uriString = [mHostnameField stringValue];
+        if (NO == [uriString hasPrefix: uriString])
+            uriString = [schema stringByAppendingString: uriString];
+        databaseURI = [NSURL URLWithString: uriString];
+    }
+    else
+    {
+        NSNetService* selection = [[mBonjourArrayController selectedObjects] objectAtIndex: 0];
+        databaseURI = [NSURL URLWithString: [NSString stringWithFormat: @"pgsql://%@/%@", 
+            [selection hostName], [selection name]]];
+    }
+    
+    if (nil == databaseURI)
+    {
+        NSString* title = BXLocalizedString (@"invalidConnectionURI", @"Invalid Connection URI", 
+                                             @"Title for dialog");
+        NSString* explanation = BXLocalizedString (@"invalidConnectionURIDescription", 
+                                                   @"The connection URI could not be resolved.", 
+                                                   @"Explanation for dialog");
+        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+            title,          NSLocalizedDescriptionKey,
+            explanation,    NSLocalizedFailureReasonErrorKey,
+            explanation,    NSLocalizedRecoverySuggestionErrorKey,
+            nil];
+        
+        NSError* error = [NSError errorWithDomain: kBXErrorDomain 
+                                             code: kBXErrorMalformedDatabaseURI 
+                                         userInfo: userInfo];
+        [mDelegate BXHandleError: error];
+    }
+    else
+    {
+        [mDatabaseContext setDatabaseURI: databaseURI];
+        [mDelegate BXBeginConnecting];
+        [mDatabaseContext connect];
+    }
 }
 
 - (IBAction) cancelConnecting: (id) sender
 {
 	[self willChangeValueForKey: @"isConnecting"];
 	mIsConnecting = NO;
-	[self didChangeValueForKey: @"isConnecting"];
-	
-	if (nil == mAuxiliaryPanel)
-	{
-		[NSApp endSheet: mPanel returnCode: NSCancelButton];
-		[mPanel close];
-	}
-	else
-	{
-		[NSApp endSheet: mAuxiliaryPanel];
-		[mAuxiliaryPanel close];
-	}
+	[self didChangeValueForKey: @"isConnecting"];	
 }
 
 - (IBAction) showBonjourList: (id) sender
 {
-	NSRect contentRect = [mBonjourListView frame];
-	frame.origin = NSZeroPoint;
-	
-	[mPanel setContentView: mHostnameView];
-	[mPanel setFrame: contentRect display: NO animate: YES];
+    [self willChangeValueForKey: @"useHostname"];
+    mUseHostname = YES;
+    [self didChangeValueForKey: @"useHostname"];
+    
+    [mDelegate BXShowBonjourListView: mBonjourListView];
 }
 
 - (IBAction) showHostnameView: (id) sender
 {
-	if ([mPanel displayedAsSheet])
-	{
-		NSRect contentRect = [mHostnameView frame];
-		frame.origin = NSZeroPoint;
-		
-		[mPanel setContentView: mHostnameView];
-		[mPanel setFrame: contentRect display: NO animate: YES];
-	}
-	else
-	{
-		mAuxiliaryPanel = [[NSPanel alloc] initWithContentRect: contentRect styleMask: NSTitledWindowMask | NSResizableWindowMask 
-													   backing: NSBackingStoreBuffered defer: YES];
-		[panel setContentView: mHostnameView];
-		[NSApp beginSheet: mAuxiliaryPanel modalForWindow: self modalDelegate: self 
-		   didEndSelector: @selector (sheetDidEnd:returnCode:contextInfo:)
-			  contextInfo: NULL];
-	}
+    [self willChangeValueForKey: @"useHostname"];
+    mUseHostname = NO;
+    [self didChangeValueForKey: @"useHostname"];
+    
+    [mDelegate BXShowByHostnameView: mByHostnameView];
 }
 
 @end

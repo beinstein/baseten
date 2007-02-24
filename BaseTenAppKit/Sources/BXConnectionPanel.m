@@ -29,13 +29,34 @@
 #import "BXConnectionPanel.h"
 
 
+static NSArray* gManuallyNotifiedKeys = nil;
+
+
 @implementation BXConnectionPanel
+
++ (void) initialize
+{
+    static BOOL tooLate = NO;
+    if (NO == tooLate)
+    {
+        tooLate = YES;
+        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: @"displayedAsSheet", nil];
+    }
+}
+
++ (BOOL) automaticallyNotifiesObserversForKey: (NSString *) aKey
+{
+    BOOL rval = NO;
+    if (NO == [gManuallyNotifiedKeys containsObject: aKey])
+        rval = [super automaticallyNotifiesObserversForKey: aKey];
+    return rval;
+}
 
 + (id) connectionPanel
 {
 	BXConnectionViewManager* manager = [[BXConnectionViewManager alloc] init];
 	NSView* bonjourListView = [manager bonjourListView];
-	NSRect contentRect = [mBonjourListView frame];
+	NSRect contentRect = [bonjourListView frame];
 	contentRect.origin = NSZeroPoint;
 	BXConnectionPanel* panel = [[[NSPanel alloc] initWithContentRect: contentRect 
 														   styleMask: NSTitledWindowMask | NSResizableWindowMask 
@@ -44,7 +65,7 @@
 	[panel setReleasedWhenClosed: YES];
 	[panel setContentView: bonjourListView];
 	[panel setConnectionViewManager: manager];
-	[manager setDelegate: self];
+	[manager setDelegate: panel];
 	
 	[manager release];
 	return panel;
@@ -53,6 +74,7 @@
 - (void) dealloc
 {
 	[mViewManager release];
+    [mAuxiliaryPanel release];
 	[super dealloc];
 }
 
@@ -68,14 +90,16 @@
 - (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
 				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo
 {
+    [self willChangeValueForKey: @"displayedAsSheet"];
 	if (nil == docWindow)
 		mDisplayedAsSheet = NO;
 	else
 		mDisplayedAsSheet = YES;
+    [self didChangeValueForKey: @"displayedAsSheet"];
 	
-	mSheetDidEndSelector = didEndSelector;
-	mSheetDelegate = modalDelegate;
-	mSheetContextInfo = contextInfo;
+	mPanelDidEndSelector = didEndSelector;
+	mPanelDelegate = modalDelegate;
+	mPanelContextInfo = contextInfo;
 	[NSApp beginSheet: self modalForWindow: docWindow modalDelegate: self 
 	   didEndSelector: @selector (sheetDidEnd:returnCode:contextInfo:) 
 		  contextInfo: NULL];
@@ -83,16 +107,22 @@
 
 - (void) sheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
-	if (NULL != mSheetDidEndSelector)
+	if (NULL != mPanelDidEndSelector)
 	{
-		NSMethodSignature* signature = [mSheetDelegate methodSignatureForSelector: mSheetDidEndSelector];
+		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: mPanelDidEndSelector];
 		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
-		[invocation setArgument: self atIndex: 2];
-		[invocation setArgument: returnCode atIndex: 3];
-		[invocation setArgument: mSheetContextInfo atIndex: 4];
+		[invocation setArgument: &self atIndex: 2];
+		[invocation setArgument: &returnCode atIndex: 3];
+		[invocation setArgument: &mPanelContextInfo atIndex: 4];
 		[invocation invoke];
 	}
 }
+
+- (void) auxiliarySheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+    mDisplayingAuxiliarySheet = NO;
+}
+
 
 - (BOOL) displayedAsSheet
 {
@@ -108,13 +138,67 @@
 {
 	return [mViewManager databaseContext];
 }
+@end
 
-- (void) BXShowHostnameView: (NSView *) hostnameView
+
+@implementation BXConnectionPanel (BXConnectionViewManagerDelegate)
+- (void) BXShowByHostnameView: (NSView *) hostnameView
 {
+    NSRect contentRect = [hostnameView frame];
+    contentRect.origin = NSZeroPoint;
+
+	if (mDisplayedAsSheet)
+	{		
+        [self setContentView: nil];
+		[self setFrame: contentRect display: YES animate: YES];
+		[self setContentView: hostnameView];
+        [hostnameView setNeedsDisplay: YES];
+	}
+	else
+	{
+        if (nil == mAuxiliaryPanel)
+        {
+            mAuxiliaryPanel = [[NSPanel alloc] initWithContentRect: contentRect 
+                                                         styleMask: NSTitledWindowMask | NSResizableWindowMask 
+                                                           backing: NSBackingStoreBuffered defer: YES];
+
+            [mAuxiliaryPanel setReleasedWhenClosed: NO];
+            [mAuxiliaryPanel setFrame: contentRect display: NO];
+            [mAuxiliaryPanel setContentView: hostnameView];
+        }        
+        
+		[NSApp beginSheet: mAuxiliaryPanel modalForWindow: self modalDelegate: self 
+           didEndSelector: @selector (auxiliarySheetDidEnd:returnCode:contextInfo:) 
+              contextInfo: NULL];
+        mDisplayingAuxiliarySheet = YES;
+	}
 }
 
 - (void) BXShowBonjourListView: (NSView *) bonjourListView
 {
+    NSRect contentRect = [bonjourListView frame];
+    contentRect.origin = NSZeroPoint;
+    
+    [self setContentView: nil];
+    [self setFrame: contentRect display: YES animate: YES];
+    [self setContentView: bonjourListView];
+    [bonjourListView setNeedsDisplay: YES];
 }
 
+- (void) BXHandleError: (NSError *) error
+{
+    [[NSAlert alertWithError: error] beginSheetModalForWindow: nil
+                                                modalDelegate: nil 
+                                               didEndSelector: NULL
+                                                  contextInfo: NULL];
+}
+
+- (void) BXBeginConnecting
+{
+    if (YES == mDisplayingAuxiliarySheet)
+    {
+        [NSApp endSheet: mAuxiliaryPanel];
+        [mAuxiliaryPanel close];
+    }
+}
 @end

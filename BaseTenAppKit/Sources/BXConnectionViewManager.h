@@ -29,49 +29,58 @@
 #import <Cocoa/Cocoa.h>
 
 
+@class BXDatabaseContext;
+
+
 @protocol BXConnectionViewManagerDelegate
-- (void) BXShowHostnameView: (NSView *) aView;
+- (void) BXShowByHostnameView: (NSView *) aView;
 - (void) BXShowBonjourListView: (NSView *) aView;
+- (void) BXHandleError: (NSError *) error;
+- (void) BXBeginConnecting;
 @end
 
 
 @interface BXConnectionViewManager : NSObject 
 {
-	IBOutlet NSView*				mBonjourListView;
-	IBOutlet NSView*				mHostnameView;
+    IBOutlet id <BXConnectionViewManagerDelegate>   mDelegate;
+
+    //Top-level objects
+	IBOutlet NSView*                                mBonjourListView;
+	IBOutlet NSView*                                mByHostnameView;
+	IBOutlet NSArrayController*                     mBonjourArrayController;
+    
+    //Others
+	IBOutlet NSProgressIndicator*                   mBonjourListProgressIndicator;
+	IBOutlet NSProgressIndicator*                   mByHostnameProgressIndicator;
+    IBOutlet NSTextField*                           mHostnameField;
+
+	//Retained
+	NSNetServiceBrowser*                            mNetServiceBrowser;
+	BXDatabaseContext*                              mDatabaseContext;
 	
-	IBOutlet NSArrayController*		mBonjourArrayController;
-	
-	IBOutlet NSButton*				mRememberPasswordButton;
-	IBOutlet NSTextFieldCell*		mUsernameField;
-	IBOutlet NSTextFieldCell*		mPasswordField;
-	
-	IBOutlet NSProgressIndicator*	mBonjourListProgressIndicator;
-	IBOutlet NSProgressIndicator*	mByHostnameProgressIndicator;
-	
-	NSNetServiceBrowser*	mNetServiceBrowser;
-	BXDatabaseContext*		mDatabaseContext;
-	
-	BOOL					mShowsOtherButton;
-	BOOL					mIsConnecting;
+	BOOL                                            mShowsOtherButton;
+	BOOL                                            mIsConnecting;
+    BOOL                                            mUseHostname;
 }
 
 - (BOOL) canConnect;
 - (BOOL) isConnecting;
 - (BOOL) showsOtherButton;
 - (void) setShowsOtherButton: (BOOL) aBool;
-
-- (IBAction) connect: (id) sender;
-- (IBAction) cancelConnecting: (id) sender;
-- (IBAction) login: (id) sender;
-- (IBAction) cancelLogin: (id) sender;
-- (IBAction) showBonjourList: (id) sender;
-- (IBAction) showHostnameView: (id) sender;
+- (void) setDelegate: (id <BXConnectionViewManagerDelegate>) anObject;
 
 - (void) startDiscovery;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXDatabaseContext *) databaseContext;
 
 - (NSView *) bonjourListView;
+- (NSView *) byHostnameView;
+@end
 
+
+@interface BXConnectionViewManager (IBActions)
+- (IBAction) connect: (id) sender;
+- (IBAction) cancelConnecting: (id) sender;
+- (IBAction) showBonjourList: (id) sender;
+- (IBAction) showHostnameView: (id) sender;
 @end

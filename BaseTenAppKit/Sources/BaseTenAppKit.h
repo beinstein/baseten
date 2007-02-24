@@ -28,3 +28,5 @@
 
 #import <BaseTenAppKit/BXSynchronizedArrayController.h>
 #import <BaseTenAppKit/BXObjectStatusToColorTransformer.h>
+#import <BaseTenAppKit/BXConnectionPanel.h>
+
