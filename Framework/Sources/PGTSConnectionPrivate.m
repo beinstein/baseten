@@ -422,9 +422,13 @@ PGTSSSLConnectionExIndex ()
             {
                 case PGRES_POLLING_OK:
                     rval = YES;
+					//Fall through
                 case PGRES_POLLING_FAILED:
                     stop = YES;
                     break;
+					
+				case PGRES_POLLING_ACTIVE:
+					break;
                     
                 case PGRES_POLLING_READING:
                     selectStatus = select (bsdSocket + 1, &mask, NULL, NULL, &ltimeout);

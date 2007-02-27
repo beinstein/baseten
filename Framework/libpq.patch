@@ -1,6 +1,6 @@
 diff -urN postgresql-8.2.3/src/include/libpq/pqcomm.h postgresql-8.2.3-tsnorri/src/include/libpq/pqcomm.h
 --- postgresql-8.2.3/src/include/libpq/pqcomm.h	2006-06-08 01:24:45.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/include/libpq/pqcomm.h	2007-02-24 20:14:34.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/include/libpq/pqcomm.h	2007-02-27 12:30:58.000000000 +0200
 @@ -147,19 +147,6 @@
  #define MAX_STARTUP_PACKET_LENGTH 10000
  
@@ -23,7 +23,7 @@ diff -urN postgresql-8.2.3/src/include/libpq/pqcomm.h postgresql-8.2.3-tsnorri/s
   * This is uglier than sending it directly to the client's backend, but it
 diff -urN postgresql-8.2.3/src/interfaces/libpq/blibpqdll.def postgresql-8.2.3-tsnorri/src/interfaces/libpq/blibpqdll.def
 --- postgresql-8.2.3/src/interfaces/libpq/blibpqdll.def	2007-02-07 06:44:09.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/blibpqdll.def	2007-02-24 19:52:16.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/blibpqdll.def	2007-02-27 12:30:58.000000000 +0200
 @@ -137,6 +137,7 @@
      _PQdescribePortal          @ 134
      _PQsendDescribePrepared    @ 135
@@ -39,7 +39,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/blibpqdll.def postgresql-8.2.3-t
 +    PQauthRequest             = _PQauthRequest
 diff -urN postgresql-8.2.3/src/interfaces/libpq/exports.txt postgresql-8.2.3-tsnorri/src/interfaces/libpq/exports.txt
 --- postgresql-8.2.3/src/interfaces/libpq/exports.txt	2006-08-18 22:52:39.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/exports.txt	2007-02-24 19:51:30.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/exports.txt	2007-02-27 12:30:58.000000000 +0200
 @@ -136,3 +136,4 @@
  PQdescribePortal          134
  PQsendDescribePrepared    135
@@ -47,16 +47,17 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/exports.txt postgresql-8.2.3-tsn
 +PQauthRequest             137
 diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-connect.c
 --- postgresql-8.2.3/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-connect.c	2007-02-24 19:49:00.000000000 +0200
-@@ -998,6 +998,7 @@
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-connect.c	2007-02-27 19:01:30.000000000 +0200
+@@ -998,6 +998,8 @@
  
  			/* Special cases: proceed without waiting. */
  		case CONNECTION_SSL_STARTUP:
 +        case CONNECTION_SSL_CONTINUE:
++        case CONNECTION_AUTH_START:
  		case CONNECTION_NEEDED:
  			break;
  
-@@ -1305,13 +1306,17 @@
+@@ -1305,13 +1307,17 @@
  		case CONNECTION_SSL_STARTUP:
  			{
  #ifdef USE_SSL
@@ -77,7 +78,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  				{
  					/*
  					 * We use pqReadData here since it has the logic to
-@@ -1344,6 +1349,9 @@
+@@ -1344,6 +1350,9 @@
  						/* Do one-time setup; this creates conn->ssl */
  						if (pqsecure_initialize(conn) == -1)
  							goto error_return;
@@ -87,7 +88,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  					}
  					else if (SSLok == 'N')
  					{
-@@ -1390,10 +1398,18 @@
+@@ -1390,10 +1399,18 @@
  					}
  				}
  
@@ -107,7 +108,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  				if (pollres == PGRES_POLLING_OK)
  				{
  					/* SSL handshake done, ready to send startup packet */
-@@ -1435,7 +1451,6 @@
+@@ -1435,7 +1452,6 @@
  				char		beresp;
  				int			msgLength;
  				int			avail;
@@ -115,7 +116,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  
  				/*
  				 * Scan the message from current point (note that if we find
-@@ -1622,14 +1637,24 @@
+@@ -1622,14 +1638,24 @@
  
  				/* It is an authentication request. */
  				/* Get the type of request. */
@@ -126,15 +127,14 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  					/* We'll come back when there are more data */
  					return PGRES_POLLING_READING;
  				}
--
 +                else if (AUTH_REQ_OK != conn->areq && NULL == conn->pguser)
 +                {
 +                    conn->status = CONNECTION_AUTH_START;
-+                    return PGRES_POLLING_READING; /* FIXME: should this be PGRES_POLLING_ACTIVE instead? */
++                    return PGRES_POLLING_ACTIVE;
 +                }
-+
-+                /* Otherwise fall through. */
-+            }
++	            /* Otherwise fall through. */
++    		}
+ 
 +        case CONNECTION_AUTH_START:
 +            {
  				/* Get the password salt if there is one. */
@@ -143,7 +143,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  				{
  					if (pqGetnchar(conn->md5Salt,
  								   sizeof(conn->md5Salt), conn))
-@@ -1638,7 +1663,7 @@
+@@ -1638,7 +1664,7 @@
  						return PGRES_POLLING_READING;
  					}
  				}
@@ -152,7 +152,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  				{
  					if (pqGetnchar(conn->cryptSalt,
  								   sizeof(conn->cryptSalt), conn))
-@@ -1664,7 +1689,7 @@
+@@ -1664,7 +1690,7 @@
  				 * XXX fe-auth.c has not been fixed to support PQExpBuffers,
  				 * so:
  				 */
@@ -161,7 +161,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  								   conn->errorMessage.data) != STATUS_OK)
  				{
  					conn->errorMessage.len = strlen(conn->errorMessage.data);
-@@ -1680,7 +1705,7 @@
+@@ -1680,7 +1706,7 @@
  				if (pqFlush(conn))
  					goto error_return;
  
@@ -170,7 +170,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  				{
  					/* We are done with authentication exchange */
  					conn->status = CONNECTION_AUTH_OK;
-@@ -1857,6 +1882,7 @@
+@@ -1857,6 +1883,7 @@
  	conn->std_strings = false;	/* unless server says differently */
  	conn->verbosity = PQERRORS_DEFAULT;
  	conn->sock = -1;
@@ -178,7 +178,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  #ifdef USE_SSL
  	conn->allow_ssl_try = true;
  	conn->wait_ssl_try = false;
-@@ -3492,6 +3518,12 @@
+@@ -3492,6 +3519,12 @@
  	return old;
  }
  
@@ -193,7 +193,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
   * and sends it to the notice processor.  This two-level setup exists
 diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-secure.c postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-secure.c
 --- postgresql-8.2.3/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-secure.c	2007-02-24 19:26:45.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-secure.c	2007-02-27 12:34:17.000000000 +0200
 @@ -193,10 +193,10 @@
  }
  
@@ -213,7 +213,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-secure.c postgresql-8.2.3-tsn
  		resetPQExpBuffer(&conn->errorMessage);
 -	}
 +    }
-+    return PGRES_POLLING_WRITING; /* FIXME: Should this be PGRES_POLLING_ACTIVE instead? */
++    return PGRES_POLLING_ACTIVE;
 +#else
 +	/* shouldn't get here */
 +	return PGRES_POLLING_FAILED;
@@ -232,7 +232,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-secure.c postgresql-8.2.3-tsn
  #else
 diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-fe.h
 --- postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-02-24 20:25:07.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-02-27 12:30:58.000000000 +0200
 @@ -53,7 +53,10 @@
  								 * backend startup. */
  	CONNECTION_SETENV,			/* Negotiating environment. */
@@ -276,7 +276,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h postgresql-8.2.3-tsno
   * unencrypted connections or if any other TLS library is in use. */
 diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-int.h postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-int.h
 --- postgresql-8.2.3/src/interfaces/libpq/libpq-int.h	2006-10-04 03:30:13.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-int.h	2007-02-24 20:24:40.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-int.h	2007-02-27 12:30:58.000000000 +0200
 @@ -310,6 +310,7 @@
  	int			addrlist_family;	/* needed to know how to free addrlist */
  	PGSetenvStatusType setenv_state;	/* for 2.0 protocol only */
@@ -295,7 +295,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-int.h postgresql-8.2.3-tsn
  extern ssize_t pqsecure_read(PGconn *, void *ptr, size_t len);
 diff -urN postgresql-8.2.3/src/interfaces/libpq/libpqddll.def postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqddll.def
 --- postgresql-8.2.3/src/interfaces/libpq/libpqddll.def	2007-02-07 06:44:09.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqddll.def	2007-02-24 19:51:07.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqddll.def	2007-02-27 12:30:58.000000000 +0200
 @@ -137,3 +137,4 @@
      PQdescribePortal          @ 134
      PQsendDescribePrepared    @ 135
@@ -303,7 +303,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/libpqddll.def postgresql-8.2.3-t
 +    PQauthRequest             @ 137
 diff -urN postgresql-8.2.3/src/interfaces/libpq/libpqdll.def postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqdll.def
 --- postgresql-8.2.3/src/interfaces/libpq/libpqdll.def	2007-02-07 06:44:09.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqdll.def	2007-02-24 19:50:47.000000000 +0200
++++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqdll.def	2007-02-27 12:30:58.000000000 +0200
 @@ -137,3 +137,4 @@
      PQdescribePortal          @ 134
      PQsendDescribePrepared    @ 135
