@@ -77,4 +77,15 @@
 }
 #endif
 
+- (void) testNilURI
+{
+	NSError* error = nil;
+	id rval = nil;
+	BXEntityDescription* entity = [ctx entityForTable: @"test" error: &error];
+	rval = [ctx executeFetchForEntity: entity withPredicate: nil error: &error];
+	MKCAssertNotNil (error);
+	rval = [ctx createObjectForEntity: entity withFieldValues: nil error: &error];
+	MKCAssertNotNil (error);
+}
+
 @end
