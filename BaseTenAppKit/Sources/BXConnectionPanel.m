@@ -2,7 +2,7 @@
 // BXConnectionPanel.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -58,10 +58,11 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	NSView* bonjourListView = [manager bonjourListView];
 	NSRect contentRect = [bonjourListView frame];
 	contentRect.origin = NSZeroPoint;
-	BXConnectionPanel* panel = [[[NSPanel alloc] initWithContentRect: contentRect 
-														   styleMask: NSTitledWindowMask | NSResizableWindowMask 
-															 backing: NSBackingStoreBuffered 
-															   defer: YES] autorelease];
+	BXConnectionPanel* panel = [[[self alloc] initWithContentRect: contentRect 
+														styleMask: NSTitledWindowMask | NSResizableWindowMask 
+														  backing: NSBackingStoreBuffered 
+															defer: YES] autorelease];
+	[panel setMinSize: contentRect.size];
 	[panel setReleasedWhenClosed: YES];
 	[panel setContentView: bonjourListView];
 	[panel setConnectionViewManager: manager];
@@ -97,6 +98,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 		mDisplayedAsSheet = YES;
     [self didChangeValueForKey: @"displayedAsSheet"];
 	
+	[mViewManager startDiscovery];
     [super beginSheetModalForWindow: docWindow modalDelegate: modalDelegate
                      didEndSelector: didEndSelector contextInfo: contextInfo];
 }
@@ -120,6 +122,16 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (BXDatabaseContext *) databaseContext
 {
 	return [mViewManager databaseContext];
+}
+
+- (void) setShowsOtherButton: (BOOL) aBool
+{
+	[mViewManager setShowsOtherButton: aBool];
+}
+
+- (void) setDatabaseName: (NSString *) aName
+{
+	[mViewManager setDatabaseName: aName];
 }
 @end
 
@@ -183,15 +195,24 @@ static NSArray* gManuallyNotifiedKeys = nil;
         [NSApp endSheet: mAuxiliaryPanel];
         [mAuxiliaryPanel close];
     }
+	
+	[NSApp endSheet: self returnCode: NSOKButton];
+	[[self retain] autorelease];
+	[self close];
 }
 
 - (void) BXCancelConnecting
 {
-    NSPanel* panel = self;
     if (YES == mDisplayingAuxiliarySheet)
-        panel = mAuxiliaryPanel;
-
-    [NSApp endSheet: mAuxiliaryPanel];
-    [mAuxiliaryPanel close];
+	{
+		[NSApp endSheet: mAuxiliaryPanel];
+		[mAuxiliaryPanel close];
+	}
+	else
+	{
+		[NSApp endSheet: self returnCode: NSCancelButton];
+		[[self retain] autorelease];
+		[self close];
+	}
 }
 @end

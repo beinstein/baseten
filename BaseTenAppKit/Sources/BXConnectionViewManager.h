@@ -2,7 +2,7 @@
 // BXConnectionViewManager.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -54,10 +54,12 @@
 	IBOutlet NSProgressIndicator*                   mBonjourListProgressIndicator;
 	IBOutlet NSProgressIndicator*                   mByHostnameProgressIndicator;
     IBOutlet NSTextField*                           mHostnameField;
+	IBOutlet NSTableView*							mBonjourList;
 
 	//Retained
 	NSNetServiceBrowser*                            mNetServiceBrowser;
 	BXDatabaseContext*                              mDatabaseContext;
+	NSString*										mDatabaseName;
 	
 	BOOL                                            mShowsOtherButton;
 	BOOL                                            mIsConnecting;
@@ -69,6 +71,7 @@
 - (BOOL) showsOtherButton;
 - (void) setShowsOtherButton: (BOOL) aBool;
 - (void) setDelegate: (id <BXConnectionViewManagerDelegate>) anObject;
+- (void) setDatabaseName: (NSString *) aName;
 
 - (void) startDiscovery;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;

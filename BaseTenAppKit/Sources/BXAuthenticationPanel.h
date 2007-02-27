@@ -2,7 +2,7 @@
 // BXAuthenticationPanel.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -29,9 +29,12 @@
 #import <Cocoa/Cocoa.h>
 #import <BaseTenAppKit/BXPanel.h>
 
+@class BXDatabaseContext;
 
 @interface BXAuthenticationPanel : BXPanel 
 {
+	//Retained
+	BXDatabaseContext*				mDatabaseContext;
     //Top-level objects
     IBOutlet NSView*                mPasswordAuthenticationView;
     
@@ -42,7 +45,11 @@
     BOOL                            mIsAuthenticating;
 }
 
++ (id) authenticationPanel;
 - (BOOL) isAuthenticating;
+- (void) setDatabaseContext: (BXDatabaseContext *) ctx;
+- (BXDatabaseContext *) databaseContext;
+
 @end
 
 

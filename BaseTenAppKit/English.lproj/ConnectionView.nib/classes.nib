@@ -11,10 +11,12 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 mBonjourArrayController = NSArrayController; 
+                mBonjourList = NSTableView; 
                 mBonjourListProgressIndicator = NSProgressIndicator; 
                 mBonjourListView = NSView; 
                 mByHostnameProgressIndicator = NSProgressIndicator; 
                 mByHostnameView = NSView; 
+                mDelegate = id; 
                 mHostnameField = NSTextField; 
             }; 
             SUPERCLASS = NSObject; 

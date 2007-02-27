@@ -1,5 +1,5 @@
 //
-// BXDatabaseContextAdditions.h
+// BXNetServiceConnector.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,12 +26,16 @@
 // $Id$
 //
 
+#import <Cocoa/Cocoa.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXConnectionSetupManagerProtocol.h>
 
-@class NSWindow;
 
+@interface BXNetServiceConnector : NSObject <BXConnectionSetupManager>
+{
+	IBOutlet BXDatabaseContext* databaseContext;
+	IBOutlet NSWindow* modalWindow;
+}
+- (IBAction) connect: (id) sender;
 
-@interface BXDatabaseContext (BaseTenAppKitAdditions)
-- (void) displayPanelForTrust: (SecTrustRef) trust;
-- (void) displayPanelForTrust: (SecTrustRef) trust modalWindow: (NSWindow *) aWindow;
 @end

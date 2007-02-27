@@ -45,6 +45,8 @@
 - (BOOL) displayedAsSheet;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXDatabaseContext *) databaseContext;
+- (void) setShowsOtherButton: (BOOL) aBool;
+- (void) setDatabaseName: (NSString *) aName;
 @end
 
 

@@ -2,7 +2,7 @@
 // BXConnectionViewManager.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -114,7 +114,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 		mNetServiceBrowser = [[NSNetServiceBrowser alloc] init];
 		[mNetServiceBrowser setDelegate: self];
 	}
-	[mNetServiceBrowser searchForBrowsableDomains];
+	[mNetServiceBrowser searchForServicesOfType: @"_postgresql._tcp." inDomain: @""];
 }
 
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx
@@ -160,20 +160,36 @@ static NSArray* gManuallyNotifiedKeys = nil;
     [self didChangeValueForKey: @"isConnecting"];    
 }
 
+- (void) setDatabaseName: (NSString *) aName
+{
+	if (aName != mDatabaseName)
+	{
+		[mDatabaseName release];
+		mDatabaseName = [aName retain];
+	}
+}
 @end
 
 
 @implementation BXConnectionViewManager (NetServiceBrowserDelegate)
 - (void) netServiceBrowser: (NSNetServiceBrowser *) netServiceBrowser 
-			 didFindDomain: (NSString *) domainName moreComing: (BOOL) moreDomainsComing
-{
-	[netServiceBrowser searchForServicesOfType: @"_postgresql._tcp" inDomain: domainName];
-}
-
-- (void) netServiceBrowser: (NSNetServiceBrowser *) netServiceBrowser 
 			didFindService: (NSNetService *) netService moreComing: (BOOL) moreServicesComing
 {
+	[netService resolveWithTimeout: 5.0];
+	[netService retain];
+	[netService setDelegate: self];
+}
+
+- (void) netServiceDidResolveAddress: (NSNetService *) netService
+{
 	[mBonjourArrayController addObject: netService];
+	[netService release];
+}
+
+- (void) netService: (NSNetService *) netService didNotResolve: (NSDictionary *) errorDict
+{
+	[mBonjourArrayController addObject: netService];
+	[netService release];
 }
 @end
 
@@ -195,13 +211,22 @@ static NSArray* gManuallyNotifiedKeys = nil;
         NSString* uriString = [mHostnameField stringValue];
         if (NO == [uriString hasPrefix: uriString])
             uriString = [schema stringByAppendingString: uriString];
-        databaseURI = [NSURL URLWithString: uriString];
+		NSURL* userURI = [NSURL URLWithString: uriString];
+		if (nil != userURI)
+		{
+			databaseURI = [[mDatabaseContext databaseURI] BXURIForHost: [userURI host]
+															  database: mDatabaseName
+															  username: [userURI user]
+															  password: [userURI password]];
+		}
     }
     else
     {
         NSNetService* selection = [[mBonjourArrayController selectedObjects] objectAtIndex: 0];
-        databaseURI = [NSURL URLWithString: [NSString stringWithFormat: @"pgsql://%@/%@", 
-            [selection hostName], [selection name]]];
+		databaseURI = [[mDatabaseContext databaseURI] BXURIForHost: [selection hostName]
+														  database: mDatabaseName
+														  username: nil
+														  password: nil];
     }
     
     if (nil == databaseURI)
@@ -224,9 +249,10 @@ static NSArray* gManuallyNotifiedKeys = nil;
     }
     else
     {
+		//FIXME: remove NSLog
+		NSLog (@"databaseURI: %@", databaseURI);
         [mDatabaseContext setDatabaseURI: databaseURI];
         [mDelegate BXBeginConnecting];
-        [mDatabaseContext connect];
     }
 }
 

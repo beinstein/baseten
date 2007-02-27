@@ -2,7 +2,7 @@
 // BXPanel.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -48,6 +48,8 @@
 	{
 		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: mPanelDidEndSelector];
 		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
+		[invocation setSelector: mPanelDidEndSelector];
+		[invocation setTarget: mPanelDelegate];
 		[invocation setArgument: &self atIndex: 2];
 		[invocation setArgument: &returnCode atIndex: 3];
 		[invocation setArgument: &mPanelContextInfo atIndex: 4];

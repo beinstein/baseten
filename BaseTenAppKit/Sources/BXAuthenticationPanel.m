@@ -2,7 +2,7 @@
 // BXAuthenticationPanel.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -56,6 +56,12 @@ static NSArray* gManuallyNotifiedKeys = nil;
     return rval;
 }
 
++ (id) authenticationPanel
+{
+	return [[[self alloc] initWithContentRect: NSZeroRect styleMask: NSTitledWindowMask | NSResizableWindowMask
+									  backing: NSBackingStoreBuffered defer: YES] autorelease];
+}
+
 - (id) initWithContentRect: (NSRect) contentRect styleMask: (unsigned int) styleMask
                    backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
 {
@@ -64,6 +70,9 @@ static NSArray* gManuallyNotifiedKeys = nil;
     {
         [gAuthenticationViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
         [self setReleasedWhenClosed: YES];
+		[self setContentView: mPasswordAuthenticationView];
+		//FIXME: replace this with the actual size
+		[self setContentSize: NSMakeSize (200.0, 200.0)];
     }
     return self;
 }
@@ -71,6 +80,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (void) dealloc
 {
     [mPasswordAuthenticationView release];
+	[mDatabaseContext release];
     [super dealloc];
 }
 
@@ -79,27 +89,47 @@ static NSArray* gManuallyNotifiedKeys = nil;
     return mIsAuthenticating;
 }
 
+- (void) setAuthenticating: (BOOL) aBool
+{
+	if (aBool != mIsAuthenticating)
+	{
+		[self willChangeValueForKey: @"isAuthenticating"];
+		mIsAuthenticating = aBool;
+		[self didChangeValueForKey: @"isAuthenticating"];		
+	}
+}
+
+- (void) setDatabaseContext: (BXDatabaseContext *) ctx
+{
+	if (mDatabaseContext != ctx)
+	{
+		[mDatabaseContext release];
+		mDatabaseContext = [ctx retain];
+	}
+}
+
+- (BXDatabaseContext *) databaseContext
+{
+	return mDatabaseContext;
+}
+
 @end
 
 
 @implementation BXAuthenticationPanel (IBActions)
 - (IBAction) authenticate: (id) sender
 {
-    [self willChangeValueForKey: @"isAuthenticating"];
-    mIsAuthenticating = YES;
-    [self didChangeValueForKey: @"isAuthenticating"];
+	[self setAuthenticating: YES];
+	[NSApp endSheet: self returnCode: NSOKButton];
+    //Try to be cautious since we get released when closed.
+    [[self retain] autorelease];
+    [self close];
 }
 
 - (IBAction) cancelAuthentication: (id) sender
 {
-    if (YES == mIsAuthenticating)
-    {
-        [self willChangeValueForKey: @"isAuthenticating"];
-        mIsAuthenticating = NO;
-        [self didChangeValueForKey: @"isAuthenticating"];
-    }
-    
-    [NSApp endSheet: self];
+	[self setAuthenticating: NO];
+    [NSApp endSheet: self returnCode: NSCancelButton];
     //Try to be cautious since we get released when closed.
     [[self retain] autorelease];
     [self close];

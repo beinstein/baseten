@@ -27,6 +27,7 @@
 //
 
 #import "BXDatabaseContextAdditions.h"
+#import <Cocoa/Cocoa.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 
@@ -35,11 +36,16 @@
 
 - (void) displayPanelForTrust: (SecTrustRef) trust
 {
+	[self displayPanelForTrust: (SecTrustRef) trust modalWindow: modalWindow];
+}
+
+- (void) displayPanelForTrust: (SecTrustRef) trust modalWindow: (NSWindow *) aWindow
+{
 	mDisplayingSheet = YES;
 	SFCertificateTrustPanel* panel = [SFCertificateTrustPanel sharedCertificateTrustPanel];
 	NSBundle* appKitBundle = [NSBundle bundleWithPath: @"/System/Library/Frameworks/AppKit.framework"];
 	[panel setAlternateButtonTitle: [appKitBundle localizedStringForKey: @"Cancel" value: @"Cancel" table: @"Common"]];
-	[panel beginSheetForWindow: modalWindow modalDelegate: self 
+	[panel beginSheetForWindow: aWindow modalDelegate: self 
 				didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
 				   contextInfo: NULL trust: trust message: nil];
 }
