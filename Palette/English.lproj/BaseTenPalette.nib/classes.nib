@@ -8,6 +8,13 @@
             SUPERCLASS = NSObject; 
         }, 
         {
+            ACTIONS = {connect = id; }; 
+            CLASS = BXNetServiceConnector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {databaseContext = BXDatabaseContext; modalWindow = NSWindow; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
             CLASS = BXSynchronizedArrayController; 
             LANGUAGE = ObjC; 
             OUTLETS = {databaseContext = BXDatabaseContext; window = NSWindow; }; 

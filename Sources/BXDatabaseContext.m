@@ -50,6 +50,7 @@
 #import "BXContainerProxy.h"
 #import "BXArrayProxy.h"
 #import "BXDatabaseContextAdditions.h"
+#import "BXConnectionSetupManagerProtocol.h"
 
 #undef BXHandleError
 #define BXHandleError( ERROR, LOCAL_ERROR ) \
@@ -497,6 +498,11 @@ extern void BXInit ()
 - (void) setPolicyDelegate: (id) anObject
 {
 	policyDelegate = anObject;
+}
+
+- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject
+{
+	mConnectionSetupManager = anObject;
 }
 
 @end
@@ -1324,8 +1330,12 @@ extern void BXInit ()
 			break;
 			
 		case kBXCertificatePolicyDisplayTrustPanel:
-			//This is in BaseTenAppKit framework.
-			[self displayPanelForTrust: trust];
+			//These are in BaseTenAppKit framework.
+			if (nil == mConnectionSetupManager)
+				[self displayPanelForTrust: trust];
+			else
+				[mConnectionSetupManager BXDatabaseContext: self displayPanelForTrust: trust];
+			
 			break;
 			
 		case kBXCertificatePolicyDeny:

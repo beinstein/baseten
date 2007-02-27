@@ -51,6 +51,37 @@
     return u;
 }
 
+- (NSURL *) BXURIForHost: (NSString *) host database: (NSString *) dbName username: (NSString *) username password: (NSString *) password
+{
+	NSString* scheme = [self scheme];
+	NSURL* rval = nil;
+	
+	if (nil != scheme)
+	{
+		NSMutableString* URLString = [NSMutableString string];
+		[URLString appendFormat: @"%@://", scheme];
+
+		if (nil == username) username = [self user];
+		if (nil == password) password = [self password];
+		if (nil != password)
+			[URLString appendFormat: @"%@:%@@", username ?: @"", password];
+		else if (nil != username)
+			[URLString appendFormat: @"%@@", username];
+	
+		if (nil == host) host = [self host];
+		if (nil == host) host = @"";
+		[URLString appendString: host];
+	
+		if (nil != dbName) 
+			[URLString appendFormat: @"/%@", dbName];
+		else
+			[URLString appendFormat: [self path] ?: @""];
+		
+		rval = [NSURL URLWithString: URLString];
+	}
+	return rval;
+}
+
 #if 0
 - (BXDatabaseObjectID *) BXDatabaseObjectID
 {

@@ -46,6 +46,7 @@
 @protocol BXInterface;
 @protocol BXObjectAsynchronousLocking;
 @protocol BXRelationshipDescription;
+@protocol BXConnectionSetupManager;
 @class BXDatabaseObject;
 @class BXEntityDescription;
 @class BXDatabaseObjectID;
@@ -55,25 +56,26 @@
 
 @interface BXDatabaseContext : NSObject
 {
-    BXHiddenId <BXInterface>        mDatabaseInterface;
-    NSURL*                          mDatabaseURI;
-    NSMutableSet*                   mSeenEntities;
-    TSNonRetainedObjectDictionary*  mObjects;
-    NSMutableSet*                   mModifiedObjectIDs;
-    NSUndoManager*                  mUndoManager;
-	NSMutableSet*                   mLazilyValidatedEntities;
-	NSMutableIndexSet*				mUndoGroupingLevels;
+    BXHiddenId <BXInterface>				mDatabaseInterface;
+    NSURL*									mDatabaseURI;
+    NSMutableSet*							mSeenEntities;
+    TSNonRetainedObjectDictionary*			mObjects;
+    NSMutableSet*							mModifiedObjectIDs;
+    NSUndoManager*							mUndoManager;
+	NSMutableSet*							mLazilyValidatedEntities;
+	NSMutableIndexSet*						mUndoGroupingLevels;
+	id <BXConnectionSetupManager>			mConnectionSetupManager;
 	
-	IBOutlet NSWindow*				modalWindow;
-	IBOutlet id                 	policyDelegate;
+	IBOutlet NSWindow*						modalWindow;
+	IBOutlet id								policyDelegate;
 
-    BOOL                            mLogsQueries;
-    BOOL                            mAutocommits;
-    BOOL                            mDeallocating;
-	BOOL							mConnectingAsync;
-	BOOL							mDisplayingSheet;
-	BOOL							mRetryingConnection;
-    BOOL                            mRetainRegisteredObjects;
+    BOOL									mLogsQueries;
+    BOOL									mAutocommits;
+    BOOL									mDeallocating;
+	BOOL									mConnectingAsync;
+	BOOL									mDisplayingSheet;
+	BOOL									mRetryingConnection;
+    BOOL									mRetainRegisteredObjects;
 }
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
@@ -116,6 +118,7 @@
 
 - (void) setModalWindow: (NSWindow *) aWindow;
 - (void) setPolicyDelegate: (id) anObject;
+- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
 @end
 
 
