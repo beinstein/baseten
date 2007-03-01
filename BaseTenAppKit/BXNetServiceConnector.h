@@ -26,6 +26,8 @@
 // $Id$
 //
 
+@class BXAuthenticationPanel;
+
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXConnectionSetupManagerProtocol.h>
@@ -35,6 +37,8 @@
 {
 	IBOutlet BXDatabaseContext* databaseContext;
 	IBOutlet NSWindow* modalWindow;
+	
+	BXAuthenticationPanel* mAuthenticationPanel;
 }
 - (IBAction) connect: (id) sender;
 

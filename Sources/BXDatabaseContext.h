@@ -76,6 +76,7 @@
 	BOOL									mDisplayingSheet;
 	BOOL									mRetryingConnection;
     BOOL									mRetainRegisteredObjects;
+	BOOL									mUsesKeychain;
 }
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
@@ -119,6 +120,8 @@
 - (void) setModalWindow: (NSWindow *) aWindow;
 - (void) setPolicyDelegate: (id) anObject;
 - (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
+
+- (void) setUsesKeychain: (BOOL) usesKeychain;
 @end
 
 

@@ -1078,7 +1078,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
             BXSafeObj (localizedError), NSLocalizedRecoverySuggestionErrorKey,
             BXSafeObj (context),        kBXDatabaseContextKey,
             BXSafeObj (entity),         kBXEntityDescriptionKey,
-            BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+            BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
             nil];
         *error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
     }
@@ -1100,7 +1100,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                 NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                     self,                kBXDatabaseContextKey,
                     BXSafeObj (entity),  kBXEntityDescriptionKey,
-                    BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+                    BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
                     BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
                     BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
                     nil];
@@ -1272,7 +1272,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                 BXSafeObj (context), kBXDatabaseContextKey,
                 BXSafeObj (entity),  kBXEntityDescriptionKey,
-                BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+                BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
                 BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
                 BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
                 nil];
@@ -1500,7 +1500,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			errorMessage, NSLocalizedFailureReasonErrorKey,
 			errorMessage, NSLocalizedRecoverySuggestionErrorKey,
 			errorMessage, kBXErrorMessageKey,
-			BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+			BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
 			nil];
 		*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionFailed
 		   						 userInfo: userInfo];
@@ -1677,7 +1677,18 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 - (void) PGTSConnectionFailed: (PGTSConnection *) aConnection
 {
-	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorSSLConnectionFailed userInfo: nil];
+	NSString* localizedError = [aConnection errorMessage];
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys: 
+		BXSafeObj (localizedError), NSLocalizedFailureReasonErrorKey,
+		BXSafeObj (localizedError), NSLocalizedRecoverySuggestionErrorKey,
+		BXSafeObj (context),        kBXDatabaseContextKey,
+		BXLocalizedString (@"connectionError", @"Connection Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+		nil];
+	
+	int errorCode = kBXErrorConnectionFailed;
+	if (PGCONN_AUTH_FAILURE == [aConnection errorCode])
+		errorCode = kBXErrorAuthenticationFailed;
+	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: errorCode userInfo: userInfo];
 	[context connectedToDatabase: NO async: YES error: &error];
 }
 

@@ -30,6 +30,7 @@
 #import "BXConnectionPanel.h"
 #import "BXAuthenticationPanel.h"
 #import "BXDatabaseContextAdditions.h"
+#import "../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/Log4Cocoa.h"
 
 
 @implementation BXNetServiceConnector 
@@ -37,6 +38,7 @@
 - (void) dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[mAuthenticationPanel release];
 	[super dealloc];
 }
 
@@ -67,13 +69,12 @@
 
 - (void) displayAuthenticationPanel
 {
-	BXAuthenticationPanel* panel = [BXAuthenticationPanel authenticationPanel];
-	[panel retain];
-	[panel setReleasedWhenClosed: YES];
-	[panel setDatabaseContext: databaseContext];
-	[panel beginSheetModalForWindow: modalWindow modalDelegate: self
-					 didEndSelector: @selector (authenticationPanelDidEnd:returnCode:contextInfo:)
-						contextInfo: NULL];
+	mAuthenticationPanel = [BXAuthenticationPanel authenticationPanel];
+	[mAuthenticationPanel retain];
+	[mAuthenticationPanel setDatabaseContext: databaseContext];
+	[mAuthenticationPanel beginSheetModalForWindow: modalWindow modalDelegate: self
+									didEndSelector: @selector (authenticationPanelDidEnd:returnCode:contextInfo:)
+									   contextInfo: NULL];
 }
 
 - (void) authenticationPanelDidEnd: (NSWindow *) panel returnCode: (int) returnCode
@@ -86,10 +87,13 @@
 				   name: kBXConnectionFailedNotification object: databaseContext];
 		[nc addObserver: self selector: @selector (endConnecting:) 
 				   name: kBXConnectionSuccessfulNotification object: databaseContext];
-		
+
 		[databaseContext setConnectionSetupManager: self];
 		[databaseContext connect];
 	}
+	
+	[mAuthenticationPanel release];
+	mAuthenticationPanel = nil;
 }
 
 - (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust
@@ -103,6 +107,14 @@
 	NSError* error = [userInfo objectForKey: kBXErrorKey];
 	if (nil != error)
 	{
+		if ([[error domain] isEqualToString: kBXErrorDomain]
+			&& kBXErrorAuthenticationFailed == [error code])
+		{
+			//FIXME: localization
+			[mAuthenticationPanel setMessage: @"Authentication failed"];
+			[self displayAuthenticationPanel];
+		}
+			
 		NSAlert* alert = [NSAlert alertWithError: error];
 		[alert beginSheetModalForWindow: modalWindow modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
 	}

@@ -1,5 +1,5 @@
 //
-// BXAuthenticationPanel.h
+// BXConnectionSetupManagerProtocol.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,38 +26,6 @@
 // $Id$
 //
 
-#import <Cocoa/Cocoa.h>
-#import <BaseTenAppKit/BXPanel.h>
-
-@class BXDatabaseContext;
-
-@interface BXAuthenticationPanel : BXPanel 
-{
-	//Retained
-	BXDatabaseContext*				mDatabaseContext;
-	NSString*						mUsername;
-    //Top-level objects
-    IBOutlet NSView*                mPasswordAuthenticationView;
-    
-    IBOutlet NSTextFieldCell*       mUsernameField;
-    IBOutlet NSSecureTextFieldCell* mPasswordField;
-    IBOutlet NSButton*              mRememberInKeychainButton;
-	IBOutlet NSTextField*			mMessageTextField;
-        
-    BOOL                            mIsAuthenticating;
-}
-
-+ (id) authenticationPanel;
-- (BOOL) isAuthenticating;
-- (void) setDatabaseContext: (BXDatabaseContext *) ctx;
-- (BXDatabaseContext *) databaseContext;
-- (void) setUsername: (NSString *) aString;
-- (void) setMessage: (NSString *) aString;
-
-@end
-
-
-@interface BXAuthenticationPanel (IBActions)
-- (IBAction) authenticate: (id) sender;
-- (IBAction) cancelAuthentication: (id) sender;
+@protocol BXConnectionSetupManager <NSObject>
+- (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust;
 @end

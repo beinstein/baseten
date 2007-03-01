@@ -162,6 +162,7 @@
 - (NSString *) commandLineOptions;
 - (ConnStatusType) connectionStatus;
 - (PGTransactionStatusType) transactionStatus;
+- (PGConnectionErrorCode) errorCode;
 - (NSString *) statusOfParameter: (NSString *) parameterName;
 - (int) protocolVersion;
 - (int) serverVersion;

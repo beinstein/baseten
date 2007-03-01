@@ -505,6 +505,10 @@ extern void BXInit ()
 	mConnectionSetupManager = anObject;
 }
 
+- (void) setUsesKeychain: (BOOL) usesKeychain
+{
+	mUsesKeychain = usesKeychain;
+}
 @end
 
 
@@ -1855,6 +1859,55 @@ extern void BXInit ()
 	
 	if (nil == mUndoGroupingLevels)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
+	
+	if (YES == mUsesKeychain)
+	{
+		OSStatus status = noErr;
+		NSString* password = [mDatabaseURI password];
+		const char* serverName = [[mDatabaseURI host] UTF8String];
+		const char* username = [[mDatabaseURI user] UTF8String];
+		const char* path = [[mDatabaseURI path] UTF8String];
+		NSNumber* portObject = [mDatabaseURI port];
+		UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432);
+		UInt32 passwordLength = 0;
+		char* passwordData = NULL;
+		
+		if (nil == password)
+		{
+			status = SecKeychainFindInternetPassword (NULL, //Default keychain
+													  strlen (serverName), serverName,
+													  0, NULL,
+													  strlen (username), username,
+													  strlen (path), path,
+													  port,
+													  0, kSecAuthenticationTypeDefault, 
+													  &passwordLength, (void **) &passwordData, NULL);
+			if (noErr == status && 0 != passwordLength)
+			{
+				password = [[[NSString alloc] initWithBytes: passwordData
+													 length: passwordLength
+												   encoding: NSUTF8StringEncoding] autorelease];
+				SecKeychainItemFreeContent (NULL, passwordData);
+				[self setDatabaseURI: [mDatabaseURI BXURIForHost: nil
+														database: nil 
+														username: nil
+														password: password]];
+			}
+		}
+		else
+		{
+			passwordData = (char *) [password UTF8String];
+			passwordLength = strlen (passwordData);
+			status = SecKeychainAddInternetPassword (NULL, //Default keychain
+													strlen (serverName), serverName,
+													0, NULL,
+													strlen (username), username,
+													strlen (path), path,
+													port,
+													0, kSecAuthenticationTypeDefault,
+													passwordLength, passwordData, NULL);
+		}
+	}
 }
 
 + (void) loadedAppKitFramework

@@ -26,6 +26,8 @@
 // $Id$
 //
 
+#import <BaseTen/BaseTen.h>
+#import <BaseTen/BXDatabaseAdditions.h>
 #import "BXAuthenticationPanel.h"
 
 
@@ -44,7 +46,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
         tooLate = YES;
         gAuthenticationViewNib = [[NSNib alloc] initWithNibNamed: @"AuthenticationView" 
                                                           bundle: [NSBundle bundleForClass: self]];
-        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: @"isAuthenticating", nil];
+        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: @"isAuthenticating", @"username", nil];
     }
 }
 
@@ -69,10 +71,11 @@ static NSArray* gManuallyNotifiedKeys = nil;
                                    backing: bufferingType defer: deferCreation]))
     {
         [gAuthenticationViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
+		NSSize contentSize = [mPasswordAuthenticationView frame].size;
         [self setReleasedWhenClosed: YES];
 		[self setContentView: mPasswordAuthenticationView];
-		//FIXME: replace this with the actual size
-		[self setContentSize: NSMakeSize (200.0, 200.0)];
+		[self setContentSize: contentSize];
+		[self setShowsResizeIndicator: NO];
     }
     return self;
 }
@@ -81,7 +84,18 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
     [mPasswordAuthenticationView release];
 	[mDatabaseContext release];
+	[mUsername release];
     [super dealloc];
+}
+
+- (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
+				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo
+{
+	NSURL* connectionURI = [mDatabaseContext databaseURI];
+	[self setUsername: [connectionURI user]];
+	[mPasswordField setObjectValue: [connectionURI password]];
+	[super beginSheetModalForWindow: docWindow modalDelegate: modalDelegate
+					 didEndSelector: didEndSelector contextInfo: contextInfo];
 }
 
 - (BOOL) isAuthenticating
@@ -113,12 +127,43 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	return mDatabaseContext;
 }
 
+- (NSString *) username
+{
+	NSString* rval = mUsername;
+	if (0 == [rval length])
+		rval = nil;
+	return rval;
+}
+
+- (void) setUsername: (NSString *) aString
+{
+	if (mUsername != aString && ![mUsername isEqualToString: aString])
+	{
+		[self willChangeValueForKey: @"username"];
+		[mUsername release];
+		mUsername = [aString retain];
+		[self didChangeValueForKey: @"username"];
+	}
+}
+
+- (void) setMessage: (NSString *) aString
+{
+	[mMessageTextField setObjectValue: aString];
+	[mMessageTextField setNeedsDisplay: YES];
+}
 @end
 
 
 @implementation BXAuthenticationPanel (IBActions)
 - (IBAction) authenticate: (id) sender
 {
+	NSURL* connectionURI = [mDatabaseContext databaseURI];
+	connectionURI = [connectionURI BXURIForHost: nil database: nil 
+									   username: [mUsernameField objectValue]
+									   password: [mPasswordField objectValue]];
+	[mDatabaseContext setDatabaseURI: connectionURI];
+	[mDatabaseContext setUsesKeychain: (NSOnState == [mRememberInKeychainButton state])];
+	
 	[self setAuthenticating: YES];
 	[NSApp endSheet: self returnCode: NSOKButton];
     //Try to be cautious since we get released when closed.
