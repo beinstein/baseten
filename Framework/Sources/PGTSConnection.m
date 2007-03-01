@@ -828,6 +828,11 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 #endif
 }
 
+- (PGConnectionErrorCode) errorCode
+{
+	return PQerrorCode (connection);
+}
+
 @end
 
 

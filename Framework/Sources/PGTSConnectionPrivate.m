@@ -406,7 +406,8 @@ PGTSSSLConnectionExIndex ()
             FD_SET (bsdSocket, &mask);
             selectStatus = 0;
             pollingStatus = pollFunction (connection);
-
+			
+			log4Debug (@"Polling status: %d connection status: %d", pollingStatus, PQstatus (connection));
 #ifdef USE_SSL
 			if (NO == sslSetUp && CONNECTION_SSL_CONTINUE == PQstatus (connection))
 			{
@@ -428,6 +429,8 @@ PGTSSSLConnectionExIndex ()
                     break;
 					
 				case PGRES_POLLING_ACTIVE:
+					//Select returns 0 on timeout
+					selectStatus = 1;
 					break;
                     
                 case PGRES_POLLING_READING:
@@ -541,7 +544,6 @@ PGTSSSLConnectionExIndex ()
                 NS_ENDHANDLER
         }
             connectionStatus = tempStatus;
-            log4Debug (@"ConnectionStatus: %d", connectionStatus);
             if (YES == allowKVO) [self didChangeValueForKey: @"connectionStatus"];
     }
 }
