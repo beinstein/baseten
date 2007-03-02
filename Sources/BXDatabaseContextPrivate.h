@@ -54,6 +54,7 @@ struct trustResult
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey;
 
 /* Really internal. */
++ (void) loadedAppKitFramework;
 - (id) executeFetchForEntity: (BXEntityDescription *) entity 
                withPredicate: (NSPredicate *) predicate 
              returningFaults: (BOOL) returnFaults 
@@ -70,7 +71,8 @@ struct trustResult
 - (BOOL) checkDatabaseURI: (NSError **) error;
 - (id <BXInterface>) databaseInterface;
 - (void) lazyInit;
-+ (void) loadedAppKitFramework;
+- (BOOL) fetchPasswordFromKeychain;
+
 @end
 
 

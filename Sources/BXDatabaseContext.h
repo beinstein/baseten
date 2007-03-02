@@ -121,7 +121,9 @@
 - (void) setPolicyDelegate: (id) anObject;
 - (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
 
+- (BOOL) usesKeychain;
 - (void) setUsesKeychain: (BOOL) usesKeychain;
+- (void) storeURICredentials;
 @end
 
 

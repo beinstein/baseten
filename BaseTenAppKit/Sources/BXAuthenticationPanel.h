@@ -43,12 +43,14 @@
     IBOutlet NSSecureTextFieldCell* mPasswordField;
     IBOutlet NSButton*              mRememberInKeychainButton;
 	IBOutlet NSTextField*			mMessageTextField;
+    IBOutlet NSMatrix*              mCredentialFieldMatrix;
         
     BOOL                            mIsAuthenticating;
 }
 
 + (id) authenticationPanel;
 - (BOOL) isAuthenticating;
+- (void) setAuthenticating: (BOOL) aBool;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXDatabaseContext *) databaseContext;
 - (void) setUsername: (NSString *) aString;

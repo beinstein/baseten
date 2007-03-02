@@ -58,7 +58,8 @@
  */
 @protocol BXInterface <NSObject>
 
-- (id) initWithContext: (BXDatabaseContext *) aContext databaseURI: (NSURL *) url;
+- (id) initWithContext: (BXDatabaseContext *) aContext;
+- (void) setDatabaseURI: (NSURL *) anURI;
 
 /** \name Capabilities */
 //@{

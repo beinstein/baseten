@@ -42,9 +42,25 @@
 		  contextInfo: NULL];
 }
 
-- (void) sheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+- (void) setLeftOpenOnContinue: (BOOL) aBool
 {
-	if (NULL != mPanelDidEndSelector)
+    mLeftOpenOnContinue = aBool;
+}
+
+- (IBAction) continue: (id) sender
+{
+    [self continueWithReturnCode: [sender tag]];
+}
+
+- (void) sheetDidEnd: (BXPanel *) panel returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+    if (NO == mLeftOpenOnContinue)
+        [self continueWithReturnCode: returnCode];
+}
+
+- (void) continueWithReturnCode: (int) returnCode;
+{
+    if (NULL != mPanelDidEndSelector)
 	{
 		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: mPanelDidEndSelector];
 		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
@@ -55,6 +71,16 @@
 		[invocation setArgument: &mPanelContextInfo atIndex: 4];
 		[invocation invoke];
 	}
+    
+    if (NO == mLeftOpenOnContinue)
+        [self end];
 }
 
+- (void) end
+{
+    [NSApp endSheet: self];
+    //Try to be cautious since we might get released when closed
+    [[self retain] autorelease];
+    [self close];    
+}
 @end

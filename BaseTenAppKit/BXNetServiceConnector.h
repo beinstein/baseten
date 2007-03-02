@@ -41,5 +41,7 @@
 	BXAuthenticationPanel* mAuthenticationPanel;
 }
 - (IBAction) connect: (id) sender;
+- (void) displayAuthenticationPanel;
+- (void) setDatabaseContext: (BXDatabaseContext *) aContext;
 
 @end

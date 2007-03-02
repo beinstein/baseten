@@ -33,11 +33,15 @@
 {
     id							mPanelDelegate;
 	SEL							mPanelDidEndSelector;
-	void*						mPanelContextInfo;    
+	void*						mPanelContextInfo;
+    BOOL                        mLeftOpenOnContinue;
 }
 
 - (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
 				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo;
-- (void) sheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo;
+- (void) setLeftOpenOnContinue: (BOOL) aBool;
 
+- (IBAction) continue: (id) sender;
+- (void) continueWithReturnCode: (int) returnCode;
+- (void) end;
 @end

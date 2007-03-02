@@ -38,6 +38,10 @@
     
 	BOOL						mDisplayedAsSheet;
     BOOL                        mDisplayingAuxiliarySheet;
+    BOOL                        mDisplayingByHostnameView;
+    
+    NSSize                      mByHostnameViewMinSize;
+    NSSize                      mBonjourListViewMinSize;
 }
 
 + (id) connectionPanel;

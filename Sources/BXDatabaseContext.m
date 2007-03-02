@@ -505,10 +505,40 @@ extern void BXInit ()
 	mConnectionSetupManager = anObject;
 }
 
+- (BOOL) usesKeychain
+{
+    return mUsesKeychain;
+}
+
 - (void) setUsesKeychain: (BOOL) usesKeychain
 {
 	mUsesKeychain = usesKeychain;
 }
+
+- (void) storeURICredentials
+{
+    OSStatus status = noErr;
+    const char* serverName = [[mDatabaseURI host] UTF8String];
+    const char* username = [[mDatabaseURI user] UTF8String];
+    const char* path = [[mDatabaseURI path] UTF8String];    
+    NSNumber* portObject = [mDatabaseURI port];
+    UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432);
+    
+    NSString* password = [mDatabaseURI password];
+    const char* tempPassword = [password UTF8String];
+    char* passwordData = strdup (tempPassword ?: "");
+    
+    status = SecKeychainAddInternetPassword (NULL, //Default keychain
+                                             strlen (serverName), serverName,
+                                             0, NULL,
+                                             strlen (username), username,
+                                             strlen (path), path,
+                                             port,
+                                             0, kSecAuthenticationTypeDefault,
+                                             strlen (passwordData), passwordData, NULL);
+    free (passwordData);
+}
+
 @end
 
 
@@ -1834,13 +1864,68 @@ extern void BXInit ()
 	if (nil == mDatabaseInterface)
 	{
 		[self willChangeValueForKey: @"autocommits"];
-		mDatabaseInterface = [[[[self class] interfaceClassForScheme: [mDatabaseURI scheme]] alloc] 
-            initWithContext: self databaseURI: mDatabaseURI];
+		mDatabaseInterface = [[[[self class] interfaceClassForScheme: 
+            [mDatabaseURI scheme]] alloc] initWithContext: self];
 		[mDatabaseInterface setAutocommits: mAutocommits];
 		[self didChangeValueForKey: @"autocommits"];
 		[mDatabaseInterface setLogsQueries: mLogsQueries];
 	}
 	return mDatabaseInterface;
+}
+
+- (BOOL) fetchPasswordFromKeychain
+{
+    //FIXME: this function doesn't work
+    
+    BOOL rval = NO;
+    OSStatus status = noErr;
+    const char* serverName = [[mDatabaseURI host] UTF8String];
+    const char* path = [[mDatabaseURI path] UTF8String];
+    NSNumber* portObject = [mDatabaseURI port];
+    UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432);
+    SecKeychainItemRef keychainItem = NULL;
+    
+    status = SecKeychainFindInternetPassword (NULL, //Default keychain
+                                              strlen (serverName), serverName,
+                                              0, NULL,
+                                              0, NULL,
+                                              strlen (path), path,
+                                              port,
+                                              0, kSecAuthenticationTypeDefault, 
+                                              0, NULL, 
+                                              &keychainItem);
+    if (noErr == status)
+    {
+        SecKeychainAttribute attribute = {kSecAccountItemAttr, 0, NULL};
+        SecKeychainAttributeList attributeList = {1, &attribute};
+        SecKeychainAttributeList* attributeListPtr = &attributeList;
+        SecKeychainAttributeInfo info = {0, NULL, NULL};
+        UInt32 passwordLength = 0;        
+        char* passwordData = NULL;
+        
+        status = SecKeychainItemCopyAttributesAndData (keychainItem, &info, NULL, &attributeListPtr, 
+                                                       &passwordLength, (void **) &passwordData);
+        if (noErr == status)
+        {
+            NSString* username = [[[NSString alloc] initWithBytes: attribute.data
+                                                           length: attribute.length
+                                                         encoding: NSUTF8StringEncoding] autorelease];
+            NSString* password = [[[NSString alloc] initWithBytes: passwordData
+                                                           length: passwordLength
+                                                         encoding: NSUTF8StringEncoding] autorelease];
+            [self setDatabaseURI: [mDatabaseURI BXURIForHost: nil
+                                                    database: nil 
+                                                    username: username
+                                                    password: password]];
+            
+            SecKeychainItemFreeAttributesAndData (attributeListPtr, passwordData);
+        }
+
+        CFRelease (keychainItem);
+        rval = YES;
+    }
+    
+    return rval;
 }
 
 - (void) lazyInit
@@ -1860,54 +1945,10 @@ extern void BXInit ()
 	if (nil == mUndoGroupingLevels)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
 	
-	if (YES == mUsesKeychain)
-	{
-		OSStatus status = noErr;
-		NSString* password = [mDatabaseURI password];
-		const char* serverName = [[mDatabaseURI host] UTF8String];
-		const char* username = [[mDatabaseURI user] UTF8String];
-		const char* path = [[mDatabaseURI path] UTF8String];
-		NSNumber* portObject = [mDatabaseURI port];
-		UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432);
-		UInt32 passwordLength = 0;
-		char* passwordData = NULL;
-		
-		if (nil == password)
-		{
-			status = SecKeychainFindInternetPassword (NULL, //Default keychain
-													  strlen (serverName), serverName,
-													  0, NULL,
-													  strlen (username), username,
-													  strlen (path), path,
-													  port,
-													  0, kSecAuthenticationTypeDefault, 
-													  &passwordLength, (void **) &passwordData, NULL);
-			if (noErr == status && 0 != passwordLength)
-			{
-				password = [[[NSString alloc] initWithBytes: passwordData
-													 length: passwordLength
-												   encoding: NSUTF8StringEncoding] autorelease];
-				SecKeychainItemFreeContent (NULL, passwordData);
-				[self setDatabaseURI: [mDatabaseURI BXURIForHost: nil
-														database: nil 
-														username: nil
-														password: password]];
-			}
-		}
-		else
-		{
-			passwordData = (char *) [password UTF8String];
-			passwordLength = strlen (passwordData);
-			status = SecKeychainAddInternetPassword (NULL, //Default keychain
-													strlen (serverName), serverName,
-													0, NULL,
-													strlen (username), username,
-													strlen (path), path,
-													port,
-													0, kSecAuthenticationTypeDefault,
-													passwordLength, passwordData, NULL);
-		}
-	}
+	if (YES == mUsesKeychain && nil == [mDatabaseURI password])
+        [self fetchPasswordFromKeychain];
+    
+    [mDatabaseInterface setDatabaseURI: mDatabaseURI];
 }
 
 + (void) loadedAppKitFramework

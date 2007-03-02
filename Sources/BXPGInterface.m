@@ -211,7 +211,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     }
 }
 
-- (id) initWithContext: (BXDatabaseContext *) aContext databaseURI: (NSURL *) url
+- (id) initWithContext: (BXDatabaseContext *) aContext
 {
     if ((self = [super init]))
     {
@@ -220,7 +220,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
         logsQueries = NO;
         clearedLocks = NO;
         state = kBXPGQueryIdle;
-        databaseURI = [url retain];
     }
     return self;
 }
@@ -265,6 +264,15 @@ static NSString* SSLMode (enum BXSSLMode mode)
     [locker release];
     [databaseURI release];
     [super dealloc];
+}
+
+- (void) setDatabaseURI: (NSURL *) anURI
+{
+    if (databaseURI != anURI)
+    {
+        [databaseURI release];
+        databaseURI = [anURI retain];
+    }
 }
 
 - (void) connect: (NSError **) error

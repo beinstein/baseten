@@ -34,6 +34,8 @@
 static NSNib* gAuthenticationViewNib = nil;
 static NSArray* gManuallyNotifiedKeys = nil;
 
+const float kSizeDiff = 25.0;
+
 
 @implementation BXAuthenticationPanel
 
@@ -72,10 +74,10 @@ static NSArray* gManuallyNotifiedKeys = nil;
     {
         [gAuthenticationViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
 		NSSize contentSize = [mPasswordAuthenticationView frame].size;
+        contentSize.height -= kSizeDiff;
         [self setReleasedWhenClosed: YES];
-		[self setContentView: mPasswordAuthenticationView];
 		[self setContentSize: contentSize];
-		[self setShowsResizeIndicator: NO];
+		[self setContentView: mPasswordAuthenticationView];
     }
     return self;
 }
@@ -148,8 +150,31 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 - (void) setMessage: (NSString *) aString
 {
+    id oldValue = [mMessageTextField objectValue];
+    if (nil != oldValue && 0 == [oldValue length])
+        oldValue = nil;
+
+    BOOL change = NO;
+    NSRect frame = [self frame];
+    if (nil == oldValue && nil != aString)
+    {
+        frame.origin.y -= kSizeDiff;
+        frame.size.height += kSizeDiff;
+        change = YES;
+    }
+    else if (nil != oldValue && nil == aString)
+    {
+        frame.origin.y += kSizeDiff;
+        frame.size.height -= kSizeDiff;
+        change = YES;
+    }
+    
+    BOOL isVisible = [self isVisible];
+    if (change)
+        [self setFrame: frame display: isVisible animate: isVisible];
+    
 	[mMessageTextField setObjectValue: aString];
-	[mMessageTextField setNeedsDisplay: YES];
+    [self makeFirstResponder: mCredentialFieldMatrix];
 }
 @end
 
@@ -162,21 +187,16 @@ static NSArray* gManuallyNotifiedKeys = nil;
 									   username: [mUsernameField objectValue]
 									   password: [mPasswordField objectValue]];
 	[mDatabaseContext setDatabaseURI: connectionURI];
-	[mDatabaseContext setUsesKeychain: (NSOnState == [mRememberInKeychainButton state])];
+	if (NSOnState == [mRememberInKeychainButton state])
+        [mDatabaseContext storeURICredentials];
 	
 	[self setAuthenticating: YES];
-	[NSApp endSheet: self returnCode: NSOKButton];
-    //Try to be cautious since we get released when closed.
-    [[self retain] autorelease];
-    [self close];
+    [self continueWithReturnCode: NSOKButton];
 }
 
 - (IBAction) cancelAuthentication: (id) sender
 {
 	[self setAuthenticating: NO];
-    [NSApp endSheet: self returnCode: NSCancelButton];
-    //Try to be cautious since we get released when closed.
-    [[self retain] autorelease];
-    [self close];
+    [self continueWithReturnCode: NSCancelButton];
 }
 @end

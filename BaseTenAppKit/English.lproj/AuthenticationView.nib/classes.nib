@@ -5,6 +5,7 @@
             CLASS = BXAuthenticationPanel; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                mCredentialFieldMatrix = NSMatrix; 
                 mMessageTextField = NSTextField; 
                 mPasswordAuthenticationView = NSView; 
                 mPasswordField = NSSecureTextFieldCell; 

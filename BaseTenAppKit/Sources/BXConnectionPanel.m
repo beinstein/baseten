@@ -27,6 +27,7 @@
 //
 
 #import "BXConnectionPanel.h"
+#import "BXAppKitAdditions.h"
 
 
 static NSArray* gManuallyNotifiedKeys = nil;
@@ -54,22 +55,34 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 + (id) connectionPanel
 {
-	BXConnectionViewManager* manager = [[BXConnectionViewManager alloc] init];
-	NSView* bonjourListView = [manager bonjourListView];
-	NSRect contentRect = [bonjourListView frame];
-	contentRect.origin = NSZeroPoint;
-	BXConnectionPanel* panel = [[[self alloc] initWithContentRect: contentRect 
-														styleMask: NSTitledWindowMask | NSResizableWindowMask 
-														  backing: NSBackingStoreBuffered 
-															defer: YES] autorelease];
-	[panel setMinSize: contentRect.size];
-	[panel setReleasedWhenClosed: YES];
-	[panel setContentView: bonjourListView];
-	[panel setConnectionViewManager: manager];
-	[manager setDelegate: panel];
-	
-	[manager release];
-	return panel;
+	return [[[self alloc] initWithContentRect: NSZeroRect styleMask: NSTitledWindowMask | NSResizableWindowMask
+									  backing: NSBackingStoreBuffered defer: YES] autorelease];
+}
+
+- (id) initWithContentRect: (NSRect) contentRect styleMask: (unsigned int) styleMask
+                   backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
+{
+    if ((self = [super initWithContentRect: contentRect styleMask: styleMask 
+                                   backing: bufferingType defer: deferCreation]))
+    {  
+        mViewManager = [[BXConnectionViewManager alloc] init];
+        [mViewManager setDelegate: self];
+        [mViewManager setShowsOtherButton: YES];
+
+        NSView* bonjourListView = [mViewManager bonjourListView];
+        NSSize contentSize = [bonjourListView frame].size;
+        
+        mByHostnameViewMinSize = [[mViewManager byHostnameView] frame].size;
+        mBonjourListViewMinSize = contentSize;
+
+        [self setContentSize: contentSize];
+        [self setContentView: bonjourListView];
+        [self setMinSize: mBonjourListViewMinSize];
+
+        [self setReleasedWhenClosed: YES];
+        [self setDelegate: self];
+    }
+    return self;
 }
 
 - (void) dealloc
@@ -139,15 +152,23 @@ static NSArray* gManuallyNotifiedKeys = nil;
 @implementation BXConnectionPanel (BXConnectionViewManagerDelegate)
 - (void) BXShowByHostnameView: (NSView *) hostnameView
 {
+    NSRect frame = [self frame];
     NSRect contentRect = [hostnameView frame];
-    contentRect.origin = NSZeroPoint;
 
 	if (mDisplayedAsSheet)
 	{		
-        [self setContentView: nil];
+        contentRect.origin = frame.origin;
+        contentRect.origin.y -= contentRect.size.height - frame.size.height;
+        contentRect.size.width = frame.size.width;
+        
+        [self setContentView: [NSView BXEmptyView]];
+        [self display];
 		[self setFrame: contentRect display: YES animate: YES];
 		[self setContentView: hostnameView];
+        [self setMinSize: mByHostnameViewMinSize];
         [hostnameView setNeedsDisplay: YES];
+        
+        mDisplayingByHostnameView = YES;
 	}
 	else
 	{
@@ -158,8 +179,8 @@ static NSArray* gManuallyNotifiedKeys = nil;
                                                            backing: NSBackingStoreBuffered defer: YES];
 
             [mAuxiliaryPanel setReleasedWhenClosed: NO];
-            [mAuxiliaryPanel setFrame: contentRect display: NO];
             [mAuxiliaryPanel setContentView: hostnameView];
+            [mAuxiliaryPanel setDelegate: self];
         }        
         
 		[NSApp beginSheet: mAuxiliaryPanel modalForWindow: self modalDelegate: self 
@@ -171,13 +192,20 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 - (void) BXShowBonjourListView: (NSView *) bonjourListView
 {
+    NSRect frame = [self frame];
     NSRect contentRect = [bonjourListView frame];
-    contentRect.origin = NSZeroPoint;
-    
-    [self setContentView: nil];
+    contentRect.origin = frame.origin;
+    contentRect.origin.y -= contentRect.size.height - frame.size.height;
+    contentRect.size.width = frame.size.width;
+
+    [self setContentView: [NSView BXEmptyView]];
+    [self display];
     [self setFrame: contentRect display: YES animate: YES];
     [self setContentView: bonjourListView];
+    [self setMinSize: mBonjourListViewMinSize];
     [bonjourListView setNeedsDisplay: YES];
+
+    mDisplayingByHostnameView = NO;
 }
 
 - (void) BXHandleError: (NSError *) error
@@ -195,10 +223,8 @@ static NSArray* gManuallyNotifiedKeys = nil;
         [NSApp endSheet: mAuxiliaryPanel];
         [mAuxiliaryPanel close];
     }
-	
-	[NSApp endSheet: self returnCode: NSOKButton];
-	[[self retain] autorelease];
-	[self close];
+
+	[self continueWithReturnCode: NSOKButton];
 }
 
 - (void) BXCancelConnecting
@@ -210,9 +236,18 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	}
 	else
 	{
-		[NSApp endSheet: self returnCode: NSCancelButton];
-		[[self retain] autorelease];
-		[self close];
+        [self continueWithReturnCode: NSCancelButton];
 	}
 }
+
+- (NSSize) windowWillResize: (NSWindow *) sender toSize: (NSSize) proposedFrameSize
+{
+    if (mDisplayingByHostnameView || sender != self)
+    {
+        NSSize size = [self frame].size;
+        proposedFrameSize.height = size.height;
+    }
+    return proposedFrameSize;
+}
+
 @end
