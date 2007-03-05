@@ -27,6 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Security/Security.h>
 
 #ifndef IBAction
 #define IBAction void
@@ -65,6 +66,7 @@
 	NSMutableSet*							mLazilyValidatedEntities;
 	NSMutableIndexSet*						mUndoGroupingLevels;
 	id <BXConnectionSetupManager>			mConnectionSetupManager;
+    SecKeychainItemRef                      mKeychainPasswordItem;
 	
 	IBOutlet NSWindow*						modalWindow;
 	IBOutlet id								policyDelegate;

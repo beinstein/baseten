@@ -40,7 +40,8 @@
 {
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	[mAuthenticationPanel release];
-    [databaseContext release];
+    [mPanel release];
+    [databaseContext release]; //This is retained even if connected in IB
 	[super dealloc];
 }
 
@@ -53,14 +54,15 @@
 {	
     [databaseContext setUsesKeychain: YES];
     
-	BXConnectionPanel* panel = [BXConnectionPanel connectionPanel];
-	[panel retain];
-	[panel setReleasedWhenClosed: YES];
+    BXConnectionPanel* panel = [BXConnectionPanel connectionPanel];
+    [self setPanel: panel];
+    
     [panel setLeftOpenOnContinue: YES];
+    [panel setReleasedWhenClosed: NO];
 	[panel setDatabaseContext: databaseContext];
 	[panel beginSheetModalForWindow: modalWindow modalDelegate: self 
-					 didEndSelector: @selector (connectionPanelDidEnd:returnCode:contextInfo:) 
-						contextInfo: NULL];
+                     didEndSelector: @selector (connectionPanelDidEnd:returnCode:contextInfo:) 
+                        contextInfo: NULL];
 }
 
 - (void) connectionPanelDidEnd: (BXConnectionPanel *) panel returnCode: (int) returnCode 
@@ -74,6 +76,11 @@
             [panel end];
             [self displayAuthenticationPanel];
         }
+        else
+        {
+            [databaseContext setConnectionSetupManager: self];
+            [databaseContext connect];
+        }
     }
     else
     {
@@ -83,10 +90,14 @@
 
 - (void) displayAuthenticationPanel
 {
-	mAuthenticationPanel = [BXAuthenticationPanel authenticationPanel];
-	[mAuthenticationPanel retain];
+    if (nil == mAuthenticationPanel)
+        [self setAuthenticationPanel: [BXAuthenticationPanel authenticationPanel]];
+    
+    [self setPanel: mAuthenticationPanel];
+
 	[mAuthenticationPanel setDatabaseContext: databaseContext];
     [mAuthenticationPanel setLeftOpenOnContinue: YES];
+        
 	[mAuthenticationPanel beginSheetModalForWindow: modalWindow modalDelegate: self
 									didEndSelector: @selector (authenticationPanelDidEnd:returnCode:contextInfo:)
 									   contextInfo: NULL];
@@ -103,16 +114,14 @@
     else
     {
         [mAuthenticationPanel end];
-        [mAuthenticationPanel release];
-        mAuthenticationPanel = nil;
+        [self setAuthenticationPanel: nil];
     }
 }
 
 - (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust
 {
     [mAuthenticationPanel end];
-    [mAuthenticationPanel release];
-	mAuthenticationPanel = nil;
+    [self setAuthenticationPanel: nil];
 
 	[context displayPanelForTrust: trust modalWindow: modalWindow];
 }
@@ -126,15 +135,22 @@
         if ([[error domain] isEqualToString: kBXErrorDomain] &&
             kBXErrorAuthenticationFailed == [error code])
         {
+            if (nil == mAuthenticationPanel)
+            {
+                [mPanel end];
+                [self setPanel: nil];
+                [self displayAuthenticationPanel];
+            }
+            
             [mAuthenticationPanel setAuthenticating: NO];
             //FIXME: localization
             [mAuthenticationPanel setMessage: @"Authentication failed"];            
         }
         else
         {
-            [mAuthenticationPanel end];
-            [mAuthenticationPanel release];
-            mAuthenticationPanel = nil;
+            [mPanel end];
+            [self setPanel: nil];
+            [self setAuthenticationPanel: nil];
             
             NSAlert* alert = [NSAlert alertWithError: error];
             [alert beginSheetModalForWindow: nil modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
@@ -142,9 +158,10 @@
     }
     else
     {
-        [mAuthenticationPanel end];
-        [mAuthenticationPanel release];
-        mAuthenticationPanel = nil;
+        [databaseContext clearKeychainPasswordItem];
+        
+        [mPanel end];
+        [self setPanel: nil];
     }
 }
 
@@ -166,6 +183,24 @@
                    name: kBXConnectionFailedNotification object: databaseContext];
         [nc addObserver: self selector: @selector (endConnecting:) 
                    name: kBXConnectionSuccessfulNotification object: databaseContext];    
+    }
+}
+
+- (void) setPanel: (BXPanel *) aPanel
+{
+    if (mPanel != aPanel)
+    {
+        [mPanel autorelease];
+        mPanel = [aPanel retain];
+    }
+}
+
+- (void) setAuthenticationPanel: (BXAuthenticationPanel *) aPanel
+{
+    if (mAuthenticationPanel != aPanel)
+    {
+        [mAuthenticationPanel release];
+        mAuthenticationPanel = [aPanel retain];
     }
 }
 

@@ -71,7 +71,6 @@ struct trustResult
 - (BOOL) checkDatabaseURI: (NSError **) error;
 - (id <BXInterface>) databaseInterface;
 - (void) lazyInit;
-- (BOOL) fetchPasswordFromKeychain;
 
 @end
 
@@ -82,4 +81,13 @@ struct trustResult
 - (void) undoWithRedoInvocations: (NSArray *) invocations;
 - (void) redoInvocations: (NSArray *) invocations;
 - (void) rollbackToLastSavepoint;
+@end
+
+
+@interface BXDatabaseContext (Keychain)
+- (NSArray *) keychainItems;
+- (SecKeychainItemRef) newestKeychainItem;
+- (BOOL) fetchPasswordFromKeychain;
+- (void) clearKeychainPasswordItem;
+- (void) setKeychainPasswordItem: (SecKeychainItemRef) anItem;
 @end

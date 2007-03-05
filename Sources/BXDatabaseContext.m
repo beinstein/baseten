@@ -181,6 +181,10 @@ extern void BXInit ()
     [mUndoManager release];
 	[mLazilyValidatedEntities release];
 	[mUndoGroupingLevels release];
+    
+    if (NULL != mKeychainPasswordItem)
+        CFRelease (mKeychainPasswordItem);
+    
     log4Debug (@"Deallocating BXDatabaseContext");
     [super dealloc];
 }
@@ -528,6 +532,7 @@ extern void BXInit ()
     const char* tempPassword = [password UTF8String];
     char* passwordData = strdup (tempPassword ?: "");
     
+    SecKeychainItemRef item = NULL;
     status = SecKeychainAddInternetPassword (NULL, //Default keychain
                                              strlen (serverName), serverName,
                                              0, NULL,
@@ -535,7 +540,9 @@ extern void BXInit ()
                                              strlen (path), path,
                                              port,
                                              0, kSecAuthenticationTypeDefault,
-                                             strlen (passwordData), passwordData, NULL);
+                                             strlen (passwordData), passwordData, 
+                                             &item);
+    [self setKeychainPasswordItem: item];
     free (passwordData);
 }
 
@@ -1081,6 +1088,19 @@ extern void BXInit ()
 			}
 			else
 			{
+                //If we have a keychain item, mark it invalid.
+                if (NULL != mKeychainPasswordItem)
+                {
+                    //FIXME: enable this after debugging
+#if 0
+                    OSStatus status = noErr;
+                    Boolean value = TRUE;
+                    SecKeychainAttribute attribute = {.tag = kSecNegativeItemAttr, .length = sizeof (Boolean), .data = &value};
+                    SecKeychainAttributeList attributeList = {.count = 1, .attr = &attribute};
+                    status = SecKeychainItemModifyAttributesAndData (mKeychainPasswordItem, &attributeList, 0, NULL);
+#endif
+                }
+                
 				mRetryingConnection = NO;
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 																			 object: self 
@@ -1873,61 +1893,6 @@ extern void BXInit ()
 	return mDatabaseInterface;
 }
 
-- (BOOL) fetchPasswordFromKeychain
-{
-    //FIXME: this function doesn't work
-    
-    BOOL rval = NO;
-    OSStatus status = noErr;
-    const char* serverName = [[mDatabaseURI host] UTF8String];
-    const char* path = [[mDatabaseURI path] UTF8String];
-    NSNumber* portObject = [mDatabaseURI port];
-    UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432);
-    SecKeychainItemRef keychainItem = NULL;
-    
-    status = SecKeychainFindInternetPassword (NULL, //Default keychain
-                                              strlen (serverName), serverName,
-                                              0, NULL,
-                                              0, NULL,
-                                              strlen (path), path,
-                                              port,
-                                              0, kSecAuthenticationTypeDefault, 
-                                              0, NULL, 
-                                              &keychainItem);
-    if (noErr == status)
-    {
-        SecKeychainAttribute attribute = {kSecAccountItemAttr, 0, NULL};
-        SecKeychainAttributeList attributeList = {1, &attribute};
-        SecKeychainAttributeList* attributeListPtr = &attributeList;
-        SecKeychainAttributeInfo info = {0, NULL, NULL};
-        UInt32 passwordLength = 0;        
-        char* passwordData = NULL;
-        
-        status = SecKeychainItemCopyAttributesAndData (keychainItem, &info, NULL, &attributeListPtr, 
-                                                       &passwordLength, (void **) &passwordData);
-        if (noErr == status)
-        {
-            NSString* username = [[[NSString alloc] initWithBytes: attribute.data
-                                                           length: attribute.length
-                                                         encoding: NSUTF8StringEncoding] autorelease];
-            NSString* password = [[[NSString alloc] initWithBytes: passwordData
-                                                           length: passwordLength
-                                                         encoding: NSUTF8StringEncoding] autorelease];
-            [self setDatabaseURI: [mDatabaseURI BXURIForHost: nil
-                                                    database: nil 
-                                                    username: username
-                                                    password: password]];
-            
-            SecKeychainItemFreeAttributesAndData (attributeListPtr, passwordData);
-        }
-
-        CFRelease (keychainItem);
-        rval = YES;
-    }
-    
-    return rval;
-}
-
 - (void) lazyInit
 {
 	if (nil == mUndoManager)
@@ -1945,7 +1910,7 @@ extern void BXInit ()
 	if (nil == mUndoGroupingLevels)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
 	
-	if (YES == mUsesKeychain && nil == [mDatabaseURI password])
+	if (YES == mUsesKeychain && NULL == mKeychainPasswordItem)
         [self fetchPasswordFromKeychain];
     
     [mDatabaseInterface setDatabaseURI: mDatabaseURI];
@@ -1958,3 +1923,188 @@ extern void BXInit ()
 
 @end
 
+
+@implementation BXDatabaseContext (Keychain)
+
+static SecKeychainAttribute
+KeychainAttribute (SecItemAttr tag, void* value, UInt32 length)
+{
+    SecKeychainAttribute attribute;
+    bzero (&attribute, sizeof (SecKeychainAttribute));
+    attribute.tag = tag;
+    attribute.data = value;
+    attribute.length = length;
+    return attribute;
+}
+
+static BOOL
+ConditionalKeychainAttributeFromString (SecItemAttr tag, NSString* value, SecKeychainAttribute* attribute)
+{
+    BOOL rval = NO;
+    if (nil != value)
+    {
+        bzero (attribute, sizeof (SecKeychainAttribute));
+        const char* utfValue = [value UTF8String];
+        attribute->tag = tag;
+        attribute->data = (void **) utfValue;
+        attribute->length = strlen (utfValue);
+        rval = YES;
+    }
+    return rval;
+}
+
+static void
+AddKeychainAttributeString (SecItemAttr tag, NSString* value, NSMutableData* buffer)
+{
+    SecKeychainAttribute attribute;
+    if (ConditionalKeychainAttributeFromString (tag, value, &attribute))
+    {
+        [buffer appendBytes: &attribute length: sizeof (SecKeychainAttribute)];
+    }
+}
+
+static void
+AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData* buffer)
+{
+    SecKeychainAttribute attribute = KeychainAttribute (tag, value, length);
+    [buffer appendBytes: &attribute length: sizeof (SecKeychainAttribute)];
+}
+
+- (NSArray *) keychainItems
+{
+    OSStatus status = noErr;
+    NSMutableArray* rval = nil;
+    
+    NSMutableData* attributeBuffer = [NSMutableData data];
+    AddKeychainAttributeString (kSecAccountItemAttr, [mDatabaseURI user], attributeBuffer);
+    AddKeychainAttributeString (kSecServerItemAttr,  [mDatabaseURI host], attributeBuffer);
+    AddKeychainAttributeString (kSecPathItemAttr,    [mDatabaseURI path], attributeBuffer);
+
+    SecAuthenticationType authType = kSecAuthenticationTypeDefault;
+    AddKeychainAttribute (kSecAuthenticationTypeItemAttr, &authType, 
+                          sizeof (SecAuthenticationType), attributeBuffer);
+
+    //For some reason we can't look for non-invalid items
+#if 0
+    Boolean allowNegative = FALSE;
+    AddKeychainAttribute (kSecNegativeItemAttr, &allowNegative, sizeof (Boolean), attributeBuffer);
+#endif
+    
+    NSNumber* portObject = [mDatabaseURI port];
+    UInt32 port = (portObject ? [portObject unsignedIntValue] : 5432);
+    AddKeychainAttribute (kSecPortItemAttr, &port, sizeof (UInt32), attributeBuffer);
+    
+    //FIXME: Do we also need the creator code? Does the current application have one?
+    SecKeychainAttributeList attrList = {
+        .count = ([attributeBuffer length] / sizeof (SecKeychainAttribute)), 
+        .attr = (void *) [attributeBuffer bytes]
+    };
+    SecKeychainSearchRef search = NULL;
+    status = SecKeychainSearchCreateFromAttributes (NULL, //Default keychain
+                                                    kSecInternetPasswordItemClass,
+                                                    &attrList,
+                                                    &search);
+    if (noErr == status)
+    {
+        rval = [NSMutableArray array];
+        SecKeychainItemRef item = NULL;
+        while (noErr == SecKeychainSearchCopyNext (search, &item))
+            [rval addObject: (id) item];
+        CFRelease (search);
+    }
+    
+    return rval;
+}
+
+- (SecKeychainItemRef) newestKeychainItem
+{
+    SecKeychainItemRef rval = NULL;
+    UInt32 rvalModDate = 0;
+    SecItemAttr attributes [] = {kSecModDateItemAttr, kSecNegativeItemAttr};
+    SecExternalFormat formats [] = {kSecFormatUnknown, kSecFormatUnknown};
+    unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
+    NSAssert (count == sizeof (formats) / sizeof (SecExternalFormat),
+              @"Expected arrays to have an equal number of items.");
+    SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
+    
+    TSEnumerate (currentItem, e, [[self keychainItems] objectEnumerator])
+    {
+        SecKeychainItemRef item = (SecKeychainItemRef) currentItem;        
+        OSStatus status = noErr;
+        SecKeychainAttributeList* returnedAttributes = NULL;
+        status = SecKeychainItemCopyAttributesAndData (item, &info, NULL, &returnedAttributes, NULL, NULL);
+        //kSecNegativeItemAttr's data seems to be NULL at least when the attribute hasn't been set.
+        if (noErr == status && NULL != returnedAttributes &&
+            NULL == returnedAttributes->attr [1].data)
+        {
+            UInt32* datePtr = returnedAttributes->attr [0].data;
+            UInt32 modDate = *datePtr;
+            if (modDate > rvalModDate)
+                rval = item;
+            SecKeychainItemFreeAttributesAndData (returnedAttributes, NULL);
+        }
+    }
+    return rval;
+}
+
+- (BOOL) fetchPasswordFromKeychain
+{
+    BOOL rval = NO;
+    [self setKeychainPasswordItem: [self newestKeychainItem]];
+    if (NULL != mKeychainPasswordItem)
+    {
+        SecItemAttr attributes [] = {kSecAccountItemAttr};
+        SecExternalFormat formats [] = {kSecFormatUnknown};
+        unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
+        NSAssert (count == sizeof (formats) / sizeof (SecExternalFormat),
+                  @"Expected arrays to have an equal number of items.");
+        SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
+        
+        OSStatus status = noErr;
+        SecKeychainAttributeList* returnedAttributes = NULL;
+        UInt32 passwordLength = 0;        
+        char* passwordData = NULL;
+        status = SecKeychainItemCopyAttributesAndData (mKeychainPasswordItem, &info, NULL, &returnedAttributes, 
+                                                       &passwordLength, (void **) &passwordData);
+        if (noErr == status && 0 < returnedAttributes->count)
+        {
+            SecKeychainAttribute usernameAttribute = returnedAttributes->attr [0];
+            NSString* username = [[[NSString alloc] initWithBytes: usernameAttribute.data
+                                                           length: usernameAttribute.length
+                                                         encoding: NSUTF8StringEncoding] autorelease];
+            NSString* password = [[[NSString alloc] initWithBytes: passwordData
+                                                           length: passwordLength
+                                                         encoding: NSUTF8StringEncoding] autorelease];
+            
+            [self setDatabaseURI: [mDatabaseURI BXURIForHost: nil
+                                                    database: nil 
+                                                    username: username
+                                                    password: password]];
+            SecKeychainItemFreeAttributesAndData (returnedAttributes, passwordData);
+            rval = YES;
+        }
+    }    
+    return rval;
+}
+
+- (void) clearKeychainPasswordItem
+{
+    [self setKeychainPasswordItem: NULL];
+}
+
+- (void) setKeychainPasswordItem: (SecKeychainItemRef) anItem
+{
+    if (anItem != mKeychainPasswordItem)
+    {
+        if (NULL != mKeychainPasswordItem)
+            CFRelease (mKeychainPasswordItem);
+        
+        if (NULL != anItem)
+        {
+            mKeychainPasswordItem = anItem;
+            CFRetain (mKeychainPasswordItem);
+        }
+    }
+}
+
+@end

@@ -1,5 +1,5 @@
 //
-// BXNetServiceConnector.h
+// BXAppKitAdditions.m
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,26 +26,17 @@
 // $Id$
 //
 
-@class BXPanel;
-@class BXAuthenticationPanel;
-
-#import <Cocoa/Cocoa.h>
-#import <BaseTen/BaseTen.h>
-#import <BaseTen/BXConnectionSetupManagerProtocol.h>
+#import "BXAppKitAdditions.h"
 
 
-@interface BXNetServiceConnector : NSObject <BXConnectionSetupManager>
+@implementation NSView (BaseTenAppKitAdditions)
+
++ (NSView *) BXEmptyView
 {
-	IBOutlet BXDatabaseContext* databaseContext;
-	IBOutlet NSWindow* modalWindow;
-	
-	BXAuthenticationPanel* mAuthenticationPanel;
-    BXPanel* mPanel;
+    static NSView* emptyView = nil;
+    if (nil == emptyView)
+        emptyView = [[NSView alloc] initWithFrame: NSZeroRect];
+    return emptyView;
 }
-- (IBAction) connect: (id) sender;
-- (void) displayAuthenticationPanel;
-- (void) setDatabaseContext: (BXDatabaseContext *) aContext;
-- (void) setPanel: (BXPanel *) aPanel;
-- (void) setAuthenticationPanel: (BXAuthenticationPanel *) aPanel;
 
 @end
