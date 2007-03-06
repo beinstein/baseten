@@ -27,6 +27,7 @@
 //
 
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXDatabaseAdditions.h>
 #import "BXAuthenticationPanel.h"
 
@@ -62,7 +63,7 @@ const float kSizeDiff = 25.0;
 
 + (id) authenticationPanel
 {
-	return [[[self alloc] initWithContentRect: NSZeroRect styleMask: NSTitledWindowMask | NSResizableWindowMask
+	return [[[self alloc] initWithContentRect: NSZeroRect styleMask: NSTitledWindowMask
 									  backing: NSBackingStoreBuffered defer: YES] autorelease];
 }
 
@@ -182,11 +183,13 @@ const float kSizeDiff = 25.0;
 @implementation BXAuthenticationPanel (IBActions)
 - (IBAction) authenticate: (id) sender
 {
+	[self makeFirstResponder: self];
+	
 	NSURL* connectionURI = [mDatabaseContext databaseURI];
 	connectionURI = [connectionURI BXURIForHost: nil database: nil 
 									   username: [mUsernameField objectValue]
 									   password: [mPasswordField objectValue]];
-	[mDatabaseContext setDatabaseURI: connectionURI];
+	[mDatabaseContext setDatabaseURIInternal: connectionURI];
 	if (NSOnState == [mRememberInKeychainButton state])
         [mDatabaseContext storeURICredentials];
 	

@@ -120,8 +120,8 @@
 
 - (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust
 {
-    [mAuthenticationPanel end];
-    [self setAuthenticationPanel: nil];
+    [mPanel end];
+    [self setPanel: nil];
 
 	[context displayPanelForTrust: trust modalWindow: modalWindow];
 }
@@ -135,12 +135,13 @@
         if ([[error domain] isEqualToString: kBXErrorDomain] &&
             kBXErrorAuthenticationFailed == [error code])
         {
-            if (nil == mAuthenticationPanel)
+            if (mPanel != mAuthenticationPanel && [mPanel isVisible])
             {
                 [mPanel end];
                 [self setPanel: nil];
-                [self displayAuthenticationPanel];
             }
+			if (NO == [mAuthenticationPanel isVisible])
+				[self displayAuthenticationPanel];
             
             [mAuthenticationPanel setAuthenticating: NO];
             //FIXME: localization

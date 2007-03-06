@@ -71,6 +71,7 @@ struct trustResult
 - (BOOL) checkDatabaseURI: (NSError **) error;
 - (id <BXInterface>) databaseInterface;
 - (void) lazyInit;
+- (void) setDatabaseURIInternal: (NSURL *) uri;
 
 @end
 

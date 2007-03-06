@@ -1211,6 +1211,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	return rval;
 }
 
+- (void) rejectedTrust
+{
+	[cvDelegate clearCaches];
+}
 @end
 
 

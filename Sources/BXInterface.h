@@ -127,4 +127,5 @@
 //@}
 
 - (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
+- (void) rejectedTrust;
 @end

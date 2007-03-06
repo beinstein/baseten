@@ -63,9 +63,9 @@
 
 		if (nil == username) username = [self user];
 		if (nil == password) password = [self password];
-		if (nil != password)
+		if (nil != password && 0 < [password length])
 			[URLString appendFormat: @"%@:%@@", username ?: @"", password];
-		else if (nil != username)
+		else if (nil != username && 0 < [username length])
 			[URLString appendFormat: @"%@@", username];
 	
 		if (nil == host) host = [self host];

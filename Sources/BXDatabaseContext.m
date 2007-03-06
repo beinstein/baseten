@@ -227,13 +227,8 @@ extern void BXInit ()
  */
 - (void) setDatabaseURI: (NSURL *) uri
 {
-    if (uri != mDatabaseURI)
-    {
-        if (nil != uri)
-            [self checkURIScheme: uri];
-        [mDatabaseURI release];
-        mDatabaseURI = [uri retain];
-    }
+	[self setDatabaseURIInternal: uri];
+	[self setKeychainPasswordItem: NULL];
 }
 
 /**
@@ -532,17 +527,32 @@ extern void BXInit ()
     const char* tempPassword = [password UTF8String];
     char* passwordData = strdup (tempPassword ?: "");
     
-    SecKeychainItemRef item = NULL;
-    status = SecKeychainAddInternetPassword (NULL, //Default keychain
-                                             strlen (serverName), serverName,
-                                             0, NULL,
-                                             strlen (username), username,
-                                             strlen (path), path,
-                                             port,
-                                             0, kSecAuthenticationTypeDefault,
-                                             strlen (passwordData), passwordData, 
-                                             &item);
-    [self setKeychainPasswordItem: item];
+	SecKeychainItemRef item = NULL;
+
+	if (NULL == mKeychainPasswordItem)
+	{
+		status = SecKeychainAddInternetPassword (NULL, //Default keychain
+												 strlen (serverName), serverName,
+												 0, NULL,
+												 strlen (username), username,
+												 strlen (path), path,
+												 port,
+												 0, kSecAuthenticationTypeDefault,
+												 strlen (passwordData), passwordData, 
+												 &item);
+		[self setKeychainPasswordItem: item];
+}
+	
+	if (errSecDuplicateItem == status || (NULL == item && NULL != mKeychainPasswordItem))
+	{
+		status = SecKeychainItemModifyAttributesAndData (mKeychainPasswordItem, NULL, strlen (passwordData), passwordData);
+	}
+	
+	if (noErr == status)
+	{
+		[self setKeychainPasswordItem: NULL];
+	}
+	
     free (passwordData);
 }
 
@@ -1089,7 +1099,9 @@ extern void BXInit ()
 			else
 			{
                 //If we have a keychain item, mark it invalid.
-                if (NULL != mKeychainPasswordItem)
+                if (NULL != mKeychainPasswordItem && NULL != error &&
+					[[*error domain] isEqualToString: kBXErrorDomain] &&
+					[*error code] == kBXErrorAuthenticationFailed)
                 {
                     //FIXME: enable this after debugging
 #if 0
@@ -1921,6 +1933,17 @@ extern void BXInit ()
 	gHaveAppKitFramework = YES;
 }
 
+- (void) setDatabaseURIInternal: (NSURL *) uri
+{
+	if (uri != mDatabaseURI)
+    {
+        if (nil != uri)
+            [self checkURIScheme: uri];
+        [mDatabaseURI release];
+        mDatabaseURI = [uri retain];
+    }	
+}
+
 @end
 
 
@@ -2076,10 +2099,10 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
                                                            length: passwordLength
                                                          encoding: NSUTF8StringEncoding] autorelease];
             
-            [self setDatabaseURI: [mDatabaseURI BXURIForHost: nil
-                                                    database: nil 
-                                                    username: username
-                                                    password: password]];
+            [self setDatabaseURIInternal: [mDatabaseURI BXURIForHost: nil
+															database: nil 
+															username: username
+															password: password]];
             SecKeychainItemFreeAttributesAndData (returnedAttributes, passwordData);
             rval = YES;
         }
@@ -2099,11 +2122,10 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
         if (NULL != mKeychainPasswordItem)
             CFRelease (mKeychainPasswordItem);
         
-        if (NULL != anItem)
-        {
-            mKeychainPasswordItem = anItem;
+		mKeychainPasswordItem = anItem;
+		
+		if (NULL != mKeychainPasswordItem)
             CFRetain (mKeychainPasswordItem);
-        }
     }
 }
 

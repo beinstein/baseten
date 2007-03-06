@@ -57,6 +57,8 @@
 		[self connect];
 	else
 	{
+		[mDatabaseInterface rejectedTrust];
+		
 		//FIXME: Create an NSError and set it in userInfo to kBXErrorKey.
 		NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 																	 object: self 
