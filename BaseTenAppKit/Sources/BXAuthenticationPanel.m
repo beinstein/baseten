@@ -76,7 +76,6 @@ const float kSizeDiff = 25.0;
         [gAuthenticationViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
 		NSSize contentSize = [mPasswordAuthenticationView frame].size;
         contentSize.height -= kSizeDiff;
-        [self setReleasedWhenClosed: YES];
 		[self setContentSize: contentSize];
 		[self setContentView: mPasswordAuthenticationView];
     }

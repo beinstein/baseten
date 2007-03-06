@@ -81,6 +81,6 @@
     [NSApp endSheet: self];
     //Try to be cautious since we might get released when closed
     [[self retain] autorelease];
-    [self close];    
+    [self orderOut: nil];    
 }
 @end

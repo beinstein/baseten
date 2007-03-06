@@ -79,7 +79,6 @@ static NSArray* gManuallyNotifiedKeys = nil;
         [self setContentView: bonjourListView];
         [self setMinSize: mBonjourListViewMinSize];
 
-        [self setReleasedWhenClosed: YES];
         [self setDelegate: self];
     }
     return self;
