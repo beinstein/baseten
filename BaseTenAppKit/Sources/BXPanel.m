@@ -61,7 +61,7 @@
 - (void) continueWithReturnCode: (int) returnCode;
 {
     if (NULL != mPanelDidEndSelector)
-	{
+	{		
 		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: mPanelDidEndSelector];
 		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
 		[invocation setSelector: mPanelDidEndSelector];
@@ -69,7 +69,10 @@
 		[invocation setArgument: &self atIndex: 2];
 		[invocation setArgument: &returnCode atIndex: 3];
 		[invocation setArgument: &mPanelContextInfo atIndex: 4];
-		[invocation invoke];
+		
+		[[NSRunLoop currentRunLoop] performSelector: @selector (invoke) target: invocation
+										   argument: nil order: UINT_MAX
+											  modes: [NSArray arrayWithObject: NSDefaultRunLoopMode]];
 	}
     
     if (NO == mLeftOpenOnContinue)
@@ -83,4 +86,5 @@
     [[self retain] autorelease];
     [self orderOut: nil];    
 }
+
 @end

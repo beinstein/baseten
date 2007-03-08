@@ -60,9 +60,18 @@
     [panel setLeftOpenOnContinue: YES];
     [panel setReleasedWhenClosed: NO];
 	[panel setDatabaseContext: databaseContext];
-	[panel beginSheetModalForWindow: modalWindow modalDelegate: self 
-                     didEndSelector: @selector (connectionPanelDidEnd:returnCode:contextInfo:) 
-                        contextInfo: NULL];
+	
+	if (nil == modalWindow)
+	{
+		[panel makeKeyAndOrderFront: nil];
+		//FIXME: we never get the end message.
+	}
+	else
+	{
+		[panel beginSheetModalForWindow: modalWindow modalDelegate: self 
+						 didEndSelector: @selector (connectionPanelDidEnd:returnCode:contextInfo:) 
+							contextInfo: NULL];
+	}
 }
 
 - (void) connectionPanelDidEnd: (BXConnectionPanel *) panel returnCode: (int) returnCode 

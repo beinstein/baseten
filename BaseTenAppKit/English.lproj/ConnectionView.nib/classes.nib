@@ -11,12 +11,14 @@
             LANGUAGE = ObjC; 
             OUTLETS = {
                 mBonjourArrayController = NSArrayController; 
+                mBonjourCancelButton = NSButton; 
                 mBonjourList = NSTableView; 
                 mBonjourListProgressIndicator = NSProgressIndicator; 
                 mBonjourListView = NSView; 
                 mByHostnameProgressIndicator = NSProgressIndicator; 
                 mByHostnameView = NSView; 
                 mDelegate = id; 
+                mHostnameCancelButton = NSButtonCell; 
                 mHostnameField = NSTextField; 
             }; 
             SUPERCLASS = NSObject; 

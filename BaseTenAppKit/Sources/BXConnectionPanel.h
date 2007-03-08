@@ -49,6 +49,7 @@
 - (BOOL) displayedAsSheet;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXDatabaseContext *) databaseContext;
+- (void) setShowsCancelButton: (BOOL) aBool;
 - (void) setShowsOtherButton: (BOOL) aBool;
 - (void) setDatabaseName: (NSString *) aName;
 @end

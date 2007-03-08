@@ -45,7 +45,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
         tooLate = YES;
         gConnectionViewNib = [[NSNib alloc] initWithNibNamed: @"ConnectionView" 
                                                       bundle: [NSBundle bundleForClass: self]];
-        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: @"isConnecting", @"useHostname", nil];
+        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: @"isConnecting", @"useHostname", @"givenHostname", nil];
     }
 }
 
@@ -61,6 +61,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
     if ((self = [super init]))
     {
+		mShowsCancelButton = YES;
         [gConnectionViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
     }
     return self;
@@ -77,6 +78,9 @@ static NSArray* gManuallyNotifiedKeys = nil;
         
 	[mNetServiceBrowser release];
 	[mDatabaseContext release];
+	[mDatabaseName release];
+	[mNetServiceTimer release];
+	[mGivenHostname release];
     
 	[super dealloc];
 }
@@ -102,13 +106,54 @@ static NSArray* gManuallyNotifiedKeys = nil;
     return mUseHostname;
 }
 
+- (BOOL) showsBonjourButton
+{
+	return mShowsBonjourButton;
+}
+
+- (BOOL) showsCancelButton
+{
+	return mShowsCancelButton;
+}
+
 - (void) setShowsOtherButton: (BOOL) aBool
 {
 	mShowsOtherButton = aBool;
 }
 
+- (void) setShowsBonjourButton: (BOOL) aBool
+{
+	mShowsBonjourButton = aBool;
+}
+
+- (void) setShowsCancelButton: (BOOL) aBool
+{
+	mShowsCancelButton = aBool;
+}
+
+- (NSString *) givenHostname
+{
+	NSString* rval = mGivenHostname;
+	if (0 == [rval length])
+		rval = nil;
+	return rval;
+}
+
+- (void) setGivenHostname: (NSString *) aName
+{
+	if (aName != mGivenHostname && NO == [mGivenHostname isEqualToString: aName])
+	{
+		[self willChangeValueForKey: @"givenHostname"];
+		[mGivenHostname release];
+		mGivenHostname = [aName retain];
+		[self didChangeValueForKey: @"givenHostname"];
+	}
+}
+
 - (void) startDiscovery
 {
+	[mNetServiceTimer release];
+	
 	if (nil == mNetServiceBrowser)
 	{
 		mNetServiceBrowser = [[NSNetServiceBrowser alloc] init];
@@ -168,6 +213,11 @@ static NSArray* gManuallyNotifiedKeys = nil;
 		mDatabaseName = [aName retain];
 	}
 }
+
+- (NSButton *) bonjourCancelButton
+{
+	return mBonjourCancelButton;
+}
 @end
 
 
@@ -178,6 +228,13 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	[netService resolveWithTimeout: 5.0];
 	[netService retain];
 	[netService setDelegate: self];
+	
+	if (NO == moreServicesComing)
+	{
+		mNetServiceTimer = [[NSTimer alloc] initWithFireDate: [NSDate dateWithTimeIntervalSinceNow: 10.0]
+													interval: 0.0 target: self selector: @selector (startDiscovery)
+													userInfo: nil repeats: NO];
+	}
 }
 
 - (void) netServiceDidResolveAddress: (NSNetService *) netService
@@ -199,6 +256,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (IBAction) connect: (id) sender
 {
 	[mNetServiceBrowser stop];
+	//FIXME: should we start again when canceling?
 	
 	[self willChangeValueForKey: @"isConnecting"];
 	mIsConnecting = YES;
@@ -208,7 +266,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
     if (YES == mUseHostname)
     {
         NSString* schema = @"pgsql://";
-        NSString* uriString = [mHostnameField stringValue];
+        NSString* uriString = mGivenHostname;
         if (NO == [uriString hasPrefix: uriString])
             uriString = [schema stringByAppendingString: uriString];
 		NSURL* userURI = [NSURL URLWithString: uriString];
@@ -268,19 +326,21 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (IBAction) showBonjourList: (id) sender
 {
     [self willChangeValueForKey: @"useHostname"];
-    mUseHostname = YES;
+    mUseHostname = NO;
     [self didChangeValueForKey: @"useHostname"];
     
     [mDelegate BXShowBonjourListView: mBonjourListView];
+	[[mBonjourList window] makeFirstResponder: mBonjourList];
 }
 
 - (IBAction) showHostnameView: (id) sender
 {
     [self willChangeValueForKey: @"useHostname"];
-    mUseHostname = NO;
+    mUseHostname = YES;
     [self didChangeValueForKey: @"useHostname"];
     
     [mDelegate BXShowByHostnameView: mByHostnameView];
+	[[mHostnameField window] makeFirstResponder: mHostnameField];
 }
 
 @end

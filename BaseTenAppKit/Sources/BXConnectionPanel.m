@@ -55,7 +55,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 + (id) connectionPanel
 {
-	return [[[self alloc] initWithContentRect: NSZeroRect styleMask: NSTitledWindowMask | NSResizableWindowMask
+	return [[[self alloc] initWithContentRect: NSZeroRect styleMask: NSClosableWindowMask | NSTitledWindowMask | NSResizableWindowMask
 									  backing: NSBackingStoreBuffered defer: YES] autorelease];
 }
 
@@ -79,6 +79,15 @@ static NSArray* gManuallyNotifiedKeys = nil;
         [self setContentView: bonjourListView];
         [self setMinSize: mBonjourListViewMinSize];
 
+		if (NSIsEmptyRect (contentRect) && 0.0 == contentRect.origin.x && 0.0 == contentRect.origin.y)
+		{
+			NSRect screenFrame = [[NSScreen mainScreen] visibleFrame];
+			NSPoint origin = NSZeroPoint;
+			origin.x = (screenFrame.size.width - contentSize.width) / 2.0;
+			origin.y = (screenFrame.size.height - contentSize.height) / 2.0;
+			[self setFrameOrigin: origin];
+		}
+		
         [self setDelegate: self];
     }
     return self;
@@ -104,22 +113,30 @@ static NSArray* gManuallyNotifiedKeys = nil;
 				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo
 {
     [self willChangeValueForKey: @"displayedAsSheet"];
-	if (nil == docWindow)
-		mDisplayedAsSheet = NO;
-	else
-		mDisplayedAsSheet = YES;
+	mDisplayedAsSheet = YES;
     [self didChangeValueForKey: @"displayedAsSheet"];
 	
-	[mViewManager startDiscovery];
     [super beginSheetModalForWindow: docWindow modalDelegate: modalDelegate
                      didEndSelector: didEndSelector contextInfo: contextInfo];
+}
+
+- (void) becomeKeyWindow
+{
+	static BOOL firstTime = NO;
+	if (NO == firstTime)
+	{
+		firstTime = YES;
+		[mViewManager startDiscovery];
+		[[mViewManager bonjourCancelButton] bind: @"enabled" toObject: mViewManager
+									 withKeyPath: @"isConnecting" options: nil];
+	}
+	[super becomeKeyWindow];
 }
 
 - (void) auxiliarySheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
     mDisplayingAuxiliarySheet = NO;
 }
-
 
 - (BOOL) displayedAsSheet
 {
@@ -134,6 +151,11 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (BXDatabaseContext *) databaseContext
 {
 	return [mViewManager databaseContext];
+}
+
+- (void) setShowsCancelButton: (BOOL) aBool
+{
+	[mViewManager setShowsCancelButton: aBool];
 }
 
 - (void) setShowsOtherButton: (BOOL) aBool
@@ -171,15 +193,17 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	}
 	else
 	{
+		[mViewManager setShowsBonjourButton: NO];
         if (nil == mAuxiliaryPanel)
         {
             mAuxiliaryPanel = [[NSPanel alloc] initWithContentRect: contentRect 
                                                          styleMask: NSTitledWindowMask | NSResizableWindowMask 
                                                            backing: NSBackingStoreBuffered defer: YES];
-
+			
             [mAuxiliaryPanel setReleasedWhenClosed: NO];
             [mAuxiliaryPanel setContentView: hostnameView];
-            [mAuxiliaryPanel setDelegate: self];
+			//FIXME: setting the delegate causes strange problems with the responder chain.
+            //[mAuxiliaryPanel setDelegate: self];
         }        
         
 		[NSApp beginSheet: mAuxiliaryPanel modalForWindow: self modalDelegate: self 
@@ -243,7 +267,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
     if (mDisplayingByHostnameView || sender != self)
     {
-        NSSize size = [self frame].size;
+        NSSize size = [sender frame].size;
         proposedFrameSize.height = size.height;
     }
     return proposedFrameSize;

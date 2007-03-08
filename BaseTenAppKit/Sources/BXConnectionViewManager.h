@@ -55,23 +55,34 @@
 	IBOutlet NSProgressIndicator*                   mByHostnameProgressIndicator;
     IBOutlet NSTextField*                           mHostnameField;
 	IBOutlet NSTableView*							mBonjourList;
-
+	IBOutlet NSButtonCell*							mHostnameCancelButton;
+	IBOutlet NSButton*								mBonjourCancelButton;
+	
 	//Retained
 	NSNetServiceBrowser*                            mNetServiceBrowser;
 	BXDatabaseContext*                              mDatabaseContext;
 	NSString*										mDatabaseName;
+	NSTimer*										mNetServiceTimer;
+	NSString*										mGivenHostname;
 	
 	BOOL                                            mShowsOtherButton;
+	BOOL											mShowsBonjourButton;
 	BOOL                                            mIsConnecting;
     BOOL                                            mUseHostname;
+	BOOL											mShowsCancelButton;
 }
 
 - (BOOL) canConnect;
 - (BOOL) isConnecting;
 - (BOOL) showsOtherButton;
+- (BOOL) showsCancelButton;
+- (void) setShowsCancelButton: (BOOL) aBool;
 - (void) setShowsOtherButton: (BOOL) aBool;
+- (void) setShowsBonjourButton: (BOOL) aBool;
 - (void) setDelegate: (id <BXConnectionViewManagerDelegate>) anObject;
 - (void) setDatabaseName: (NSString *) aName;
+- (NSString *) givenHostname;
+- (void) setGivenHostname: (NSString *) aName;
 
 - (void) startDiscovery;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
@@ -79,6 +90,7 @@
 
 - (NSView *) bonjourListView;
 - (NSView *) byHostnameView;
+- (NSButton *) bonjourCancelButton;
 @end
 
 
