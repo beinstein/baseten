@@ -76,8 +76,8 @@
 		32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit_Prefix.pch; path = Sources/BaseTenAppKit_Prefix.pch; sourceTree = "<group>"; };
 		5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXControllerProtocol.h; path = Sources/BXControllerProtocol.h; sourceTree = "<group>"; };
 		531650C30B72040700785454 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = /System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<absolute>"; };
-		532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXNetServiceConnector.h; sourceTree = "<group>"; };
-		532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXNetServiceConnector.m; sourceTree = "<group>"; };
+		532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXNetServiceConnector.h; path = Sources/BXNetServiceConnector.h; sourceTree = "<group>"; };
+		532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXNetServiceConnector.m; path = Sources/BXNetServiceConnector.m; sourceTree = "<group>"; };
 		5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitFunctions.h; path = Sources/BXAppKitFunctions.h; sourceTree = "<group>"; };
 		5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAppKitFunctions.m; path = Sources/BXAppKitFunctions.m; sourceTree = "<group>"; };
 		53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSController+BXAppKitAdditions.h"; path = "Sources/NSController+BXAppKitAdditions.h"; sourceTree = "<group>"; };
@@ -94,8 +94,8 @@
 		537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit.h; path = Sources/BaseTenAppKit.h; sourceTree = "<group>"; };
 		537E4A860A14C91800A22080 /* BaseTenAppKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTenAppKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTen.icns; path = ../BaseTen.icns; sourceTree = SOURCE_ROOT; };
-		53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAppKitAdditions.h; sourceTree = "<group>"; };
-		53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAppKitAdditions.m; sourceTree = "<group>"; };
+		53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitAdditions.h; path = Sources/BXAppKitAdditions.h; sourceTree = "<group>"; };
+		53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAppKitAdditions.m; path = Sources/BXAppKitAdditions.m; sourceTree = "<group>"; };
 		53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextAdditions.h; path = Sources/BXDatabaseContextAdditions.h; sourceTree = "<group>"; };
 		53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextAdditions.m; path = Sources/BXDatabaseContextAdditions.m; sourceTree = "<group>"; };
 		53E906590B845A30008CEA4B /* BXConnectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConnectionPanel.h; path = Sources/BXConnectionPanel.h; sourceTree = "<group>"; };
@@ -469,6 +469,7 @@
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SKIP_INSTALL = YES;
 				STRIP_INSTALLED_PRODUCT = NO;
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = framework;
 				ZERO_LINK = YES;
@@ -484,7 +485,10 @@
 				DSTROOT = /;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = "../build/$(BUILD_STYLE)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)",
+					"../build/$(BUILD_STYLE)",
+				);
 				FRAMEWORK_VERSION = A;
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -494,14 +498,17 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/BaseTenAppKit_Prefix.pch;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
 				INFOPLIST_FILE = Info.plist;
 				INIT_ROUTINE = _BaseTenAppKitInitFramework;
 				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
+				LIBRARY_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PREBINDING = NO;
 				PRODUCT_NAME = BaseTenAppKit;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SKIP_INSTALL = YES;
+				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = framework;
 			};
