@@ -122,13 +122,15 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 - (void) becomeKeyWindow
 {
-	static BOOL firstTime = NO;
-	if (NO == firstTime)
+	if (NO == mFirstTime)
 	{
-		firstTime = YES;
+		mFirstTime = YES;
 		[mViewManager startDiscovery];
-		[[mViewManager bonjourCancelButton] bind: @"enabled" toObject: mViewManager
-									 withKeyPath: @"isConnecting" options: nil];
+        if (NO == mDisplayedAsSheet)
+        {
+            [[mViewManager bonjourCancelButton] bind: @"enabled" toObject: mViewManager
+                                         withKeyPath: @"isConnecting" options: nil];
+        }
 	}
 	[super becomeKeyWindow];
 }
@@ -182,6 +184,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
         contentRect.origin.y -= contentRect.size.height - frame.size.height;
         contentRect.size.width = frame.size.width;
         
+        [mViewManager setShowsBonjourButton: YES];
         [self setContentView: [NSView BXEmptyView]];
         [self display];
 		[self setFrame: contentRect display: YES animate: YES];

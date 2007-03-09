@@ -32,8 +32,7 @@
 @interface BXPanel : NSPanel 
 {
     id							mPanelDelegate;
-	SEL							mPanelDidEndSelector;
-	void*						mPanelContextInfo;
+	NSInvocation*				mDidEndInvocation;
     BOOL                        mLeftOpenOnContinue;
 }
 
@@ -44,4 +43,5 @@
 - (IBAction) continue: (id) sender;
 - (void) continueWithReturnCode: (int) returnCode;
 - (void) end;
+- (void) setDidEndInvocation: (NSInvocation *) invocation;
 @end

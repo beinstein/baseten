@@ -39,6 +39,7 @@
 	BOOL						mDisplayedAsSheet;
     BOOL                        mDisplayingAuxiliarySheet;
     BOOL                        mDisplayingByHostnameView;
+    BOOL                        mFirstTime;
     
     NSSize                      mByHostnameViewMinSize;
     NSSize                      mBonjourListViewMinSize;

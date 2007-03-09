@@ -63,8 +63,15 @@
 	
 	if (nil == modalWindow)
 	{
+        SEL selector = @selector (connectionPanelDidEnd:returnCode:contextInfo:);
+        NSMethodSignature* signature = [self methodSignatureForSelector: selector];
+        
+        NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
+        [invocation setTarget: self];
+        [invocation setSelector: selector];
+        
+        [panel setDidEndInvocation: invocation];
 		[panel makeKeyAndOrderFront: nil];
-		//FIXME: we never get the end message.
 	}
 	else
 	{

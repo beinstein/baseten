@@ -190,7 +190,14 @@ const float kSizeDiff = 25.0;
 									   password: [mPasswordField objectValue]];
 	[mDatabaseContext setDatabaseURIInternal: connectionURI];
 	if (NSOnState == [mRememberInKeychainButton state])
-        [mDatabaseContext storeURICredentials];
+    {
+        //This should be done before -[BXDatabaseContext connect] since SecKeychainUnlock might get called.
+        [[NSRunLoop currentRunLoop] performSelector: @selector (storeURICredentials)
+                                             target: mDatabaseContext
+                                           argument: nil
+                                              order: UINT_MAX
+                                              modes: [NSArray arrayWithObject: NSDefaultRunLoopMode]];
+    }
 	
 	[self setAuthenticating: YES];
     [self continueWithReturnCode: NSOKButton];

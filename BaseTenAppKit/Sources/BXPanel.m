@@ -31,12 +31,31 @@
 
 @implementation BXPanel
 
+- (void) dealloc
+{
+    [mDidEndInvocation release];
+    [super dealloc];
+}
+
 - (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
 				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo
-{	
-	mPanelDidEndSelector = didEndSelector;
+{	    
 	mPanelDelegate = modalDelegate;
-	mPanelContextInfo = contextInfo;
+    if (NULL != didEndSelector)
+    {
+		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: didEndSelector];
+        NSAssert1 (5 == [signature numberOfArguments], @"Expected number of arguments to be 5, was %d",
+                   [signature numberOfArguments]);
+        
+		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
+		[invocation setSelector: didEndSelector];
+		[invocation setTarget: mPanelDelegate];
+		[invocation setArgument: &self atIndex: 2];
+        //Return code is not yet known.
+		[invocation setArgument: &contextInfo atIndex: 4];
+        [self setDidEndInvocation: invocation];
+    }
+        
 	[NSApp beginSheet: self modalForWindow: docWindow modalDelegate: self 
 	   didEndSelector: @selector (sheetDidEnd:returnCode:contextInfo:) 
 		  contextInfo: NULL];
@@ -60,17 +79,10 @@
 
 - (void) continueWithReturnCode: (int) returnCode;
 {
-    if (NULL != mPanelDidEndSelector)
+    if (NULL != mDidEndInvocation)
 	{		
-		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: mPanelDidEndSelector];
-		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
-		[invocation setSelector: mPanelDidEndSelector];
-		[invocation setTarget: mPanelDelegate];
-		[invocation setArgument: &self atIndex: 2];
-		[invocation setArgument: &returnCode atIndex: 3];
-		[invocation setArgument: &mPanelContextInfo atIndex: 4];
-		
-		[[NSRunLoop currentRunLoop] performSelector: @selector (invoke) target: invocation
+		[mDidEndInvocation setArgument: &returnCode atIndex: 3];
+		[[NSRunLoop currentRunLoop] performSelector: @selector (invoke) target: mDidEndInvocation
 										   argument: nil order: UINT_MAX
 											  modes: [NSArray arrayWithObject: NSDefaultRunLoopMode]];
 	}
@@ -81,10 +93,20 @@
 
 - (void) end
 {
+    [self setDidEndInvocation: nil];
     [NSApp endSheet: self];
     //Try to be cautious since we might get released when closed
     [[self retain] autorelease];
     [self orderOut: nil];    
+}
+
+- (void) setDidEndInvocation: (NSInvocation *) invocation
+{
+    if (mDidEndInvocation != invocation)
+    {
+        [mDidEndInvocation release];
+        mDidEndInvocation = [invocation retain];
+    }
 }
 
 @end
