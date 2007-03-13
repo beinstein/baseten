@@ -50,7 +50,6 @@
 		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
 		[invocation setSelector: didEndSelector];
 		[invocation setTarget: mPanelDelegate];
-		[invocation setArgument: &self atIndex: 2];
         //Return code is not yet known.
 		[invocation setArgument: &contextInfo atIndex: 4];
         [self setDidEndInvocation: invocation];
@@ -106,6 +105,7 @@
     {
         [mDidEndInvocation release];
         mDidEndInvocation = [invocation retain];
+		[mDidEndInvocation setArgument: &self atIndex: 2];
     }
 }
 

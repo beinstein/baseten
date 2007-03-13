@@ -69,7 +69,7 @@
         NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
         [invocation setTarget: self];
         [invocation setSelector: selector];
-        
+
         [panel setDidEndInvocation: invocation];
 		[panel makeKeyAndOrderFront: nil];
 	}

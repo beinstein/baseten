@@ -205,8 +205,8 @@ static NSArray* gManuallyNotifiedKeys = nil;
 			
             [mAuxiliaryPanel setReleasedWhenClosed: NO];
             [mAuxiliaryPanel setContentView: hostnameView];
-			//FIXME: setting the delegate causes strange problems with the responder chain.
-            //[mAuxiliaryPanel setDelegate: self];
+			[mAuxiliaryPanel setMinSize: mByHostnameViewMinSize];
+            [mAuxiliaryPanel setDelegate: self];
         }        
         
 		[NSApp beginSheet: mAuxiliaryPanel modalForWindow: self modalDelegate: self 
@@ -274,6 +274,12 @@ static NSArray* gManuallyNotifiedKeys = nil;
         proposedFrameSize.height = size.height;
     }
     return proposedFrameSize;
+}
+
+- (id) windowWillReturnFieldEditor: (NSWindow *) sender toObject: (id) anObject
+{
+	//For some reason this is needed when mAuxiliaryPanel uses this as delegate.
+	return nil;
 }
 
 @end
