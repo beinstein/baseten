@@ -100,6 +100,7 @@
 		53B86FFA0A0A1D6F007315BC /* BXPropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B86FFB0A0A1D6F007315BC /* BXPropertyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */; };
 		53B872830A0A4CEC007315BC /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
+		53B90C260BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53D0D17C0B6F8A6800D2D101 /* BXPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */; };
 		53D0D19E0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */; };
@@ -259,6 +260,7 @@
 		53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPropertyDescription.m; path = Sources/BXPropertyDescription.m; sourceTree = "<group>"; };
 		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
+		53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPropertyDescriptionPrivate.h; path = Sources/BXPropertyDescriptionPrivate.h; sourceTree = "<group>"; };
 		53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPolicyDelegate.h; path = Sources/BXPolicyDelegate.h; sourceTree = "<group>"; };
 		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
 		53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGCertificateVerificationDelegate.m; path = Sources/BXPGCertificateVerificationDelegate.m; sourceTree = "<group>"; };
@@ -446,6 +448,7 @@
 				53B872800A0A4CEC007315BC /* BXAbstractDescription.h */,
 				53B872810A0A4CEC007315BC /* BXAbstractDescription.m */,
 				53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */,
+				53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */,
 				53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */,
 				533229E40A024C2500BDB151 /* BXEntityDescription.h */,
 				539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */,
@@ -527,6 +530,7 @@
 				53D0D17C0B6F8A6800D2D101 /* BXPolicyDelegate.h in Headers */,
 				53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */,
 				532D61000B9454110028E90B /* BXConnectionSetupManagerProtocol.h in Headers */,
+				53B90C260BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

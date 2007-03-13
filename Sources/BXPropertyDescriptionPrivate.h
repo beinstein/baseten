@@ -1,4 +1,6 @@
 //
+// BXPropertyDescriptionPrivate.h
+//
 // BXPropertyDescription.h
 // BaseTen
 //
@@ -23,23 +25,9 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id$
+// $Id: BXPropertyDescription.h 84 2007-01-12 11:38:38Z tuukka.norri@karppinen.fi $
 //
 
-#import <Foundation/Foundation.h>
-#import <BaseTen/BXAbstractDescription.h>
-
-@class BXEntityDescription;
-
-@interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSCoding>
-{
-    BXEntityDescription*	mEntity;
-	BOOL					mIsOptional;
-}
-
-+ (id) propertyWithName: (NSString *) name entity: (BXEntityDescription *) entity;
-- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity;
-- (BXEntityDescription *) entity;
-- (BOOL) isOptional;
-
+@interface BXPropertyDescription (PrivateMethods)
+- (void) setOptional: (BOOL) aBool;
 @end

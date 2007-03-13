@@ -50,6 +50,7 @@
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXException.h"
 #import "BXPGCertificateVerificationDelegate.h"
+#import "BXPropertyDescriptionPrivate.h"
 
 
 //FIXME: these should be non-blockable assertions and the definitions should be somewhere else
@@ -1122,6 +1123,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                 TSEnumerate (currentFName, e, [pkeyFNames objectEnumerator])
                 {
                     BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+					[desc setOptional: NO];
                     [pkeyPropertyDescs addObject: desc];
                 }
                 
@@ -1134,15 +1136,16 @@ static NSString* SSLMode (enum BXSSLMode mode)
         if (nil == [entity fields])
         {
             NSArray* pkeyFNames = [pkeyfields valueForKey: @"name"];
-            NSArray* fNames = [[tableInfo allFields] valueForKey: @"name"];
             NSMutableArray* propertyDescs = [NSMutableArray arrayWithCapacity: [pkeyFNames count]];
             
-            TSEnumerate (currentFName, e, [fNames objectEnumerator])
+            TSEnumerate (currentField, e, [[tableInfo allFields] objectEnumerator])
             {
+				NSString* currentFName = [currentField name];
                 if (NO == [pkeyFNames containsObject: currentFName])
                 {
-                    [propertyDescs addObject: 
-                        [BXPropertyDescription propertyWithName: currentFName entity: entity]];
+					BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+					[desc setOptional: ![currentField isNotNull]];
+                    [propertyDescs addObject: desc];
                 }
             }
             [entity setFields: propertyDescs];

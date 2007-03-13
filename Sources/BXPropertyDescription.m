@@ -2,7 +2,7 @@
 // BXPropertyDescription.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -26,13 +26,14 @@
 // $Id$
 //
 
-#import <BaseTen/BXPropertyDescription.h>
-#import <BaseTen/BXEntityDescription.h>
+#import "BXPropertyDescription.h"
+#import "BXPropertyDescriptionPrivate.h"
+#import "BXEntityDescription.h"
 
 
 /**
     A property description contains information about a column in a specific entity.
-    This class is thread-safe.
+    The corresponding class in Core Data is NSAttributeDescription. This class is thread-safe.
 */
 @implementation BXPropertyDescription
 
@@ -90,6 +91,7 @@
 {
 	[self initWithName: [decoder decodeObjectForKey: @"name"]
 				entity: [decoder decodeObjectForKey: @"entity"]];
+	[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
 	return self;
 }
 
@@ -97,6 +99,7 @@
 {
 	[coder encodeObject: mName forKey: @"name"];
 	[coder encodeObject: mEntity forKey: @"entity"];
+	[coder encodeBool: mIsOptional forKey: @"isOptional"];
 }
 
 - (unsigned int) hash
@@ -135,6 +138,21 @@
             rval = [mName caseInsensitiveCompare: [anotherObject name]];
     }
     return rval;
+}
+
+- (BOOL) isOptional
+{
+	return mIsOptional;
+}
+
+@end
+
+
+@implementation BXPropertyDescription (PrivateMethods)
+
+- (void) setOptional: (BOOL) aBool
+{
+	mIsOptional = aBool;
 }
 
 @end
