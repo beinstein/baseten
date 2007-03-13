@@ -387,7 +387,9 @@ PGTSSSLConnectionExIndex ()
     int bsdSocket = PQsocket (connection);
     
     if (bsdSocket < 0)
-        log4Error (@"Unable to get connection socket from libpq");
+	{
+        log4Info (@"Unable to get connection socket from libpq");
+	}
     else
     {
 		sslSetUp = NO;

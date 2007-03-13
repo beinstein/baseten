@@ -267,7 +267,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
     {
         NSString* schema = @"pgsql://";
         NSString* uriString = mGivenHostname;
-        if (NO == [uriString hasPrefix: uriString])
+        if (NO == [uriString hasPrefix: schema])
             uriString = [schema stringByAppendingString: uriString];
 		NSURL* userURI = [NSURL URLWithString: uriString];
 		if (nil != userURI)
