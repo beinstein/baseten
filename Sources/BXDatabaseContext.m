@@ -838,13 +838,15 @@ extern void BXInit ()
 						
 						//Undo manager does things in reverse order
 						NSArray* invocations = [recorder recordedInvocations];
-						[mUndoManager beginUndoGrouping];
+						if (![mUndoManager groupsByEvent])
+    						[mUndoManager beginUndoGrouping];
 						[[mUndoManager prepareWithInvocationTarget: self] deletedObjectsFromDatabase: [NSArray arrayWithObject: objectID]];
 						if (createdSavepoint)
 							[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 						[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: invocations];
 						[[mUndoManager prepareWithInvocationTarget: objectID] setLastModificationType: [objectID lastModificationType]];
-						[mUndoManager endUndoGrouping];        
+						if (![mUndoManager groupsByEvent])
+    						[mUndoManager endUndoGrouping];        
 						
 						//Remember the modification type for ROLLBACK
 						[objectID setLastModificationType: kBXInsertModification];
@@ -1789,7 +1791,8 @@ extern void BXInit ()
 					[[recorder recordWithPersistentTarget: self] faultKeys: [aDict allKeys] inObjectsWithIDs: objectIDs];
 					
 					//Undo manager does things in reverse order
-					[mUndoManager beginUndoGrouping];
+					if (![mUndoManager groupsByEvent])
+    					[mUndoManager beginUndoGrouping];
 					//Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
 					[[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
 					if (createdSavepoint)
@@ -1805,7 +1808,8 @@ extern void BXInit ()
 						if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
 							[currentID setLastModificationType: kBXUpdateModification];
 					}
-					[mUndoManager endUndoGrouping];
+					if (![mUndoManager groupsByEvent])
+    					[mUndoManager endUndoGrouping];
 				}
 			}
 		}
@@ -1851,7 +1855,8 @@ extern void BXInit ()
 					[[recorder recordWithPersistentTarget: self] deletedObjectsFromDatabase: objectIDs];
 					
 					//Undo manager does things in reverse order
-					[mUndoManager beginUndoGrouping];
+					if (![mUndoManager groupsByEvent])
+    					[mUndoManager beginUndoGrouping];
 					[[mUndoManager prepareWithInvocationTarget: self] addedObjectsToDatabase: objectIDs];
 					if (createdSavepoint)
 						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
@@ -1862,7 +1867,8 @@ extern void BXInit ()
 						//Remember the modification type for ROLLBACK
 						[currentID setLastModificationType: kBXDeleteModification];
 					}
-					[mUndoManager endUndoGrouping];
+					if (![mUndoManager groupsByEvent])
+    					[mUndoManager endUndoGrouping];
 				}
 			}
 		}
