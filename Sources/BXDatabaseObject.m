@@ -360,10 +360,10 @@ ParseSelector (SEL aSelector, NSString** key)
 
 - (void) clearStatus
 {
-    if (kBXObjectNoStatus != mStatus)
+    if (kBXObjectNoLockStatus != mLockStatus)
     {
         [self willChangeValueForKey: @"statusInfo"];
-        mStatus = kBXObjectNoStatus;
+        mLockStatus = kBXObjectNoLockStatus;
         [self didChangeValueForKey: @"statusInfo"];
     }
 }
@@ -378,7 +378,7 @@ ParseSelector (SEL aSelector, NSString** key)
  * \param   sender          An object that conforms to the BXObjectAsynchronousLocking
  *                          protocol.
  */
-- (void) lockKey: (id) key status: (enum BXObjectStatus) objectStatus sender: (id <BXObjectAsynchronousLocking>) sender;
+- (void) lockKey: (id) key status: (enum BXObjectLockStatus) objectStatus sender: (id <BXObjectAsynchronousLocking>) sender;
 {
     [mContext lockObject: self key: key status: objectStatus sender: sender];
 }
@@ -389,15 +389,15 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (BOOL) isDeleted
 {
-    return (kBXObjectDeletedStatus == mStatus);
+    return (kBXObjectDeletedStatus == mLockStatus);
 }
 
 - (void) setDeleted
 {
-    if (kBXObjectDeletedStatus != mStatus)
+    if (kBXObjectDeletedStatus != mLockStatus)
     {
         [self willChangeValueForKey: @"statusInfo"];
-        mStatus = kBXObjectDeletedStatus;
+        mLockStatus = kBXObjectDeletedStatus;
         [self didChangeValueForKey: @"statusInfo"];
     }
 }
@@ -702,7 +702,7 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (BOOL) isLockedForKey: (NSString *) aKey
 {
-    return (kBXObjectLockedStatus == mStatus);
+    return (kBXObjectLockedStatus == mLockStatus);
 }
 
 /**
@@ -710,10 +710,10 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) setLockedForKey: (NSString *) aKey
 {
-    if (kBXObjectLockedStatus != mStatus)
+    if (kBXObjectLockedStatus != mLockStatus)
     {
         [self willChangeValueForKey: @"statusInfo"];
-        mStatus = kBXObjectLockedStatus;
+        mLockStatus = kBXObjectLockedStatus;
         [self didChangeValueForKey: @"statusInfo"];
     }
 }
@@ -779,7 +779,7 @@ ParseSelector (SEL aSelector, NSString** key)
         {
             mValues = [[NSMutableDictionary alloc] init];
         }
-        mStatus = kBXObjectNoStatus;
+        mLockStatus = kBXObjectNoLockStatus;
     }
     return self;
 }

@@ -45,7 +45,7 @@ extern NSString* const kBXContextKey;
 extern NSString* const kBXErrorKey;
 extern NSString* const kBXObjectKey;
 extern NSString* const kBXEntityDescriptionKey;
-extern NSString* const kBXObjectStatusKey;
+extern NSString* const kBXObjectLockStatusKey;
 extern NSString* const kBXObjectIDKey;
 extern NSString* const kBXEntityDescriptionKey;
 extern NSString* const kBXPrimaryKeyFieldsKey;
@@ -81,10 +81,10 @@ enum BXModificationType
 
 enum BXRelationshipType
 {
-    kBXRelationshipUndefined     = (1 << 0),
-    kBXRelationshipOneToOne      = (1 << 1),
-    kBXRelationshipOneToMany     = (1 << 2),
-    kBXRelationshipManyToMany    = (1 << 3)
+    kBXRelationshipUndefined     = 0,
+    kBXRelationshipOneToOne      = (1 << 0),
+    kBXRelationshipOneToMany     = (1 << 1),
+    kBXRelationshipManyToMany    = (1 << 2)
 };
 
 enum BXCertificatePolicy

@@ -34,9 +34,9 @@
 
 enum BXPropertyOption
 {
-	kBXPropertyNoOption 	= 1 << 0,
-	kBXPropertyOptional		= 1 << 1,
-	kBXPropertyPrimaryKey	= 1 << 2
+	kBXPropertyNoOption 	= 0,
+	kBXPropertyOptional		= 1 << 0,
+	kBXPropertyPrimaryKey	= 1 << 1
 };
 
 

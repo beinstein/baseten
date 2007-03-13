@@ -49,7 +49,7 @@ struct trustResult
                            error: (NSError **) error;
 
 /* Especially these need some attention before moving to a public header. */
-- (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectStatus) status
+- (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectLockStatus) status
              sender: (id <BXObjectAsynchronousLocking>) sender;
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey;
 

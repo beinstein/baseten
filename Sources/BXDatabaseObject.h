@@ -36,12 +36,21 @@
 @class BXPropertyDescription;
 
 
-/** Object status */
-enum BXObjectStatus
+/** Object lock status */
+enum BXObjectLockStatus
 {
-    kBXObjectNoStatus = 0,
+    kBXObjectNoLockStatus = 0,
     kBXObjectLockedStatus,
-    kBXObjectDeletedStatus
+    kBXObjectDeletedStatus,
+};
+
+/** Object existence */
+enum BXObjectStoreStatus
+{
+	kBXObjectNoStoreStatus = 0,
+	kBXObjectInsertPending,	//After insert before commit
+	kBXObjectDeletePending,	//After delete before commit
+	kBXObjectDeleted		//After insert + rollback and delete + commit
 };
 
 
@@ -73,10 +82,10 @@ enum BXObjectStatus
 
 @interface BXDatabaseObject : NSObject
 {
-    BXDatabaseContext*      mContext; //Weak
-    BXDatabaseObjectID*     mObjectID;
-    NSMutableDictionary*    mValues;
-    unsigned int            mStatus;
+    BXDatabaseContext*			mContext; //Weak
+    BXDatabaseObjectID*			mObjectID;
+    NSMutableDictionary*		mValues;
+    enum BXObjectLockStatus     mLockStatus;
 }
 
 + (BOOL) accessInstanceVariablesDirectly;
@@ -92,7 +101,7 @@ enum BXObjectStatus
 - (id) valueForUndefinedKey: (NSString *) aKey;
 - (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey;
 - (NSDictionary *) cachedObjects;
-- (void) lockKey: (id) key status: (enum BXObjectStatus) objectStatus sender: (id <BXObjectAsynchronousLocking>) sender;
+- (void) lockKey: (id) key status: (enum BXObjectLockStatus) objectStatus sender: (id <BXObjectAsynchronousLocking>) sender;
 
 //- (void) conditionallyFaultAllKeys;
 //- (void) conditionallyFaultKey: (id) aKey;

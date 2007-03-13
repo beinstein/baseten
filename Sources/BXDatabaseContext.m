@@ -822,7 +822,6 @@ extern void BXInit ()
 					{
 						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
 						objectID = [mModifiedObjectIDs BXConditionalAdd: objectID];
-						[rval awakeFromInsert];
 						
 						//For redo
 						TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
@@ -1297,7 +1296,7 @@ extern void BXInit ()
     }
 }
 
-- (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectStatus) status
+- (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectLockStatus) status
 {
     unsigned int count = [objectIDs count];
     if (0 < count)
@@ -1324,7 +1323,7 @@ extern void BXInit ()
             objectIDs, kBXObjectIDsKey,
             self, kBXDatabaseContextKey,
             foundObjects, kBXObjectsKey,
-            [NSValue valueWithBytes: &status objCType: @encode (enum BXObjectStatus)], kBXObjectStatusKey,
+            [NSValue valueWithBytes: &status objCType: @encode (enum BXObjectLockStatus)], kBXObjectLockStatusKey,
             nil];
         [[NSNotificationCenter defaultCenter] postNotificationName: kBXLockNotification
                                                             object: [[objectIDs objectAtIndex: 0] entity]
@@ -1671,7 +1670,7 @@ extern void BXInit ()
  * \internal
  * \param aKey Currently ignored, since PostgreSQL only supports row-level locks.
  */
-- (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectStatus) status
+- (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectLockStatus) status
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
     [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];    

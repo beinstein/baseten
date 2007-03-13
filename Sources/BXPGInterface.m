@@ -979,7 +979,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
  * Lock notifications should always be listened to, since modifications cause the rows to be locked until
  * the end of the ongoing transaction
  */
-- (void) lockObject: (BXDatabaseObject *) anObject key: (id) aKey lockType: (enum BXObjectStatus) type
+- (void) lockObject: (BXDatabaseObject *) anObject key: (id) aKey lockType: (enum BXObjectLockStatus) type
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
     BXDatabaseObjectID* objectID = [anObject objectID];
@@ -1451,7 +1451,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 }
 
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey
-                             status: (enum BXObjectStatus *) status
+                             status: (enum BXObjectLockStatus *) status
 {
     NSMutableArray* ids = nil;
     NSDictionary* userInfo = [notification userInfo];
@@ -1481,7 +1481,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
             else if ([@"D" isEqualToString: statusString])
                 *status = kBXObjectDeletedStatus;
             else
-                *status = kBXObjectNoStatus;
+                *status = kBXObjectNoLockStatus;
         }
     }
     return ids;
@@ -1725,7 +1725,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 - (void) rowsLocked: (NSNotification *) notification
 {
-    enum BXObjectStatus status = kBXObjectNoStatus;
+    enum BXObjectLockStatus status = kBXObjectNoLockStatus;
     NSArray* ids = [self notificationObjectIDs: notification relidKey: @"baseten_lock_relid" status: &status];
     if (0 < [ids count])
         [context lockedObjectsInDatabase: ids status: status];

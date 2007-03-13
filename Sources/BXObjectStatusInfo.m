@@ -98,14 +98,14 @@
 
 - (id) valueForKey: (NSString *) aKey
 {
-    enum BXObjectStatus rval = kBXObjectNoStatus;
+    enum BXObjectLockStatus rval = kBXObjectNoLockStatus;
     id target = [checker target];
     if (([target isDeleted]))
         rval = kBXObjectDeletedStatus;
     else if (([target isLockedForKey: aKey]))
         rval = kBXObjectLockedStatus;
     
-    return [NSValue valueWithBytes: &rval objCType: @encode (enum BXObjectStatus)];
+    return [NSValue valueWithBytes: &rval objCType: @encode (enum BXObjectLockStatus)];
 }
 
 @end

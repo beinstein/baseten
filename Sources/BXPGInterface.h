@@ -118,7 +118,7 @@ enum BXPGQueryState
 - (NSDictionary *) lastModificationForEntity: (BXEntityDescription *) entity;
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey;
 - (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey
-                             status: (enum BXObjectStatus *) status;
+                             status: (enum BXObjectLockStatus *) status;
 
 - (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error;
 

@@ -43,7 +43,7 @@
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
-- (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectStatus) status;
+- (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectLockStatus) status;
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
 - (void) handleInvalidTrustAsync: (NSValue *) value;
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
@@ -89,7 +89,7 @@
 /** 
  * Lock an object asynchronously.
  */
-- (void) lockObject: (BXDatabaseObject *) object key: (id) key lockType: (enum BXObjectStatus) type
+- (void) lockObject: (BXDatabaseObject *) object key: (id) key lockType: (enum BXObjectLockStatus) type
              sender: (id <BXObjectAsynchronousLocking>) sender;
 /**
  * Unlock a locked object synchronously.
