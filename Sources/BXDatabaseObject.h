@@ -118,6 +118,8 @@ enum BXObjectStatus
 
 - (void) faultKey: (NSString *) aKey;
 - (int) isFaultKey: (NSString *) aKey;
+
+- (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError;
 @end
 
 

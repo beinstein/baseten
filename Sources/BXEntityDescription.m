@@ -33,6 +33,7 @@
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXPropertyDescription.h"
 #import "BXRelationshipDescription.h"
+#import "BXPropertyDescriptionPrivate.h"
 
 #import <TSDataTypes/TSDataTypes.h>
 
@@ -88,8 +89,7 @@ static NSMutableSet* gViewEntities;
 - (void) dealloc
 {
     [mRelationships release];
-    [mPkeyFields release];
-    [mFields release];
+	[mAttributes release];
     [mDatabaseURI release];
     [mSchemaName release];
     [mDependentViewEntities release];
@@ -125,8 +125,7 @@ static NSMutableSet* gViewEntities;
     if (Nil != cls)
         [rval setDatabaseObjectClass: cls];
 		
-	[self setPrimaryKeyFields: [decoder decodeObjectForKey: @"pkeyFields"]];
-	[self setFields: [decoder decodeObjectForKey: @"fields"]];
+	[self setAttributes: [decoder decodeObjectForKey: @"attributes"]];
  	        
     return rval;
 }
@@ -137,8 +136,7 @@ static NSMutableSet* gViewEntities;
     [encoder encodeObject: mSchemaName forKey: @"schemaName"];
     [encoder encodeObject: mDatabaseURI forKey: @"databaseURI"];
     [encoder encodeObject: NSStringFromClass (mDatabaseObjectClass) forKey: @"databaseObjectClassName"];
-	[encoder encodeObject: mPkeyFields forKey: @"pkeyFields"];
-	[encoder encodeObject: mFields forKey: @"fields"];
+	[encoder encodeObject: mAttributes forKey: @"attributes"];
 }
 
 - (id) copyWithZone: (NSZone *) zone
@@ -183,7 +181,7 @@ static NSMutableSet* gViewEntities;
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"<%@ %@ hpkey: %d (%p)>", mDatabaseURI, [self name], nil != mPkeyFields, self];
+    return [NSString stringWithFormat: @"<%@ %@ (%p)>", mDatabaseURI, [self name], self];
 }
 
 /**
@@ -224,25 +222,27 @@ static NSMutableSet* gViewEntities;
  */
 - (void) setPrimaryKeyFields: (NSArray *) anArray
 {
-    if (mPkeyFields != anArray && nil != anArray)
-    {
-        NSMutableArray* descs = [NSMutableArray arrayWithCapacity: [anArray count]];
-        TSEnumerate (currentField, e, [anArray objectEnumerator])
-        {
-            if ([currentField isKindOfClass: [BXPropertyDescription class]])
-            {
-                NSAssert ([currentField entity] == self, nil);
-                [descs addObject: currentField];
-            }
-            else if ([currentField isKindOfClass: [NSString class]])
-            {
-                [descs addObject: [BXPropertyDescription propertyWithName: currentField entity: self]];
-            }
-        }
-        
-        [mPkeyFields release];
-        mPkeyFields = [[descs sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)] retain];
-    }
+	if (nil != anArray)
+	{
+		NSMutableDictionary* attributes = [[mAttributes mutableCopy] autorelease];
+		TSEnumerate (currentField, e, [anArray objectEnumerator])
+		{
+			BXPropertyDescription* property = nil;
+			if ([currentField isKindOfClass: [BXPropertyDescription class]])
+			{
+				NSAssert ([currentField entity] == self, nil);
+				property = currentField;
+			}
+			else if ([currentField isKindOfClass: [NSString class]])
+			{
+                property = [BXPropertyDescription propertyWithName: currentField entity: self];
+			}
+			[property setPrimaryKey: YES];
+			[property setOptional: NO];
+			[attributes setObject: property forKey: [property name]];
+		}
+		[self setAttributes: attributes];
+	}
 }
 
 /**
@@ -260,16 +260,24 @@ static NSMutableSet* gViewEntities;
  */
 - (NSArray *) primaryKeyFields
 {
-    return mPkeyFields;
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"YES == isPrimaryKey"];
+	NSArray* rval = [[[mAttributes allValues] filteredArrayUsingPredicate: predicate] 
+			sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)];
+	if (0 == [rval count]) rval = nil;
+	return rval;
 }
 
 /** 
  * Fields for this entity
- * \return          A set of BXPropertyDescriptions
+ * \return          An array of BXPropertyDescriptions
  */
 - (NSArray *) fields
 {
-    return mFields; 
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"NO == isPrimaryKey"];
+	NSArray* rval = [[[mAttributes allValues] filteredArrayUsingPredicate: predicate] 
+			sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)];
+	if (0 == [rval count]) rval = nil;
+	return rval;
 }
 
 /**
@@ -369,6 +377,11 @@ static NSMutableSet* gViewEntities;
         }
     }
     return rval;
+}
+
+- (NSDictionary *) attributesByName
+{
+	return mAttributes;
 }
 
 @end
@@ -514,14 +527,6 @@ static NSMutableSet* gViewEntities;
 	}
 }
 
-- (void) setFields: (NSArray *) aFields
-{
-    if (mFields != aFields) {
-        [mFields release];
-        mFields = [aFields copy];
-    }
-}
-
 - (void) registerObjectID: (BXDatabaseObjectID *) anID
 {
     NSAssert2 ([anID entity] == self, 
@@ -563,9 +568,7 @@ static NSMutableSet* gViewEntities;
 #ifndef NS_BLOCK_ASSERTIONS
             TSEnumerate (currentField, e, [properties objectEnumerator])
             {
-                if (! ([mPkeyFields containsObject: currentField] ||
-                       [mFields containsObject: currentField] ||
-                       nil == mFields))
+				if (nil == [mAttributes objectForKey: [currentField name]])
                 {
                     rval = nil;
                     break;
@@ -576,32 +579,23 @@ static NSMutableSet* gViewEntities;
         else
         {
             //If not, give the corresponding properties.
-            NSAssert (nil != mFields, @"Expected to know fileds.");
             rval = [NSMutableArray arrayWithCapacity: [properties count]];
-            NSArray* fNames = [mFields valueForKey: @"name"];
-            NSArray* pkeyFNames = [mPkeyFields valueForKey: @"name"];
             TSEnumerate (currentProperty, e, [properties objectEnumerator])
             {
-                unsigned int index = NSNotFound;
                 NSString* propertyName = [currentProperty name];
-                
-                BXPropertyDescription* prop = nil;
-                if (NSNotFound != (index = [pkeyFNames indexOfObject: propertyName]))
-                    prop = [mPkeyFields objectAtIndex: index];
-                else if (NSNotFound != (index = [fNames indexOfObject: propertyName]))
-                    prop = [mFields objectAtIndex: index];
-                else if (nil == mFields) 
-                {
-                    //If fields haven't been received yet, we can risk making a nonexistent property
-                    prop = [BXPropertyDescription propertyWithName: propertyName entity: self];
-                }
-                else
-                {
-                    [[NSException exceptionWithName: NSInternalInconsistencyException 
-                                             reason: [NSString stringWithFormat: @"Nonexistent property %@ given", currentProperty]
-                                           userInfo: nil] raise];
-                }
-                
+                BXPropertyDescription* prop = [mAttributes objectForKey: propertyName];
+				if (nil == prop)
+				{
+					//If fields haven't been received yet, we can risk making a nonexistent property
+					if (nil == mAttributes) 
+						prop = [BXPropertyDescription propertyWithName: propertyName entity: self];
+					else
+					{
+						[[NSException exceptionWithName: NSInternalInconsistencyException 
+												 reason: [NSString stringWithFormat: @"Nonexistent property %@ given", currentProperty]
+											   userInfo: nil] raise];
+					}
+				}
                 [rval addObject: prop];
             }
         }
@@ -630,6 +624,15 @@ static NSMutableSet* gViewEntities;
         }
     }
     return rval;
+}
+
+- (void) setAttributes: (NSDictionary *) attributes
+{
+	if (attributes != mAttributes)
+	{
+		[mAttributes release];
+		mAttributes = [attributes copy];
+	}
 }
 
 @end

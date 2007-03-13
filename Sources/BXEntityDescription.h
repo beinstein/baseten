@@ -39,13 +39,12 @@
     NSURL*                  mDatabaseURI;
     NSString*               mSchemaName;
     Class                   mDatabaseObjectClass;
-    NSArray*                mPkeyFields;
     NSSet*                  mViewEntities;
     NSMutableDictionary*    mTargetViews;
+	NSDictionary*			mAttributes;
 
     NSMutableSet*           mDependentViewEntities;
     id                      mObjectIDs;    
-    NSArray*                mFields;
     NSMutableDictionary*    mRelationships;
     BOOL                    mHasAllRelationships;
 }
@@ -58,6 +57,7 @@
 - (void) setDatabaseObjectClass: (Class) cls;
 - (Class) databaseObjectClass;
 - (void) setPrimaryKeyFields: (NSArray *) anArray;
+- (NSDictionary *) attributesByName;
 - (NSArray *) primaryKeyFields;
 - (NSArray *) fields;
 - (BOOL) viewIsBasedOnTablesInItsSchema: (NSSet *) tableNames;

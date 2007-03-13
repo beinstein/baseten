@@ -224,6 +224,15 @@ ParseSelector (SEL aSelector, NSString** key)
     [self setPrimitiveValue: aValue forKey: aKey];
 }
 
+- (BOOL) validateValue: (id *) ioValue forKey: (NSString *) key error: (NSError **) outError
+{
+	BOOL rval = YES;
+	rval = [self checkNullConstraintForValue: ioValue key: key error: outError];
+	if (YES == rval)
+		rval = [super validateValue: ioValue forKey: key error: outError];
+	return rval;
+}
+
 /** The object's ID */
 - (BXDatabaseObjectID *) objectID
 {
@@ -707,6 +716,33 @@ ParseSelector (SEL aSelector, NSString** key)
         mStatus = kBXObjectLockedStatus;
         [self didChangeValueForKey: @"statusInfo"];
     }
+}
+
+- (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError
+{
+	BOOL rval = YES;
+	NSAssert (NULL != ioValue, @"Expected ioValue not to be NULL.");
+	id value = *ioValue;
+	BXPropertyDescription* property = [[[mObjectID entity] attributesByName] objectForKey: key];
+	if (NO == [property isOptional] && (nil == value || [NSNull null] == value))
+	{
+		rval = NO;
+		if (NULL != outError)
+		{
+			NSString* message = BXLocalizedString (@"nullValueGivenForNonOptionalField", @"This field requires a non-null value.", @"Error description");
+            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                BXSafeObj (property), kBXPropertyKey,
+                BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+                BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+                BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
+                nil];
+			NSError* error = [NSError errorWithDomain: kBXErrorDomain 
+												 code: kBXErrorNullConstraintNotSatisfied
+											 userInfo: userInfo];
+			*outError = error;
+		}
+	}
+	return rval;
 }
 
 @end

@@ -30,4 +30,5 @@
 
 @interface BXPropertyDescription (PrivateMethods)
 - (void) setOptional: (BOOL) aBool;
+- (void) setPrimaryKey: (BOOL) aBool;
 @end

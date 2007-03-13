@@ -51,6 +51,7 @@ extern NSString* const kBXEntityDescriptionKey;
 extern NSString* const kBXPrimaryKeyFieldsKey;
 extern NSString* const kBXConnectionSuccessfulNotification;
 extern NSString* const kBXConnectionFailedNotification;
+extern NSString* const kBXPropertyKey;
 
 extern NSString* const kBXErrorDomain;
 extern NSString* const kBXErrorMessageKey;
@@ -65,7 +66,8 @@ enum BXError
     kBXErrorObservingFailed,
 	kBXErrorObjectNotFound,
     kBXErrorMalformedDatabaseURI,
-	kBXErrorAuthenticationFailed
+	kBXErrorAuthenticationFailed,
+	kBXErrorNullConstraintNotSatisfied
 };
 
 enum BXModificationType

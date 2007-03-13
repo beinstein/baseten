@@ -73,7 +73,8 @@
 {
 	NSError* error = nil;
 	[ctx connectIfNeeded: &error];
-	BXEntityDescription* entity = [ctx entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest" error: &error];
+	//This entity has fields only some of which are primary key.
+	BXEntityDescription* entity = [ctx entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	
 	//The entity should be validated

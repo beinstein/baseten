@@ -38,7 +38,6 @@
 + (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (id) initWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (void) addDependentView: (BXEntityDescription *) viewEntity;
-- (void) setFields: (NSArray *) fieldArray;
 - (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context error: (NSError **) error;
 - (void) cacheRelationship: (id <BXRelationshipDescription>) relationship;
 - (void) registerObjectID: (BXDatabaseObjectID *) anID;
@@ -47,4 +46,5 @@
 - (NSArray *) correspondingProperties: (NSArray *) properties;
 - (BOOL) hasAncestor: (BXEntityDescription *) entity;
 - (void) setViewEntities: (NSSet *) aSet;
+- (void) setAttributes: (NSDictionary *) attributes;
 @end

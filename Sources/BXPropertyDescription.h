@@ -31,15 +31,25 @@
 
 @class BXEntityDescription;
 
+
+enum BXPropertyOption
+{
+	kBXPropertyNoOption 	= 1 << 0,
+	kBXPropertyOptional		= 1 << 1,
+	kBXPropertyPrimaryKey	= 1 << 2
+};
+
+
 @interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSCoding>
 {
     BXEntityDescription*	mEntity;
-	BOOL					mIsOptional;
+	enum BXPropertyOption   mOptions;
 }
 
 + (id) propertyWithName: (NSString *) name entity: (BXEntityDescription *) entity;
 - (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity;
 - (BXEntityDescription *) entity;
 - (BOOL) isOptional;
+- (BOOL) isPrimaryKey;
 
 @end

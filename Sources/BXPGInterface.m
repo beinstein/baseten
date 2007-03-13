@@ -1092,65 +1092,74 @@ static NSString* SSLMode (enum BXSSLMode mode)
         *error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
     }
     else
-    {        
-        //Get the primary key
-        NSArray* pkeyfields = [entity primaryKeyFields];
-        if (nil == pkeyfields)
-        {
-            //We probably needn't look for primary key this way, since modification observing already requires it.
-            //However, the exception needs to be thrown in case of a view.
-            PGTSIndexInfo* pkey = [tableInfo primaryKey];
-            if (nil == pkey)
-            {
-                NSString* message = BXLocalizedString (@"noPrimaryKeyFmt", 
-                                                       @"There was no primary key for table %@ in schema %@.", 
-                                                       @"Error description format string");
-                message = [NSString stringWithFormat: message, [tableInfo schemaName], [tableInfo name]];
-                NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    self,                kBXDatabaseContextKey,
-                    BXSafeObj (entity),  kBXEntityDescriptionKey,
-                    BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                    BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
-                    BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
-                    nil];
-                *error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoPrimaryKey userInfo: userInfo];
-            }
-            else
-            {
-                NSArray* pkeyFNames = [[[pkey fields] allObjects] valueForKey: @"name"];
-                NSMutableArray* pkeyPropertyDescs = [NSMutableArray arrayWithCapacity: [pkeyFNames count]];
-                
-                TSEnumerate (currentFName, e, [pkeyFNames objectEnumerator])
-                {
-                    BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
-					[desc setOptional: NO];
-                    [pkeyPropertyDescs addObject: desc];
-                }
-                
-                [entity setPrimaryKeyFields: pkeyPropertyDescs];
-                pkeyfields = pkeyPropertyDescs;
-            }
-        }
-        
-        //While we're at it, set the fields as well
-        if (nil == [entity fields])
-        {
-            NSArray* pkeyFNames = [pkeyfields valueForKey: @"name"];
-            NSMutableArray* propertyDescs = [NSMutableArray arrayWithCapacity: [pkeyFNames count]];
-            
-            TSEnumerate (currentField, e, [[tableInfo allFields] objectEnumerator])
-            {
-				NSString* currentFName = [currentField name];
-                if (NO == [pkeyFNames containsObject: currentFName])
-                {
-					BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
-					[desc setOptional: ![currentField isNotNull]];
-                    [propertyDescs addObject: desc];
-                }
-            }
-            [entity setFields: propertyDescs];
-        }
-        
+    {
+		//Get the primary key
+		NSMutableDictionary* attributes = nil;
+		NSArray* pkeyfields = [entity primaryKeyFields];
+		NSArray* fields = [entity fields];
+		if (nil == fields && nil != pkeyfields)
+		{
+			//Attributes only contains primary key fields and we might not get them from the database.
+			attributes = [[[entity attributesByName] mutableCopy] autorelease];
+		}
+		else if (nil == pkeyfields)
+		{
+			attributes = [NSMutableDictionary dictionary];
+		}
+		
+		//Attributes won't be set if we have the required information.
+		if (nil != attributes)
+		{
+			if (nil == pkeyfields)
+			{
+				//Modification observing already requires a primary key. We need the error for views, however.
+				PGTSIndexInfo* pkey = [tableInfo primaryKey];
+				if (nil == pkey)
+				{
+					NSString* message = BXLocalizedString (@"noPrimaryKeyFmt", 
+														   @"There was no primary key for table %@ in schema %@.", 
+														   @"Error description format string");
+					message = [NSString stringWithFormat: message, [tableInfo schemaName], [tableInfo name]];
+					NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+						self,                kBXDatabaseContextKey,
+						BXSafeObj (entity),  kBXEntityDescriptionKey,
+						BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+						BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+						BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
+						nil];
+					*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoPrimaryKey userInfo: userInfo];
+				}
+				else
+				{
+					NSArray* pkeyFNames = [[[pkey fields] allObjects] valueForKey: @"name"];
+					TSEnumerate (currentFName, e, [pkeyFNames objectEnumerator])
+					{
+						BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+						[desc setOptional: NO];
+						[desc setPrimaryKey: YES];
+						[attributes setObject: desc forKey: currentFName];
+					}
+				}
+			}
+			
+			//While we're at it, set the fields as well.
+			if (nil == fields)
+			{
+				TSEnumerate (currentField, e, [[tableInfo allFields] objectEnumerator])
+				{
+					NSString* currentFName = [currentField name];
+					if (nil == [attributes objectForKey: currentFName])
+					{
+						BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+						[desc setOptional: ![currentField isNotNull]];
+						[desc setPrimaryKey: NO];
+						[attributes setObject: desc forKey: currentFName];
+					}
+				}
+			}
+			[entity setAttributes: attributes];
+		}
+			
         //If the entity is a view, set the dependent entities.
         if ('v' == [tableInfo kind] && nil == [entity entitiesBasedOn])
         {

@@ -89,9 +89,12 @@
 
 - (id) initWithCoder: (NSCoder *) decoder
 {
-	[self initWithName: [decoder decodeObjectForKey: @"name"]
-				entity: [decoder decodeObjectForKey: @"entity"]];
-	[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
+	if ((self = [self initWithName: [decoder decodeObjectForKey: @"name"]
+							entity: [decoder decodeObjectForKey: @"entity"]]))
+	{
+		[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
+		[self setPrimaryKey: [decoder decodeBoolForKey: @"isPrimaryKey"]];
+	}
 	return self;
 }
 
@@ -99,7 +102,8 @@
 {
 	[coder encodeObject: mName forKey: @"name"];
 	[coder encodeObject: mEntity forKey: @"entity"];
-	[coder encodeBool: mIsOptional forKey: @"isOptional"];
+	[coder encodeBool: [self isOptional] forKey: @"isOptional"];
+	[coder encodeBool: [self isPrimaryKey] forKey: @"isPrimaryKey"];
 }
 
 - (unsigned int) hash
@@ -142,7 +146,12 @@
 
 - (BOOL) isOptional
 {
-	return mIsOptional;
+	return (mOptions & kBXPropertyOptional ? YES : NO);
+}
+
+- (BOOL) isPrimaryKey
+{
+	return (mOptions & kBXPropertyPrimaryKey ? YES : NO);
 }
 
 @end
@@ -152,7 +161,18 @@
 
 - (void) setOptional: (BOOL) aBool
 {
-	mIsOptional = aBool;
+	if (aBool)
+		mOptions |= kBXPropertyOptional;
+	else
+		mOptions &= ~kBXPropertyOptional;
+}
+
+- (void) setPrimaryKey: (BOOL) aBool
+{
+	if (aBool)
+		mOptions |= kBXPropertyPrimaryKey;
+	else
+		mOptions &= ~kBXPropertyPrimaryKey;
 }
 
 @end
