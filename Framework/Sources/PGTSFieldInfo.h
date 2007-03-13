@@ -41,6 +41,7 @@
     unsigned int index;
     unsigned int indexInResultSet;
     Oid typeOid;
+	BOOL isNotNull;
 }
 
 - (unsigned int) index;
@@ -53,5 +54,6 @@
 - (Oid) typeOid;
 - (NSString *) qualifiedName;
 - (NSComparisonResult) indexCompare: (PGTSFieldInfo *) aField;
+- (BOOL) isNotNull;
 
 @end
