@@ -45,7 +45,7 @@
 - (id) transformedValue: (NSValue *) objectStatus
 {
     id rval = nil;
-    enum BXObjectStatus status = kBXObjectNoStatus;
+    enum BXObjectLockStatus status = kBXObjectNoLockStatus;
     [objectStatus getValue: &status];
     
     switch (status)
@@ -56,7 +56,7 @@
         case kBXObjectDeletedStatus:
             rval = [NSColor redColor];
             break;
-        case kBXObjectNoStatus:
+        case kBXObjectNoLockStatus:
         default:
             rval = [NSColor blackColor];
     }

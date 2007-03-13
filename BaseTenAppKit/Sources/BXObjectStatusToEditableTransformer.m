@@ -45,12 +45,12 @@
 - (id) transformedValue: (NSValue *) objectStatus
 {
     BOOL rval = NO;
-    enum BXObjectStatus status = kBXObjectNoStatus;
+    enum BXObjectLockStatus status = kBXObjectNoLockStatus;
     [objectStatus getValue: &status];
     
     switch (status)
     {
-        case kBXObjectNoStatus:
+        case kBXObjectNoLockStatus:
             rval = YES;
         case kBXObjectLockedStatus:
         case kBXObjectDeletedStatus:

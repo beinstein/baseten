@@ -34,7 +34,7 @@
 
 @implementation NSObjectController (BXCocoaAdditions)
 /** A convenience method for locking the key in the currently selected object. */
-- (void) BXLockKey: (NSString *) key status: (enum BXObjectStatus) status editor: (id) editor
+- (void) BXLockKey: (NSString *) key status: (enum BXObjectLockStatus) status editor: (id) editor
 {
     [self BXLockObject: [self selection] key: key status: status editor: editor];
 }
@@ -50,7 +50,7 @@
 
 /** Lock an object asynchronously. */
 - (void) BXLockObject: (BXDatabaseObject *) object key: (NSString *) key 
-                  status: (enum BXObjectStatus) status editor: (id) editor
+                  status: (enum BXObjectLockStatus) status editor: (id) editor
 {
     BXDatabaseContext* ctx = [self BXDatabaseContext];
     
