@@ -34,6 +34,8 @@
 #import "BXDatabaseContext.h"
 #import "BXInterface.h"
 #import "BXPropertyDescription.h"
+#import "BXDatabaseObject.h"
+#import "BXDatabaseObjectPrivate.h"
 
 
 static TSNonRetainedObjectSet* gObjectIDs;
@@ -517,5 +519,10 @@ static TSNonRetainedObjectSet* gObjectIDs;
     NSArray* myKeys = [[self entity] correspondingProperties: keys];
     NSArray* values = [self objectsForKeys: myKeys];
     return [[self class] IDWithEntity: view primaryKeyFields: [NSDictionary dictionaryWithObjects: values forKeys: keys]];
+}
+
+- (void) setStatus: (enum BXObjectDeletionStatus) status forObjectRegisteredInContext: (BXDatabaseContext *) context
+{
+	[[context registeredObjectWithID: self] setDeleted: status];
 }
 @end

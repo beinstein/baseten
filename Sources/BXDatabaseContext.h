@@ -95,12 +95,9 @@
 
 - (BOOL) hasSeenEntity: (BXEntityDescription *) anEntity;
 - (NSSet *) seenEntities;
-- (void) setHasSeen: (BOOL) aBool entity: (BXEntityDescription *) anEntity;
 
 - (void) setAutocommits: (BOOL) aBool;
 - (BOOL) autocommits;
-
-- (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject;
 
 - (BOOL) logsQueries;
 - (void) setLogsQueries: (BOOL) aBool;
@@ -108,8 +105,6 @@
 - (void) connect;
 - (void) connectIfNeeded: (NSError **) error;
 
-- (BOOL) registerObject: (BXDatabaseObject *) anObject;
-- (void) unregisterObject: (BXDatabaseObject *) anObject;
 - (BXDatabaseObject *) registeredObjectWithID: (BXDatabaseObjectID *) objectID;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs nullObjects: (BOOL) returnNullObjects;
@@ -117,11 +112,8 @@
 - (NSUndoManager *) undoManager;
 - (BOOL) setUndoManager: (NSUndoManager *) aManager;
 
-- (void) handleError: (NSError *) anError;
-
 - (void) setModalWindow: (NSWindow *) aWindow;
 - (void) setPolicyDelegate: (id) anObject;
-- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
 
 - (BOOL) usesKeychain;
 - (void) setUsesKeychain: (BOOL) usesKeychain;
@@ -161,10 +153,8 @@
 
 
 @interface BXDatabaseContext (HelperMethods)
-- (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
-- (NSArray *) keyPathComponents: (NSString *) keyPath;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error;
 - (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
@@ -178,7 +168,7 @@
 
 
 @interface BXDatabaseContext (NSCoding) <NSCoding> 
-//Only basic support for Interface Builder
+/* Only basic support for Interface Builder. */
 @end
 
 

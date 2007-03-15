@@ -2,7 +2,7 @@
 // BXDatabaseObject.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -36,21 +36,18 @@
 @class BXPropertyDescription;
 
 
-/** Object lock status */
-enum BXObjectLockStatus
+enum BXObjectDeletionStatus
 {
-    kBXObjectNoLockStatus = 0,
-    kBXObjectLockedStatus,
-    kBXObjectDeletedStatus,
+	kBXObjectExists = 0,
+	kBXObjectDeletePending,
+	kBXObjectDeleted
 };
 
-/** Object existence */
-enum BXObjectStoreStatus
+enum BXObjectLockStatus
 {
-	kBXObjectNoStoreStatus = 0,
-	kBXObjectInsertPending,	//After insert before commit
-	kBXObjectDeletePending,	//After delete before commit
-	kBXObjectDeleted		//After insert + rollback and delete + commit
+	kBXObjectNoLockStatus = 0,
+	kBXObjectLockedStatus,
+	kBXObjectDeletedStatus
 };
 
 
@@ -85,33 +82,22 @@ enum BXObjectStoreStatus
     BXDatabaseContext*			mContext; //Weak
     BXDatabaseObjectID*			mObjectID;
     NSMutableDictionary*		mValues;
-    enum BXObjectLockStatus     mLockStatus;
+	enum BXObjectDeletionStatus	mDeleted;
+	enum BXObjectLockStatus		mLocked;
+	BOOL						mCreatedInCurrentTransaction;
 }
 
-+ (BOOL) accessInstanceVariablesDirectly;
 - (BXDatabaseObjectID *) objectID;
 - (BXDatabaseContext *) databaseContext;
-- (BOOL) registerWithContext: (BXDatabaseContext *) ctx entity: (BXEntityDescription *) entity;
-- (BOOL) registerWithContext: (BXDatabaseContext *) ctx objectID: (BXDatabaseObjectID *) anID;
-- (void) removePrimaryKeyValuesFromStore;
 
 - (id) objectForKey: (BXPropertyDescription *) aKey;
 - (NSArray *) valuesForKeys: (NSArray *) keys;
 - (NSArray *) objectsForKeys: (NSArray *) keys;
-- (id) valueForUndefinedKey: (NSString *) aKey;
-- (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey;
 - (NSDictionary *) cachedObjects;
-- (void) lockKey: (id) key status: (enum BXObjectLockStatus) objectStatus sender: (id <BXObjectAsynchronousLocking>) sender;
-
-//- (void) conditionallyFaultAllKeys;
-//- (void) conditionallyFaultKey: (id) aKey;
-
-- (void) BXDatabaseContextWillDealloc;
 
 - (id <BXObjectStatusInfo>) statusInfo;
-- (void) clearStatus;
 - (BOOL) isDeleted;
-- (void) setDeleted;
+- (BOOL) isInserted;
 
 - (id) primitiveValueForKey: (NSString *) aKey;
 - (void) setPrimitiveValue: (id) aVal forKey: (NSString *) aKey;
@@ -119,16 +105,11 @@ enum BXObjectStoreStatus
 
 - (NSDictionary *) cachedValues;
 - (id) cachedValueForKey: (NSString *) aKey;
-- (void) setCachedValue: (id) aValue forKey: (NSString *) aKey;
-- (void) setCachedValuesForKeysWithDictionary: (NSDictionary *) aDict;
 
 - (BOOL) isLockedForKey: (NSString *) aKey;
-- (void) setLockedForKey: (NSString *) aKey;
 
 - (void) faultKey: (NSString *) aKey;
 - (int) isFaultKey: (NSString *) aKey;
-
-- (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError;
 @end
 
 

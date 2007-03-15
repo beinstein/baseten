@@ -40,6 +40,7 @@
 #import "BXInterface.h"
 #import "BXPGInterface.h"
 #import "BXDatabaseObject.h"
+#import "BXDatabaseObjectPrivate.h"
 #import "BXEntityDescription.h"
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObjectID.h"
@@ -313,11 +314,6 @@ extern void BXInit ()
     return mSeenEntities;
 }
 
-- (void) setHasSeen: (BOOL) aBool entity: (BXEntityDescription *) anEntity
-{
-    [mSeenEntities addObject: anEntity];
-}
-
 /**
  * Set the query execution method.
  * When autocommit is not on, savepoints are inserted after each query
@@ -345,41 +341,6 @@ extern void BXInit ()
     if (nil != mDatabaseInterface)
         rval = [mDatabaseInterface autocommits];
     return mAutocommits;
-}
-
-- (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject
-{
-    [mObjects removeObjectForKey: [anObject objectID]];
-}
-
-/**
- * \internal
- * Register an object to the context
- * After fetching objects from the database, a database interface should register them with a context.
- * This enables updating the database as well as automatic synchronization, if this has been implemented
- * in the database interface class.
- * \return A boolean. NO indicates that an object was already registered.
- */
-- (BOOL) registerObject: (BXDatabaseObject *) anObject
-{
-    BOOL rval = NO;
-    BXDatabaseObjectID* objectID = [anObject objectID];
-    if (nil == [mObjects objectForKey: objectID])
-    {
-        rval = YES;
-        [mObjects setObject: anObject forKey: objectID];
-        if (mRetainRegisteredObjects)
-            [anObject retain];
-    }
-    return rval;
-}
-
-- (void) unregisterObject: (BXDatabaseObject *) anObject
-{
-    if (mRetainRegisteredObjects) {
-        [[mObjects objectForKey: [anObject objectID]] autorelease];
-    }
-    [mObjects removeObjectForKey: [anObject objectID]];
 }
 
 /**
@@ -476,11 +437,6 @@ extern void BXInit ()
     return rval;
 }
 
-- (void) handleError: (NSError *) anError
-{
-    [[anError BXExceptionWithName: kBXExceptionUnhandledError] raise];
-}
-
 - (void) setModalWindow: (NSWindow *) aWindow
 {
 	if (aWindow != modalWindow)
@@ -497,11 +453,6 @@ extern void BXInit ()
 - (void) setPolicyDelegate: (id) anObject
 {
 	policyDelegate = anObject;
-}
-
-- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject
-{
-	mConnectionSetupManager = anObject;
 }
 
 - (BOOL) usesKeychain
@@ -790,7 +741,7 @@ extern void BXInit ()
  *                              and a database object couldn't be created.
  */
 - (id) createObjectForEntity: (BXEntityDescription *) entity 
-             withFieldValues: (NSDictionary *) fieldValues 
+             withFieldValues: (NSDictionary *) givenFieldValues 
                        error: (NSError **) error
 {
     NSError* localError = nil;
@@ -800,6 +751,22 @@ extern void BXInit ()
 		[self connectIfNeeded: &localError];
 		if (nil == localError)
 		{
+			//The interface wants only property descriptions as keys
+			NSMutableDictionary* fieldValues = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
+			Class propertyDescriptionClass = [BXPropertyDescription class];
+			Class stringClass = [NSString class];
+			TSEnumerate (currentKey, e, [givenFieldValues keyEnumerator])
+			{
+				id value = [givenFieldValues objectForKey: currentKey];
+				if ([currentKey isKindOfClass: propertyDescriptionClass])
+					[fieldValues setObject: value forKey: currentKey];
+				else if ([currentKey isKindOfClass: stringClass])
+				{
+					BXPropertyDescription* prop = [BXPropertyDescription propertyWithName: currentKey entity: entity];
+					[fieldValues setObject: value forKey: prop];
+				}
+			}
+			
 			//First make the object
 			rval = [mDatabaseInterface createObjectForEntity: entity withFieldValues: fieldValues
 													   class: [entity databaseObjectClass]
@@ -817,6 +784,7 @@ extern void BXInit ()
 				}
 				else
 				{
+					[rval setCreatedInCurrentTransaction: YES];
 					BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 					if (nil == localError)
 					{
@@ -831,9 +799,6 @@ extern void BXInit ()
 						[[recorder recordWithPersistentTarget: self] createObjectForEntity: entity 
 																		   withFieldValues: values
 																					 error: NULL];
-#if 0
-						[[recorder recordWithPersistentTarget: self] addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
-#endif
 						
 						//Undo manager does things in reverse order
 						NSArray* invocations = [recorder recordedInvocations];
@@ -905,10 +870,11 @@ extern void BXInit ()
         NSMutableArray* deleted = [NSMutableArray array];
         TSEnumerate (currentID, e, [mModifiedObjectIDs objectEnumerator])
         {
+			BXDatabaseObject* registeredObject = [self registeredObjectWithID: currentID];
             switch ([currentID lastModificationType])
             {
                 case kBXUpdateModification:
-                    [[self registeredObjectWithID: currentID] faultKey: nil];
+                    [registeredObject faultKey: nil];
                     break;
                 case kBXInsertModification:
                     [added addObject: currentID];
@@ -920,6 +886,17 @@ extern void BXInit ()
                     break;
             }
             [currentID setLastModificationType: kBXNoModification];
+			
+			if (kBXObjectDeletePending == [registeredObject deletionStatus])
+			{
+				if ([registeredObject isInserted])
+					[registeredObject setDeleted: kBXObjectExists];
+				else
+				{
+					[registeredObject setDeleted: kBXObjectDeleted];
+					[registeredObject setCreatedInCurrentTransaction: NO];
+				}
+			}			
         }
         [mModifiedObjectIDs removeAllObjects];
         //In case of rollback, the objects deleted during the last transaction 
@@ -947,7 +924,13 @@ extern void BXInit ()
     {
         NSError* localError = nil;
         TSEnumerate (currentID, e, [mModifiedObjectIDs objectEnumerator])
+		{
             [currentID setLastModificationType: kBXNoModification];
+			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
+			[currentObject setCreatedInCurrentTransaction: NO];
+			if ([currentObject isDeleted])
+				[currentObject setDeleted: kBXObjectDeleted];
+		}
         [mModifiedObjectIDs removeAllObjects];
 
         [mUndoManager removeAllActions];
@@ -1129,6 +1112,8 @@ extern void BXInit ()
 		{
 			TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
 			{
+				//This might have changed during connection.
+				[currentEntity setDatabaseURI: mDatabaseURI];
 				[mDatabaseInterface validateEntity: currentEntity error: &localError];
 				if (nil != localError)
 					break;
@@ -1214,7 +1199,7 @@ extern void BXInit ()
         NSMutableArray* insertedIDs = nil;
         NSMutableArray* updatedIDs = nil;
         NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-                
+		
         //Send the notifications
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
             objectIDs, kBXObjectIDsKey,
@@ -1266,7 +1251,10 @@ extern void BXInit ()
     if (0 < [objectIDs count])
     {
         BXEntityDescription* entity = [[objectIDs objectAtIndex: 0] entity];
-
+		
+		TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+			[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeleted];
+		
         //Send the notification
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
             objectIDs, kBXObjectIDsKey,
@@ -1305,20 +1293,22 @@ extern void BXInit ()
         TSEnumerate (currentID, e, [objectIDs objectEnumerator])
         {
             BXDatabaseObject* object = [self registeredObjectWithID: currentID];
-            
-            switch (status)
-            {
-                case kBXObjectDeletedStatus:
-                    [object setDeleted];
-                    break;
-                case kBXObjectLockedStatus:
-                    [object setLockedForKey: nil]; //TODO: set the key accordingly
-                    break;
-                default:
-                    break;
-            }
-            [foundObjects addObject: object];
-        }
+            if (nil != object)
+			{
+				switch (status)
+				{
+					case kBXObjectDeletedStatus:
+						[object lockForDelete];
+						break;
+					case kBXObjectLockedStatus:
+						[object setLockedForKey: nil]; //TODO: set the key accordingly
+						break;
+					default:
+						break;
+				}
+				[foundObjects addObject: object];
+			}
+		}
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
             objectIDs, kBXObjectIDsKey,
             self, kBXDatabaseContextKey,
@@ -1426,15 +1416,6 @@ extern void BXInit ()
 
 @implementation BXDatabaseContext (HelperMethods)
 
-- (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids
-{
-    TSEnumerate (currentObject, e, [[self registeredObjectsWithIDs: ids] objectEnumerator])
-    {
-        if ([NSNull null] != currentObject)
-            [currentObject faultKey: nil]; //TODO: set the keys correctly
-    }
-}
-
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
 {
     return [self objectIDsForEntity: anEntity predicate: nil error: error];
@@ -1443,11 +1424,6 @@ extern void BXInit ()
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error
 {
     return [[self executeFetchForEntity: anEntity withPredicate: predicate returningFaults: YES error: error] valueForKey: @"objectID"];
-}
-
-- (NSArray *) keyPathComponents: (NSString *) keyPath
-{
-    return [mDatabaseInterface keyPathComponents: keyPath];
 }
 
 /**
@@ -1461,9 +1437,9 @@ extern void BXInit ()
 	BXEntityDescription* rval = nil;
 	if ([self checkDatabaseURI: &localError])
 	{
-		rval =  [BXEntityDescription entityWithURI: mDatabaseURI
-											 table: tableName
-										  inSchema: schemaName];
+		rval =  [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
+													 table: tableName
+												  inSchema: schemaName];
 		
 		//If we don't have a connection, return an entity which will be validated later.
 		if (NO == [mDatabaseInterface connected])
@@ -1844,9 +1820,10 @@ extern void BXInit ()
 				if (nil == localError)
 				{
 					[self deletedObjectsFromDatabase: objectIDs];
-					
 					[mModifiedObjectIDs addObjectsFromArray: objectIDs];
-					
+					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+						[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeletePending];
+
 					//For redo
 					TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
 					[[recorder recordWithPersistentTarget: self] executeDeleteObject: anObject entity: entity 
@@ -1856,6 +1833,11 @@ extern void BXInit ()
 					//Undo manager does things in reverse order
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager beginUndoGrouping];
+					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+					{
+						enum BXObjectDeletionStatus status = [[self registeredObjectWithID: currentID] deletionStatus];
+						[[mUndoManager prepareWithInvocationTarget: currentID] setStatus: status forObjectRegisteredInContext: self];
+					}
 					[[mUndoManager prepareWithInvocationTarget: self] addedObjectsToDatabase: objectIDs];
 					if (createdSavepoint)
 						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
@@ -1947,6 +1929,70 @@ extern void BXInit ()
         [mDatabaseURI release];
         mDatabaseURI = [uri retain];
     }	
+}
+
+- (NSArray *) keyPathComponents: (NSString *) keyPath
+{
+    return [mDatabaseInterface keyPathComponents: keyPath];
+}
+
+- (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids
+{
+    TSEnumerate (currentObject, e, [[self registeredObjectsWithIDs: ids] objectEnumerator])
+    {
+        if ([NSNull null] != currentObject)
+            [currentObject faultKey: nil]; //TODO: set the keys correctly
+    }
+}
+
+- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject
+{
+	mConnectionSetupManager = anObject;
+}
+
+- (void) handleError: (NSError *) anError
+{
+    [[anError BXExceptionWithName: kBXExceptionUnhandledError] raise];
+}
+
+- (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject
+{
+    [mObjects removeObjectForKey: [anObject objectID]];
+}
+
+/**
+* \internal
+ * Register an object to the context
+ * After fetching objects from the database, a database interface should register them with a context.
+ * This enables updating the database as well as automatic synchronization, if this has been implemented
+ * in the database interface class.
+ * \return A boolean. NO indicates that an object was already registered.
+ */
+- (BOOL) registerObject: (BXDatabaseObject *) anObject
+{
+    BOOL rval = NO;
+    BXDatabaseObjectID* objectID = [anObject objectID];
+    if (nil == [mObjects objectForKey: objectID])
+    {
+        rval = YES;
+        [mObjects setObject: anObject forKey: objectID];
+        if (mRetainRegisteredObjects)
+            [anObject retain];
+    }
+    return rval;
+}
+
+- (void) unregisterObject: (BXDatabaseObject *) anObject
+{
+    if (mRetainRegisteredObjects) {
+        [[mObjects objectForKey: [anObject objectID]] autorelease];
+    }
+    [mObjects removeObjectForKey: [anObject objectID]];
+}
+
+- (void) setHasSeen: (BOOL) aBool entity: (BXEntityDescription *) anEntity
+{
+    [mSeenEntities addObject: anEntity];
 }
 
 @end

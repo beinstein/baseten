@@ -34,9 +34,9 @@
 @protocol BXRelationshipDescription;
 
 @interface BXEntityDescription (PrivateMethods)
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) eName;
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
-- (id) initWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
++ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) eName;
++ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
+- (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (void) addDependentView: (BXEntityDescription *) viewEntity;
 - (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context error: (NSError **) error;
 - (void) cacheRelationship: (id <BXRelationshipDescription>) relationship;

@@ -6,6 +6,22 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		53EFE9F20BA96464008666B7 /* BaseTen */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 53EFE9FD0BA96498008666B7 /* Build configuration list for PBXAggregateTarget "BaseTen" */;
+			buildPhases = (
+			);
+			dependencies = (
+				53EFE9F40BA96469008666B7 /* PBXTargetDependency */,
+				53EFE9F60BA9646D008666B7 /* PBXTargetDependency */,
+				53EFE9F80BA96472008666B7 /* PBXTargetDependency */,
+			);
+			name = BaseTen;
+			productName = BaseTen;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		5301300D09D437030037C485 /* BXDatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301300B09D437030037C485 /* BXDatabaseContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5301300E09D437030037C485 /* BXDatabaseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 5301300C09D437030037C485 /* BXDatabaseContext.m */; };
@@ -62,7 +78,7 @@
 		53596CC40A371483009C39E9 /* BXObjectStatusInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */; };
 		53596CC50A371484009C39E9 /* BXConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301302609D43A450037C485 /* BXConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53596CC60A371484009C39E9 /* BXConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5301302709D43A450037C485 /* BXConstants.m */; };
-		53596CC70A371485009C39E9 /* BXDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53596CC70A371485009C39E9 /* BXDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53596CC80A371485009C39E9 /* BXDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */; };
 		53596CC90A371486009C39E9 /* BXAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B872800A0A4CEC007315BC /* BXAbstractDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53596CCB0A371488009C39E9 /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
@@ -75,15 +91,15 @@
 		53596CF60A3714AC009C39E9 /* datatypeassociations.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53596CF50A3714AC009C39E9 /* datatypeassociations.plist */; };
 		537E98390AAF538B00542F9C /* BXContainerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98370AAF538B00542F9C /* BXContainerProxy.h */; };
 		537E983A0AAF538C00542F9C /* BXContainerProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E98380AAF538B00542F9C /* BXContainerProxy.m */; };
-		537E983B0AAF538C00542F9C /* BXContainerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98370AAF538B00542F9C /* BXContainerProxy.h */; };
+		537E983B0AAF538C00542F9C /* BXContainerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98370AAF538B00542F9C /* BXContainerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537E983C0AAF538C00542F9C /* BXContainerProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E98380AAF538B00542F9C /* BXContainerProxy.m */; };
 		537E98670AAF57E100542F9C /* BXSetProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98650AAF57E100542F9C /* BXSetProxy.h */; };
 		537E98680AAF57E100542F9C /* BXSetProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E98660AAF57E100542F9C /* BXSetProxy.m */; };
-		537E98690AAF57E100542F9C /* BXSetProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98650AAF57E100542F9C /* BXSetProxy.h */; };
+		537E98690AAF57E100542F9C /* BXSetProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98650AAF57E100542F9C /* BXSetProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537E986A0AAF57E100542F9C /* BXSetProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E98660AAF57E100542F9C /* BXSetProxy.m */; };
 		537E987F0AAF71D000542F9C /* BXSetRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E987D0AAF71D000542F9C /* BXSetRelationProxy.h */; };
 		537E98800AAF71D000542F9C /* BXSetRelationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E987E0AAF71D000542F9C /* BXSetRelationProxy.m */; };
-		537E98810AAF71D000542F9C /* BXSetRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E987D0AAF71D000542F9C /* BXSetRelationProxy.h */; };
+		537E98810AAF71D000542F9C /* BXSetRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E987D0AAF71D000542F9C /* BXSetRelationProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537E98820AAF71D000542F9C /* BXSetRelationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E987E0AAF71D000542F9C /* BXSetRelationProxy.m */; };
 		5383CD1209F57EA40044D8B6 /* BXDatabaseObjectID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5383CD1309F57EA40044D8B6 /* BXDatabaseObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = 5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */; };
@@ -93,7 +109,7 @@
 		53A75FEF0B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */; };
 		53A75FF00B032ECF0032A99C /* BXDatabaseContextPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53AE2C9A0B1721A4000E6EF1 /* BaseTen.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53AE2C990B1721A4000E6EF1 /* BaseTen.icns */; };
-		53B3F38E0AD63A95003E807B /* BXSetHelperTableRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */; };
+		53B3F38E0AD63A95003E807B /* BXSetHelperTableRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B3F38F0AD63A96003E807B /* BXSetHelperTableRelationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321C0570AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m */; };
 		53B86FF40A0A1D2A007315BC /* BXRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B86FF20A0A1D2A007315BC /* BXRelationshipDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53B86FF50A0A1D2A007315BC /* BXRelationshipDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B86FF30A0A1D2A007315BC /* BXRelationshipDescription.m */; };
@@ -102,12 +118,13 @@
 		53B872830A0A4CEC007315BC /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
 		53B90C260BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53D0D17C0B6F8A6800D2D101 /* BXPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */; };
+		53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53D0D19E0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */; };
 		53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8010B666C3B00C3D20A /* libcrypto.dylib */; };
 		53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8120B666C7900C3D20A /* libssl.dylib */; };
 		53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
 		53E11A270A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
+		53EFEA960BA98028008666B7 /* BXDatabaseObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -175,6 +192,41 @@
 			remoteGlobalIDString = 536580D10A36FDFB00CDEC90;
 			remoteInfo = "Static archive";
 		};
+		53EFE9E40BA96444008666B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 537E4A860A14C91800A22080;
+			remoteInfo = BaseTenAppKit;
+		};
+		53EFE9EF0BA96452008666B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D1AC9740486D14A00FE50C9;
+			remoteInfo = BaseTenPalette;
+		};
+		53EFE9F30BA96469008666B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
+			remoteInfo = "BaseTen Static";
+		};
+		53EFE9F50BA9646D008666B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = BaseTenAppKit;
+		};
+		53EFE9F70BA96472008666B7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1AC9600486D14A00FE50C9;
+			remoteInfo = BaseTenPalette;
+		};
 		53F523570A51A24D00E7DDC4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */;
@@ -209,64 +261,67 @@
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTen_Prefix.pch; path = Sources/BaseTen_Prefix.pch; sourceTree = "<group>"; };
 		53012E6009D4368D0037C485 /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = Dependencies/PGTS/Framework/Framework.xcodeproj; sourceTree = "<group>"; };
-		5301300B09D437030037C485 /* BXDatabaseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContext.h; path = Sources/BXDatabaseContext.h; sourceTree = "<group>"; };
+		5301300B09D437030037C485 /* BXDatabaseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseContext.h; path = Sources/BXDatabaseContext.h; sourceTree = "<group>"; };
 		5301300C09D437030037C485 /* BXDatabaseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContext.m; path = Sources/BXDatabaseContext.m; sourceTree = "<group>"; };
-		5301302609D43A450037C485 /* BXConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConstants.h; path = Sources/BXConstants.h; sourceTree = "<group>"; };
+		5301302609D43A450037C485 /* BXConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXConstants.h; path = Sources/BXConstants.h; sourceTree = "<group>"; };
 		5301302709D43A450037C485 /* BXConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXConstants.m; path = Sources/BXConstants.m; sourceTree = "<group>"; };
-		530132D709D45F9B0037C485 /* BXDatabaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObject.h; path = Sources/BXDatabaseObject.h; sourceTree = "<group>"; };
+		530132D709D45F9B0037C485 /* BXDatabaseObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObject.h; path = Sources/BXDatabaseObject.h; sourceTree = "<group>"; };
 		530132D809D45F9B0037C485 /* BXDatabaseObject.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; name = BXDatabaseObject.m; path = Sources/BXDatabaseObject.m; sourceTree = "<group>"; };
-		530132E109D460230037C485 /* BXPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGInterface.h; path = Sources/BXPGInterface.h; sourceTree = "<group>"; };
+		530132E109D460230037C485 /* BXPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGInterface.h; path = Sources/BXPGInterface.h; sourceTree = "<group>"; };
 		530132E209D460230037C485 /* BXPGInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGInterface.m; path = Sources/BXPGInterface.m; sourceTree = "<group>"; };
 		53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseAdditions.m; path = Sources/BXDatabaseAdditions.m; sourceTree = "<group>"; };
 		530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PGTSTiger.xcodeproj; path = Dependencies/PGTS/TigerFramework/PGTSTiger.xcodeproj; sourceTree = "<group>"; };
-		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
+		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
 		531266E40B68F9CA00637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
-		531C82E90A63EBD9001AFBC4 /* BXOneToOneRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXOneToOneRelationshipDescription.h; path = Sources/BXOneToOneRelationshipDescription.h; sourceTree = "<group>"; };
+		531C82E90A63EBD9001AFBC4 /* BXOneToOneRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXOneToOneRelationshipDescription.h; path = Sources/BXOneToOneRelationshipDescription.h; sourceTree = "<group>"; };
 		531C82EA0A63EBD9001AFBC4 /* BXOneToOneRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOneToOneRelationshipDescription.m; path = Sources/BXOneToOneRelationshipDescription.m; sourceTree = "<group>"; };
-		531C82F20A63EBF6001AFBC4 /* BXHelperTableMTMRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXHelperTableMTMRelationshipDescription.h; path = Sources/BXHelperTableMTMRelationshipDescription.h; sourceTree = "<group>"; };
+		531C82F20A63EBF6001AFBC4 /* BXHelperTableMTMRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXHelperTableMTMRelationshipDescription.h; path = Sources/BXHelperTableMTMRelationshipDescription.h; sourceTree = "<group>"; };
 		531C82F30A63EBF6001AFBC4 /* BXHelperTableMTMRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXHelperTableMTMRelationshipDescription.m; path = Sources/BXHelperTableMTMRelationshipDescription.m; sourceTree = "<group>"; };
-		531C84C80A63EFC8001AFBC4 /* BXRelationshipDescriptionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescriptionProtocol.h; path = Sources/BXRelationshipDescriptionProtocol.h; sourceTree = "<group>"; };
-		531E2B2A0A5A70D900A3BB37 /* BXArrayProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXArrayProxy.h; path = Sources/BXArrayProxy.h; sourceTree = "<group>"; };
+		531C84C80A63EFC8001AFBC4 /* BXRelationshipDescriptionProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXRelationshipDescriptionProtocol.h; path = Sources/BXRelationshipDescriptionProtocol.h; sourceTree = "<group>"; };
+		531E2B2A0A5A70D900A3BB37 /* BXArrayProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXArrayProxy.h; path = Sources/BXArrayProxy.h; sourceTree = "<group>"; };
 		531E2B2B0A5A70D900A3BB37 /* BXArrayProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXArrayProxy.m; path = Sources/BXArrayProxy.m; sourceTree = "<group>"; };
-		5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSetHelperTableRelationProxy.h; path = Sources/BXSetHelperTableRelationProxy.h; sourceTree = "<group>"; };
+		5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetHelperTableRelationProxy.h; path = Sources/BXSetHelperTableRelationProxy.h; sourceTree = "<group>"; };
 		5321C0570AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSetHelperTableRelationProxy.m; path = Sources/BXSetHelperTableRelationProxy.m; sourceTree = "<group>"; };
 		5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = Dependencies/PGTS/Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = "<group>"; };
-		532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = BXConnectionSetupManagerProtocol.h; path = Sources/BXConnectionSetupManagerProtocol.h; sourceTree = "<group>"; };
+		532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; lineEnding = 0; name = BXConnectionSetupManagerProtocol.h; path = Sources/BXConnectionSetupManagerProtocol.h; sourceTree = "<group>"; };
 		533229E30A024C2500BDB151 /* BXEntityDescription.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXEntityDescription.m; path = Sources/BXEntityDescription.m; sourceTree = "<group>"; };
-		533229E40A024C2500BDB151 /* BXEntityDescription.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = BXEntityDescription.h; path = Sources/BXEntityDescription.h; sourceTree = "<group>"; };
-		533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectStatusInfo.h; path = Sources/BXObjectStatusInfo.h; sourceTree = "<group>"; };
+		533229E40A024C2500BDB151 /* BXEntityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescription.h; path = Sources/BXEntityDescription.h; sourceTree = "<group>"; };
+		533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXObjectStatusInfo.h; path = Sources/BXObjectStatusInfo.h; sourceTree = "<group>"; };
 		533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectStatusInfo.m; path = Sources/BXObjectStatusInfo.m; sourceTree = "<group>"; };
-		5339AB910A7542EC00994B1A /* BXException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXException.h; path = Sources/BXException.h; sourceTree = "<group>"; };
+		5339AB910A7542EC00994B1A /* BXException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXException.h; path = Sources/BXException.h; sourceTree = "<group>"; };
 		5339AB920A7542EC00994B1A /* BXException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXException.m; path = Sources/BXException.m; sourceTree = "<group>"; };
-		5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectIDPrivate.h; path = Sources/BXDatabaseObjectIDPrivate.h; sourceTree = "<group>"; };
+		5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectIDPrivate.h; path = Sources/BXDatabaseObjectIDPrivate.h; sourceTree = "<group>"; };
 		53596CF50A3714AC009C39E9 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xml; name = datatypeassociations.plist; path = Dependencies/PGTS/Framework/datatypeassociations.plist; sourceTree = "<group>"; };
 		5368D60F0A3711C800D136DC /* BaseTen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		537E98370AAF538B00542F9C /* BXContainerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXContainerProxy.h; path = Sources/BXContainerProxy.h; sourceTree = "<group>"; };
+		537E98370AAF538B00542F9C /* BXContainerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXContainerProxy.h; path = Sources/BXContainerProxy.h; sourceTree = "<group>"; };
 		537E98380AAF538B00542F9C /* BXContainerProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXContainerProxy.m; path = Sources/BXContainerProxy.m; sourceTree = "<group>"; };
-		537E98650AAF57E100542F9C /* BXSetProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSetProxy.h; path = Sources/BXSetProxy.h; sourceTree = "<group>"; };
+		537E98650AAF57E100542F9C /* BXSetProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetProxy.h; path = Sources/BXSetProxy.h; sourceTree = "<group>"; };
 		537E98660AAF57E100542F9C /* BXSetProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSetProxy.m; path = Sources/BXSetProxy.m; sourceTree = "<group>"; };
-		537E987D0AAF71D000542F9C /* BXSetRelationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSetRelationProxy.h; path = Sources/BXSetRelationProxy.h; sourceTree = "<group>"; };
+		537E987D0AAF71D000542F9C /* BXSetRelationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetRelationProxy.h; path = Sources/BXSetRelationProxy.h; sourceTree = "<group>"; };
 		537E987E0AAF71D000542F9C /* BXSetRelationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSetRelationProxy.m; path = Sources/BXSetRelationProxy.m; sourceTree = "<group>"; };
-		5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectID.h; path = Sources/BXDatabaseObjectID.h; sourceTree = "<group>"; };
+		5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectID.h; path = Sources/BXDatabaseObjectID.h; sourceTree = "<group>"; };
 		5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectID.m; path = Sources/BXDatabaseObjectID.m; sourceTree = "<group>"; };
-		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
-		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
-		539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXEntityDescriptionPrivate.h; path = Sources/BXEntityDescriptionPrivate.h; sourceTree = "<group>"; };
-		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
+		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
+		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
+		539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescriptionPrivate.h; path = Sources/BXEntityDescriptionPrivate.h; sourceTree = "<group>"; };
+		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
 		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseTen.icns; sourceTree = "<group>"; };
-		53B86FF20A0A1D2A007315BC /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
+		53B86FF20A0A1D2A007315BC /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
 		53B86FF30A0A1D2A007315BC /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelationshipDescription.m; path = Sources/BXRelationshipDescription.m; sourceTree = "<group>"; };
-		53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPropertyDescription.h; path = Sources/BXPropertyDescription.h; sourceTree = "<group>"; };
+		53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescription.h; path = Sources/BXPropertyDescription.h; sourceTree = "<group>"; };
 		53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPropertyDescription.m; path = Sources/BXPropertyDescription.m; sourceTree = "<group>"; };
-		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
+		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
-		53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPropertyDescriptionPrivate.h; path = Sources/BXPropertyDescriptionPrivate.h; sourceTree = "<group>"; };
-		53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPolicyDelegate.h; path = Sources/BXPolicyDelegate.h; sourceTree = "<group>"; };
-		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
+		53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescriptionPrivate.h; path = Sources/BXPropertyDescriptionPrivate.h; sourceTree = "<group>"; };
+		53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPolicyDelegate.h; path = Sources/BXPolicyDelegate.h; sourceTree = "<group>"; };
+		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
 		53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGCertificateVerificationDelegate.m; path = Sources/BXPGCertificateVerificationDelegate.m; sourceTree = "<group>"; };
 		53DBE8010B666C3B00C3D20A /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53DBE8120B666C7900C3D20A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
 		53E11A250A791A8D00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
+		53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = "<group>"; };
+		53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenPalette.xcodeproj; path = Palette/BaseTenPalette.xcodeproj; sourceTree = "<group>"; };
+		53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectPrivate.h; path = Sources/BXDatabaseObjectPrivate.h; sourceTree = "<group>"; };
 		53F77DA20A3806580058F7D6 /* basic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = basic.xcconfig; path = xcconfig/basic.xcconfig; sourceTree = SOURCE_ROOT; };
 		53F77DA30A3806580058F7D6 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = xcconfig/debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		53F77DA40A3806580058F7D6 /* fmwk-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "fmwk-debug.xcconfig"; path = "xcconfig/fmwk-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
@@ -341,6 +396,8 @@
 				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
 				53DBE8120B666C7900C3D20A /* libssl.dylib */,
 				531266E40B68F9CA00637EDA /* Security.framework */,
+				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
+				53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -367,6 +424,7 @@
 				53933EF409EBD082001D00BB /* BXInterface.h */,
 				532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */,
 				530132D709D45F9B0037C485 /* BXDatabaseObject.h */,
+				53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */,
 				530132D809D45F9B0037C485 /* BXDatabaseObject.m */,
 				5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */,
 				5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */,
@@ -470,6 +528,22 @@
 			name = "PostgreSQL Interface";
 			sourceTree = "<group>";
 		};
+		53EFE9E10BA96444008666B7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53EFE9E50BA96444008666B7 /* BaseTenAppKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		53EFE9E70BA96452008666B7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53EFE9F00BA96452008666B7 /* BaseTenPalette.palette */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		53F523520A51A24D00E7DDC4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -531,6 +605,7 @@
 				53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */,
 				532D61000B9454110028E90B /* BXConnectionSetupManagerProtocol.h in Headers */,
 				53B90C260BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h in Headers */,
+				53EFEA960BA98028008666B7 /* BXDatabaseObjectPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,6 +700,14 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
+					ProductGroup = 53EFE9E10BA96444008666B7 /* Products */;
+					ProjectRef = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
+				},
+				{
+					ProductGroup = 53EFE9E70BA96452008666B7 /* Products */;
+					ProjectRef = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
+				},
+				{
 					ProductGroup = 536B8A950A519D4C00379C00 /* Products */;
 					ProjectRef = 53012E6009D4368D0037C485 /* Framework.xcodeproj */;
 				},
@@ -640,6 +723,7 @@
 			targets = (
 				5368D60E0A3711C800D136DC /* BaseTen Static */,
 				8DC2EF4F0486A6940098B216 /* BaseTen subframeworks */,
+				53EFE9F20BA96464008666B7 /* BaseTen */,
 			);
 		};
 /* End PBXProject section */
@@ -671,6 +755,20 @@
 			fileType = archive.ar;
 			path = libPGTSTiger.a;
 			remoteRef = 536B8AAC0A519D5B00379C00 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53EFE9E50BA96444008666B7 /* BaseTenAppKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTenAppKit.framework;
+			remoteRef = 53EFE9E40BA96444008666B7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53EFE9F00BA96452008666B7 /* BaseTenPalette.palette */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = BaseTenPalette.palette;
+			remoteRef = 53EFE9EF0BA96452008666B7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		53F523580A51A24D00E7DDC4 /* TSDataTypes.framework */ = {
@@ -840,6 +938,21 @@
 			name = "Static archive";
 			targetProxy = 53DB86D30A6FBE4000FC801D /* PBXContainerItemProxy */;
 		};
+		53EFE9F40BA96469008666B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5368D60E0A3711C800D136DC /* BaseTen Static */;
+			targetProxy = 53EFE9F30BA96469008666B7 /* PBXContainerItemProxy */;
+		};
+		53EFE9F60BA9646D008666B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BaseTenAppKit;
+			targetProxy = 53EFE9F50BA9646D008666B7 /* PBXContainerItemProxy */;
+		};
+		53EFE9F80BA96472008666B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BaseTenPalette;
+			targetProxy = 53EFE9F70BA96472008666B7 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -894,6 +1007,28 @@
 			};
 			name = Release;
 		};
+		53EFE9FE0BA96498008666B7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = BaseTen;
+			};
+			name = Debug;
+		};
+		53EFE9FF0BA96498008666B7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				PRODUCT_NAME = BaseTen;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -920,6 +1055,15 @@
 			buildConfigurations = (
 				5368D6120A3711CA00D136DC /* Debug */,
 				5368D6130A3711CA00D136DC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53EFE9FD0BA96498008666B7 /* Build configuration list for PBXAggregateTarget "BaseTen" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53EFE9FE0BA96498008666B7 /* Debug */,
+				53EFE9FF0BA96498008666B7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

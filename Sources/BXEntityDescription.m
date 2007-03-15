@@ -119,7 +119,7 @@ static NSMutableSet* gViewEntities;
     NSURL* databaseURI = [decoder decodeObjectForKey: @"databaseURI"];
     NSString* schemaName = [decoder decodeObjectForKey: @"schemaName"];
     NSString* name = [decoder decodeObjectForKey: @"name"];
-    id rval = [self initWithURI: databaseURI table: name inSchema: schemaName];
+    id rval = [self initWithDatabaseURI: databaseURI table: name inSchema: schemaName];
     
     Class cls = NSClassFromString ([decoder decodeObjectForKey: @"databaseObjectClassName"]);
     if (Nil != cls)
@@ -297,8 +297,9 @@ static NSMutableSet* gViewEntities;
         NSMutableSet* entities = [NSMutableSet setWithCapacity: [tableNames count]];
         TSEnumerate (currentName, e, [tableNames objectEnumerator])
         {
-            [entities addObject: [BXEntityDescription entityWithURI: mDatabaseURI table: currentName
-                                                              inSchema: mSchemaName]];
+            [entities addObject: [BXEntityDescription entityWithDatabaseURI: mDatabaseURI 
+																	  table: currentName
+																   inSchema: mSchemaName]];
         }
         rval = [self viewIsBasedOnEntities: entities];
     }
@@ -327,7 +328,7 @@ static NSMutableSet* gViewEntities;
     return rval;
 }
 
-/** Whether this entity s marked as a view or not. */
+/** Whether this entity is marked as a view or not. */
 - (BOOL) isView
 {
     return (nil != mViewEntities);
@@ -401,9 +402,9 @@ static NSMutableSet* gViewEntities;
  * \param       tName   Table name
  * \param       sName   Schema name
  */
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
++ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
 {
-    return [[[self alloc] initWithURI: anURI table: tName inSchema: sName] autorelease];
+    return [[[self alloc] initWithDatabaseURI: anURI table: tName inSchema: sName] autorelease];
 }
 
 /**
@@ -412,9 +413,9 @@ static NSMutableSet* gViewEntities;
  * \param       anURI   The database URI
  * \param       tName   Table name
  */
-+ (id) entityWithURI: (NSURL *) anURI table: (NSString *) tName
++ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName
 {
-    return [self entityWithURI: anURI table: tName inSchema: nil];
+    return [self entityWithDatabaseURI: anURI table: tName inSchema: nil];
 }
 
 /**
@@ -425,7 +426,7 @@ static NSMutableSet* gViewEntities;
  * \param       tName   Table name
  * \param       sName   Schema name
  */
-- (id) initWithURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
+- (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
 {
     if ((self = [super initWithName: tName]))
     {
@@ -632,6 +633,24 @@ static NSMutableSet* gViewEntities;
 	{
 		[mAttributes release];
 		mAttributes = [attributes copy];
+	}
+}
+
+- (void) setDatabaseURI: (NSURL *) anURI
+{
+	//In case we really modify the URI, remove self from collections and have the hash calculated again.
+	if (anURI != mDatabaseURI && NO == [anURI isEqual: mDatabaseURI])
+	{
+		[gEntities removeObject: self];
+		[gViewEntities removeObject: self];
+		mHash = 0;
+		
+		[mDatabaseURI release];
+		mDatabaseURI = [anURI retain];
+		
+		[gEntities addObject: self];
+		if ([self isView])
+			[gViewEntities addObject: self];
 	}
 }
 

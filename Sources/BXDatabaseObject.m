@@ -31,6 +31,7 @@
 #import <ctype.h>
 
 #import "BXDatabaseObject.h"
+#import "BXDatabaseObjectPrivate.h"
 #import "BXDatabaseContext.h"
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseObjectID.h"
@@ -70,7 +71,7 @@ ColonCount (const char* start)
 }
 
 /**
-* Is the given selector a setter or a getter?
+ * Is the given selector a setter or a getter?
  * \return 2 if setter, 1 if getter, 0 if neither
  */
 static int 
@@ -117,11 +118,6 @@ ParseSelector (SEL aSelector, NSString** key)
  * different threads the result is undefined and deadlocks are possible.
  */
 @implementation BXDatabaseObject
-
-+ (BOOL) accessInstanceVariablesDirectly
-{
-    return NO;
-}
 
 + (void) initialize
 {
@@ -214,16 +210,6 @@ ParseSelector (SEL aSelector, NSString** key)
     return [self valuesForKeys: [keys valueForKey: @"name"]];
 }
 
-- (id) valueForUndefinedKey: (NSString *) aKey
-{
-    return [self primitiveValueForKey: aKey];
-}
-
-- (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey
-{
-    [self setPrimitiveValue: aValue forKey: aKey];
-}
-
 - (BOOL) validateValue: (id *) ioValue forKey: (NSString *) key error: (NSError **) outError
 {
 	BOOL rval = YES;
@@ -237,84 +223,6 @@ ParseSelector (SEL aSelector, NSString** key)
 - (BXDatabaseObjectID *) objectID
 {
     return mObjectID;
-}
-
-/**
-* \internal
- * Register the object with a context.
- * In order to function properly, the database object needs to know about its context and its entity.
- * Registration is possible only if the object has not already been assigned a context. 
- * \return A boolean indicating whether the operation was successful or not.
- */
-- (BOOL) registerWithContext: (BXDatabaseContext *) ctx entity: (BXEntityDescription *) entity
-{
-    BOOL rval = NO;
-    if (nil == mContext)
-    {
-        //Object ID
-        NSArray* pkeyFields = [entity primaryKeyFields];
-        NSArray* pkeyFValues = nil;
-
-        @synchronized (mValues)
-        {
-            pkeyFValues = [mValues objectsForKeys: [pkeyFields valueForKey: @"name"] notFoundMarker: nil];
-        }
-        
-        NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFields];
-        
-        mObjectID = [[BXDatabaseObjectID alloc] initWithEntity: entity
-                                              primaryKeyFields: pkeyDict];
-        
-        if (YES == [ctx registerObject: self])
-        {
-            rval = YES;
-            [self removePrimaryKeyValuesFromStore];
-            
-            //Context
-            mContext = ctx; //Weak
-        }
-    }
-    return rval;
-}
-
-/**
-* \internal
- * Register the object with a context.
- * Register with a pre-defined object ID
- * \return A boolean indicating whether the operation was successful or not.
- */
-- (BOOL) registerWithContext: (BXDatabaseContext *) ctx objectID: (BXDatabaseObjectID *) anID
-{
-    BOOL rval = NO;
-    if (nil == mContext)
-    {
-        mObjectID = [anID retain];
-        if (YES == [ctx registerObject: self])
-        {
-            rval = YES;
-            [self removePrimaryKeyValuesFromStore];
-            
-            //Context
-            mContext = ctx; //Weak
-        }        
-    }
-    return rval;
-}
-
-/**
- * \internal
- * Remove the primary key values from store.
- * This should be done after setting the object ID, since
- * it will be used to fetch the values thereafter.
- */
-- (void) removePrimaryKeyValuesFromStore
-{
-    NSAssert (nil != mObjectID, nil);
-    TSEnumerate (currentKey, e, [[mObjectID primaryKeyFieldValues] keyEnumerator])
-    {
-        NSString* name = [currentKey name];
-        [self setCachedValue: nil forKey: name];
-    }
 }
 
 - (id) valueForKeyPath: (NSString *) keyPath
@@ -351,55 +259,6 @@ ParseSelector (SEL aSelector, NSString** key)
         [rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
     }
     return rval;
-}
-
-- (void) BXDatabaseContextWillDealloc
-{
-    mContext = nil;
-}
-
-- (void) clearStatus
-{
-    if (kBXObjectNoLockStatus != mLockStatus)
-    {
-        [self willChangeValueForKey: @"statusInfo"];
-        mLockStatus = kBXObjectNoLockStatus;
-        [self didChangeValueForKey: @"statusInfo"];
-    }
-}
-
-/**
- * \internal
- * Lock the object in an asynchronous manner.
- * Ask the database to change the status of the key. The result is sent to the 
- * provided object.
- * \param   key             The key to be locked
- * \param   objectStatus    Status of the object after locking
- * \param   sender          An object that conforms to the BXObjectAsynchronousLocking
- *                          protocol.
- */
-- (void) lockKey: (id) key status: (enum BXObjectLockStatus) objectStatus sender: (id <BXObjectAsynchronousLocking>) sender;
-{
-    [mContext lockObject: self key: key status: objectStatus sender: sender];
-}
-
-/**
- * Whether the object has beed deleted or 
- * is going to be deleted after the next commit.
- */
-- (BOOL) isDeleted
-{
-    return (kBXObjectDeletedStatus == mLockStatus);
-}
-
-- (void) setDeleted
-{
-    if (kBXObjectDeletedStatus != mLockStatus)
-    {
-        [self willChangeValueForKey: @"statusInfo"];
-        mLockStatus = kBXObjectDeletedStatus;
-        [self didChangeValueForKey: @"statusInfo"];
-    }
 }
 
 /**
@@ -464,19 +323,6 @@ ParseSelector (SEL aSelector, NSString** key)
         rval = [mValues valueForKey: aKey];
     }
     return rval;
-}
-
-- (void) setCachedValue: (id) aValue forKey: (NSString *) aKey
-{
-    @synchronized (mValues)
-    {
-        [self willChangeValueForKey: aKey];
-        if (nil == aValue)
-            [mValues removeObjectForKey: aKey];
-        else
-            [mValues setValue: aValue forKey: aKey];
-        [self didChangeValueForKey: aKey];
-    }
 }
 
 /**
@@ -603,18 +449,6 @@ ParseSelector (SEL aSelector, NSString** key)
         [self queryFailed: error];
 }
 
-/** 
- * \internal
- * A convenience method for handling the object's cache.
- */
-- (void) setCachedValuesForKeysWithDictionary: (NSDictionary *) aDict
-{
-    @synchronized (mValues)
-    {
-        [mValues addEntriesFromDictionary: aDict];
-    }
-}
-
 /** Fault the given key. */
 - (void) faultKey: (NSString *) aKey
 {
@@ -702,47 +536,25 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (BOOL) isLockedForKey: (NSString *) aKey
 {
-    return (kBXObjectLockedStatus == mLockStatus);
+    return (kBXObjectNoLockStatus != mLocked);
 }
 
 /**
- * Set lock status for the given key.
+ * Whether the object has beed deleted or 
+ * is going to be deleted after the next commit.
  */
-- (void) setLockedForKey: (NSString *) aKey
+- (BOOL) isDeleted
 {
-    if (kBXObjectLockedStatus != mLockStatus)
-    {
-        [self willChangeValueForKey: @"statusInfo"];
-        mLockStatus = kBXObjectLockedStatus;
-        [self didChangeValueForKey: @"statusInfo"];
-    }
+    return (kBXObjectExists != mDeleted);
 }
 
-- (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError
+/**
+ * Whether the object has been inserted in a previous transaction.
+ * If the object has been deleted, this method returns NO.
+ */
+- (BOOL) isInserted
 {
-	BOOL rval = YES;
-	NSAssert (NULL != ioValue, @"Expected ioValue not to be NULL.");
-	id value = *ioValue;
-	BXPropertyDescription* property = [[[mObjectID entity] attributesByName] objectForKey: key];
-	if (NO == [property isOptional] && (nil == value || [NSNull null] == value))
-	{
-		rval = NO;
-		if (NULL != outError)
-		{
-			NSString* message = BXLocalizedString (@"nullValueGivenForNonOptionalField", @"This field requires a non-null value.", @"Error description");
-            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                BXSafeObj (property), kBXPropertyKey,
-                BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
-                BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
-                nil];
-			NSError* error = [NSError errorWithDomain: kBXErrorDomain 
-												 code: kBXErrorNullConstraintNotSatisfied
-											 userInfo: userInfo];
-			*outError = error;
-		}
-	}
-	return rval;
+	return (kBXObjectExists == mDeleted && !mCreatedInCurrentTransaction);
 }
 
 @end
@@ -779,7 +591,9 @@ ParseSelector (SEL aSelector, NSString** key)
         {
             mValues = [[NSMutableDictionary alloc] init];
         }
-        mLockStatus = kBXObjectNoLockStatus;
+		mCreatedInCurrentTransaction = NO;
+		mDeleted = kBXObjectExists;
+        mLocked = kBXObjectNoLockStatus;
     }
     return self;
 }
@@ -795,5 +609,239 @@ ParseSelector (SEL aSelector, NSString** key)
     [super dealloc];
 }
 //@}
+
+@end
+
+
+@implementation BXDatabaseObject (PrivateMethods)
+
++ (BOOL) accessInstanceVariablesDirectly
+{
+    return NO;
+}
+
+/**
+ * \internal
+ * Remove the primary key values from store.
+ * This should be done after setting the object ID, since
+ * it will be used to fetch the values thereafter.
+ */
+- (void) removePrimaryKeyValuesFromStore
+{
+    NSAssert (nil != mObjectID, nil);
+    TSEnumerate (currentKey, e, [[mObjectID primaryKeyFieldValues] keyEnumerator])
+    {
+        NSString* name = [currentKey name];
+        [self setCachedValue: nil forKey: name];
+    }
+}
+
+/**
+ * \internal
+ * Register the object with a context.
+ * In order to function properly, the database object needs to know about its context and its entity.
+ * Registration is possible only if the object has not already been assigned a context. 
+ * \return A boolean indicating whether the operation was successful or not.
+ */
+- (BOOL) registerWithContext: (BXDatabaseContext *) ctx entity: (BXEntityDescription *) entity
+{
+    BOOL rval = NO;
+    if (nil == mContext)
+    {
+        //Object ID
+        NSArray* pkeyFields = [entity primaryKeyFields];
+        NSArray* pkeyFValues = nil;
+		
+        @synchronized (mValues)
+        {
+            pkeyFValues = [mValues objectsForKeys: [pkeyFields valueForKey: @"name"] notFoundMarker: nil];
+        }
+        
+        NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFields];
+        
+        mObjectID = [[BXDatabaseObjectID alloc] initWithEntity: entity
+                                              primaryKeyFields: pkeyDict];
+        
+        if (YES == [ctx registerObject: self])
+        {
+            rval = YES;
+            [self removePrimaryKeyValuesFromStore];
+            
+            //Context
+            mContext = ctx; //Weak
+        }
+    }
+    return rval;
+}
+
+/**
+ * \internal
+ * Register the object with a context.
+ * Register with a pre-defined object ID
+ * \return A boolean indicating whether the operation was successful or not.
+ */
+- (BOOL) registerWithContext: (BXDatabaseContext *) ctx objectID: (BXDatabaseObjectID *) anID
+{
+    BOOL rval = NO;
+    if (nil == mContext)
+    {
+        mObjectID = [anID retain];
+        if (YES == [ctx registerObject: self])
+        {
+            rval = YES;
+            [self removePrimaryKeyValuesFromStore];
+            
+            //Context
+            mContext = ctx; //Weak
+        }        
+    }
+    return rval;
+}
+
+/**
+ * \internal
+ * Set lock status for the given key.
+ */
+- (void) setLockedForKey: (NSString *) aKey
+{
+    if (kBXObjectLockedStatus != mLocked)
+    {
+        [self willChangeValueForKey: @"statusInfo"];
+        mLocked = kBXObjectLockedStatus;
+        [self didChangeValueForKey: @"statusInfo"];
+    }
+}
+
+- (void) lockForDelete
+{
+	if (kBXObjectDeletedStatus != mLocked)
+	{
+		[self willChangeValueForKey: @"statusInfo"];
+		mLocked = kBXObjectDeletedStatus;
+		[self didChangeValueForKey: @"statusInfo"];
+	}
+}
+
+- (BOOL) lockedForDelete
+{
+	return (kBXObjectDeletedStatus == mLocked);
+}
+
+- (void) clearStatus
+{
+    if (kBXObjectNoLockStatus != mLocked)
+    {
+        [self willChangeValueForKey: @"statusInfo"];
+        mLocked = kBXObjectNoLockStatus;
+        [self didChangeValueForKey: @"statusInfo"];
+    }
+}
+
+- (void) setCachedValue: (id) aValue forKey: (NSString *) aKey
+{
+    @synchronized (mValues)
+    {
+        [self willChangeValueForKey: aKey];
+        if (nil == aValue)
+            [mValues removeObjectForKey: aKey];
+        else
+            [mValues setValue: aValue forKey: aKey];
+        [self didChangeValueForKey: aKey];
+    }
+}
+
+/** 
+ * \internal
+ * A convenience method for handling the object's cache.
+ */
+- (void) setCachedValuesForKeysWithDictionary: (NSDictionary *) aDict
+{
+    @synchronized (mValues)
+    {
+        [mValues addEntriesFromDictionary: aDict];
+    }
+}
+
+- (void) setCreatedInCurrentTransaction: (BOOL) aBool
+{
+	mCreatedInCurrentTransaction = aBool;
+}
+
+- (BOOL) isCreatedInCurrentTransaction
+{
+	return mCreatedInCurrentTransaction;
+}
+
+- (void) setDeleted: (enum BXObjectDeletionStatus) status
+{
+	if (status != mDeleted)
+	{
+		[self willChangeValueForKey: @"statusInfo"];
+		mDeleted = status;
+		[self didChangeValueForKey: @"statusInfo"];
+	}
+}
+
+- (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError
+{
+	BOOL rval = YES;
+	NSAssert (NULL != ioValue, @"Expected ioValue not to be NULL.");
+	id value = *ioValue;
+	BXPropertyDescription* property = [[[mObjectID entity] attributesByName] objectForKey: key];
+	if (NO == [property isOptional] && (nil == value || [NSNull null] == value))
+	{
+		rval = NO;
+		if (NULL != outError)
+		{
+			NSString* message = BXLocalizedString (@"nullValueGivenForNonOptionalField", @"This field requires a non-null value.", @"Error description");
+            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                BXSafeObj (property), kBXPropertyKey,
+                BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+                BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+                BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
+                nil];
+			NSError* error = [NSError errorWithDomain: kBXErrorDomain 
+												 code: kBXErrorNullConstraintNotSatisfied
+											 userInfo: userInfo];
+			*outError = error;
+		}
+	}
+	return rval;
+}
+
+- (id) valueForUndefinedKey: (NSString *) aKey
+{
+    return [self primitiveValueForKey: aKey];
+}
+
+- (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey
+{
+    [self setPrimitiveValue: aValue forKey: aKey];
+}
+
+- (void) BXDatabaseContextWillDealloc
+{
+    mContext = nil;
+}
+
+/**
+ * \internal
+ * Lock the object in an asynchronous manner.
+ * Ask the database to change the status of the key. The result is sent to the 
+ * provided object.
+ * \param   key             The key to be locked
+ * \param   objectStatus    Status of the object after locking
+ * \param   sender          An object that conforms to the BXObjectAsynchronousLocking
+ *                          protocol.
+ */
+- (void) lockKey: (id) key status: (enum BXObjectLockStatus) objectStatus sender: (id <BXObjectAsynchronousLocking>) sender;
+{
+    [mContext lockObject: self key: key status: objectStatus sender: sender];
+}
+
+- (enum BXObjectDeletionStatus) deletionStatus
+{
+	return mDeleted;
+}
 
 @end

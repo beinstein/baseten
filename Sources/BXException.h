@@ -29,8 +29,8 @@
 #import <Foundation/Foundation.h>
 
 
-@interface BXException : NSException {
-
+@interface BXException : NSException
+{
 }
 
 @end

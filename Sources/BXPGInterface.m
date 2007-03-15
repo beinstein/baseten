@@ -35,7 +35,9 @@
 
 #import "BXPGInterface.h"
 #import "BXDatabaseObject.h"
+#import "BXDatabaseObjectPrivate.h"
 #import "BXDatabaseContext.h"
+#import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
@@ -362,11 +364,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			queryFormat = [NSString stringWithFormat: queryFormat, [[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
 			res = [connection executeQuery: queryFormat parameterArray: fieldValues];
 			
-			//Get the modification
+			//If registration fails, there should be a suitable object in memory.
 			[res setRowClass: aClass];
 			[res advanceRow];
 			rval = [res currentRowAsObject];
-			[rval registerWithContext: context entity: entity];
+			if (NO == [rval registerWithContext: context entity: entity])
+				rval = [context registeredObjectWithID: [rval objectID]];
 			[rval faultKey: nil];
 		}
     }

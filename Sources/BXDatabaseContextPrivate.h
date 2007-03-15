@@ -72,7 +72,14 @@ struct trustResult
 - (id <BXInterface>) databaseInterface;
 - (void) lazyInit;
 - (void) setDatabaseURIInternal: (NSURL *) uri;
-
+- (void) setHasSeen: (BOOL) aBool entity: (BXEntityDescription *) anEntity;
+- (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject;
+- (BOOL) registerObject: (BXDatabaseObject *) anObject;
+- (void) unregisterObject: (BXDatabaseObject *) anObject;
+- (void) handleError: (NSError *) anError;
+- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
+- (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
+- (NSArray *) keyPathComponents: (NSString *) keyPath;
 @end
 
 

@@ -27,6 +27,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+
 @protocol BXController;
 @protocol BXObjectAsynchronousLocking;
 @class BXDatabaseObject;
@@ -35,7 +36,7 @@ enum BXObjectLockStatus;
 
 @interface NSController (BXCocoaAdditions) <BXController, BXObjectAsynchronousLocking>
 - (void) BXLockObject: (BXDatabaseObject *) object key: (NSString *) key 
-                  status: (enum BXObjectLockStatus) status editor: (id) editor;
+			   status: (enum BXObjectLockStatus) status editor: (id) editor;
 - (void) BXUnlockObject: (BXDatabaseObject *) anObject key: (NSString *) key editor: (id) editor;
 @end
 

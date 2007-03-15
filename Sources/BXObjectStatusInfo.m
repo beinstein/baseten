@@ -2,7 +2,7 @@
 // BXObjectStatusInfo.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -26,8 +26,9 @@
 // $Id$
 //
 
-#import <BaseTen/BXObjectStatusInfo.h>
-#import <BaseTen/BXDatabaseObject.h>
+#import "BXObjectStatusInfo.h"
+#import "BXDatabaseObject.h"
+#import "BXDatabaseObjectPrivate.h"
 
 
 @implementation BXObjectStatusInfo
@@ -76,6 +77,7 @@
     return [NSNumber numberWithBool: ![(id) [checker target] isLockedForKey: nil]];
 }
 
+//We have to implement this by hand since this is an NSProxy.
 - (id) valueForKeyPath: (NSString *) keyPath
 {
     id rval = nil;
@@ -100,12 +102,11 @@
 {
     enum BXObjectLockStatus rval = kBXObjectNoLockStatus;
     id target = [checker target];
-    if (([target isDeleted]))
+    if ([target isDeleted] || [target lockedForDelete])
         rval = kBXObjectDeletedStatus;
     else if (([target isLockedForKey: aKey]))
         rval = kBXObjectLockedStatus;
     
     return [NSValue valueWithBytes: &rval objCType: @encode (enum BXObjectLockStatus)];
 }
-
 @end

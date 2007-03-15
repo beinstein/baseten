@@ -73,6 +73,18 @@
     [pool release];
 }
 
+- (void) testCreateWithFieldValues
+{
+	NSError* error = nil;
+	NSString* key = @"value";
+	NSDictionary* values = [NSDictionary dictionaryWithObjectsAndKeys: @"test", key, nil];
+	BXDatabaseObject* object = [context createObjectForEntity: entity withFieldValues: values error: &error];
+	MKCAssertNotNil (object);
+	STAssertNil (error, [error description]);
+	MKCAssertTrue ([[object valueForKey: key] isEqual: [values valueForKey: key]]);
+	[context rollback];
+}
+
 - (void) testCreateCustom
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
