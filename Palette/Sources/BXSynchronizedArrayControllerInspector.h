@@ -43,7 +43,7 @@
     IBOutlet NSButtonCell* selectsInsertedButton;
     IBOutlet NSButtonCell* multipleValuesMarkerButton;
     IBOutlet NSButtonCell* clearsFilterPredicateButton;
-    IBOutlet NSButtonCell* fetchesOnAwakeButton;
+    IBOutlet NSButtonCell* fetchesOnConnectButton;
     IBOutlet NSTextView* fetchPredicateTextView;
     IBOutlet NSButton* setPredicateButton;
 }
@@ -51,8 +51,6 @@
 - (IBAction) setPredicate: (id) sender;
 - (BXDatabaseContext *) dbContext;
 
-- (BOOL) fetchesOnAwake;
-- (void) setFetchesOnAwake: (BOOL) aVal;
 - (BOOL) avoidsEmptySelection;
 - (void) setAvoidsEmptySelection: (BOOL) aVal;
 - (BOOL) preservesSelection;
@@ -63,8 +61,8 @@
 - (void) setAlwaysUsesMultipleValuesMarker: (BOOL) aVal;
 - (BOOL) clearsFilterPredicateOnInsertion;
 - (void) setClearsFilterPredicateOnInsertion: (BOOL) aVal;
-- (BOOL) fetchesOnAwake;
-- (void) setFetchesOnAwake: (BOOL) aVal;
+- (BOOL) fetchesOnConnect;
+- (void) setFetchesOnConnect: (BOOL) aVal;
 
 #if 0
 - (void) assignEntityForTable: (NSString *) tableName schema: (NSString *) schemaName;

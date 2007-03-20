@@ -39,13 +39,14 @@
     IBOutlet NSWindow* window;
         
     BXEntityDescription* mEntityDescription;
-    BOOL mFetchesOnAwake;
-    BOOL mChanging;
     
     //For the IB Palette
     NSString* mSchemaName;
     NSString* mTableName;
     NSString* mDBObjectClassName;    
+
+    BOOL mFetchesOnConnect;
+    BOOL mChanging;
 }
 
 - (NSString *) schemaName;
@@ -60,8 +61,8 @@
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXEntityDescription *) entityDescription;
 - (void) setEntityDescription: (BXEntityDescription *) desc;
-- (BOOL) fetchesOnAwake;
-- (void) setFetchesOnAwake: (BOOL) aBool;
+- (BOOL) fetchesOnConnect;
+- (void) setFetchesOnConnect: (BOOL) aBool;
 @end
 
 

@@ -10,7 +10,7 @@
                 contextWarningField = NSTextField; 
                 customClassNameField = NSTextField; 
                 fetchPredicateTextView = NSTextView; 
-                fetchesOnAwakeButton = NSButtonCell; 
+                fetchesOnConnectButton = NSButtonCell; 
                 multipleValuesMarkerButton = NSButtonCell; 
                 preservesSelectionButton = NSButtonCell; 
                 schemaNameField = NSTextField; 

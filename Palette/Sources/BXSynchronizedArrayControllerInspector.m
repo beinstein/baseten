@@ -59,7 +59,7 @@ static NSArray* gManuallyNotifiedKeys;
             [self setKeys: keys triggerChangeNotificationsForDependentKey: @"customClassName"];
             
             gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects:
-                @"object", @"tableName", @"schemaName", @"customClassName", @"fetchesOnAwake",
+                @"object", @"tableName", @"schemaName", @"customClassName", @"fetchesOnConnect",
                 @"avoidsEmptySelection", @"preservesSelection", @"selectsInsertedObjects",
                 @"alwaysUsesMultipleValuesMarker", @"clearsFilterPredicateOnInsertion", 
                 nil];
@@ -124,7 +124,7 @@ static NSArray* gManuallyNotifiedKeys;
 		predicateString = @"";
 	[fetchPredicateTextView setString:predicateString];
 	
-    [fetchesOnAwakeButton setEnabled: ok];
+    [fetchesOnConnectButton setEnabled: ok];
 	
     [contextWarningField setHidden: ok];
     [schemaNameField setEnabled: ok];
@@ -246,7 +246,7 @@ GenericAccessors (preservesSelection, setPreservesSelection);
 GenericAccessors (selectsInsertedObjects, setSelectsInsertedObjects);
 GenericAccessors (alwaysUsesMultipleValuesMarker, setAlwaysUsesMultipleValuesMarker);
 GenericAccessors (clearsFilterPredicateOnInsertion, setClearsFilterPredicateOnInsertion);
-GenericAccessors (fetchesOnAwake, setFetchesOnAwake);
+GenericAccessors (fetchesOnConnect, setFetchesOnConnect);
 @end
 
 

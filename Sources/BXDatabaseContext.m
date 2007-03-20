@@ -1136,7 +1136,6 @@ extern void BXInit ()
 				notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification
 															 object: self 
 														   userInfo: nil];			
-				[[NSNotificationCenter defaultCenter] postNotification: notification];
 			}
 			else
 			{
@@ -1144,8 +1143,8 @@ extern void BXInit ()
 				notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 															 object: self
 														   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
-				[[NSNotificationCenter defaultCenter] postNotification: notification];
 			}
+			[[NSNotificationCenter defaultCenter] postNotification: notification];
 		}
 	}
 }

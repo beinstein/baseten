@@ -56,7 +56,7 @@
     {
         [self setAutomaticallyPreparesContent: NO];
         [self setEditable: YES];
-        mFetchesOnAwake = YES;
+        mFetchesOnConnect = NO;
         mChanging = NO;
     }
     return self;
@@ -77,13 +77,7 @@
             [mEntityDescription setDatabaseObjectClass: NSClassFromString (mDBObjectClassName)];    
         
         NSWindow* aWindow = [self BXWindow];
-        [databaseContext setUndoManager: [aWindow undoManager]];
-        
-        if (YES == mFetchesOnAwake)
-        {
-            [aWindow makeKeyAndOrderFront: nil];
-            [self fetch: nil];
-        }
+        [databaseContext setUndoManager: [aWindow undoManager]];        
     }
     [super awakeFromNib];
 }
@@ -169,7 +163,8 @@
     if (desc != mEntityDescription)
     {
         NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-        [nc removeObserver: self];
+        [nc removeObserver: self name: kBXInsertNotification object: mEntityDescription];
+        [nc removeObserver: self name: kBXDeleteNotification object: mEntityDescription];
         [mEntityDescription release];
         
         mEntityDescription = desc;
@@ -189,20 +184,29 @@
     return databaseContext;
 }
 
+/**
+ * \internal
+ * \see setFetchesOnAwake:
+ */
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx
 {
     if (ctx != databaseContext)
     {
+		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+		//databaseContext may be nil here since we don't observe multiple contexts.
+		[nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
+		
         [databaseContext release];
         databaseContext = ctx;
 		
 		if (nil != databaseContext)
 		{
             [databaseContext retain];
-            
-            NSError* error = nil;
+			if (mFetchesOnConnect)
+				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
             
             //Also set the entity description, since the database URI has changed.
+            NSError* error = nil;
             BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
                                                                             inSchema: [self schemaName]
                                                                                error: &error];
@@ -210,22 +214,36 @@
                 [self BXHandleError: error];
             else
             {
-                [entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];
-                
+                [entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];                
                 [self setEntityDescription: entityDescription];
             }
 		}
     }
 }
 
-- (BOOL) fetchesOnAwake
+- (BOOL) fetchesOnConnect
 {
-    return mFetchesOnAwake;
+    return mFetchesOnConnect;
 }
 
-- (void) setFetchesOnAwake: (BOOL) aBool
+/**
+ * \internal
+ * \see setDatabaseContext:
+ */
+- (void) setFetchesOnConnect: (BOOL) aBool
 {
-    mFetchesOnAwake = aBool;
+	if (mFetchesOnConnect != aBool)
+	{
+		mFetchesOnConnect = aBool;
+		if (nil != databaseContext)
+		{
+			NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+			if (YES == mFetchesOnConnect)
+				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
+			else
+				[nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
+		}
+	}
 }
 
 - (void) objectDidBeginEditing: (id) editor
@@ -277,6 +295,12 @@
         [mDBObjectClassName release];
         mDBObjectClassName = [aDBObjectClassName retain];
     }
+}
+
+- (void) endConnecting: (NSNotification *) notification
+{
+	if (YES == mFetchesOnConnect)
+		[self fetch: nil];
 }
 
 @end
@@ -350,7 +374,7 @@
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
     [super encodeWithCoder: encoder];
-    [encoder encodeBool: mFetchesOnAwake forKey: @"fetchesOnAwake"];
+    [encoder encodeBool: mFetchesOnConnect forKey: @"fetchesOnConnect"];
     
     [encoder encodeObject: mTableName forKey: @"tableName"];
     [encoder encodeObject: mSchemaName forKey: @"schemaName"];
@@ -363,7 +387,7 @@
     {
         [self setAutomaticallyPreparesContent: NO];
         [self setEditable: YES];
-        [self setFetchesOnAwake: [decoder decodeBoolForKey: @"fetchesOnAwake"]];
+        [self setFetchesOnConnect: [decoder decodeBoolForKey: @"fetchesOnConnect"]];
         
         [self setTableName:  [decoder decodeObjectForKey: @"tableName"]];
         [self setSchemaName: [decoder decodeObjectForKey: @"schemaName"]];
