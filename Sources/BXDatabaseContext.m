@@ -1106,11 +1106,19 @@ extern void BXInit ()
 																			 object: self 
 																		   userInfo: [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey]];
 				[[NSNotificationCenter defaultCenter] postNotification: notification];
+				
+				//Strip password from the URI
+				NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: @""];
+				[self setDatabaseURIInternal: newURI];				
 			}
 		}
 	}
 	else //YES == connected
 	{
+		//Strip password from the URI
+		NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: @""];
+		[self setDatabaseURIInternal: newURI];
+		
 		NSError* localError = nil;
 		if (NULL == error || nil == *error)
 		{
@@ -1928,10 +1936,7 @@ extern void BXInit ()
 	if (YES == mUsesKeychain && NULL == mKeychainPasswordItem)
         [self fetchPasswordFromKeychain];
 	    
-	//Set the URI and strip password from it.
     [mDatabaseInterface setDatabaseURI: mDatabaseURI];
-	NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: [NSNull null]];
-	[self setDatabaseURIInternal: newURI];
 }
 
 + (void) loadedAppKitFramework

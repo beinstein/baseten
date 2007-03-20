@@ -292,11 +292,14 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		[connection connect];
 		[self checkConnectionStatus: error];
 	}
+	
+	[self setDatabaseURI: nil];
 }
 
 - (void) connectAsync: (NSError **) error
 {
 	[self prepareConnection: [context sslMode]];
+	[self setDatabaseURI: nil];
 	[connection connectAsync];
 }
 
@@ -1511,13 +1514,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	
 	NSMutableDictionary* connectionDict = [databaseURI PGTSConnectionDictionary];
 	[connectionDict setValue: SSLMode (mode) forKey: kPGTSSSLModeKey];
-	if (nil != databaseURI)
-	{
-		[connection setConnectionDictionary: connectionDict];
-		[self setDatabaseURI: nil];
-	}
-	
+	[connection setConnectionDictionary: connectionDict];
 	[connection setLogsQueries: logsQueries];
+
 	invalidCertificate = NO;
 }
 
@@ -1552,12 +1551,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			[tempConnection connect];
 			notifyConnection = connection;
 			connection = tempConnection;
-			
-			[connection setConnectionString: nil];
-			
 			log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
 		}
-		[notifyConnection setConnectionString: nil];
 	}
 }
 @end
