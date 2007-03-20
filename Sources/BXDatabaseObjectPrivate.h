@@ -47,4 +47,5 @@
 - (BOOL) registerWithContext: (BXDatabaseContext *) ctx objectID: (BXDatabaseObjectID *) anID;
 - (void) removePrimaryKeyValuesFromStore;
 - (BOOL) lockedForDelete;
+- (void) awakeFromFetchIfNeeded;
 @end

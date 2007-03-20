@@ -570,13 +570,14 @@ ParseSelector (SEL aSelector, NSString** key)
 //
 /**
  * Callback for deserializing the row.
+ * Called once after fetch or firing a fault.
  */
 - (void) awakeFromFetch
 {
 }
 
 /**
-* Callback for creating the row.
+ * Callback for saving the row into the database.
  */
 - (void) awakeFromInsert
 {
@@ -594,6 +595,7 @@ ParseSelector (SEL aSelector, NSString** key)
 		mCreatedInCurrentTransaction = NO;
 		mDeleted = kBXObjectExists;
         mLocked = kBXObjectNoLockStatus;
+		mNeedsToAwakeFromFetch = YES;
     }
     return self;
 }
@@ -659,17 +661,10 @@ ParseSelector (SEL aSelector, NSString** key)
         
         NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFields];
         
-        mObjectID = [[BXDatabaseObjectID alloc] initWithEntity: entity
-                                              primaryKeyFields: pkeyDict];
-        
-        if (YES == [ctx registerObject: self])
-        {
-            rval = YES;
-            [self removePrimaryKeyValuesFromStore];
-            
-            //Context
-            mContext = ctx; //Weak
-        }
+        BXDatabaseObjectID* objectID = [[BXDatabaseObjectID alloc] initWithEntity: entity
+																 primaryKeyFields: pkeyDict];
+		rval = [self registerWithContext: ctx objectID: objectID];
+		[objectID release];
     }
     return rval;
 }
@@ -842,6 +837,15 @@ ParseSelector (SEL aSelector, NSString** key)
 - (enum BXObjectDeletionStatus) deletionStatus
 {
 	return mDeleted;
+}
+
+- (void) awakeFromFetchIfNeeded
+{
+	if (YES == mNeedsToAwakeFromFetch)
+	{
+		mNeedsToAwakeFromFetch = NO;
+		[self awakeFromFetch];
+	}
 }
 
 @end

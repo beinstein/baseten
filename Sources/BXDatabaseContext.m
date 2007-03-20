@@ -831,6 +831,8 @@ extern void BXInit ()
     NSError* localError = nil;
     //Always fetch all keys when firing a fault
     BOOL rval = [mDatabaseInterface fireFault: anObject key: nil error: &localError];
+	if (YES == rval)
+		[anObject awakeFromFetchIfNeeded];
     BXHandleError (error, localError);
     return rval;
 
@@ -926,7 +928,10 @@ extern void BXInit ()
         TSEnumerate (currentID, e, [mModifiedObjectIDs objectEnumerator])
 		{
             [currentID setLastModificationType: kBXNoModification];
+			
 			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
+			if ([currentObject isCreatedInCurrentTransaction] && ![currentObject isDeleted])
+				[currentObject awakeFromInsert];
 			[currentObject setCreatedInCurrentTransaction: NO];
 			if ([currentObject isDeleted])
 				[currentObject setDeleted: kBXObjectDeleted];
@@ -957,7 +962,6 @@ extern void BXInit ()
             if (0 < [objects count])
             {
                 rval = [objects objectAtIndex: 0];
-                [rval awakeFromFetch];
             }
             else
             {
@@ -1687,11 +1691,10 @@ extern void BXInit ()
 											 returningFaults: returnFaults excludingFields: excludedFields 
 													   class: [entity databaseObjectClass] 
 													   error: &localError];
-			
 			if (nil == localError)
 			{
-				[rval makeObjectsPerformSelector: @selector (awakeFromFetch)];
 				[mSeenEntities addObject: entity];
+				[rval makeObjectsPerformSelector: @selector (awakeFromFetchIfNeeded)];
 				
 				if (Nil != returnedClass)
 				{
