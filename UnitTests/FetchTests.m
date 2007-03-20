@@ -179,4 +179,29 @@
 	MKCAssertTrue (3 == count);
 }
 
+- (void) testNullValidation
+{
+	NSError* error = nil;
+	BXEntityDescription* person = [context entityForTable: @"person" error: &error];
+	NSArray* people = [context executeFetchForEntity: person withPredicate: nil error: &error];
+	BXDatabaseObject* personObject = [people objectAtIndex: 0];
+	
+	//soulmate has a non-null constraint.
+	id value = nil;
+	[personObject validateValue: &value forKey: @"soulmate" error: &error];
+	STAssertEqualObjects ([error domain], kBXErrorDomain, [error localizedDescription]);
+	STAssertTrue ([error code] == kBXErrorNullConstraintNotSatisfied, [error localizedDescription]);
+	
+	error = nil;
+	value = [NSNull null];
+	[personObject validateValue: &value forKey: @"soulmate" error: &error];
+	STAssertEqualObjects ([error domain], kBXErrorDomain, [error localizedDescription]);
+	STAssertTrue ([error code] == kBXErrorNullConstraintNotSatisfied, [error localizedDescription]);
+	
+	error = nil;
+	value = [NSNumber numberWithInt: 1];
+	[personObject validateValue: &value forKey: @"soulmate" error: &error];
+	STAssertNil (error, [error localizedDescription]);
+}
+
 @end

@@ -24,7 +24,7 @@ BEGIN TRANSACTION;
 
 CREATE TABLE test (
     id SERIAL PRIMARY KEY,
-    value VARCHAR (255) NULL
+    value VARCHAR (255)
 );
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test' AND n.nspname = 'public' AND c.relnamespace = n.oid;
 
@@ -34,7 +34,7 @@ SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_names
 
 CREATE TABLE "Pkeytest" (
     "Id" INTEGER PRIMARY KEY,
-    value VARCHAR (255) NULL
+    value VARCHAR (255)
 );
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'Pkeytest' AND n.nspname = 'public' AND c.relnamespace = n.oid;
 
@@ -60,7 +60,7 @@ SET search_path TO "Fkeytest";
 -- A simple many-to-one relationship
 CREATE TABLE test1 (
     id SERIAL PRIMARY KEY,
-    value VARCHAR (255) NULL
+    value VARCHAR (255)
 );
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
@@ -74,7 +74,7 @@ SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_names
 
 CREATE TABLE test2 (
     id SERIAL PRIMARY KEY,
-    value VARCHAR (255) NULL,
+    value VARCHAR (255),
     fkt1id INTEGER CONSTRAINT fkt1 REFERENCES test1 (id)
 );
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
