@@ -34,4 +34,5 @@
 @interface BXDatabaseContext (BaseTenAppKitAdditions)
 - (void) displayPanelForTrust: (SecTrustRef) trust;
 - (void) displayPanelForTrust: (SecTrustRef) trust modalWindow: (NSWindow *) aWindow;
+- (id <BXConnectionSetupManager>) copyDefaultConnectionSetupManager;
 @end

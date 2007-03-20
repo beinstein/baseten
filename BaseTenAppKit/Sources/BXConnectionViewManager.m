@@ -263,30 +263,29 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	[self didChangeValueForKey: @"isConnecting"];
     
     NSURL* databaseURI = nil;
+	NSURL* baseURI = [mDatabaseContext databaseURI];
+	if (nil == baseURI)
+		baseURI = [NSURL URLWithString: @"pgsql:///"];
     if (YES == mUseHostname)
     {
-        NSString* schema = @"pgsql://";
+        NSString* scheme = [baseURI scheme];
         NSString* uriString = mGivenHostname;
-        if (NO == [uriString hasPrefix: schema])
-            uriString = [schema stringByAppendingString: uriString];
+        if (NO == [uriString hasPrefix: scheme])
+            uriString = [scheme stringByAppendingString: uriString];
 		NSURL* userURI = [NSURL URLWithString: uriString];
 		if (nil != userURI)
 		{
-			databaseURI = [[mDatabaseContext databaseURI] BXURIForHost: [userURI host]
-															  database: mDatabaseName
-															  username: [userURI user]
-															  password: [userURI password]];
+			databaseURI = [baseURI BXURIForHost: [userURI host] database: mDatabaseName
+									   username: [userURI user] password: [userURI password]];
 		}
     }
     else
     {
         NSNetService* selection = [[mBonjourArrayController selectedObjects] objectAtIndex: 0];
-		databaseURI = [[mDatabaseContext databaseURI] BXURIForHost: [selection hostName]
-														  database: mDatabaseName
-														  username: nil
-														  password: nil];
+		databaseURI = [baseURI BXURIForHost: [selection hostName] database: mDatabaseName
+								   username: nil password: nil];
     }
-    
+	    
     if (nil == databaseURI)
     {
         NSString* title = BXLocalizedString (@"invalidConnectionURI", @"Invalid Connection URI", 

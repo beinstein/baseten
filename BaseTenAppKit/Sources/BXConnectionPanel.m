@@ -169,6 +169,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
 	[mViewManager setDatabaseName: aName];
 }
+
 @end
 
 
@@ -236,10 +237,16 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 - (void) BXHandleError: (NSError *) error
 {
-    [[NSAlert alertWithError: error] beginSheetModalForWindow: nil
-                                                modalDelegate: nil 
-                                               didEndSelector: NULL
-                                                  contextInfo: NULL];
+	if (YES == mDisplayingAuxiliarySheet)
+	{
+		[NSApp endSheet: mAuxiliaryPanel];
+		[mAuxiliaryPanel close];
+	}
+	
+    [[NSAlert alertWithError: error] beginSheetModalForWindow: nil modalDelegate: nil 
+                                               didEndSelector: NULL contextInfo: NULL];
+	
+	[self continueWithReturnCode: NSCancelButton];		
 }
 
 - (void) BXBeginConnecting
@@ -274,12 +281,6 @@ static NSArray* gManuallyNotifiedKeys = nil;
         proposedFrameSize.height = size.height;
     }
     return proposedFrameSize;
-}
-
-- (id) windowWillReturnFieldEditor: (NSWindow *) sender toObject: (id) anObject
-{
-	//For some reason this is needed when mAuxiliaryPanel uses this as delegate.
-	return nil;
 }
 
 @end

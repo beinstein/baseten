@@ -65,7 +65,7 @@
     NSUndoManager*							mUndoManager;
 	NSMutableSet*							mLazilyValidatedEntities;
 	NSMutableIndexSet*						mUndoGroupingLevels;
-	id <BXConnectionSetupManager>			mConnectionSetupManager;
+	BXHiddenId <BXConnectionSetupManager>	mConnectionSetupManager;
     SecKeychainItemRef                      mKeychainPasswordItem;
 	
 	IBOutlet NSWindow*						modalWindow;
@@ -175,4 +175,5 @@
 @interface BXDatabaseContext (IBActions)
 - (IBAction) saveDocument: (id) sender;
 - (IBAction) revertDocumentToSaved: (id) sender;
+- (IBAction) connect: (id) sender;
 @end

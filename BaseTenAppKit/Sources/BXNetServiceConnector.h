@@ -36,16 +36,13 @@
 
 @interface BXNetServiceConnector : NSObject <BXConnectionSetupManager>
 {
-	IBOutlet BXDatabaseContext* databaseContext;
-	IBOutlet NSWindow* modalWindow;
+	IBOutlet BXDatabaseContext* databaseContext;	//Weak
+	IBOutlet NSWindow* modalWindow;					//Weak
 	
 	BXAuthenticationPanel* mAuthenticationPanel;
     BXPanel* mPanel;
 }
-- (IBAction) connect: (id) sender;
 - (void) displayAuthenticationPanel;
-- (void) setDatabaseContext: (BXDatabaseContext *) aContext;
 - (void) setPanel: (BXPanel *) aPanel;
 - (void) setAuthenticationPanel: (BXAuthenticationPanel *) aPanel;
-
 @end

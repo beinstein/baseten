@@ -27,5 +27,8 @@
 //
 
 @protocol BXConnectionSetupManager <NSObject>
+- (IBAction) connect: (id) sender;
 - (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust;
+- (void) setDatabaseContext: (BXDatabaseContext *) aContext;
+- (void) setModalWindow: (NSWindow *) aWindow;
 @end

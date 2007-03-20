@@ -41,7 +41,6 @@
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	[mAuthenticationPanel release];
     [mPanel release];
-    [databaseContext release]; //This is retained even if connected in IB
 	[super dealloc];
 }
 
@@ -124,6 +123,7 @@
 {
 	if (NSOKButton == returnCode)
 	{
+		NSAssert (nil != databaseContext, @"Expected databaseContext not to be nil.");
 		[databaseContext setConnectionSetupManager: self];
 		[databaseContext connect];
 	}
@@ -190,12 +190,11 @@
     {
         [nc removeObserver: self name: kBXConnectionFailedNotification object: databaseContext];
         [nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
-        [databaseContext release];
     }
     
     if (nil != aContext)
     {
-        databaseContext = [aContext retain];
+		databaseContext = aContext;
         [nc addObserver: self selector: @selector (endConnecting:) 
                    name: kBXConnectionFailedNotification object: databaseContext];
         [nc addObserver: self selector: @selector (endConnecting:) 
@@ -219,6 +218,11 @@
         [mAuthenticationPanel release];
         mAuthenticationPanel = [aPanel retain];
     }
+}
+
+- (void) setModalWindow: (NSWindow *) aWindow
+{
+	modalWindow = aWindow;
 }
 
 @end

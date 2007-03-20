@@ -58,7 +58,6 @@
     if ( nil != LOCAL_ERROR ) { if ( NULL != ERROR ) *(NSError **)ERROR = LOCAL_ERROR; else [self handleError: LOCAL_ERROR]; }
             
 
-
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
 static BOOL gHaveAppKitFramework = NO;
 
@@ -182,6 +181,7 @@ extern void BXInit ()
     [mUndoManager release];
 	[mLazilyValidatedEntities release];
 	[mUndoGroupingLevels release];
+	[mConnectionSetupManager release];
     
     if (NULL != mKeychainPasswordItem)
         CFRelease (mKeychainPasswordItem);
@@ -1606,6 +1606,20 @@ extern void BXInit ()
 }
 //@}
 
+/**
+ * Connect to the database.
+ * Hand over the connection setup to mConnectionSetupManager.
+ */
+- (IBAction) connect: (id) sender
+{
+	if (nil == mConnectionSetupManager)
+	{
+		mConnectionSetupManager = [self copyDefaultConnectionSetupManager];
+		[mConnectionSetupManager setDatabaseContext: self];
+		[mConnectionSetupManager setModalWindow: modalWindow];
+	}
+	[mConnectionSetupManager connect: sender];
+}
 @end
 
 
@@ -1914,7 +1928,7 @@ extern void BXInit ()
 	
 	if (YES == mUsesKeychain && NULL == mKeychainPasswordItem)
         [self fetchPasswordFromKeychain];
-    
+	    
     [mDatabaseInterface setDatabaseURI: mDatabaseURI];
 }
 

@@ -1,7 +1,7 @@
 {
     IBClasses = (
         {
-            ACTIONS = {revertDocumentToSaved = id; saveDocument = id; }; 
+            ACTIONS = {connect = id; revertDocumentToSaved = id; saveDocument = id; }; 
             CLASS = BXDatabaseContext; 
             LANGUAGE = ObjC; 
             OUTLETS = {modalWindow = NSWindow; policyDelegate = id; }; 

@@ -27,6 +27,7 @@
 //
 
 #import "BXDatabaseContextAdditions.h"
+#import "BXNetServiceConnector.h"
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
@@ -65,6 +66,11 @@
 																   userInfo: nil];
 		[[NSNotificationCenter defaultCenter] postNotification: notification];
 	}
+}
+
+- (id <BXConnectionSetupManager>) copyDefaultConnectionSetupManager
+{
+	return [[BXNetServiceConnector alloc] init];
 }
 
 @end
