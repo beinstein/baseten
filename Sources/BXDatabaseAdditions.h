@@ -51,7 +51,7 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 - (NSURL *) BXURIForHost: (NSString *) host 
 				database: (NSString *) dbName 
 				username: (NSString *) username 
-				password: (NSString *) password;
+				password: (id) password;
 @end
 
 

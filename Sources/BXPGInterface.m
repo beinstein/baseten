@@ -1511,9 +1511,13 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	
 	NSMutableDictionary* connectionDict = [databaseURI PGTSConnectionDictionary];
 	[connectionDict setValue: SSLMode (mode) forKey: kPGTSSSLModeKey];
-	[connection setConnectionDictionary: connectionDict];
+	if (nil != databaseURI)
+	{
+		[connection setConnectionDictionary: connectionDict];
+		[self setDatabaseURI: nil];
+	}
+	
 	[connection setLogsQueries: logsQueries];
-
 	invalidCertificate = NO;
 }
 
@@ -1549,8 +1553,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			notifyConnection = connection;
 			connection = tempConnection;
 			
+			[connection setConnectionString: nil];
+			
 			log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
 		}
+		[notifyConnection setConnectionString: nil];
 	}
 }
 @end

@@ -1928,7 +1928,10 @@ extern void BXInit ()
 	if (YES == mUsesKeychain && NULL == mKeychainPasswordItem)
         [self fetchPasswordFromKeychain];
 	    
+	//Set the URI and strip password from it.
     [mDatabaseInterface setDatabaseURI: mDatabaseURI];
+	NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: [NSNull null]];
+	[self setDatabaseURIInternal: newURI];
 }
 
 + (void) loadedAppKitFramework

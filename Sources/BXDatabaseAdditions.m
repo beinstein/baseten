@@ -51,7 +51,7 @@
     return u;
 }
 
-- (NSURL *) BXURIForHost: (NSString *) host database: (NSString *) dbName username: (NSString *) username password: (NSString *) password
+- (NSURL *) BXURIForHost: (NSString *) host database: (NSString *) dbName username: (NSString *) username password: (id) password
 {
 	NSString* scheme = [self scheme];
 	NSURL* rval = nil;
@@ -62,7 +62,10 @@
 		[URLString appendFormat: @"%@://", scheme];
 
 		if (nil == username) username = [self user];
+		
 		if (nil == password) password = [self password];
+		else if ([NSNull null] == password) password = nil;
+		
 		if (nil != password && 0 < [password length])
 			[URLString appendFormat: @"%@:%@@", username ?: @"", password];
 		else if (nil != username && 0 < [username length])
