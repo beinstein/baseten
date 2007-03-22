@@ -1443,13 +1443,17 @@ static NSString* SSLMode (enum BXSSLMode mode)
 {
     id rval = nil;
     NSError* localError = nil;
-    //FIXME: handle the error.
-    if (nil != [self validateEntity: entity error: &localError])
+	[self validateEntity: entity error: &localError];
+	if (nil == localError)
     {
         PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
         //Now use the real connection since we need the last modification from its viewpoint
         rval = [modificationNotifier lastModificationForTable: table connection: connection];
     }
+	else
+	{
+		[localError BXExceptionWithName: kBXPGUnableToObserveModificationsException];
+	}
     return rval;
 }
 

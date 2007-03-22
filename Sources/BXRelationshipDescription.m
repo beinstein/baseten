@@ -174,10 +174,7 @@ NullArray (unsigned int count)
         {
             if (nil == targetEntity)
                 targetEntity = [self dstEntity];
-#if 0
-            //FIXME: a bit kludgy
-            [context validateEntity: targetEntity];
-#endif
+
             NSArray* properties = [targetEntity correspondingProperties: [self dstProperties]];
 
             //Many (one)-to-one
@@ -190,18 +187,10 @@ NullArray (unsigned int count)
     }
     else if (YES == oneToMany)
     {
-#if 0
-        //FIXME: a bit kludgy
-        [context validateEntity: entity];
-#endif
         NSArray* values = [object objectsForKeys: [entity correspondingProperties: [self dstProperties]]];
         if (nil == targetEntity)
             targetEntity = [self srcEntity];
-#if 0
-        //FIXME: this is a bit of a kludge, since entities should be validated by the database interface.
-        //Perhaps the db interface should have the method -correspondingProperties:.
-        [context validateEntity: targetEntity];
-#endif
+
         NSArray* properties = [targetEntity correspondingProperties: [self srcProperties]];
 
         //one-to-many

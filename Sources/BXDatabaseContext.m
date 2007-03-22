@@ -1009,27 +1009,42 @@ extern void BXInit ()
 
 - (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error
 {
-    //FIXME: The ids might have different entities
     NSMutableSet* rval = nil;
     if (0 < [anArray count])
     {
         rval = [NSMutableSet setWithCapacity: [anArray count]];
-        NSMutableArray* predicates = [NSMutableArray array];
+        NSMutableDictionary* entities = [NSMutableDictionary dictionary];
         TSEnumerate (currentID, e, [anArray objectEnumerator])
         {
             id currentObject = [self registeredObjectWithID: currentID];
             if (nil == currentObject)
+			{
+				BXEntityDescription* entity = [currentID entity];
+				NSMutableArray* predicates = [entities objectForKey: entity];
+				if (nil == predicates)
+				{
+					predicates = [NSMutableArray array];
+					[entities setObject: predicates forKey: entity];
+				}
                 [predicates addObject: [currentID predicate]];
+			}
             else
+			{
                 [rval addObject: currentObject];
+			}
         }
         
-        if (0 < [predicates count])
+        if (0 < [entities count])
         {
             NSError* localError = nil;
-            NSPredicate* predicate = [NSCompoundPredicate orPredicateWithSubpredicates: predicates];
-            [rval addObjectsFromArray: [self executeFetchForEntity: [[anArray objectAtIndex: 0] entity] 
-                                                     withPredicate: predicate error: &localError]];
+			TSEnumerate (currentEntity, e, [entities keyEnumerator])
+			{
+				NSPredicate* predicate = [NSCompoundPredicate orPredicateWithSubpredicates: [entities objectForKey: currentEntity]];
+				NSArray* fetched = [self executeFetchForEntity: currentEntity withPredicate: predicate error: &localError];
+				if (nil != localError)
+					break;
+				[rval addObjectsFromArray: fetched];
+			}
             BXHandleError (error, localError);
         }
     }

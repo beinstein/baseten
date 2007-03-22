@@ -37,9 +37,9 @@
     BOOL                        mRegistered;
     unsigned int                mHash;
     NSURL*                      mURIRepresentation;
-    BXEntityDescription*     mEntity;
+    BXEntityDescription*		mEntity;
     NSMutableDictionary*        mPkeyFValues;
-    enum BXModificationType  mLastModificationType;
+    enum BXModificationType		mLastModificationType;
 }
 - (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error;
 

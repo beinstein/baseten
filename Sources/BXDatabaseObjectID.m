@@ -426,12 +426,23 @@ static TSNonRetainedObjectSet* gObjectIDs;
 {
     if ((self = [super init]))
     {
-        if (nil == aDesc || 0 == [aDict count])
+		NSString* reason = nil;
+        if (nil == aDesc)
+			reason = @"Entity was nil.";
+		else if (0 == [aDict count])
+			reason = @"Primary key values were not set.";
+		
+		TSEnumerate (currentDesc, e, [aDict keyEnumerator])
+		{
+			if (NO == [currentDesc isKindOfClass: [BXPropertyDescription class]])
+			{
+				reason = @"Expected to receive only BXPropertyDescriptions as keys.";
+				break;
+			}
+		}
+		
+		if (nil != reason)
         {
-            //FIXME: also check that the keys are BXPropertyDescriptions.
-            NSString* reason = @"Primary key values were not set.";
-            if (nil == aDesc)
-                reason = @"Entity was nil.";
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                 self,   kBXObjectIDKey,
                 aDesc,  kBXEntityDescriptionKey,
