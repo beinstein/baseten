@@ -267,6 +267,8 @@ PGTSSSLConnectionExIndex ()
 - (void) disconnectAndCleanup
 {
 	//N.B. No locking
+	[socket release];
+	socket = nil;
 	if (NULL != cancelRequest)
 	{
 		PQfreeCancel (cancelRequest);
@@ -274,9 +276,6 @@ PGTSSSLConnectionExIndex ()
 	}
 	PQfinish (connection);
 	connection = NULL;
-	[socket closeFile];
-	[socket release];
-	socket = nil;
 }	
 @end
 
@@ -395,7 +394,6 @@ PGTSSSLConnectionExIndex ()
 		sslSetUp = NO;
         if (YES == reset)
         {
-            [socket closeFile];
             [socket release];
             socket = nil;
         }
@@ -460,7 +458,7 @@ PGTSSSLConnectionExIndex ()
             //FIXME: set other things as well?
             PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
 
-            socket = [[NSFileHandle alloc] initWithFileDescriptor: bsdSocket];
+			socket = [[NSFileHandle alloc] initWithFileDescriptor: bsdSocket closeOnDealloc: NO];
             [socket waitForDataInBackgroundAndNotify];
             [[NSNotificationCenter defaultCenter] addObserver: self 
                                                      selector: @selector (dataAvailableFromLib:)
