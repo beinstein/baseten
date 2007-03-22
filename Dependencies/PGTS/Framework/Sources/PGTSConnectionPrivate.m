@@ -267,9 +267,6 @@ PGTSSSLConnectionExIndex ()
 - (void) disconnectAndCleanup
 {
 	//N.B. No locking
-	[socket closeFile];
-	[socket release];
-	socket = nil;
 	if (NULL != cancelRequest)
 	{
 		PQfreeCancel (cancelRequest);
@@ -277,6 +274,9 @@ PGTSSSLConnectionExIndex ()
 	}
 	PQfinish (connection);
 	connection = NULL;
+	[socket closeFile];
+	[socket release];
+	socket = nil;
 }	
 @end
 
