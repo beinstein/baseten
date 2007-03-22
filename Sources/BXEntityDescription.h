@@ -34,6 +34,14 @@
 @class BXDatabaseContext;
 @class BXDatabaseObjectID;
 
+
+enum BXEntityFlag
+{
+	kBXEntityNoFlag					= 0,
+	kBXEntityHasAllRelationships	= 1 << 0,
+	kBXEntityIsValidated			= 1 << 1
+};
+
 @interface BXEntityDescription : BXAbstractDescription <NSCopying, NSCoding>
 {
     NSURL*                  mDatabaseURI;
@@ -46,7 +54,7 @@
     NSMutableSet*           mDependentViewEntities;
     id                      mObjectIDs;    
     NSMutableDictionary*    mRelationships;
-    BOOL                    mHasAllRelationships;
+    enum BXEntityFlag       mFlags;
 }
 
 + (NSSet *) views;
@@ -69,4 +77,5 @@
 - (void) setTargetView: (BXEntityDescription *) viewEntity 
   forRelationshipNamed: (NSString *) relationshipName;
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
+- (BOOL) isValidated;
 @end

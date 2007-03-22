@@ -187,11 +187,15 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSAssert (count == [dstFields count], nil);
     srcProperties = [NSMutableArray arrayWithCapacity: count];
     dstProperties = [NSMutableArray arrayWithCapacity: count];
+	
+	NSAssert ([srcEntity isValidated] && [dstEntity isValidated], @"Expected entities to have been validated.");
+	NSDictionary* srcAttributes = [srcEntity attributesByName];
+	NSDictionary* dstAttributes = [dstEntity attributesByName];
     
     for (unsigned int i = 0; i < count; i++)
     {
-		id p1 = [[srcEntity attributesByName] objectForKey: [[srcFields objectAtIndex: i] name]];
-		id p2 = [[dstEntity attributesByName] objectForKey: [[dstFields objectAtIndex: i] name]];
+		id p1 = [srcAttributes objectForKey: [[srcFields objectAtIndex: i] name]];
+		id p2 = [dstAttributes objectForKey: [[dstFields objectAtIndex: i] name]];
         [srcProperties addObject: p1];
         [dstProperties addObject: p2];
     }
@@ -923,23 +927,26 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				}
 				
                 {
+					NSAssert ([srcEntity isValidated], @"Expected srcEntity to have been validated.");
                     NSArray* srcFNames = [res valueForKey: @"srcfnames"];
+                    NSDictionary* srcAttributes = [srcEntity attributesByName];
                     srcProperties = [NSMutableArray arrayWithCapacity: [srcFNames count]];                
-                    
+					
                     TSEnumerate (currentFName, e, [srcFNames objectEnumerator])
                     {
-                        BXPropertyDescription* desc = [[srcEntity attributesByName] objectForKey: currentFName];
+                        BXPropertyDescription* desc = [srcAttributes objectForKey: currentFName];
                         [srcProperties addObject: desc];
                     }
                     
                     //Use the information supplied by the database, if the user wants all the relationships
                     //and not just those between given two tables
+					NSAssert ([dstEntity isValidated], @"Expected srcEntity to have been validated.");
+                    NSDictionary* dstAttributes = [dstEntity attributesByName];
                     NSArray* dstFNames = [res valueForKey: @"dstfnames"];
                     dstProperties = [NSMutableArray arrayWithCapacity: [dstFNames count]];
                     TSEnumerate (currentFName, e, [dstFNames objectEnumerator])
                     {
-                        
-                        BXPropertyDescription* desc = [[dstEntity attributesByName] objectForKey: currentFName];
+                        BXPropertyDescription* desc = [dstAttributes objectForKey: currentFName];
                         [dstProperties addObject: desc];
                     }
                 }

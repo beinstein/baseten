@@ -250,13 +250,19 @@ ParseSelector (SEL aSelector, NSString** key)
 - (NSDictionary *) cachedObjects
 {
     NSDictionary* cachedValues = [self cachedValues];
-    BXEntityDescription* entity = [[self objectID] entity];
-    NSMutableDictionary* rval = [NSMutableDictionary dictionaryWithCapacity: [cachedValues count]];
-    TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
-    {
-        BXPropertyDescription* desc = [[entity attributesByName] objectForKey: currentFName]; 
-        [rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
-    }
+    NSMutableDictionary* rval = nil;
+	if (0 < [cachedValues count])
+	{
+		BXEntityDescription* entity = [[self objectID] entity];
+		NSAssert1 ([entity isValidated], @"Expected entity %@ to have been validated earlier.", entity);
+		rval = [NSMutableDictionary dictionaryWithCapacity: [cachedValues count]];
+		
+		TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
+		{
+			BXPropertyDescription* desc = [[entity attributesByName] objectForKey: currentFName]; 
+			[rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
+		}
+	}
     return rval;
 }
 
@@ -779,9 +785,11 @@ ParseSelector (SEL aSelector, NSString** key)
 - (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError
 {
 	BOOL rval = YES;
+	BXEntityDescription* entity = [mObjectID entity];
 	NSAssert (NULL != ioValue, @"Expected ioValue not to be NULL.");
+	NSAssert1 ([entity isValidated], @"Expected entity %@ to have been validated earlier.", entity);
 	id value = *ioValue;
-	BXPropertyDescription* property = [[[mObjectID entity] attributesByName] objectForKey: key];
+	BXPropertyDescription* property = [[entity attributesByName] objectForKey: key];
 	if (NO == [property isOptional] && (nil == value || [NSNull null] == value))
 	{
 		rval = NO;
@@ -849,9 +857,11 @@ ParseSelector (SEL aSelector, NSString** key)
 
 - (NSArray *) keysIncludedInQuery: (id) aKey
 {
+	BXEntityDescription* entity = [[self objectID] entity];
+	NSAssert1 ([entity isValidated], @"Expected entity %@ to have been validated earlier.", entity);
+
 	NSArray* rval = nil;
 	BOOL shouldContinue = NO;
-	BXEntityDescription* entity = [[self objectID] entity];
 	if ([aKey isKindOfClass: [BXPropertyDescription class]])
 		shouldContinue = YES;
 	else if ([aKey isKindOfClass: [NSString class]])

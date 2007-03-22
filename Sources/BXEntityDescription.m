@@ -387,6 +387,11 @@ static NSMutableSet* gViewEntities;
 	return mAttributes;
 }
 
+- (BOOL) isValidated
+{
+	return mFlags & kBXEntityIsValidated;
+}
+
 @end
 
 
@@ -451,7 +456,6 @@ static NSMutableSet* gViewEntities;
             mDependentViewEntities = [[NSMutableSet alloc] init];
             mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
             mTargetViews = [[NSMutableDictionary alloc] init];
-            mHasAllRelationships = NO;
         }
         else
         {
@@ -490,9 +494,9 @@ static NSMutableSet* gViewEntities;
     if (nil == mViewEntities)
     {
         //FIXME: this might cause cached objects to be ignored.
-        if (NO == mHasAllRelationships)
+        if (NO == [self hasAllRelationships])
         {
-            mHasAllRelationships = YES;
+			[self setHasAllRelationships: YES];
             [context relationshipsByNameWithEntity: self entity: nil error: error];
         }
         rval = [mRelationships objectForKey: aName];
@@ -684,6 +688,27 @@ static NSMutableSet* gViewEntities;
 		}
 	}
 	return rval;
+}
+
+- (BOOL) hasAllRelationships
+{
+	return mFlags & kBXEntityHasAllRelationships;
+}
+
+- (void) setHasAllRelationships: (BOOL) flag
+{
+	if (flag)
+		mFlags |= kBXEntityHasAllRelationships;
+	else
+		mFlags &= ~kBXEntityHasAllRelationships;
+}
+
+- (void) setValidated: (BOOL) flag
+{
+	if (flag)
+		mFlags |= kBXEntityIsValidated;
+	else
+		mFlags &= ~kBXEntityIsValidated;
 }
 
 @end

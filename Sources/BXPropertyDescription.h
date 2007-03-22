@@ -32,9 +32,9 @@
 @class BXEntityDescription;
 
 
-enum BXPropertyOption
+enum BXPropertyFlag
 {
-	kBXPropertyNoOption 	= 0,
+	kBXPropertyNoFlag		= 0,
 	kBXPropertyOptional		= 1 << 0,
 	kBXPropertyPrimaryKey	= 1 << 1,
 	kBXPropertyExcluded		= 1 << 2
@@ -44,7 +44,7 @@ enum BXPropertyOption
 @interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSCoding>
 {
     BXEntityDescription*	mEntity;
-	enum BXPropertyOption   mOptions;
+	enum BXPropertyFlag   mFlags;
 }
 
 - (BXEntityDescription *) entity;

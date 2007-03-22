@@ -49,4 +49,7 @@
 - (void) setViewEntities: (NSSet *) aSet;
 - (void) setAttributes: (NSDictionary *) attributes;
 - (void) resetPropertyExclusion;
+- (BOOL) hasAllRelationships;
+- (void) setHasAllRelationships: (BOOL) flag;
+- (void) setValidated: (BOOL) flag;
 @end

@@ -123,6 +123,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
                     break;
                 }
             }
+			NSAssert1 ([entityDesc isValidated], @"Expected entity %@ to have been validated earlier.", entityDesc);
 			BXPropertyDescription* propertyDesc = [[entityDesc attributesByName] objectForKey: key]; 
             [pkeyDict setObject: value forKey: propertyDesc];
             

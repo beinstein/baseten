@@ -764,6 +764,7 @@ extern void BXInit ()
 					[fieldValues setObject: value forKey: currentKey];
 				else if ([currentKey isKindOfClass: stringClass])
 				{
+					//We connected earlier so no need for an assertion.
 					BXPropertyDescription* prop = [[entity attributesByName] valueForKey: currentKey];
 					[fieldValues setObject: value forKey: prop];
 				}
@@ -1132,6 +1133,7 @@ extern void BXInit ()
 				[mDatabaseInterface validateEntity: currentEntity error: &localError];
 				if (nil != localError)
 					break;
+				[currentEntity setValidated: YES];
 				[mLazilyValidatedEntities removeObject: currentEntity];
 			}
 		}
@@ -1470,6 +1472,7 @@ extern void BXInit ()
 			[self connectIfNeeded: &localError];
 			BXHandleError (error, localError);
 			[mDatabaseInterface validateEntity: rval error: &localError];
+			[rval setValidated: YES];
 		}
 	}
 	BXHandleError (error, localError);

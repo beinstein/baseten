@@ -127,17 +127,17 @@ static NSMutableDictionary* gProperties;
 
 - (BOOL) isOptional
 {
-	return (mOptions & kBXPropertyOptional ? YES : NO);
+	return (mFlags & kBXPropertyOptional ? YES : NO);
 }
 
 - (BOOL) isPrimaryKey
 {
-	return (mOptions & kBXPropertyPrimaryKey ? YES : NO);
+	return (mFlags & kBXPropertyPrimaryKey ? YES : NO);
 }
 
 - (BOOL) isExcluded
 {
-	return (mOptions & kBXPropertyExcluded ? YES : NO);
+	return (mFlags & kBXPropertyExcluded ? YES : NO);
 }
 
 @end
@@ -206,21 +206,21 @@ static NSMutableDictionary* gProperties;
 - (void) setOptional: (BOOL) aBool
 {
 	if (aBool)
-		mOptions |= kBXPropertyOptional;
+		mFlags |= kBXPropertyOptional;
 	else
-		mOptions &= ~kBXPropertyOptional;
+		mFlags &= ~kBXPropertyOptional;
 }
 
 - (void) setPrimaryKey: (BOOL) aBool
 {
 	if (aBool)
 	{
-		mOptions |= kBXPropertyPrimaryKey;
-		mOptions &= ~kBXPropertyExcluded;
+		mFlags |= kBXPropertyPrimaryKey;
+		mFlags &= ~kBXPropertyExcluded;
 	}
 	else
 	{
-		mOptions &= ~kBXPropertyPrimaryKey;
+		mFlags &= ~kBXPropertyPrimaryKey;
 	}
 }
 
@@ -229,9 +229,9 @@ static NSMutableDictionary* gProperties;
 	if (![self isPrimaryKey])
 	{
 		if (aBool)
-			mOptions |= kBXPropertyExcluded;
+			mFlags |= kBXPropertyExcluded;
 		else
-			mOptions &= ~kBXPropertyExcluded;
+			mFlags &= ~kBXPropertyExcluded;
 	}
 }
 
