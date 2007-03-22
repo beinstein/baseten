@@ -71,9 +71,8 @@
 - (id) createObjectForEntity: (BXEntityDescription *) entity withFieldValues: (NSDictionary *) fieldValues
                        class: (Class) aClass error: (NSError **) error;
 - (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
-                           returningFaults: (BOOL) returnFaults excludingFields: (NSArray *) excludedFields 
-                                     class: (Class) aClass error: (NSError **) error;
-- (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error;
+                           returningFaults: (BOOL) returnFaults class: (Class) aClass error: (NSError **) error;
+- (BOOL) fireFault: (BXDatabaseObject *) anObject keys: (NSArray *) keys error: (NSError **) error;
 - (NSArray *) executeUpdateWithDictionary: (NSDictionary *) aDict
                                  objectID: (BXDatabaseObjectID *) anID
                                    entity: (BXEntityDescription *) entity

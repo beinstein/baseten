@@ -48,4 +48,5 @@
 - (void) removePrimaryKeyValuesFromStore;
 - (BOOL) lockedForDelete;
 - (void) awakeFromFetchIfNeeded;
+- (NSArray *) keysIncludedInQuery: (id) aKey;
 @end

@@ -670,7 +670,8 @@ extern void BXInit ()
                               error: (NSError **) error
 {
     return [self executeFetchForEntity: entity withPredicate: predicate 
-                       excludingFields: excludedFields updateAutomatically: NO error: error];
+                       excludingFields: excludedFields
+				   updateAutomatically: NO error: error];
 }
 
 /** 
@@ -718,8 +719,9 @@ extern void BXInit ()
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     excludingFields: (NSArray *) excludedFields updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
 {
+	[entity resetPropertyExclusion];
     return [self executeFetchForEntity: entity withPredicate: predicate
-                       returningFaults: (0 != [excludedFields count]) excludingFields: excludedFields
+                       returningFaults: NO excludingFields: excludedFields
                          returnedClass: (shouldUpdate ? [BXArrayProxy class] : Nil) 
                                  error: error];
 }
@@ -762,7 +764,7 @@ extern void BXInit ()
 					[fieldValues setObject: value forKey: currentKey];
 				else if ([currentKey isKindOfClass: stringClass])
 				{
-					BXPropertyDescription* prop = [BXPropertyDescription propertyWithName: currentKey entity: entity];
+					BXPropertyDescription* prop = [[entity attributesByName] valueForKey: currentKey];
 					[fieldValues setObject: value forKey: prop];
 				}
 			}
@@ -830,7 +832,8 @@ extern void BXInit ()
 {
     NSError* localError = nil;
     //Always fetch all keys when firing a fault
-    BOOL rval = [mDatabaseInterface fireFault: anObject key: nil error: &localError];
+	NSArray* keys = [anObject keysIncludedInQuery: aKey];
+    BOOL rval = [mDatabaseInterface fireFault: anObject keys: keys error: &localError];
 	if (YES == rval)
 		[anObject awakeFromFetchIfNeeded];
     BXHandleError (error, localError);
@@ -1708,10 +1711,10 @@ extern void BXInit ()
 		[self connectIfNeeded: &localError];
 		if (nil == localError)
 		{
-			//To prevent any problems when objects do not know all their fields, always return faults 
-			//when retrieving only a subset of the available fields
+			excludedFields = [entity properties: excludedFields];
+			[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
 			rval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
-											 returningFaults: returnFaults excludingFields: excludedFields 
+											 returningFaults: returnFaults 
 													   class: [entity databaseObjectClass] 
 													   error: &localError];
 			if (nil == localError)

@@ -2,7 +2,7 @@
 // BXEntityDescription.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -218,7 +218,9 @@ static NSMutableSet* gViewEntities;
  * Normally the database context determines the primary key, when
  * an entity is used in a database query. However, when an entity is a view, the fields
  * have to be set manually before using the entity in a query.
- * \param   anArray     An NSArray of NSStrings or BXPropertyDescriptions.
+ * \param   anArray     An NSArray of NSStrings.
+ * \internal
+ * \note BXPropertyDescriptions should only be created here and in -[BXInterface validateEntity:]
  */
 - (void) setPrimaryKeyFields: (NSArray *) anArray
 {
@@ -587,15 +589,19 @@ static NSMutableSet* gViewEntities;
                 BXPropertyDescription* prop = [mAttributes objectForKey: propertyName];
 				if (nil == prop)
 				{
+#if 0
 					//If fields haven't been received yet, we can risk making a nonexistent property
 					if (nil == mAttributes) 
 						prop = [BXPropertyDescription propertyWithName: propertyName entity: self];
 					else
 					{
+#endif
 						[[NSException exceptionWithName: NSInternalInconsistencyException 
 												 reason: [NSString stringWithFormat: @"Nonexistent property %@ given", currentProperty]
 											   userInfo: nil] raise];
+#if 0
 					}
+#endif
 				}
                 [rval addObject: prop];
             }
@@ -652,6 +658,32 @@ static NSMutableSet* gViewEntities;
 		if ([self isView])
 			[gViewEntities addObject: self];
 	}
+}
+
+- (void) resetPropertyExclusion
+{
+	TSEnumerate (currentProp, e, [mAttributes objectEnumerator])
+		[currentProp setExcluded: NO];
+}
+
+- (NSArray *) properties: (NSArray *) strings
+{
+	NSMutableArray* rval = nil;
+	if (0 < [strings count])
+	{
+		rval = [NSMutableArray arrayWithCapacity: [strings count]];
+		TSEnumerate (currentField, e, [strings objectEnumerator])
+		{
+			if ([currentField isKindOfClass: [NSString class]])
+				currentField = [mAttributes objectForKey: currentField];
+			NSAssert2 ([currentField isKindOfClass: [BXPropertyDescription class]], 
+					   @"Expected to receive NSStrings or BXPropertyDescriptions (%@ was a %@).",
+					   currentField, [currentField class]);
+			
+			[rval addObject: currentField];
+		}
+	}
+	return rval;
 }
 
 @end

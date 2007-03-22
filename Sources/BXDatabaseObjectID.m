@@ -36,6 +36,7 @@
 #import "BXPropertyDescription.h"
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
+#import "BXPropertyDescriptionPrivate.h"
 
 
 static TSNonRetainedObjectSet* gObjectIDs;
@@ -61,7 +62,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
 
 /** 
  * Create an object identifier from an NSURL
- * Note that this is not the designated initializer.
+ * \note This is not the designated initializer.
  */
 - (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error
 {
@@ -122,7 +123,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
                     break;
                 }
             }
-            BXPropertyDescription* propertyDesc = [BXPropertyDescription propertyWithName: key entity: entityDesc];
+			BXPropertyDescription* propertyDesc = [[entityDesc attributesByName] objectForKey: key]; 
             [pkeyDict setObject: value forKey: propertyDesc];
             
             [queryScanner scanUpToString: @"&" intoString: NULL];

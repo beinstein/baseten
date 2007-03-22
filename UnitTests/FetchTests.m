@@ -32,6 +32,7 @@
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseObjectIDPrivate.h>
 #import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEntityDescriptionPrivate.h>
 
 
 @interface BXDatabaseObject (BXKVC)
@@ -48,7 +49,9 @@
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
 	[context setAutocommits: NO];
-    entity = [context entityForTable: @"test" error: nil];
+	NSError* error = nil;
+    entity = [context entityForTable: @"test" error: &error];
+	STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (entity);
 }
 
@@ -60,13 +63,14 @@
 - (void) testObjectWithID
 {
     NSError* error = nil;
-    NSNumber* idNumber = [NSNumber numberWithInt: 1];
-    BXPropertyDescription* property = [BXPropertyDescription propertyWithName: @"id" entity: entity];
-    BXDatabaseObjectID* anId = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields:
-        [NSDictionary dictionaryWithObject: idNumber forKey: property]];
+	NSURL* objectURI = [NSURL URLWithString: @"pgsql://localhost/basetentest/public/test?id,n=1"];
+	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: objectURI
+																context: context 
+																  error: &error] autorelease];
+	STAssertNil (error, [error localizedDescription]);
     BXDatabaseObject* object = [context objectWithID: anId error: &error];
-    MKCAssertNil (error);
-    MKCAssertEqualObjects ([object valueForKey: @"id"], idNumber);
+	STAssertNil (error, [error localizedDescription]);
+    MKCAssertEqualObjects ([object valueForKey: @"id"], [anId valueForKey: @"id"]);
     //if this is not nil, then another test has failed or the database is not in known state
     STAssertEqualObjects ([object valueForKey: @"value"], nil, @"Database is not in known state!");
 }
@@ -202,6 +206,29 @@
 	value = [NSNumber numberWithInt: 1];
 	[personObject validateValue: &value forKey: @"soulmate" error: &error];
 	STAssertNil (error, [error localizedDescription]);
+}
+
+- (void) testExclusion
+{
+	NSError* error = nil;
+	NSString* fieldname = @"value";
+	BXPropertyDescription* property = [[entity attributesByName] objectForKey: fieldname];
+	MKCAssertFalse ([property isExcluded]);
+
+	NSArray* result = [context executeFetchForEntity: entity withPredicate: nil 
+									 excludingFields: [NSArray arrayWithObject: fieldname]
+											   error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	MKCAssertTrue ([property isExcluded]);
+	
+	//Quite the same, which object we get
+	BXDatabaseObject* object = [result objectAtIndex: 0]; 
+	MKCAssertTrue (1 == [object isFaultKey: fieldname]);
+	[context fireFault: object key: fieldname error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	MKCAssertTrue (0 == [object isFaultKey: fieldname]);
+	
+	[entity resetPropertyExclusion];
 }
 
 @end

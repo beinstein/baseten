@@ -254,8 +254,7 @@ ParseSelector (SEL aSelector, NSString** key)
     NSMutableDictionary* rval = [NSMutableDictionary dictionaryWithCapacity: [cachedValues count]];
     TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
     {
-        BXPropertyDescription* desc = 
-            [BXPropertyDescription propertyWithName: currentFName entity: entity];
+        BXPropertyDescription* desc = [[entity attributesByName] objectForKey: currentFName]; 
         [rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
     }
     return rval;
@@ -846,6 +845,34 @@ ParseSelector (SEL aSelector, NSString** key)
 		mNeedsToAwakeFromFetch = NO;
 		[self awakeFromFetch];
 	}
+}
+
+- (NSArray *) keysIncludedInQuery: (id) aKey
+{
+	NSArray* rval = nil;
+	BOOL shouldContinue = NO;
+	BXEntityDescription* entity = [[self objectID] entity];
+	if ([aKey isKindOfClass: [BXPropertyDescription class]])
+		shouldContinue = YES;
+	else if ([aKey isKindOfClass: [NSString class]])
+	{
+		shouldContinue = YES;
+		aKey = [[entity attributesByName] objectForKey: aKey];
+	}
+	
+	if (shouldContinue)
+	{
+		NSArray* cachedKeys = [[self cachedObjects] allKeys];
+		NSMutableArray* queryKeys = [[[[entity attributesByName] allValues] mutableCopy] autorelease];
+		[queryKeys removeObjectsInArray: cachedKeys];
+		[queryKeys filterUsingPredicate: [NSPredicate predicateWithFormat: @"NO == isExcluded"]];
+		if (YES == [aKey isExcluded])
+			[queryKeys addObject: aKey];
+		
+		rval = queryKeys;
+	}
+	
+	return rval;
 }
 
 @end

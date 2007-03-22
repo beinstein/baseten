@@ -36,7 +36,8 @@ enum BXPropertyOption
 {
 	kBXPropertyNoOption 	= 0,
 	kBXPropertyOptional		= 1 << 0,
-	kBXPropertyPrimaryKey	= 1 << 1
+	kBXPropertyPrimaryKey	= 1 << 1,
+	kBXPropertyExcluded		= 1 << 2
 };
 
 
@@ -46,10 +47,9 @@ enum BXPropertyOption
 	enum BXPropertyOption   mOptions;
 }
 
-+ (id) propertyWithName: (NSString *) name entity: (BXEntityDescription *) entity;
-- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity;
 - (BXEntityDescription *) entity;
 - (BOOL) isOptional;
 - (BOOL) isPrimaryKey;
+- (BOOL) isExcluded;
 
 @end

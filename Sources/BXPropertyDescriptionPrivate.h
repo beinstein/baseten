@@ -29,6 +29,9 @@
 //
 
 @interface BXPropertyDescription (PrivateMethods)
++ (id) propertyWithName: (NSString *) name entity: (BXEntityDescription *) entity;
+- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity;
 - (void) setOptional: (BOOL) aBool;
 - (void) setPrimaryKey: (BOOL) aBool;
+- (void) setExcluded: (BOOL) aBool;
 @end

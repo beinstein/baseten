@@ -2,7 +2,7 @@
 // BXPGInterface.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -177,7 +177,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 @implementation PGTSForeignKeyDescription (BXPGInterfaceAdditions)
 - (BXRelationshipDescription *) BXPGRelationshipFromEntity: (BXEntityDescription *) srcEntity
-                                                      toEntity: (BXEntityDescription *) dstEntity
+												  toEntity: (BXEntityDescription *) dstEntity
 {
     NSArray* srcFields = [self sourceFields];
     NSArray* dstFields = [self referenceFields];
@@ -190,8 +190,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
     
     for (unsigned int i = 0; i < count; i++)
     {
-        id p1 = [BXPropertyDescription propertyWithName: [[srcFields objectAtIndex: i] name] entity: srcEntity];
-        id p2 = [BXPropertyDescription propertyWithName: [[dstFields objectAtIndex: i] name] entity: dstEntity];
+		id p1 = [[srcEntity attributesByName] objectForKey: [[srcFields objectAtIndex: i] name]];
+		id p2 = [[dstEntity attributesByName] objectForKey: [[dstFields objectAtIndex: i] name]];
         [srcProperties addObject: p1];
         [dstProperties addObject: p2];
     }
@@ -387,7 +387,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
 - (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity 
                              withPredicate: (NSPredicate *) predicate 
                            returningFaults: (BOOL) returnFaults 
-                           excludingFields: (NSArray *) excludedFields 
                                      class: (Class) aClass 
                                      error: (NSError **) error;
 {
@@ -414,31 +413,21 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				unsigned int count = [pkeyfields count];
 				NSMutableArray* pkeyQNames = [NSMutableArray arrayWithCapacity: count];            
 				TSEnumerate (currentField, e, [pkeyfields objectEnumerator])
-					[pkeyQNames addObject: [currentField BXPGQualifiedName: connection]];
+					[pkeyQNames addObject: [currentField BXPGEscapedName: connection]];
 				
 				//What to query
 				NSString* queryFields = nil;
 				if (YES == returnFaults)
 					queryFields = [pkeyQNames componentsJoinedByString: @", "];
-				else if (nil == excludedFields) 
-					queryFields = [NSString stringWithFormat: @"%@.*", [entity BXPGQualifiedName: connection]];
 				else
 				{
-					NSMutableArray* remainingFields = [NSMutableArray arrayWithArray: fields];
-					TSEnumerate (currentDesc, e, [excludedFields objectEnumerator])
+					NSMutableArray* remainingFields = [NSMutableArray arrayWithArray: pkeyQNames];
+					TSEnumerate (currentField, e, [fields objectEnumerator])
 					{
-						if (NO == [pkeyfields containsObject: currentDesc])
-							[remainingFields removeObject: currentDesc];
+						if (![currentField isExcluded])
+							[remainingFields addObject: [currentField BXPGEscapedName: connection]];
 					}
-					
-					//Escape the names
-					for (unsigned int i = 0, count = [remainingFields count]; i < count; i++)
-					{
-						[remainingFields replaceObjectAtIndex: i withObject: 
-							[[remainingFields objectAtIndex: i] BXPGQualifiedName: connection]];
-					}
-					
-					queryFields = [NSString stringWithFormat: @"\"%@\"", [remainingFields componentsJoinedByString: @"\", \""]];
+					queryFields = [remainingFields componentsJoinedByString: @", "];
 				}            
 				
 				//Make sure that the where clause contains at least something, so the query is easier to format.
@@ -521,16 +510,22 @@ static NSString* SSLMode (enum BXSSLMode mode)
     return rows;
 }
 
-- (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error
+- (BOOL) fireFault: (BXDatabaseObject *) anObject keys: (NSArray *) keys error: (NSError **) error
 {
     BOOL rval = NO;
     NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+	NSAssert (nil != keys && 0 < [keys count], @"Expected to receive some keys to fetch.");
     @try
     {
         BXDatabaseObjectID* objectID = [anObject objectID];
         NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+		NSMutableArray* escapedKeys = [NSMutableArray arrayWithCapacity: [keys count]];
+		TSEnumerate (currentKey, e, [keys objectEnumerator])
+			[escapedKeys addObject: [currentKey BXPGEscapedName: connection]];
         NSString* query = [NSString stringWithFormat: @"SELECT %@ FROM %@ WHERE %@", 
-            (aKey ? [NSString stringWithFormat:@"\"%@\"", aKey] : @"*"), [[objectID entity] BXPGQualifiedName: connection], [[objectID predicate] PGTSWhereClauseWithContext: ctx]];
+			[escapedKeys componentsJoinedByString: @", "],
+			[[objectID entity] BXPGQualifiedName: connection],
+			[[objectID predicate] PGTSWhereClauseWithContext: ctx]];
         PGTSResultSet* res = [connection executeQuery: query parameterArray: [ctx objectForKey: kPGTSParametersKey]];
         if (YES == [res advanceRow])
         {
@@ -933,9 +928,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                     
                     TSEnumerate (currentFName, e, [srcFNames objectEnumerator])
                     {
-                        BXPropertyDescription* desc = 
-							[BXPropertyDescription propertyWithName: currentFName
-															 entity: srcEntity];
+                        BXPropertyDescription* desc = [[srcEntity attributesByName] objectForKey: currentFName];
                         [srcProperties addObject: desc];
                     }
                     
@@ -946,9 +939,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                     TSEnumerate (currentFName, e, [dstFNames objectEnumerator])
                     {
                         
-                        BXPropertyDescription* desc = 
-                        [BXPropertyDescription propertyWithName: currentFName
-														 entity: dstEntity];
+                        BXPropertyDescription* desc = [[dstEntity attributesByName] objectForKey: currentFName];
                         [dstProperties addObject: desc];
                     }
                 }
@@ -1074,6 +1065,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
  * \internal
  * Check that the entity exists.
  * Also tell the entity about the pkey and other fields.
+ * \note BXPropertyDescriptions should only be created here and in -[BXEntityDescription setPrimaryKeyFields:]
  */
 - (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
@@ -1139,7 +1131,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					NSArray* pkeyFNames = [[[pkey fields] allObjects] valueForKey: @"name"];
 					TSEnumerate (currentFName, e, [pkeyFNames objectEnumerator])
 					{
-						BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+						BXPropertyDescription* desc = [attributes objectForKey: currentFName];
+						if (nil == desc)
+							desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
 						[desc setOptional: NO];
 						[desc setPrimaryKey: YES];
 						[attributes setObject: desc forKey: currentFName];
@@ -1155,7 +1149,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					NSString* currentFName = [currentField name];
 					if (nil == [attributes objectForKey: currentFName])
 					{
-						BXPropertyDescription* desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+						BXPropertyDescription* desc = [attributes objectForKey: currentFName];
+						if (nil == desc)
+							desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
 						[desc setOptional: ![currentField isNotNull]];
 						[desc setPrimaryKey: NO];
 						[attributes setObject: desc forKey: currentFName];

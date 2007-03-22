@@ -29,51 +29,30 @@
 #import "BXPropertyDescription.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXEntityDescription.h"
+#import "BXDatabaseAdditions.h"
+
+
+#ifndef NS_BLOCK_ASSERTIONS
+static NSMutableDictionary* gProperties;
+#endif
 
 
 /**
-    A property description contains information about a column in a specific entity.
-    The corresponding class in Core Data is NSAttributeDescription. This class is thread-safe.
-*/
+ *  A property description contains information about a column in a specific entity.
+ *  The corresponding class in Core Data is NSAttributeDescription. This class is thread-safe.
+ */
 @implementation BXPropertyDescription
 
-/** 
- * \name Creating a property description
- */
-//@{
-/**
- * Create a property description.
- * \param       aName       Name of the property
- * \param       anEntity    The entity which contains the property.
- * \return                  The property description.
- */
-+ (id) propertyWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity
++ (void) initialize
 {
-    return [[[self alloc] initWithName: aName entity: anEntity] autorelease];
-}
-
-/**
- * The designated initializer.
- * Create a property description.
- * \param       aName       Name of the property
- * \param       anEntity    The entity which contains the property.
- * \return                  The property description.
- */
-- (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity
-{
-    if ((self = [super initWithName: aName]))
-    {
-        NSAssert (nil != anEntity, @"Expected entity not to be nil.");
-        mEntity = anEntity; //Weak since entities are not released anyway
-    }
-    return self;
-}
-//@}
-
-- (id) initWithName: (NSString *) name
-{
-    [self release];
-    return nil;
+	static BOOL tooLate = NO;
+	if (NO == tooLate)
+	{
+		tooLate = YES;
+#ifndef NS_BLOCK_ASSERTIONS
+		gProperties = [[NSMutableDictionary alloc] init];
+#endif
+	}
 }
 
 /** Entity for this property. */
@@ -94,6 +73,7 @@
 	{
 		[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
 		[self setPrimaryKey: [decoder decodeBoolForKey: @"isPrimaryKey"]];
+		[self setExcluded: [decoder decodeBoolForKey: @"isExcluded"]];
 	}
 	return self;
 }
@@ -104,6 +84,7 @@
 	[coder encodeObject: mEntity forKey: @"entity"];
 	[coder encodeBool: [self isOptional] forKey: @"isOptional"];
 	[coder encodeBool: [self isPrimaryKey] forKey: @"isPrimaryKey"];
+	[coder encodeBool: [self isExcluded] forKey: @"isExcluded"];
 }
 
 - (unsigned int) hash
@@ -154,10 +135,73 @@
 	return (mOptions & kBXPropertyPrimaryKey ? YES : NO);
 }
 
+- (BOOL) isExcluded
+{
+	return (mOptions & kBXPropertyExcluded ? YES : NO);
+}
+
 @end
 
 
 @implementation BXPropertyDescription (PrivateMethods)
+
+/** 
+ * \internal
+ * \name Creating a property description
+ */
+//@{
+/**
+ * Create a property description.
+ * \param       aName       Name of the property
+ * \param       anEntity    The entity which contains the property.
+ * \return                  The property description.
+ */
++ (id) propertyWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity
+{
+    return [[[self alloc] initWithName: aName entity: anEntity] autorelease];
+}
+
+/**
+ * The designated initializer.
+ * Create a property description.
+ * \param       aName       Name of the property
+ * \param       anEntity    The entity which contains the property.
+ * \return                  The property description.
+ */
+- (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity
+{
+    if ((self = [super initWithName: aName]))
+    {
+        NSAssert (nil != anEntity, @"Expected entity not to be nil.");
+        mEntity = anEntity; //Weak since entities are not released anyway
+		
+		//Enforcing this shouldn't be necessary since properties should only get created in our code.
+#ifndef NS_BLOCK_ASSERTIONS
+		NSMutableSet* props = [gProperties objectForKey: aName];
+		if (nil == props)
+		{
+			props = [NSMutableSet setWithObject: self];
+			[gProperties setObject: props forKey: aName];
+		}
+		else
+		{
+			TSEnumerate (currentProp, e, [props objectEnumerator])
+			{
+				if ([currentProp entity] == anEntity)
+					NSAssert1 (NO, @"Expected to have only single instance of property %@", self);
+			}
+		}
+#endif
+    }
+    return self;
+}
+//@}
+
+- (id) initWithName: (NSString *) name
+{
+    [self release];
+    return nil;
+}
 
 - (void) setOptional: (BOOL) aBool
 {
@@ -170,9 +214,25 @@
 - (void) setPrimaryKey: (BOOL) aBool
 {
 	if (aBool)
+	{
 		mOptions |= kBXPropertyPrimaryKey;
+		mOptions &= ~kBXPropertyExcluded;
+	}
 	else
+	{
 		mOptions &= ~kBXPropertyPrimaryKey;
+	}
+}
+
+- (void) setExcluded: (BOOL) aBool
+{
+	if (![self isPrimaryKey])
+	{
+		if (aBool)
+			mOptions |= kBXPropertyExcluded;
+		else
+			mOptions &= ~kBXPropertyExcluded;
+	}
 }
 
 @end

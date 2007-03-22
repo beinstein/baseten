@@ -2,7 +2,7 @@
 // BXEntityDescriptionPrivate.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -43,8 +43,10 @@
 - (void) registerObjectID: (BXDatabaseObjectID *) anID;
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID;
 - (BXEntityDescription *) targetForRelationship: (id <BXRelationshipDescription>) rel;
+- (NSArray *) properties: (NSArray *) strings;
 - (NSArray *) correspondingProperties: (NSArray *) properties;
 - (BOOL) hasAncestor: (BXEntityDescription *) entity;
 - (void) setViewEntities: (NSSet *) aSet;
 - (void) setAttributes: (NSDictionary *) attributes;
+- (void) resetPropertyExclusion;
 @end
