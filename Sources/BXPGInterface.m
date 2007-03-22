@@ -609,6 +609,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSArray* objectIDs = nil;
 			if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
 			{
+				//Transaction for locking the rows (?)
 				if (YES == autocommits)
 					[self beginSubtransactionIfNeeded];
 				updatedPkey = YES;
@@ -712,18 +713,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
     @try
     {
-		//Begin early to prevent the subtransaction
 		[self beginIfNeeded];
-		
-        if (nil == lockedObjectID)
-            [self beginSubtransactionIfNeeded];
-        else
-        {
-            NSAssert2 (nil == objectID || objectID == lockedObjectID, 
-                       @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
-                       objectID, lockedObjectID);
-        }
-        NSAssert (PQTRANS_INTRANS == [connection transactionStatus], @"Expected to have a transaction");
 
         if (nil != objectID)
         {
@@ -743,21 +733,29 @@ static NSString* SSLMode (enum BXSSLMode mode)
             if (nil == parameters)
 				parameters = [NSMutableArray array];
 			
-			//Lock the row and get the object IDs
-			NSArray* objectIDs = [self lockRowsWithObjectID: objectID entity: entity 
-												whereClause: whereClause parameters: parameters];
-			NSAssert2 (nil == lockedObjectID || [objectIDs containsObject: lockedObjectID], 
-					   @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
-					   objectID, lockedObjectID);
 			//Notify only if we are not updating a view.
 			if (NO == [entity isView])
-				[self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];
+				[self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: YES];
 			
-			NSString* queryString = [NSString stringWithFormat: @"DELETE FROM %@ WHERE %@", name, whereClause];
-			[connection executeQuery: queryString parameterArray: parameters];
+			NSString* pkeyFNames = [[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "];
+			NSString* queryString = [NSString stringWithFormat: @"DELETE FROM %@ WHERE %@ RETURNING %@", name, whereClause, pkeyFNames];
+			PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
 			
-			//Commit only if autocommitting
-			[self endSubtransactionIfNeeded]; 
+			NSMutableArray* objectIDs = [NSMutableArray arrayWithCapacity: [res countOfRows]];
+			NSArray* pkeyfields = [entity primaryKeyFields];
+			NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyfields forKeys: [pkeyfields valueForKey: @"name"]];
+			while ([res advanceRow])
+			{
+				NSDictionary* pkey = [[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict];
+				BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
+															   primaryKeyFields: pkey];
+				[objectIDs addObject: objectID];
+			}
+			
+			NSAssert3 (nil == objectID || (1 == [objectIDs count] && [objectIDs containsObject: objectID]),
+					   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nObjectIDs: %@",
+					   objectID, predicate, objectIDs);
+			
 			rval = objectIDs;
 		}
     }
@@ -999,6 +997,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
         
         //Lock the row
+		//Transaction for locking the rows (?)
 		[self beginIfNeeded];
         [self beginSubtransactionIfNeeded];
         state = kBXPGQueryBegun;
