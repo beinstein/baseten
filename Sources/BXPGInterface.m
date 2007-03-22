@@ -419,7 +419,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				//What to query
 				NSString* queryFields = nil;
 				if (YES == returnFaults)
-					queryFields = [pkeyQNames componentsJoinedByString: @", "]; // FIXME Quote fields
+					queryFields = [pkeyQNames componentsJoinedByString: @", "];
 				else if (nil == excludedFields) 
 					queryFields = [NSString stringWithFormat: @"%@.*", [entity BXPGQualifiedName: connection]];
 				else
