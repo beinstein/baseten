@@ -1387,7 +1387,9 @@ extern void BXInit ()
 	SecTrustRef trust = trustResult.trust;
 	SecTrustResultType result = trustResult.result;
 	
-	enum BXCertificatePolicy policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
+	enum BXCertificatePolicy policy = kBXCertificatePolicyUndefined;
+	if ([policyDelegate respondsToSelector: @selector (BXDatabaseContext:handleInvalidTrust:result:)])
+		policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
 	if (gHaveAppKitFramework && kBXCertificatePolicyUndefined == policy)
 		policy = kBXCertificatePolicyDisplayTrustPanel;
 	
@@ -1418,7 +1420,7 @@ extern void BXInit ()
 - (enum BXSSLMode) sslMode
 {
 	enum BXSSLMode mode = kBXSSLModeDisable;
-	if (NO == mRetryingConnection)
+	if (NO == mRetryingConnection && [policyDelegate respondsToSelector: @selector (BXSSLModeForDatabaseContext:)])
 		mode = [policyDelegate BXSSLModeForDatabaseContext: self];
 	return (kBXSSLModeUndefined == mode ? kBXSSLModePrefer : mode);
 }
