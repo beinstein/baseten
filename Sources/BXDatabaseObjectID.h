@@ -58,10 +58,5 @@
 @end
 
 
-@interface BXDatabaseObjectID (NSCoding) <NSCoding>
-@end
-
-
 @interface BXDatabaseObjectID (NSCopying) <NSCopying>
 @end
-

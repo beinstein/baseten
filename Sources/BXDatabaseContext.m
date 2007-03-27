@@ -1363,10 +1363,6 @@ extern void BXInit ()
         {
             if ([NSNull null] != currentObject)
             {
-#if 0
-                [currentObject setDeleted: NO];
-                [currentObject setLocked: NO forKey: nil];
-#endif
                 [currentObject clearStatus];
                 [iteratedObjects addObject: currentObject];
             }

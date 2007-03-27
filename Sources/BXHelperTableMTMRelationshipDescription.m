@@ -138,12 +138,7 @@
     }
     
     BXDatabaseContext* context = [object databaseContext];
-#if 0
-    //FIXME: this is a bit of a kludge, since entities should be validated by the database interface.
-    //Perhaps the db interface should have the method -correspondingProperties:.
-    [context validateEntity: entity];
-    [context validateEntity: dstEntity];
-#endif
+
     //Make the join using predicates: src --> helper --> dst
     //Use values only in place of src
     NSPredicate* helperToSRCPredicate = 

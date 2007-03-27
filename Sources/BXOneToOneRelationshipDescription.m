@@ -67,12 +67,6 @@
 
 - (int) isToManyFromEntity: (BXEntityDescription *) entity
 {
-#if 0
-    int rval = -1;
-    if ([relationship1 srcEntity] == entity || [relationship2 srcEntity] == entity)
-        rval = 0;
-    return rval;
-#endif
     return 0;
 }
 

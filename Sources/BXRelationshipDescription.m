@@ -138,8 +138,6 @@ NullArray (unsigned int count)
     return rval;
 }
 
-//FIXME: targetEntity is probably always [[[object objectID] entity] targetForRelationship: self]
-//unless it's nil, which is resolved in the method.
 - (id) resolveFrom: (BXDatabaseObject *) object to: (BXEntityDescription *) targetEntity error: (NSError **) error
 {
     id rval = nil;
@@ -297,7 +295,6 @@ NullArray (unsigned int count)
 }
 
 
-//FIXME: the three methods below should probably use correspondingProperties.
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                  to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 {
@@ -310,7 +307,7 @@ NullArray (unsigned int count)
     if (0 < [objectSet count])
     {
         //to-many
-        NSArray* values = [refObject objectsForKeys: dstProperties];
+        NSArray* values = [refObject objectsForKeys: [refEntity correspondingProperties: dstProperties]];
         NSArray* keys = [srcProperties valueForKey: @"name"];
         [[refObject databaseContext] executeUpdateEntity: targetEntity
                                           withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
@@ -336,7 +333,7 @@ NullArray (unsigned int count)
     //to-many
     //Remove objects by setting fkey columns to null. If the objectSet was nil, then remove all objects.
     NSPredicate* predicate = [NSPredicate BXAndPredicateWithProperties: [targetEntity correspondingProperties: srcProperties]
-                                                    matchingProperties: [refObject objectsForKeys: dstProperties]
+                                                    matchingProperties: [refObject objectsForKeys: [refEntity correspondingProperties: dstProperties]]
                                                                   type: NSEqualToPredicateOperatorType];
     if (nil != objectSet)
     {
@@ -371,7 +368,7 @@ NullArray (unsigned int count)
             NSAssert ([refEntity isView] || [updatedEntity isEqual: refEntity], @"Expected to be modifying the correct entity.");
             //This is needed for views.
             updatedEntity = refEntity;
-            values = [target objectsForKeys: dstProperties];
+            values = [target objectsForKeys: [refEntity correspondingProperties: dstProperties]];
             predicate = [[refObject objectID] predicate];
             break;
         case 1:
@@ -379,7 +376,7 @@ NullArray (unsigned int count)
             if (YES == [target isKindOfClass: [BXDatabaseObject class]])
                 target = [NSSet setWithObject: target];
             if (nil != target)
-                values = [refObject objectsForKeys: dstProperties];
+                values = [refObject objectsForKeys: [refEntity correspondingProperties: dstProperties]];
                 
             //Again, this is needed for views
             if (nil != target)

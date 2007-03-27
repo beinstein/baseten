@@ -93,6 +93,13 @@ enum BXPGQueryState
     BOOL clearedLocks;	
 	volatile BOOL invalidCertificate;
 }
+
+- (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity 
+                             withPredicate: (NSPredicate *) predicate 
+                           returningFaults: (BOOL) returnFaults 
+                                     class: (Class) aClass
+								 forUpdate: (BOOL) forUpdate
+                                     error: (NSError **) error;
 @end
 
 

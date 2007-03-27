@@ -368,32 +368,6 @@ static TSNonRetainedObjectSet* gObjectIDs;
 @end
 
 
-//FIXME: this could use some attention.
-@implementation BXDatabaseObjectID (NSCoding)
-- (id) initWithCoder: (NSCoder *) decoder
-{
-    if ((self = [super init]))
-    {
-        mEntity = [[decoder decodeObjectForKey: @"entity"] retain];
-        @synchronized (mPkeyFValues)
-        {
-            mPkeyFValues = [[decoder decodeObjectForKey: @"pkeyFValues"] retain];
-        }
-    }
-    return self;
-}
-
-- (void) encodeWithCoder: (NSCoder *) encoder
-{
-    [encoder encodeObject: mEntity forKey: @"entity"];
-    @synchronized (mPkeyFValues)
-    {
-        [encoder encodeObject: mPkeyFValues forKey: @"pkeyFValues"];
-    }
-}
-@end
-
-
 @implementation BXDatabaseObjectID (NSCopying)
 - (id) copyWithZone: (NSZone *) zone
 {

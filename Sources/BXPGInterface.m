@@ -357,8 +357,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         //This is needed if the entity is passed from one context to another.
         if (nil != [self validateEntity: entity error: error])
 		{
-			//Make the query
-			//FIXME: we should execute the query RETURNING * except for the excluded fields
+			//Inserted values
 			NSString* queryFormat = nil;
 			if (0 == [valueDict count])
 				queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ DEFAULT VALUES RETURNING %%@", [entity BXPGQualifiedName: connection]];
@@ -368,7 +367,21 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					[entity BXPGQualifiedName: connection], (nil == fieldNames ? @"" : [fieldNames componentsJoinedByString: @", "]), 
 					[NSString PGTSFieldAliases: [fieldNames count]]];
 			}
-			queryFormat = [NSString stringWithFormat: queryFormat, [[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
+			
+			//Returned values
+			NSArray* pkeyfields = [entity primaryKeyFields];
+			NSMutableArray* pkeyQNames = [NSMutableArray arrayWithCapacity: [pkeyfields count]];            
+			TSEnumerate (currentField, e, [pkeyfields objectEnumerator])
+				[pkeyQNames addObject: [currentField BXPGEscapedName: connection]];			
+			NSMutableArray* remainingFields = [NSMutableArray arrayWithArray: pkeyQNames];
+			TSEnumerate (currentField, e, [fields objectEnumerator])
+			{
+				if (![currentField isExcluded])
+					[remainingFields addObject: [currentField BXPGEscapedName: connection]];
+			}
+
+			//Make the query
+			queryFormat = [NSString stringWithFormat: queryFormat, [remainingFields componentsJoinedByString: @", "]];
 			res = [connection executeQuery: queryFormat parameterArray: fieldValues];
 			
 			//If registration fails, there should be a suitable object in memory.
@@ -392,11 +405,23 @@ static NSString* SSLMode (enum BXSSLMode mode)
                              withPredicate: (NSPredicate *) predicate 
                            returningFaults: (BOOL) returnFaults 
                                      class: (Class) aClass 
-                                     error: (NSError **) error;
+                                     error: (NSError **) error
+{
+	return [self executeFetchForEntity: entity withPredicate: predicate returningFaults: returnFaults 
+								 class: aClass forUpdate: NO error: error];
+}
+
+- (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity 
+                             withPredicate: (NSPredicate *) predicate 
+                           returningFaults: (BOOL) returnFaults 
+                                     class: (Class) aClass
+								 forUpdate: (BOOL) forUpdate
+                                     error: (NSError **) error
 {
     NSMutableArray* rows = nil;
     NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
     NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+	NSAssert (Nil != aClass, @"Expected class to be set.");
 
     //Begin the exception handling context, since the metadata queries might also fail
     @try
@@ -455,8 +480,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				}
 				
 				//Make the query
-				NSString* query = [NSString stringWithFormat: @"SELECT %@ FROM %@ WHERE %@", 
-					queryFields, fromClause, whereClause];
+				NSString* queryFormat = @"SELECT %@ FROM %@ WHERE %@";
+				if (YES == forUpdate)
+					queryFormat = @"SELECT %@ FROM %@ WHERE %@ FOR UPDATE";
+				NSString* query = [NSString stringWithFormat: queryFormat, queryFields, fromClause, whereClause];
 				
 				//Execute the query
 				NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
@@ -566,7 +593,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
                        objectID, lockedObjectID);
             
             //The run loop probably hasn't ran yet, if we don't have the transaction.
-            //FIXME: this should probably be done in executeDelete as well.
             if ((PQTRANS_INTRANS != [connection transactionStatus]))
             {
                 struct timeval tv = [connection timeout];
@@ -608,89 +634,91 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSArray* objectIDs = nil;
 			if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
 			{
+				updatedPkey = YES;
+
 				//Transaction for locking the rows (?)
 				if (YES == autocommits)
 					[self beginSubtransactionIfNeeded];
-				updatedPkey = YES;
 				
-				//FIXME: Since we are reading committed changes, we should SELECT the object IDs FOR UPDATE here.
-				objectIDs = [context objectIDsForEntity: entity predicate: predicate error: error];
+				//Since we are reading committed changes, SELECT the object IDs FOR UPDATE.
+				NSArray* res = [self executeFetchForEntity: entity withPredicate: predicate returningFaults: YES
+													 class: [entity databaseObjectClass] forUpdate: YES error: error];
+				objectIDs = [res valueForKey: @"objectID"];
 			}
 			
-			//Send the UPDATE query
-			queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@ RETURNING %@", 
-				name, [aDict PGTSSetClauseParameters: parameters], whereClause,
-				[[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
-			PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
-			
-			//Notify only if we are not updating a view.
-			if (NO == [entity isView])
-				[self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
-			
-			[self endSubtransactionIfNeeded]; 
-			
-			//Handle the result and get new pkey values
-			NSDictionary* pkeyDict = nil;
-			if (YES == updatedPkey)
+			if (nil == *error)
 			{
-				if (1 == [objectIDs count])
-				{                
-					//If 1 == [objectIDs count], then information about last modification 
-					//can be used, since the modification is be unambiguous.
-					NSDictionary* lastModification = [[self lastModificationForEntity: entity] objectForKey: kPGTSRowsKey];
-					NSArray* pkeyFValues = [lastModification objectsForKeys: pkeyFNames
-															 notFoundMarker: nil];
-					pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFields];
+				//Send the UPDATE query
+				queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@ RETURNING %@", 
+					name, [aDict PGTSSetClauseParameters: parameters], whereClause,
+					[[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
+				PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
+				
+				//Notify only if we are not updating a view.
+				if (NO == [entity isView])
+					[self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
+				
+				[self endSubtransactionIfNeeded]; 
+				
+				//Handle the result and get new pkey values
+				NSDictionary* pkeyDict = nil;
+				if (YES == updatedPkey)
+				{
+					if (1 == [objectIDs count])
+					{                
+						//If 1 == [objectIDs count], then information about last modification 
+						//can be used, since the modification is unambiguous.
+						NSDictionary* lastModification = [[self lastModificationForEntity: entity] objectForKey: kPGTSRowsKey];
+						NSArray* pkeyFValues = [lastModification objectsForKeys: pkeyFNames
+																 notFoundMarker: nil];
+						pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFields];
+					}
+					else
+					{
+						//Updating the primary key is safer to do one by one, since now
+						//we don't check the values from the database.
+						pkeyDict = [aDict BXTranslateUsingKeys: translationDict];
+					}
 				}
 				else
 				{
-					//Updating the primary key is safer to do one by one, since now
-					//we don't check the values from the database.
-					pkeyDict = [aDict BXTranslateUsingKeys: translationDict];
-				}
-			}
-			else
-			{
-				//Otherwise get the ids from the result
-				NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-				NSAssert (nil != entity, @"Expected entity not to be nil.");
-				while (([res advanceRow]))
-				{
-					BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields:
-						[[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict]];
-					[ids addObject: currentID];
-				}
-				rval = ids;
-				objectIDs = ids;
-			}
-			
-			//Update the object
-			//Also mark the objects locked        
-			TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-			{
-				BXDatabaseObject* object = [context registeredObjectWithID: currentID];
-				if (nil != object)
-				{
-					[object setCachedValuesForKeysWithDictionary: aDict];
-					//Object ID remembers the pkey
-					[object removePrimaryKeyValuesFromStore];
-					//This probably does only harm
-#if 0
-					[object setLockedForKey: nil]; //TODO: set the key accordingly
-#endif
-					
-					//Update the object ID. 
-					if (nil != pkeyDict)
+					//Otherwise get the ids from the result
+					NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
+					NSAssert (nil != entity, @"Expected entity not to be nil.");
+					while (([res advanceRow]))
 					{
-						[context unregisterObject: object];
-						[currentID replaceValuesWith: pkeyDict];
-						[context registerObject: object];
+						BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields:
+							[[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict]];
+						[ids addObject: currentID];
+					}
+					rval = ids;
+					objectIDs = ids;
+				}
+				
+				//Update the object
+				//Also mark the objects locked        
+				TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+				{
+					BXDatabaseObject* object = [context registeredObjectWithID: currentID];
+					if (nil != object)
+					{
+						[object setCachedValuesForKeysWithDictionary: aDict];
+						//Object ID remembers the pkey
+						[object removePrimaryKeyValuesFromStore];
+						
+						//Update the object ID. 
+						if (nil != pkeyDict)
+						{
+							[context unregisterObject: object];
+							[currentID replaceValuesWith: pkeyDict];
+							[context registerObject: object];
+						}
 					}
 				}
 			}
 		}
-    }
-    @catch (BXException* exception)
+	}
+	@catch (BXException* exception)
     {
         [self packError: error exception: exception];
     }
@@ -1063,7 +1091,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 - (BOOL) messagesForViewModifications
 {
-    //FIXME: At the moment this means 
+    //At the moment this means:
     //"Messages for view modifications that originate from the tables the view is based on."
     return NO;
 }
@@ -1278,21 +1306,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                                                      selector: @selector (notifyConnectionWillClose:)
                                                          name: kPGTSWillDisconnectNotification 
                                                        object: notifyConnection];
-      
-            //FIXME: reconsider this. Do we need the notifications in all cases from dependent relations? Also, -validateEntity: already seems to be recursive.
-#if 0
-            if (YES == [entity isView])
-            {
-                //Throws on error
-                TSEnumerate (currentEntity, e, [[entity entitiesBasedOn] objectEnumerator])
-                {
-                    [self observeIfNeeded: currentEntity error: error];
-                    if (nil != *error)
-                        break;
-                }
-            }
-#endif
-            
+                  
             rval = (nil == *error);
         }
         @catch (PGTSQueryException* exception)
@@ -1386,6 +1400,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSAssert (entity && whereClause, @"Expected to be called with parameters.");
     if (NO == autocommits)
     {
+		NSAssert (PQTRANS_IDLE == [notifyConnection transactionStatus], @"Expected notifyConnection not to have transaction.");
+
         PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
         PGTSTableInfo* table = [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
         
@@ -1404,8 +1420,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSString* query = [NSString stringWithFormat: format, funcname, SavepointIndex(),
             [pkeyFNames componentsJoinedByString: @"\", \""], [entity BXPGQualifiedName: notifyConnection], whereClause];
-        //FIXME: error handling?
-        [notifyConnection executeQuery: query parameterArray: parameters];
+
+        //No error handling since all this is optional.
+		[notifyConnection executeQuery: query parameterArray: parameters];
     }
 }
 

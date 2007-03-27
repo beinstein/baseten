@@ -528,7 +528,7 @@ static NSMutableSet* gViewEntities;
 	{
         [mRelationships setObject: relationship forKey: relname];
 		
-		//FIXME: this is a hack.
+		//FIXME: this is a hack to get the relationships indexed by their alternative names.
 		if (NO == [relationship isOneToOne] && NO == [relationship isManyToMany])
 			[mRelationships setObject: relationship forKey: [(BXRelationshipDescription *) relationship alternativeNameFromEntity: self]];
 	}
@@ -575,7 +575,8 @@ static NSMutableSet* gViewEntities;
 #ifndef NS_BLOCK_ASSERTIONS
             TSEnumerate (currentField, e, [properties objectEnumerator])
             {
-				if (nil == [mAttributes objectForKey: [currentField name]])
+				if ([currentField entity] != self || 
+					nil == [mAttributes objectForKey: [currentField name]])
                 {
                     rval = nil;
                     break;
@@ -593,19 +594,9 @@ static NSMutableSet* gViewEntities;
                 BXPropertyDescription* prop = [mAttributes objectForKey: propertyName];
 				if (nil == prop)
 				{
-#if 0
-					//If fields haven't been received yet, we can risk making a nonexistent property
-					if (nil == mAttributes) 
-						prop = [BXPropertyDescription propertyWithName: propertyName entity: self];
-					else
-					{
-#endif
-						[[NSException exceptionWithName: NSInternalInconsistencyException 
-												 reason: [NSString stringWithFormat: @"Nonexistent property %@ given", currentProperty]
-											   userInfo: nil] raise];
-#if 0
-					}
-#endif
+					[[NSException exceptionWithName: NSInternalInconsistencyException 
+											 reason: [NSString stringWithFormat: @"Nonexistent property %@ given", currentProperty]
+										   userInfo: nil] raise];
 				}
                 [rval addObject: prop];
             }
