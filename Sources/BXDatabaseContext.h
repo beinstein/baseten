@@ -79,6 +79,7 @@
     BOOL									mRetainRegisteredObjects;
 	BOOL									mUsesKeychain;
 	BOOL									mCanConnect;
+	BOOL									mDidDisconnect;
 }
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
@@ -104,6 +105,7 @@
 
 - (void) connect;
 - (void) connectIfNeeded: (NSError **) error;
+- (void) disconnect; /* Only for ending asynchronous connection attempt */
 
 - (BXDatabaseObject *) registeredObjectWithID: (BXDatabaseObjectID *) objectID;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs;

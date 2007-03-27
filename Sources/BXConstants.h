@@ -67,7 +67,8 @@ enum BXError
 	kBXErrorObjectNotFound,
     kBXErrorMalformedDatabaseURI,
 	kBXErrorAuthenticationFailed,
-	kBXErrorNullConstraintNotSatisfied
+	kBXErrorNullConstraintNotSatisfied,
+	kBXErrorSSLError
 };
 
 enum BXModificationType

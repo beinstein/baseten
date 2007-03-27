@@ -307,6 +307,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	[connection connectAsync];
 }
 
+- (void) disconnect
+{
+	if (CONNECTION_OK != [connection connectionStatus])
+		[connection disconnect];
+}
+
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
 {
 	NSArray* rval = nil;
@@ -1738,8 +1744,18 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		nil];
 	
 	int errorCode = kBXErrorConnectionFailed;
-	if (PGCONN_AUTH_FAILURE == [aConnection errorCode])
-		errorCode = kBXErrorAuthenticationFailed;
+	int receivedCode = [aConnection errorCode];
+	switch (receivedCode)
+	{
+		case PGCONN_AUTH_FAILURE:
+			errorCode = kBXErrorAuthenticationFailed;
+			break;
+		case PGCONN_SSL_ERROR:
+			errorCode = kBXErrorSSLError;
+			break;
+		default: 
+			break;
+	}
 	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: errorCode userInfo: userInfo];
 	[context connectedToDatabase: NO async: YES error: &error];
 }

@@ -277,6 +277,15 @@ PGTSSSLConnectionExIndex ()
 	PQfinish (connection);
 	connection = NULL;
 }	
+
+- (void) setErrorMessage: (NSString *) aMessage
+{
+	if (errorMessage != aMessage)
+	{
+		[errorMessage release];
+		errorMessage = [aMessage retain];
+	}
+}
 @end
 
 
@@ -304,8 +313,8 @@ PGTSSSLConnectionExIndex ()
 
 - (void) succeededToCopyData: (NSData *) data
 {
-    NSString* errorMessage = nil;
-    [workerProxy endCopyAndAccept2: [delegate PGTSConnection: self acceptCopyingData: data errorMessage: &errorMessage]
+    NSString* message = nil;
+    [workerProxy endCopyAndAccept2: [delegate PGTSConnection: self acceptCopyingData: data errorMessage: &message]
                       errorMessage: errorMessage messageWhenDone: YES];
 }
 
@@ -443,10 +452,17 @@ PGTSSSLConnectionExIndex ()
                     break;
             } //switch
 
-            [self setConnectionStatus];
-                            
-            if (0 >= selectStatus || YES == stop)
+            [self updateConnectionStatus];
+			
+			if (0 == selectStatus)
+			{
+				[self setErrorMessage: NSLocalizedString (@"Connection timed out.", @"Error message for connection failure")];
+				break;
+			}
+            else if (0 >= selectStatus || YES == stop)
+			{
                 break;
+			}
         }
         
         if (YES == rval && CONNECTION_OK == connectionStatus)
@@ -527,7 +543,7 @@ PGTSSSLConnectionExIndex ()
 }
 
 /** Set the connection status after we have made the connection */
-- (void) setConnectionStatus
+- (void) updateConnectionStatus
 {
     //KVO is not available on Mac OS X 10.2
     static BOOL allowKVO = YES;
@@ -541,10 +557,10 @@ PGTSSSLConnectionExIndex ()
             NS_HANDLER
                 if ([[localException name] isEqualToString: NSInvalidArgumentException])
                     allowKVO = NO;
-                NS_ENDHANDLER
+			NS_ENDHANDLER
         }
-            connectionStatus = tempStatus;
-            if (YES == allowKVO) [self didChangeValueForKey: @"connectionStatus"];
+		connectionStatus = tempStatus;
+		if (YES == allowKVO) [self didChangeValueForKey: @"connectionStatus"];
     }
 }
 

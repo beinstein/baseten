@@ -61,12 +61,18 @@
 - (id) initWithContext: (BXDatabaseContext *) aContext;
 - (void) setDatabaseURI: (NSURL *) anURI;
 
-/** \name Capabilities */
+/** 
+ * \internal
+ * \name Capabilities 
+ */
 //@{
 - (BOOL) messagesForViewModifications;
 //@}
 
-/** \name Queries */
+/** 
+ * \internal
+ * \name Queries 
+ */
 //@{
 - (id) createObjectForEntity: (BXEntityDescription *) entity withFieldValues: (NSDictionary *) fieldValues
                        class: (Class) aClass error: (NSError **) error;
@@ -86,11 +92,13 @@
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error;
 
 /** 
+ * \internal
  * Lock an object asynchronously.
  */
 - (void) lockObject: (BXDatabaseObject *) object key: (id) key lockType: (enum BXObjectLockStatus) type
              sender: (id <BXObjectAsynchronousLocking>) sender;
 /**
+ * \internal
  * Unlock a locked object synchronously.
  */
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey;
@@ -98,10 +106,14 @@
 
 - (BOOL) connected;
 
-/** \name Connecting to the database */
+/** 
+ * \internal
+ * \name Connecting to the database 
+ */
 //@{
 - (void) connect: (NSError **) error;
 - (void) connectAsync: (NSError **) error;
+- (void) disconnect;
 //@}
 
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
@@ -113,7 +125,10 @@
 								types: (enum BXRelationshipType) typeBitmap
 								error: (NSError **) error;
 
-/** \name Transactions */
+/**
+ * \internal
+ * \name Transactions 
+ */
 //@{
 - (void) rollback;
 - (BOOL) save: (NSError **) error;

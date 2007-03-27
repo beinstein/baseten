@@ -99,6 +99,7 @@
     }
     else
     {
+		[databaseContext disconnect];
 		[databaseContext BXConnectionSetupManagerFinishedAttempt];
         [panel end];
     }
@@ -132,6 +133,7 @@
     {
         [mAuthenticationPanel end];
         [self setAuthenticationPanel: nil];
+		[databaseContext disconnect];
 		[databaseContext BXConnectionSetupManagerFinishedAttempt];
     }
 }
@@ -173,6 +175,7 @@
             
             NSAlert* alert = [NSAlert alertWithError: error];
             [alert beginSheetModalForWindow: nil modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
+			[databaseContext BXConnectionSetupManagerFinishedAttempt];
         }
     }
     else

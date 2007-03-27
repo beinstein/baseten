@@ -248,6 +248,7 @@ extern void BXInit ()
 - (void) connectIfNeeded: (NSError **) error
 {
     NSError* localError = nil;
+	mDidDisconnect = NO;
     if ([self checkDatabaseURI: &localError])
     {
         if (NO == [self isConnected])
@@ -277,6 +278,7 @@ extern void BXInit ()
 - (void) connect
 {
 	NSError* localError = nil;
+	mDidDisconnect = NO;
 	if ([self checkDatabaseURI: &localError])
 	{
 		if (NO == [self isConnected])
@@ -301,11 +303,25 @@ extern void BXInit ()
 }
 
 /**
+ * Disconnect from a database during asynchronous connection attempt.
+ * Cancels a connection attempt. Presently this method should be invoked after -connect or -connect: if desired.
+ * After the connection has been made, it has no effect.
+ */
+- (void) disconnect
+{
+	if (NO == [self isConnected])
+	{
+		mDidDisconnect = YES;
+		[mDatabaseInterface disconnect];
+	}
+}
+
+/**
  * Connection status.
  */
 - (BOOL) isConnected
 {
-	return [mDatabaseInterface connected];
+	return [[self databaseInterface] connected];
 }
 
 - (BOOL) hasSeenEntity: (BXEntityDescription *) entity
@@ -1116,7 +1132,26 @@ extern void BXInit ()
 	{
 		if (NO == mDisplayingSheet)
 		{
-			if (NO == mRetryingConnection)
+			NSString* domain = [*error domain];
+			int code = [*error code];
+			BOOL authenticationFailed = NO;
+			BOOL certificateVerifyFailed = NO;
+			if ([domain isEqualToString: kBXErrorDomain])
+			{
+				switch (code)
+				{
+					case kBXErrorAuthenticationFailed:
+						authenticationFailed = YES;
+						break;
+					case kBXErrorSSLError:
+						certificateVerifyFailed = YES;
+						break;
+					default:
+						break;
+				}
+			}
+			
+			if (!mRetryingConnection && (authenticationFailed || certificateVerifyFailed))
 			{
 				mRetryingConnection = YES;
 				[self connect];
@@ -1124,9 +1159,7 @@ extern void BXInit ()
 			else
 			{
                 //If we have a keychain item, mark it invalid.
-                if (NULL != mKeychainPasswordItem && NULL != error &&
-					[[*error domain] isEqualToString: kBXErrorDomain] &&
-					[*error code] == kBXErrorAuthenticationFailed)
+                if (NULL != mKeychainPasswordItem && authenticationFailed)
                 {
                     //FIXME: enable this after debugging
 #if 0
@@ -1139,10 +1172,15 @@ extern void BXInit ()
                 }
                 
 				mRetryingConnection = NO;
-				[self setCanConnect: YES];
+				
+				//If we have a connection setup manager, it will call a method when it's finished.
+				if (nil == mConnectionSetupManager)
+					[self setCanConnect: YES];
+				
+				//Don't set the error if we were supposed to disconnect.
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 																			 object: self 
-																		   userInfo: [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey]];
+																		   userInfo: (mDidDisconnect ? nil : [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey])];
 				[[NSNotificationCenter defaultCenter] postNotification: notification];
 				
 				//Strip password from the URI
