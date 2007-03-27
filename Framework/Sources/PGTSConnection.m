@@ -146,7 +146,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
         messageDelegateAfterConnecting = YES;
         //socket is managed by the worker thread
         cancelRequest = NULL;
-        timeout.tv_sec = 15;
+        timeout.tv_sec = 10;
         timeout.tv_usec = 0;
         
         workerThreadLock = [[NSLock alloc] init];
@@ -227,6 +227,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
     [parameterCounts release];
 	[deserializationDictionary release];
     [initialCommands release];
+	[errorMessage release];
     
     log4Debug (@"Deallocating db connection: %p", self);
     [super dealloc];
@@ -482,6 +483,13 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 {
     NSMutableDictionary* connectionDict = [[kPGTSDefaultConnectionDictionary mutableCopy] autorelease];
     [connectionDict addEntriesFromDictionary: userDict];
+	
+	if (nil == [connectionDict objectForKey: kPGTSConnectTimeoutKey])
+	{
+		int seconds = [self timeout].tv_sec;
+		[connectionDict setObject: [NSNumber numberWithInt: seconds] forKey: kPGTSConnectTimeoutKey];
+	}
+	
     [self setConnectionString: [connectionDict PGTSConnectionString]];
 }
 
@@ -808,9 +816,11 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 - (NSString *) errorMessage
 {
     NSString* rval = nil;
-    char* errorMessage = PQerrorMessage (connection);
-    if (0 != strlen (errorMessage))
-        rval = [NSString stringWithUTF8String: errorMessage];
+    char* message = PQerrorMessage (connection);
+    if (0 != strlen (message))
+        rval = [NSString stringWithUTF8String: message];
+	else
+		rval = errorMessage;
 	return rval;
 }
 

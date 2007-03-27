@@ -72,6 +72,8 @@
 	volatile ConnStatusType connectionStatus;
     struct timeval timeout;
 	
+	NSString* errorMessage;
+	
 	id <PGTSCertificateVerificationDelegate> certificateVerificationDelegate;
 
 	BOOL connectsAutomatically;

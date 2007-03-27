@@ -493,14 +493,14 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
  * \param errorMessage Custom error message, may be nil
  * \param messageWhenDone Whether to send the results to the delegate
  */
-- (int) endCopyAndAccept2: (BOOL) accept errorMessage: (NSString *) errorMessage messageWhenDone: (BOOL) messageWhenDone
+- (int) endCopyAndAccept2: (BOOL) accept errorMessage: (NSString *) localErrorMessage messageWhenDone: (BOOL) messageWhenDone
 {
     int rval = 0;
-    if (NO == accept && nil == errorMessage)
+    if (NO == accept && nil == localErrorMessage)
         errorMessage = NSLocalizedString (@"Copy cancelled", @"User abort");
     
     [connectionLock lock];
-    SendQuery (rval = PQputCopyEnd (connection, [errorMessage UTF8String]));
+    SendQuery (rval = PQputCopyEnd (connection, [localErrorMessage UTF8String]));
     [connectionLock unlock];
     
     if (messageWhenDone)

@@ -53,6 +53,7 @@
 - (int) sendResultsToDelegate: (int) status;
 - (void) handleFailedQuery;
 - (void) disconnectAndCleanup;
+- (void) setErrorMessage: (NSString *) aMessage;
 @end
 
 
@@ -72,5 +73,5 @@
 - (void) logNotice: (id) anObject;
 - (void) logNotification: (id) anObject;
 - (void) postPGnotifications;
-- (void) setConnectionStatus;
+- (void) updateConnectionStatus;
 @end
