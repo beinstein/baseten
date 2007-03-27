@@ -161,6 +161,7 @@ extern void BXInit ()
         mLogsQueries = (NULL != logEnv && strcmp ("YES", logEnv));
         mDeallocating = NO;
         mRetainRegisteredObjects = NO;
+		mCanConnect = YES;
     }
     return self;
 }
@@ -249,8 +250,9 @@ extern void BXInit ()
     NSError* localError = nil;
     if ([self checkDatabaseURI: &localError])
     {
-        if (NO == [[self databaseInterface] connected])
+        if (NO == [self isConnected])
         {
+			[self setCanConnect: NO];
 			[self lazyInit];
 			[mDatabaseInterface connect: &localError];
 			
@@ -277,18 +279,20 @@ extern void BXInit ()
 	NSError* localError = nil;
 	if ([self checkDatabaseURI: &localError])
 	{
-		if (NO == [[self databaseInterface] connected])
+		if (NO == [self isConnected])
 		{
 			[self lazyInit];
 			[mDatabaseInterface connectAsync: &localError];
 		}
 	}
 	
-	if (nil != localError)
+	if (nil == localError)
+		[self setCanConnect: NO];
+	else
 	{
 		[mDatabaseInterface release];
 		mDatabaseInterface = nil;
-
+		
         NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
                                                                      object: self
                                                                    userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
@@ -505,6 +509,17 @@ extern void BXInit ()
 	}
 	
     free (passwordData);
+}
+
+/**
+ * Establishing a connection.
+ * Returns a boolean indicating whether connecting can be attempted using -connect:.
+ * Presently this method returns YES when connection attempt hasn't already been started and after
+ * the attempt has failed.
+ */
+- (BOOL) canConnect
+{
+	return mCanConnect;
 }
 
 @end
@@ -1124,6 +1139,7 @@ extern void BXInit ()
                 }
                 
 				mRetryingConnection = NO;
+				[self setCanConnect: YES];
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 																			 object: self 
 																		   userInfo: [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey]];
@@ -1641,13 +1657,17 @@ extern void BXInit ()
  */
 - (IBAction) connect: (id) sender
 {
-	if (nil == mConnectionSetupManager)
+	if (NO == [[self databaseInterface] connected])
 	{
-		mConnectionSetupManager = [self copyDefaultConnectionSetupManager];
-		[mConnectionSetupManager setDatabaseContext: self];
-		[mConnectionSetupManager setModalWindow: modalWindow];
+		if (nil == mConnectionSetupManager)
+		{
+			mConnectionSetupManager = [self copyDefaultConnectionSetupManager];
+			[mConnectionSetupManager setDatabaseContext: self];
+			[mConnectionSetupManager setModalWindow: modalWindow];
+		}
+		[mConnectionSetupManager connect: sender];
+		[self setCanConnect: NO];
 	}
-	[mConnectionSetupManager connect: sender];
 }
 @end
 
@@ -2041,6 +2061,16 @@ extern void BXInit ()
     [mSeenEntities addObject: anEntity];
 }
 
+- (void) setCanConnect: (BOOL) aBool
+{
+	if (aBool != mCanConnect)
+	{
+		[self willChangeValueForKey: @"canConnect"];
+		mCanConnect = aBool;
+		[self didChangeValueForKey: @"canConnect"];
+	}
+}
+
 @end
 
 
@@ -2226,4 +2256,13 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     }
 }
 
+@end
+
+
+@implementation BXDatabaseContext (Callbacks)
+- (void) BXConnectionSetupManagerFinishedAttempt
+{
+	if (NO == [self isConnected])
+		[self setCanConnect: YES];
+}
 @end

@@ -80,6 +80,7 @@ struct trustResult
 - (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
+- (void) setCanConnect: (BOOL) aBool;
 @end
 
 
@@ -98,4 +99,9 @@ struct trustResult
 - (BOOL) fetchPasswordFromKeychain;
 - (void) clearKeychainPasswordItem;
 - (void) setKeychainPasswordItem: (SecKeychainItemRef) anItem;
+@end
+
+
+@interface BXDatabaseContext (Callbacks)
+- (void) BXConnectionSetupManagerFinishedAttempt;
 @end

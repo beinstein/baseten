@@ -91,6 +91,16 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	return YES;
 }
 
+- (void) setConnecting: (BOOL) aBool
+{
+	if (mIsConnecting != aBool)
+	{
+		[self willChangeValueForKey: @"isConnecting"];
+		mIsConnecting = aBool;
+		[self didChangeValueForKey: @"isConnecting"];
+	}
+}
+
 - (BOOL) isConnecting
 {
 	return mIsConnecting;
@@ -200,9 +210,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 - (void) endConnecting: (NSNotification *) notification
 {
-    [self willChangeValueForKey: @"isConnecting"];
-    mIsConnecting = NO;
-    [self didChangeValueForKey: @"isConnecting"];    
+	[self setConnecting: NO];
 }
 
 - (void) setDatabaseName: (NSString *) aName
@@ -218,6 +226,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
 	return mBonjourCancelButton;
 }
+
 @end
 
 
@@ -256,16 +265,13 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (IBAction) connect: (id) sender
 {
 	[mNetServiceBrowser stop];
-	//FIXME: should we start again when canceling?
-	
-	[self willChangeValueForKey: @"isConnecting"];
-	mIsConnecting = YES;
-	[self didChangeValueForKey: @"isConnecting"];
+	[self setConnecting: YES];
     
     NSURL* databaseURI = nil;
 	NSURL* baseURI = [mDatabaseContext databaseURI];
 	if (nil == baseURI)
 		baseURI = [NSURL URLWithString: @"pgsql:///"];
+	
     if (YES == mUseHostname)
     {
         NSString* scheme = [baseURI scheme];
@@ -306,8 +312,6 @@ static NSArray* gManuallyNotifiedKeys = nil;
     }
     else
     {
-		//FIXME: remove NSLog
-		NSLog (@"databaseURI: %@", databaseURI);
         [mDatabaseContext setDatabaseURI: databaseURI];
         [mDelegate BXBeginConnecting];
     }
@@ -315,9 +319,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 - (IBAction) cancelConnecting: (id) sender
 {
-	[self willChangeValueForKey: @"isConnecting"];
-	mIsConnecting = NO;
-	[self didChangeValueForKey: @"isConnecting"];
+	[self setConnecting: NO];
     
     [mDelegate BXCancelConnecting];
 }

@@ -74,11 +74,11 @@
     BOOL									mLogsQueries;
     BOOL									mAutocommits;
     BOOL									mDeallocating;
-	BOOL									mConnectingAsync;
 	BOOL									mDisplayingSheet;
 	BOOL									mRetryingConnection;
     BOOL									mRetainRegisteredObjects;
 	BOOL									mUsesKeychain;
+	BOOL									mCanConnect;
 }
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
@@ -118,6 +118,8 @@
 - (BOOL) usesKeychain;
 - (void) setUsesKeychain: (BOOL) usesKeychain;
 - (void) storeURICredentials;
+
+- (BOOL) canConnect;
 @end
 
 

@@ -74,6 +74,7 @@
 
 - (BOOL) canConnect;
 - (BOOL) isConnecting;
+- (void) setConnecting: (BOOL) aBool;
 - (BOOL) showsOtherButton;
 - (BOOL) showsCancelButton;
 - (void) setShowsCancelButton: (BOOL) aBool;

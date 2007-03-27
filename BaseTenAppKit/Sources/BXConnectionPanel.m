@@ -170,6 +170,12 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	[mViewManager setDatabaseName: aName];
 }
 
+- (void) end
+{
+	[super end];
+	[mViewManager setConnecting: NO];
+}
+
 @end
 
 

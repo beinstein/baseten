@@ -99,6 +99,7 @@
     }
     else
     {
+		[databaseContext BXConnectionSetupManagerFinishedAttempt];
         [panel end];
     }
 }
@@ -131,6 +132,7 @@
     {
         [mAuthenticationPanel end];
         [self setAuthenticationPanel: nil];
+		[databaseContext BXConnectionSetupManagerFinishedAttempt];
     }
 }
 

@@ -169,12 +169,20 @@ const float kSizeDiff = 25.0;
         change = YES;
     }
     
-    BOOL isVisible = [self isVisible];
     if (change)
+	{
+		BOOL isVisible = [self isVisible];
         [self setFrame: frame display: isVisible animate: isVisible];
+	}
     
 	[mMessageTextField setObjectValue: aString];
     [self makeFirstResponder: mCredentialFieldMatrix];
+}
+
+- (void) end
+{
+	[super end];
+	[self setAuthenticating: NO];
 }
 @end
 
