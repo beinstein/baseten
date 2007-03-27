@@ -791,8 +791,8 @@ extern void BXInit ()
 					BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 					if (nil == localError)
 					{
-						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
 						objectID = [mModifiedObjectIDs BXConditionalAdd: objectID];
+						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
 						
 						//For redo
 						TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
@@ -902,7 +902,10 @@ extern void BXInit ()
 					[registeredObject setDeleted: kBXObjectDeleted];
 					[registeredObject setCreatedInCurrentTransaction: NO];
 				}
-			}			
+			}
+			
+			[registeredObject clearStatus];
+			[registeredObject setDeleted: kBXObjectExists];
         }
         [mModifiedObjectIDs removeAllObjects];
         //In case of rollback, the objects deleted during the last transaction 
