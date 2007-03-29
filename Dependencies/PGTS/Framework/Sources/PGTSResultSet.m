@@ -205,7 +205,7 @@ static unsigned int _serial;
 
 - (id) valueForKey: (NSString *) aKey
 {
-    //FIXME: unknown key? We probably shouldn't return nil
+	//Unknown key raises an exception.
     return [self valueForFieldNamed: aKey];
 }
 

@@ -78,8 +78,9 @@ PGTSSSLConnectionExIndex ()
 - (void) didChangeValueForKey: (NSString *) key;
 @end
 
-//FIXME: what is this?
+
 #if 0
+//Check for key-value observing capability.
 @interface NSObject (PGTSKVO)
 + (BOOL) PGTSAllowKVO;
 @end
@@ -166,11 +167,8 @@ PGTSSSLConnectionExIndex ()
                                                  object: self
                                                userInfo: userInfo];
     if (delegateProcessesNotices)
-    {
-        //[delegate PGTSConnection: nil receivedNotice: notification]; //FIXME: come up with a way to pass the connection object
-        //update: I really cannot understand, what was supposed to be the problem with this. Can't I just use 'self'?
         [delegate PGTSConnection: self receivedNotice: notification];
-    }
+
     [self logNotice: message];
 }
 
