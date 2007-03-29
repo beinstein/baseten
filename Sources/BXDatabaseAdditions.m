@@ -125,7 +125,8 @@
     NSMutableData* rval = [NSMutableData data];
     unsigned int length = [self length];
     const char* bytes = [self bytes];
-    char* hex = malloc (3 * sizeof (char));
+	const size_t hexlength = 3;
+    char* hex = malloc (hexlength * sizeof (char));
     for (int i = 0; i < length; i++)
     {
         unsigned char c = bytes [i];
@@ -134,8 +135,8 @@
             [rval appendBytes: &c length: sizeof (char)];
         else
         {
-            sprintf (hex, "%%%02x", c);
-            [rval appendBytes: hex length: 3 * sizeof (char)];
+            snprintf (hex, hexlength, "%%%02x", c);
+            [rval appendBytes: hex length: hexlength * sizeof (char)];
         }
     }
     free (hex);

@@ -61,10 +61,7 @@
 #define BXAssert2( ASSERTION, MESSAGE, ARG1, ARG2 )   if (!( ASSERTION )) BXHandleAssertionError( __FILE__, __LINE__, [NSString stringWithFormat: MESSAGE, ARG1, ARG2] )
 static void BXHandleAssertionError (char* file, int line, NSString* message)
 {
-    //FIXME: write some c functions in Log4Cocoa (L4CLogger.h) and change this to use one of them
-    fprintf (stderr, "Assertion failed in %s line %d", file, line);
-    if (nil != message)
-        fprintf (stderr, "\t%s\n", [message UTF8String]);
+	log4CError (@"Assertion failed in %s line %d (%@).", file, line, message);
 }
 
 static unsigned int savepointIndex;
@@ -854,17 +851,18 @@ static NSString* SSLMode (enum BXSSLMode mode)
 								types: (enum BXRelationshipType) typeBitmap
 								error: (NSError **) error
 {    
-    //FIXME: Some errors might not be handled. Set the error parameter when required.
-    NSAssert (nil != srcEntity, nil);
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    NSAssert (nil != srcEntity, @"Expected to have srcEntity.");
+    NSAssert (NULL != error, @"Expected error to be set.");
     
+	NSMutableArray* rval = nil;
+	
     NSMutableArray* types = [NSMutableArray arrayWithObject: @"t"];
     if (typeBitmap == kBXRelationshipUndefined || typeBitmap & kBXRelationshipOneToOne)
         [types addObject: @"o"];
     if (typeBitmap == kBXRelationshipUndefined || typeBitmap & kBXRelationshipManyToMany)
         [types addObject: @"m"];
     
-    //FIXME: this could be a stored procedure or something
+    //FIXME: these could be stored procedures or something
     NSString* query = nil;
     if (nil == givenDSTEntity)
     {
@@ -897,114 +895,122 @@ static NSString* SSLMode (enum BXSSLMode mode)
             " ORDER BY type DESC";
     }
     
-    PGTSResultSet* res = [connection executeQuery: query parameters:
-        [srcEntity schemaName], [srcEntity name], types, [givenDSTEntity schemaName], [givenDSTEntity name]];
- 
-    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-    NSMutableDictionary* manyToOne = [NSMutableDictionary dictionary];
-    while ([res advanceRow])
-    {
-		if (nil != *error) break;
+	@try
+	{
+		PGTSResultSet* res = [connection executeQuery: query parameters:
+			[srcEntity schemaName], [srcEntity name], types, [givenDSTEntity schemaName], [givenDSTEntity name]];
 		
-        unichar type = [[res valueForKey: @"type"] characterAtIndex: 0];
-        Class relationshipClass = Nil;
-        switch (type)
-        {
-            case 'o':
-                relationshipClass = [BXOneToOneRelationshipDescription class];
-                //Fall through on purpose
-            case 'm':
-            {
-                if (Nil == relationshipClass)
-                    relationshipClass = [BXHelperTableMTMRelationshipDescription class];
-                
-                NSArray* conoids = [res valueForKey: @"refconoids"];
-                NSArray* rels = [manyToOne objectsForKeys: conoids notFoundMarker: [NSNull null]];
-                NSAssert (NO == [rels containsObject: [NSNull null]], nil);
-                NSAssert (2 == [rels count], nil);
-                
-                id rel = [relationshipClass relationshipWithRelationship1: [rels objectAtIndex: 0]
-                                                            relationship2: [rels objectAtIndex: 1]];
-                NSString* relationName = [res valueForKey: @"dstname"];
-                if ('m' == type)
-                    [rel setName: relationName];
-                [rval addObject: rel];
-                break;
-            }
-            case 't':
-            {
-                NSNumber* conoid = [res valueForKey: @"conoid"];
-                
-                //Go through the source columns' names
-                NSMutableArray* srcProperties = nil;
-                NSMutableArray* dstProperties = nil;
-                BXEntityDescription* srcEntity = [context entityForTable: [res valueForKey: @"srcrelname"]
-                                                                inSchema: [res valueForKey: @"srcnspname"]
-                                                                   error: error];
-				if (nil != *error)
+		rval = [NSMutableArray arrayWithCapacity: [res countOfRows]];
+		NSMutableDictionary* manyToOne = [NSMutableDictionary dictionary];
+		while ([res advanceRow])
+		{
+			if (nil != *error) break;
+			
+			unichar type = [[res valueForKey: @"type"] characterAtIndex: 0];
+			Class relationshipClass = Nil;
+			switch (type)
+			{
+				case 'o':
+					relationshipClass = [BXOneToOneRelationshipDescription class];
+					//Fall through on purpose
+				case 'm':
 				{
-					//Continue we were not able to observe the entity.
-					if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
-						*error = nil;
-					break;
-				}
-				
-                BXEntityDescription* dstEntity = [context entityForTable: [res valueForKey: @"dstrelname"]
-                                                                inSchema: [res valueForKey: @"dstnspname"]
-                                                                   error: error];
-				if (nil != *error)
-				{
-					//Continue we were not able to observe the entity.
-					if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
-						*error = nil;
-					break;
-				}
-				
-                {
-					NSAssert ([srcEntity isValidated], @"Expected srcEntity to have been validated.");
-                    NSArray* srcFNames = [res valueForKey: @"srcfnames"];
-                    NSDictionary* srcAttributes = [srcEntity attributesByName];
-                    srcProperties = [NSMutableArray arrayWithCapacity: [srcFNames count]];                
+					if (Nil == relationshipClass)
+						relationshipClass = [BXHelperTableMTMRelationshipDescription class];
 					
-                    TSEnumerate (currentFName, e, [srcFNames objectEnumerator])
-                    {
-                        BXPropertyDescription* desc = [srcAttributes objectForKey: currentFName];
-                        [srcProperties addObject: desc];
-                    }
-                    
-                    //Use the information supplied by the database, if the user wants all the relationships
-                    //and not just those between given two tables
-					NSAssert ([dstEntity isValidated], @"Expected srcEntity to have been validated.");
-                    NSDictionary* dstAttributes = [dstEntity attributesByName];
-                    NSArray* dstFNames = [res valueForKey: @"dstfnames"];
-                    dstProperties = [NSMutableArray arrayWithCapacity: [dstFNames count]];
-                    TSEnumerate (currentFName, e, [dstFNames objectEnumerator])
-                    {
-                        BXPropertyDescription* desc = [dstAttributes objectForKey: currentFName];
-                        [dstProperties addObject: desc];
-                    }
-                }
-                
-                //Now we have enough information to make the relationship object
-                NSString* relationName = [res valueForKey: @"srcname"];
-                BXRelationshipDescription* rel = 
-                    [BXRelationshipDescription relationshipWithName: relationName
-                                                         srcProperties: srcProperties 
-                                                         dstProperties: dstProperties];
-                
-                [manyToOne setObject: rel forKey: conoid];
-                
-                //Add the object. At this point rval contains only MTO's, 
-                //so if we are adding a foreign key from any other table than srcEntity,
-                //we only need to check that there isn't one with the same name yet.
-				[rval addObject: rel];
-				
-                break;
-            }
-            default:
-                break;
-        }
-    }
+					NSArray* conoids = [res valueForKey: @"refconoids"];
+					NSArray* rels = [manyToOne objectsForKeys: conoids notFoundMarker: [NSNull null]];
+					NSAssert1 (NO == [rels containsObject: [NSNull null]], @"Didn't expect NSNulls (rels: %@).", rels);
+					NSAssert1 (2 == [rels count], @"Expected to have two objects in rels (found instead: %@).", rels);
+					
+					id rel = [relationshipClass relationshipWithRelationship1: [rels objectAtIndex: 0]
+																relationship2: [rels objectAtIndex: 1]];
+					NSString* relationName = [res valueForKey: @"dstname"];
+					if ('m' == type)
+						[rel setName: relationName];
+					[rval addObject: rel];
+					break;
+				}
+				case 't':
+				{
+					NSNumber* conoid = [res valueForKey: @"conoid"];
+					
+					//Go through the source columns' names
+					NSMutableArray* srcProperties = nil;
+					NSMutableArray* dstProperties = nil;
+					BXEntityDescription* srcEntity = [context entityForTable: [res valueForKey: @"srcrelname"]
+																	inSchema: [res valueForKey: @"srcnspname"]
+																	   error: error];
+					if (nil != *error)
+					{
+						//Continue if we were not able to observe the entity.
+						if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
+							*error = nil;
+						break;
+					}
+					
+					BXEntityDescription* dstEntity = [context entityForTable: [res valueForKey: @"dstrelname"]
+																	inSchema: [res valueForKey: @"dstnspname"]
+																	   error: error];
+					if (nil != *error)
+					{
+						//Continue we were not able to observe the entity.
+						if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
+							*error = nil;
+						break;
+					}
+					
+					{
+						NSAssert ([srcEntity isValidated], @"Expected srcEntity to have been validated.");
+						NSArray* srcFNames = [res valueForKey: @"srcfnames"];
+						NSDictionary* srcAttributes = [srcEntity attributesByName];
+						srcProperties = [NSMutableArray arrayWithCapacity: [srcFNames count]];                
+						
+						TSEnumerate (currentFName, e, [srcFNames objectEnumerator])
+						{
+							BXPropertyDescription* desc = [srcAttributes objectForKey: currentFName];
+							[srcProperties addObject: desc];
+						}
+						
+						//Use the information supplied by the database, if the user wants all the relationships
+						//and not just those between given two tables.
+						NSAssert ([dstEntity isValidated], @"Expected srcEntity to have been validated.");
+						NSDictionary* dstAttributes = [dstEntity attributesByName];
+						NSArray* dstFNames = [res valueForKey: @"dstfnames"];
+						dstProperties = [NSMutableArray arrayWithCapacity: [dstFNames count]];
+						TSEnumerate (currentFName, e, [dstFNames objectEnumerator])
+						{
+							BXPropertyDescription* desc = [dstAttributes objectForKey: currentFName];
+							[dstProperties addObject: desc];
+						}
+					}
+					
+					//Now we have enough information to make the relationship object
+					NSString* relationName = [res valueForKey: @"srcname"];
+					BXRelationshipDescription* rel = 
+						[BXRelationshipDescription relationshipWithName: relationName
+														  srcProperties: srcProperties 
+														  dstProperties: dstProperties];
+					
+					[manyToOne setObject: rel forKey: conoid];
+					
+					//Add the object. At this point rval contains only MTO's, 
+					//so if we are adding a foreign key from any other table than srcEntity,
+					//we only need to check that there isn't one with the same name yet.
+					[rval addObject: rel];
+					
+					break;
+				}
+				default:
+					break;
+			}
+		}		
+	}
+	@catch (PGTSException* exception)
+	{
+		[self packPGError: error exception: exception];
+	}
+	
 	if (nil != *error) rval = nil;
     return rval;
 }

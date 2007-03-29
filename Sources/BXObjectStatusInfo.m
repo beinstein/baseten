@@ -92,7 +92,8 @@
     }
     else
     {
-        [[NSException exceptionWithName: @"" reason: [NSString stringWithFormat: @"Keypath: %@", keyPath]
+        [[NSException exceptionWithName: NSInternalInconsistencyException 
+								 reason: [NSString stringWithFormat: @"Keypath shouldn't contain periods but was %@", keyPath]
                                userInfo: nil] raise];
     }
     return rval;
