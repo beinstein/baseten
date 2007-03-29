@@ -36,6 +36,7 @@
 #import "L4PreprocessorStatics.h"
 #import "L4NSObjectAdditions.h"
 #import "L4Configurator.h"
+#import "L4LogManager.h"
 
 static L4Level *_fatal = nil;
 static L4Level *_error = nil;
@@ -46,18 +47,29 @@ static NSLock *_loggerLock = nil;
 
 id objc_msgSend(id self, SEL op, ...);
 
-void log4Log(id object, int line, char *file, const char *method,
+static void log4AssertionDebug ()
+{
+	log4CInfo (@"Break on _log4AssertionDebug to inspect.");
+}
+
+void log4Log(id object, int line, const char* project, char *file, const char *method,
               SEL sel, BOOL isAssertion, BOOL assertion, 
               id exception, id message, ...)
 {
-    NSString *combinedMessage;
+    NSString *combinedMessage = nil;
+	L4Logger* logger = nil;
+	if (nil == object)
+		logger = [L4LogManager loggerForProject: project file: file];
+	else
+		logger = [object l4Logger];
+	
     file = ((strrchr (file, '/') ?: file - 1) + 1);
     if ( [message isKindOfClass:[NSString class]] )
     {
         va_list args;
         va_start(args, message);
-        combinedMessage = [[NSString alloc] initWithFormat:message
-                                                 arguments:args];
+        combinedMessage = [[NSString alloc] initWithFormat: message
+                                                 arguments: args];
         va_end(args);
     }
     else
@@ -65,14 +77,15 @@ void log4Log(id object, int line, char *file, const char *method,
         combinedMessage = [message retain];
     }
 
-    if ( isAssertion )
+    if ( isAssertion && !assertion )
     {
-        objc_msgSend([object l4Logger], sel, line, file, method, 
+        objc_msgSend(logger, sel, line, file, method, 
                      assertion, combinedMessage);
+		log4AssertionDebug ();
     }
     else
     {
-        objc_msgSend([object l4Logger], sel, line, file, method, 
+        objc_msgSend(logger, sel, line, file, method, 
                      combinedMessage, exception);
     }
     
@@ -485,21 +498,7 @@ void log4Log(id object, int line, char *file, const char *method,
          methodName: (char *) methodName
               debug: (id) aMessage
           exception: (NSException *) e
-{
-    //Configure if it hasn't been already done.
-    {
-        id appender = nil;
-        id aLogger = nil;
-        for (aLogger = self; aLogger != nil; aLogger = [aLogger parent] )
-        {
-            appender = [aLogger aai];
-            if (nil != appender)
-                break;
-        }
-        if (nil == appender)
-            [L4Configurator autoConfigure];
-    }
-    
+{    
     // Check repository threshold level
     //
     if([repository isDisabled: [_debug intValue]])
@@ -761,6 +760,7 @@ void log4Log(id object, int line, char *file, const char *method,
     }
 }
 
+#if 0
 /* legacy method, see forcedLog: (L4LoggingEvent *) event */
 - (void) log: (id) aMessage
        level: (L4Level *) aLevel
@@ -814,12 +814,27 @@ void log4Log(id object, int line, char *file, const char *method,
                                         message: aMessage
                                       exception: e]];
 }
+#endif
 
 // THIS IS THE MAIN METHOD, the other few above methods are still here due to the porting process
 // I'm not entirely sure if they're going to stick around, but definately for now.
 //
 - (void) forcedLog: (L4LoggingEvent *) event
 {
+	//Configure if it hasn't been already done.
+    {
+        id appender = nil;
+        id aLogger = nil;
+        for (aLogger = self; aLogger != nil; aLogger = [aLogger parent] )
+        {
+            appender = [aLogger aai];
+            if (nil != appender)
+                break;
+        }
+        if (nil == appender)
+            [L4Configurator autoConfigure];
+    }
+	
     [self callAppenders: event];
 }
 

@@ -108,6 +108,15 @@ static id <L4LoggerRepository> _loggerRepository = nil;
 #endif
 }
 
++ (L4Logger *) loggerForProject: (const char *) project file: (const char *) file
+{
+#ifdef USE_REPOSITORY_SELECTOR
+	return [[repositorySelector loggerRepository] loggerForProject: project file: file];
+#else
+	return [_loggerRepository loggerForProject: project file: file];
+#endif
+}
+
 + (L4Logger *) loggerForName: (NSString *) aName
 {
 #ifdef USE_REPOSITORY_SELECTOR

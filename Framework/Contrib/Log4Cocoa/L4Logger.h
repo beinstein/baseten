@@ -60,47 +60,61 @@
  * to do or can't use these macros for some reason.
  */
 
-void log4Log(id object, int line, char *file, const char *method,
-              SEL sel, BOOL isAssertion, BOOL assertion, 
-              id exception, id message, ...);
+extern void log4Log(id object, int line, const char* project, char *file, const char *method,
+			 SEL sel, BOOL isAssertion, BOOL assertion, 
+			 id exception, id message, ...);
 
-/*
-#define L4_PLAIN(type) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
-#define L4_EXCEPTION(type, e) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
-#define L4_ASSERTION(assertion) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
+/** 
+ * This is needed for libraries, for example, which might contain modules with same names.
+ * In this case, functions from different modules would use the same logger, which
+ * probably isn't desired.
+ */
+#ifndef L4_CURRENT_LIBRARY
+#define L4_CURRENT_LIBRARY ""
+#endif
 
-#define log4Debug(message, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message, ##__VA_ARGS__)
-#define log4Info(message, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message, ##__VA_ARGS__)
-#define log4Warn(message, ...)  log4Log(L4_PLAIN(warn), message, ##__VA_ARGS__)
-#define log4Error(message, ...) log4Log(L4_PLAIN(error), message, ##__VA_ARGS__)
-#define log4Fatal(message, ...) log4Log(L4_PLAIN(fatal), message, ##__VA_ARGS__)
+#define L4_PLAIN(type) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
+#define L4_EXCEPTION(type, e) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
+#define L4_ASSERTION(assertion) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
 
-#define log4DebugWithException(message, e, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_EXCEPTION(debug, e), message, ##__VA_ARGS__)
-#define log4InfoWithException(message, e, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_EXCEPTION(info, e), message, ##__VA_ARGS__)
-#define log4WarnWithException(message, e, ...)  log4Log(L4_EXCEPTION(warn, e), message, ##__VA_ARGS__)
-#define log4ErrorWithException(message, e, ...) log4Log(L4_EXCEPTION(error, e), message, ##__VA_ARGS__)
-#define log4FatalWithException(message, e, ...) log4Log(L4_EXCEPTION(fatal, e), message, ##__VA_ARGS__)
+#define L4_C_PLAIN(type) NULL, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
+#define L4_C_ASSERTION(assertion) NULL, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
 
-#define log4Assert(assertion, message, ...) log4Log(L4_ASSERTION(assertion), message, ##__VA_ARGS__)
-*/
+#define log4Debug(message, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message , ##__VA_ARGS__)
+#define log4Info(message, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message , ##__VA_ARGS__)
+#define log4Warn(message, ...)  log4Log(L4_PLAIN(warn), message , ##__VA_ARGS__)
+#define log4Error(message, ...) log4Log(L4_PLAIN(error), message , ##__VA_ARGS__)
+#define log4Fatal(message, ...) log4Log(L4_PLAIN(fatal), message , ##__VA_ARGS__)
 
-#define L4_PLAIN(type) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
-#define L4_EXCEPTION(type, e) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
-#define L4_ASSERTION(assertion) self, __LINE__, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
+#define log4CDebug(message, ...) log4Log(L4_C_PLAIN(debug), message , ##__VA_ARGS__)
+#define log4CInfo(message, ...) log4Log(L4_C_PLAIN(info), message , ##__VA_ARGS__)
+#define log4CWarn(message, ...) log4Log(L4_C_PLAIN(warn), message , ##__VA_ARGS__)
+#define log4CError(message, ...) log4Log(L4_C_PLAIN(error), message , ##__VA_ARGS__)
+#define log4CFatal(message, ...) log4Log(L4_C_PLAIN(fatal), message , ##__VA_ARGS__)
 
-#define log4Debug(message, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message, ##__VA_ARGS__)
-#define log4Info(message, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message, ##__VA_ARGS__)
-#define log4Warn(message, ...)  log4Log(L4_PLAIN(warn), message, ##__VA_ARGS__)
-#define log4Error(message, ...) log4Log(L4_PLAIN(error), message, ##__VA_ARGS__)
-#define log4Fatal(message, ...) log4Log(L4_PLAIN(fatal), message, ##__VA_ARGS__)
+#define log4DebugWithException(message, e, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_EXCEPTION(debug, e), message , ##__VA_ARGS__)
+#define log4InfoWithException(message, e, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_EXCEPTION(info, e), message , ##__VA_ARGS__)
+#define log4WarnWithException(message, e, ...)  log4Log(L4_EXCEPTION(warn, e), message , ##__VA_ARGS__)
+#define log4ErrorWithException(message, e, ...) log4Log(L4_EXCEPTION(error, e), message , ##__VA_ARGS__)
+#define log4FatalWithException(message, e, ...) log4Log(L4_EXCEPTION(fatal, e), message , ##__VA_ARGS__)
 
-#define log4DebugWithException(message, e, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_EXCEPTION(debug, e), message, ##__VA_ARGS__)
-#define log4InfoWithException(message, e, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_EXCEPTION(info, e), message, ##__VA_ARGS__)
-#define log4WarnWithException(message, e, ...)  log4Log(L4_EXCEPTION(warn, e), message, ##__VA_ARGS__)
-#define log4ErrorWithException(message, e, ...) log4Log(L4_EXCEPTION(error, e), message, ##__VA_ARGS__)
-#define log4FatalWithException(message, e, ...) log4Log(L4_EXCEPTION(fatal, e), message, ##__VA_ARGS__)
+#define l4ExceptionUserInfo(...) [[self l4ExceptionUserInfo] l4AddEntriesFromDictionary: [NSDictionary dictionaryWithObjectsAndKeys: __VA_ARGS__]]
 
-#define log4Assert(assertion, message, ...) log4Log(L4_ASSERTION(assertion), message, ##__VA_ARGS__)
+#define log4AssertLog(assertion, message, ...) log4Log(L4_ASSERTION(assertion), message , ##__VA_ARGS__)
+#define log4CAssertLog(assertion, message, ...) log4Log(L4_C_ASSERTION(assertion), message , ##__VA_ARGS__)
+#define log4AssertVoidReturn(assertion, message, ...) \
+	if (!assertion) { log4Log(L4_ASSERTION(0), message , ##__VA_ARGS__); return; }
+#define log4AssertValueReturn(assertion, retval, message, ...) \
+	if (!assertion) { log4Log(L4_ASSERTION(0), message , ##__VA_ARGS__); return (retval); }
+
+#define log4AssertThrow(assertion, exception) (assertion ? : [exception raise])
+#define log4AssertThrowArgs(assertion, exceptionName, exceptionUserInfo, exceptionReason, ...) \
+	log4AssertThrow (assertion, \
+					 [NSException exceptionWithName: exceptionName \
+											 reason: ([NSString stringWithFormat: (exceptionReason) , ##__VA_ARGS__]) \
+										   userInfo: (exceptionUserInfo ?: [self l4ExceptionUserInfo])])
+#define log4AssertThrowIIArgs(assertion, exceptionUserInfo, exceptionReason, ...) \
+	log4AssertThrowArgs (assertion, NSInternalInconsistencyException, (exceptionUserInfo), exceptionReason , ##__VA_ARGS__)
 
 
 @class L4AppenderAttachableImpl;
@@ -272,6 +286,7 @@ void log4Log(id object, int line, char *file, const char *method,
 /* Legacy primitive logging methods               */
 /* See below, forcedLog: (L4LoggingEvent *) event */
 
+#if 0
 - (void) log: (id) aMessage
        level: (L4Level *) aLevel;
 
@@ -292,6 +307,7 @@ void log4Log(id object, int line, char *file, const char *method,
         lineNumber: (int) lineNumber
           fileName: (char *) fileName
         methodName: (char *) methodName;
+#endif
 
 /* This is the designated logging method that the others invoke. */
 

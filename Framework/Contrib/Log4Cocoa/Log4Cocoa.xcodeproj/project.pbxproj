@@ -68,7 +68,6 @@
 		530EC00A0B4BCDE700DFC1CA /* L4NSObjectAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = F642027102B03EE001653044 /* L4NSObjectAdditions.m */; };
 		530EC00B0B4BCDE800DFC1CA /* L4Configurator.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AD24F702B3CCEB01000102 /* L4Configurator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530EC00C0B4BCDE900DFC1CA /* L4Configurator.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AD24F802B3CCEB01000102 /* L4Configurator.m */; };
-		530EC00D0B4BCDEC00DFC1CA /* L4CLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E38663033CD46C01000102 /* L4CLogger.m */; };
 		530EC0140B4BCE1500DFC1CA /* L4Level.h in Headers */ = {isa = PBXBuildFile; fileRef = F591406C02A96C8701000102 /* L4Level.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530EC0150B4BCE1600DFC1CA /* L4LoggerProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591407002A96C8701000102 /* L4LoggerProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530EC0160B4BCE1600DFC1CA /* L4Level.m in Sources */ = {isa = PBXBuildFile; fileRef = F591406D02A96C8701000102 /* L4Level.m */; };
@@ -88,7 +87,6 @@
 		530EC0410B4BCE2100DFC1CA /* L4DefaultRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BE20AB02AF27FE01000102 /* L4DefaultRenderer.m */; };
 		530EC0420B4BCE2100DFC1CA /* L4LogLog.h in Headers */ = {isa = PBXBuildFile; fileRef = F642026C02AFF63301653044 /* L4LogLog.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530EC0430B4BCE2200DFC1CA /* L4LogLog.m in Sources */ = {isa = PBXBuildFile; fileRef = F642026D02AFF63301653044 /* L4LogLog.m */; };
-		530EC0440B4BCE2300DFC1CA /* L4CLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E38662033CD46C01000102 /* L4CLogger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530EC0450B4BCE2400DFC1CA /* L4AppenderProtocols.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404A02A96C6901000102 /* L4AppenderProtocols.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530EC0460B4BCE2500DFC1CA /* L4AppenderAttachableImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = F591404802A96C6901000102 /* L4AppenderAttachableImpl.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		530EC0470B4BCE2600DFC1CA /* L4AppenderAttachableImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = F591404902A96C6901000102 /* L4AppenderAttachableImpl.m */; };
@@ -514,7 +512,6 @@
 				530EC03E0B4BCE1F00DFC1CA /* L4RendererMap.h in Headers */,
 				530EC0400B4BCE2000DFC1CA /* L4DefaultRenderer.h in Headers */,
 				530EC0420B4BCE2100DFC1CA /* L4LogLog.h in Headers */,
-				530EC0440B4BCE2300DFC1CA /* L4CLogger.h in Headers */,
 				530EC0450B4BCE2400DFC1CA /* L4AppenderProtocols.h in Headers */,
 				530EC0460B4BCE2500DFC1CA /* L4AppenderAttachableImpl.h in Headers */,
 				530EC0490B4BCE2700DFC1CA /* L4AppenderSkeleton.h in Headers */,
@@ -746,7 +743,6 @@
 			files = (
 				530EC00A0B4BCDE700DFC1CA /* L4NSObjectAdditions.m in Sources */,
 				530EC00C0B4BCDE900DFC1CA /* L4Configurator.m in Sources */,
-				530EC00D0B4BCDEC00DFC1CA /* L4CLogger.m in Sources */,
 				530EC0160B4BCE1600DFC1CA /* L4Level.m in Sources */,
 				530EC0180B4BCE1700DFC1CA /* L4Logger.m in Sources */,
 				530EC01A0B4BCE1800DFC1CA /* L4RootLogger.m in Sources */,

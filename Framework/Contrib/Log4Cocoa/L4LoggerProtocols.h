@@ -62,6 +62,7 @@ parameter. See also {@link #setThreshold} method.  */
 
 - (L4Logger *) rootLogger;
 - (L4Logger *) loggerForClass: (Class) aClass;
+- (L4Logger *) loggerForProject: (const char *) project file: (const char *) file;
 - (L4Logger *) loggerForName: (NSString *) aName;
 - (L4Logger *) loggerForName: (NSString *) aName
                      factory: (id <L4LoggerFactory>) aFactory;
