@@ -75,8 +75,8 @@
 {
     if (nil == name && index != 0)
     {
-        PGTSResultSet* res = [connection executeQuery: @"SELECT attname, atttypid, attnotnull FROM pg_attribute WHERE attrelid = $1 AND attnum = $2"
-                                           parameters: PGTSOidAsObject ([table oid]), [NSNumber numberWithUnsignedInt: index]];
+		NSString* query = @"SELECT attname, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1 AND attnum = $2";
+        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([table oid]), [NSNumber numberWithUnsignedInt: index]];
         if ([res advanceRow])
         {
             [self setName: [res valueForFieldNamed: @"attname"]];
@@ -102,8 +102,8 @@
 {
     if (index == 0 && nil != name)
     {
-        PGTSResultSet* res = [connection executeQuery: @"SELECT attnumber, atttypid, attnotnull FROM pg_attribute WHERE attrelid = $1 AND attname = $2"
-                                           parameters: PGTSOidAsObject ([table oid]), name];
+		NSString* query = @"SELECT attnumber, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1 AND attname = $2";
+        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([table oid]), name];
         [self setIndex: [[res valueForFieldNamed: @"attnumber"] unsignedIntValue]];
         typeOid = [[res valueForFieldNamed: @"atttypid"] PGTSOidValue];
 		isNotNull = [[res valueForFieldNamed: @"attnotnull"] boolValue];
