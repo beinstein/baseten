@@ -36,6 +36,7 @@
 #import "BXPropertyDescriptionPrivate.h"
 
 #import <TSDataTypes/TSDataTypes.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 //This cannot be a non-retaining set, since the entities might have been used to
@@ -478,9 +479,9 @@ static NSMutableSet* gViewEntities;
 
 - (void) addDependentView: (BXEntityDescription *) viewEntity
 {
-    NSAssert2 ([viewEntity isView], 
-               @"Attempted to add a view dependency to an entity that is not a view.\n\t self:\t%@ \n\t entity:\t%@",
-               self, viewEntity);
+    log4AssertLog ([viewEntity isView], 
+				   @"Attempted to add a view dependency to an entity that is not a view.\n\t self:\t%@ \n\t entity:\t%@",
+				   self, viewEntity);
     if ([viewEntity isView])
         [mDependentViewEntities addObject: viewEntity];
 }

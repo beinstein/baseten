@@ -29,6 +29,7 @@
 #import <objc/objc.h>
 #import <string.h>
 #import <ctype.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
@@ -423,7 +424,7 @@ ParseSelector (SEL aSelector, NSString** key)
         }
         default:
         {
-            NSAssert (NO, nil);
+            log4AssertLog (NO, @"isFaultKey returned a value other than 0, 1 or -1.");
             break;
         }
     }
@@ -448,7 +449,7 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) setPrimitiveValuesForKeysWithDictionary: (NSDictionary *) aDict
 {
-    NSAssert (nil != mContext, nil);
+    log4AssertVoidReturn (nil != mContext, @"Expected to have a database context.");
     NSError* error = nil;
     if (NO == [mContext executeUpdateObject: self withDictionary: aDict error: &error])
         [self queryFailed: error];
@@ -635,7 +636,7 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) removePrimaryKeyValuesFromStore
 {
-    NSAssert (nil != mObjectID, nil);
+    log4AssertVoidReturn (nil != mObjectID, @"Expected to have an object ID.");
     TSEnumerate (currentKey, e, [[mObjectID primaryKeyFieldValues] keyEnumerator])
     {
         NSString* name = [currentKey name];
@@ -786,8 +787,8 @@ ParseSelector (SEL aSelector, NSString** key)
 {
 	BOOL rval = YES;
 	BXEntityDescription* entity = [mObjectID entity];
-	NSAssert (NULL != ioValue, @"Expected ioValue not to be NULL.");
-	NSAssert1 ([entity isValidated], @"Expected entity %@ to have been validated earlier.", entity);
+	log4AssertValueReturn (NULL != ioValue, NO, @"Expected ioValue not to be NULL.");
+	log4AssertValueReturn ([entity isValidated], NO, @"Expected entity %@ to have been validated earlier.", entity);
 	id value = *ioValue;
 	BXPropertyDescription* property = [[entity attributesByName] objectForKey: key];
 	if (NO == [property isOptional] && (nil == value || [NSNull null] == value))

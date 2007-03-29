@@ -103,13 +103,13 @@ extern void log4Log(id object, int line, const char* project, char *file, const 
 #define log4AssertLog(assertion, message, ...) log4Log(L4_ASSERTION(assertion), message , ##__VA_ARGS__)
 #define log4CAssertLog(assertion, message, ...) log4Log(L4_C_ASSERTION(assertion), message , ##__VA_ARGS__)
 #define log4AssertVoidReturn(assertion, message, ...) \
-	if (!assertion) { log4Log(L4_ASSERTION(0), message , ##__VA_ARGS__); return; }
+	if (! (assertion)) { log4Log(L4_ASSERTION(0), message , ##__VA_ARGS__); return; }
 #define log4AssertValueReturn(assertion, retval, message, ...) \
-	if (!assertion) { log4Log(L4_ASSERTION(0), message , ##__VA_ARGS__); return (retval); }
+	if (! (assertion)) { log4Log(L4_ASSERTION(0), message , ##__VA_ARGS__); return (retval); }
 
-#define log4AssertThrow(assertion, exception) (assertion ? : [exception raise])
+#define log4AssertThrow(assertion, exception) ((assertion) ? : [exception raise])
 #define log4AssertThrowArgs(assertion, exceptionName, exceptionUserInfo, exceptionReason, ...) \
-	log4AssertThrow (assertion, \
+	log4AssertThrow ((assertion), \
 					 [NSException exceptionWithName: exceptionName \
 											 reason: ([NSString stringWithFormat: (exceptionReason) , ##__VA_ARGS__]) \
 										   userInfo: (exceptionUserInfo ?: [self l4ExceptionUserInfo])])

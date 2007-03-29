@@ -2244,8 +2244,9 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
         SecItemAttr attributes [] = {kSecAccountItemAttr};
         SecExternalFormat formats [] = {kSecFormatUnknown};
         unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
-        NSAssert (count == sizeof (formats) / sizeof (SecExternalFormat),
-                  @"Expected arrays to have an equal number of items.");
+		unsigned int formatCount = sizeof (formats) / sizeof (SecExternalFormat);
+        log4AssertValueReturn (count == formatCount, NO,
+							   @"Expected arrays to have an equal number of items (attributes: %u formats: %u).", count, formatCount);
         SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
         
         OSStatus status = noErr;
