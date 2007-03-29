@@ -55,6 +55,8 @@
 
 + (L4Logger *) l4Logger;
 - (L4Logger *) l4Logger;
++ (NSMutableDictionary *) l4ExceptionUserInfo;
+- (NSMutableDictionary *) l4ExceptionUserInfo;
 
 @end
 
@@ -62,8 +64,15 @@
 
 + (L4Logger *) l4Logger;
 - (L4Logger *) l4Logger;
++ (NSMutableDictionary *) l4ExceptionUserInfo;
+- (NSMutableDictionary *) l4ExceptionUserInfo;
 
 @end
+
+@interface NSMutableDictionary(L4CocoaMethods)
+- (NSMutableDictionary *) l4AddEntriesFromDictionary: (NSDictionary *) aDict;
+@end
+
 /*****
 
 CODE TO ADD TO YOUR BASE CLASS .h file declarations

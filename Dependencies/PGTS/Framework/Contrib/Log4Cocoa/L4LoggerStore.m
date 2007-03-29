@@ -184,6 +184,32 @@ static NSLock *_storeLock = nil;
     return theLogger;
 }
 
+- (L4Logger *) loggerForProject: (const char *) project file: (const char *) file
+{
+	NSMutableString* name = [NSMutableString stringWithFormat: @"%s-%s", project, file];
+	unsigned int i = [name length];
+	NSRange range = NSMakeRange (0, 1);
+	while (1)
+	{
+		i--;
+		switch ([name characterAtIndex: i])
+		{
+			case '-':
+				[name insertString: @"-" atIndex: i];
+				break;
+			case '.':
+				range.location = i;
+				[name replaceCharactersInRange: range withString: @"-"];
+				break;
+			default:
+				break;
+		}
+		if (i == 0) break;
+	}
+	id logger = [self loggerForName: name factory: self];
+	return logger;
+}
+
 - (L4Logger *) loggerForName: (NSString *) aName
 {
     return [self loggerForName: aName

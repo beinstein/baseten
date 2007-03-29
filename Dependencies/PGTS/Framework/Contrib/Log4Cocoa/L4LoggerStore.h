@@ -83,6 +83,8 @@
  */
 - (L4Logger *) loggerForClass: (Class) aClass;
 
+- (L4Logger *) loggerForProject: (const char *) project file: (const char *) file;
+
 /* a wrapper for loggerForName:factory: with self as the factory */
 - (L4Logger *) loggerForName: (NSString *) aName;
 

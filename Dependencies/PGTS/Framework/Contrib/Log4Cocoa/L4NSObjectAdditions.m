@@ -35,6 +35,7 @@
 #import "L4NSObjectAdditions.h"
 
 
+
 @implementation L4NSObjectAdditions
 
 @end
@@ -52,6 +53,27 @@
     return [L4LogManager loggerForClass: [self class]];
 }
 
++ (NSMutableDictionary *) l4ExceptionUserInfo
+{
+	return [NSMutableDictionary dictionary];
+}
+
+- (NSMutableDictionary *) l4ExceptionUserInfo
+{
+	return [NSMutableDictionary dictionary];
+}
+
+@end
+
+
+@implementation NSMutableDictionary(L4CocoaMethods)
+
+- (NSMutableDictionary *) l4AddEntriesFromDictionary: (NSDictionary *) aDict;
+{
+	[self addEntriesFromDictionary: aDict];
+	return self;
+}
+
 @end
 
 
@@ -65,6 +87,16 @@
 - (L4Logger *) l4Logger
 {
     return [L4LogManager loggerForClass: [self class]];
+}
+
++ (NSMutableDictionary *) l4ExceptionUserInfo
+{
+	return [NSMutableDictionary dictionary];
+}
+
+- (NSMutableDictionary *) l4ExceptionUserInfo
+{
+	return [NSMutableDictionary dictionary];
 }
 
 @end
