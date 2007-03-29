@@ -47,7 +47,7 @@ static NSLock *_loggerLock = nil;
 
 id objc_msgSend(id self, SEL op, ...);
 
-static void log4AssertionDebug ()
+extern void log4AssertionDebug ()
 {
 	log4CInfo (@"Break on _log4AssertionDebug to inspect.");
 }
