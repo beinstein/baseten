@@ -165,9 +165,8 @@
 {
     if (NSNotFound == fieldCount)
     {
-        NSString* query = @"SELECT max (attnum) AS count FROM pg_attribute WHERE attrelid = $1";
-        PGTSResultSet* res = [connection executeQuery: query
-                                           parameters: PGTSOidAsObject (oid)];
+        NSString* query = @"SELECT max (attnum) AS count FROM pg_attribute WHERE attisdropped = false AND attrelid = $1";
+        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
         [res advanceRow];
         [self setFieldCount: [[res valueForKey: @"count"] unsignedIntValue]];
     }
