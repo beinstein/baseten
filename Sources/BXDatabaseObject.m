@@ -556,11 +556,11 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Whether the object has been inserted in a previous transaction.
- * If the object has been deleted, this method returns NO.
+ * If the object has been deleted, this method returns YES.
  */
 - (BOOL) isInserted
 {
-	return (kBXObjectExists == mDeleted && !mCreatedInCurrentTransaction);
+	return (kBXObjectExists != mDeleted || mCreatedInCurrentTransaction);
 }
 
 @end
@@ -584,6 +584,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Callback for saving the row into the database.
+ * \note BXDatabaseContext may create new objects during redo causing awakeFromInsert to be invoked for them.
  */
 - (void) awakeFromInsert
 {
@@ -602,6 +603,7 @@ ParseSelector (SEL aSelector, NSString** key)
 		mDeleted = kBXObjectExists;
         mLocked = kBXObjectNoLockStatus;
 		mNeedsToAwakeFromFetch = YES;
+		mNeedsToAwakeFromInsert = YES;
     }
     return self;
 }
@@ -884,6 +886,15 @@ ParseSelector (SEL aSelector, NSString** key)
 	}
 	
 	return rval;
+}
+
+- (void) awakeFromInsertIfNeeded
+{
+	if (YES == mNeedsToAwakeFromInsert)
+	{
+		mNeedsToAwakeFromInsert = NO;
+		[self awakeFromInsert];
+	}
 }
 
 @end

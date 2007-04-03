@@ -814,7 +814,7 @@ extern void BXInit ()
 				if (YES == [mDatabaseInterface autocommits])
 				{
 					[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
-					[rval awakeFromInsert];
+					[rval awakeFromInsertIfNeeded];
 				}
 				else
 				{
@@ -824,6 +824,7 @@ extern void BXInit ()
 					{
 						objectID = [mModifiedObjectIDs BXConditionalAdd: objectID];
 						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
+						[rval awakeFromInsertIfNeeded];
 						
 						//For redo
 						TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
@@ -926,7 +927,7 @@ extern void BXInit ()
 			
 			if (kBXObjectDeletePending == [registeredObject deletionStatus])
 			{
-				if ([registeredObject isInserted])
+				if (![registeredObject isInserted])
 					[registeredObject setDeleted: kBXObjectExists];
 				else
 				{
@@ -968,8 +969,6 @@ extern void BXInit ()
             [currentID setLastModificationType: kBXNoModification];
 			
 			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
-			if ([currentObject isCreatedInCurrentTransaction] && ![currentObject isDeleted])
-				[currentObject awakeFromInsert];
 			[currentObject setCreatedInCurrentTransaction: NO];
 			if ([currentObject isDeleted])
 				[currentObject setDeleted: kBXObjectDeleted];

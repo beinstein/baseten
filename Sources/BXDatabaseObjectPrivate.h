@@ -49,4 +49,5 @@
 - (BOOL) lockedForDelete;
 - (void) awakeFromFetchIfNeeded;
 - (NSArray *) keysIncludedInQuery: (id) aKey;
+- (void) awakeFromInsertIfNeeded;
 @end
