@@ -552,10 +552,7 @@
 				INIT_ROUTINE = _BaseTenAppKitInitFramework;
 				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
 				INSTALL_PATH = "";
-				LIBRARY_SEARCH_PATHS = (
-					"../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/build/$(BUILD_STYLE)",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = "-headerpad_max_install_names";
 				PREBINDING = NO;
 				PRODUCT_NAME = BaseTenAppKit;
@@ -592,7 +589,10 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/BaseTenAppKit_Prefix.pch;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				HEADER_SEARCH_PATHS = (
+					"../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/build/$(BUILD_STYLE)",
+					"$(BUILT_PRODUCTS_DIR)",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INIT_ROUTINE = _BaseTenAppKitInitFramework;
 				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";

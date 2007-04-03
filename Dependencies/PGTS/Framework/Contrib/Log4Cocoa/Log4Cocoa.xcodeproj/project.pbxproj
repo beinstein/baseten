@@ -190,7 +190,7 @@
 		530EBD130B4BBFAE00DFC1CA /* Info-Log4Cocoa__Upgraded_.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Info-Log4Cocoa__Upgraded_.plist"; sourceTree = "<group>"; };
 		530EBD140B4BBFAE00DFC1CA /* Log4Cocoa.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Log4Cocoa.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		530EC0030B4BCDB100DFC1CA /* libLog4Cocoa.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libLog4Cocoa.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		53C1DF180B4BD429007947D8 /* AllTests */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.executable"; path = AllTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		53C1DF180B4BD429007947D8 /* AllTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = AllTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		53C1DF1F0B4BD429007947D8 /* Documentation */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Documentation; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4965D2F0465C75A0065302B /* AllTests_Prefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AllTests_Prefix.h; sourceTree = "<group>"; };
 		C4965D320465C7B30065302B /* ObjcUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = file; name = ObjcUnit.framework; path = /Library/Frameworks/ObjcUnit.framework; sourceTree = "<absolute>"; };

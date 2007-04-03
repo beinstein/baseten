@@ -42,6 +42,13 @@
 			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
 		};
+		5381F73D0BC282BD008642BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53EFE9F20BA96464008666B7 /* BaseTen */;
+			remoteInfo = BaseTen;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -152,6 +159,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5381F73E0BC282BD008642BA /* PBXTargetDependency */,
 				530A43930A5C0FD600A4722B /* PBXTargetDependency */,
 			);
 			name = UnitTests;
@@ -248,6 +256,11 @@
 			isa = PBXTargetDependency;
 			name = "BaseTen Static";
 			targetProxy = 530A43920A5C0FD600A4722B /* PBXContainerItemProxy */;
+		};
+		5381F73E0BC282BD008642BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BaseTen;
+			targetProxy = 5381F73D0BC282BD008642BA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
