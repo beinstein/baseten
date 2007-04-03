@@ -61,7 +61,7 @@
  */
 
 extern void log4Log(id object, int line, const char* project, char *file, const char *method,
-			 SEL sel, BOOL isAssertion, BOOL assertion, 
+			 SEL sel, BOOL isAssertion, BOOL assertion, BOOL throwOnAssertionFailure,
 			 id exception, id message, ...);
 
 /** 
@@ -73,12 +73,16 @@ extern void log4Log(id object, int line, const char* project, char *file, const 
 #define L4_CURRENT_LIBRARY ""
 #endif
 
-#define L4_PLAIN(type) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
-#define L4_EXCEPTION(type, e) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, e
-#define L4_ASSERTION(assertion) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
+#ifndef DEBUG_BUILD
+#define DEBUG_BUILD 0
+#endif
 
-#define L4_C_PLAIN(type) NULL, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, nil
-#define L4_C_ASSERTION(assertion) NULL, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, nil
+#define L4_PLAIN(type) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, 0, nil
+#define L4_EXCEPTION(type, e) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:exception:), NO, YES, 0, e
+#define L4_ASSERTION(assertion) self, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, DEBUG_BUILD, nil
+
+#define L4_C_PLAIN(type) NULL, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:type:), NO, YES, 0, nil
+#define L4_C_ASSERTION(assertion) NULL, __LINE__, L4_CURRENT_LIBRARY, __BASE_FILE__, __PRETTY_FUNCTION__, @selector(lineNumber:fileName:methodName:assert:log:), YES, assertion, DEBUG_BUILD, nil
 
 #define log4Debug(message, ...) if([[self l4Logger] isDebugEnabled]) log4Log(L4_PLAIN(debug), message , ##__VA_ARGS__)
 #define log4Info(message, ...)  if([[self l4Logger] isInfoEnabled]) log4Log(L4_PLAIN(info), message , ##__VA_ARGS__)

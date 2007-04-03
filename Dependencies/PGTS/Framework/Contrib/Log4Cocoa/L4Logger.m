@@ -53,45 +53,55 @@ extern void log4AssertionDebug ()
 }
 
 void log4Log(id object, int line, const char* project, char *file, const char *method,
-              SEL sel, BOOL isAssertion, BOOL assertion, 
+              SEL sel, BOOL isAssertion, BOOL assertion, BOOL throwOnAssertionFailure,
               id exception, id message, ...)
 {
-    NSString *combinedMessage = nil;
-	L4Logger* logger = nil;
-	if (nil == object)
-		logger = [L4LogManager loggerForProject: project file: file];
-	else
-		logger = [object l4Logger];
-	
-    file = ((strrchr (file, '/') ?: file - 1) + 1);
-    if ( [message isKindOfClass:[NSString class]] )
-    {
-        va_list args;
-        va_start(args, message);
-        combinedMessage = [[NSString alloc] initWithFormat: message
-                                                 arguments: args];
-        va_end(args);
-    }
-    else
-    {
-        combinedMessage = [message retain];
-    }
-
-    if ( isAssertion && !assertion )
-    {
-        objc_msgSend(logger, sel, line, file, method, 
-                     assertion, combinedMessage);
-		log4AssertionDebug ();
-    }
-    else
-    {
-        objc_msgSend(logger, sel, line, file, method, 
-                     combinedMessage, exception);
-    }
-    
-    [combinedMessage release];
+	if (!isAssertion || !assertion)
+	{
+		NSString *combinedMessage = nil;
+		L4Logger* logger = nil;
+		if (nil == object)
+			logger = [L4LogManager loggerForProject: project file: file];
+		else
+			logger = [object l4Logger];
+		
+		file = ((strrchr (file, '/') ?: file - 1) + 1);
+		if ( [message isKindOfClass:[NSString class]] )
+		{
+			va_list args;
+			va_start(args, message);
+			combinedMessage = [[NSString alloc] initWithFormat: message
+													 arguments: args];
+			va_end(args);
+		}
+		else
+		{
+			combinedMessage = [message retain];
+		}
+		
+		if (isAssertion)
+		{
+			if (!assertion)
+			{
+				objc_msgSend(logger, sel, line, file, method, 
+							 assertion, combinedMessage);
+				log4AssertionDebug ();
+				
+				if (throwOnAssertionFailure)
+					[[NSException exceptionWithName: NSInternalInconsistencyException reason: nil userInfo: nil] raise];
+			}
+		}
+		else
+		{
+			objc_msgSend(logger, sel, line, file, method, 
+						 combinedMessage, exception);
+		}
+		
+		[combinedMessage release];
+	}
 }
-
+	
+	
 @implementation L4Logger
 
 + (void) initialize
