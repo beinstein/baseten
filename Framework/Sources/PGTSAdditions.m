@@ -105,12 +105,12 @@ strtof (const char * restrict nptr, char ** restrict endptr);
         NSString* path = [[[NSBundle bundleForClass: [PGTSConnection class]] resourcePath] 
             stringByAppendingString: @"/datatypeassociations.plist"];
         NSData* plist = [NSData dataWithContentsOfFile: path];
-        NSAssert1 (nil != plist, @"datatypeassociations.plist was not found (looked from %@)", path);
+        log4AssertValueReturn (nil != plist, nil, @"datatypeassociations.plist was not found (looked from %@).", path);
         
         NSString* error = nil;
         dict = [[NSPropertyListSerialization propertyListFromData: plist mutabilityOption: NSPropertyListMutableContainers 
                                                            format: NULL errorDescription: &error] retain];
-        NSAssert2 (nil != dict, @"Error creating PGTSDeserializationDictionary: %@ (file: %@)", error, path);
+        log4AssertValueReturn (nil != dict, nil, @"Error creating PGTSDeserializationDictionary: %@ (file: %@)", error, path);
             
         NSArray* keys = [dict allKeys];
         TSEnumerate (key, e, [keys objectEnumerator])
@@ -506,12 +506,12 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     id rval = [NSCalendarDate dateWithString: dateString
                               calendarFormat: @"%Y-%m-%d %H:%M:%S"];
     rval = [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate] + interval];
-    NSAssert (nil != rval, @"Failed matching string to date format");
-#ifndef NS_BLOCK_ASSERTIONS
+    log4AssertLog (nil != rval, @"Failed to match string to date format");
+#ifndef L4_BLOCK_ASSERTIONS
 	double integralPart = 0.0;
-	NSAssert2 (NULL == subseconds || 0.0 < modf ([rval timeIntervalSince1970], &integralPart),
-			   @"Expected date to have a fractional part (timestamp: %f, subseconds: %s)",
-			   [rval timeIntervalSince1970], subseconds);
+	log4AssertLog (NULL == subseconds || 0.0 < modf ([rval timeIntervalSince1970], &integralPart),
+				   @"Expected date to have a fractional part (timestamp: %f, subseconds: %s)",
+				   [rval timeIntervalSince1970], subseconds);
 #endif
     return rval;
 }
@@ -604,7 +604,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
         }
     }
     
-    NSAssert1 (nil != rval, @"Failed matching string %s to date format.", value);
+    log4AssertLog (nil != rval, @"Failed matching string %s to date format.", value);
     return rval;
 }
 
@@ -750,7 +750,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     char* privileges = strsep (&grantingRole, "/");
     
     //Zero-length but not NULL
-    NSAssert (NULL != privileges && NULL != role && NULL != grantingRole, @"Unable to parse privileges.");
+    log4AssertValueReturn (NULL != privileges && NULL != role && NULL != grantingRole, nil, @"Unable to parse privileges (%s).", value);
     
     //Role is zero-length if the privileges are for PUBLIC
     rval = [[[PGTSACLItem alloc] init] autorelease];

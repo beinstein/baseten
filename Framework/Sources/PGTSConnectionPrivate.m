@@ -420,7 +420,7 @@ PGTSSSLConnectionExIndex ()
 			{
 				sslSetUp = YES;
 				SSL* ssl = PQgetssl (connection);
-				NSAssert (NULL != ssl, @"Expected ssl struct not to be NULL.");
+				log4AssertValueReturn (NULL != ssl, NO, @"Expected ssl struct not to be NULL.");
 				SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLCertificate);
 				SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex (), self);
 			}

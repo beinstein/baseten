@@ -54,9 +54,6 @@
 #import "PGTSTypeInfo.h"
 
 
-#define USE_ASSERTIONS 1
-
-
 //This is somehow ifdef'd out from stdlib.h in Mac OS X 10.2.8 when using std=c99 but not in 10.4
 unsigned long long
 strtoull (const char * restrict nptr, char ** restrict endptr, int base);
@@ -325,10 +322,9 @@ static unsigned int _serial;
     for (int i = 0; i < count; i++)
     {
         Class currentClass = [classes objectAtIndex: i];
-        //FIXME: NSInvalidArgumentException might be better that an assertion
-#ifdef USE_ASSERTIONS
-        NSAssert ([currentClass class] == currentClass, @"Class array may contain only classes");
-#endif
+        log4AssertValueReturn ([currentClass class] == currentClass, NO, 
+							   @"Class array may contain only classes (was %@).", classes);
+
         if ([NSNull null] != (void *) currentClass)
             if (NO == [self setClass: currentClass forFieldAtIndex: i])
                 return NO;

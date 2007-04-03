@@ -35,6 +35,7 @@
 #import <PGTS/PGTSFunctions.h>
 #import <PGTS/PGTSConnectionDelegate.h>
 #import <TSDataTypes/TSDataTypes.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 @class PGTSResultSet;
@@ -179,7 +180,9 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
 
 - (PGTSResultSet *) executePreparedQuery: (NSString *) aName parameterArray: (NSArray *) parameters
 {
-    NSAssert ([parameters count] == [parameterCounts tagForKey: aName], nil);
+    log4AssertValueReturn ([parameters count] == [parameterCounts tagForKey: aName], nil,
+						   @"Expected to know parameter count beforehand (parameters: %@ expected count: %d).",
+						   parameters, [parameterCounts tagForKey: aName]);
     return [self resultFromProxy: returningWorkerProxy status: 
         [returningWorkerProxy sendPreparedQuery2: aName parameterArray: parameters
                                  messageDelegate: NO]];
@@ -277,7 +280,9 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
     int rval = -1;
     if (CheckExceptionTable (self, kPGTSRaiseForAsync))
     {
-        NSAssert ([parameters count] == [parameterCounts tagForKey: aName], nil);
+		log4AssertValueReturn ([parameters count] == [parameterCounts tagForKey: aName], -1, 
+							   @"Expected to know parameter count beforehand (parameters: %@ expected count: %d).",
+							   parameters, [parameterCounts tagForKey: aName]);
         rval = [self sendResultsToDelegate: 
             [returningWorkerProxy sendPreparedQuery2: aName parameterArray: parameters
                                      messageDelegate: NO]];
