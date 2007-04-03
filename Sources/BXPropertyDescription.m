@@ -31,8 +31,10 @@
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
 
-#ifndef NS_BLOCK_ASSERTIONS
+
+#ifndef L4_BLOCK_ASSERTIONS
 static NSMutableDictionary* gProperties;
 #endif
 
@@ -49,7 +51,7 @@ static NSMutableDictionary* gProperties;
 	if (NO == tooLate)
 	{
 		tooLate = YES;
-#ifndef NS_BLOCK_ASSERTIONS
+#ifndef L4_BLOCK_ASSERTIONS
 		gProperties = [[NSMutableDictionary alloc] init];
 #endif
 	}
@@ -113,8 +115,8 @@ static NSMutableDictionary* gProperties;
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXPropertyDescription *) anotherObject
 {
-    NSAssert ([anotherObject isKindOfClass: [BXPropertyDescription class]], 
-              @"Property descriptions can only be compared with other similar objects for now.");
+    log4AssertValueReturn ([anotherObject isKindOfClass: [BXPropertyDescription class]], NSOrderedSame,
+						   @"Property descriptions can only be compared with other similar objects for now.");
     NSComparisonResult rval = NSOrderedSame;
     if (self != anotherObject)
     {
@@ -172,25 +174,25 @@ static NSMutableDictionary* gProperties;
 {
     if ((self = [super initWithName: aName]))
     {
-        NSAssert (nil != anEntity, @"Expected entity not to be nil.");
+        log4AssertValueReturn (nil != anEntity, nil, @"Expected entity not to be nil.");
         mEntity = anEntity; //Weak since entities are not released anyway
 		
 		//Enforcing this shouldn't be necessary since properties should only get created in our code.
-#ifndef NS_BLOCK_ASSERTIONS
-		NSMutableSet* props = [gProperties objectForKey: aName];
-		if (nil == props)
+#ifndef L4_BLOCK_ASSERTIONS
+		NSMutableSet* entities = [gProperties objectForKey: aName];
+		if (nil == entities)
 		{
-			props = [NSMutableSet setWithObject: self];
-			[gProperties setObject: props forKey: aName];
+			entities = [NSMutableSet set];
+			[gProperties setObject: entities forKey: aName];
 		}
-		else
+		
+		TSEnumerate (currentEntity, e, [entities objectEnumerator])
 		{
-			TSEnumerate (currentProp, e, [props objectEnumerator])
-			{
-				if ([currentProp entity] == anEntity)
-					NSAssert1 (NO, @"Expected to have only single instance of property %@", self);
-			}
+			if (currentEntity == anEntity)
+				log4AssertValueReturn (NO, nil, @"Expected to have only single instance of property %@", self);
 		}
+
+		[entities addObject: anEntity];
 #endif
     }
     return self;

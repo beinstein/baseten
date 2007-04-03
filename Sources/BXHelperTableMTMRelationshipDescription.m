@@ -40,6 +40,8 @@
 #import "BXSetRelationProxy.h"
 #import "BXSetHelperTableRelationProxy.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 //FIXME: when requested, create a mutable array proxy to which objects from the helper table get added.
 //This way modifications to the helper table get notified.
@@ -126,13 +128,15 @@
         }   
         else
         {
-            NSAssert (NO, nil);
+			log4AssertValueReturn (NO, nil, 
+								   @"Unable to match entities (entity: %@ entity1: %@ entity2: %@)",
+								   entity, entity1, entity2);
         }
         
         if (nil != givenDST)
         {
-            NSAssert2 (YES == [givenDST hasAncestor: dstEntity], 
-                       @"Given entity %@ is not part of %@", givenDST, self);
+			log4AssertValueReturn (YES == [givenDST hasAncestor: dstEntity], nil,
+								   @"Given entity %@ is not part of %@", givenDST, self);
             dstEntity = givenDST;
         }
     }
@@ -190,7 +194,7 @@
 
 - (NSString *) nameFromEntity: (BXEntityDescription *) entity
 {
-#ifndef NS_BLOCK_ASSERTIONS
+#ifndef L4_BLOCK_ASSERTIONS
     if (NO == [[self entities] containsObject: entity])
     {
         BOOL ok = NO;
@@ -200,7 +204,9 @@
             if (YES == ok)
                 break;
         }
-        NSAssert2 (YES == ok, @"Expected %@ to be one of %@ or to have one of them as an ancestor.", entity, [self entities]);
+        log4AssertValueReturn (YES == ok, nil, 
+							   @"Expected %@ to be one of %@ or to have one of them as an ancestor.", 
+							   entity, [self entities]);
     }
 #endif
     return [self name];

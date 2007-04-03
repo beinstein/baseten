@@ -125,7 +125,7 @@
 {
 	if (NSOKButton == returnCode)
 	{
-		NSAssert (nil != databaseContext, @"Expected databaseContext not to be nil.");
+		log4AssertVoidReturn (nil != databaseContext, @"Expected databaseContext not to be nil.");
 		[databaseContext setConnectionSetupManager: self];
 		[databaseContext connect];
 	}

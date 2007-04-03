@@ -158,10 +158,10 @@ static NSMutableSet* gViewEntities;
     {        
         BXEntityDescription* aDesc = (BXEntityDescription *) anObject;
         
-        NSAssert (nil != mName && nil != mSchemaName && nil != mDatabaseURI, 
-                  @"Properties should not be nil in isEqual:");
-        NSAssert (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, 
-                  @"Properties should not be nil in isEqual:");
+        log4AssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
+							   @"Properties should not be nil in isEqual:");
+        log4AssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
+							   @"Properties should not be nil in isEqual:");
 
         rval = ([mName isEqualToString: aDesc->mName] && 
                 [mSchemaName isEqualToString: aDesc->mSchemaName] &&
@@ -233,7 +233,9 @@ static NSMutableSet* gViewEntities;
 			BXPropertyDescription* property = nil;
 			if ([currentField isKindOfClass: [BXPropertyDescription class]])
 			{
-				NSAssert ([currentField entity] == self, nil);
+				log4AssertVoidReturn ([currentField entity] == self, 
+									  @"Expected to receive only properties in which entity is self (self: %@ currentField: %@).",
+									  self, currentField);
 				property = currentField;
 			}
 			else if ([currentField isKindOfClass: [NSString class]])
@@ -322,7 +324,7 @@ static NSMutableSet* gViewEntities;
     BOOL rval = NO;
     if (nil == mViewEntities)
     {
-        NSAssert (NO == [entities containsObject: self], @"A view cannot be based on itself.");
+        log4AssertValueReturn (NO == [entities containsObject: self], NO, @"A view cannot be based on itself.");
         mViewEntities = [entities retain];
         [gViewEntities addObject: self];
         [mViewEntities makeObjectsPerformSelector: @selector (addDependentView:) withObject: self];
@@ -357,9 +359,8 @@ static NSMutableSet* gViewEntities;
 - (void) setTargetView: (BXEntityDescription *) viewEntity 
   forRelationshipNamed: (NSString *) relationshipName
 {
-    //FIXME: This should be an exception rather than assertion
-    NSAssert1 (nil == viewEntity || [viewEntity isView], 
-               @"Expected to receive a view entity or nil (%@)", viewEntity);
+    log4AssertVoidReturn (nil == viewEntity || [viewEntity isView], 
+					@"Expected to receive a view entity or nil (%@)", viewEntity);
     
     if (nil == viewEntity)
         [mTargetViews removeObjectForKey: relationshipName];
@@ -369,8 +370,8 @@ static NSMutableSet* gViewEntities;
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity
 {
-    NSAssert ([anotherEntity isKindOfClass: [BXEntityDescription class]], 
-              @"Entity descriptions can only be compared with other similar objects for now.");
+    log4AssertValueReturn ([anotherEntity isKindOfClass: [BXEntityDescription class]], NSOrderedSame, 
+					 @"Entity descriptions can only be compared with other similar objects for now.");
     NSComparisonResult rval = NSOrderedSame;
     if (self != anotherEntity)
     {
@@ -441,15 +442,15 @@ static NSMutableSet* gViewEntities;
         mDatabaseObjectClass = [BXDatabaseObject class];
         if (nil == sName)
             sName = @"public";
-        NSAssert (nil != anURI, nil);
+        log4AssertValueReturn (nil != anURI, nil, @"Expected anURI to be set.");
         mDatabaseURI = [anURI copy];
         mSchemaName = [sName copy];
         
         id anObject = [gEntities member: self];
-        NSAssert2 ([gEntities containsObject: self] ? nil != anObject : YES, 
-                   @"gEntities contains the current entity but it could not be found."
-                   " \n\tself: \t%@ \n\tgEntities: \t%@",
-                   self, gEntities);
+        log4AssertValueReturn ([gEntities containsObject: self] ? nil != anObject : YES, nil, 
+							   @"gEntities contains the current entity but it could not be found."
+							   " \n\tself: \t%@ \n\tgEntities: \t%@",
+							   self, gEntities);
         if (nil == anObject)
         {
             [gEntities addObject: self];
@@ -518,9 +519,9 @@ static NSMutableSet* gViewEntities;
 
 - (void) cacheRelationship: (id <BXRelationshipDescription>) relationship
 {
-    NSAssert2 ([[relationship entities] containsObject: self], 
-               @"Attempt to cache a relationship which this entity is not part of. \n\tEntity: %@ \n\tRelationship: %@",
-               self, relationship);
+    log4AssertVoidReturn ([[relationship entities] containsObject: self], 
+						  @"Attempted to cache a relationship which this entity is not part of. \n\tEntity: %@ \n\tRelationship: %@",
+						  self, relationship);
     
     //One-to-one and many-to-many replace many-to-one
     NSString* relname = [relationship nameFromEntity: self];
@@ -537,9 +538,9 @@ static NSMutableSet* gViewEntities;
 
 - (void) registerObjectID: (BXDatabaseObjectID *) anID
 {
-    NSAssert2 ([anID entity] == self, 
-               @"Attempted to register an object ID the entity of which is other than self.\n"
-               "\tanID:\t%@ \n\tself:\t%@", anID, self);
+    log4AssertVoidReturn ([anID entity] == self, 
+						  @"Attempted to register an object ID the entity of which is other than self.\n"
+						  "\tanID:\t%@ \n\tself:\t%@", anID, self);
     if (self == [anID entity])
         [mObjectIDs addObject: anID];
 }
@@ -573,15 +574,12 @@ static NSMutableSet* gViewEntities;
         if ([[[properties objectAtIndex: 0] entity] isEqual: self])
         {
             rval = properties;            
-#ifndef NS_BLOCK_ASSERTIONS
+#ifndef L4_BLOCK_ASSERTIONS
             TSEnumerate (currentField, e, [properties objectEnumerator])
             {
 				if ([currentField entity] != self || 
 					nil == [mAttributes objectForKey: [currentField name]])
-                {
-                    rval = nil;
-                    break;
-                }
+					log4AssertValueReturn (NO, nil, @"Expected given properties to have self as entity (self: %@ properties: %@).", self, properties);
             }
 #endif
         }
@@ -672,9 +670,9 @@ static NSMutableSet* gViewEntities;
 		{
 			if ([currentField isKindOfClass: [NSString class]])
 				currentField = [mAttributes objectForKey: currentField];
-			NSAssert2 ([currentField isKindOfClass: [BXPropertyDescription class]], 
-					   @"Expected to receive NSStrings or BXPropertyDescriptions (%@ was a %@).",
-					   currentField, [currentField class]);
+			log4AssertValueReturn ([currentField isKindOfClass: [BXPropertyDescription class]], nil, 
+								   @"Expected to receive NSStrings or BXPropertyDescriptions (%@ was a %@).",
+								   currentField, [currentField class]);
 			
 			[rval addObject: currentField];
 		}

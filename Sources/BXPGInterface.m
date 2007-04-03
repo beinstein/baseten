@@ -150,7 +150,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context
 {
     PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-    NSAssert (nil != connection, @"Expected connection not to be nil");
+    log4AssertValueReturn (nil != connection, nil, @"Expected connection not to be nil.");
     return [self BXPGQualifiedName: connection];
 }
 @end
@@ -162,8 +162,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [self count]];
     TSEnumerate (currentDesc, e, [self objectEnumerator])
     {
-        NSAssert ([currentDesc isKindOfClass: [BXPropertyDescription class]],
-                  @"Expected to have only BXPropertyDescriptions.");
+        log4AssertValueReturn ([currentDesc isKindOfClass: [BXPropertyDescription class]], nil, 
+							   @"Expected to have only BXPropertyDescriptions (%@).", self);
         [rval addObject: [currentDesc BXPGEscapedName: connection]];
     }
     return rval;
@@ -181,11 +181,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSMutableArray *srcProperties = nil, *dstProperties = nil;
     
     unsigned int count = [srcFields count];
-    NSAssert (count == [dstFields count], nil);
+    log4AssertValueReturn (count == [dstFields count], nil, @"Expected counts to match (srcFields: %@ dstFields: %@).", srcFields, dstFields);
     srcProperties = [NSMutableArray arrayWithCapacity: count];
     dstProperties = [NSMutableArray arrayWithCapacity: count];
 	
-	NSAssert ([srcEntity isValidated] && [dstEntity isValidated], @"Expected entities to have been validated.");
+	log4AssertValueReturn ([srcEntity isValidated] && [dstEntity isValidated], nil, 
+						   @"Expected entities to have been validated (src: %@ dst: %@).", srcEntity, dstEntity);
 	NSDictionary* srcAttributes = [srcEntity attributesByName];
 	NSDictionary* dstAttributes = [dstEntity attributesByName];
     
@@ -351,8 +352,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSArray* fieldNames = [fields BXPGEscapedNames: connection];
     NSArray* fieldValues = [valueDict objectsForKeys: fields notFoundMarker: nil];
 
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
-    NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set (was %p)", error);
+    log4AssertValueReturn (NO == [connection overlooksFailedQueries], nil, @"Connection should throw when a query fails");
     @try
     {
 		[self beginIfNeeded];
@@ -422,9 +423,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
                                      error: (NSError **) error
 {
     NSMutableArray* rows = nil;
-    NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
-	NSAssert (Nil != aClass, @"Expected class to be set.");
+    log4AssertValueReturn (NO == [connection overlooksFailedQueries], nil, @"Connection should throw when a query fails");
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set (was %p)", error);
+	log4AssertValueReturn (Nil != aClass, nil, @"Expected class to be set.");
 
     //Begin the exception handling context, since the metadata queries might also fail
     @try
@@ -440,7 +441,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSArray* fields = [entity fields];
 			
 			//Execute the query
-			NSAssert (nil != pkeyfields, @"Expected pkeyfields not to be nil.");
+			log4AssertValueReturn (nil != pkeyfields, nil, @"Expected pkeyfields not to be nil (entity: %@).", entity);
+			
 			{
 				unsigned int count = [pkeyfields count];
 				NSMutableArray* pkeyQNames = [NSMutableArray arrayWithCapacity: count];            
@@ -472,14 +474,14 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				NSString* fromClause = nil;
 				{
 					NSMutableSet* entitySet = [NSMutableSet setWithSet: [predicate BXEntitySet]];
-					NSAssert (nil != entitySet, nil);
+					log4AssertValueReturn (nil != entitySet, nil, @"Expected to receive an entity set (predicate: %@).", predicate);
 					[entitySet addObject: entity];
 					[entitySet removeObject: [NSNull null]];
 					NSMutableArray* components = [NSMutableArray arrayWithCapacity: [entitySet count]];
 					TSEnumerate (currentEntity, e, [entitySet objectEnumerator])
 						[components addObject: [currentEntity BXPGQualifiedName: connection]];
 					fromClause = [components componentsJoinedByString: @", "];
-					NSAssert (nil != fromClause, nil);
+					log4AssertValueReturn (nil != fromClause, nil, @"Expected to have a from clause (predicate: %@).", predicate);
 				}
 				
 				//Make the query
@@ -547,8 +549,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 - (BOOL) fireFault: (BXDatabaseObject *) anObject keys: (NSArray *) keys error: (NSError **) error
 {
     BOOL rval = NO;
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
-	NSAssert (nil != keys && 0 < [keys count], @"Expected to receive some keys to fetch.");
+    log4AssertValueReturn (NULL != error, NO, @"Expected error to be set.", error);
+	log4AssertValueReturn (nil != keys && 0 < [keys count], NO, @"Expected to have received some keys to fetch.");
     @try
     {
         BXDatabaseObjectID* objectID = [anObject objectID];
@@ -580,9 +582,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
                                 predicate: (NSPredicate *) predicate
                                     error: (NSError **) error
 {
-    NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
-    NSAssert (objectID || entity, @"Expected to be called either with the objectID or with an entity.");
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    log4AssertValueReturn (NO == [connection overlooksFailedQueries], nil, @"Connection should throw when a query fails");
+    log4AssertValueReturn (objectID || entity, nil, @"Expected to be called either with the objectID or with an entity.");
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set (was %p)", error);
     NSString* queryString = nil;
     
     NSArray* rval = nil;
@@ -591,9 +593,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
         //Check for a previously locked row
         if (nil != lockedObjectID)
         {
-            NSAssert2 (nil == objectID || objectID == lockedObjectID, 
-                       @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
-                       objectID, lockedObjectID);
+            log4AssertValueReturn (nil == objectID || objectID == lockedObjectID, nil, 
+								   @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
+								   objectID, lockedObjectID);
             
             //The run loop probably hasn't ran yet, if we don't have the transaction.
             if ((PQTRANS_INTRANS != [connection transactionStatus]))
@@ -687,7 +689,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				{
 					//Otherwise get the ids from the result
 					NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-					NSAssert (nil != entity, @"Expected entity not to be nil.");
+					log4AssertValueReturn (nil != entity, nil, @"Expected entity not to be nil.");
 					while (([res advanceRow]))
 					{
 						BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields:
@@ -738,9 +740,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
                                   error: (NSError **) error
 {
     NSArray* rval = nil;
-    NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
-    NSAssert (objectID || entity, @"Expected to be called either with an objectID or with an entity.");
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    log4AssertValueReturn (NO == [connection overlooksFailedQueries], nil, @"Connection should throw when a query fails");
+    log4AssertValueReturn (objectID || entity, nil, @"Expected to be called either with an objectID or with an entity.");
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set (was %p)", error);
     @try
     {
 		[self beginIfNeeded];
@@ -782,9 +784,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				[objectIDs addObject: objectID];
 			}
 			
-			NSAssert3 (nil == objectID || (1 == [objectIDs count] && [objectIDs containsObject: objectID]),
-					   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nObjectIDs: %@",
-					   objectID, predicate, objectIDs);
+			log4AssertLog (nil == objectID || (1 == [objectIDs count] && [objectIDs containsObject: objectID]),
+						   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nObjectIDs: %@",
+						   objectID, predicate, objectIDs);
 			
 			rval = objectIDs;
 		}
@@ -810,7 +812,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 {
     if ([self connected])
     {
-        NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+        log4AssertLog (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
         @try
         {
             [self internalRollback];
@@ -825,10 +827,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
 - (BOOL) save: (NSError **) error
 {
     BOOL rval = NO;
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    log4AssertLog (NULL != error, @"Expected error to be set.", error);
     if ([self connected])
     {
-        NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+        log4AssertLog (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails.");
         @try
         {
             [self internalCommit];
@@ -851,8 +853,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 								types: (enum BXRelationshipType) typeBitmap
 								error: (NSError **) error
 {    
-    NSAssert (nil != srcEntity, @"Expected to have srcEntity.");
-    NSAssert (NULL != error, @"Expected error to be set.");
+    log4AssertValueReturn (nil != srcEntity, nil, @"Expected to have srcEntity.");
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
     
 	NSMutableArray* rval = nil;
 	
@@ -920,8 +922,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					
 					NSArray* conoids = [res valueForKey: @"refconoids"];
 					NSArray* rels = [manyToOne objectsForKeys: conoids notFoundMarker: [NSNull null]];
-					NSAssert1 (NO == [rels containsObject: [NSNull null]], @"Didn't expect NSNulls (rels: %@).", rels);
-					NSAssert1 (2 == [rels count], @"Expected to have two objects in rels (found instead: %@).", rels);
+					log4AssertValueReturn (NO == [rels containsObject: [NSNull null]], nil, @"Didn't expect NSNulls (rels: %@).", rels);
+					log4AssertValueReturn (2 == [rels count], nil, @"Expected to have two objects in rels (found instead: %@).", rels);
 					
 					id rel = [relationshipClass relationshipWithRelationship1: [rels objectAtIndex: 0]
 																relationship2: [rels objectAtIndex: 1]];
@@ -961,7 +963,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					}
 					
 					{
-						NSAssert ([srcEntity isValidated], @"Expected srcEntity to have been validated.");
+						log4AssertValueReturn ([srcEntity isValidated], nil, @"Expected srcEntity to have been validated.");
 						NSArray* srcFNames = [res valueForKey: @"srcfnames"];
 						NSDictionary* srcAttributes = [srcEntity attributesByName];
 						srcProperties = [NSMutableArray arrayWithCapacity: [srcFNames count]];                
@@ -974,7 +976,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						
 						//Use the information supplied by the database, if the user wants all the relationships
 						//and not just those between given two tables.
-						NSAssert ([dstEntity isValidated], @"Expected srcEntity to have been validated.");
+						log4AssertValueReturn ([dstEntity isValidated], nil, @"Expected dstEntity to have been validated.");
 						NSDictionary* dstAttributes = [dstEntity attributesByName];
 						NSArray* dstFNames = [res valueForKey: @"dstfnames"];
 						dstProperties = [NSMutableArray arrayWithCapacity: [dstFNames count]];
@@ -1011,7 +1013,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		[self packPGError: error exception: exception];
 	}
 	
-	if (nil != *error) rval = nil;
+	if (NULL != error && nil != *error) rval = nil;
     return rval;
 }
 
@@ -1073,7 +1075,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         autocommits = aBool;
         if ([self connected])
         {
-            NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+            log4AssertVoidReturn (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
 			PGTransactionStatusType status = [connection transactionStatus];
             if (PQTRANS_IDLE != status)
                 [self internalCommit];
@@ -1116,8 +1118,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
  */
 - (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
-    NSAssert (NULL != error, @"Expected error to be set.");
-    NSAssert (nil != notifyConnection, @"Expected notifyConnection to be set.");
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
+    log4AssertValueReturn (nil != notifyConnection, nil, @"Expected notifyConnection to be set.");
 
     PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
     PGTSTableInfo* tableInfo = [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
@@ -1238,9 +1240,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 - (BOOL) establishSavepoint: (NSError **) error
 {
 	BOOL rval = NO;
-	NSAssert (NULL != error, @"Expected error to be set.");
-	NSAssert (PQTRANS_INTRANS == [connection transactionStatus], @"Transaction should be in progress.");
-	NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+	log4AssertValueReturn (NULL != error, NO, @"Expected error to be set.");
+	log4AssertValueReturn (PQTRANS_INTRANS == [connection transactionStatus], NO, @"Transaction should be in progress.");
+	log4AssertValueReturn (NO == [connection overlooksFailedQueries], NO, @"Connection should throw when a query fails");
 	@try
 	{
 		[connection executeQuery: SavepointQuery ()];
@@ -1256,8 +1258,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 - (BOOL) rollbackToLastSavepoint: (NSError **) error
 {
 	BOOL rval = NO;
-	NSAssert (NULL != error, @"Expected error to be set.");
-	NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+	log4AssertValueReturn (NULL != error, NO, @"Expected error to be set.");
+	log4AssertValueReturn (NO == [connection overlooksFailedQueries], NO, @"Connection should throw when a query fails");
 	@try
 	{
 		[notifyConnection executeQuery: @"SELECT baseten.LocksStepBack ()"];
@@ -1281,13 +1283,14 @@ static NSString* SSLMode (enum BXSSLMode mode)
 @implementation BXPGInterface (Helpers)
 - (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error
 {
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    log4AssertValueReturn (NULL != error, NO, @"Expected error to be set.");
     BOOL rval = NO;
     if (nil == modificationNotifier)
     {
         //PostgreSQL backends don't deliver notifications to interfaces during transactions
-        NSAssert1 (connection == notifyConnection || PQTRANS_IDLE == [notifyConnection transactionStatus], 
-                   @"Connection %p was expected to be in PQTRANS_IDLE", notifyConnection);
+        log4AssertValueReturn (connection == notifyConnection || PQTRANS_IDLE == [notifyConnection transactionStatus], NO,
+							   @"Connection %p was expected to be in PQTRANS_IDLE (status: %d connection: %p notifyconnection: %p).", 
+							   [notifyConnection transactionStatus], connection, notifyConnection);
         
         modificationNotifier = [[PGTSModificationNotifier alloc] init];
         [modificationNotifier setConnection: notifyConnection];
@@ -1371,7 +1374,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                         parameters: (NSArray *) parameters
 {
     //objectID is optional
-    NSAssert (entity && whereClause, @"Expected to be called with parameters.");
+    log4AssertValueReturn (entity && whereClause, nil, @"Expected to be called with parameters.");
     NSArray* rval = nil;
     NSString* name = [entity BXPGQualifiedName: connection];
     if (nil != objectID)
@@ -1409,10 +1412,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
                      parameters: (NSArray *) parameters
                      willDelete: (BOOL) willDelete
 {
-    NSAssert (entity && whereClause, @"Expected to be called with parameters.");
+    log4AssertVoidReturn (entity && whereClause, @"Expected to be called with parameters.");
     if (NO == autocommits)
     {
-		NSAssert (PQTRANS_IDLE == [notifyConnection transactionStatus], @"Expected notifyConnection not to have transaction.");
+		log4AssertVoidReturn (PQTRANS_IDLE == [notifyConnection transactionStatus], @"Expected notifyConnection not to have transaction.");
 
         PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
         PGTSTableInfo* table = [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
@@ -1428,7 +1431,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         
         //Get and sort the primary key fields and execute the query
         NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
-        NSAssert (nil != pkeyFields, @"Expected to know the primary key.");
+        log4AssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSString* query = [NSString stringWithFormat: format, funcname, SavepointIndex(),
             [pkeyFNames componentsJoinedByString: @"\", \""], [entity BXPGQualifiedName: notifyConnection], whereClause];
@@ -1452,19 +1455,15 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	
     NSError* placeholder = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];
     
-    //NSAssert (NULL != error, @"Expected error to be set (was NULL)");
-    if (NULL == error)
-        [exception raise];
-    else
+    log4AssertLog (NULL != error, @"Expected error to be set.");
+    if (NULL != error)
         *error = placeholder;
 }
 
 - (void) packError: (NSError **) error exception: (NSException *) exception
 {
-    //NSAssert (NULL != error, @"Expected error to be set (was NULL)");
-    if (NULL == error)
-        [exception raise];
-    else
+    log4AssertLog (NULL != error, @"Expected error to be set.");
+    if (NULL != error)
         *error = [[exception userInfo] objectForKey: kBXErrorKey];
 }
 
@@ -1530,7 +1529,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 - (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error
 {
-    NSAssert1 (NULL != error, @"Expected error to be set (was %p)", error);
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
     return [context entityForTable: [table name] inSchema: [table schemaName] error: error];
 }
 
@@ -1557,7 +1556,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 - (void) checkConnectionStatus: (NSError **) error
 {
-	NSAssert1 (NULL != error, @"Expected error to be set (was %p).", error);
+	log4AssertVoidReturn (NULL != error, @"Expected error to be set.", error);
 	if (CONNECTION_OK != [connection connectionStatus])
 	{
 		NSString* errorMessage = [connection errorMessage];
@@ -1613,7 +1612,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 - (void) beginSubtransactionIfNeeded
 {
 	//Exception should get handled by the caller
-	NSAssert (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails");
+	log4AssertVoidReturn (NO == [connection overlooksFailedQueries], @"Connection should throw when a query fails.");
 	if (PQTRANS_IDLE == [connection transactionStatus])
 		[connection executeQuery: @"BEGIN"];	
 }

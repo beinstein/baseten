@@ -64,7 +64,7 @@
     else
     {
         //Only allow the non-mutating methods
-        NSAssert (Nil != mNonMutatingClass, nil);
+		log4AssertLog (Nil != mNonMutatingClass, @"Expected mimiced class to be set.");
         rval = [mNonMutatingClass instanceMethodSignatureForSelector: aSelector];
     }
     return rval;

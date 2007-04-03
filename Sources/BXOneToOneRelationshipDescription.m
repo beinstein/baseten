@@ -35,6 +35,7 @@
 #import "BXDatabaseObjectID.h"
 #import "BXException.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
 
 @class BXEntityDescription;
 
@@ -85,7 +86,10 @@
     else if ([entity hasAncestor: [relationship2 srcEntity]])
         rval = [relationship2 resolveFrom: object to: targetEntity error: error];
     else
-        NSAssert (NO, nil);
+	{
+		log4AssertValueReturn (NO, nil, @"Unable to match entities (self: %@ object: %@ targetEntity: %@).",
+							   self, object, targetEntity);
+	}
     
     return rval;
 }

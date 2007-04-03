@@ -44,8 +44,8 @@
     if (NULL != didEndSelector)
     {
 		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: didEndSelector];
-        NSAssert1 (5 == [signature numberOfArguments], @"Expected number of arguments to be 5, was %d",
-                   [signature numberOfArguments]);
+        log4AssertVoidReturn (5 == [signature numberOfArguments], @"Expected number of arguments to be 5, was %d",
+							  [signature numberOfArguments]);
         
 		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
 		[invocation setSelector: didEndSelector];

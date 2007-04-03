@@ -255,7 +255,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	if (0 < [cachedValues count])
 	{
 		BXEntityDescription* entity = [[self objectID] entity];
-		NSAssert1 ([entity isValidated], @"Expected entity %@ to have been validated earlier.", entity);
+		log4AssertValueReturn ([entity isValidated], nil, @"Expected entity %@ to have been validated earlier.", entity);
 		rval = [NSMutableDictionary dictionaryWithCapacity: [cachedValues count]];
 		
 		TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
@@ -346,11 +346,12 @@ ParseSelector (SEL aSelector, NSString** key)
     
     if (nil == rval)
     {
-        switch ([self isFaultKey: aKey])
+		int isFault = [self isFaultKey: aKey];
+        switch (isFault)
         {
             case 1:
             {
-                NSAssert (nil != mContext, nil);
+                log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
                 NSError* error = nil;
                 if (NO == [mContext fireFault: self key: aKey error: &error])
                     [self queryFailed: error];
@@ -359,7 +360,7 @@ ParseSelector (SEL aSelector, NSString** key)
             }
             case -1: //Unknown key; try foreign keys
             {
-                NSAssert (nil != mContext, nil);
+                log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
                 NSError* error = nil;
                 BXEntityDescription* entity = [mObjectID entity];
                 id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
@@ -370,7 +371,7 @@ ParseSelector (SEL aSelector, NSString** key)
                 break;
             }
             default:
-                NSAssert (NO, nil);
+                log4AssertValueReturn (NO, nil, @"isFault had a strange value (%d).", isFault);
                 break;
         }
     }
@@ -390,7 +391,7 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) setPrimitiveValue: (id) aVal forKey: (NSString *) aKey
 {    
-    NSAssert (nil != mContext, nil);
+    log4AssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
     NSError* error = nil;
     
     //We only need the old value when autocommitting.
@@ -861,7 +862,7 @@ ParseSelector (SEL aSelector, NSString** key)
 - (NSArray *) keysIncludedInQuery: (id) aKey
 {
 	BXEntityDescription* entity = [[self objectID] entity];
-	NSAssert1 ([entity isValidated], @"Expected entity %@ to have been validated earlier.", entity);
+	log4AssertValueReturn ([entity isValidated], nil, @"Expected entity %@ to have been validated earlier.", entity);
 
 	NSArray* rval = nil;
 	BOOL shouldContinue = NO;

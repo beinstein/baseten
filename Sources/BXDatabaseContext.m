@@ -575,16 +575,18 @@ extern void BXInit ()
 - (BOOL) prepareSavepointIfNeeded: (NSError **) error
 {
 	BOOL rval = NO;
-	NSAssert (NULL != error, @"Expected error to be set.");
+	NSError* localError = nil;
 	int groupingLevel = [mUndoManager groupingLevel];
-	
+
+	log4AssertLog (NULL != error, @"Expected error to be set.");
+
 	if ([mUndoManager isRedoing])
 		--groupingLevel;
 	
 	if (0 == groupingLevel)
 	{
-		[mDatabaseInterface establishSavepoint: error];
-		if (nil == *error)
+		[mDatabaseInterface establishSavepoint: &localError];
+		if (nil == localError)
 			rval = YES;
 	}
 	else
@@ -592,11 +594,15 @@ extern void BXInit ()
 		int lastLevel = [mUndoGroupingLevels lastIndex];
 		if (lastLevel != groupingLevel)
 		{
-			NSAssert (NSNotFound == (unsigned) lastLevel || lastLevel < groupingLevel, 
-					  @"Undo group level stack is corrupt.");
+			log4AssertValueReturn (NSNotFound == (unsigned) lastLevel || lastLevel < groupingLevel, NO, 
+								   @"Undo group level stack is corrupt.");
 			[mUndoGroupingLevels addIndex: groupingLevel];
 		}
 	}
+	
+	if (NULL != error)
+		*error = localError;
+	
 	return rval;
 }
 
@@ -1125,14 +1131,19 @@ extern void BXInit ()
 
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 {
-	NSAssert (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
+	log4AssertLog (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
 	
 	if (NO == connected)
 	{
 		if (NO == mDisplayingSheet)
 		{
-			NSString* domain = [*error domain];
-			int code = [*error code];
+			NSString* domain = nil;
+			int code = 0;
+			if (NULL != error)
+			{
+				domain = [*error domain];
+				code = [*error code];
+			}
 			BOOL authenticationFailed = NO;
 			BOOL certificateVerifyFailed = NO;
 			if ([domain isEqualToString: kBXErrorDomain])
@@ -1839,7 +1850,7 @@ extern void BXInit ()
                    withDictionary: (NSDictionary *) aDict 
                             error: (NSError **) error
 {
-    NSAssert ((anObject || anEntity) && aDict, @"Expected to be called with parameters.");
+	log4AssertValueReturn ((anObject || anEntity) && aDict, nil, @"Expected to be called with parameters.");
     NSError* localError = nil;
 	NSArray* objectIDs = nil;
 	if ([self checkDatabaseURI: &localError])
@@ -1964,7 +1975,7 @@ extern void BXInit ()
 - (BOOL) checkDatabaseURI: (NSError **) error
 {
 	BOOL rval = YES;
-	NSAssert (nil != error, @"Expected error not to be nil.");
+	log4AssertLog (NULL != error, @"Expected error not to be null.");
 	if (nil == mDatabaseURI)
 	{
 		rval = NO;
@@ -1976,7 +1987,9 @@ extern void BXInit ()
 			reason, NSLocalizedRecoverySuggestionErrorKey, 
 			self, kBXDatabaseContextKey,
 			nil];
-		*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoDatabaseURI userInfo: userInfo];
+		
+		if (NULL != error)
+			*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoDatabaseURI userInfo: userInfo];
 	}
 	return rval;
 }
@@ -2210,8 +2223,8 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     SecItemAttr attributes [] = {kSecModDateItemAttr, kSecNegativeItemAttr};
     SecExternalFormat formats [] = {kSecFormatUnknown, kSecFormatUnknown};
     unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
-    NSAssert (count == sizeof (formats) / sizeof (SecExternalFormat),
-              @"Expected arrays to have an equal number of items.");
+	log4AssertValueReturn (count == sizeof (formats) / sizeof (SecExternalFormat), NULL,
+						   @"Expected arrays to have an equal number of items.");
     SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
     
     TSEnumerate (currentItem, e, [[self keychainItems] objectEnumerator])

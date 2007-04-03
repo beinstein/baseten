@@ -270,6 +270,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = "../build/$(BUILD_STYLE)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -302,6 +303,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = "../build/$(BUILD_STYLE)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;

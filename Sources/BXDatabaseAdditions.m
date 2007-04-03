@@ -34,6 +34,8 @@
 #import "BXException.h"
 #import "BXDatabaseObject.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 @implementation NSURL (BXDatabaseAdditions)
 
@@ -232,7 +234,7 @@
                                        type: (NSPredicateOperatorType) type
 {
     unsigned int count = [properties count];
-    NSAssert (count == [otherProperties count], nil);
+	log4AssertValueReturn (count == [otherProperties count], nil, @"Expected given arrays' counts to match.");
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: count];
     for (int i = 0; i < count; i++)
     {

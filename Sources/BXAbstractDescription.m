@@ -28,17 +28,19 @@
 
 #import "BXAbstractDescription.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 /**
-    An abstract superclass for various description classes.
-*/
+ * An abstract superclass for various description classes.
+ */
 @implementation BXAbstractDescription
 
 - (id) initWithName: (NSString *) aName
 {
     if ((self = [super init]))
     {
-        NSAssert (nil != aName, nil);
+        log4AssertValueReturn (nil != aName, nil, @"Expected name not to be nil.");
         mName = [aName copy];
     }
     return self;

@@ -436,6 +436,7 @@
 			baseConfigurationReference = 2B8B5E410B20189600EF04F3 /* debug.xcconfig */;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = /;
@@ -480,6 +481,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 2B8B5E420B20189600EF04F3 /* release.xcconfig */;
 			buildSettings = {
+				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEPLOYMENT_LOCATION = NO;
 				DSTROOT = /;

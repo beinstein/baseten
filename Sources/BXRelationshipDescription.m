@@ -42,6 +42,8 @@
 #import "BXDatabaseAdditions.h"
 #import "BXSetRelationProxy.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 static BOOL gReturnsArrayProxies = NO;
 
@@ -84,10 +86,10 @@ NullArray (unsigned int count)
 {
     if ((self = [super initWithName: aName]))
     {
-        NSAssert (nil != anArray && nil != anotherArray, nil);
-        NSAssert ([anArray count] == [anotherArray count], nil);
-        NSAssert (1 == [[NSSet setWithArray: [anArray valueForKey: @"entity"]] count], nil);
-        NSAssert (1 == [[NSSet setWithArray: [anotherArray valueForKey: @"entity"]] count], nil);
+        log4AssertValueReturn (nil != anArray && nil != anotherArray, nil, @"Expected to be called with parameters.");
+        log4AssertValueReturn ([anArray count] == [anotherArray count], nil, @"Expected array counts to match (anArray: %@ anotherArray: %@)", anArray, anotherArray);
+        log4AssertValueReturn (1 == [[NSSet setWithArray: [anArray valueForKey: @"entity"]] count], nil, @"Expected all src properties to have the same entity (%@).", anArray);
+        log4AssertValueReturn (1 == [[NSSet setWithArray: [anotherArray valueForKey: @"entity"]] count], nil, @"Expected all dst properties to have the same entity (%@).", anotherArray);
 
         srcProperties = [anArray copy];
         dstProperties = [anotherArray copy];
@@ -301,9 +303,9 @@ NullArray (unsigned int count)
     NSError* localError = nil;
     if (nil == targetEntity)
         targetEntity = [self srcEntity];
-    NSAssert (nil != refObject, @"Expected refObject not to be nil");
+    log4AssertVoidReturn (nil != refObject, @"Expected refObject not to be nil");
     BXEntityDescription* refEntity = [[refObject objectID] entity];
-    NSAssert (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
+    log4AssertVoidReturn (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
     if (0 < [objectSet count])
     {
         //to-many
@@ -323,12 +325,12 @@ NullArray (unsigned int count)
     NSError* localError = nil;
     if (nil == targetEntity)
         targetEntity = [self srcEntity];
-    NSAssert (nil != refObject, @"Expected refObject not to be nil");
+    log4AssertVoidReturn (nil != refObject, @"Expected refObject not to be nil");
     BXDatabaseObjectID* refID = [refObject objectID];
     BXEntityDescription* refEntity = [refID entity];
     if (nil == targetEntity)
         targetEntity = [self srcEntity];
-    NSAssert (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
+    log4AssertVoidReturn (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
 
     //to-many
     //Remove objects by setting fkey columns to null. If the objectSet was nil, then remove all objects.
@@ -363,9 +365,10 @@ NullArray (unsigned int count)
     {
         case 0:
             //to-one
-            NSAssert ([target isKindOfClass: [BXDatabaseObject class]], 
-                      @"Expected to receive an object target for a to-one relationship.");
-            NSAssert ([refEntity isView] || [updatedEntity isEqual: refEntity], @"Expected to be modifying the correct entity.");
+            log4AssertVoidReturn ([target isKindOfClass: [BXDatabaseObject class]], 
+								  @"Expected to receive an object target for a to-one relationship.");
+            log4AssertVoidReturn ([refEntity isView] || [updatedEntity isEqual: refEntity], 
+								  @"Expected to be modifying the correct entity.");
             //This is needed for views.
             updatedEntity = refEntity;
             values = [target objectsForKeys: [refEntity correspondingProperties: dstProperties]];
@@ -388,7 +391,10 @@ NullArray (unsigned int count)
             break;
         case -1:
         default:
-            NSAssert (NO , @"Expected the relationship to be defined for this accessor");
+		{
+			log4AssertVoidReturn (NO , @"Expected the relationship to be defined for this accessor");
+			break;
+		}
     }
     
     if (nil == localError)

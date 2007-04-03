@@ -38,6 +38,8 @@
 #import "BXDatabaseObjectPrivate.h"
 #import "BXPropertyDescriptionPrivate.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 static TSNonRetainedObjectSet* gObjectIDs;
 
@@ -122,8 +124,8 @@ static TSNonRetainedObjectSet* gObjectIDs;
                     value = [NSUnarchiver unarchiveObjectWithData: archivedData];
                     break;
                 }
-            }
-			NSAssert1 ([entityDesc isValidated], @"Expected entity %@ to have been validated earlier.", entityDesc);
+            }	
+			log4AssertValueReturn ([entityDesc isValidated], nil, @"Expected entity %@ to have been validated earlier.", entityDesc);
 			BXPropertyDescription* propertyDesc = [[entityDesc attributesByName] objectForKey: key]; 
             [pkeyDict setObject: value forKey: propertyDesc];
             
@@ -436,10 +438,10 @@ static TSNonRetainedObjectSet* gObjectIDs;
         
         //Only single instance allowed
         id anID = [gObjectIDs member: self];
-        NSAssert2 ([gObjectIDs containsObject: self] ? nil != anID : YES, 
-                   @"gObjectIDs contains the current objectID but it could not be found."
-                   " \n\tself: \t%@ \n\tgObjectIDs: \t%@",
-                   self, gObjectIDs);
+        log4AssertValueReturn ([gObjectIDs containsObject: self] ? nil != anID : YES, nil,
+							   @"gObjectIDs contains the current objectID but it could not be found."
+							   " \n\tself: \t%@ \n\tgObjectIDs: \t%@",
+							   self, gObjectIDs);
         if (nil == anID)
         {
             [gObjectIDs addObject: self];
@@ -500,7 +502,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
 
 - (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view
 {
-    NSAssert1 ([view isView], @"Expected given entity (%@) to be a view.", view);
+    log4AssertValueReturn ([view isView], nil, @"Expected given entity (%@) to be a view.", view);
     
     NSArray* keys = [view primaryKeyFields];
     NSArray* myKeys = [[self entity] correspondingProperties: keys];
