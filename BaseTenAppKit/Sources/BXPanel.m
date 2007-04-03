@@ -28,6 +28,8 @@
 
 #import "BXPanel.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 @implementation BXPanel
 

@@ -55,15 +55,6 @@
 #import "BXPropertyDescriptionPrivate.h"
 
 
-//FIXME: these should be non-blockable assertions and the definitions should be somewhere else
-#define BXAssert0( ASSERTION )                        if (!( ASSERTION )) BXHandleAssertionError( __FILE__, __LINE__, nil )
-#define BXAssert( ASSERTION, MESSAGE )                if (!( ASSERTION )) BXHandleAssertionError( __FILE__, __LINE__, MESSAGE )
-#define BXAssert2( ASSERTION, MESSAGE, ARG1, ARG2 )   if (!( ASSERTION )) BXHandleAssertionError( __FILE__, __LINE__, [NSString stringWithFormat: MESSAGE, ARG1, ARG2] )
-static void BXHandleAssertionError (char* file, int line, NSString* message)
-{
-	log4CError (@"Assertion failed in %s line %d (%@).", file, line, message);
-}
-
 static unsigned int savepointIndex;
 static NSString* SavepointQuery ()
 {
@@ -606,7 +597,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                 do
                     runLoopRan = [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: date] || runLoopRan;
                 while (! (PQTRANS_INTRANS == [connection transactionStatus] || [date timeIntervalSinceNow] < 0));
-                BXAssert0 (YES == runLoopRan);
+                log4AssertValueReturn (YES == runLoopRan, nil, @"Expected to have runloop run.");
             }
         }
 		
@@ -1306,43 +1297,63 @@ static NSString* SSLMode (enum BXSSLMode mode)
         rval = YES;
     else
     {
-        @try
-        {
-            PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
-            BXAssert0 ([modificationNotifier addObserver: self selector: @selector (rowsInserted:) table: table notificationName: kPGTSInsertModification]);
-            BXAssert0 ([modificationNotifier addObserver: self selector: @selector (rowsUpdated:) table: table notificationName: kPGTSUpdateModification]);
-            BXAssert0 ([modificationNotifier addObserver: self selector: @selector (rowsDeleted:) table: table notificationName: kPGTSDeleteModification]);
-            BXAssert0 ([lockNotifier addObserver: self selector: @selector (rowsLocked:) table: table notificationName: kPGTSLockedForUpdate]);
-            BXAssert0 ([lockNotifier addObserver: self selector: @selector (rowsLocked:) table: table notificationName: kPGTSLockedForDelete]);
-            BXAssert0 ([lockNotifier addObserver: self selector: @selector (rowsUnlocked:) table: table notificationName: kPGTSUnlockedRowsNotification]);
-        
-            [context setHasSeen: YES entity: entity];
-            [[NSNotificationCenter defaultCenter] addObserver: self
-                                                     selector: @selector (notifyConnectionWillClose:)
-                                                         name: kPGTSWillDisconnectNotification 
-                                                       object: notifyConnection];
-                  
-            rval = (nil == *error);
-        }
-        @catch (PGTSQueryException* exception)
-        {
-            NSString* message = BXLocalizedString (@"observingErrorFmt", 
-                                                   @"Table %@ in schema %@ has not been prepared for modification observing.", 
-                                                   @"Error description format");
-            message = [NSString stringWithFormat: message, [entity name], [entity schemaName]];
-            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                BXSafeObj (context), kBXDatabaseContextKey,
-                BXSafeObj (entity),  kBXEntityDescriptionKey,
-                BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
-                BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
-                nil];
-            *error = [NSError errorWithDomain: kBXErrorDomain
-                                         code: kBXErrorObservingFailed
-                                     userInfo: userInfo];
-        }
-    }
-    return rval;
+		PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
+		
+		{
+			SEL selectors [] = {@selector (rowsInserted:), @selector (rowsUpdated:), @selector (rowsDeleted:)};
+			NSString* notificationNames [] = {kPGTSInsertModification, kPGTSUpdateModification, kPGTSDeleteModification};
+			for (int i = 0; i < 3; i++)
+			{
+				rval = [modificationNotifier addObserver: self 
+												selector: selectors [i] 
+												   table: table 
+										notificationName: notificationNames [i]];
+				if (NO == rval)
+					goto bail;
+			}
+		}
+		
+		{
+			SEL selectors [] = {@selector (rowsLocked:), @selector (rowsLocked:), @selector (rowsUnlocked:)};
+			NSString* notificationNames [] = {kPGTSLockedForUpdate, kPGTSLockedForDelete, kPGTSUnlockedRowsNotification};
+			for (int i = 0; i < 3; i++)
+			{
+				rval = [lockNotifier addObserver: self 
+										selector: selectors [i]
+										   table: table 
+								notificationName: notificationNames [i]];
+				if (NO == rval)
+					goto bail;
+			}
+		}
+		
+		[context setHasSeen: YES entity: entity];
+		[[NSNotificationCenter defaultCenter] addObserver: self
+												 selector: @selector (notifyConnectionWillClose:)
+													 name: kPGTSWillDisconnectNotification 
+												   object: notifyConnection];
+	}
+	return rval;
+
+bail:
+	if (NULL != error)
+	{
+		NSString* message = BXLocalizedString (@"observingErrorFmt", 
+											   @"Table %@ in schema %@ has not been prepared for modification observing.", 
+											   @"Error description format");
+		message = [NSString stringWithFormat: message, [entity name], [entity schemaName]];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+			BXSafeObj (context), kBXDatabaseContextKey,
+			BXSafeObj (entity),  kBXEntityDescriptionKey,
+			BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+			BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+			BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
+			nil];
+		*error = [NSError errorWithDomain: kBXErrorDomain
+									 code: kBXErrorObservingFailed
+								 userInfo: userInfo];
+	}
+	return NO;
 }
 
 /**

@@ -178,6 +178,41 @@
 			remoteGlobalIDString = 53C9BE020A36FEBE00AAFE50;
 			remoteInfo = "Static archive";
 		};
+		5381F6B50BC281CE008642BA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */;
+			remoteInfo = libLog4Cocoa;
+		};
+		53B38EE10BC2809A00EAA5C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 530EC0030B4BCDB100DFC1CA;
+			remoteInfo = libLog4Cocoa;
+		};
+		53B38EE30BC2809A00EAA5C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53C1DF180B4BD429007947D8;
+			remoteInfo = "AllTests (Upgraded)";
+		};
+		53B38EE50BC2809A00EAA5C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53C1DF1F0B4BD429007947D8;
+			remoteInfo = "Documentation (Upgraded)";
+		};
+		53B38EE70BC2809A00EAA5C3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 530EBD140B4BBFAE00DFC1CA;
+			remoteInfo = Log4Cocoa;
+		};
 		53DB86D10A6FBE3C00FC801D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */;
@@ -306,6 +341,7 @@
 		539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescriptionPrivate.h; path = Sources/BXEntityDescriptionPrivate.h; sourceTree = "<group>"; };
 		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
 		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseTen.icns; sourceTree = "<group>"; };
+		53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Log4Cocoa.xcodeproj; path = Dependencies/PGTS/Framework/Contrib/Log4Cocoa/Log4Cocoa.xcodeproj; sourceTree = "<group>"; };
 		53B86FF20A0A1D2A007315BC /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
 		53B86FF30A0A1D2A007315BC /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelationshipDescription.m; path = Sources/BXRelationshipDescription.m; sourceTree = "<group>"; };
 		53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescription.h; path = Sources/BXPropertyDescription.h; sourceTree = "<group>"; };
@@ -391,6 +427,7 @@
 				5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */,
 				53012E6009D4368D0037C485 /* Framework.xcodeproj */,
 				530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */,
+				53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
@@ -498,6 +535,17 @@
 				5321C0570AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m */,
 			);
 			name = "Automatically-updating containers";
+			sourceTree = "<group>";
+		};
+		53B38EDB0BC2809A00EAA5C3 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53B38EE20BC2809A00EAA5C3 /* libLog4Cocoa.a */,
+				53B38EE40BC2809A00EAA5C3 /* AllTests */,
+				53B38EE60BC2809A00EAA5C3 /* Documentation */,
+				53B38EE80BC2809A00EAA5C3 /* Log4Cocoa.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		53B8730F0A0A53D9007315BC /* Descriptions */ = {
@@ -659,6 +707,7 @@
 				531B00D70A519FB0006AEF08 /* PBXTargetDependency */,
 				53DB86D20A6FBE3C00FC801D /* PBXTargetDependency */,
 				53DB86D40A6FBE4000FC801D /* PBXTargetDependency */,
+				5381F6B60BC281CE008642BA /* PBXTargetDependency */,
 			);
 			name = "BaseTen Static";
 			productName = "BXDatabase Static";
@@ -712,6 +761,10 @@
 					ProjectRef = 53012E6009D4368D0037C485 /* Framework.xcodeproj */;
 				},
 				{
+					ProductGroup = 53B38EDB0BC2809A00EAA5C3 /* Products */;
+					ProjectRef = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
+				},
+				{
 					ProductGroup = 536B8AA60A519D5B00379C00 /* Products */;
 					ProjectRef = 530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */;
 				},
@@ -755,6 +808,34 @@
 			fileType = archive.ar;
 			path = libPGTSTiger.a;
 			remoteRef = 536B8AAC0A519D5B00379C00 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53B38EE20BC2809A00EAA5C3 /* libLog4Cocoa.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libLog4Cocoa.a;
+			remoteRef = 53B38EE10BC2809A00EAA5C3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53B38EE40BC2809A00EAA5C3 /* AllTests */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = AllTests;
+			remoteRef = 53B38EE30BC2809A00EAA5C3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53B38EE60BC2809A00EAA5C3 /* Documentation */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = Documentation;
+			remoteRef = 53B38EE50BC2809A00EAA5C3 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53B38EE80BC2809A00EAA5C3 /* Log4Cocoa.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Log4Cocoa.framework;
+			remoteRef = 53B38EE70BC2809A00EAA5C3 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		53EFE9E50BA96444008666B7 /* BaseTenAppKit.framework */ = {
@@ -927,6 +1008,11 @@
 			isa = PBXTargetDependency;
 			name = "Static archive";
 			targetProxy = 531B00D60A519FB0006AEF08 /* PBXContainerItemProxy */;
+		};
+		5381F6B60BC281CE008642BA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libLog4Cocoa;
+			targetProxy = 5381F6B50BC281CE008642BA /* PBXContainerItemProxy */;
 		};
 		53DB86D20A6FBE3C00FC801D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
