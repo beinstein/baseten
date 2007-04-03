@@ -40,6 +40,8 @@
 #import "PGTSTableInfo.h"
 #import "PGTSDatabaseInfo.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 #ifndef PGTS_SCHEMA_NAME
 #define PGTS_SCHEMA_NAME "PGTS"
@@ -94,7 +96,7 @@
 {
     if (0 == [observedTables countForObject: tableInfo])
     {
-        NSAssert (nil != connection, nil);
+		log4AssertVoidReturn (nil != connection, nil, @"Expected to have a connection.");
         [connection executeQuery: @"SELECT " PGTS_SCHEMA_NAME ".StopObservingModifications ($1)" 
                       parameters: PGTSOidAsObject ([tableInfo oid])];
     }
@@ -109,7 +111,7 @@
                 notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveModifications ($1) AS nname" ];
     if (YES == rval && nil == lastCheck)
     {
-        NSAssert (nil != connection, nil);
+		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
         PGTSResultSet* res = [connection executeQuery: 
             @"SELECT " PGTS_SCHEMA_NAME ".ModificationTableCleanup ();"
              "SELECT COALESCE (MAX (" PGTS_SCHEMA_NAME "_modification_timestamp), CURRENT_TIMESTAMP)::TIMESTAMP (3) WITHOUT TIME ZONE AS date "
@@ -125,7 +127,7 @@
  */
 - (NSDictionary *) lastModificationForTable: (PGTSTableInfo *) table
 {
-    NSAssert (nil != connection, nil);
+    log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
     return [self lastModificationForTable: table connection: connection];
 } 
 
@@ -133,7 +135,7 @@
 {
     if ([self shouldHandleNotification: notification])
     {
-        NSAssert (nil != connection, nil);
+		log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
         [self checkInModificationTableNamed: [notification name]];
     }
 }

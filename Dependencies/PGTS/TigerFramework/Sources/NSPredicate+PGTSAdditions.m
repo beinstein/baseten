@@ -32,8 +32,8 @@
 
 #import <PGTS/PGTSFunctions.h>
 #import <PGTS/PGTSConstants.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
-//FIXME: since the where clause methods produce an expression which could be used elsewhere as well, the methods should be renamed.
 
 @implementation NSPredicate (PGTSAdditions)
 
@@ -64,7 +64,8 @@
 
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
-    NSAssert1 (nil != [context objectForKey: kPGTSConnectionKey], @"Did you remember to set connection to %@ in context?", kPGTSConnectionKey);
+    log4AssertValueReturn (nil != [context objectForKey: kPGTSConnectionKey], nil, 
+						   @"Did you remember to set connection to %@ in context?", kPGTSConnectionKey);
     NSString* rval = nil;
     NSArray* subpredicates = [self subpredicates];
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [subpredicates count]];

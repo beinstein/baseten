@@ -34,6 +34,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSFunctions.h"
 #import <TSDataTypes/TSDataTypes.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 #define AddClass( CLASSNAME, ARRAY ) { \
@@ -66,7 +67,7 @@
     {
         NSString* query = @"SELECT oid FROM pg_namespace WHERE nspname = $1";
         PGTSResultSet* res = [connection executeQuery: query parameters: schemaName];
-        NSAssert ([res querySucceeded], nil);
+        log4AssertValueReturn ([res querySucceeded], NO, @"Query failed (%@).", [res errorMessage]);
         if (0 == [res countOfRows])
             rval = NO;
         else

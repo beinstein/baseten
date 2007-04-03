@@ -37,6 +37,8 @@
 #import "PGTSTableInfo.h"
 #import "PGTSDatabaseInfo.h"
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 
 #ifndef PGTS_SCHEMA_NAME
 #define PGTS_SCHEMA_NAME "PGTS"
@@ -83,7 +85,7 @@
 - (NSArray *) locksForTable: (PGTSTableInfo *) table fromItems: (NSArray *) fromItems 
                 whereClause: (NSString *) whereClause parameters: (NSArray *) parameters
 {
-    NSAssert (nil != connection, nil);
+    log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
 
     NSArray* rval = nil;    
     NSString* lockTableName = [notificationNames objectAtIndex: [table oid]];
@@ -125,7 +127,7 @@
     [super removeObserver: anObject table: table notificationName: notificationName];
     if (0 == [observedTables count])
     {
-        NSAssert (nil != connection, nil);
+		log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
         [connection stopListening: self forNotification: @"\"" PGTS_SCHEMA_NAME ".ClearedLocks\""];
     }
 }
@@ -139,7 +141,7 @@
                 notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveLocks ($1) AS nname"];
     if (YES == rval && YES == zeroCount)
     {
-        NSAssert (nil != connection, nil);
+		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
         //Clock synchronization
         if (nil == lastCheck)
         {
@@ -156,7 +158,7 @@
 
 - (void) handleClearNotification: (NSNotification *) notification
 {
-    NSAssert (nil != connection, nil);
+    log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
 
     PGTSResultSet* releasedRows = nil;
         
@@ -223,7 +225,7 @@ error:
     if (nil == rval)
     {
         //FIXME: does the function return a suitable name?
-        NSAssert (nil != connection, nil);
+		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
         PGTSResultSet* res = [connection executeQuery: @"SELECT " PGTS_SCHEMA_NAME ".LockNotifyFunctionName ($1::OID) AS fname" 
                                            parameters: PGTSOidAsObject ([table oid])];
         [res advanceRow];
@@ -239,7 +241,7 @@ error:
     if (nil == rval)
     {
         //FIXME: does the function return a suitable name?
-        NSAssert (nil != connection, nil);
+		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
         PGTSResultSet* res = [connection executeQuery: @"SELECT " PGTS_SCHEMA_NAME ".LockTableName ($1::OID) AS tname" 
                                            parameters: PGTSOidAsObject ([table oid])];
         [res advanceRow];
@@ -251,7 +253,7 @@ error:
 
 - (void) handleNotification: (NSNotification *) notification
 {
-    NSAssert (nil != connection, nil);
+    log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
     NSDictionary* userInfo = [notification userInfo];
     NSNumber* backendPID = [NSNumber numberWithInt: [connection backendPID]];
     if (observesSelfGenerated || NO == [[userInfo objectForKey: kPGTSBackendPIDKey] isEqualToNumber: backendPID])

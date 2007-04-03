@@ -34,8 +34,6 @@
 
 #import "TSRunloopMessenger.h"
 
-#define USE_ASSERTIONS 1
-
 #import "PGTSConnectionPrivate.h"
 #import "PGTSConnection.h"
 #import "PGTSResultSetPrivate.h"

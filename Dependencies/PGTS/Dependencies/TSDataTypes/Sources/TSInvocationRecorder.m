@@ -94,7 +94,6 @@
 
 - (void) forwardInvocation: (NSInvocation *) invocation
 {
-    NSAssert (nil != invocation, @"Expected invocation not to be nil");
     [invocation setTarget: recordingTarget];
     if (YES == retainsArguments)
     {
