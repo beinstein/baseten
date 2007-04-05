@@ -39,7 +39,7 @@
 #define kPGTSRaiseForReceiveCopyData    (1 << 5)
 #define kPGTSRaiseForSendCopyData       (1 << 6)
     
-#define LogQuery( QUERY, PARAMETERS ) { if (YES == logsQueries) [self logQuery: QUERY parameters: PARAMETERS]; }
+#define LogQuery( QUERY, MESSAGE_DELEGATE, PARAMETERS ) { if (YES == logsQueries) [self logQuery: QUERY message: MESSAGE_DELEGATE parameters: PARAMETERS]; }
 
 
 @interface PGTSConnection (PrivateMethods)
@@ -69,7 +69,7 @@
 - (void) workerThreadMain: (NSLock *) threadLock;
 - (BOOL) workerPollConnectionResetting: (BOOL) reset;
 - (void) workerEnd;
-- (void) logQuery: (NSString *) query parameters: (NSArray *) parameters;
+- (void) logQuery: (NSString *) query message: (BOOL) messageDelegate parameters: (NSArray *) parameters;
 - (void) logNotice: (id) anObject;
 - (void) logNotification: (id) anObject;
 - (void) postPGnotifications;

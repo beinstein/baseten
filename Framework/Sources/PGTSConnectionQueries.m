@@ -232,6 +232,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
     return rval;
 }
 
+//FIXME: LogQueries missing
 - (int) sendQuery: (NSString *) queryString parameterArray: (NSArray *) parameters
 {
     int rval = -1;
@@ -328,7 +329,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
 - (int) sendQuery2: (NSString *) queryString messageDelegate: (BOOL) messageDelegate
 {
     int rval = 0;
-    LogQuery (queryString, nil);
+    LogQuery (queryString, messageDelegate, nil);
     [connectionLock lock];
     SendQuery (rval = PQsendQuery (connection, [queryString UTF8String]));
     [connectionLock unlock];
@@ -376,7 +377,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
 		}
     }
     
-    LogQuery (queryString, parameters);
+    LogQuery (queryString, messageDelegate, parameters);
     [connectionLock lock];
     SendQuery (rval = PQsendQueryParams (connection, [queryString UTF8String], nParams, paramTypes,
                                   paramValues, paramLengths, paramFormats, 0));
@@ -430,7 +431,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
         //paramFormats [i] = (0 == length ? 0 : 1);
     }
     
-    LogQuery (aName, arguments);
+    LogQuery (aName, messageDelegate, arguments);
     [connectionLock lock];
     SendQuery (rval = PQsendQueryPrepared (connection, [aName UTF8String], nParams, paramValues, 
                                     (const int *) paramLengths, (const int *) paramFormats, 0));

@@ -498,9 +498,9 @@ PGTSSSLConnectionExIndex ()
     log4Debug (@"workerEnd");
 }
 
-- (void) logQuery: (NSString *) query parameters: (NSArray *) parameters
+- (void) logQuery: (NSString *) query message: (BOOL) messageDelegate parameters: (NSArray *) parameters
 {
-    printf ("(%p) %s %s\n", self, [[query description] UTF8String], [[parameters description] UTF8String]);
+    printf ("(%p) (%c) %s %s\n", self, messageDelegate ? 'A' : 'S', [[query description] UTF8String], [[parameters description] UTF8String]);
     //log4Info (@"(%p) %@ %@\n", self, query, parameters);
 }
 
