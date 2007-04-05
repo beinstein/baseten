@@ -231,4 +231,39 @@
 	[entity resetPropertyExclusion];
 }
 
+- (void) testJoin
+{
+	NSError* error = nil;
+	[context connectIfNeeded: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
+	BXEntityDescription* person = [context entityForTable: @"person" error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
+	BXPropertyDescription* person_id = [[person attributesByName] objectForKey: @"id"];
+	BXPropertyDescription* test_id = [[entity attributesByName] objectForKey: @"id"];
+	MKCAssertNotNil (person_id);
+	MKCAssertNotNil (test_id);
+	
+	NSExpression* lhs = [NSExpression expressionForConstantValue: person_id];
+	NSExpression* rhs = [NSExpression expressionForConstantValue: test_id];
+	NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs
+																	   modifier: NSDirectPredicateModifier 
+																		   type: NSEqualToPredicateOperatorType
+																		options: 0];
+	MKCAssertNotNil (predicate);
+	
+	//Make another predicate just to test compound predicates.
+	NSPredicate* truePredicate = [NSPredicate predicateWithFormat: @"TRUEPREDICATE"];
+	MKCAssertNotNil (truePredicate);
+	NSPredicate* compound = [NSCompoundPredicate andPredicateWithSubpredicates: 
+		[NSArray arrayWithObjects: predicate, truePredicate, nil]];
+	
+	NSArray* res = [context executeFetchForEntity: person withPredicate: compound error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
+	MKCAssertTrue (1 == [res count]);
+	MKCAssertEqualObjects ([[res objectAtIndex: 0] valueForKey: @"name"], @"nzhuk");
+}
+
 @end

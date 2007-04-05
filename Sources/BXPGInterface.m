@@ -438,7 +438,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				unsigned int count = [pkeyfields count];
 				NSMutableArray* pkeyQNames = [NSMutableArray arrayWithCapacity: count];            
 				TSEnumerate (currentField, e, [pkeyfields objectEnumerator])
-					[pkeyQNames addObject: [currentField BXPGEscapedName: connection]];
+					[pkeyQNames addObject: [currentField BXPGQualifiedName: connection]];
 				
 				//What to query
 				NSString* queryFields = nil;
@@ -450,7 +450,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					TSEnumerate (currentField, e, [fields objectEnumerator])
 					{
 						if (![currentField isExcluded])
-							[remainingFields addObject: [currentField BXPGEscapedName: connection]];
+							[remainingFields addObject: [currentField BXPGQualifiedName: connection]];
 					}
 					queryFields = [remainingFields componentsJoinedByString: @", "];
 				}            
@@ -467,7 +467,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					NSMutableSet* entitySet = [NSMutableSet setWithSet: [predicate BXEntitySet]];
 					log4AssertValueReturn (nil != entitySet, nil, @"Expected to receive an entity set (predicate: %@).", predicate);
 					[entitySet addObject: entity];
-					[entitySet removeObject: [NSNull null]];
 					NSMutableArray* components = [NSMutableArray arrayWithCapacity: [entitySet count]];
 					TSEnumerate (currentEntity, e, [entitySet objectEnumerator])
 						[components addObject: [currentEntity BXPGQualifiedName: connection]];

@@ -182,7 +182,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */;
+			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA;
 			remoteInfo = libLog4Cocoa;
 		};
 		53B38EE10BC2809A00EAA5C3 /* PBXContainerItemProxy */ = {

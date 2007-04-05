@@ -260,7 +260,6 @@
 - (NSSet *) BXEntitySet
 {
     NSMutableSet* rval = [NSMutableSet setWithArray: [self BXEntities]];
-    [rval removeObject: [NSNull null]];
     return rval;
 }
 
@@ -386,12 +385,26 @@
 
 
 @implementation NSComparisonPredicate (BXDatabaseAdditions)
+- (NSMutableSet *) BXEntitySet
+{
+	return [NSMutableSet setWithArray: [self BXEntities]];
+}
+
 - (NSArray *) BXEntities
 {
     id lEnt = [[self  leftExpression] BXEntity];
     id rEnt = [[self rightExpression] BXEntity];
-    NSNull* null = [NSNull null];
-    return [NSArray arrayWithObjects: (lEnt ? lEnt : null), (rEnt ? rEnt : null), nil];
+	id rval = nil;
+	if (nil == lEnt && nil == rEnt)
+		rval = nil;
+	else if (nil == lEnt)
+		rval = [NSArray arrayWithObject: rEnt];
+	else if (nil == rEnt)
+		rval = [NSArray arrayWithObject: lEnt];
+	else
+		rval = [NSArray arrayWithObjects: lEnt, rEnt, nil];
+	
+	return rval;
 }
 
 - (BOOL) BXEvaluateWithObject: (id) anObject
