@@ -383,7 +383,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.911::NUMERIC;
+    SELECT 0.912::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
@@ -391,7 +391,7 @@ GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
 
 
 CREATE OR REPLACE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
-    SELECT 0.11::NUMERIC;
+    SELECT 0.12::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CompatibilityVersion () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".CompatibilityVersion () TO basetenread;
@@ -810,11 +810,12 @@ BEGIN
     ntname      := "baseten".ModificationTableName (tableoid);
     restname    := "baseten".ModResultTableName (tableoid);
     fdecl       := 
-        'CREATE OR REPLACE FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP)                            ' ||
+        'CREATE OR REPLACE FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP, INTEGER)                   ' ||
         'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
         'DECLARE                                                                                     ' ||
         '   should_clean ALIAS FOR $1;                                                               ' ||
         '   earliest_date ALIAS FOR $2;                                                              ' ||        
+        '   ignored_be_pid ALIAS FOR $3;                                                             ' ||
         '   row ' || ntname || '%ROWTYPE;                                                            ' ||
         'BEGIN                                                                                       ' ||
         '    BEGIN                                                                                   ' ||
@@ -834,6 +835,7 @@ BEGIN
         '    (                                                                                       ' ||
         '        SELECT * FROM ' || ntname || '                                                      ' ||
         '            WHERE "baseten_modification_type" = ''D'' AND                                   ' ||
+        '                baseten_modification_backend_pid != ignored_be_pid AND                      ' ||
         '                ("baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp) ' ||
         '                 OR "baseten_modification_timestamp" IS NULL                                ' ||
         '                )                                                                           ' ||
@@ -854,12 +856,13 @@ BEGIN
         '       SELECT m.* FROM ' || ntname || ' m                                                   ' ||
         '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                      ' ||
         '           WHERE m."baseten_modification_type" = ''I'' AND                                  ' ||
-        '               (r."baseten_modification_id" IS NULL OR                                      ' ||
-        '                    m."baseten_modification_timestamp" > r."baseten_modification_timestamp" ' ||
-        '               ) AND                                                                        ' ||
-        '               (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp)' ||
-        '                OR m."baseten_modification_timestamp" IS NULL                               ' ||
-        '               )                                                                            ' ||
+        '              m."baseten_modification_backend_pid" != ignored_be_pid AND                    ' ||
+        '              (r."baseten_modification_id" IS NULL OR                                       ' ||
+        '                   m."baseten_modification_timestamp" > r."baseten_modification_timestamp"  ' ||
+        '              ) AND                                                                         ' ||
+        '              (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp) ' ||
+        '               OR m."baseten_modification_timestamp" IS NULL                                ' ||
+        '              )                                                                             ' ||
         '           ORDER BY "baseten_modification_timestamp" DESC,                                  ' ||
         '                "baseten_modification_insert_timestamp" DESC                                ' ||
         '   ) AS si;                                                                                 ' ||
@@ -874,10 +877,11 @@ BEGIN
         '       SELECT m.* FROM ' || ntname || ' m                                                   ' ||
         '           LEFT JOIN ' || restname || ' r USING (' || pkeyfnames || ')                      ' ||
         '           WHERE m."baseten_modification_type" = ''U'' AND                                  ' ||
-        '               r."baseten_modification_id" IS NULL AND                                      ' ||
-        '               (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp)' ||
-        '                OR m."baseten_modification_timestamp" IS NULL                               ' ||
-        '               )                                                                            ' ||
+        '              m."baseten_modification_backend_pid" != ignored_be_pid AND                    ' ||
+        '              r."baseten_modification_id" IS NULL AND                                       ' ||
+        '              (m."baseten_modification_timestamp" > COALESCE ($2, ''-infinity''::timestamp) ' ||
+        '               OR m."baseten_modification_timestamp" IS NULL                                ' ||
+        '              )                                                                             ' ||
         '           ORDER BY "baseten_modification_timestamp" DESC,                                  ' ||
         '               "baseten_modification_insert_timestamp" DESC                                 ' ||
         '   ) AS su;                                                                                 ' ||
@@ -894,15 +898,15 @@ BEGIN
         '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;                                     ' ;
     EXECUTE fdecl;
     fdecl :=
-        'CREATE OR REPLACE FUNCTION ' || ntname || ' (TIMESTAMP)                                     ' ||
+        'CREATE OR REPLACE FUNCTION ' || ntname || ' (TIMESTAMP, INTEGER)                            ' ||
         'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
-        '    SELECT * FROM ' || ntname || '(true, $1);                                               ' ||
+        '    SELECT * FROM ' || ntname || '(true, $1, $2);                                           ' ||
         '$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;                                         ';
     EXECUTE fdecl;
-    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP) FROM PUBLIC';
-    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (TIMESTAMP) FROM PUBLIC';
-    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP) TO basetenread';
-    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (TIMESTAMP) TO basetenread';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP, INTEGER) FROM PUBLIC';
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (TIMESTAMP, INTEGER) FROM PUBLIC';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP, INTEGER) TO basetenread';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (TIMESTAMP, INTEGER) TO basetenread';
         
     RETURN;
 END;

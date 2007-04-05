@@ -47,7 +47,7 @@ static NSLock *_loggerLock = nil;
 
 id objc_msgSend(id self, SEL op, ...);
 
-extern void log4AssertionDebug ()
+extern void _log4AssertionDebug ()
 {
 	log4CInfo (@"Break on _log4AssertionDebug to inspect.");
 }
@@ -85,7 +85,7 @@ void log4Log(id object, int line, const char* project, char *file, const char *m
 			{
 				objc_msgSend(logger, sel, line, file, method, 
 							 assertion, combinedMessage);
-				log4AssertionDebug ();
+				_log4AssertionDebug ();
 				
 				if (throwOnAssertionFailure)
 					[[NSException exceptionWithName: NSInternalInconsistencyException reason: nil userInfo: nil] raise];

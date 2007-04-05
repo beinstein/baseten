@@ -147,16 +147,16 @@
 
 - (void) checkInModificationTableNamed: (NSString *) modificationTableName
 {
-    NSNumber* backendPID = [NSNumber numberWithInt: [connection backendPID]];
-    
     //When observing self-generated modifications, also the ones that still have NULL values for 
     //pgts_modification_timestamp should be included in the query.
-    NSString* addition = @"(true)";
-    if (NO == observesSelfGenerated)
-        addition = @"" PGTS_SCHEMA_NAME "_modification_backend_pid != $2";
+    NSNumber* backendPID = nil;
+    if (observesSelfGenerated)
+		backendPID = [NSNumber numberWithInt: 0];
+	else
+        backendPID = [NSNumber numberWithInt: [connection backendPID]];
     
     NSString* query = [NSString stringWithFormat: 
-        @"SELECT * FROM %@ ($1::timestamp) WHERE %@", modificationTableName, addition];
+        @"SELECT * FROM %@ ($1::timestamp, $2)", modificationTableName];
     PGTSResultSet* res = [connection executeQuery: query parameters: lastCheck, backendPID];
     
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];

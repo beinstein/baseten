@@ -653,6 +653,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				if (NO == [entity isView])
 					[self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
 				
+				//FIXME: if we are continuously updating the value in autocommit mode, we are going to lose the lock here.
+				//See -lockObject:key:lockType:sender:
 				[self endSubtransactionIfNeeded]; 
 				
 				//Handle the result and get new pkey values
@@ -1009,35 +1011,40 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 /** 
  * Lock an object asynchronously.
- * In autocommit mode, begin a transaction, since the lock would be immediately lost otherwise.
  * Lock notifications should always be listened to, since modifications cause the rows to be locked until
- * the end of the ongoing transaction
+ * the end of the ongoing transaction.
+ * \note For now, this doesn't work in autocommit mode. See the UPDATE method.
  */
 - (void) lockObject: (BXDatabaseObject *) anObject key: (id) aKey lockType: (enum BXObjectLockStatus) type
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
-    BXDatabaseObjectID* objectID = [anObject objectID];
-    BXEntityDescription* entity = [objectID entity];
-    
-    //There was a strange problem with views in january 2007. This might not be needed in the future.
-    if (NO == [entity isView])
-    {
-        NSString* name = [entity BXPGQualifiedName: connection];
-        NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
-        NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
-        
-        //Lock the row
-		//Transaction for locking the rows (?)
-		[self beginIfNeeded];
-        [self beginSubtransactionIfNeeded];
-        state = kBXPGQueryBegun;
-        [connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
-               parameterArray: [ctx objectForKey: kPGTSParametersKey]];
-        state = kBXPGQueryLock;
-        
-        [self setLockedKey: aKey];
-        [self setLockedObjectID: objectID];
-    }
+	if (NO == autocommits)
+	{
+		BXDatabaseObjectID* objectID = [anObject objectID];
+		BXEntityDescription* entity = [objectID entity];
+		
+		//There was a strange problem with views in january 2007. This might not be needed in the future.
+		if (NO == [entity isView])
+		{
+			NSString* name = [entity BXPGQualifiedName: connection];
+			NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+			NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
+			
+			//Lock the row
+			//Transaction for locking the rows (?)
+			[self beginIfNeeded];
+			//If we supported autocommit, we needed to begin a transaction, 
+			//since the lock would be immediately lost otherwise.
+			[self beginSubtransactionIfNeeded];
+			state = kBXPGQueryBegun;
+			[connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
+				   parameterArray: [ctx objectForKey: kPGTSParametersKey]];
+			state = kBXPGQueryLock;
+			
+			[self setLockedKey: aKey];
+			[self setLockedObjectID: objectID];
+		}
+	}
 }
 
 /**
@@ -1045,7 +1052,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
  */
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey
 {
-    //FIXME: to make unlocking from a method like this work, the locking system should be repaired.
+    //FIXME: at least conditionally ending a transaction would be needed here when in autocommit mode.
 }
 
 - (NSArray *) keyPathComponents: (NSString *) keyPath

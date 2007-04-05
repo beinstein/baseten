@@ -257,9 +257,9 @@ extern void BXInit ()
 			[self lazyInit];
 			[mDatabaseInterface connect: &localError];
 			
-			if (nil == localError) 
-				[self connectedToDatabase: YES async: NO error: &localError];
-			else
+			BOOL success = (nil == localError);
+			[self connectedToDatabase: success async: NO error: &localError];
+			if (!success)
 			{
 				[mDatabaseInterface release];
 				mDatabaseInterface = nil;
@@ -1220,27 +1220,22 @@ extern void BXInit ()
 			}
 		}
 		
-        //Error will be handled by the caller if NO == async
-		if (YES == async)
+		mRetryingConnection = NO;
+		NSNotification* notification = nil;
+		if (nil == localError)
 		{
-			mRetryingConnection = NO;
-
-			NSNotification* notification = nil;
-			if (nil == localError)
-			{
-				notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification
-															 object: self 
-														   userInfo: nil];			
-			}
-			else
-			{
-				//FIXME: what is the state in this case? Connected?
-				notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
-															 object: self
-														   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
-			}
-			[[NSNotificationCenter defaultCenter] postNotification: notification];
+			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification
+														 object: self 
+													   userInfo: nil];			
 		}
+		else
+		{
+			//FIXME: what is the state in this case? Connected?
+			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
+														 object: self
+													   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
+		}
+		[[NSNotificationCenter defaultCenter] postNotification: notification];
 	}
 }
 

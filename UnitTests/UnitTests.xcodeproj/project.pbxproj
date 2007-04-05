@@ -8,14 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
-		53193E520BC50E57009A77EC /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
-		53193E530BC50E58009A77EC /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
-		53193E540BC50E59009A77EC /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
-		53193E550BC50E5A009A77EC /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
-		53193E560BC50E5B009A77EC /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
-		53193E570BC50E5B009A77EC /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
-		53193E580BC50E5D009A77EC /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
-		53193E590BC50E5D009A77EC /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
+		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
+		53193F5C0BC51A77009A77EC /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
+		53193F5D0BC51A78009A77EC /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
+		53193F5E0BC51A79009A77EC /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
+		53193F5F0BC51A7A009A77EC /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
+		53193F600BC51A7B009A77EC /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
+		53193F610BC51A7B009A77EC /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
+		53193F620BC51A7C009A77EC /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
+		53193F630BC51A7D009A77EC /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
 		53F645630BB2CDEC00BB866E /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
 /* End PBXBuildFile section */
@@ -59,6 +60,7 @@
 		530A438E0A5C0FD000A4722B /* UnitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "UnitTests-Info.plist"; sourceTree = "<group>"; };
 		530A439D0A5C114E00A4722B /* ConnectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectTest.h; sourceTree = "<group>"; };
 		530A439E0A5C114E00A4722B /* ConnectTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectTest.m; sourceTree = "<group>"; };
+		53193E8D0BC51701009A77EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		531E118B0A6A3A6C003A0F23 /* EntityTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityTests.h; sourceTree = "<group>"; };
 		531E118C0A6A3A6C003A0F23 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
 		5321BEAB0AD4DCDD0011D0C8 /* MTMCollectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTMCollectionTest.h; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 			files = (
 				530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */,
 				539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */,
+				53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,6 +141,7 @@
 		53BD96D30A5C2506001C950C /* Dependencies */ = {
 			isa = PBXGroup;
 			children = (
+				53193E8D0BC51701009A77EC /* Foundation.framework */,
 				53BD96BE0A5C2501001C950C /* SenTestingKit.framework */,
 				530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */,
 			);
@@ -238,14 +242,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				53F645630BB2CDEC00BB866E /* FetchTests.m in Sources */,
-				53193E520BC50E57009A77EC /* MTMCollectionTest.m in Sources */,
-				53193E530BC50E58009A77EC /* MTOCollectionTest.m in Sources */,
-				53193E540BC50E59009A77EC /* CreateTests.m in Sources */,
-				53193E550BC50E5A009A77EC /* ModificationTests.m in Sources */,
-				53193E560BC50E5B009A77EC /* ForeignKeyTests.m in Sources */,
-				53193E570BC50E5B009A77EC /* ObjectIDTests.m in Sources */,
-				53193E580BC50E5D009A77EC /* ConnectTest.m in Sources */,
-				53193E590BC50E5D009A77EC /* EntityTests.m in Sources */,
+				53193F5C0BC51A77009A77EC /* ConnectTest.m in Sources */,
+				53193F5D0BC51A78009A77EC /* EntityTests.m in Sources */,
+				53193F5E0BC51A79009A77EC /* ObjectIDTests.m in Sources */,
+				53193F5F0BC51A7A009A77EC /* CreateTests.m in Sources */,
+				53193F600BC51A7B009A77EC /* ModificationTests.m in Sources */,
+				53193F610BC51A7B009A77EC /* ForeignKeyTests.m in Sources */,
+				53193F620BC51A7C009A77EC /* MTOCollectionTest.m in Sources */,
+				53193F630BC51A7D009A77EC /* MTMCollectionTest.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,10 +304,6 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-				);
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
 				WARNING_CFLAGS = "-Wall";
