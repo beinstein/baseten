@@ -37,7 +37,7 @@
 #import "L4AppenderAttachableImpl.h"
 #import "L4AppenderProtocols.h"
 #import "L4AppenderSkeleton.h"
-#import "L4CLogger.h"
+//#import "L4CLogger.h"
 #import "L4Configurator.h"
 #import "L4ConsoleAppender.h"
 #import "L4DefaultRenderer.h"
