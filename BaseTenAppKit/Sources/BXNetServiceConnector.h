@@ -34,6 +34,8 @@
 #import <BaseTen/BXConnectionSetupManagerProtocol.h>
 
 
+@class BXConnectionPanel;
+
 @interface BXNetServiceConnector : NSObject <BXConnectionSetupManager>
 {
 	IBOutlet BXDatabaseContext* databaseContext;	//Weak
@@ -45,4 +47,5 @@
 - (void) displayAuthenticationPanel;
 - (void) setPanel: (BXPanel *) aPanel;
 - (void) setAuthenticationPanel: (BXAuthenticationPanel *) aPanel;
+- (void) continueFromDatabaseSelection: (BXConnectionPanel *) panel returnCode: (int) returnCode;
 @end

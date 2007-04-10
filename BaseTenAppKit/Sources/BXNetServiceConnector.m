@@ -52,36 +52,47 @@
 - (IBAction) connect: (id) sender
 {	
     [databaseContext setUsesKeychain: YES];
-    
-    BXConnectionPanel* panel = [BXConnectionPanel connectionPanel];
-    [self setPanel: panel];
-    
-    [panel setLeftOpenOnContinue: YES];
-    [panel setReleasedWhenClosed: NO];
-	[panel setDatabaseContext: databaseContext];
-	
-	if (nil == modalWindow)
+	if (nil != [[databaseContext databaseURI] host])
 	{
-        SEL selector = @selector (connectionPanelDidEnd:returnCode:contextInfo:);
-        NSMethodSignature* signature = [self methodSignatureForSelector: selector];
-        
-        NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
-        [invocation setTarget: self];
-        [invocation setSelector: selector];
-
-        [panel setDidEndInvocation: invocation];
-		[panel makeKeyAndOrderFront: nil];
+		[self continueFromDatabaseSelection: nil returnCode: NSOKButton];
 	}
 	else
 	{
-		[panel beginSheetModalForWindow: modalWindow modalDelegate: self 
-						 didEndSelector: @selector (connectionPanelDidEnd:returnCode:contextInfo:) 
-							contextInfo: NULL];
+		BXConnectionPanel* panel = [BXConnectionPanel connectionPanel];
+		[self setPanel: panel];
+		
+		[panel setLeftOpenOnContinue: YES];
+		[panel setReleasedWhenClosed: NO];
+		[panel setDatabaseContext: databaseContext];
+		
+		if (nil == modalWindow)
+		{
+			SEL selector = @selector (connectionPanelDidEnd:returnCode:contextInfo:);
+			NSMethodSignature* signature = [self methodSignatureForSelector: selector];
+			
+			NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
+			[invocation setTarget: self];
+			[invocation setSelector: selector];
+			
+			[panel setDidEndInvocation: invocation];
+			[panel makeKeyAndOrderFront: nil];
+		}
+		else
+		{
+			[panel beginSheetModalForWindow: modalWindow modalDelegate: self 
+							 didEndSelector: @selector (connectionPanelDidEnd:returnCode:contextInfo:) 
+								contextInfo: NULL];
+		}
 	}
 }
 
 - (void) connectionPanelDidEnd: (BXConnectionPanel *) panel returnCode: (int) returnCode 
 				   contextInfo: (void *) contextInfo
+{
+	[self continueFromDatabaseSelection: panel returnCode: returnCode];
+}
+
+- (void) continueFromDatabaseSelection: (BXConnectionPanel *) panel returnCode: (int) returnCode
 {
 	if (NSOKButton == returnCode)
 	{
