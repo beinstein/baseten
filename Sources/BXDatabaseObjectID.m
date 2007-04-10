@@ -164,13 +164,13 @@ static TSNonRetainedObjectSet* gObjectIDs;
     [super dealloc];
 }
 
-/** The entity of the object ID */
+/** The entity of the receiver. */
 - (BXEntityDescription *) entity
 {
     return mEntity;
 }
 
-/** URI representation of the object ID */
+/** URI representation of the receiver. */
 - (NSURL *) URIRepresentation
 {
     if (nil == mURIRepresentation)
@@ -371,9 +371,9 @@ static TSNonRetainedObjectSet* gObjectIDs;
 
 
 @implementation BXDatabaseObjectID (NSCopying)
+/** Retain on copy. */
 - (id) copyWithZone: (NSZone *) zone
 {
-    //Retain on copy
     return [self retain];
 }
 @end

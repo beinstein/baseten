@@ -33,6 +33,9 @@
 #import "BXDatabaseContext.h"
 
 
+/**
+ * An NSCountedSet-style self-updating container proxy for many-to-many relationships.
+ */
 @implementation BXSetHelperTableRelationProxy
 
 - (void) setMainEntity: (BXEntityDescription *) aMainEntity

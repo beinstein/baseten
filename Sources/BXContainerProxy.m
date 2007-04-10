@@ -33,6 +33,9 @@
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
+/**
+ * A generic self-updating container proxy.
+ */
 @implementation BXContainerProxy
 
 - (id) BXInitWithArray: (NSMutableArray *) anArray

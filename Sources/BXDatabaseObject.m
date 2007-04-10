@@ -269,6 +269,8 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * A proxy for monitoring the object status.
+ * Returns a proxy that can be used with BXObjectStatusToEditableTransformer and
+ * BXObjectStatusToColorTransformer.
  */
 - (id <BXObjectStatusInfo>) statusInfo
 {
@@ -547,8 +549,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Whether the object has beed deleted or 
- * is going to be deleted after the next commit.
+ * Whether the object has beed deleted or is going to be deleted after the next commit.
  */
 - (BOOL) isDeleted
 {
@@ -621,15 +622,16 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 //@}
 
-@end
-
-
-@implementation BXDatabaseObject (PrivateMethods)
-
+/** Returns NO. */
 + (BOOL) accessInstanceVariablesDirectly
 {
     return NO;
 }
+
+@end
+
+
+@implementation BXDatabaseObject (PrivateMethods)
 
 /**
  * \internal

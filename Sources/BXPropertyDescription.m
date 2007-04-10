@@ -40,8 +40,8 @@ static NSMutableDictionary* gProperties;
 
 
 /**
- *  A property description contains information about a column in a specific entity.
- *  The corresponding class in Core Data is NSAttributeDescription. This class is thread-safe.
+ * A property description contains information about a column in a specific entity.
+ * The corresponding class in Core Data is NSAttributeDescription. This class is thread-safe.
  */
 @implementation BXPropertyDescription
 
@@ -63,6 +63,7 @@ static NSMutableDictionary* gProperties;
     return mEntity;
 }
 
+/** Retain on copy. */
 - (id) copyWithZone: (NSZone *) zone
 {
     return [self retain];
@@ -127,16 +128,19 @@ static NSMutableDictionary* gProperties;
     return rval;
 }
 
+/** Whether the attribute is optional. */
 - (BOOL) isOptional
 {
 	return (mFlags & kBXPropertyOptional ? YES : NO);
 }
 
+/** Whether the attribute is part of the primary key for its entity. */
 - (BOOL) isPrimaryKey
 {
 	return (mFlags & kBXPropertyPrimaryKey ? YES : NO);
 }
 
+/** Whether the attribute will be excluded from fetches and queried only when needed. */
 - (BOOL) isExcluded
 {
 	return (mFlags & kBXPropertyExcluded ? YES : NO);
@@ -153,6 +157,7 @@ static NSMutableDictionary* gProperties;
  */
 //@{
 /**
+ * \internal
  * Create a property description.
  * \param       aName       Name of the property
  * \param       anEntity    The entity which contains the property.
@@ -164,6 +169,7 @@ static NSMutableDictionary* gProperties;
 }
 
 /**
+ * \internal
  * The designated initializer.
  * Create a property description.
  * \param       aName       Name of the property

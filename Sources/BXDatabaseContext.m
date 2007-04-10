@@ -98,6 +98,9 @@ extern void BXInit ()
     }
 }
 
+/**
+ * Returns NO.
+ */
 + (BOOL) accessInstanceVariablesDirectly
 {
     return NO;
@@ -128,7 +131,7 @@ extern void BXInit ()
  * A convenience method.
  * \param   uri     URI of the target database
  * \return          The database context
- * \throw   NSException named kBXUnsupportedDatabaseException in case the given URI cannot be handled.
+ * \throw   NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 + (id) contextWithDatabaseURI: (NSURL *) uri
 {
@@ -139,7 +142,7 @@ extern void BXInit ()
  * An initializer.
  * The database URI has to be set afterwards.
  * \return          The database context
- * \throw           NSException named kBXUnsupportedDatabaseException in case the given URI cannot be handled.
+ * \throw           NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 - (id) init
 {
@@ -150,6 +153,7 @@ extern void BXInit ()
  * The designated initializer.
  * \param   uri     URI of the target database
  * \return          The database context
+ * \throw           NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 - (id) initWithDatabaseURI: (NSURL *) uri
 {
@@ -162,6 +166,7 @@ extern void BXInit ()
         mDeallocating = NO;
         mRetainRegisteredObjects = NO;
 		mCanConnect = YES;
+		mConnectsOnAwake = YES;
     }
     return self;
 }
@@ -205,12 +210,18 @@ extern void BXInit ()
     }
 }
 
-- (BOOL)retainsRegisteredObjects
+/**
+ * Whether the receiver retains registered objects.
+ */
+- (BOOL) retainsRegisteredObjects
 {
     return mRetainRegisteredObjects;
 }
 
-- (void)setRetainsRegisteredObjects:(BOOL)flag
+/**
+ * Set whether the receiver should retain all registered objects.
+ */
+- (void) setRetainsRegisteredObjects: (BOOL) flag
 {
     if (mRetainRegisteredObjects != flag) {
         mRetainRegisteredObjects = flag;
@@ -225,7 +236,7 @@ extern void BXInit ()
 /**
  * Set the database URI.
  * \param   uri     The database URI
- * \throw   NSException named kBXUnsupportedDatabaseException in case the given URI cannot be handled.
+ * \throw   NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 - (void) setDatabaseURI: (NSURL *) uri
 {
@@ -272,8 +283,8 @@ extern void BXInit ()
 /**
  * Connect to the database.
  * This method returns immediately.
- * After the attempt, either a kBXConnectionSuccessfulNotification or a 
- * kBXConnectionFailedNotification will be posted.
+ * After the attempt, either a \c kBXConnectionSuccessfulNotification or a 
+ * \c kBXConnectionFailedNotification will be posted.
  */
 - (void) connect
 {
@@ -457,6 +468,10 @@ extern void BXInit ()
     return rval;
 }
 
+/**
+ * Set the NSWindow used with various sheets.
+ * If set to nil, ordinary panels will be used.
+ */
 - (void) setModalWindow: (NSWindow *) aWindow
 {
 	if (aWindow != modalWindow)
@@ -475,16 +490,25 @@ extern void BXInit ()
 	policyDelegate = anObject;
 }
 
+/**
+ * Whether the default keychain is searched for database passwords.
+ */
 - (BOOL) usesKeychain
 {
     return mUsesKeychain;
 }
 
+/**
+ * Set whether the default keychain should be searched for database passwords.
+ */
 - (void) setUsesKeychain: (BOOL) usesKeychain
 {
 	mUsesKeychain = usesKeychain;
 }
 
+/**
+ * Store login credentials from the database URI to the default keychain.
+ */
 - (void) storeURICredentials
 {
     OSStatus status = noErr;
@@ -538,11 +562,17 @@ extern void BXInit ()
 	return mCanConnect;
 }
 
+/**
+ * Set whether connection should be attempted on -awakeFromNib.
+ */
 - (void) setConnectsOnAwake: (BOOL) aBool
 {
 	mConnectsOnAwake = aBool;
 }
 
+/**
+ * Whether connection is attempted on -awakeFromNib.
+ */
 - (BOOL) connectsOnAwake
 {
 	return mConnectsOnAwake;
@@ -551,14 +581,7 @@ extern void BXInit ()
 @end
 
 
-/**
- * \internal
- * When modifications are made, the respective undo grouping levels get stored in a stack,
- * mUndoGroupingLevels. When an undo group closes, a savepoint gets created for the group.
- * If there is no active undo group, establish the savepoint immediately.
- */
 @implementation BXDatabaseContext (Undoing)
-
 - (void) undoGroupWillClose: (NSNotification *) notification
 {
 	unsigned int groupingLevel = [mUndoManager groupingLevel];
@@ -582,6 +605,12 @@ extern void BXInit ()
 	}
 }
 
+/**
+ * \internal
+ * When modifications are made, the respective undo grouping levels get stored in a stack,
+ * mUndoGroupingLevels. When an undo group closes, a savepoint gets created for the group.
+ * If there is no active undo group, establish the savepoint immediately.
+ */
 - (BOOL) prepareSavepointIfNeeded: (NSError **) error
 {
 	BOOL rval = NO;
@@ -780,14 +809,14 @@ extern void BXInit ()
 /**
  * Create a new database object.
  * Essentially inserts a new row into the database and retrieves it.
- * \param       entity          The target entity
- * \param       fieldValues     Initial values for fields. May be nil or left empty if
- *                              values for the primary key can be determined by the database.
- * \param       error           If an error occurs, this pointer is set to an NSError instance.
- *                              May be NULL.
- * \return                      A subclass of BXDatabaseObject or nil, if an error has occured
+ * \param       entity           The target entity
+ * \param       givenFieldValues Initial values for fields. May be nil or left empty if
+ *                               values for the primary key can be determined by the database.
+ * \param       error            If an error occurs, this pointer is set to an NSError instance.
+ *                               May be NULL.
+ * \return                       A subclass of BXDatabaseObject or nil, if an error has occured
  * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
- *                              and a database object couldn't be created.
+ *              and a database object couldn't be created.
  */
 - (id) createObjectForEntity: (BXEntityDescription *) entity 
              withFieldValues: (NSDictionary *) givenFieldValues 
@@ -1704,11 +1733,11 @@ extern void BXInit ()
 {
     [self rollback];
 }
-//@}
 
 /**
  * Connect to the database.
- * Hand over the connection setup to mConnectionSetupManager.
+ * Hand over the connection setup to mConnectionSetupManager. Presently, a 
+ * \c BXNetServiceConnector will be created automatically if one doesn't exist.
  */
 - (IBAction) connect: (id) sender
 {
@@ -1724,6 +1753,7 @@ extern void BXInit ()
 		[self setCanConnect: NO];
 	}
 }
+//@}
 @end
 
 

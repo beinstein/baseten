@@ -31,8 +31,10 @@
 #import "BXDatabaseObjectPrivate.h"
 
 
+/**
+ * A proxy for retrieving database object status.
+ */
 @implementation BXObjectStatusInfo
-
 
 + (id) statusInfoWithTarget: (BXDatabaseObject *) target
 {
@@ -99,6 +101,12 @@
     return rval;
 }
 
+/** 
+ * Returns a status constant for the given key.
+ * The constant may then be passed to value transformers in BaseTenAppKit.
+ * \param aKey An NSString that corresponds to a field name.
+ * \return An NSValue that contains the constant.
+ */
 - (id) valueForKey: (NSString *) aKey
 {
     enum BXObjectLockStatus rval = kBXObjectNoLockStatus;

@@ -29,7 +29,7 @@
 #import "BXException.h"
 
 /**
- * A BaseTen-specific exception
+ * A BaseTen-specific exception.
  */
 @implementation BXException
 @end

@@ -29,6 +29,9 @@
 #import "BXSetProxy.h"
 
 
+/**
+ * An NSCountedSet-style self-updating container proxy.
+ */
 @implementation BXSetProxy
 
 - (id) BXInitWithArray: (NSMutableArray *) anArray

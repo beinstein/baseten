@@ -31,6 +31,9 @@
 #import "BXConstants.h"
 
 
+/**
+ * An NSArray or NSMutableArray-style self-updating container proxy.
+ */
 @implementation BXArrayProxy
 
 - (id) BXInitWithArray: (NSMutableArray *) anArray

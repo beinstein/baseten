@@ -73,6 +73,9 @@
 @end
 
 
+/**
+ * An NSCountedSet-style self-updating container proxy for relationships.
+ */
 @implementation BXSetRelationProxy
 
 - (id) BXInitWithArray: (NSMutableArray *) anArray

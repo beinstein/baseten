@@ -140,9 +140,9 @@ static NSMutableSet* gViewEntities;
 	[encoder encodeObject: mAttributes forKey: @"attributes"];
 }
 
+/** Retain on copy. */
 - (id) copyWithZone: (NSZone *) zone
 {
-    //Retain on copy
     return [self retain];
 }
 
@@ -260,7 +260,7 @@ static NSMutableSet* gViewEntities;
 
 /**
  * Primary key fields for this entity.
- * The fields get determined automatically after using the entity in a query.
+ * The fields get determined automatically after database connection has been made.
  * \return          An array of BXPropertyDescriptions
  */
 - (NSArray *) primaryKeyFields
@@ -273,7 +273,7 @@ static NSMutableSet* gViewEntities;
 }
 
 /** 
- * Fields for this entity
+ * Fields for this entity.
  * \return          An array of BXPropertyDescriptions
  */
 - (NSArray *) fields
@@ -384,11 +384,21 @@ static NSMutableSet* gViewEntities;
     return rval;
 }
 
+/** 
+ * Attributes for this entity.
+ * Primary key fields and other fields for this entity.
+ * \return          An NSDictionary with NSStrings as keys and BXPropertyDescriptions as objects.
+ */
 - (NSDictionary *) attributesByName
 {
 	return mAttributes;
 }
 
+/**
+ * Entity validation.
+ * The entity will be validated after database connection has been made. Afterwards, 
+ * -fields, -primaryKeyFields and -attributesByName return meaningful values.
+ */
 - (BOOL) isValidated
 {
 	return mFlags & kBXEntityIsValidated;

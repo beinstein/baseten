@@ -50,7 +50,7 @@
  *         sudo -u mysql -s
  *     </tt>
  * \li Initialize the PostgreSQL database folder. We'll use en_US.UTF-8 as the default locale:\n
- *     <tt>/usr/local/pgsql/bin/initdb --locale en_US.UTF-8 -D /usr/local/pgsql/data</tt>
+ *     <tt>LC_ALL=en_US.UTF-8 /usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</tt>
  * \li Launch the PostgreSQL server itself:\n
  *     <tt>
  *        /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data\n
@@ -100,10 +100,10 @@
  *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
  *     <li>Enter a valid database URI. 
  *         <ul>
- *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately
- *                 and Undo may not be used. Otherwise, the context's -save: and -revert: methods should be used to 
- *                 commit and rollback. Undo may be used between commits.</li>
- *             <li>If query logging is selected, all the queries will be logged to standard output.</li>
+ *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
+ *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
+ *                 should be used to commit and rollback. Undo may be used between commits.</li>
+ *             <li>If query logging is enabled, all queries will be logged to standard output.</li>
  *         </ul>
  *     </li>
  *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
