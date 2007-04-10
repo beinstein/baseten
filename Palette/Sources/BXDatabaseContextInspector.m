@@ -47,6 +47,7 @@
     [databaseURIField setObjectValue: [ctx databaseURI]];
     [logsQueriesButton setState: ([ctx logsQueries])];
     [autocommitsButton setState: ([ctx autocommits])];
+	[connectsOnAwakeButton setState: ([ctx connectsOnAwake])];
     
     [super revert: sender];
 }
@@ -71,6 +72,17 @@
     [[undoManager prepareWithInvocationTarget: logsQueriesButton] setState: [ctx logsQueries]];
     [undoManager endUndoGrouping];
     [ctx setLogsQueries: (NSOnState == [logsQueriesButton state])];
+}
+
+- (IBAction) setConnectOnAwake: (id) sender
+{
+	id ctx = [self object];
+    NSUndoManager* undoManager = [[self window] undoManager];
+    [undoManager beginUndoGrouping];
+    [[undoManager prepareWithInvocationTarget: self] setConnectOnAwake: nil];
+    [[undoManager prepareWithInvocationTarget: connectsOnAwakeButton] setState: [ctx connectsOnAwake]];
+    [undoManager endUndoGrouping];
+    [ctx setConnectsOnAwake: (NSOnState == [connectsOnAwakeButton state])];	
 }
 
 - (IBAction) setURLFromTextField: (id) sender

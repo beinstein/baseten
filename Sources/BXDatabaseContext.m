@@ -538,6 +538,16 @@ extern void BXInit ()
 	return mCanConnect;
 }
 
+- (void) setConnectsOnAwake: (BOOL) aBool
+{
+	mConnectsOnAwake = aBool;
+}
+
+- (BOOL) connectsOnAwake
+{
+	return mConnectsOnAwake;
+}
+
 @end
 
 
@@ -1647,6 +1657,7 @@ extern void BXInit ()
     [encoder encodeObject: mDatabaseURI forKey: @"databaseURI"];
     [encoder encodeBool: mLogsQueries forKey: @"logsQueries"];
     [encoder encodeBool: mAutocommits forKey: @"autocommits"];
+	[encoder encodeBool: mConnectsOnAwake forKey: @"connectsOnAwake"];
 }
 
 - (id) initWithCoder: (NSCoder *) decoder
@@ -1656,6 +1667,7 @@ extern void BXInit ()
         [self setDatabaseURI: [decoder decodeObjectForKey: @"databaseURI"]];
         [self setLogsQueries: [decoder decodeBoolForKey: @"logsQueries"]];
         [self setAutocommits: [decoder decodeBoolForKey: @"autocommits"]];
+		[self setConnectsOnAwake: [decoder decodeBoolForKey: @"connectsOnAwake"]];
     }
     return self;
 }

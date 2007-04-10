@@ -35,6 +35,19 @@
 
 @implementation BXDatabaseContext (BaseTenAppKitAdditions)
 
+- (void) awakeFromNib
+{
+	if (mConnectsOnAwake)
+	{
+		[modalWindow makeKeyAndOrderFront: nil];
+		[[NSRunLoop currentRunLoop] performSelector: @selector (connect:)
+											 target: self 
+										   argument: nil
+											  order: UINT_MAX
+											  modes: [NSArray arrayWithObject: NSDefaultRunLoopMode]];
+	}
+}
+
 - (void) displayPanelForTrust: (SecTrustRef) trust
 {
 	[self displayPanelForTrust: (SecTrustRef) trust modalWindow: modalWindow];

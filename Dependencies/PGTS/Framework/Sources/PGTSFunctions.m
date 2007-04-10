@@ -85,7 +85,7 @@ PGTSInit ()
             }
             kPGTSConnectionDictionaryKeys = [keys copy];
 			
-			//sslmode is disable by default??
+			//sslmode is disabled by default??
 			[(NSMutableDictionary *) kPGTSDefaultConnectionDictionary setObject: @"prefer" forKey: @"sslmode"];
         }
         [pool release];

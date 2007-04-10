@@ -65,7 +65,7 @@
 - (void) awakeFromNib
 {
     NSError* error = nil;
-    if (nil == mEntityDescription)
+    if (nil == mEntityDescription && nil != mTableName)
         [self setEntityDescription: [databaseContext entityForTable: mTableName inSchema: mSchemaName error: &error]];
     
     if (nil != error)
@@ -206,17 +206,20 @@
 				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
             
             //Also set the entity description, since the database URI has changed.
-            NSError* error = nil;
-            BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
-                                                                            inSchema: [self schemaName]
-                                                                               error: &error];
-            if (nil != error)
-                [self BXHandleError: error];
-            else
-            {
-                [entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];                
-                [self setEntityDescription: entityDescription];
-            }
+			if (nil != [self tableName])
+			{
+				NSError* error = nil;
+				BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
+																				inSchema: [self schemaName]
+																				   error: &error];
+				if (nil != error)
+					[self BXHandleError: error];
+				else
+				{
+					[entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];                
+					[self setEntityDescription: entityDescription];
+				}
+			}
 		}
     }
 }

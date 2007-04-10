@@ -33,11 +33,13 @@
     IBOutlet NSTextField* databaseURIField;
     IBOutlet NSButtonCell* logsQueriesButton;
     IBOutlet NSButtonCell* autocommitsButton;
+	IBOutlet NSButtonCell* connectsOnAwakeButton;
     IBOutlet NSWindow* window;
 }
 
 - (IBAction) setLogQueries: (id) sender;
 - (IBAction) setAutocommit: (id) sender;
 - (IBAction) setURLFromTextField: (id) sender;
+- (IBAction) setConnectOnAwake: (id) sender;
 
 @end

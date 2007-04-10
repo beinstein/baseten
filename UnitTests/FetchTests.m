@@ -266,4 +266,29 @@
 	MKCAssertEqualObjects ([[res objectAtIndex: 0] valueForKey: @"name"], @"nzhuk");
 }
 
+#if 0
+- (void) testJoin2
+{
+	NSError* error = nil;	
+	[context connectIfNeeded: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
+	BXEntityDescription* order = [context entityForTable: @"order" error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	BXEntityDescription* supplier = [context entityForTable: @"supplier" error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
+	BXPropertyDescription* supplierName = [[supplier attributesByName] objectForKey: @"supplier_name"];
+	BXPropertyDescription* poNumber = [[order attributesByName] objectForKey: @"po_number"];
+	MKCAssertNotNil (supplierName);
+	MKCAssertNotNil (poNumber);
+	
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: 
+		@"(NOT %@ MATCHES[c] \"test\") OR %@ MATCHES[c] \"ferg\"", poNumber, supplierName];
+
+	NSArray* res = [context executeFetchForEntity: order withPredicate: predicate error: &error];
+	res = nil;
+}
+#endif
+
 @end

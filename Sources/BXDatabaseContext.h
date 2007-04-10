@@ -80,6 +80,7 @@
 	BOOL									mUsesKeychain;
 	BOOL									mCanConnect;
 	BOOL									mDidDisconnect;
+	BOOL									mConnectsOnAwake;
 }
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
@@ -122,6 +123,9 @@
 - (void) storeURICredentials;
 
 - (BOOL) canConnect;
+
+- (void) setConnectsOnAwake: (BOOL) aBool;
+- (BOOL) connectsOnAwake;
 @end
 
 
