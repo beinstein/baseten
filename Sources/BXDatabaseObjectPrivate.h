@@ -28,7 +28,6 @@
 
 
 @interface BXDatabaseObject (PrivateMethods)
-+ (BOOL) accessInstanceVariablesDirectly;
 - (BOOL) isCreatedInCurrentTransaction;
 - (void) setCreatedInCurrentTransaction: (BOOL) aBool;
 - (enum BXObjectDeletionStatus) deletionStatus;

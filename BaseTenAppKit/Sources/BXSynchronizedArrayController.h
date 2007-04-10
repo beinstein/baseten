@@ -37,7 +37,7 @@
 {
 	/** The database context. */
 	IBOutlet BXDatabaseContext* databaseContext;
-	/** An NSWindow to which sheets are attached. */
+	/** An NSWindow to which sheets are attached. */
     IBOutlet NSWindow* window;
         
     BXEntityDescription* mEntityDescription;
