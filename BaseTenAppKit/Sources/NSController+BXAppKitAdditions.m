@@ -33,7 +33,10 @@
 
 
 @implementation NSObjectController (BXCocoaAdditions)
-/** A convenience method for locking the key in the currently selected object. */
+/** 
+ * \internal
+ * A convenience method for locking the key in the currently selected object. 
+ */
 - (void) BXLockKey: (NSString *) key status: (enum BXObjectLockStatus) status editor: (id) editor
 {
     [self BXLockObject: [self selection] key: key status: status editor: editor];
@@ -48,7 +51,10 @@
 
 @implementation NSController (BXCocoaAdditions)
 
-/** Lock an object asynchronously. */
+/** 
+ * \internal
+ * Lock an object asynchronously. 
+ */
 - (void) BXLockObject: (BXDatabaseObject *) object key: (NSString *) key 
                   status: (enum BXObjectLockStatus) status editor: (id) editor
 {
@@ -64,7 +70,10 @@
     [ctx lockObject: object key: key status: status sender: self];
 }
 
-/** Unlock an object synchronously. */
+/** 
+ * \internal
+ * Unlock an object synchronously. 
+ */
 - (void) BXUnlockObject: (BXDatabaseObject *) object key: (NSString *) key editor: (id) editor
 {
     BXDatabaseContext* ctx = [self BXDatabaseContext];
@@ -78,7 +87,10 @@
     [ctx unlockObject: object key: key];
 }
 
-/** Handle the error if a lock couldn't be acquired. */
+/** 
+ * \internal 
+ * Handle the error if a lock couldn't be acquired. 
+ */
 - (void) BXLockAcquired: (BOOL) lockAcquired object: (BXDatabaseObject *) receiver
 {
     if (NO == lockAcquired)
@@ -91,16 +103,22 @@
     }
 }
 
-/** Return the database context. */
+/** 
+ * \internal
+ * Return the database context. 
+ */
 - (BXDatabaseContext *) BXDatabaseContext
 {
     @throw [NSException exceptionWithName: NSInternalInconsistencyException
-                                   reason: @"Insufficient functionality; use a subclass provided with the BXCocoa framework instead"
+                                   reason: @"Insufficient functionality; use a subclass provided with the BaseTenAppKit framework instead"
                                  userInfo: nil];
     return nil;
 }
 
-/** The window in which all the edited NSControls are. */
+/** 
+ * \internal 
+ * The window in which all the edited NSControls are. 
+ */
 - (NSWindow *) BXWindow
 {
     return nil;

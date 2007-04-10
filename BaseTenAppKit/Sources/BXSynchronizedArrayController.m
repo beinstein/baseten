@@ -38,6 +38,9 @@
 //FIXME: Handle locks
 
 
+/**
+ * An NSArrayController subclass for use with BaseTen.
+ */
 @implementation BXSynchronizedArrayController
 
 + (void) initialize

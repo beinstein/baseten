@@ -30,6 +30,10 @@
 #import <BaseTen/BXDatabaseObject.h>
 
 
+/**
+ * Transforms an object status to a colour.
+ * Presently, grey corresponds to a locked object and red to a deleted object.
+ */
 @implementation BXObjectStatusToColorTransformer
 
 + (Class) transformedValueClass

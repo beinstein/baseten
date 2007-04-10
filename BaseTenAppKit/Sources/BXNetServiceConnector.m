@@ -34,6 +34,12 @@
 #import "../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/Log4Cocoa.h"
 
 
+/**
+ * A connection setup manager for use with Bonjour.
+ * Determines connection information from the database URI
+ * and then presents dialogs for the missing information.
+ * \note Presently one is created automatically in -[BXDatabaseContext connect:].
+ */
 @implementation BXNetServiceConnector 
 
 - (void) dealloc

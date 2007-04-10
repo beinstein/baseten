@@ -68,7 +68,9 @@
 	BXHiddenId <BXConnectionSetupManager>	mConnectionSetupManager;
     SecKeychainItemRef                      mKeychainPasswordItem;
 	
+	/** An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;
+	/** A delegate for policies. Currently used with SSL connections. */
 	IBOutlet id								policyDelegate;
 
     BOOL									mLogsQueries;
