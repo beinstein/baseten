@@ -128,6 +128,8 @@
 
 - (void) setConnectsOnAwake: (BOOL) aBool;
 - (BOOL) connectsOnAwake;
+
+- (void) refreshObject: (BXDatabaseObject *) object mergeChanges: (BOOL) flag;
 @end
 
 

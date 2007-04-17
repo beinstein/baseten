@@ -486,26 +486,20 @@ ParseSelector (SEL aSelector, NSString** key)
         [self queryFailed: error];
 }
 
-/** Fault the given key. */
+/** 
+ * Fault the given key. 
+ * The object's cached value or related object will be released.
+ * A new fetch won't be performed until any of the object's values is requested.
+ * \param aKey The key to fault. If nil, all values will be removed.
+ */
 - (void) faultKey: (NSString *) aKey
 {
     @synchronized (mValues)
     {
         if (nil == aKey)
-        {
-            NSArray* keys = [mValues allKeys];
-            TSEnumerate (currentKey, e, [keys objectEnumerator])
-                [self willChangeValueForKey: currentKey];
             [mValues removeAllObjects];
-            TSEnumerate (currentKey, e, [keys objectEnumerator])
-                [self didChangeValueForKey: currentKey];
-        }
         else
-        {
-            [self willChangeValueForKey: aKey];
             [mValues removeObjectForKey: aKey];
-            [self didChangeValueForKey: aKey];
-        }
     }
 }
 
