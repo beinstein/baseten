@@ -52,13 +52,16 @@
     return observesSelfGenerated;
 }
 
-- (void) setLastCheck: (NSDate *) date;
+- (NSDate *) lastCheckForTable: (NSString *) table
 {
-    if (lastCheck != date && (nil == lastCheck || NSOrderedAscending == [lastCheck compare: date]))
-    {
-        [lastCheck release];
-        lastCheck = [date retain];
-    }
+	return [lastChecks objectForKey: table];
+}
+
+- (void) setLastCheck: (NSDate *) date forTable: (NSString *) table;
+{
+	NSDate* oldDate = [lastChecks objectForKey: table];
+    if (oldDate != date && (nil == oldDate || NSOrderedAscending == [oldDate compare: date]))
+		[lastChecks setObject: date forKey: table];
 }
 
 - (id) init
@@ -68,6 +71,8 @@
         observedTables = [[NSCountedSet alloc] init];
         notificationNames = [[TSIndexDictionary alloc] init];
         observesSelfGenerated = NO;
+		lastChecks = [[NSMutableDictionary alloc] init];
+		postedNotifications = [[NSCountedSet alloc] init];
     }
     return self;
 }
@@ -78,18 +83,23 @@
     
     [notificationNames release];
     [observedTables release];
-    [lastCheck release];
+    [lastChecks release];
     [sentNotifications release];
+	[postedNotifications release];
     [connection release];
     [super dealloc];
 }
 
-- (void) removeObserver: (id) anObject table: (PGTSTableInfo *) tableInfo 
-       notificationName: (NSString *) notificationName
+- (void) removeObserverForTable: (PGTSTableInfo *) tableInfo
+			   notificationName: (NSString *) notificationName
 {
+	//FIXME: should something be done with notificationNames?
     [[tableInfo retain] autorelease];
-    [[NSNotificationCenter defaultCenter] removeObserver: anObject name: notificationName object: tableInfo];
+	[postedNotifications removeObject: notificationName];
+	if (0 == [postedNotifications countForObject: notificationName])
+		[[NSNotificationCenter defaultCenter] removeObserver: delegate name: notificationName object: tableInfo];
     [observedTables removeObject: tableInfo];
+	[lastChecks removeObjectForKey: tableInfo];
     [self removeNotificationIfNeeded: tableInfo];
 }
 
@@ -102,14 +112,14 @@
     return nil;
 }
 
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
-    notificationName: (NSString *) notificationName
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector 
+	 notificationName: (NSString *) notificationName
 {
     return NO;
 }
 
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
-    notificationName: (NSString *) notificationName notificationQuery: (NSString *) query
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector  
+	 notificationName: (NSString *) notificationName notificationQuery: (NSString *) query
 {
     BOOL rval = NO;
     
@@ -146,15 +156,21 @@
     
     if (YES == rval)
     {
-        if (nil != notificationName)
-            [[NSNotificationCenter defaultCenter] addObserver: anObject selector: aSelector
-                                                         name: notificationName object: self];
-        else
-        {            
-            TSEnumerate (notification, e, [[self sentNotifications] objectEnumerator])
-            [[NSNotificationCenter defaultCenter] addObserver: anObject selector: aSelector
-                                                         name: notification object: self];
-        }
+		if (0 == [postedNotifications countForObject: notificationName])
+		{
+			if (nil != notificationName)
+				[[NSNotificationCenter defaultCenter] addObserver: delegate selector: aSelector
+															 name: notificationName object: self];
+			else
+			{            
+				TSEnumerate (notification, e, [[self sentNotifications] objectEnumerator])
+				{
+					[[NSNotificationCenter defaultCenter] addObserver: delegate selector: aSelector
+																 name: notification object: self];
+				}
+			}
+		}
+		[postedNotifications addObject: notificationName];
     }
     
     return rval;
@@ -184,24 +200,26 @@
 - (BOOL) shouldHandleNotification: (NSNotification *) notification
 {
     BOOL rval = NO;
-    if (nil == delegate)
+    if (YES == delegateDecidesNotificationPosting)
+    {
+        rval = [delegate PGTSNotifierShouldHandleNotification: notification
+                                             fromTableWithOid: [notificationNames indexOfObject: [notification name]]];
+    }
+    else
     {
         NSDictionary* userInfo = [notification userInfo];
         NSNumber* backendPID = [NSNumber numberWithInt: [connection backendPID]];
         if (observesSelfGenerated || NO == [[userInfo objectForKey: kPGTSBackendPIDKey] isEqualToNumber: backendPID])
             rval = YES;
     }
-    else
-    {
-        rval = [delegate PGTSNotifierShouldHandleNotification: notification
-                                             fromTableWithOid: [notificationNames indexOfObject: [notification name]]];
-    }
     return rval;
 }
 
 - (void) setDelegate: (id) anObject
 {
-    delegate = anObject; 
+	delegate = anObject;
+	delegateDecidesNotificationPosting =
+		[delegate respondsToSelector: @selector (PGTSNotifierShouldHandleNotification:fromTableWithOid:)];
 }
 
 @end

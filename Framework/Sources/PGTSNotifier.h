@@ -32,28 +32,30 @@
 @class PGTSConnection;
 
 
-//FIXME: the connection should be an instance variable
 @interface PGTSNotifier : NSObject 
 {
     PGTSConnection* connection;
     NSCountedSet* observedTables;
-    TSIndexDictionary* notificationNames;
-    NSDate* lastCheck;
-    BOOL observesSelfGenerated;
+	NSCountedSet* postedNotifications;
+    TSIndexDictionary* notificationNames; //From Postgres
+	NSMutableDictionary* lastChecks;
     NSArray* sentNotifications;
     id delegate;
+	BOOL delegateDecidesNotificationPosting;
+    BOOL observesSelfGenerated;
 }
 
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
-    notificationName: (NSString *) notificationName;
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
-    notificationName: (NSString *) notificationName notificationQuery: (NSString *) query;
-- (void) removeObserver: (id) anObject table: (PGTSTableInfo *) tableInfo 
-       notificationName: (NSString *) notificationName;
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector
+	 notificationName: (NSString *) notificationName;
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector 
+	 notificationName: (NSString *) notificationName notificationQuery: (NSString *) query;
+- (void) removeObserverForTable: (PGTSTableInfo *) tableInfo 
+			   notificationName: (NSString *) notificationName;
 
 - (void) setObservesSelfGenerated: (BOOL) aBool;
 - (BOOL) observesSelfGenerated;
-- (void) setLastCheck: (NSDate *) date;
+- (NSDate *) lastCheckForTable: (NSString *) table;
+- (void) setLastCheck: (NSDate *) date forTable: (NSString *) table;
 - (void) removeNotificationIfNeeded: (PGTSTableInfo *) tableInfo;
 - (NSArray *) sentNotifications;
 
