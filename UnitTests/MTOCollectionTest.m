@@ -31,6 +31,7 @@
 
 #import "MKCSenTestCaseAdditions.h"
 #import "MTOCollectionTest.h"
+#import "UnitTestAdditions.h"
 
 
 @implementation MTOCollectionTest
@@ -80,7 +81,7 @@
     //Here it doesn't matter, whether there are any objects in the relationship or not.
     BXDatabaseObject* object = [res objectAtIndex: 0];
     NSCountedSet* foreignObjects = [object valueForKey: @"m"];
-    NSCountedSet* foreignObjects2 = [object valueForKey: @"m"];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: @"m"];
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);
@@ -133,7 +134,7 @@
     //Get an object from the result
     BXDatabaseObject* object = [res objectAtIndex: 0];
     NSCountedSet* foreignObjects = [object valueForKey: @"m"];
-    NSCountedSet* foreignObjects2 = [object valueForKey: @"m"];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: @"m"];
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);

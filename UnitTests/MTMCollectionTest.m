@@ -28,6 +28,7 @@
 
 #import "MTMCollectionTest.h"
 #import "MKCSenTestCaseAdditions.h"
+#import "UnitTestAdditions.h"
 
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseAdditions.h>
@@ -80,7 +81,7 @@
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: nil error: &error];
-    MKCAssertNil (error);
+	STAssertNil (error, [error localizedDescription]);
     MKCAssertTrue (4 == [res count]);
     
     //Get an object from the result
@@ -89,7 +90,8 @@
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
     NSCountedSet* foreignObjects = [object valueForKey: @"foreignobject"];
-    NSCountedSet* foreignObjects2 = [object valueForKey: @"foreignobject"];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: @"foreignobject"];
+	
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);
