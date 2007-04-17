@@ -348,34 +348,46 @@ ParseSelector (SEL aSelector, NSString** key)
     
     if (nil == rval)
     {
-		int isFault = [self isFaultKey: aKey];
-        switch (isFault)
-        {
-            case 1:
-            {
-                log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-                NSError* error = nil;
-                if (NO == [mContext fireFault: self key: aKey error: &error])
-                    [self queryFailed: error];
-                rval = [self cachedValueForKey: aKey];
-                break;
-            }
-            case -1: //Unknown key; try foreign keys
-            {
-                log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-                NSError* error = nil;
-                BXEntityDescription* entity = [mObjectID entity];
-                id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
-                if (nil != error) [self queryFailed: error];
-                //Don't cache the results to prevent a retain cycle.
-                rval = [rel resolveFrom: self to: [entity targetForRelationship: rel] error: &error];
-                if (nil != error) [self queryFailed: error];
-                break;
-            }
-            default:
-                log4AssertValueReturn (NO, nil, @"isFault had a strange value (%d).", isFault);
-                break;
-        }
+		NSError* error = nil;
+		enum BXDatabaseObjectKeyType keyType = [self keyType: aKey error: &error];
+		if (nil != error)
+			[self queryFailed: error];
+		else
+		{
+			switch (keyType)
+			{
+				case kBXDatabaseObjectKnownKey:
+				{
+					log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+					if (NO == [mContext fireFault: self key: aKey error: &error])
+						[self queryFailed: error];
+					rval = [self cachedValueForKey: aKey];
+					break;
+				}
+				case kBXDatabaseObjectForeignKey:
+				{
+					log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+					NSError* error = nil;
+					BXEntityDescription* entity = [mObjectID entity];
+					id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
+					//This shouldn't be necessary since the relationship was fetched in -keyType:error:.
+					if (nil != error) [self queryFailed: error];
+					rval = [rel resolveFrom: self to: [entity targetForRelationship: rel] error: &error];
+					if (nil != error) [self queryFailed: error];
+					//Caching the result might cause a retain cycle.
+					[self setCachedValue: rval forKey: aKey];
+					break;
+				}
+				case kBXDatabaseObjectUnknownKey:
+					break;
+					
+				case kBXDatabaseObjectPrimaryKey:
+				case kBXDatabaseObjectNoKeyType:
+				default:
+					log4AssertValueReturn (NO, nil, @"keyType had a strange value (%d).", keyType);
+					break;
+			}
+		}
     }
     
     if (nil == rval)
@@ -401,39 +413,55 @@ ParseSelector (SEL aSelector, NSString** key)
     if ([mContext autocommits] && nil != [mContext undoManager])
         oldValue = [self valueForKey: aKey];
     
-    switch ([self isFaultKey: aKey])
-    {
-        case 0:
-        case 1:
-        {            
-            //Known key
-            if (nil == aVal)
-                aVal = [NSNull null];
-            [mContext executeUpdateObject: self key: aKey value: aVal error: &error];            
-            break;
-        }
-        case -1:
-        {
-            //Unknown key; try foreign keys
-            BXEntityDescription* entity = [mObjectID entity];
-            id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
-            if (nil == rel)
-            {
-                //No such foreign key
-                [super setValue: aVal forUndefinedKey: aKey];
-            }
-            [rel setTarget: aVal referenceFrom: self error: &error];
-            break;
-        }
-        default:
-        {
-            log4AssertLog (NO, @"isFaultKey returned a value other than 0, 1 or -1.");
-            break;
-        }
-    }
-    
-    if (nil == error)
-    {
+	enum BXDatabaseObjectKeyType keyType = [self keyType: aKey error: &error];
+	if (nil != error)
+		[self queryFailed: error];
+	else
+	{
+		switch (keyType)
+		{
+			case kBXDatabaseObjectPrimaryKey:
+			case kBXDatabaseObjectKnownKey:
+			{            
+				if (nil == aVal)
+					aVal = [NSNull null];
+				[mContext executeUpdateObject: self key: aKey value: aVal error: &error];            
+				break;
+			}
+				
+			case kBXDatabaseObjectForeignKey:
+			{
+				BXEntityDescription* entity = [mObjectID entity];
+				id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
+				if (nil == error)
+				{
+					[rel setTarget: aVal referenceFrom: self error: &error];
+					
+					//FIXME: KVO notification should be done in the relationship to 
+					//propagate the modification to other objects.
+					[self willChangeValueForKey: aKey];
+					[mValues removeObjectForKey: aKey];
+					[mValues setObject: [self primitiveValueForKey: aKey] forKey: aKey];
+					[self didChangeValueForKey: aKey];
+				}
+				break;
+			}
+				
+			case kBXDatabaseObjectUnknownKey:
+				[super setValue: aVal forUndefinedKey: aKey];
+				break;
+
+			case kBXDatabaseObjectNoKeyType:
+			default:
+			{
+				log4AssertLog (NO, @"keyType had a strange value (%d).", keyType);
+				break;
+			}
+		}
+	}
+	
+	if (nil == error)
+	{
         //Undo in case of autocommit
         if ([mContext autocommits])
             [[[mContext undoManager] prepareWithInvocationTarget: self] setPrimitiveValue: oldValue forKey: aKey];
@@ -565,6 +593,12 @@ ParseSelector (SEL aSelector, NSString** key)
 	return (kBXObjectExists != mDeleted || mCreatedInCurrentTransaction);
 }
 
+/** Retain on copy. */
+- (id) copyWithZone: (NSZone *) zone
+{
+	return [self retain];
+}
+
 @end
 
 
@@ -626,6 +660,11 @@ ParseSelector (SEL aSelector, NSString** key)
 + (BOOL) accessInstanceVariablesDirectly
 {
     return NO;
+}
+
++ (BOOL) automaticallyNotifiesObserversForKey: (NSString *) aKey
+{
+	return NO;
 }
 
 @end
@@ -898,6 +937,32 @@ ParseSelector (SEL aSelector, NSString** key)
 		mNeedsToAwakeFromInsert = NO;
 		[self awakeFromInsert];
 	}
+}
+
+- (enum BXDatabaseObjectKeyType) keyType: (NSString *) aKey error: (NSError **) error
+{
+	log4AssertValueReturn (NULL != error, kBXDatabaseObjectNoKeyType, @"Expected error to be set.");
+	log4AssertValueReturn (nil == *error, kBXDatabaseObjectNoKeyType, @"Expected *error to be nil (was: %@).", *error);
+	
+	enum BXDatabaseObjectKeyType rval = kBXDatabaseObjectUnknownKey;
+	if (nil != [mObjectID propertyNamed: aKey])
+	{
+        //Primary key fields are never faults
+		rval = kBXDatabaseObjectPrimaryKey;
+	}
+	else
+	{
+		BXEntityDescription* entity = [mObjectID entity];
+		if (nil != [[entity attributesByName] objectForKey: aKey])
+		{
+			rval = kBXDatabaseObjectKnownKey;
+		}
+		else if (nil != [entity relationshipNamed: aKey context: mContext error: error])
+		{
+			rval = kBXDatabaseObjectForeignKey;
+		}
+	}	
+    return rval;
 }
 
 @end

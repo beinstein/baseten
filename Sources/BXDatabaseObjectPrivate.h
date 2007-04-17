@@ -27,6 +27,15 @@
 //
 
 
+enum BXDatabaseObjectKeyType
+{
+	kBXDatabaseObjectNoKeyType = 0,
+	kBXDatabaseObjectUnknownKey,
+	kBXDatabaseObjectPrimaryKey,
+	kBXDatabaseObjectKnownKey,
+	kBXDatabaseObjectForeignKey
+};
+
 @interface BXDatabaseObject (PrivateMethods)
 - (BOOL) isCreatedInCurrentTransaction;
 - (void) setCreatedInCurrentTransaction: (BOOL) aBool;
@@ -49,4 +58,5 @@
 - (void) awakeFromFetchIfNeeded;
 - (NSArray *) keysIncludedInQuery: (id) aKey;
 - (void) awakeFromInsertIfNeeded;
+- (enum BXDatabaseObjectKeyType) keyType: (NSString *) aKey error: (NSError **) error;
 @end

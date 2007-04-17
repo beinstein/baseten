@@ -81,60 +81,66 @@ static TSNonRetainedObjectSet* gObjectIDs;
     NSString* dbAddress = [absoluteURI substringToIndex: [absoluteURI length] - ([tableName length] + 1 + [query length])];
     //FIXME: object address and context address should be compared.
     dbAddress = nil; //Suppress a warning
+
     BXEntityDescription* entityDesc = [context entityForTable: tableName inSchema: schemaName error: &localError];
+    if (nil != localError) goto bail;
+	if (NO == [entityDesc isValidated])
+	{
+		[context connectIfNeeded: &localError];
+		if (nil != localError) goto bail;
+	}
     
-    if (nil != localError)
-    {
-        BXHandleError (error, localError);
-    }
-    else
-    {
-        NSMutableDictionary* pkeyDict = [NSMutableDictionary dictionary];
-        NSScanner* queryScanner = [NSScanner scannerWithString: query];
-        while (NO == [queryScanner isAtEnd])
-        {
-            NSString* key = nil;
-            NSString* type = nil;
-            id value = nil;
-            
-            [queryScanner scanUpToString: @"," intoString: &key];
-            [queryScanner scanString: @"," intoString: NULL];
-            [queryScanner scanUpToString: @"=" intoString: &type];
-            [queryScanner scanString: @"=" intoString: NULL];
-            
-            unichar c = [type characterAtIndex: 0];
-            switch (c)
-            {
-                case 's':
-                    [queryScanner scanUpToString: @"&" intoString: &value];
-                    break;
-                case 'n':
-                {
-                    NSDecimal dec;
-                    [queryScanner scanDecimal: &dec];
-                    value = [NSDecimalNumber decimalNumberWithDecimal: dec];
-                    break;
-                }
-                case 'd':
-                default:
-                {
-                    NSString* encodedString = nil;
-                    [queryScanner scanUpToString: @"&" intoString: &encodedString];
-                    NSData* archivedData = [encodedString BXURLDecodedData];
-                    value = [NSUnarchiver unarchiveObjectWithData: archivedData];
-                    break;
-                }
-            }	
-			log4AssertValueReturn ([entityDesc isValidated], nil, @"Expected entity %@ to have been validated earlier.", entityDesc);
-			BXPropertyDescription* propertyDesc = [[entityDesc attributesByName] objectForKey: key]; 
-            [pkeyDict setObject: value forKey: propertyDesc];
-            
-            [queryScanner scanUpToString: @"&" intoString: NULL];
-            [queryScanner scanString: @"&" intoString: NULL];
-        }
-        rval = [self initWithEntity: entityDesc primaryKeyFields: pkeyDict];
-    }
-    return rval;
+	NSMutableDictionary* pkeyDict = [NSMutableDictionary dictionary];
+	NSScanner* queryScanner = [NSScanner scannerWithString: query];
+	while (NO == [queryScanner isAtEnd])
+	{
+		NSString* key = nil;
+		NSString* type = nil;
+		id value = nil;
+		
+		[queryScanner scanUpToString: @"," intoString: &key];
+		[queryScanner scanString: @"," intoString: NULL];
+		[queryScanner scanUpToString: @"=" intoString: &type];
+		[queryScanner scanString: @"=" intoString: NULL];
+		
+		unichar c = [type characterAtIndex: 0];
+		switch (c)
+		{
+			case 's':
+				[queryScanner scanUpToString: @"&" intoString: &value];
+				break;
+			case 'n':
+			{
+				NSDecimal dec;
+				[queryScanner scanDecimal: &dec];
+				value = [NSDecimalNumber decimalNumberWithDecimal: dec];
+				break;
+			}
+			case 'd':
+			default:
+			{
+				NSString* encodedString = nil;
+				[queryScanner scanUpToString: @"&" intoString: &encodedString];
+				NSData* archivedData = [encodedString BXURLDecodedData];
+				value = [NSUnarchiver unarchiveObjectWithData: archivedData];
+				break;
+			}
+		}	
+		log4AssertValueReturn ([entityDesc isValidated], nil, @"Expected entity %@ to have been validated earlier.", entityDesc);
+		BXPropertyDescription* propertyDesc = [[entityDesc attributesByName] objectForKey: key]; 
+		[pkeyDict setObject: value forKey: propertyDesc];
+		
+		[queryScanner scanUpToString: @"&" intoString: NULL];
+		[queryScanner scanString: @"&" intoString: NULL];
+	}
+	rval = [self initWithEntity: entityDesc primaryKeyFields: pkeyDict];
+	return rval;
+	
+bail:
+	{
+		BXHandleError (error, localError);
+		return nil;
+	}
 }
 
 - (NSString *) description

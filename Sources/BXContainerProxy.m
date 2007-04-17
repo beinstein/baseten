@@ -35,6 +35,7 @@
 
 /**
  * A generic self-updating container proxy.
+ * NSKeyValueObserving is implemented in the container.
  */
 @implementation BXContainerProxy
 

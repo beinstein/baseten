@@ -403,10 +403,12 @@ NullArray (unsigned int count)
             values = NullArray ([dstProperties count]);
         
         NSDictionary* change = [NSDictionary dictionaryWithObjects: values forKeys: updatedKeys];
-        [[refObject databaseContext] executeUpdateEntity: updatedEntity
-                                          withDictionary: change
-                                               predicate: predicate
-                                                   error: &localError];
+		BXDatabaseContext* context = [refObject databaseContext];
+        [context executeUpdateEntity: updatedEntity
+					  withDictionary: change
+						   predicate: predicate
+							   error: &localError];
+		
         BXHandleError (error, localError);
     }
 }

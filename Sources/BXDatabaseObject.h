@@ -77,7 +77,7 @@ enum BXObjectLockStatus
 @end
 
 
-@interface BXDatabaseObject : NSObject
+@interface BXDatabaseObject : NSObject <NSCopying>
 {
     BXDatabaseContext*			mContext; //Weak
     BXDatabaseObjectID*			mObjectID;

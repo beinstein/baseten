@@ -230,12 +230,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
         PGTSTableInfo* tableInfo = [dbInfo tableInfoForTableNamed: [currentEntity name] inSchemaNamed: [currentEntity schemaName]];
 		if (nil != tableInfo)
 		{
-			[modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSInsertModification];
-			[modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSUpdateModification];
-			[modificationNotifier removeObserver: self table: tableInfo notificationName: kPGTSDeleteModification];
-			[lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSLockedForUpdate];
-			[lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSLockedForDelete];
-			[lockNotifier removeObserver: self table: tableInfo notificationName: kPGTSUnlockedRowsNotification];
+			[modificationNotifier removeObserverForTable: tableInfo notificationName: kPGTSInsertModification];
+			[modificationNotifier removeObserverForTable: tableInfo notificationName: kPGTSUpdateModification];
+			[modificationNotifier removeObserverForTable: tableInfo notificationName: kPGTSDeleteModification];
+			[lockNotifier removeObserverForTable: tableInfo notificationName: kPGTSLockedForUpdate];
+			[lockNotifier removeObserverForTable: tableInfo notificationName: kPGTSLockedForDelete];
+			[lockNotifier removeObserverForTable: tableInfo notificationName: kPGTSUnlockedRowsNotification];
 		}
     }
     [modificationNotifier release];
@@ -1292,11 +1292,13 @@ static NSString* SSLMode (enum BXSSLMode mode)
         modificationNotifier = [[PGTSModificationNotifier alloc] init];
         [modificationNotifier setConnection: notifyConnection];
         [modificationNotifier setObservesSelfGenerated: NO];
+		[modificationNotifier setDelegate: self];
     }
     if (nil == lockNotifier)
     {
         lockNotifier = [[PGTSLockNotifier alloc] init];
         [lockNotifier setConnection: notifyConnection];
+		[lockNotifier setDelegate: self];
     }
     
     if (YES == [context hasSeenEntity: entity])
@@ -1310,10 +1312,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSString* notificationNames [] = {kPGTSInsertModification, kPGTSUpdateModification, kPGTSDeleteModification};
 			for (int i = 0; i < 3; i++)
 			{
-				rval = [modificationNotifier addObserver: self 
-												selector: selectors [i] 
-												   table: table 
-										notificationName: notificationNames [i]];
+				rval = [modificationNotifier observeTable: table
+												 selector: selectors [i] 
+										 notificationName: notificationNames [i]];
 				if (NO == rval)
 					goto bail;
 			}
@@ -1324,10 +1325,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSString* notificationNames [] = {kPGTSLockedForUpdate, kPGTSLockedForDelete, kPGTSUnlockedRowsNotification};
 			for (int i = 0; i < 3; i++)
 			{
-				rval = [lockNotifier addObserver: self 
-										selector: selectors [i]
-										   table: table 
-								notificationName: notificationNames [i]];
+				rval = [lockNotifier observeTable: table 
+										 selector: selectors [i]
+								 notificationName: notificationNames [i]];
 				if (NO == rval)
 					goto bail;
 			}
