@@ -50,8 +50,8 @@ enum PGTSTableOperation
 - (NSDictionary *) lastModificationForTable: (PGTSTableInfo *) table;
 - (void) checkForModificationsInTable: (PGTSTableInfo *) table;
 
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
-    notificationName: (NSString *) notificationName;
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector  
+	 notificationName: (NSString *) notificationName;
 - (NSDictionary *) lastModificationForTable: (PGTSTableInfo *) table connection: (PGTSConnection *) connection;
 - (void) checkInModificationTableNamed: (NSString *) modificationTableName;
 

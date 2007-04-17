@@ -102,14 +102,13 @@
     }
 }
 
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
-    notificationName: (NSString *) notificationName
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector  
+	 notificationName: (NSString *) notificationName
 {
-    log4Debug (@"addObserver: %@ name: %@", anObject, notificationName);
-    BOOL rval =  [self addObserver: anObject selector: aSelector 
-                            table: tableInfo notificationName: notificationName 
-                notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveModifications ($1) AS nname" ];
-    if (YES == rval && nil == lastCheck)
+    log4Debug (@"observeTable: %@ name: %@", tableInfo, notificationName);
+    BOOL rval = [self observeTable: tableInfo selector: aSelector notificationName: notificationName 
+				 notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveModifications ($1) AS nname" ];
+    if (YES == rval && nil == [self lastCheckForTable: notificationName])
     {
 		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
         PGTSResultSet* res = [connection executeQuery: 
@@ -117,7 +116,7 @@
              "SELECT COALESCE (MAX (" PGTS_SCHEMA_NAME "_modification_timestamp), CURRENT_TIMESTAMP)::TIMESTAMP (3) WITHOUT TIME ZONE AS date "
              " FROM " PGTS_SCHEMA_NAME ".Modification;"];
         [res advanceRow];
-        [self setLastCheck: [res valueForKey: @"date"]];
+        [self setLastCheck: [res valueForKey: @"date"] forTable: [notificationNames objectAtIndex: [tableInfo oid]]];
     }
     return rval;
 }
@@ -157,7 +156,7 @@
     
     NSString* query = [NSString stringWithFormat: 
         @"SELECT * FROM %@ ($1::timestamp, $2)", modificationTableName];
-    PGTSResultSet* res = [connection executeQuery: query parameters: lastCheck, backendPID];
+    PGTSResultSet* res = [connection executeQuery: query parameters: [self lastCheckForTable: modificationTableName], backendPID];
     
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     NSMutableDictionary* baseUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -191,7 +190,7 @@
             
             [rows addObject: row];
             lastType = modificationType;
-            [self setLastCheck: [res valueForKey: @"" PGTS_SCHEMA_NAME "_modification_timestamp"]];
+            [self setLastCheck: [res valueForKey: @"" PGTS_SCHEMA_NAME "_modification_timestamp"] forTable: modificationTableName];
             [res advanceRow];
         }        
     }

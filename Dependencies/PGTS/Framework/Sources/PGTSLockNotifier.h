@@ -37,7 +37,7 @@
     NSDate* lastClearCheck;
 }
 
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector  
     notificationName: (NSString *) notificationName;
 - (NSArray *) locksForTable: (PGTSTableInfo *) table whereClause: (NSString *) whereClause;
 - (NSArray *) locksForTable: (PGTSTableInfo *) table fromItems: (NSArray *) fromItems 

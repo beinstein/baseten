@@ -121,10 +121,10 @@
     return sentNotifications;
 }
 
-- (void) removeObserver: (id) anObject table: (PGTSTableInfo *) table 
-       notificationName: (NSString *) notificationName
+- (void) removeObserverForTable: (PGTSTableInfo *) table 
+			   notificationName: (NSString *) notificationName
 {
-    [super removeObserver: anObject table: table notificationName: notificationName];
+    [super removeObserverForTable: table notificationName: notificationName];
     if (0 == [observedTables count])
     {
 		log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
@@ -132,23 +132,22 @@
     }
 }
 
-- (BOOL) addObserver: (id) anObject selector: (SEL) aSelector table: (PGTSTableInfo *) tableInfo 
-    notificationName: (NSString *) notificationName
+- (BOOL) observeTable: (PGTSTableInfo *) tableInfo selector: (SEL) aSelector
+	 notificationName: (NSString *) notificationName
 {
     BOOL zeroCount = ([observedTables count] == 0);
-    BOOL rval = [self addObserver: anObject selector: aSelector 
-                            table: tableInfo notificationName: notificationName 
-                notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveLocks ($1) AS nname"];
+    BOOL rval = [self observeTable: tableInfo selector: aSelector notificationName: notificationName 
+				 notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveLocks ($1) AS nname"];
     if (YES == rval && YES == zeroCount)
     {
 		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
         //Clock synchronization
-        if (nil == lastCheck)
+        if (nil == [self lastCheckForTable: notificationName])
         {
             PGTSResultSet* res = [connection executeQuery: 
                                     @"SELECT timeofday ()::TIMESTAMP (3) WITHOUT TIME ZONE"];
             [res advanceRow];
-            [self setLastCheck: [res valueForKey: @"timeofday"]];
+            [self setLastCheck: [res valueForKey: @"timeofday"] forTable: [notificationNames objectAtIndex: [tableInfo oid]]];
         }        
         [connection startListening: self forNotification: @"" PGTS_SCHEMA_NAME ".ClearedLocks"
                                       selector: @selector (handleClearNotification:)];
@@ -266,7 +265,7 @@ error:
             @"SELECT * FROM %@ WHERE " PGTS_SCHEMA_NAME "_lock_cleared = false AND " PGTS_SCHEMA_NAME "_lock_timestamp > $1::timestamp %@ "
             " ORDER BY " PGTS_SCHEMA_NAME "_lock_relid ASC, " PGTS_SCHEMA_NAME "_lock_timestamp ASC", 
             lockTableName, addition];
-        PGTSResultSet* res = [connection executeQuery: query parameters: lastCheck, backendPID];
+        PGTSResultSet* res = [connection executeQuery: query parameters: [self lastCheckForTable: lockTableName], backendPID];
         
         NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
         NSMutableDictionary* baseUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -316,7 +315,7 @@ error:
                 [nc postNotificationName: notificationName object: self userInfo: [userInfo autorelease]];
             }
             while (NO == [res isAtEnd]);
-            [self setLastCheck: [res valueForFieldNamed: @"" PGTS_SCHEMA_NAME "_lock_timestamp"]];
+            [self setLastCheck: [res valueForFieldNamed: @"" PGTS_SCHEMA_NAME "_lock_timestamp"] forTable: lockTableName];
         }
     }
 }
