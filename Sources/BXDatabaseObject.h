@@ -121,4 +121,5 @@ enum BXObjectLockStatus
 
 - (void) awakeFromFetch;
 - (void) awakeFromInsert;
+- (void) didTurnIntoFault;
 @end

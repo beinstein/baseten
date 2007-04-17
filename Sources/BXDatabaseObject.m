@@ -494,13 +494,17 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) faultKey: (NSString *) aKey
 {
+	BOOL didBecomeFault = NO;
     @synchronized (mValues)
     {
+		didBecomeFault = ((nil == aKey && 0 < [mValues count]) || nil != [mValues objectForKey: aKey]);
         if (nil == aKey)
             [mValues removeAllObjects];
         else
             [mValues removeObjectForKey: aKey];
     }
+	if (didBecomeFault)
+		[self performSelectorOnMainThread: @selector (didTurnIntoFault) withObject: nil waitUntilDone: NO];
 }
 
 /** 
@@ -661,6 +665,9 @@ ParseSelector (SEL aSelector, NSString** key)
 	return NO;
 }
 
+- (void) didTurnIntoFault
+{
+}
 @end
 
 
@@ -797,7 +804,11 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     @synchronized (mValues)
     {
+		TSEnumerate (currentKey, e, [aDict keyEnumerator])
+			[self willChangeValueForKey: currentKey];
         [mValues addEntriesFromDictionary: aDict];
+		TSEnumerate (currentKey, e, [aDict keyEnumerator])
+			[self didChangeValueForKey: currentKey];
     }
 }
 
