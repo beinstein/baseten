@@ -105,7 +105,10 @@
     
         [manyEntity setTargetView: ([oneEntity isView] ? oneEntity : nil) forRelationshipNamed: @"fkt1"];
         BXDatabaseObject* object = [res objectAtIndex: 0];
+		MKCAssertTrue ([object isFaultKey: @"fkt1"]);
+		
         BXDatabaseObject* foreignObject = [object valueForKey: @"fkt1"];
+		MKCAssertFalse ([object isFaultKey: @"fkt1"]);
 
         //See that the object has the given entity
         MKCAssertTrue ([[object objectID] entity] == manyEntity);

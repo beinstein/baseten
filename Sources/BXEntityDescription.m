@@ -289,7 +289,7 @@ static NSMutableSet* gViewEntities;
  * Mark the entity as a view.
  * The database contect cannot determine this information by itself. Also the primary key needs
  * to be set manually.
- * \see -           setPrimaryKeyFields:
+ * \see             - setPrimaryKeyFields:
  * \param           tableNames          NSSet containing names of the tables that are in the same schema
  *                                      as the view.
  * \return                              A BOOL indicating whether the operation was succcessful or not.
@@ -315,7 +315,7 @@ static NSMutableSet* gViewEntities;
  * Mark the entity as a view.
  * The database context cannot read this information from the database. The primary key also needs
  * to be set manually.
- * \see -           setPrimaryKeyFields:
+ * \see             - setPrimaryKeyFields:
  * \param           entities          NSSet containing the entities.
  * \return                              Whether the operation was succcessful or not.
  */

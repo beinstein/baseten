@@ -42,6 +42,22 @@
 @end
 
 
+@interface FetchTestObject : BXDatabaseObject
+{
+	@public
+	BOOL didTurnIntoFault;
+}
+@end
+
+
+@implementation FetchTestObject
+- (void) didTurnIntoFault
+{
+	didTurnIntoFault = YES;
+}
+@end
+
+
 @implementation FetchTests
 
 - (void) setUp
@@ -290,5 +306,48 @@
 	res = nil;
 }
 #endif
+
+- (void) testFault
+{
+	NSError* error = nil;
+	[entity setDatabaseObjectClass: [FetchTestObject class]];
+	NSArray* res = [context executeFetchForEntity: entity withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
+								  returningFaults: NO error: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
+	FetchTestObject* object = [res objectAtIndex: 0];
+	MKCAssertFalse ([object isFaultKey: nil]);
+	MKCAssertFalse ([object isFaultKey: @"value"]);
+	
+	object->didTurnIntoFault = NO;
+	[object faultKey: @"value"];
+	MKCAssertTrue (object->didTurnIntoFault);
+	MKCAssertTrue ([object isFaultKey: nil]);
+	MKCAssertTrue ([object isFaultKey: @"value"]);
+	MKCAssertFalse ([object isFaultKey: @"id"]);
+	
+	object->didTurnIntoFault = NO;
+	[object valueForKey: @"value"];
+	[object faultKey: nil];
+	MKCAssertTrue (object->didTurnIntoFault);	
+	MKCAssertTrue ([object isFaultKey: nil]);
+	MKCAssertTrue ([object isFaultKey: @"value"]);
+	
+	object->didTurnIntoFault = NO;
+	[object valueForKey: @"value"];
+	[context refreshObject: object mergeChanges: YES];
+	MKCAssertFalse (object->didTurnIntoFault);
+	MKCAssertFalse ([object isFaultKey: nil]);
+	MKCAssertFalse ([object isFaultKey: @"value"]);
+	
+	object->didTurnIntoFault = NO;
+	[object valueForKey: @"value"];
+	[context refreshObject: object mergeChanges: NO];
+	MKCAssertTrue (object->didTurnIntoFault);
+	MKCAssertTrue ([object isFaultKey: nil]);
+	MKCAssertTrue ([object isFaultKey: @"value"]);
+		
+	[entity setDatabaseObjectClass: nil];
+}
 
 @end

@@ -504,7 +504,7 @@ ParseSelector (SEL aSelector, NSString** key)
             [mValues removeObjectForKey: aKey];
     }
 	if (didBecomeFault)
-		[self performSelectorOnMainThread: @selector (didTurnIntoFault) withObject: nil waitUntilDone: NO];
+		[self didTurnIntoFault];
 }
 
 /** 

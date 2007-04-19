@@ -580,17 +580,20 @@ extern void BXInit ()
 
 /**
  * Refresh or fault an object.
- * All the object's cached values including related objects will be released.
- * A new fetch won't be performed until any of the object's values is requested.
- * \note Since changes always get sent to the database immediately, this method's behaviour
- *		 is a bit different than its counterpart's in Core Data. When firing a fault, the database
- *       gets queried in any case.
+ * This method is provided for Core Data compatibility.
+ * \param flag   If NO, all the object's cached values including related objects will be released.
+ *               A new fetch won't be performed until any of the object's values is requested.
+ *               If YES, this is a no-op.
  * \param object The object to fault.
- * \param flag Currently ignored.
+ * \note         Since changes always get sent to the database immediately, this method's behaviour
+ *		         is a bit different than its counterpart's in Core Data. When firing a fault, the database
+ *               gets queried in any case.
+ * \see          BXDatabaseObject::faultKey:
  */
 - (void) refreshObject: (BXDatabaseObject *) object mergeChanges: (BOOL) flag
 {
-	[object faultKey: nil];
+    if (NO == flag)
+        [object faultKey: nil];
 }
 
 @end
