@@ -1601,8 +1601,8 @@ extern void BXInit ()
 		{
 			[self connectIfNeeded: &localError];
 			BXHandleError (error, localError);
-			[mDatabaseInterface validateEntity: rval error: &localError];
-			[rval setValidated: YES];
+			if ([mDatabaseInterface validateEntity: rval error: &localError])
+				[rval setValidated: YES];
 		}
 	}
 	BXHandleError (error, localError);
