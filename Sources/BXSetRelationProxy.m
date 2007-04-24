@@ -82,11 +82,12 @@
 {
     if ((self = [super BXInitWithArray: anArray]))
     {
+		//mContainer should be retained by now.
         mOriginalContainer = mContainer;
         
         //From now on, receive notifications
         mHelper = [[BXSetRelationProxyHelper alloc] initWithProxy: self container: mContainer];
-        mContainer = [mHelper mutableSetValueForKey: @"set"];
+        mContainer = [[mHelper mutableSetValueForKey: @"set"] retain];
     }
     return self;
 }
@@ -94,7 +95,6 @@
 - (void) dealloc
 {
     [mHelper release];
-    mContainer = nil;
     [mOriginalContainer release];
     [super dealloc];
 }

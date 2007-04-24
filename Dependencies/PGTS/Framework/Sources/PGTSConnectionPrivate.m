@@ -195,8 +195,10 @@ PGTSSSLConnectionExIndex ()
                 result, kPGTSResultSetKey,
                 self,   kPGTSConnectionKey,
                 nil];
-            [[PGTSQueryException exceptionWithName: kPGTSQueryFailedException reason: [result errorMessage] 
-                                          userInfo: userInfo] raise];
+			NSException* exception = [PGTSQueryException exceptionWithName: kPGTSQueryFailedException 
+																	reason: [result errorMessage] 
+																  userInfo: userInfo];
+            [exception raise];
         }
     }
 }

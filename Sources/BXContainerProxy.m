@@ -57,7 +57,7 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@: %@", [self class], mContainer];
+    return [NSString stringWithFormat: @"<%@: %p>: %@", NSStringFromClass ([self class]), self, mContainer];
 }
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
