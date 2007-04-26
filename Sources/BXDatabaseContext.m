@@ -1677,7 +1677,7 @@ extern void BXInit ()
 	BXHandleError (error, localError);
 	if (nil == localError)
 	{
-		//Rval might lose some objects since the relationships could have same names (MTO in helper tables)
+		//Rval might lose some objects since the relationships could have same names (MTO in helper tables).
 		//FIXME: does this include most of the names?
 		rval = [NSMutableDictionary dictionaryWithCapacity: [relationships count]];
 		TSEnumerate (currentRel, e, [relationships objectEnumerator])

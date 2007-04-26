@@ -46,5 +46,6 @@
 - (void) setRelationship2: (BXRelationshipDescription *) aRelationship2;
 - (BXRelationshipDescription *) relationship1;
 - (BXRelationshipDescription *) relationship2;
+- (BXEntityDescription *) otherEntity: (BXEntityDescription *) anEntity;
 
 @end

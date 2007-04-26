@@ -42,7 +42,7 @@
 - (void) cacheRelationship: (id <BXRelationshipDescription>) relationship;
 - (void) registerObjectID: (BXDatabaseObjectID *) anID;
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID;
-- (BXEntityDescription *) targetForRelationship: (id <BXRelationshipDescription>) rel;
+- (BXEntityDescription *) targetForRelationship: (NSString *) name;
 - (NSArray *) properties: (NSArray *) strings;
 - (NSArray *) correspondingProperties: (NSArray *) properties;
 - (BOOL) hasAncestor: (BXEntityDescription *) entity;

@@ -190,4 +190,18 @@
 {
     return [NSArray arrayWithObjects: relationship1, relationship2, nil];
 }
+
+
+- (BXEntityDescription *) otherEntity: (BXEntityDescription *) anEntity
+{
+	BXEntityDescription* entity1 = [relationship1 srcEntity];
+	BXEntityDescription* entity2 = [relationship2 srcEntity];
+	
+	id rval = entity1;
+	if (anEntity == entity1)
+		rval = entity2;
+	
+	return rval;
+}
+
 @end

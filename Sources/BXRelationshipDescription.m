@@ -282,21 +282,6 @@ NullArray (unsigned int count)
     return rval;
 }
 
-//FIXME: the naming thing should be rethought.
-- (NSString *) alternativeNameFromEntity: (BXEntityDescription *) entity
-{
-    NSString* rval = nil;
-    if ([self srcEntity] == entity || 
-        [entity hasAncestor: [self srcEntity]] || 
-        [self dstEntity] == entity || 
-        [entity hasAncestor: [self dstEntity]])
-    {
-        rval = [[self srcEntity] name];
-    }
-    return rval;
-}
-
-
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
                  to: (BXEntityDescription *) targetEntity error: (NSError **) error;
 {
@@ -417,4 +402,17 @@ NullArray (unsigned int count)
 {
     return nil;
 }
+
+- (BXEntityDescription *) otherEntity: (BXEntityDescription *) anEntity
+{
+	BXEntityDescription* entity1 = [self srcEntity];
+	BXEntityDescription* entity2 = [self dstEntity];
+	
+	id rval = entity1;
+	if (anEntity == entity1)
+		rval = entity2;
+	
+	return rval;	
+}
+
 @end

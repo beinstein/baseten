@@ -372,7 +372,7 @@ ParseSelector (SEL aSelector, NSString** key)
 					id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
 					//This shouldn't be necessary since the relationship was fetched in -keyType:error:.
 					if (nil != error) [self queryFailed: error];
-					rval = [rel resolveFrom: self to: [entity targetForRelationship: rel] error: &error];
+					rval = [rel resolveFrom: self to: [entity targetForRelationship: aKey] error: &error];
 					if (nil != error) [self queryFailed: error];
 					//Caching the result might cause a retain cycle.
 					[self setCachedValue: rval forKey: aKey];

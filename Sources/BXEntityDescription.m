@@ -34,6 +34,7 @@
 #import "BXPropertyDescription.h"
 #import "BXRelationshipDescription.h"
 #import "BXPropertyDescriptionPrivate.h"
+#import "BXHelperTableMTMRelationshipDescription.h"
 
 #import <TSDataTypes/TSDataTypes.h>
 #import <Log4Cocoa/Log4Cocoa.h>
@@ -534,15 +535,29 @@ static NSMutableSet* gViewEntities;
 						  self, relationship);
     
     //One-to-one and many-to-many replace many-to-one
-    NSString* relname = [relationship nameFromEntity: self];
-    id oldRelationship = [mRelationships objectForKey: relname];
-    if (nil == oldRelationship || [relationship isOneToOne] || [relationship isManyToMany])
+	//FIXME: storing the relationships by names like this
+	//should be replaced by something more thoroughly thought.
+	if ([relationship isManyToMany])
 	{
-        [mRelationships setObject: relationship forKey: relname];
-		
+		[mRelationships setObject: relationship forKey: 
+			[[(BXHelperTableMTMRelationshipDescription *) relationship otherEntity: self] name]];
+	}
+	else
+	{
+		NSString* relname = [relationship nameFromEntity: self];
+		[mRelationships setObject: relationship forKey: relname];
+
 		//FIXME: this is a hack to get the relationships indexed by their alternative names.
-		if (NO == [relationship isOneToOne] && NO == [relationship isManyToMany])
-			[mRelationships setObject: relationship forKey: [(BXRelationshipDescription *) relationship alternativeNameFromEntity: self]];
+		NSArray* keys = [NSArray arrayWithObjects: 
+			[[(id) relationship otherEntity: self] name],
+			nil];
+		
+		TSEnumerate (currentKey, e, [keys objectEnumerator])
+		{
+			id oldRelationship = [mRelationships objectForKey: currentKey];
+			if (nil == oldRelationship || [relationship isOneToOne])
+				[mRelationships setObject: relationship forKey: currentKey];
+		}
 	}
 }
 
@@ -560,9 +575,9 @@ static NSMutableSet* gViewEntities;
     [mObjectIDs removeObject: anID];
 }
 
-- (BXEntityDescription *) targetForRelationship: (id <BXRelationshipDescription>) rel
+- (BXEntityDescription *) targetForRelationship: (NSString *) name
 {
-    return [mTargetViews objectForKey: [rel nameFromEntity: self]];
+    return [mTargetViews objectForKey: name];
 }
 
 /**

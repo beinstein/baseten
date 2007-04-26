@@ -38,7 +38,7 @@
 	BXEntityDescription* entity = [[self objectID] entity];
 	id <BXRelationshipDescription> rel = [entity relationshipNamed: aName context: mContext error: &error];
 	NSAssert (nil == error, [error localizedDescription]);
-	id rval = [rel resolveFrom: self to: [entity targetForRelationship: rel] error: &error];
+	id rval = [rel resolveFrom: self to: [entity targetForRelationship: aName] error: &error];
 	NSAssert (nil == error, [error localizedDescription]);
 	return rval;
 }
