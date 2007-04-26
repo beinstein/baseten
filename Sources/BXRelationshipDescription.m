@@ -415,4 +415,15 @@ NullArray (unsigned int count)
 	return rval;	
 }
 
+- (NSArray *) propertiesForEntity: (BXEntityDescription *) entity
+{
+	NSArray* retval = nil;
+	if ([self srcEntity] == entity)
+		retval = srcProperties;
+	else if ([self dstEntity] == entity)
+		retval = dstProperties;
+	
+	return retval;
+}
+
 @end

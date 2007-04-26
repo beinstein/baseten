@@ -81,4 +81,6 @@
 /** Set either a to-one or a to-many relationship's target depending on the relationship type and the reference object. */
 - (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error;
 - (NSArray *) subrelationships;
+
+- (NSArray *) propertiesForEntity: (BXEntityDescription *) entity;
 @end

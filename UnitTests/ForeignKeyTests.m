@@ -103,12 +103,14 @@
         MKCAssertNil (error);
         MKCAssertTrue (1 == [res count]);
     
+#if 0
         [manyEntity setTargetView: ([oneEntity isView] ? oneEntity : nil) forRelationshipNamed: @"test1"];
+#endif
         BXDatabaseObject* object = [res objectAtIndex: 0];
-		MKCAssertTrue ([object isFaultKey: @"test1"]);
+		MKCAssertTrue ([object isFaultKey: [oneEntity name]]);
 		
-        BXDatabaseObject* foreignObject = [object valueForKey: @"test1"];
-		MKCAssertFalse ([object isFaultKey: @"test1"]);
+        BXDatabaseObject* foreignObject = [object primitiveValueForKey: [oneEntity name]];
+		MKCAssertFalse ([object isFaultKey: [oneEntity name]]);
 
         //See that the object has the given entity
         MKCAssertTrue ([[object objectID] entity] == manyEntity);
@@ -205,14 +207,16 @@
 {
     NSError* error = nil;
     
-    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"ototest2"];
-    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"ototest1"];
+#if 0
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: [entity2 name]];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: [entity1 name]];
+#endif
     
     //-[BXDatabaseContext relationshipsByNameWithEntity:entity:] doesn't 
     //currently search the relationships recursively
     id <BXRelationshipDescription> foobar = nil;
     if ([entity1 isView] || [entity2 isView])
-        foobar = [entity1 relationshipNamed: @"ototest2" context: context error: nil];
+        foobar = [entity1 relationshipNamed: [entity2 name] context: context error: nil];
     else
     {
         NSDictionary* rels = [context relationshipsByNameWithEntity: entity1 entity: entity2 error: nil];
@@ -234,11 +238,11 @@
     {
         BXDatabaseObject* object = [res objectAtIndex: i];
         
-        BXDatabaseObject* foreignObject  = [object valueForKey: @"ototest2"];
+        BXDatabaseObject* foreignObject  = [object valueForKey: [entity2 name]];
         BXDatabaseObject* foreignObject2 = [foobar resolveFrom: object to: entity2 error: &error];
         MKCAssertNil (error);
         
-        BXDatabaseObject* object2 = [foreignObject valueForKey: @"ototest1"];
+        BXDatabaseObject* object2 = [foreignObject valueForKey: [entity1 name]];
         BXDatabaseObject* object3 = [foobar resolveFrom: foreignObject to: entity1 error: &error];
         MKCAssertNil (error);
         
@@ -269,7 +273,7 @@
     MKCAssertNil (error);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    MKCAssertNil ([object valueForKey: @"ototest1"]);
+    MKCAssertNil ([object valueForKey: [entity1 name]]);
     MKCAssertTrue ([[object objectID] entity] == entity2);
 }
 
@@ -285,8 +289,10 @@
 
 - (void) many: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2
 {
-    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"mtmtest2"];
-    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"mtmtest1"];
+#if 0
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: [entity2 name]];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: [entity1 name]];
+#endif
     
     NSError* error = nil;
     NSArray* res = [context executeFetchForEntity: entity1 withPredicate: nil error: &error];
@@ -301,7 +307,7 @@
         MKCAssertTrue ([[object objectID] entity] == entity1);
         
         //NSSet* foreignObjects = [object valueForKey: @"mtmtest2"];
-        NSSet* foreignObjects = [object primitiveValueForKey: @"mtmtest2"];
+        NSSet* foreignObjects = [object primitiveValueForKey: [entity2 name]];
         MKCAssertNotNil (foreignObjects);
         if ([@"d1" isEqualToString: [object valueForKey: @"value1"]])
         {
@@ -310,7 +316,7 @@
             MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
 
             MKCAssertEqualObjects ([foreignObject valueForKey: @"value2"], @"d2");
-            NSSet* objects = [foreignObject valueForKey: @"mtmtest1"];
+            NSSet* objects = [foreignObject valueForKey: [entity1 name]];
             MKCAssertTrue (1 == [objects count]);
             BXDatabaseObject* backRef = [objects anyObject];
             MKCAssertTrue ([[backRef objectID] entity] == entity1);
@@ -326,7 +332,7 @@
             TSEnumerate (foreignObject, e, [foreignObjects objectEnumerator])
             {
                 MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
-                NSArray* objects = [foreignObject valueForKey: @"mtmtest1"];
+                NSArray* objects = [foreignObject valueForKey: [entity1 name]];
                 MKCAssertNotNil (objects);
                 MKCAssertTrue (3 == [objects count]);
                 
@@ -352,8 +358,10 @@
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
+#if 0
     [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: @"test1"];
     [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"test2"];
+#endif
 
     //Change reference in foreignObject from id=1 to id=2
     NSError* error = nil;
@@ -376,9 +384,9 @@
     BXDatabaseObject* object = [res objectAtIndex: 0];
     MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
-    MKCAssertFalse ([[foreignObject valueForKey: @"test1"] isEqual: object]);
-    [foreignObject setValue: object forKey: @"test1"];
-    MKCAssertEqualObjects ([foreignObject valueForKey: @"test1"], object);
+    MKCAssertFalse ([[foreignObject valueForKey: [oneEntity name]] isEqual: object]);
+    [foreignObject setValue: object forKey: [oneEntity name]];
+    MKCAssertEqualObjects ([foreignObject valueForKey: [oneEntity name]], object);
     
     [context rollback];
 }
@@ -398,13 +406,15 @@
     //Create an object to oneEntity and add referencing objects to manyEntity
     NSError* error = nil;
     
-    [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: @"test2"];
-    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"test1"];
+#if 0
+    [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: [oneEntity name]];
+    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: [manyEntity name]];
+#endif
     
     BXDatabaseObject* object = [context createObjectForEntity: oneEntity withFieldValues: nil error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (object);
-    STAssertTrue (0 == [[object valueForKey: @"test2"] count], [[object valueForKey: @"test2"] description]);
+    STAssertTrue (0 == [[object valueForKey: [manyEntity name]] count], [[object valueForKey: [manyEntity name]] description]);
     MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
     const int count = 2;
@@ -421,9 +431,9 @@
     
     //FIXME: Reversing this should work better, since one query would be enough.
     //i.e. [object setValue: foreignObjects forKey: @"fkt1"];
-    [foreignObjects setValue: object forKey: @"test1"];
+    [foreignObjects setValue: object forKey: [oneEntity name]];
     
-    NSSet* referencedObjects = [NSSet setWithSet: [object valueForKey: @"test2"]];
+    NSSet* referencedObjects = [NSSet setWithSet: [object valueForKey: [manyEntity name]]];
     MKCAssertEqualObjects (referencedObjects, foreignObjects);
 
     [context rollback];
@@ -443,12 +453,16 @@
 {
     //Change a reference in entity1 and entity2
     
-    MKCAssertTrue ([[entity1 relationshipNamed: @"ototest2" context: context error: nil] isOneToOne]);
-    MKCAssertTrue ([[entity2 relationshipNamed: @"ototest1" context: context error: nil] isOneToOne]);
-    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"ototest2"];
-    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"ototest1"];
-    
     NSError* error = nil;
+    MKCAssertTrue ([[entity1 relationshipNamed: [entity2 name] context: context error: &error] isOneToOne]);
+    STAssertNil (error, [error localizedDescription]);
+    MKCAssertTrue ([[entity2 relationshipNamed: [entity1 name] context: context error: &error] isOneToOne]);
+    STAssertNil (error, [error localizedDescription]);
+#if 0
+    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: [entity2 name]];
+    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: [entity1 name]];
+#endif
+    
     NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                             error: &error];
@@ -465,12 +479,12 @@
     BXDatabaseObject* foreignObject1 = [res objectAtIndex: 0];
     MKCAssertTrue ([[foreignObject1 objectID] entity] == entity2);
     
-    BXDatabaseObject* foreignObject2 = [object valueForKey: @"ototest2"];
+    BXDatabaseObject* foreignObject2 = [object valueForKey: [entity2 name]];
     MKCAssertFalse ([foreignObject1 isEqual: foreignObject2]);
     MKCAssertFalse (foreignObject1 == foreignObject2);
     MKCAssertTrue ([[foreignObject2 objectID] entity] == entity2);
     
-    [object setValue: foreignObject1 forKey: @"ototest2"];
+    [object setValue: foreignObject1 forKey: [entity2 name]];
     NSNumber* n1 = [NSNumber numberWithInt: 1];
     MKCAssertEqualObjects (n1, [object valueForKey: @"r2"]);
     MKCAssertEqualObjects (n1, [foreignObject1 valueForKey: @"r1"]);

@@ -504,28 +504,99 @@ static NSMutableSet* gViewEntities;
                                                error: (NSError **) error
 {
     id rval = nil;
-    if (nil == mViewEntities)
-    {
-        //FIXME: this might cause cached objects to be ignored.
-        if (NO == [self hasAllRelationships])
-        {
-			[self setHasAllRelationships: YES];
-            [context relationshipsByNameWithEntity: self entity: nil error: error];
-        }
-        rval = [mRelationships objectForKey: aName];
-    }
-    else
-    {
-        //If this entity is a view, enumerate the tables the view is based on and
-        //try to find the correct relationship.
-        TSEnumerate (currentViewEntity, e, [mViewEntities objectEnumerator])
-        {
-            rval = [currentViewEntity relationshipNamed: aName context: context error: error];
-            if (nil != rval || (NULL != error && nil != *error))
-                break;
-        }
-    }
-    return rval;
+	if (nil == mViewEntities)
+	{
+		//FIXME: this might cause cached some objects to be ignored.
+		[self fetchRelationshipsIfNeeded: context error: error];
+		rval = [mRelationships objectForKey: aName];
+	}
+	else if (nil == (rval = [mRelationships objectForKey: aName]))
+	{
+		//If there is a view named like the sought relationship, try to find a path between this entity and the view.
+		//FIXME: if aName is formatted like schema.table, we needn't make the assumption below.
+		NSError* localError = nil;
+		BXEntityDescription* target = [context entityForTable: aName inSchema: [self schemaName] error: &localError];
+		if (nil != target && [target isView])
+		{
+			rval = [self findPathToEntity: target 
+					 usingPropertiesNamed: [[self attributesByName] allKeys]
+					targetPropertiesNamed: [[target attributesByName] allKeys]
+								  context: context
+									error: error];
+			if (nil != rval)
+			{
+				[mRelationships setObject: rval forKey: aName];
+				//FIXME: this shouldn't be set here but rather in the relationship.
+				[self setTargetView: target forRelationshipNamed: aName];
+			}
+		}
+		else
+		{
+			//Enumerate the tables the view is based on and
+			//try to find the correct relationship.
+			TSEnumerate (currentViewEntity, e, [mViewEntities objectEnumerator])
+		{
+				rval = [currentViewEntity relationshipNamed: aName context: context error: error];
+				if (nil != rval || (NULL != error && nil != *error))
+				{
+					[mRelationships setObject: rval forKey: aName];
+					break;
+				}
+		}		
+		}		
+	}
+	return rval;
+}
+
+- (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 
+							   usingPropertiesNamed: (NSArray *) srcNames
+							  targetPropertiesNamed: (NSArray *) dstNames
+											context: (BXDatabaseContext *) context
+											  error: (NSError **) error
+{
+	//FIXME: performance is something like O (n * m) instead of O (n + m).
+	log4AssertValueReturn (NULL != error, nil , @"Expected error not to be NULL.");
+	id <BXRelationshipDescription> retval = nil;
+	if ([self isView])
+	{
+		TSEnumerate (currentViewEntity, e, [mViewEntities objectEnumerator])
+		{
+			retval = [currentViewEntity findPathToEntity: anEntity 
+								 usingPropertiesNamed: srcNames
+								targetPropertiesNamed: dstNames
+											  context: context
+												error: error];
+			if (nil != retval || nil != *error)
+				break;
+		}
+	}
+	else if ([anEntity isView])
+	{
+		TSEnumerate (currentEntity, e, [[anEntity entitiesBasedOn] objectEnumerator])
+		{
+			retval = [self findPathToEntity: currentEntity 
+					usingPropertiesNamed: srcNames
+				   targetPropertiesNamed: dstNames
+								 context: context
+								   error: error];
+			if (nil != retval || nil != *error)
+				break;
+		}
+	}
+	else
+	{
+		id <BXRelationshipDescription> rel = [self relationshipNamed: [anEntity name] context: context error: error];
+		if (nil != rel)
+		{
+			NSArray* currentSrcNames = [[rel propertiesForEntity: self] valueForKey: @"name"];
+			NSArray* currentDstNames = [[rel propertiesForEntity: anEntity] valueForKey: @"name"];
+			if ([srcNames BXContainsObjectsInArray: currentSrcNames] && 
+				[dstNames BXContainsObjectsInArray: currentDstNames])
+				retval = rel;
+		}
+	}
+	
+	return retval;
 }
 
 - (void) cacheRelationship: (id <BXRelationshipDescription>) relationship
@@ -724,6 +795,15 @@ static NSMutableSet* gViewEntities;
 		mFlags |= kBXEntityIsValidated;
 	else
 		mFlags &= ~kBXEntityIsValidated;
+}
+
+- (void) fetchRelationshipsIfNeeded: (BXDatabaseContext *) context error: (NSError **) error
+{
+	if (NO == [self hasAllRelationships])
+	{
+		[self setHasAllRelationships: YES];
+		[context relationshipsByNameWithEntity: self entity: nil error: error];
+	}
 }
 
 @end

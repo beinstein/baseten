@@ -204,4 +204,15 @@
 	return rval;
 }
 
+- (NSArray *) propertiesForEntity: (BXEntityDescription *) entity
+{
+	NSArray* retval = nil;
+	if ([relationship1 srcEntity] == entity)
+		retval = [relationship1 srcProperties];
+	else if ([relationship2 srcEntity] == entity)
+		retval = [relationship2 srcProperties];
+	
+	return retval;
+}
+
 @end

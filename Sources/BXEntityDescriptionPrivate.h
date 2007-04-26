@@ -52,4 +52,10 @@
 - (BOOL) hasAllRelationships;
 - (void) setHasAllRelationships: (BOOL) flag;
 - (void) setValidated: (BOOL) flag;
+- (void) fetchRelationshipsIfNeeded: (BXDatabaseContext *) context error: (NSError **) error;
+- (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 
+							   usingPropertiesNamed: (NSArray *) srcNames
+							  targetPropertiesNamed: (NSArray *) dstNames
+											context: (BXDatabaseContext *) context
+											  error: (NSError **) error;
 @end
