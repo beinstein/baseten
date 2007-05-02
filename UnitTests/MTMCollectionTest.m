@@ -75,8 +75,10 @@
     [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
     
+#if 0
     [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"mtmtest2"];
     [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"mtmtest1"];
+#endif
 
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: entity1
@@ -89,8 +91,8 @@
     res =  [res filteredArrayUsingPredicate: predicate];
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    NSCountedSet* foreignObjects = [object valueForKey: @"mtmtest2"];
-    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: @"mtmtest2"];
+    NSCountedSet* foreignObjects = [object valueForKey: [entity2 name]];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: [entity2 name]];
 	
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);

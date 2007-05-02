@@ -296,12 +296,17 @@
 	
 	BXPropertyDescription* supplierName = [[supplier attributesByName] objectForKey: @"supplier_name"];
 	BXPropertyDescription* poNumber = [[order attributesByName] objectForKey: @"po_number"];
+	BXPropertyDescription* supplierId = [[supplier attributesByName] objectForKey: @"supplier_id"];
+	BXPropertyDescription* orderSupplierId = [[order attributesByName] objectForKey: @"supplier_id"];
 	MKCAssertNotNil (supplierName);
 	MKCAssertNotNil (poNumber);
+	MKCAssertNotNil (supplierId);
+	MKCAssertNotNil (orderSupplierId);
 	
-	NSPredicate* predicate = [NSPredicate predicateWithFormat: 
-		@"(NOT %@ MATCHES[c] \"test\") OR %@ MATCHES[c] \"ferg\"", poNumber, supplierName];
-
+    NSPredicate* predicate = [NSPredicate predicateWithFormat: 
+        @"%@ == %@ AND ((NOT %@ MATCHES[c] \"test\") OR %@ MATCHES[c] \"ferg\")", 
+		supplierId, orderSupplierId, poNumber, supplierName];
+    
 	NSArray* res = [context executeFetchForEntity: order withPredicate: predicate error: &error];
 	res = nil;
 }

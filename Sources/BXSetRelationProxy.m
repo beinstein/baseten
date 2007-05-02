@@ -26,6 +26,7 @@
 // $Id$
 //
 
+#import "BXDatabaseContext.h"
 #import "BXSetRelationProxy.h"
 #import "BXRelationshipDescriptionProtocol.h"
 #import "BXDatabaseAdditions.h"
@@ -115,19 +116,35 @@
         case NSKeyValueChangeInsertion:
         {
             NSSet* objects = [change objectForKey: NSKeyValueChangeNewKey];
+            BXEntityDescription* entity = [[[objects anyObject] objectID] entity];
             [mRelationship addObjects: objects
                         referenceFrom: mReferenceObject
-                                   to: [[[objects anyObject] objectID] entity]
+                                   to: entity
                                 error: NULL];
+            
+            //For autocommit
+            if ([mContext autocommits])
+            {
+                [[[mContext undoManager] prepareWithInvocationTarget: mRelationship]
+                    removeObjects: objects referenceFrom: mReferenceObject to: entity error: NULL];
+            }
             break;
         }
         case NSKeyValueChangeRemoval:
         {
             NSSet* objects = [change objectForKey: NSKeyValueChangeOldKey];
+            BXEntityDescription* entity = [[[objects anyObject] objectID] entity];
             [mRelationship removeObjects: objects
                            referenceFrom: mReferenceObject
-                                      to: [[[objects anyObject] objectID] entity]
+                                      to: entity
                                    error: NULL];
+
+            //For autocommit
+            if ([mContext autocommits])
+            {
+                [[[mContext undoManager] prepareWithInvocationTarget: mRelationship]
+                    addObjects: objects referenceFrom: mReferenceObject to: entity error: NULL];
+            }
             break;
         }
         default:
@@ -138,7 +155,7 @@
 
 - (void) setRelationship: (id <BXRelationshipDescription>) relationship
 {
-    //BXEntityDescription retains these, so we don't have to
+    //BXEntityDescription retains these, so we don't have to.
     mRelationship = relationship;
 }
 

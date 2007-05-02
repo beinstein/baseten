@@ -68,8 +68,10 @@
 {
     NSError* error = nil;
     
+#if 0
     [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"mtocollectiontest2"];
     [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"mtocollectiontest1"];
+#endif
     
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: oneEntity
@@ -80,15 +82,15 @@
     //Get an object from the result
     //Here it doesn't matter, whether there are any objects in the relationship or not.
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    NSCountedSet* foreignObjects = [object valueForKey: @"mtocollectiontest2"];
-    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: @"mtocollectiontest2"];
+    NSCountedSet* foreignObjects = [object valueForKey: [manyEntity name]];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: [manyEntity name]];
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
 
     //Remove the referenced objects
-    [object setValue: nil forKey: @"mtocollectiontest2"];
+    [object setValue: nil forKey: [manyEntity name]];
     MKCAssertTrue (0 == [foreignObjects count]);
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
@@ -99,7 +101,7 @@
     MKCAssertTrue (3 == [objects2 count]);
     
     //Set the referenced objects
-    [object setValue: objects2 forKey: @"mtocollectiontest2"];
+    [object setValue: objects2 forKey: [manyEntity name]];
     
     MKCAssertTrue (3 == [foreignObjects count]);
     MKCAssertEqualObjects ([NSSet setWithSet: foreignObjects], objects2);
@@ -122,8 +124,10 @@
 {
     NSError* error = nil;
 
+#if 0
     [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"m"];
     [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"m"];
+#endif
 
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: oneEntity
@@ -133,8 +137,8 @@
     
     //Get an object from the result
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    NSCountedSet* foreignObjects = [object valueForKey: @"m"];
-    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: @"m"];
+    NSCountedSet* foreignObjects = [object valueForKey: [manyEntity name]];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: [manyEntity name]];
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);
