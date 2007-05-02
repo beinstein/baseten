@@ -140,7 +140,10 @@ ParseSelector (SEL aSelector, NSString** key)
     return rval;
 }
 
-/** The database context to which this object is registered. */
+/** 
+ * The database context to which this object is registered. 
+ * This method doesn't cause a fault to fire.
+ */
 - (BXDatabaseContext *) databaseContext
 {
     return mContext;
@@ -150,6 +153,7 @@ ParseSelector (SEL aSelector, NSString** key)
  * Test object equality.
  * Currently objects are considered equal if they are managed by the same database context and
  * their object IDs are equal.
+ * This method doesn't cause a fault to fire.
  */
 - (BOOL) isEqual: (BXDatabaseObject *) anObject
 {
@@ -211,6 +215,11 @@ ParseSelector (SEL aSelector, NSString** key)
     return [self valuesForKeys: [keys valueForKey: @"name"]];
 }
 
+/**
+ * Validate a value.
+ * Currently, only null constraints are checked.
+ * This method doesn't cause a fault to fire.
+ */
 - (BOOL) validateValue: (id *) ioValue forKey: (NSString *) key error: (NSError **) outError
 {
 	BOOL rval = YES;
@@ -220,7 +229,10 @@ ParseSelector (SEL aSelector, NSString** key)
 	return rval;
 }
 
-/** The object's ID */
+/** 
+ * The object's ID. 
+ * This method doesn't cause a fault to fire.
+ */
 - (BXDatabaseObjectID *) objectID
 {
     return mObjectID;
@@ -271,6 +283,7 @@ ParseSelector (SEL aSelector, NSString** key)
  * A proxy for monitoring the object status.
  * Returns a proxy that can be used with BXObjectStatusToEditableTransformer and
  * BXObjectStatusToColorTransformer.
+ * This method doesn't cause a fault to fire.
  */
 - (id <BXObjectStatusInfo>) statusInfo
 {
@@ -321,6 +334,7 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * Value from the object's cache.
  * This method is thread-safe. Primary key values should be accessed using the object ID instead.
+ * This method doesn't cause a fault to fire.
  * \return      The value in question or nil, if it has not been fetched from the database yet.
  */
 - (id) cachedValueForKey: (NSString *) aKey
@@ -509,6 +523,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /** 
  * Whether the given key s faulted or not.
+ * This method doesn't cause a fault to fire.
  * \param   aKey    An NSString. May be nil, in which case the object
  *                  is considered a fault if value for any of its keys is
  *                  not cached.
@@ -551,6 +566,7 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * Values from the object's cache.
  * This method is thread-safe.
+ * This method doesn't cause a fault to fire.
  * \return      An NSDictionary which contains the cached values.
  */
 - (NSDictionary *) cachedValues
@@ -568,6 +584,7 @@ ParseSelector (SEL aSelector, NSString** key)
  * Returns YES if modifying the given key would block.
  * Current implementation locks the whole object
  * when any key gets locked.
+ * This method doesn't cause a fault to fire.
  */
 - (BOOL) isLockedForKey: (NSString *) aKey
 {
@@ -576,6 +593,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Whether the object has beed deleted or is going to be deleted after the next commit.
+ * This method doesn't cause a fault to fire.
  */
 - (BOOL) isDeleted
 {
@@ -585,6 +603,7 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * Whether the object has been inserted in a previous transaction.
  * If the object has been deleted, this method returns YES.
+ * This method doesn't cause a fault to fire.
  */
 - (BOOL) isInserted
 {
