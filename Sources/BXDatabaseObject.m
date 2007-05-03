@@ -134,8 +134,8 @@ ParseSelector (SEL aSelector, NSString** key)
     NSString* rval = nil;
     @synchronized (mValues)
     {
-        rval = [NSString stringWithFormat: @"%@ (%p) \n\t\tURI: %@ \n\t\tisFault: %d \n\t\tentity: %@ \n\t\tvalues: %@", 
-            [self class], self, [[self objectID] URIRepresentation], [self isFaultKey: nil], [[mObjectID entity] name], mValues];
+        rval = [NSString stringWithFormat: @"%@ (%p) \n\t\tURI: %@ \n\t\tisFault: %d \n\t\tentity: %@", 
+            [self class], self, [[self objectID] URIRepresentation], [self isFaultKey: nil], [[mObjectID entity] name]];
     }
     return rval;
 }
@@ -806,12 +806,10 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     @synchronized (mValues)
     {
-        [self willChangeValueForKey: aKey];
         if (nil == aValue)
             [mValues removeObjectForKey: aKey];
         else
             [mValues setValue: aValue forKey: aKey];
-        [self didChangeValueForKey: aKey];
     }
 }
 

@@ -70,7 +70,7 @@
                         context: (void *) context
 {
     [observer observeValueForKeyPath: keyPath ofObject: object change: change context: context];
-}    
+}   
 @end
 
 
@@ -83,12 +83,8 @@
 {
     if ((self = [super BXInitWithArray: anArray]))
     {
-		//mContainer should be retained by now.
-        mOriginalContainer = mContainer;
-        
         //From now on, receive notifications
         mHelper = [[BXSetRelationProxyHelper alloc] initWithProxy: self container: mContainer];
-        mContainer = [[mHelper mutableSetValueForKey: @"set"] retain];
     }
     return self;
 }
@@ -96,13 +92,7 @@
 - (void) dealloc
 {
     [mHelper release];
-    [mOriginalContainer release];
     [super dealloc];
-}
-
-- (unsigned int) countForObject: (id) anObject
-{
-    return [mOriginalContainer countForObject: anObject];
 }
 
 - (void) observeValueForKeyPath: (NSString *) keyPath
@@ -138,7 +128,7 @@
                            referenceFrom: mReferenceObject
                                       to: entity
                                    error: NULL];
-
+            
             //For autocommit
             if ([mContext autocommits])
             {
@@ -166,26 +156,6 @@
         [mReferenceObject release];
         mReferenceObject = [aReferenceObject retain];
     }
-}
-
-- (void) handleAddedObjects: (NSArray *) objectArray
-{
-    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
-	{
-		if (NO == [mOriginalContainer containsObject: currentObject])
-			[mOriginalContainer addObject: currentObject];
-	}
-}
-
-- (void) handleRemovedObjects: (NSArray *) objectArray
-{
-    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
-        [mOriginalContainer removeObject: currentObject];
-}
-
-- (id) countedSet
-{
-    return mOriginalContainer;
 }
 
 @end

@@ -49,4 +49,9 @@
     return [mContainer countForObject: anObject];
 }
 
+- (id) countedSet
+{
+    return mContainer;
+}
+
 @end

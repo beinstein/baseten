@@ -36,7 +36,6 @@
 
 @interface BXSetRelationProxy : BXSetProxy
 {
-    id mOriginalContainer;
     id mHelper;
     id <BXRelationshipDescription> mRelationship;
     BXDatabaseObject* mReferenceObject;
@@ -44,6 +43,5 @@
 
 - (void) setReferenceObject: (BXDatabaseObject *) aReferenceObject;
 - (void) setRelationship: (id <BXRelationshipDescription>) relationship;
-- (id) countedSet;
 
 @end

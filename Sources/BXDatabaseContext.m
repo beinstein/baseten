@@ -1910,8 +1910,21 @@ extern void BXInit ()
 	NSArray* objectIDs = nil;
 	if ([self checkDatabaseURI: &localError])
 	{
+        //FIXME: this should be done even if anObject is nil but then we won't be able to determine the objects beforehand.
+        if (nil != anObject)
+        {
+            TSEnumerate (currentKey, e, [aDict keyEnumerator])
+                [anObject willChangeValueForKey: currentKey];
+        }
+        
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
-															 entity: anEntity predicate: predicate error: &localError];        
+															 entity: anEntity predicate: predicate error: &localError];
+        if (nil != anObject)
+        {
+            TSEnumerate (currentKey, e, [aDict keyEnumerator])
+                [anObject didChangeValueForKey: currentKey];
+        }
+        
 		if (nil == localError)
 		{
 			//If autocommit is on, the update notification will be received immediately.

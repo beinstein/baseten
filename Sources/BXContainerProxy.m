@@ -49,7 +49,7 @@
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [mContainer release];
+    [mContainer release];    
     [mContext release];
     [mFilterPredicate release];
     [super dealloc];

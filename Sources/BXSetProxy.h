@@ -34,4 +34,5 @@
 }
 
 - (unsigned int) countForObject: (id) anObject;
+- (id) countedSet;
 @end
