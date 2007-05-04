@@ -104,7 +104,7 @@
         rval = YES;
         if (NO == merge)
         {
-            //Do not really remove, since we do not want to affect the database
+            //Do not really remove, since we do not want to affect the database.
             [super removeObjects: [self arrangedObjects]];
             [self addObjects: result];
         }
@@ -141,7 +141,7 @@
         else
         {
             id content = [self content];
-            TSEnumerate (currentObject, e, [[result allObjects] objectEnumerator])
+            TSEnumerate (currentObject, e, [result objectEnumerator])
             {
                 if (NO == [content containsObject: currentObject])
                     [self addObject: currentObject];

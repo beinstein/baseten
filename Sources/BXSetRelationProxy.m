@@ -158,4 +158,10 @@
     }
 }
 
+- (void) forwardInvocation: (NSInvocation *) anInvocation
+{
+    //Unless we modify the helper's proxy object, changes won't be notified.
+    [anInvocation invokeWithTarget: [mHelper mutableSetValueForKey: @"set"]];
+}
+
 @end

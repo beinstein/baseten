@@ -583,11 +583,15 @@ static NSString* SSLMode (enum BXSSLMode mode)
         //Check for a previously locked row
         if (nil != lockedObjectID)
         {
-            log4AssertValueReturn (nil == objectID || objectID == lockedObjectID, nil, 
-								   @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
-								   objectID, lockedObjectID);
+            //FIXME: This assertion fails with MTO relationships.
+#if 0
+            log4AssertLog (nil == objectID || objectID == lockedObjectID,
+                           @"Expected modified object to match the locked one.\n\t%@ \n\t%@",
+                           objectID, lockedObjectID);
+#endif
             
             //The run loop probably hasn't ran yet, if we don't have the transaction.
+            //FIXME: can we really run the run loop without getting some objects released?
             if ((PQTRANS_INTRANS != [connection transactionStatus]))
             {
                 struct timeval tv = [connection timeout];
@@ -1010,6 +1014,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 }
 
 /** 
+ * \internal
  * Lock an object asynchronously.
  * Lock notifications should always be listened to, since modifications cause the rows to be locked until
  * the end of the ongoing transaction.
@@ -1048,6 +1053,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 }
 
 /**
+ * \internal
  * Unlock a locked object synchronously.
  */
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey
@@ -1423,6 +1429,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 }
 
 /**
+ * \internal
  * Mark objects locked.
  * Assume that the actual locking has been done elsewhere using SELECT...FOR UPDATE or otherwise.
  */

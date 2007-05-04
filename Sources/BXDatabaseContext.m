@@ -1910,20 +1910,25 @@ extern void BXInit ()
 	NSArray* objectIDs = nil;
 	if ([self checkDatabaseURI: &localError])
 	{
+#if 0
         //FIXME: this should be done even if anObject is nil but then we won't be able to determine the objects beforehand.
         if (nil != anObject)
         {
             TSEnumerate (currentKey, e, [aDict keyEnumerator])
                 [anObject willChangeValueForKey: currentKey];
         }
+#endif
         
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
+        
+#if 0
         if (nil != anObject)
         {
             TSEnumerate (currentKey, e, [aDict keyEnumerator])
                 [anObject didChangeValueForKey: currentKey];
         }
+#endif
         
 		if (nil == localError)
 		{
@@ -1962,6 +1967,7 @@ extern void BXInit ()
 						[[mUndoManager prepareWithInvocationTarget: currentID] setLastModificationType: modificationType];            
 						
 						//Remember the modification type for ROLLBACK
+                        //FIXME: should the undo manager be the target instead of currentID?
 						if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
 							[currentID setLastModificationType: kBXUpdateModification];
 					}

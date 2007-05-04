@@ -435,11 +435,19 @@ ParseSelector (SEL aSelector, NSString** key)
 		switch (keyType)
 		{
 			case kBXDatabaseObjectPrimaryKey:
+                //Primary key values are stored into the object ID but can be queried 
+                //through this object.
+                [self willChangeValueForKey: aKey];
+                //Fall through.
+                
 			case kBXDatabaseObjectKnownKey:
 			{            
 				if (nil == aVal)
 					aVal = [NSNull null];
 				[mContext executeUpdateObject: self key: aKey value: aVal error: &error];            
+                
+                if (kBXDatabaseObjectPrimaryKey == keyType)
+                    [self didChangeValueForKey: aKey];
 				break;
 			}
 				
@@ -513,9 +521,20 @@ ParseSelector (SEL aSelector, NSString** key)
     {
 		didBecomeFault = ((nil == aKey && 0 < [mValues count]) || nil != [mValues objectForKey: aKey]);
         if (nil == aKey)
+        {
+            NSArray* keys = [mValues allKeys];
+            TSEnumerate (currentKey, e, [keys objectEnumerator])
+                [self willChangeValueForKey: currentKey];
             [mValues removeAllObjects];
+            TSEnumerate (currentKey, e, [keys objectEnumerator])
+                [self didChangeValueForKey: currentKey];
+        }
         else
+        {
+            [self willChangeValueForKey: aKey];
             [mValues removeObjectForKey: aKey];
+            [self didChangeValueForKey: aKey];
+        }
     }
 	if (didBecomeFault)
 		[self didTurnIntoFault];
@@ -806,10 +825,21 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     @synchronized (mValues)
     {
+        BOOL didChange = NO;
+        //Emptying the cache sends a KVO notification.
+        if (! ([aValue isKindOfClass: [BXDatabaseObject class]]))
+        {
+            didChange = YES;
+            [self willChangeValueForKey: aKey];
+        }
+        
         if (nil == aValue)
             [mValues removeObjectForKey: aKey];
         else
             [mValues setValue: aValue forKey: aKey];
+        
+        if (didChange)
+            [self didChangeValueForKey: aKey];
     }
 }
 
