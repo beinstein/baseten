@@ -1,6 +1,6 @@
-diff -urN postgresql-8.2.3/src/include/libpq/pqcomm.h postgresql-8.2.3-tsnorri/src/include/libpq/pqcomm.h
---- postgresql-8.2.3/src/include/libpq/pqcomm.h	2006-06-08 01:24:45.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/include/libpq/pqcomm.h	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/include/libpq/pqcomm.h postgresql-8.2.4-tsnorri/src/include/libpq/pqcomm.h
+--- postgresql-8.2.4/src/include/libpq/pqcomm.h	2006-06-08 01:24:45.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/include/libpq/pqcomm.h	2007-04-05 11:12:02.000000000 +0300
 @@ -147,19 +147,6 @@
  #define MAX_STARTUP_PACKET_LENGTH 10000
  
@@ -21,9 +21,9 @@ diff -urN postgresql-8.2.3/src/include/libpq/pqcomm.h postgresql-8.2.3-tsnorri/s
  /*
   * A client can also send a cancel-current-operation request to the postmaster.
   * This is uglier than sending it directly to the client's backend, but it
-diff -urN postgresql-8.2.3/src/interfaces/libpq/blibpqdll.def postgresql-8.2.3-tsnorri/src/interfaces/libpq/blibpqdll.def
---- postgresql-8.2.3/src/interfaces/libpq/blibpqdll.def	2007-02-07 06:44:09.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/blibpqdll.def	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/blibpqdll.def postgresql-8.2.4-tsnorri/src/interfaces/libpq/blibpqdll.def
+--- postgresql-8.2.4/src/interfaces/libpq/blibpqdll.def	2007-02-07 06:44:09.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/blibpqdll.def	2007-04-05 11:12:02.000000000 +0300
 @@ -137,6 +137,8 @@
      _PQdescribePortal          @ 134
      _PQsendDescribePrepared    @ 135
@@ -39,18 +39,18 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/blibpqdll.def postgresql-8.2.3-t
      PQsendDescribePortal      = _PQsendDescribePortal
 +    PQauthRequest             = _PQauthRequest
 +    PQerrorCode               = _PQerrorCode
-diff -urN postgresql-8.2.3/src/interfaces/libpq/exports.txt postgresql-8.2.3-tsnorri/src/interfaces/libpq/exports.txt
---- postgresql-8.2.3/src/interfaces/libpq/exports.txt	2006-08-18 22:52:39.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/exports.txt	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/exports.txt postgresql-8.2.4-tsnorri/src/interfaces/libpq/exports.txt
+--- postgresql-8.2.4/src/interfaces/libpq/exports.txt	2006-08-18 22:52:39.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/exports.txt	2007-04-05 11:12:02.000000000 +0300
 @@ -136,3 +136,5 @@
  PQdescribePortal          134
  PQsendDescribePrepared    135
  PQsendDescribePortal      136
 +PQauthRequest             137
 +PQerrorCode               138
-diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-connect.c
---- postgresql-8.2.3/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-connect.c	2007-04-05 11:16:08.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/fe-connect.c postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-connect.c
+--- postgresql-8.2.4/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-connect.c	2007-04-05 11:16:08.000000000 +0300
 @@ -911,6 +911,9 @@
  				}
  				break;
@@ -196,7 +196,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  
  					/*
  					 * if the resultStatus is FATAL, then conn->errorMessage
-@@ -1857,6 +1889,8 @@
+@@ -1860,6 +1893,8 @@
  	conn->std_strings = false;	/* unless server says differently */
  	conn->verbosity = PQERRORS_DEFAULT;
  	conn->sock = -1;
@@ -205,7 +205,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  #ifdef USE_SSL
  	conn->allow_ssl_try = true;
  	conn->wait_ssl_try = false;
-@@ -3305,6 +3339,14 @@
+@@ -3308,6 +3342,14 @@
  	return conn->status;
  }
  
@@ -220,7 +220,7 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  PGTransactionStatusType
  PQtransactionStatus(const PGconn *conn)
  {
-@@ -3492,6 +3534,12 @@
+@@ -3495,6 +3537,12 @@
  	return old;
  }
  
@@ -233,9 +233,9 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-connect.c postgresql-8.2.3-ts
  /*
   * The default notice message receiver just gets the standard notice text
   * and sends it to the notice processor.  This two-level setup exists
-diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-protocol3.c postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-protocol3.c
---- postgresql-8.2.3/src/interfaces/libpq/fe-protocol3.c	2006-10-04 03:30:13.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-protocol3.c	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/fe-protocol3.c postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-protocol3.c
+--- postgresql-8.2.4/src/interfaces/libpq/fe-protocol3.c	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-protocol3.c	2007-04-05 11:12:02.000000000 +0300
 @@ -847,6 +847,11 @@
  	 */
  	if (isError)
@@ -248,9 +248,9 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-protocol3.c postgresql-8.2.3-
  		res->errMsg = pqResultStrdup(res, workBuf.data);
  		if (!res->errMsg)
  			goto fail;
-diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-secure.c postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-secure.c
---- postgresql-8.2.3/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/fe-secure.c	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/fe-secure.c postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-secure.c
+--- postgresql-8.2.4/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-secure.c	2007-04-05 11:12:02.000000000 +0300
 @@ -193,10 +193,10 @@
  }
  
@@ -296,9 +296,9 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/fe-secure.c postgresql-8.2.3-tsn
  					}
  					close_SSL(conn);
  					return PGRES_POLLING_FAILED;
-diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-fe.h
---- postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpq-fe.h postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-fe.h
+--- postgresql-8.2.4/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-04-05 11:12:02.000000000 +0300
 @@ -53,11 +53,20 @@
  								 * backend startup. */
  	CONNECTION_SETENV,			/* Negotiating environment. */
@@ -351,9 +351,9 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-fe.h postgresql-8.2.3-tsno
  
  /* Get the OpenSSL structure associated with a connection. Returns NULL for
   * unencrypted connections or if any other TLS library is in use. */
-diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-int.h postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-int.h
---- postgresql-8.2.3/src/interfaces/libpq/libpq-int.h	2006-10-04 03:30:13.000000000 +0300
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpq-int.h	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpq-int.h postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-int.h
+--- postgresql-8.2.4/src/interfaces/libpq/libpq-int.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-int.h	2007-04-05 11:12:02.000000000 +0300
 @@ -284,6 +284,7 @@
  
  	/* Status indicators */
@@ -378,18 +378,18 @@ diff -urN postgresql-8.2.3/src/interfaces/libpq/libpq-int.h postgresql-8.2.3-tsn
  extern PostgresPollingStatusType pqsecure_open_client(PGconn *);
  extern void pqsecure_close(PGconn *);
  extern ssize_t pqsecure_read(PGconn *, void *ptr, size_t len);
-diff -urN postgresql-8.2.3/src/interfaces/libpq/libpqddll.def postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqddll.def
---- postgresql-8.2.3/src/interfaces/libpq/libpqddll.def	2007-02-07 06:44:09.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqddll.def	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpqddll.def postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqddll.def
+--- postgresql-8.2.4/src/interfaces/libpq/libpqddll.def	2007-02-07 06:44:09.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqddll.def	2007-04-05 11:12:02.000000000 +0300
 @@ -137,3 +137,5 @@
      PQdescribePortal          @ 134
      PQsendDescribePrepared    @ 135
      PQsendDescribePortal      @ 136
 +    PQauthRequest             @ 137
 +    PQerrorCode               @ 138
-diff -urN postgresql-8.2.3/src/interfaces/libpq/libpqdll.def postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqdll.def
---- postgresql-8.2.3/src/interfaces/libpq/libpqdll.def	2007-02-07 06:44:09.000000000 +0200
-+++ postgresql-8.2.3-tsnorri/src/interfaces/libpq/libpqdll.def	2007-04-05 11:12:02.000000000 +0300
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpqdll.def postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqdll.def
+--- postgresql-8.2.4/src/interfaces/libpq/libpqdll.def	2007-02-07 06:44:09.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqdll.def	2007-04-05 11:12:02.000000000 +0300
 @@ -137,3 +137,5 @@
      PQdescribePortal          @ 134
      PQsendDescribePrepared    @ 135
