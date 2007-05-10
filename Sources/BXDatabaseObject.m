@@ -674,8 +674,7 @@ ParseSelector (SEL aSelector, NSString** key)
 		mCreatedInCurrentTransaction = NO;
 		mDeleted = kBXObjectExists;
         mLocked = kBXObjectNoLockStatus;
-		mNeedsToAwakeFromFetch = YES;
-		mNeedsToAwakeFromInsert = YES;
+		mNeedsToAwake = YES;
     }
     return self;
 }
@@ -945,9 +944,9 @@ ParseSelector (SEL aSelector, NSString** key)
 
 - (void) awakeFromFetchIfNeeded
 {
-	if (YES == mNeedsToAwakeFromFetch)
+	if (YES == mNeedsToAwake)
 	{
-		mNeedsToAwakeFromFetch = NO;
+		mNeedsToAwake = NO;
 		[self awakeFromFetch];
 	}
 }
@@ -984,9 +983,9 @@ ParseSelector (SEL aSelector, NSString** key)
 
 - (void) awakeFromInsertIfNeeded
 {
-	if (YES == mNeedsToAwakeFromInsert)
+	if (YES == mNeedsToAwake)
 	{
-		mNeedsToAwakeFromInsert = NO;
+		mNeedsToAwake = NO;
 		[self awakeFromInsert];
 	}
 }

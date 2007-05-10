@@ -85,8 +85,7 @@ enum BXObjectLockStatus
 	enum BXObjectDeletionStatus	mDeleted;
 	enum BXObjectLockStatus		mLocked;
 	BOOL						mCreatedInCurrentTransaction;
-	BOOL						mNeedsToAwakeFromFetch;
-	BOOL						mNeedsToAwakeFromInsert;
+	BOOL						mNeedsToAwake;
 }
 
 - (BXDatabaseObjectID *) objectID;
