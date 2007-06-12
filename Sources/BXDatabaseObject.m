@@ -260,6 +260,10 @@ ParseSelector (SEL aSelector, NSString** key)
     return rval;
 }
 
+/**
+ * \internal
+ * Returns cached non-foreign objects.
+ */
 - (NSDictionary *) cachedObjects
 {
     NSDictionary* cachedValues = [self cachedValues];
@@ -273,7 +277,8 @@ ParseSelector (SEL aSelector, NSString** key)
 		TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
 		{
 			BXPropertyDescription* desc = [[entity attributesByName] objectForKey: currentFName]; 
-			[rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
+            if (nil != desc)
+                [rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
 		}
 	}
     return rval;

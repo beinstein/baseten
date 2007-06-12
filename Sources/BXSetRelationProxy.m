@@ -92,6 +92,7 @@
 - (void) dealloc
 {
     [mHelper release];
+    [mRelationship release];
     [super dealloc];
 }
 
@@ -145,8 +146,11 @@
 
 - (void) setRelationship: (id <BXRelationshipDescription>) relationship
 {
-    //BXEntityDescription retains these, so we don't have to.
-    mRelationship = relationship;
+    if (mRelationship != relationship)
+    {
+        [mRelationship release];
+        mRelationship = [relationship retain];
+    }
 }
 
 - (void) setReferenceObject: (BXDatabaseObject *) aReferenceObject
