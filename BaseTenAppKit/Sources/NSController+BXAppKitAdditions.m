@@ -26,10 +26,10 @@
 // $Id$
 //
 
-#import "NSController+BXAppKitAdditions.h"
-#import "BXControllerProtocol.h"
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
+#import "BXControllerProtocol.h"
+#import "NSController+BXAppKitAdditions.h"
 
 
 @implementation NSObjectController (BXCocoaAdditions)

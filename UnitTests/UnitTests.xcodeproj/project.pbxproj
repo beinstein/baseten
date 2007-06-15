@@ -197,6 +197,7 @@
 					ProjectRef = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				530A438B0A5C0FD000A4722B /* UnitTests */,
 			);
@@ -301,7 +302,10 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = "../build/$(BUILD_STYLE)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"../build/$(BUILD_STYLE)",
+					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -330,7 +334,10 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = "../build/$(BUILD_STYLE)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"../build/$(BUILD_STYLE)",
+					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
+				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;

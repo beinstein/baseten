@@ -773,6 +773,7 @@
 					ProjectRef = 5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				5368D60E0A3711C800D136DC /* BaseTen Static */,
 				8DC2EF4F0486A6940098B216 /* BaseTen subframeworks */,

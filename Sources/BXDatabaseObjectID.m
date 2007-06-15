@@ -39,6 +39,7 @@
 #import "BXPropertyDescriptionPrivate.h"
 
 #import <Log4Cocoa/Log4Cocoa.h>
+#import <TSDataTypes/TSDataTypes.h>
 
 
 static TSNonRetainedObjectSet* gObjectIDs;

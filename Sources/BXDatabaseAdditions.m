@@ -33,6 +33,7 @@
 #import "BXDatabaseContext.h"
 #import "BXException.h"
 #import "BXDatabaseObject.h"
+#import "BXPropertyDescription.h"
 
 #import <Log4Cocoa/Log4Cocoa.h>
 

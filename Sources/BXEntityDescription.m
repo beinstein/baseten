@@ -35,6 +35,7 @@
 #import "BXRelationshipDescription.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXHelperTableMTMRelationshipDescription.h"
+#import "BXDatabaseObject.h"
 
 #import <TSDataTypes/TSDataTypes.h>
 #import <Log4Cocoa/Log4Cocoa.h>
