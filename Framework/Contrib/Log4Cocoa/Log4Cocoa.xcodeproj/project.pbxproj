@@ -651,10 +651,12 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 539EEAA90B4A8793005DDDA5 /* Build configuration list for PBXProject "Log4Cocoa" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Log4Cocoa */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */,
 				53C1DECC0B4BD429007947D8 /* AllTests (Upgraded) */,
@@ -942,12 +944,14 @@
 		539EEAAA0B4A8793005DDDA5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
 		539EEAAB0B4A8793005DDDA5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};

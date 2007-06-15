@@ -33,6 +33,7 @@
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
 #import "PGTSFunctions.h"
+#import "PGTSRoleDescription.h"
 #import <TSDataTypes/TSDataTypes.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 

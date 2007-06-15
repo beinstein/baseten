@@ -302,6 +302,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53B3838408BF41830071D224 /* Build configuration list for PBXProject "TSDataTypes" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* TSDataTypes */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -312,6 +313,7 @@
 					ProjectRef = 5317484A095C1A420098D3D5 /* TSDataTypesUnitTests.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				53B383F308BF75740071D224 /* TSDataTypes */,
 				53BF4A340A36F6680065845D /* Static archive */,
@@ -405,6 +407,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 53BF4A550A36F8E90065845D /* static-debug.xcconfig */;
 			buildSettings = {
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
@@ -412,6 +415,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 53BF4A560A36F8E90065845D /* static-release.xcconfig */;
 			buildSettings = {
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
