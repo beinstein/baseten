@@ -57,8 +57,8 @@
 - (BXEntityDescription *) dstEntity;
 
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                 to: (BXEntityDescription *) targetEntity error: (NSError **) error;
+                 to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error;
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                    to: (BXEntityDescription *) targetEntity error: (NSError **) error;
+                    to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error;
 - (BXEntityDescription *) otherEntity: (BXEntityDescription *) anEntity;
 @end

@@ -111,13 +111,18 @@
             [mRelationship addObjects: objects
                         referenceFrom: mReferenceObject
                                    to: entity
+                                 name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
                                 error: NULL];
             
             //For autocommit
             if ([mContext autocommits])
             {
                 [[[mContext undoManager] prepareWithInvocationTarget: mRelationship]
-                    removeObjects: objects referenceFrom: mReferenceObject to: entity error: NULL];
+                    removeObjects: objects 
+                    referenceFrom: mReferenceObject 
+                               to: entity 
+                             name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
+                            error: NULL];
             }
             break;
         }
@@ -128,13 +133,18 @@
             [mRelationship removeObjects: objects
                            referenceFrom: mReferenceObject
                                       to: entity
+                                    name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
                                    error: NULL];
             
             //For autocommit
             if ([mContext autocommits])
             {
                 [[[mContext undoManager] prepareWithInvocationTarget: mRelationship]
-                    addObjects: objects referenceFrom: mReferenceObject to: entity error: NULL];
+                    addObjects: objects 
+                 referenceFrom: mReferenceObject 
+                            to: entity 
+                          name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
+                         error: NULL];
             }
             break;
         }

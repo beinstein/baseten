@@ -151,13 +151,13 @@
     return rval;
 }
 
-- (void) setTarget: (id) anObject referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
+- (void) setTarget: (id) anObject referenceFrom: (BXDatabaseObject *) refObject name: (NSString *) name error: (NSError **) error
 {
     //FIXME: these should be in a transaction
     @try
     {
-        [relationship1 setTarget: anObject referenceFrom: refObject error: error];
-        [relationship2 setTarget: anObject referenceFrom: refObject error: error];
+        [relationship1 setTarget: anObject referenceFrom: refObject name: name error: error];
+        [relationship2 setTarget: anObject referenceFrom: refObject name: name error: error];
     }
     @catch (BXException* anException)
     {
@@ -169,7 +169,7 @@
 }
 
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                 to: (BXEntityDescription *) targetEntity error: (NSError **) error
+                 to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error
 {
     //FIXME: make this a little bit better (userInfo etc.)
     [[BXException exceptionWithName: NSInternalInconsistencyException 
@@ -178,7 +178,7 @@
 }
 
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject
-                    to: (BXEntityDescription *) targetEntity error: (NSError **) error
+                    to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error
 {
     //FIXME: make this a little bit better (userInfo etc.)
     [[BXException exceptionWithName: NSInternalInconsistencyException 

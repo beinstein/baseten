@@ -283,7 +283,7 @@ NullArray (unsigned int count)
 }
 
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                 to: (BXEntityDescription *) targetEntity error: (NSError **) error;
+                 to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error;
 {
     NSError* localError = nil;
     if (nil == targetEntity)
@@ -305,7 +305,7 @@ NullArray (unsigned int count)
 }
 
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                    to: (BXEntityDescription *) targetEntity error: (NSError **) error
+                    to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error
 {
     NSError* localError = nil;
     if (nil == targetEntity)
@@ -336,7 +336,7 @@ NullArray (unsigned int count)
     BXHandleError (error, localError);
 }
 
-- (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
+- (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject name: (NSString *) name error: (NSError **) error
 {
     //Set either a to-one or a to-many relationship's target depending on the relationship type and the reference object.
     BXEntityDescription* refEntity = [[refObject objectID] entity];
@@ -372,7 +372,7 @@ NullArray (unsigned int count)
             predicate = [target BXOrPredicateForObjects];
             
             //All other rows will be updated not to have the value in referencing fields.
-            [self removeObjects: nil referenceFrom: refObject to: updatedEntity error: &localError];
+            [self removeObjects: nil referenceFrom: refObject to: updatedEntity name: name error: &localError];
             
             BXHandleError (error, localError);
             break;

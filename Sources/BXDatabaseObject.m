@@ -468,7 +468,7 @@ ParseSelector (SEL aSelector, NSString** key)
                     {
                         //FIXME: this is likely to cause problems. The collection contents should be compared to 
                         //database contents at least if there is a NULL constraint.
-                        [rel setTarget: aVal referenceFrom: self error: &error];
+                        [rel setTarget: aVal referenceFrom: self name: aKey error: &error];
                         
                         //FIXME: KVO notification should be done in the relationship to 
                         //propagate the modification to other objects.

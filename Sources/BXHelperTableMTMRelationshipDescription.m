@@ -239,17 +239,17 @@
     }
 }
 
-- (void) setTarget: (id) collection referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error
+- (void) setTarget: (id) collection referenceFrom: (BXDatabaseObject *) refObject name: (NSString *) name error: (NSError **) error
 {
     //FIXME: come up with a better way to handle the error
     //FIXME: this should be inside a transaction
-    [self removeObjects: nil referenceFrom: refObject to: nil error: error];
+    [self removeObjects: nil referenceFrom: refObject to: nil name: name error: error];
     if (NULL == error || NULL != *error)
-        [self addObjects: collection referenceFrom: refObject to: nil error: error];
+        [self addObjects: collection referenceFrom: refObject to: nil name: name error: error];
 }
 
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject
-                 to: (BXEntityDescription *) targetEntity error: (NSError **) error
+                 to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error
 {
     BXRelationshipDescription* refRel = nil;
     BXRelationshipDescription* targetRel = nil;
@@ -290,7 +290,7 @@
 }
 
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject
-                    to: (BXEntityDescription *) targetEntity error: (NSError **) error
+                    to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error
 {
     NSError* localError = nil;
     BXRelationshipDescription* refRel = nil;

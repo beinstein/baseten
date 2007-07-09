@@ -74,12 +74,12 @@
 
 /** Add objects to a to-many relationship. */
 - (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                 to: (BXEntityDescription *) targetEntity error: (NSError **) error;
+                 to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error;
 /** Remove objects from a to-many relationship. */
 - (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) anotherObject
-                    to: (BXEntityDescription *) targetEntity error: (NSError **) error;
+                    to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error;
 /** Set either a to-one or a to-many relationship's target depending on the relationship type and the reference object. */
-- (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject error: (NSError **) error;
+- (void) setTarget: (id) target referenceFrom: (BXDatabaseObject *) refObject name: (NSString *) name error: (NSError **) error;
 - (NSArray *) subrelationships;
 
 - (NSArray *) propertiesForEntity: (BXEntityDescription *) entity;
