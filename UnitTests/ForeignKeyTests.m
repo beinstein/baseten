@@ -385,7 +385,7 @@
     MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
     MKCAssertFalse ([[foreignObject valueForKey: [oneEntity name]] isEqual: object]);
-    [foreignObject setValue: object forKey: [oneEntity name]];
+    [foreignObject setPrimitiveValue: object forKey: [oneEntity name]];
     MKCAssertEqualObjects ([foreignObject valueForKey: [oneEntity name]], object);
     
     [context rollback];
@@ -484,7 +484,7 @@
     MKCAssertFalse (foreignObject1 == foreignObject2);
     MKCAssertTrue ([[foreignObject2 objectID] entity] == entity2);
     
-    [object setValue: foreignObject1 forKey: [entity2 name]];
+    [object setPrimitiveValue: foreignObject1 forKey: [entity2 name]];
     NSNumber* n1 = [NSNumber numberWithInt: 1];
     MKCAssertEqualObjects (n1, [object valueForKey: @"r2"]);
     MKCAssertEqualObjects (n1, [foreignObject1 valueForKey: @"r1"]);

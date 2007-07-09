@@ -313,8 +313,6 @@ NullArray (unsigned int count)
     log4AssertVoidReturn (nil != refObject, @"Expected refObject not to be nil");
     BXDatabaseObjectID* refID = [refObject objectID];
     BXEntityDescription* refEntity = [refID entity];
-    if (nil == targetEntity)
-        targetEntity = [self srcEntity];
     log4AssertVoidReturn (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
 
     //to-many
@@ -342,37 +340,46 @@ NullArray (unsigned int count)
     BXEntityDescription* refEntity = [[refObject objectID] entity];
     //Always modify the many end of the relationship.
     BXEntityDescription* updatedEntity = [self srcEntity];
-    NSArray* updatedKeys = [srcProperties valueForKey: @"name"];
-    NSArray* values = nil;
-    NSPredicate* predicate = nil;
     NSError* localError = nil;
     switch ([self isToManyFromEntity: refEntity])
     {
         case 0:
             //to-one
-            log4AssertVoidReturn ([target isKindOfClass: [BXDatabaseObject class]], 
+            log4AssertVoidReturn (nil == target || [target isKindOfClass: [BXDatabaseObject class]], 
 								  @"Expected to receive an object target for a to-one relationship.");
             log4AssertVoidReturn ([refEntity isView] || [updatedEntity isEqual: refEntity], 
 								  @"Expected to be modifying the correct entity.");
-            //This is needed for views.
+
+            id temp = target;
+            target = [NSSet setWithObject: refObject];
+            refObject = temp;
+            
             updatedEntity = refEntity;
-            values = [target objectsForKeys: [refEntity correspondingProperties: dstProperties]];
-            predicate = [[refObject objectID] predicate];
             break;
         case 1:
             //to-many
             if (YES == [target isKindOfClass: [BXDatabaseObject class]])
                 target = [NSSet setWithObject: target];
             if (nil != target)
-                values = [refObject objectsForKeys: [refEntity correspondingProperties: dstProperties]];
-                
-            //Again, this is needed for views
-            if (nil != target)
+            {
+                //Again, this is needed for views
                 updatedEntity = [[[target anyObject] objectID] entity];
-            predicate = [target BXOrPredicateForObjects];
-            
+            }
+                
             //All other rows will be updated not to have the value in referencing fields.
-            [self removeObjects: nil referenceFrom: refObject to: updatedEntity name: name error: &localError];
+            //FIXME: this seems kludgy. The object class needs to be tested, though, since we 
+            //might get called from an OTO relationship.
+            id oldSet = [refObject primitiveValueForKey: name];
+            if ([oldSet isKindOfClass: [BXDatabaseObject class]])
+                oldSet = [NSSet setWithObject: oldSet];
+            
+            NSMutableSet* removedObjects = [NSMutableSet setWithSet: oldSet];
+            [removedObjects minusSet: target];
+            NSMutableSet* addedObjects = [NSMutableSet setWithSet: target];
+            [addedObjects minusSet: oldSet];
+            target = addedObjects;
+            
+            [self removeObjects: removedObjects referenceFrom: refObject to: updatedEntity name: name error: &localError];
             
             BXHandleError (error, localError);
             break;
@@ -385,17 +392,8 @@ NullArray (unsigned int count)
     }
     
     if (nil == localError)
-    {
-        if (nil == values)
-            values = NullArray ([dstProperties count]);
-        
-        NSDictionary* change = [NSDictionary dictionaryWithObjects: values forKeys: updatedKeys];
-		BXDatabaseContext* context = [refObject databaseContext];
-        [context executeUpdateEntity: updatedEntity
-					  withDictionary: change
-						   predicate: predicate
-							   error: &localError];
-		
+    {        
+        [self addObjects: target referenceFrom: refObject to: updatedEntity name: name error: &localError];
         BXHandleError (error, localError);
     }
 }

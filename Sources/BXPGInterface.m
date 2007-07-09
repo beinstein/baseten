@@ -1295,7 +1295,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         //PostgreSQL backends don't deliver notifications to interfaces during transactions
         log4AssertValueReturn (connection == notifyConnection || PQTRANS_IDLE == [notifyConnection transactionStatus], NO,
 							   @"Connection %p was expected to be in PQTRANS_IDLE (status: %d connection: %p notifyconnection: %p).", 
-							   [notifyConnection transactionStatus], connection, notifyConnection);
+							   notifyConnection, [notifyConnection transactionStatus], connection, notifyConnection);
         
         modificationNotifier = [[PGTSModificationNotifier alloc] init];
         [modificationNotifier setConnection: notifyConnection];

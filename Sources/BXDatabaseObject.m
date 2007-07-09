@@ -470,8 +470,7 @@ ParseSelector (SEL aSelector, NSString** key)
                         //database contents at least if there is a NULL constraint.
                         [rel setTarget: aVal referenceFrom: self name: aKey error: &error];
                         
-                        //FIXME: KVO notification should be done in the relationship to 
-                        //propagate the modification to other objects.
+                        //FIXME: KVO notification by NSNotifications or something like that?
                         [self willChangeValueForKey: aKey];
                         [mValues removeObjectForKey: aKey];
                         [mValues setObject: [self primitiveValueForKey: aKey] forKey: aKey];
