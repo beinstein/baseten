@@ -52,6 +52,7 @@
 #import "BXArrayProxy.h"
 #import "BXDatabaseContextAdditions.h"
 #import "BXConnectionSetupManagerProtocol.h"
+#import "BXConstantsPrivate.h"
 
 #undef BXHandleError
 #define BXHandleError( ERROR, LOCAL_ERROR ) \
@@ -1308,15 +1309,20 @@ extern void BXInit ()
             //Fault the objects and send the notification
             if (YES == shouldFault)
                 [objects makeObjectsPerformSelector: @selector (faultKey:) withObject: nil];
+            
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                 objectIDs, kBXObjectIDsKey,
                 objects, kBXObjectsKey,
                 self, kBXDatabaseContextKey,
                 nil];
             
-            [[NSNotificationCenter defaultCenter] postNotificationName: kBXUpdateNotification 
-                                                                object: entity
-                                                              userInfo: userInfo];
+            id notificationNames [2] = {kBXUpdateEarlyNotification, kBXUpdateNotification};
+            for (int i = 0; i < 2; i++)
+            {
+                [[NSNotificationCenter defaultCenter] postNotificationName: notificationNames [i]
+                                                                    object: entity
+                                                                  userInfo: userInfo];
+            }
         }
         
         //Handle the views.
@@ -1355,7 +1361,11 @@ extern void BXInit ()
             objectIDs, kBXObjectIDsKey,
             self, kBXDatabaseContextKey,
             nil];
-        [nc postNotificationName: kBXInsertNotification object: entity userInfo: userInfo];        
+        NSString* notificationNames [2] = {kBXInsertEarlyNotification, kBXInsertNotification};
+        for (int i = 0; i < 2; i++)
+        {
+            [nc postNotificationName: notificationNames [i] object: entity userInfo: userInfo];
+        }
         
         if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
         {
@@ -1376,10 +1386,16 @@ extern void BXInit ()
                         [updatedIDs addObject: partialID];
                 }
                 
-                NSArray* arrays [2] = {insertedIDs, updatedIDs};
-                NSString* notificationNames [2] = {kBXInsertNotification, kBXUpdateNotification};
-                id objectArrays [2] = {nil, [self registeredObjectsWithIDs: updatedIDs]};
-                for (int i = 0; i < 2; i++)
+                id updatedIds = [self registeredObjectsWithIDs: updatedIDs];
+                NSString* notificationNames [4] = {
+                    kBXInsertEarlyNotification, 
+                    kBXUpdateEarlyNotification,
+                    kBXInsertNotification, 
+                    kBXUpdateNotification
+                };
+                NSArray* arrays [4] = {insertedIDs, updatedIDs, insertedIDs, updatedIDs};
+                id objectArrays [4] = {nil, updatedIds, nil, updatedIds};
+                for (int i = 0; i < 4; i++)
                 {
                     if (0 < [arrays [i] count])
                     {
@@ -1404,16 +1420,23 @@ extern void BXInit ()
 		
 		TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 			[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeleted];
-		
-        //Send the notification
+        
+		id objects = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
+        
+        //Send the notifications
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
             objectIDs, kBXObjectIDsKey,
-            [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]], kBXObjectsKey,
+            objects, kBXObjectsKey,
             self, kBXDatabaseContextKey,
             nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName: kBXDeleteNotification
-                                                            object: entity
-                                                          userInfo: userInfo];
+        const int count = 2;
+        NSString* notificationNames [2] = {kBXDeleteEarlyNotification, kBXDeleteNotification};
+        for (int i = 0; i < count; i++)
+        {
+            [[NSNotificationCenter defaultCenter] postNotificationName: notificationNames [i]
+                                                                object: entity
+                                                              userInfo: userInfo];
+        }
         
         //This method will be called recursively, when the changed rows have been determined
         if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])

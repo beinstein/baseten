@@ -423,79 +423,86 @@ ParseSelector (SEL aSelector, NSString** key)
  * \param   aKey    An NSString.
  */
 - (void) setPrimitiveValue: (id) aVal forKey: (NSString *) aKey
-{    
+{
     log4AssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
     NSError* error = nil;
     
-    //We only need the old value when autocommitting.
+    //We only need the non-cached value when autocommitting.
     id oldValue = nil;
     if ([mContext autocommits] && nil != [mContext undoManager])
         oldValue = [self valueForKey: aKey];
-    
-	enum BXDatabaseObjectKeyType keyType = [self keyType: aKey error: &error];
-	if (nil != error)
-		[self queryFailed: error];
-	else
-	{
-		switch (keyType)
-		{
-			case kBXDatabaseObjectPrimaryKey:
-                //Primary key values are stored into the object ID but can be queried 
-                //through this object.
-                [self willChangeValueForKey: aKey];
-                //Fall through.
-                
-			case kBXDatabaseObjectKnownKey:
-			{            
-				if (nil == aVal)
-					aVal = [NSNull null];
-				[mContext executeUpdateObject: self key: aKey value: aVal error: &error];            
-                
-                if (kBXDatabaseObjectPrimaryKey == keyType)
-                    [self didChangeValueForKey: aKey];
-				break;
-			}
-				
-			case kBXDatabaseObjectForeignKey:
-			{
-				BXEntityDescription* entity = [mObjectID entity];
-				id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
-				if (nil == error)
-				{
-					[rel setTarget: aVal referenceFrom: self error: &error];
-					
-					//FIXME: KVO notification should be done in the relationship to 
-					//propagate the modification to other objects.
-					[self willChangeValueForKey: aKey];
-					[mValues removeObjectForKey: aKey];
-					[mValues setObject: [self primitiveValueForKey: aKey] forKey: aKey];
-					[self didChangeValueForKey: aKey];
-				}
-				break;
-			}
-				
-			case kBXDatabaseObjectUnknownKey:
-				[super setValue: aVal forUndefinedKey: aKey];
-				break;
-
-			case kBXDatabaseObjectNoKeyType:
-			default:
-			{
-				log4AssertLog (NO, @"keyType had a strange value (%d).", keyType);
-				break;
-			}
-		}
-	}
-	
-	if (nil == error)
-	{
-        //Undo in case of autocommit
-        if ([mContext autocommits])
-            [[[mContext undoManager] prepareWithInvocationTarget: self] setPrimitiveValue: oldValue forKey: aKey];
-    }
     else
+        oldValue = [self cachedValueForKey: aKey];
+    
+    if (nil == oldValue || NO == [oldValue isEqual: aVal])
     {
-        [self queryFailed: error];
+        enum BXDatabaseObjectKeyType keyType = [self keyType: aKey error: &error];
+        if (nil != error)
+            [self queryFailed: error];
+        else
+        {
+            switch (keyType)
+            {
+                case kBXDatabaseObjectPrimaryKey:
+                    //Primary key values are stored into the object ID but can be queried 
+                    //through this object.
+                    [self willChangeValueForKey: aKey];
+                    //Fall through.
+                    
+                case kBXDatabaseObjectKnownKey:
+                {            
+                    if (nil == aVal)
+                        aVal = [NSNull null];
+                    [mContext executeUpdateObject: self key: aKey value: aVal error: &error];            
+                    
+                    if (kBXDatabaseObjectPrimaryKey == keyType)
+                        [self didChangeValueForKey: aKey];
+                    break;
+                }
+                    
+                case kBXDatabaseObjectForeignKey:
+                {
+                    BXEntityDescription* entity = [mObjectID entity];
+                    id <BXRelationshipDescription> rel = [entity relationshipNamed: aKey context: mContext error: &error];
+                    if (nil == error)
+                    {
+                        //FIXME: this is likely to cause problems. The collection contents should be compared to 
+                        //database contents at least if there is a NULL constraint.
+                        [rel setTarget: aVal referenceFrom: self error: &error];
+                        
+                        //FIXME: KVO notification should be done in the relationship to 
+                        //propagate the modification to other objects.
+                        [self willChangeValueForKey: aKey];
+                        [mValues removeObjectForKey: aKey];
+                        [mValues setObject: [self primitiveValueForKey: aKey] forKey: aKey];
+                        [self didChangeValueForKey: aKey];
+                    }
+                    break;
+                }
+                    
+                case kBXDatabaseObjectUnknownKey:
+                    [super setValue: aVal forUndefinedKey: aKey];
+                    break;
+                    
+                case kBXDatabaseObjectNoKeyType:
+                default:
+                {
+                    log4AssertLog (NO, @"keyType had a strange value (%d).", keyType);
+                    break;
+                }
+            }
+        }
+        
+        if (nil == error)
+        {
+            //Undo in case of autocommit
+            if ([mContext autocommits])
+                [[[mContext undoManager] prepareWithInvocationTarget: self] setPrimitiveValue: oldValue forKey: aKey];
+        }
+        else
+        {
+            [self queryFailed: error];
+        }
     }
 }
 

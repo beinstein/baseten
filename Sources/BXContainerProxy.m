@@ -29,6 +29,7 @@
 #import "BXContainerProxy.h"
 #import "BXDatabaseContext.h"
 #import "BXConstants.h"
+#import "BXConstantsPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import <Log4Cocoa/Log4Cocoa.h>
 
@@ -62,6 +63,8 @@
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
 {
+    NSLog (@"sel: %s", aSelector);
+    
     NSMethodSignature* rval = nil;
     if (YES == mIsMutable)
         rval = [mContainer methodSignatureForSelector: aSelector];
@@ -77,6 +80,11 @@
 - (void) forwardInvocation: (NSInvocation *) anInvocation
 {
     [anInvocation invokeWithTarget: mContainer];
+}
+
+- (BOOL) isEqual: (id) anObject
+{
+    return [mContainer isEqual: anObject];
 }
 
 - (void) addedObjects: (NSNotification *) notification
@@ -225,9 +233,9 @@
         SEL delSelector = @selector (deletedObjects:);
         SEL updSelector = @selector (updatedObjects:);
     
-        [nc addObserver: self selector: addSelector name: kBXInsertNotification object: entity];
-        [nc addObserver: self selector: delSelector name: kBXDeleteNotification object: entity];                    
-        [nc addObserver: self selector: updSelector name: kBXUpdateNotification object: entity];
+        [nc addObserver: self selector: addSelector name: kBXInsertEarlyNotification object: entity];
+        [nc addObserver: self selector: delSelector name: kBXDeleteEarlyNotification object: entity];                    
+        [nc addObserver: self selector: updSelector name: kBXUpdateEarlyNotification object: entity];
     }
 }
 

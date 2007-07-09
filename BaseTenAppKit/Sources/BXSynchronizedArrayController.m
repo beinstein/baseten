@@ -143,6 +143,12 @@
             id content = [self content];
             TSEnumerate (currentObject, e, [result objectEnumerator])
             {
+                //FIXME: addObject shouldn't be called here since it causes 
+                //-setPrimitiveValue:forKey: to be called in bound related objects with the
+                //content array as argument. This is redundant since this method is called as 
+                //a result of the object having been already added. On the other hand other
+                //observers might not get notified if the object was added more directly so
+                //for now we try to detect this in BXDatabaseObject instead.
                 if (NO == [content containsObject: currentObject])
                     [self addObject: currentObject];
             }

@@ -370,8 +370,10 @@ NullArray (unsigned int count)
             if (nil != target)
                 updatedEntity = [[[target anyObject] objectID] entity];
             predicate = [target BXOrPredicateForObjects];
+            
             //All other rows will be updated not to have the value in referencing fields.
             [self removeObjects: nil referenceFrom: refObject to: updatedEntity error: &localError];
+            
             BXHandleError (error, localError);
             break;
         case -1:

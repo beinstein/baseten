@@ -117,6 +117,7 @@
 		53B86FFB0A0A1D6F007315BC /* BXPropertyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */; };
 		53B872830A0A4CEC007315BC /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
 		53B90C260BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53BDBC190C306DFD007F63A1 /* BXConstantsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53D0D17C0B6F8A6800D2D101 /* BXPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53D0D19E0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */; };
@@ -349,6 +350,7 @@
 		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
 		53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescriptionPrivate.h; path = Sources/BXPropertyDescriptionPrivate.h; sourceTree = "<group>"; };
+		53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXConstantsPrivate.h; sourceTree = "<group>"; };
 		53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPolicyDelegate.h; path = Sources/BXPolicyDelegate.h; sourceTree = "<group>"; };
 		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
 		53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGCertificateVerificationDelegate.m; path = Sources/BXPGCertificateVerificationDelegate.m; sourceTree = "<group>"; };
@@ -469,6 +471,7 @@
 				533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */,
 				533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */,
 				5301302609D43A450037C485 /* BXConstants.h */,
+				53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */,
 				5301302709D43A450037C485 /* BXConstants.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
@@ -654,6 +657,7 @@
 				532D61000B9454110028E90B /* BXConnectionSetupManagerProtocol.h in Headers */,
 				53B90C260BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h in Headers */,
 				53EFEA960BA98028008666B7 /* BXDatabaseObjectPrivate.h in Headers */,
+				53BDBC190C306DFD007F63A1 /* BXConstantsPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
