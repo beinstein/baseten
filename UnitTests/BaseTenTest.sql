@@ -331,5 +331,21 @@ INSERT INTO datetest DEFAULT VALUES;
 INSERT INTO datetest DEFAULT VALUES;
 INSERT INTO datetest DEFAULT VALUES;
 
+
+CREATE TABLE fkeytest_add (
+    id INTEGER PRIMARY KEY,
+    value VARCHAR (255)
+);
+CREATE TABLE fkeytest_add_rel (
+    id INTEGER PRIMARY KEY,
+    fid INTEGER NOT NULL REFERENCES fkeytest_add (id),
+    value VARCHAR (255)
+);
+SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n
+	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname IN ('fkeytest_add', 'fkeytest_add_rel');
+INSERT INTO fkeytest_add (id, value) VALUES (1, 'fkeytest_add');
+GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add TO baseten_test_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add_rel TO baseten_test_user;
+
 COMMIT;
 
