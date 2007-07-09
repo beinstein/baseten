@@ -63,8 +63,6 @@
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
 {
-    NSLog (@"sel: %s", aSelector);
-    
     NSMethodSignature* rval = nil;
     if (YES == mIsMutable)
         rval = [mContainer methodSignatureForSelector: aSelector];
