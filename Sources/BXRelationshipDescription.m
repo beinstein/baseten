@@ -313,7 +313,6 @@ NullArray (unsigned int count)
     log4AssertVoidReturn (nil != refObject, @"Expected refObject not to be nil");
     BXDatabaseObjectID* refID = [refObject objectID];
     BXEntityDescription* refEntity = [refID entity];
-    log4AssertVoidReturn (1 == [self isToManyFromEntity: refEntity], @"Expected relationship to be to-many for this accessor");
 
     //to-many
     //Remove objects by setting fkey columns to null. If the objectSet was nil, then remove all objects.
@@ -341,22 +340,40 @@ NullArray (unsigned int count)
     //Always modify the many end of the relationship.
     BXEntityDescription* updatedEntity = [self srcEntity];
     NSError* localError = nil;
+
+    //All other rows will be updated not to have the value in referencing fields.
+    //FIXME: this seems kludgy. The object class needs to be tested, though, since we 
+    //might get called from an OTO relationship.
+    id oldValue = [refObject primitiveValueForKey: name];
+    NSSet* oldSet = nil;
+    NSMutableSet* addedObjects = nil;
+        
     switch ([self isToManyFromEntity: refEntity])
     {
         case 0:
+        {
             //to-one
             log4AssertVoidReturn (nil == target || [target isKindOfClass: [BXDatabaseObject class]], 
 								  @"Expected to receive an object target for a to-one relationship.");
             log4AssertVoidReturn ([refEntity isView] || [updatedEntity isEqual: refEntity], 
 								  @"Expected to be modifying the correct entity.");
-
-            id temp = target;
-            target = [NSSet setWithObject: refObject];
-            refObject = temp;
             
-            updatedEntity = refEntity;
+            if (nil == target)
+            {
+                if (nil != oldValue)
+                    oldSet = [NSSet setWithObject: oldValue];                
+            }
+            else
+            {
+                addedObjects = [NSMutableSet setWithObject: refObject];
+                refObject = target;
+            }
+
+            //FIXME: assertions for collections above?
             break;
+        }
         case 1:
+        {
             //to-many
             if (YES == [target isKindOfClass: [BXDatabaseObject class]])
                 target = [NSSet setWithObject: target];
@@ -365,24 +382,11 @@ NullArray (unsigned int count)
                 //Again, this is needed for views
                 updatedEntity = [[[target anyObject] objectID] entity];
             }
-                
-            //All other rows will be updated not to have the value in referencing fields.
-            //FIXME: this seems kludgy. The object class needs to be tested, though, since we 
-            //might get called from an OTO relationship.
-            id oldSet = [refObject primitiveValueForKey: name];
-            if ([oldSet isKindOfClass: [BXDatabaseObject class]])
-                oldSet = [NSSet setWithObject: oldSet];
             
-            NSMutableSet* removedObjects = [NSMutableSet setWithSet: oldSet];
-            [removedObjects minusSet: target];
-            NSMutableSet* addedObjects = [NSMutableSet setWithSet: target];
-            [addedObjects minusSet: oldSet];
-            target = addedObjects;
-            
-            [self removeObjects: removedObjects referenceFrom: refObject to: updatedEntity name: name error: &localError];
-            
-            BXHandleError (error, localError);
+            oldSet = oldValue;
+            addedObjects = target;
             break;
+        }
         case -1:
         default:
 		{
@@ -391,11 +395,21 @@ NullArray (unsigned int count)
 		}
     }
     
-    if (nil == localError)
-    {        
-        [self addObjects: target referenceFrom: refObject to: updatedEntity name: name error: &localError];
+    NSMutableSet* removedObjects = [NSMutableSet setWithSet: oldSet];
+    [removedObjects minusSet: addedObjects];
+    [addedObjects minusSet: oldSet];
+
+    if (0 < [removedObjects count])
+    {
+        [self removeObjects: removedObjects referenceFrom: refObject to: updatedEntity name: name error: &localError];
         BXHandleError (error, localError);
     }
+    
+    if (nil == localError && 0 < [addedObjects count])
+    {        
+        [self addObjects: addedObjects referenceFrom: refObject to: updatedEntity name: name error: &localError];
+        BXHandleError (error, localError);
+    }    
 }
 
 - (NSArray *) subrelationships

@@ -473,7 +473,10 @@ ParseSelector (SEL aSelector, NSString** key)
                         //FIXME: KVO notification by NSNotifications or something like that?
                         [self willChangeValueForKey: aKey];
                         [mValues removeObjectForKey: aKey];
-                        [mValues setObject: [self primitiveValueForKey: aKey] forKey: aKey];
+                        id newValue = [self primitiveValueForKey: aKey];
+                        if (nil == newValue)
+                            newValue = [NSNull null];
+                        [mValues setObject: newValue forKey: aKey];
                         [self didChangeValueForKey: aKey];
                     }
                     break;

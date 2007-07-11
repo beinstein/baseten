@@ -57,5 +57,8 @@
 - (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity;
 - (void) modOne: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2;
 - (void) MTMHelper: (BXEntityDescription *) entity;
+- (BXDatabaseObject *) removeRefObject: (BXEntityDescription *) entity;
+- (void) remove1: (BXEntityDescription *) oneEntity;
+- (void) remove2: (BXEntityDescription *) oneEntity;
 
 @end

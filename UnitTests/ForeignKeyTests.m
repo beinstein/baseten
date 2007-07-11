@@ -522,5 +522,54 @@
 		MKCAssertTrue (1 == [[currentObject valueForKey: @"id1"] intValue]);
 	}
 }
+
+- (void) testRemove1
+{
+    [self remove1: test1];
+}
+
+- (void) testRemoveView1
+{
+    [self remove1: test1v];
+}
+
+- (void) testRemove2
+{
+    [self remove2: test1];
+}
+
+- (void) testRemoveView2
+{
+    [self remove2: test1v];
+}
+
+- (BXDatabaseObject *) removeRefObject: (BXEntityDescription *) entity
+{
+    NSError* error = nil;
+    NSArray* res = [context executeFetchForEntity: entity
+                                    withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
+                                            error: &error];
+    
+    STAssertNil (error, [error localizedDescription]);
+    return [res objectAtIndex: 0];
+}
+
+- (void) remove1: (BXEntityDescription *) oneEntity
+{
+    BXDatabaseObject* object = [self removeRefObject: oneEntity];
+    [object setPrimitiveValue: nil forKey: @"test2"];
+
+    [context rollback];
+}
+
+- (void) remove2: (BXEntityDescription *) oneEntity
+{
+    BXDatabaseObject* object = [self removeRefObject: oneEntity];
+    NSSet* refObjects = [object primitiveValueForKey: @"test2"];
+    TSEnumerate (currentObject, e, [refObjects objectEnumerator])
+        [currentObject setPrimitiveValue: nil forKey: @"test1"];
+    
+    [context rollback];
+}
     
 @end
