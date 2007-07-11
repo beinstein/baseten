@@ -12,6 +12,15 @@
 		5340930F0C4243C7000E4C6B /* UnitTestAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A494840BD4D92F008E850E /* UnitTestAdditions.m */; };
 		534BAE300BEBC734008488B9 /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
+		53AB8BB20C452473006D18ED /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
+		53AB8BB30C452473006D18ED /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
+		53AB8BB40C452474006D18ED /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
+		53AB8BB50C452475006D18ED /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
+		53AB8BB60C452475006D18ED /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
+		53AB8BB70C452476006D18ED /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
+		53AB8BB80C452476006D18ED /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
+		53AB8BB90C452477006D18ED /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
+		53AB8BBA0C452477006D18ED /* UndoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B2C1390BE88608002B66B1 /* UndoTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -245,6 +254,15 @@
 			files = (
 				534BAE300BEBC734008488B9 /* ForeignKeyTests.m in Sources */,
 				5340930F0C4243C7000E4C6B /* UnitTestAdditions.m in Sources */,
+				53AB8BB20C452473006D18ED /* ConnectTest.m in Sources */,
+				53AB8BB30C452473006D18ED /* EntityTests.m in Sources */,
+				53AB8BB40C452474006D18ED /* ObjectIDTests.m in Sources */,
+				53AB8BB50C452475006D18ED /* FetchTests.m in Sources */,
+				53AB8BB60C452475006D18ED /* CreateTests.m in Sources */,
+				53AB8BB70C452476006D18ED /* ModificationTests.m in Sources */,
+				53AB8BB80C452476006D18ED /* MTOCollectionTest.m in Sources */,
+				53AB8BB90C452477006D18ED /* MTMCollectionTest.m in Sources */,
+				53AB8BBA0C452477006D18ED /* UndoTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

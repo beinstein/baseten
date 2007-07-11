@@ -51,6 +51,8 @@ CREATE ROLE basetenuser WITH
 	NOCREATEDB
 	NOCREATEROLE
 	NOLOGIN;
+COMMENT ON ROLE basetenread IS 'Read-only rights for BaseTen relations';
+COMMENT ON ROLE basetenuser IS 'Read and write access to BaseTen relations';
 COMMIT;
 
 
@@ -145,16 +147,23 @@ CREATE TYPE "baseten".TableType AS (
 CREATE OR REPLACE FUNCTION "baseten".TableType (OID, TEXT) RETURNS "baseten".TableType AS $$
     SELECT $1, $2;
 $$ IMMUTABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".TableType (OID, TEXT) FROM PUBLIC;
+COMMENT ON FUNCTION "baseten".TableType (OID, TEXT) IS 'Initializer for baseten.tabletype';
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".TableType (OID, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".TableType (OID, TEXT) TO basetenread;
 
 
 CREATE TABLE "baseten".ViewPrimaryKey (
-    nspname NAME NOT NULL,
+    nspname NAME NOT NULL DEFAULT 'public',
     relname NAME NOT NULL,
     attname NAME NOT NULL,
     PRIMARY KEY (nspname, relname, attname)
 );
+COMMENT ON TABLE "baseten".ViewPrimaryKey IS 'Primary keys for views. This table may be modified by hand.';
+COMMENT ON COLUMN "baseten".ViewPrimaryKey.nspname IS 'Namespace name';
+COMMENT ON COLUMN "baseten".ViewPrimaryKey.relname IS 'View name';
+COMMENT ON COLUMN "baseten".ViewPrimaryKey.attname IS 'Column name';
+-- FIXME: privileges?
+GRANT SELECT ON TABLE "baseten".ViewPrimaryKey TO basetenread;
 
 
 CREATE VIEW "baseten".PrimaryKey AS
@@ -180,6 +189,7 @@ CREATE VIEW "baseten".PrimaryKey AS
                 AND c.relkind = 'v'
     ) r
     ORDER BY oid ASC, attnum ASC;
+COMMENT ON VIEW "baseten".PrimaryKey IS 'Primary keys for tables and views';
 REVOKE ALL PRIVILEGES ON "baseten".PrimaryKey FROM PUBLIC;
 GRANT SELECT ON "baseten".PrimaryKey TO basetenread;
 
@@ -383,8 +393,9 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.912::NUMERIC;
+    SELECT 0.913::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
+COMMENT ON FUNCTION "baseten".Version () IS 'Schema version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
 
@@ -393,6 +404,7 @@ GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
 CREATE OR REPLACE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
     SELECT 0.12::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
+COMMENT ON FUNCTION "baseten".CompatibilityVersion () IS 'Schema compatibility version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CompatibilityVersion () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".CompatibilityVersion () TO basetenread;
 
@@ -622,6 +634,7 @@ CREATE OR REPLACE FUNCTION "baseten".IsObservingCompatible (OID) RETURNS boolean
             AND c.relname = "baseten".ModificationTableName1 ($1)
             AND n.nspname = 'baseten');
 $$ STABLE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+COMMENT ON FUNCTION "baseten".IsObservingCompatible (OID) IS 'Checks for observing compatibility. Returns a boolean.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".IsObservingCompatible (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".IsObservingCompatible (OID) TO basetenread;
 
@@ -636,6 +649,7 @@ BEGIN
     RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
+COMMENT ON FUNCTION "baseten".VerifyObservingCompatibility (OID) IS 'Verifies observing compatibility. Throws on failure.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".VerifyObservingCompatibility (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".VerifyObservingCompatibility (OID) TO basetenread;
 
@@ -731,6 +745,7 @@ BEGIN
 --    RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
+COMMENT ON FUNCTION "baseten".CancelModificationObserving (OID) IS 'Removes BaseTen tables for a specific relation';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CancelModificationObserving (OID) FROM PUBLIC;
 
 
@@ -1015,6 +1030,7 @@ BEGIN
     RETURN rval;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
+COMMENT ON FUNCTION "baseten".PrepareForModificationObserving (OID) IS 'BaseTen-enables a relation';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving (OID) FROM PUBLIC;
 
 GRANT basetenread TO basetenuser;

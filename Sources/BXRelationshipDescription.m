@@ -338,7 +338,7 @@ NullArray (unsigned int count)
     //Set either a to-one or a to-many relationship's target depending on the relationship type and the reference object.
     BXEntityDescription* refEntity = [[refObject objectID] entity];
     //Always modify the many end of the relationship.
-    BXEntityDescription* updatedEntity = [self srcEntity];
+    BXEntityDescription* updatedEntity = nil;
     NSError* localError = nil;
 
     //All other rows will be updated not to have the value in referencing fields.
@@ -355,15 +355,14 @@ NullArray (unsigned int count)
             //to-one
             log4AssertVoidReturn (nil == target || [target isKindOfClass: [BXDatabaseObject class]], 
 								  @"Expected to receive an object target for a to-one relationship.");
-            log4AssertVoidReturn ([refEntity isView] || [updatedEntity isEqual: refEntity], 
+            log4AssertVoidReturn ([refEntity isView] || [[self srcEntity] isEqual: refEntity], 
 								  @"Expected to be modifying the correct entity.");
             
-            if (nil == target)
-            {
-                if (nil != oldValue)
-                    oldSet = [NSSet setWithObject: oldValue];                
-            }
-            else
+			updatedEntity = [[refObject objectID] entity];
+			if (nil != oldValue)
+				oldSet = [NSSet setWithObject: oldValue];
+
+            if (nil != target)
             {
                 addedObjects = [NSMutableSet setWithObject: refObject];
                 refObject = target;
