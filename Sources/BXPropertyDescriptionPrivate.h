@@ -1,7 +1,5 @@
 //
 // BXPropertyDescriptionPrivate.h
-//
-// BXPropertyDescription.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.

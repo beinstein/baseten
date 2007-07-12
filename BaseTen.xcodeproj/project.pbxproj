@@ -319,6 +319,12 @@
 		5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetHelperTableRelationProxy.h; path = Sources/BXSetHelperTableRelationProxy.h; sourceTree = "<group>"; };
 		5321C0570AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSetHelperTableRelationProxy.m; path = Sources/BXSetHelperTableRelationProxy.m; sourceTree = "<group>"; };
 		5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = Dependencies/PGTS/Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = "<group>"; };
+		5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRelationshipDescription.h; sourceTree = "<group>"; };
+		5328FB6C0C457AC4006DE171 /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRelationshipDescription.m; sourceTree = "<group>"; };
+		5328FB7D0C457DAF006DE171 /* BXRelatedObjectContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXRelatedObjectContainer.h; sourceTree = "<group>"; };
+		5328FB7E0C457DAF006DE171 /* BXRelatedObjectContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXRelatedObjectContainer.m; sourceTree = "<group>"; };
+		5328FBD40C4580CD006DE171 /* BXForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXForeignKey.h; sourceTree = "<group>"; };
+		5328FBD50C4580CD006DE171 /* BXForeignKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXForeignKey.m; sourceTree = "<group>"; };
 		532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; lineEnding = 0; name = BXConnectionSetupManagerProtocol.h; path = Sources/BXConnectionSetupManagerProtocol.h; sourceTree = "<group>"; };
 		533229E30A024C2500BDB151 /* BXEntityDescription.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXEntityDescription.m; path = Sources/BXEntityDescription.m; sourceTree = "<group>"; };
 		533229E40A024C2500BDB151 /* BXEntityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescription.h; path = Sources/BXEntityDescription.h; sourceTree = "<group>"; };
@@ -505,6 +511,26 @@
 			name = Relationships;
 			sourceTree = "<group>";
 		};
+		5328FB600C457A80006DE171 /* Old */ = {
+			isa = PBXGroup;
+			children = (
+				531C84C80A63EFC8001AFBC4 /* BXRelationshipDescriptionProtocol.h */,
+				531C82F80A63EC01001AFBC4 /* Relationships */,
+			);
+			name = Old;
+			sourceTree = "<group>";
+		};
+		5328FB7F0C457DB9006DE171 /* Relationships */ = {
+			isa = PBXGroup;
+			children = (
+				5328FB7D0C457DAF006DE171 /* BXRelatedObjectContainer.h */,
+				5328FB7E0C457DAF006DE171 /* BXRelatedObjectContainer.m */,
+				5328FBD40C4580CD006DE171 /* BXForeignKey.h */,
+				5328FBD50C4580CD006DE171 /* BXForeignKey.m */,
+			);
+			name = Relationships;
+			sourceTree = "<group>";
+		};
 		536B8A950A519D4C00379C00 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -562,8 +588,10 @@
 				533229E40A024C2500BDB151 /* BXEntityDescription.h */,
 				539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */,
 				533229E30A024C2500BDB151 /* BXEntityDescription.m */,
-				531C84C80A63EFC8001AFBC4 /* BXRelationshipDescriptionProtocol.h */,
-				531C82F80A63EC01001AFBC4 /* Relationships */,
+				5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */,
+				5328FB6C0C457AC4006DE171 /* BXRelationshipDescription.m */,
+				5328FB7F0C457DB9006DE171 /* Relationships */,
+				5328FB600C457A80006DE171 /* Old */,
 			);
 			name = Descriptions;
 			sourceTree = "<group>";
