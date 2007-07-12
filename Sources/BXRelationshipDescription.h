@@ -27,38 +27,26 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXAbstractDescription.h>
+#import <CoreData/CoreData.h>
+#import <BaseTen/BXPropertyDescription.h>
 
-@protocol BXRelationshipDescription;
-@class BXEntityDescription;
+@class BXForeignKey;
 
-
-@interface BXRelationshipDescription : BXAbstractDescription <BXRelationshipDescription>
+/**
+ * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
+ */
+@interface BXRelationshipDescription : BXPropertyDescription <NSCopying>
 {
-    NSArray* srcProperties;
-    NSArray* dstProperties;
+	//FIXME: If entity objects are made non-persistent, 
+	//this field should be nullified when the corresponding entity gets dealloced.
+    BXEntityDescription* mDestinationEntity; //Weak
+
+	BXForeignKey* mForeignKey;
+	BOOL mIsToMany;
 }
 
-+ (BOOL) returnsArrayProxies;
-+ (void) setReturnsArrayProxies: (BOOL) aBool;
-
-+ (id) relationshipWithName: (NSString *) aName
-              srcProperties: (NSArray *) anArray
-              dstProperties: (NSArray *) anotherArray;
-- (id) initWithName: (NSString *) aName 
-      srcProperties: (NSArray *) anArray
-      dstProperties: (NSArray *) anotherArray;
-
-- (NSArray *) srcProperties;
-- (NSArray *) dstProperties;
-- (void) setSRCProperties: (NSArray *) anArray;
-- (void) setDSTProperties: (NSArray *) anArray;
-- (BXEntityDescription *) srcEntity;
-- (BXEntityDescription *) dstEntity;
-
-- (void) addObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                 to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error;
-- (void) removeObjects: (NSSet *) objectSet referenceFrom: (BXDatabaseObject *) refObject 
-                    to: (BXEntityDescription *) targetEntity name: (NSString *) name error: (NSError **) error;
-- (BXEntityDescription *) otherEntity: (BXEntityDescription *) anEntity;
+- (BXEntityDescription *) destinationEntity;
+- (BXRelationshipDescription *) inverseRelationship;
+- (NSDeleteRule) deleteRule;
+- (BOOL) isToMany;
 @end

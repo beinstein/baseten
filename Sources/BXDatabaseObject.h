@@ -33,7 +33,7 @@
 @class BXDatabaseObjectID;
 @class BXEntityDescription;
 @class BXRelationshipDescription;
-@class BXPropertyDescription;
+@class BXAttributeDescription;
 
 
 enum BXObjectDeletionStatus
@@ -91,7 +91,7 @@ enum BXObjectLockStatus
 - (BXDatabaseObjectID *) objectID;
 - (BXDatabaseContext *) databaseContext;
 
-- (id) objectForKey: (BXPropertyDescription *) aKey;
+- (id) objectForKey: (BXAttributeDescription *) aKey;
 - (NSArray *) valuesForKeys: (NSArray *) keys;
 - (NSArray *) objectsForKeys: (NSArray *) keys;
 - (NSDictionary *) cachedObjects;

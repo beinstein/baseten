@@ -31,6 +31,9 @@
 
 @class BXDatabaseContext;
 @class BXDatabaseObjectID;
+@class BXRelationshipDescription;
+
+//FIXME: remove this.
 @protocol BXRelationshipDescription;
 
 @interface BXEntityDescription (PrivateMethods)
@@ -39,20 +42,19 @@
 - (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (void) addDependentView: (BXEntityDescription *) viewEntity;
 - (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context error: (NSError **) error;
-- (void) cacheRelationship: (id <BXRelationshipDescription>) relationship;
 - (void) registerObjectID: (BXDatabaseObjectID *) anID;
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID;
 - (BXEntityDescription *) targetForRelationship: (NSString *) name;
-- (NSArray *) properties: (NSArray *) strings;
-- (NSArray *) correspondingProperties: (NSArray *) properties;
+- (NSArray *) attributes: (NSArray *) strings;
+- (NSArray *) correspondingAttributes: (NSArray *) attributes;
 - (BOOL) hasAncestor: (BXEntityDescription *) entity;
 - (void) setViewEntities: (NSSet *) aSet;
 - (void) setAttributes: (NSDictionary *) attributes;
-- (void) resetPropertyExclusion;
-- (BOOL) hasAllRelationships;
-- (void) setHasAllRelationships: (BOOL) flag;
+- (void) resetAttributeExclusion;
 - (void) setValidated: (BOOL) flag;
-- (void) fetchRelationshipsIfNeeded: (BXDatabaseContext *) context error: (NSError **) error;
+
+- (BXRelationshipDescription *) inverseRelationshipFor: (BXRelationshipDescription *) aRel;
+
 - (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 
 							   usingPropertiesNamed: (NSArray *) srcNames
 							  targetPropertiesNamed: (NSArray *) dstNames

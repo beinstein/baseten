@@ -207,13 +207,13 @@ CREATE VIEW "baseten".viewdependencies AS
 	INNER JOIN pg_class c3 ON c3.oid = d1.classid AND c3.relname = 'pg_rewrite'
 	INNER JOIN pg_class c4 ON c4.oid = d1.refclassid AND c4.relname = 'pg_class'
 	WHERE d1.deptype = 'n';
+COMMENT ON VIEW "baseten".viewdependencies IS 'View dependencies; one row per dependent relation';
 REVOKE ALL PRIVILEGES ON "baseten".viewdependencies FROM PUBLIC;
 GRANT SELECT ON "baseten".viewdependencies TO basetenread;
 
 
 -- Constraint names
 -- Helps joining to queries on pg_constraint
--- Order of columns is probably not guaranteed
 CREATE OR REPLACE VIEW "baseten".conname AS
 SELECT 
     c.oid,
@@ -229,19 +229,54 @@ INNER JOIN pg_attribute a2 ON (
     a2.attnum = ANY (c.confkey)
 )
 GROUP BY c.oid;
+COMMENT ON VIEW "baseten".conname IS 'Constraint names';
+COMMENT ON COLUMN "baseten".conname.oid IS 'Constraint oid';
+COMMENT ON COLUMN "baseten".conname.keynames IS 'Column names';
+COMMENT ON COLUMN "baseten".conname.fkeynames IS 'Foreign column names';
 REVOKE ALL PRIVILEGES ON "baseten".conname FROM PUBLIC;
 GRANT SELECT ON "baseten".conname TO basetenread;
 
 
--- Many-to-one relationships
-CREATE OR REPLACE VIEW "baseten".manytoone AS
-SELECT 
-    c.oid AS conoid,
-    c.conname AS srcname, 
-    c.conrelid AS src, c.confrelid AS dst, 
-    c.conkey AS srcfields, c.confkey AS dstfields,
-    n.keynames AS srcfnames, n.fkeynames AS dstfnames,
-    p.oid IS NOT NULL AS dst_is_pkey
+-- Fkeys in pkeys
+CREATE OR REPLACE VIEW "baseten".fkeypkeycount AS
+-- In the sub-select we search for all primary keys and their columns.
+-- Then we count the foreign keys the columns of which are contained
+-- in those of the primary keys'. Finally we filter out anything irrelevant.
+SELECT
+	p1.conrelid,
+	COUNT (p1.oid) AS count
+FROM pg_constraint p1
+INNER JOIN (
+	SELECT
+		conrelid,
+		conkey
+	FROM pg_constraint
+	WHERE contype = 'p'
+) AS p2 ON (
+	p1.conrelid = p2.conrelid AND 
+	p2.conkey @> p1.conkey
+)
+WHERE (p1.contype = 'f')
+GROUP BY p1.conrelid;
+COMMENT ON VIEW "baseten".fkeypkeycount IS 'Number of foreign key constraints included in primary keys';
+COMMENT ON COLUMN "baseten".fkeypkeycount.conrelid IS 'Primary key constraint oid';
+COMMENT ON COLUMN "baseten".fkeypkeycount.count IS 'Foreign key constraint count';
+REVOKE ALL PRIVILEGES ON "baseten".fkeypkeycount FROM PUBLIC;
+GRANT SELECT ON "baseten".fkeypkeycount TO basetenread;
+
+
+CREATE OR REPLACE VIEW "baseten".foreignkey AS
+SELECT
+	c.oid		AS conoid,
+	c.conname	AS name,
+	c.conrelid	AS srcoid,
+	ns1.nspname	AS srcnspname,
+	cl1.relname	AS srcrelname,
+	n.keynames	AS srcfnames,
+	c.confrelid	AS dstoid,
+	ns2.nspname	AS dstnspname,
+	cl2.relname	AS dstrelname,
+	n.fkeynames AS dstfnames
 FROM pg_constraint c
 -- Check whether dst is a primary key
 LEFT JOIN pg_constraint p ON (
@@ -251,103 +286,115 @@ LEFT JOIN pg_constraint p ON (
 )
 -- Constrained fields' names
 INNER JOIN "baseten".conname n ON (c.oid = n.oid)
+-- Relation names
+INNER JOIN pg_class cl1 ON (cl1.oid = c.conrelid)
+INNER JOIN pg_class cl2 ON (cl2.oid = c.confrelid)
+-- Namespace names
+INNER JOIN pg_namespace ns1 ON (ns1.oid = cl1.relnamespace)
+INNER JOIN pg_namespace ns2 ON (ns2.oid = cl2.relnamespace)
 -- Only select foreign keys
 WHERE c.contype = 'f';
-REVOKE ALL PRIVILEGES ON "baseten".manytoone FROM PUBLIC;
-GRANT SELECT ON "baseten".manytoone TO basetenread;
+COMMENT ON VIEW "baseten".foreignkey IS 'Foreign keys';
+COMMENT ON COLUMN "baseten".foreignkey.conoid IS 'Constraint oid';
+COMMENT ON COLUMN "baseten".foreignkey.srcoid IS 'Referencing table''s oid';
+COMMENT ON COLUMN "baseten".foreignkey.srcnspname IS 'Referencing namespace''s name';
+COMMENT ON COLUMN "baseten".foreignkey.srcrelname IS 'Referencing table''s name';
+COMMENT ON COLUMN "baseten".foreignkey.srcfnames IS 'Referencing columns'' names';
+COMMENT ON COLUMN "baseten".foreignkey.dstoid IS 'Referenced table''s oid';
+COMMENT ON COLUMN "baseten".foreignkey.dstnspname IS 'Referenced namespace''s name';
+COMMENT ON COLUMN "baseten".foreignkey.dstrelname IS 'Referenced table''s name';
+COMMENT ON COLUMN "baseten".foreignkey.dstfnames IS 'Referenced columns'' names';
+REVOKE ALL PRIVILEGES ON "baseten".foreignkey FROM PUBLIC;
+GRANT SELECT ON "baseten".foreignkey TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".relationships AS
-SELECT 
-    r.conoid,                   -- Constraint OID
-    r.refconoids,               -- One-to-one and many-to-many constraints depend on simpler 
-                                -- many-to-one relationships
-    r.srcname,                  -- Name of the relationship from source's point of view
-    r.dstname,                  -- Name of the relationship from destination's point of view
-    r.src,                      -- Source table OID
-    r.dst,                      -- Destination table OID
-    r.helper,                   -- Helper table OID (only with many-to-many=
-    n1.nspname AS srcnspname,   -- Source table namespace name
-    c1.relname AS srcrelname,   -- Source table name
-    n2.nspname AS dstnspname,   -- Destination table namespace name
-    c2.relname AS dstrelname,   -- Destination table name
-    r.srcfields,                -- Source column numbers
-    r.dstfields,                -- Destination column numbers
-    r.helperfields,             -- Helper column numbers
-    r.srcfnames,                -- Source column names
-    r.dstfnames,                -- Destination column names
-    r.helperfnames,             -- Helper column names
-    r.type,                     -- Relationship type: 'm' for many-to-many, 'o' for one-to-one,
-                                -- 't' for many-to-one
-    r.dst_is_pkey               -- Whether destination columns make the primary key
-FROM (
-    -- Many-to-one
-    SELECT
-        conoid,
-        NULL::OID [] AS refconoids,
-        srcname,
-        NULL::NAME AS dstname,
-        src, dst,
-        NULL::OID AS helper,
-        srcfields, dstfields,
-        NULL::smallint [] AS helperfields,
-        srcfnames, dstfnames,
-        NULL::NAME [] AS helperfnames,
-        't'::CHAR (1) AS type,
-        dst_is_pkey
-    FROM "baseten".manytoone mto
-    UNION
-    -- One-to-one
-    SELECT
-        NULL::OID AS conoid,
-        ARRAY [m1.conoid, m2.conoid] AS refconoids,
-        m1.srcname,
-        m2.srcname AS dstname,
-        m1.src, m1.dst,
-        NULL::OID AS helper,
-        m1.srcfields, m1.dstfields,
-        NULL::smallint [] AS helperfields,
-        m1.srcfnames, m1.dstfnames,
-        NULL::NAME [] AS helperfnames,
-        'o'::CHAR (1) AS type,
-        m1.dst_is_pkey
-    FROM "baseten".manytoone m1
-    INNER JOIN "baseten".manytoone m2 ON (
-        m1.src = m2.dst AND
-        m2.src = m1.dst
-    )
-    UNION
-    -- Many-to-many
-    SELECT
-        NULL::OID as conoid,
-        ARRAY [m1.conoid, m2.conoid] AS refconoids,
-        m2.srcname AS srcname,
-        m1.srcname AS dstname,
-        m1.dst AS src, m2.dst AS dst,
-        m1.src AS helper,
-        m1.dstfields AS srcfields,
-        m2.dstfields AS dstfields,
-        array_cat (m1.srcfields, m2.srcfields) AS helperfields,
-        m1.dstfnames AS srcfnames,
-        m2.dstfnames AS dstfnames,
-        array_cat (m1.srcfnames, m2.srcfnames) AS helperfnames,
-        'm'::CHAR (1) AS type,
-        (m1.dst_is_pkey AND m2.dst_is_pkey) AS dst_is_pkey
-    FROM "baseten".manytoone m1
-    INNER JOIN "baseten".manytoone m2 ON (
-        m1.src = m2.src AND
-        m1.dst <> m2.dst
-    )
-    INNER JOIN pg_class c ON (
-        c.oid = m1.src
-    )
-) r
-INNER JOIN pg_class c1 ON (c1.oid = r.src)
-INNER JOIN pg_class c2 ON (c2.oid = r.dst)
-INNER JOIN pg_namespace n1 ON (n1.oid = c1.relnamespace)
-INNER JOIN pg_namespace n2 ON (n2.oid = c2.relnamespace);
-REVOKE ALL PRIVILEGES ON "baseten".relationships FROM PUBLIC;
-GRANT SELECT ON "baseten".relationships TO basetenread;
+CREATE OR REPLACE VIEW "baseten".onetomany AS
+SELECT
+	conoid,
+	name,
+	srcoid,
+	srcnspname,
+	srcrelname,
+	srcfnames,
+	dstoid,
+	dstnspname,
+	dstrelname,
+	dstfnames,
+	true 		AS ismanytoone
+FROM "baseten".foreignkey
+UNION
+SELECT
+    conoid,
+	srcrelname	AS name,
+	dstoid		AS srcoid,
+	dstnspname	AS srcnspname,
+	dstrelname	AS srcrelname,
+	dstfnames	AS srcfnames,
+	srcoid		AS dstoid,
+	srcnspname	AS dstnspname,
+	srcrelname	AS dstrelname,
+	srcfnames	AS dstfnames,
+	false		AS ismanytoone
+FROM "baseten".foreignkey;
+COMMENT ON VIEW "baseten".onetomany IS 'One-to-many relationships';
+COMMENT ON COLUMN "baseten".onetomany.ismanytoone IS 'If true, current relationship is many-to-one.';
+REVOKE ALL PRIVILEGES ON "baseten".onetomany FROM PUBLIC;
+GRANT SELECT ON "baseten".onetomany TO basetenread;
+
+
+CREATE OR REPLACE VIEW "baseten".onetoone AS
+SELECT
+	f1.conoid,
+	f2.conoid		AS inverseconoid,
+	f1.name,
+	f1.srcoid,
+	f1.srcnspname,
+	f1.srcrelname,
+	f1.srcfnames,
+	f1.dstoid,
+	f1.dstnspname,
+	f1.dstrelname,
+	f1.dstfnames
+FROM "baseten".foreignkey f1
+INNER JOIN "baseten".foreignkey f2 ON (
+	f1.srcoid = f2.dstoid AND
+	f2.srcoid = f1.dstoid
+);
+COMMENT ON VIEW "baseten".onetoone IS 'One-to-one relationships';
+REVOKE ALL PRIVILEGES ON "baseten".onetomany FROM PUBLIC;
+GRANT SELECT ON "baseten".onetomany TO basetenread;
+
+
+CREATE OR REPLACE VIEW "baseten".manytomany AS
+SELECT
+	f1.conoid		AS conoid,
+	f2.conoid		AS inverseconoid,
+	f1.dstrelname	AS name,
+	f1.dstoid 		AS srcoid,
+	f1.dstnspname 	AS srcnspname,
+	f1.dstrelname 	AS srcrelname,
+	f1.dstfnames 	AS srcfnames,
+	f2.dstoid,
+	f2.dstnspname,
+	f2.dstrelname,
+	f2.dstfnames,
+	f1.srcoid		AS helperoid,
+	f1.srcnspname	AS helpernspname,
+	f1.srcrelname	AS helperrelname,
+	array_cat (f1.srcfnames, f2.srcfnames) AS helperfnames
+FROM "baseten".foreignkey f1
+INNER JOIN "baseten".foreignkey f2 ON (
+	f1.srcoid = f2.srcoid AND
+	f1.dstoid <> f2.dstoid
+)
+-- Primary key needs to include exactly two foreign keys and possibly other columns.
+INNER JOIN "baseten".fkeypkeycount r ON (
+	r.conrelid = f1.srcoid AND
+	r.count = 2
+);
+COMMENT ON VIEW "baseten".manytomany IS 'Many-to-many relationships';
+REVOKE ALL PRIVILEGES ON "baseten".manytomany FROM PUBLIC;
+GRANT SELECT ON "baseten".manytomany TO basetenread;
 
 
 -- For modification tracking

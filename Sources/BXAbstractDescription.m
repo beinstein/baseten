@@ -46,6 +46,19 @@
     return self;
 }
 
+- (id) initWithCoder: (NSCoder *) decoder
+{
+	if ((self = [self initWithName: [decoder decodeObjectForKey: @"name"]]))
+	{
+	}
+	return self;
+}
+
+- (void) encodeWithCoder: (NSCoder *) encoder
+{
+	[encoder encodeObject: mName forKey: @"name"];
+}
+
 - (void) setName: (NSString *) aName
 {
     if (nil == mName) {
@@ -85,17 +98,13 @@
 
 - (BOOL) isEqual: (id) anObject
 {
-    BOOL rval = NO;
-    if ([anObject isKindOfClass: [self class]])
+    BOOL retval = NO;
+    if ([anObject isKindOfClass: [self class]] && [super isEqual: anObject])
     {
         BXAbstractDescription* aDesc = (BXAbstractDescription *) anObject;
-        rval = [mName isEqualToString: aDesc->mName];
+        retval = [mName isEqualToString: aDesc->mName];
     }
-    else
-    {
-        rval = [super isEqual: anObject];
-    }
-    return rval;
+    return retval;
 }
 
 @end

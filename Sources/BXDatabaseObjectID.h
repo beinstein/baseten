@@ -31,7 +31,7 @@
 
 @class BXEntityDescription;
 @class BXDatabaseContext;
-@class BXPropertyDescription;
+@class BXAttributeDescription;
 
 @interface BXDatabaseObjectID : NSObject {
     BOOL                        mRegistered;

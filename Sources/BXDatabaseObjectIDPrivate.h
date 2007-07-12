@@ -27,7 +27,7 @@
 //
 
 @class BXEntityDescription;
-@class BXPropertyDescription;
+@class BXAttributeDescription;
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXDatabaseObjectID.h>
@@ -40,7 +40,7 @@
 - (void) setLastModificationType: (enum BXModificationType) aType;
 - (enum BXModificationType) lastModificationType;
 - (void) replaceValuesWith: (NSDictionary *) aDict;
-- (BXPropertyDescription *) propertyNamed: (NSString *) aName;
+- (BXAttributeDescription *) attributeNamed: (NSString *) aName;
 - (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view;
 - (void) setStatus: (enum BXObjectDeletionStatus) status forObjectRegisteredInContext: (BXDatabaseContext *) context;
 @end

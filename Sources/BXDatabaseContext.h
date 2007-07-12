@@ -169,13 +169,6 @@
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error;
-- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
-                                          entity: (BXEntityDescription *) anotherEntity
-                                           error: (NSError **) error;
-- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
-                                          entity: (BXEntityDescription *) anotherEntity
-                                           types: (enum BXRelationshipType) bitmap
-                                           error: (NSError **) error;
 @end
 
 

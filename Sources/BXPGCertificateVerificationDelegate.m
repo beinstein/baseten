@@ -123,6 +123,7 @@
 			}
 			else
 			{				
+				//FIXME: This looks like a potential timing problem. Are we releasing trust before it has been passed to main thread?
 				struct trustResult trustResult = {trust, result};
 				CFRetain (trust);
 				NSValue* resultValue = [NSValue valueWithBytes: &trustResult objCType: @encode (struct trustResult)];				

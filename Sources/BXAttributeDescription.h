@@ -1,5 +1,5 @@
 //
-// BXForeignKey.h
+// BXAttributeDescription.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -27,10 +27,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <BaseTen/BXPropertyDescription.h>
+
+@class BXEntityDescription;
 
 
-@interface BXForeignKey : NSObject {
-
+@interface BXAttributeDescription : BXPropertyDescription <NSCopying, NSCoding>
+{
 }
+
+- (BOOL) isPrimaryKey;
+- (BOOL) isExcluded;
 
 @end

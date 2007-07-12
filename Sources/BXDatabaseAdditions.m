@@ -33,7 +33,7 @@
 #import "BXDatabaseContext.h"
 #import "BXException.h"
 #import "BXDatabaseObject.h"
-#import "BXPropertyDescription.h"
+#import "BXAttributeDescription.h"
 
 #import <Log4Cocoa/Log4Cocoa.h>
 
@@ -368,16 +368,16 @@
 @implementation NSExpression (BXDatabaseAdditions)
 - (BXEntityDescription *) BXEntity
 {
-    return [[self BXProperty] entity];
+    return [[self BXAttribute] entity];
 }
 
-- (BXPropertyDescription *) BXProperty
+- (BXAttributeDesription *) BXAttribute
 {
-    BXPropertyDescription* rval = nil;
+    BXAttributeDesription* rval = nil;
     if ([self expressionType] == NSConstantValueExpressionType)
     {
         id constantValue = [self constantValue];
-        if ([constantValue isKindOfClass: [BXPropertyDescription class]])
+        if ([constantValue isKindOfClass: [BXAttributeDesription class]])
             rval = constantValue;
     }
     return rval;
@@ -418,12 +418,12 @@
     {
         if (NSConstantValueExpressionType == [expressions [i] expressionType])
         {
-            id property = [expressions [i] constantValue];
-            if ([property isKindOfClass: [BXPropertyDescription class]])
+            id attribute = [expressions [i] constantValue];
+            if ([attribute isKindOfClass: [BXAttributeDesription class]])
             {
                 createNew = YES;
                 expressions [i] = [NSExpression expressionForConstantValue: 
-                    [anObject objectForKey: property]];
+                    [anObject objectForKey: attribute]];
             }
         }
     }

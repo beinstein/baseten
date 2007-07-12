@@ -1,5 +1,5 @@
 //
-// BXRelationshipDescription.m
+// BXForeignKey.m
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,32 +26,36 @@
 // $Id$
 //
 
-#import "BXRelationshipDescription.h"
+#import "BXForeignKey.h"
+#import "BXForeignKeyPrivate.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
-@implementation BXRelationshipDescription
+@implementation BXForeignKey
 
-- (BXEntityDescription *) destinationEntity
+- (id) initWithName: (NSString *) aName
 {
-    return mDestinationEntity;
+	if ((self = [super initWithName: aName]))
+	{
+		mFieldNames = [[NSMutableSet alloc] init];
+	}
+	return self;
 }
 
-- (BXRelationshipDescription *) inverseRelationship
+- (void) dealloc
 {
-    //FIXME: this is only a stub.
-    return nil;
+	[mFieldNames release];
+	[super dealloc];
 }
 
-- (NSDeleteRule) deleteRule
-{
-    //FIXME: this is only a stub.
-    return NSNoActionDeleteRule;
-}
+@end
 
-- (BOOL) isToMany
-{
-    //FIXME: this is only a stub.
-    return NO;
-}
 
+@implementation BXForeignKey (PrivateMethods)
+- (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName
+{
+	log4AssertVoidReturn (nil == srcFName, @"Expected srcFName not to be nil.");
+	log4AssertVoidReturn (nil == dstFName, @"Expected dstFName not to be nil.");
+	[mFieldNames addObject: [NSArray arrayWithObjects: srcFName, dstFName, nil]];
+}
 @end

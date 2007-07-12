@@ -1,5 +1,5 @@
 //
-// BXForeignKey.m
+// BXForeignKey.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,9 +26,13 @@
 // $Id$
 //
 
-#import "BXForeignKey.h"
+#import <Foundation/Foundation.h>
+#import <BaseTen/BXAbstractDescription.h>
 
 
-@implementation BXForeignKey
+@interface BXForeignKey : BXAbstractDescription 
+{
+	NSMutableSet* mFieldNames;
+}
 
 @end

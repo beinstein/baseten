@@ -31,7 +31,7 @@
 #import <BaseTen/BXDatabaseObject.h>
 #import <BaseTen/BXInterface.h>
 #import <BaseTen/BXEntityDescription.h>
-#import <BaseTen/BXPropertyDescription.h>
+#import <BaseTen/BXAttributeDescription.h>
 #import <BaseTen/BXDatabaseObjectID.h>
 #import <BaseTen/BXRelationshipDescriptionProtocol.h>
 #import <BaseTen/BXException.h>

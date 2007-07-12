@@ -38,7 +38,7 @@
 enum BXEntityFlag
 {
 	kBXEntityNoFlag					= 0,
-	kBXEntityHasAllRelationships	= 1 << 0,
+	//kBXEntityHasAllRelationships	= 1 << 0, //Not needed
 	kBXEntityIsValidated			= 1 << 1
 };
 
@@ -53,7 +53,8 @@ enum BXEntityFlag
 
     NSMutableSet*           mDependentViewEntities;
     id                      mObjectIDs;    
-    NSMutableDictionary*    mRelationships;
+    NSMutableDictionary*    mRelationships; //FIXME: this should be moved to a class similar to NSManagedObjectModel.
+    NSMutableDictionary*    mInverseRelationships; //FIXME: this should be moved to a class similar to NSManagedObjectModel.
     enum BXEntityFlag       mFlags;
 }
 
@@ -78,4 +79,5 @@ enum BXEntityFlag
   forRelationshipNamed: (NSString *) relationshipName;
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
 - (BOOL) isValidated;
+//FIXME: add -hasRelationships?
 @end

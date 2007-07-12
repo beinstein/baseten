@@ -1,5 +1,5 @@
 //
-// BXOneToOneRelationshipDescription.h
+// BXRelationshipDescriptionPrivate.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,26 +26,11 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-
-@protocol BXRelationshipDescription;
-@class BXRelationshipDescription;
+#import <BaseTen/BXRelationshipDescription.h>
 
 
-@interface BXOneToOneRelationshipDescription : NSObject <BXRelationshipDescription>
-{
-    BXRelationshipDescription* relationship1;
-    BXRelationshipDescription* relationship2;
-}
-
-+ (id) relationshipWithRelationship1: (BXRelationshipDescription *) r1 
-                       relationship2: (BXRelationshipDescription *) r2;
-- (id) initWithRelationship1: (BXRelationshipDescription *) r1 relationship2: (BXRelationshipDescription *) r2;
-
-- (void) setRelationship1: (BXRelationshipDescription *) aRelationship1;
-- (void) setRelationship2: (BXRelationshipDescription *) aRelationship2;
-- (BXRelationshipDescription *) relationship1;
-- (BXRelationshipDescription *) relationship2;
-- (BXEntityDescription *) otherEntity: (BXEntityDescription *) anEntity;
-
+@interface BXRelationshipDescription (PrivateMethods)
+- (void) setDestinationEntity: (BXEntityDescription *) entity;
+- (void) setForeignKey: (BXForeignKey *) aKey;
+- (void) setIsToMany: (BOOL) aBool;
 @end

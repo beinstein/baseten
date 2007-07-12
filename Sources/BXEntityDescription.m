@@ -30,11 +30,10 @@
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
-#import "BXRelationshipDescriptionProtocol.h"
-#import "BXPropertyDescription.h"
+#import "BXAttributeDescription.h"
 #import "BXRelationshipDescription.h"
+#import "BXAttributeDescriptionPrivate.h"
 #import "BXPropertyDescriptionPrivate.h"
-#import "BXHelperTableMTMRelationshipDescription.h"
 #import "BXDatabaseObject.h"
 
 #import <TSDataTypes/TSDataTypes.h>
@@ -92,6 +91,7 @@ static NSMutableSet* gViewEntities;
 - (void) dealloc
 {
     [mRelationships release];
+	[mInverseRelationships release];
 	[mAttributes release];
     [mDatabaseURI release];
     [mSchemaName release];
@@ -150,33 +150,31 @@ static NSMutableSet* gViewEntities;
 
 - (BOOL) isEqual: (id) anObject
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     
     if (self == anObject)
-        rval = YES;
-    else if (NO == [anObject isKindOfClass: [self class]])
-        rval = [super isEqual: anObject];
-    else
-    {        
-        BXEntityDescription* aDesc = (BXEntityDescription *) anObject;
+        retval = YES;
+    else if ([anObject isKindOfClass: [self class]] && [super isEqual: anObject])
+	{
+		
+		BXEntityDescription* aDesc = (BXEntityDescription *) anObject;
         
-        log4AssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
-							   @"Properties should not be nil in isEqual:");
-        log4AssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
-							   @"Properties should not be nil in isEqual:");
-
-        rval = ([mName isEqualToString: aDesc->mName] && 
-                [mSchemaName isEqualToString: aDesc->mSchemaName] &&
-                [mDatabaseURI isEqual: aDesc->mDatabaseURI]);
-    }
-    return rval;
+		log4AssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
+							   @"Properties should not be nil in -isEqual:.");
+		log4AssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
+							   @"Properties should not be nil in -isEqual:.");
+		
+		retval = ([mSchemaName isEqualToString: aDesc->mSchemaName] &&
+				  [mDatabaseURI isEqual: aDesc->mDatabaseURI]);
+	}
+    return retval;
 }
 
 - (unsigned int) hash
 {
     if (0 == mHash)
     {
-        //We use a real hash function with the URI
+        //We use a real hash function with the URI.
         mHash = ([super hash] ^ [mSchemaName hash] ^ [mDatabaseURI BXHash]);
     }
     return mHash;
@@ -223,7 +221,7 @@ static NSMutableSet* gViewEntities;
  * have to be set manually before using the entity in a query.
  * \param   anArray     An NSArray of NSStrings.
  * \internal
- * \note BXPropertyDescriptions should only be created here and in -[BXInterface validateEntity:]
+ * \note BXAttributeDescriptions should only be created here and in -[BXInterface validateEntity:]
  */
 - (void) setPrimaryKeyFields: (NSArray *) anArray
 {
@@ -232,21 +230,21 @@ static NSMutableSet* gViewEntities;
 		NSMutableDictionary* attributes = [[mAttributes mutableCopy] autorelease];
 		TSEnumerate (currentField, e, [anArray objectEnumerator])
 		{
-			BXPropertyDescription* property = nil;
-			if ([currentField isKindOfClass: [BXPropertyDescription class]])
+			BXAttributeDescription* attribute = nil;
+			if ([currentField isKindOfClass: [BXAttributeDescription class]])
 			{
 				log4AssertVoidReturn ([currentField entity] == self, 
-									  @"Expected to receive only properties in which entity is self (self: %@ currentField: %@).",
+									  @"Expected to receive only attributes in which entity is self (self: %@ currentField: %@).",
 									  self, currentField);
-				property = currentField;
+				attribute = currentField;
 			}
 			else if ([currentField isKindOfClass: [NSString class]])
 			{
-                property = [BXPropertyDescription propertyWithName: currentField entity: self];
+                attribute = [BXAttributeDescription attributeWithName: currentField entity: self];
 			}
-			[property setPrimaryKey: YES];
-			[property setOptional: NO];
-			[attributes setObject: property forKey: [property name]];
+			[attribute setPrimaryKey: YES];
+			[attribute setOptional: NO];
+			[attributes setObject: attribute forKey: [attribute name]];
 		}
 		[self setAttributes: attributes];
 	}
@@ -263,7 +261,7 @@ static NSMutableSet* gViewEntities;
 /**
  * Primary key fields for this entity.
  * The fields get determined automatically after database connection has been made.
- * \return          An array of BXPropertyDescriptions
+ * \return          An array of BXAttributeDescriptions
  */
 - (NSArray *) primaryKeyFields
 {
@@ -276,7 +274,7 @@ static NSMutableSet* gViewEntities;
 
 /** 
  * Fields for this entity.
- * \return          An array of BXPropertyDescriptions
+ * \return          An array of BXAttributeDescriptions
  */
 - (NSArray *) fields
 {
@@ -389,7 +387,7 @@ static NSMutableSet* gViewEntities;
 /** 
  * Attributes for this entity.
  * Primary key fields and other fields for this entity.
- * \return          An NSDictionary with NSStrings as keys and BXPropertyDescriptions as objects.
+ * \return          An NSDictionary with NSStrings as keys and BXAttributeDescriptions as objects.
  */
 - (NSDictionary *) attributesByName
 {
@@ -467,6 +465,7 @@ static NSMutableSet* gViewEntities;
         {
             [gEntities addObject: self];
             mRelationships = [[NSMutableDictionary alloc] init];
+			mInverseRelationships = [[NSMutableDictionary alloc] init];
             mDependentViewEntities = [[NSMutableSet alloc] init];
             mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
             mTargetViews = [[NSMutableDictionary alloc] init];
@@ -499,11 +498,14 @@ static NSMutableSet* gViewEntities;
         [mDependentViewEntities addObject: viewEntity];
 }
 
-//FIXME: Consider moving the recursion to -[BXDatabaseContext relationshipsByNameWithEntity:entity:]
 - (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName
                                              context: (BXDatabaseContext *) context
                                                error: (NSError **) error
 {
+	//FIXME: this needs to be rewritten.
+	return nil;
+#if 0
+	//FIXME: Consider moving the recursion to -[BXDatabaseContext relationshipsByNameWithEntity:entity:]
     id rval = nil;
 	if (nil == mViewEntities)
 	{
@@ -547,6 +549,7 @@ static NSMutableSet* gViewEntities;
 		}		
 	}
 	return rval;
+#endif
 }
 
 - (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 
@@ -600,39 +603,6 @@ static NSMutableSet* gViewEntities;
 	return retval;
 }
 
-- (void) cacheRelationship: (id <BXRelationshipDescription>) relationship
-{
-    log4AssertVoidReturn ([[relationship entities] containsObject: self], 
-						  @"Attempted to cache a relationship which this entity is not part of. \n\tEntity: %@ \n\tRelationship: %@",
-						  self, relationship);
-    
-    //One-to-one and many-to-many replace many-to-one
-	//FIXME: storing the relationships by names like this
-	//should be replaced by something more thoroughly thought.
-	if ([relationship isManyToMany])
-	{
-		[mRelationships setObject: relationship forKey: 
-			[[(BXHelperTableMTMRelationshipDescription *) relationship otherEntity: self] name]];
-	}
-	else
-	{
-		NSString* relname = [relationship nameFromEntity: self];
-		[mRelationships setObject: relationship forKey: relname];
-
-		//FIXME: this is a hack to get the relationships indexed by their alternative names.
-		NSArray* keys = [NSArray arrayWithObjects: 
-			[[(id) relationship otherEntity: self] name],
-			nil];
-		
-		TSEnumerate (currentKey, e, [keys objectEnumerator])
-		{
-			id oldRelationship = [mRelationships objectForKey: currentKey];
-			if (nil == oldRelationship || [relationship isOneToOne])
-				[mRelationships setObject: relationship forKey: currentKey];
-		}
-	}
-}
-
 - (void) registerObjectID: (BXDatabaseObjectID *) anID
 {
     log4AssertVoidReturn ([anID entity] == self, 
@@ -652,16 +622,17 @@ static NSMutableSet* gViewEntities;
     return [mTargetViews objectForKey: name];
 }
 
+//FIXME: this method could be going away soon.
 /**
  * \internal
  * Property descriptions for table columns that correspond to view columns.
- * Retrieving property descriptions is done by comparing property or column names; 
+ * Retrieving attribute descriptions is done by comparing attribute or column names; 
  * columns in views need to have the same names as in tables. We iterate through 
- * the given properties and compare their names first to primary key field names, 
+ * the given attributes and compare their names first to primary key field names, 
  * then others.
- * \param properties Properties in a view that is based on this table.
+ * \param properties Attributes in a view that is based on this table.
  */
-- (NSArray *) correspondingProperties: (NSArray *) properties
+- (NSArray *) correspondingAttributes: (NSArray *) properties
 {
     id rval = nil;
     
@@ -687,14 +658,14 @@ static NSMutableSet* gViewEntities;
             TSEnumerate (currentProperty, e, [properties objectEnumerator])
             {
                 NSString* propertyName = [currentProperty name];
-                BXPropertyDescription* prop = [mAttributes objectForKey: propertyName];
-				if (nil == prop)
+                BXAttributeDescription* attr = [mAttributes objectForKey: propertyName];
+				if (nil == attr)
 				{
 					[[NSException exceptionWithName: NSInternalInconsistencyException 
-											 reason: [NSString stringWithFormat: @"Nonexistent property %@ given", currentProperty]
+											 reason: [NSString stringWithFormat: @"Nonexistent attribute %@ given", currentProperty]
 										   userInfo: nil] raise];
 				}
-                [rval addObject: prop];
+                [rval addObject: attr];
             }
         }
     }
@@ -751,13 +722,13 @@ static NSMutableSet* gViewEntities;
 	}
 }
 
-- (void) resetPropertyExclusion
+- (void) resetAttributeExclusion
 {
 	TSEnumerate (currentProp, e, [mAttributes objectEnumerator])
 		[currentProp setExcluded: NO];
 }
 
-- (NSArray *) properties: (NSArray *) strings
+- (NSArray *) attributes: (NSArray *) strings
 {
 	NSMutableArray* rval = nil;
 	if (0 < [strings count])
@@ -767,27 +738,14 @@ static NSMutableSet* gViewEntities;
 		{
 			if ([currentField isKindOfClass: [NSString class]])
 				currentField = [mAttributes objectForKey: currentField];
-			log4AssertValueReturn ([currentField isKindOfClass: [BXPropertyDescription class]], nil, 
-								   @"Expected to receive NSStrings or BXPropertyDescriptions (%@ was a %@).",
+			log4AssertValueReturn ([currentField isKindOfClass: [BXAttributeDescription class]], nil, 
+								   @"Expected to receive NSStrings or BXAttributeDescriptions (%@ was a %@).",
 								   currentField, [currentField class]);
 			
 			[rval addObject: currentField];
 		}
 	}
 	return rval;
-}
-
-- (BOOL) hasAllRelationships
-{
-	return mFlags & kBXEntityHasAllRelationships;
-}
-
-- (void) setHasAllRelationships: (BOOL) flag
-{
-	if (flag)
-		mFlags |= kBXEntityHasAllRelationships;
-	else
-		mFlags &= ~kBXEntityHasAllRelationships;
 }
 
 - (void) setValidated: (BOOL) flag
@@ -798,13 +756,9 @@ static NSMutableSet* gViewEntities;
 		mFlags &= ~kBXEntityIsValidated;
 }
 
-- (void) fetchRelationshipsIfNeeded: (BXDatabaseContext *) context error: (NSError **) error
+- (BXRelationshipDescription *) inverseRelationshipFor: (BXRelationshipDescription *) aRel
 {
-	if (NO == [self hasAllRelationships])
-	{
-		[self setHasAllRelationships: YES];
-		[context relationshipsByNameWithEntity: self entity: nil error: error];
-	}
+	return [mInverseRelationships objectForKey: aRel];
 }
 
 @end

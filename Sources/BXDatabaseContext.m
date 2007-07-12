@@ -46,7 +46,6 @@
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXConstants.h"
-#import "BXRelationshipDescriptionProtocol.h"
 #import "BXException.h"
 #import "BXContainerProxy.h"
 #import "BXArrayProxy.h"
@@ -814,7 +813,7 @@ extern void BXInit ()
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     excludingFields: (NSArray *) excludedFields updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
 {
-	[entity resetPropertyExclusion];
+	[entity resetAttributeExclusion];
     return [self executeFetchForEntity: entity withPredicate: predicate
                        returningFaults: NO excludingFields: excludedFields
                          returnedClass: (shouldUpdate ? [BXArrayProxy class] : Nil) 
@@ -848,20 +847,20 @@ extern void BXInit ()
 		[self connectIfNeeded: &localError];
 		if (nil == localError)
 		{
-			//The interface wants only property descriptions as keys
+			//The interface wants only attribute descriptions as keys
 			NSMutableDictionary* fieldValues = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
-			Class propertyDescriptionClass = [BXPropertyDescription class];
+			Class attributeDescriptionClass = [BXAttributeDescription class];
 			Class stringClass = [NSString class];
 			TSEnumerate (currentKey, e, [givenFieldValues keyEnumerator])
 			{
 				id value = [givenFieldValues objectForKey: currentKey];
-				if ([currentKey isKindOfClass: propertyDescriptionClass])
+				if ([currentKey isKindOfClass: attributeDescriptionClass])
 					[fieldValues setObject: value forKey: currentKey];
 				else if ([currentKey isKindOfClass: stringClass])
 				{
 					//We connected earlier so no need for an assertion.
-					BXPropertyDescription* prop = [[entity attributesByName] valueForKey: currentKey];
-					[fieldValues setObject: value forKey: prop];
+					BXAttributeDescription* attr = [[entity attributesByName] valueForKey: currentKey];
+					[fieldValues setObject: value forKey: attr];
 				}
 			}
 			
@@ -1644,79 +1643,6 @@ extern void BXInit ()
 }
 //@}
 
-/**
- * \name Convenience methods for getting relationship descriptions
- */
-//@{
-/** 
- * Relationships between given entities. 
- * Only relationships between tables are returned.
- */
-- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
-                                          entity: (BXEntityDescription *) anotherEntity
-                                           error: (NSError **) error
-{
-    return [self relationshipsByNameWithEntity: anEntity
-                                        entity: anotherEntity
-                                         types: kBXRelationshipUndefined
-                                         error: error];
-}
-
-/** 
- * Relationships of a specific type between given entities. 
- * Only relationships between tables are returned.
- */
-- (NSDictionary *) relationshipsByNameWithEntity: (BXEntityDescription *) anEntity
-                                          entity: (BXEntityDescription *) anotherEntity
-                                           types: (enum BXRelationshipType) bitmap
-                                           error: (NSError **) error
-{
-    log4Debug (@"RelationshipsByNameWithEntity:entity:types");
-	NSMutableDictionary* rval = nil;
-    NSError* localError = nil;
-	id relationships = nil;
-	if ([self checkDatabaseURI: &localError])
-	{
-		//Normalize
-		if (nil == anEntity)
-		{
-			if (nil == anotherEntity)
-				return nil;
-			else
-			{
-				anEntity = anotherEntity;
-				anotherEntity = nil;
-			}
-		}
-		
-		[self connectIfNeeded: &localError];
-		BXHandleError (NULL, localError);
-		relationships = [mDatabaseInterface relationshipsWithEntity: anEntity
-															 entity: anotherEntity
-															  types: bitmap
-															  error: &localError];
-	}
-	
-	BXHandleError (error, localError);
-	if (nil == localError)
-	{
-		//Rval might lose some objects since the relationships could have same names (MTO in helper tables).
-		//FIXME: does this include most of the names?
-		rval = [NSMutableDictionary dictionaryWithCapacity: [relationships count]];
-		TSEnumerate (currentRel, e, [relationships objectEnumerator])
-		{
-			TSEnumerate (currentEntity, e, [[currentRel entities] objectEnumerator])
-				[currentEntity cacheRelationship: currentRel];
-			
-			NSString* name = [currentRel nameFromEntity: anEntity];
-			if (nil != name)
-				[rval setObject: currentRel forKey: name];
-		}
-	}
-    return rval;
-}
-//@}
-
 @end
 
 
@@ -1874,7 +1800,7 @@ extern void BXInit ()
 		[self connectIfNeeded: &localError];
 		if (nil == localError)
 		{
-			excludedFields = [entity properties: excludedFields];
+			excludedFields = [entity attributes: excludedFields];
 			[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
 			rval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
 											 returningFaults: returnFaults 
@@ -2216,6 +2142,20 @@ extern void BXInit ()
 		mCanConnect = aBool;
 		[self didChangeValueForKey: @"canConnect"];
 	}
+}
+
+- (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
+{
+	NSError* localError = nil;
+	id relationships = nil;
+	if ([self checkDatabaseURI: &localError])
+	{		
+		[self connectIfNeeded: &localError];
+		if (nil == error)
+			relationships = [mDatabaseInterface relationshipsForEntity: anEntity error: &localError];
+		BXHandleError (NULL, localError);
+	}
+	return relationships;
 }
 
 @end

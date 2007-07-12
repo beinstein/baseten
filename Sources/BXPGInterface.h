@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXInterface.h>
 #import <BaseTen/BXEntityDescription.h>
-#import <BaseTen/BXPropertyDescription.h>
+#import <BaseTen/BXAttributeDescription.h>
 #import <BaseTen/BXDatabaseObject.h>
 
 @protocol BXObjectAsynchronousLocking;
@@ -63,7 +63,7 @@ enum BXPGQueryState
 @end
 
 
-@interface BXPropertyDescription (BXPGInterfaceAdditions)
+@interface BXAttributeDescription (BXPGInterfaceAdditions)
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context;
 - (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
 @end
@@ -82,6 +82,7 @@ enum BXPGQueryState
     PGTSModificationNotifier* modificationNotifier;
     PGTSLockNotifier*  lockNotifier;
  	BXPGCertificateVerificationDelegate* cvDelegate;
+	NSMutableDictionary* mForeignKeys;
    
     enum BXPGQueryState state; /** What kind of query has been sent recently? */
     id <BXObjectAsynchronousLocking> locker;
@@ -131,6 +132,8 @@ enum BXPGQueryState
 
 - (void) prepareConnection: (enum BXSSLMode) mode;
 - (void) checkConnectionStatus: (NSError **) error;
+
+- (void) fetchForeignKeys;
 @end
 
 

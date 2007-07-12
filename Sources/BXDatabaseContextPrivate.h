@@ -47,6 +47,7 @@ struct trustResult
                         predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (BOOL) executeDeleteFromEntity: (BXEntityDescription *) anEntity withPredicate: (NSPredicate *) predicate 
                            error: (NSError **) error;
+- (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
 /* Especially these need some attention before moving to a public header. */
 - (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectLockStatus) status

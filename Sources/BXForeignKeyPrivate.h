@@ -1,5 +1,5 @@
 //
-// BXPropertyDescriptionPrivate.h
+// BXForeignKeyPrivate.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -23,11 +23,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: BXPropertyDescription.h 84 2007-01-12 11:38:38Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
-@interface BXPropertyDescription (PrivateMethods)
-- (void) setEntity: (BXEntityDescription *) anEntity;
-- (void) setOptional: (BOOL) aBool;
-- (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity;
+#import <BaseTen/BXForeignKey.h>
+
+@interface BXForeignKey (PrivateMethods)
+- (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
 @end

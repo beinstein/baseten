@@ -41,8 +41,7 @@
 #import "BXEntityDescription.h"
 #import "BXEntityDescriptionPrivate.h"
 #import "BXConstants.h"
-#import "BXRelationshipDescriptionProtocol.h"
-#import "BXPropertyDescription.h"
+#import "BXAttributeDescription.h"
 #import "BXObjectStatusInfo.h"
 
 
@@ -197,17 +196,17 @@ ParseSelector (SEL aSelector, NSString** key)
  * Value or objects from the database.
  * Look up the value from the cache or ask the database context to fetch it.
  * Currently this method calls -primitiveValueForKey:.
- * \param   aKey    A BXPropertyDescription.
+ * \param   aKey    A BXAttributeDescription.
  * \return          An object or an NSArray of BXDatabaseObjects.
  */
-- (id) objectForKey: (BXPropertyDescription *) aKey
+- (id) objectForKey: (BXAttributeDescription *) aKey
 {
     return [self valueForKey: [aKey name]];
 }
 
 /** 
  * A convenience method for retrieving values for multiple keys. 
- * \param   keys    An NSArray of BXPropertyDescriptions 
+ * \param   keys    An NSArray of BXAttributeDescriptions 
  * \return          The requested values.
  */
 - (NSArray *) objectsForKeys: (NSArray *) keys
@@ -276,7 +275,7 @@ ParseSelector (SEL aSelector, NSString** key)
 		
 		TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
 		{
-			BXPropertyDescription* desc = [[entity attributesByName] objectForKey: currentFName]; 
+			BXAttributeDescription* desc = [[entity attributesByName] objectForKey: currentFName]; 
             if (nil != desc)
                 [rval setObject: [cachedValues objectForKey: currentFName] forKey: desc];
 		}
@@ -583,7 +582,7 @@ ParseSelector (SEL aSelector, NSString** key)
     {
         rval = 0;
     }
-    else if (nil != [mObjectID propertyNamed: aKey])
+    else if (nil != [mObjectID attributeNamed: aKey])
     {
         //Primary key fields are never faults
         rval = 0;
@@ -899,15 +898,15 @@ ParseSelector (SEL aSelector, NSString** key)
 	log4AssertValueReturn (NULL != ioValue, NO, @"Expected ioValue not to be NULL.");
 	log4AssertValueReturn ([entity isValidated], NO, @"Expected entity %@ to have been validated earlier.", entity);
 	id value = *ioValue;
-	BXPropertyDescription* property = [[entity attributesByName] objectForKey: key];
-	if (NO == [property isOptional] && (nil == value || [NSNull null] == value))
+	BXAttributeDescription* attribute = [[entity attributesByName] objectForKey: key];
+	if (NO == [attribute isOptional] && (nil == value || [NSNull null] == value))
 	{
 		rval = NO;
 		if (NULL != outError)
 		{
 			NSString* message = BXLocalizedString (@"nullValueGivenForNonOptionalField", @"This field requires a non-null value.", @"Error description");
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                BXSafeObj (property), kBXPropertyKey,
+                BXSafeObj (attribute), kBXAttributeKey,
                 BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
                 BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
                 BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
@@ -972,7 +971,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 	NSArray* rval = nil;
 	BOOL shouldContinue = NO;
-	if ([aKey isKindOfClass: [BXPropertyDescription class]])
+	if ([aKey isKindOfClass: [BXAttributeDescription class]])
 		shouldContinue = YES;
 	else if ([aKey isKindOfClass: [NSString class]])
 	{
@@ -1010,7 +1009,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	log4AssertValueReturn (nil == *error, kBXDatabaseObjectNoKeyType, @"Expected *error to be nil (was: %@).", *error);
 	
 	enum BXDatabaseObjectKeyType rval = kBXDatabaseObjectUnknownKey;
-	if (nil != [mObjectID propertyNamed: aKey])
+	if (nil != [mObjectID attributeNamed: aKey])
 	{
         //Primary key fields are never faults
 		rval = kBXDatabaseObjectPrimaryKey;

@@ -120,10 +120,7 @@
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;
 
-- (NSArray *) relationshipsWithEntity: (BXEntityDescription *) srcEntity
-							   entity: (BXEntityDescription *) givenDSTEntity
-								types: (enum BXRelationshipType) typeBitmap
-								error: (NSError **) error;
+- (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
 /**
  * \internal

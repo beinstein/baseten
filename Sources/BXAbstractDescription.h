@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface BXAbstractDescription : NSObject 
+@interface BXAbstractDescription : NSObject <NSCoding>
 {
     unsigned int    mHash;
     NSString*       mName;

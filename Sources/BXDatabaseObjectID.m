@@ -33,10 +33,10 @@
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseContext.h"
 #import "BXInterface.h"
-#import "BXPropertyDescription.h"
+#import "BXAttributeDescription.h"
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
-#import "BXPropertyDescriptionPrivate.h"
+#import "BXAttributeDescriptionPrivate.h"
 
 #import <Log4Cocoa/Log4Cocoa.h>
 #import <TSDataTypes/TSDataTypes.h>
@@ -128,8 +128,8 @@ static TSNonRetainedObjectSet* gObjectIDs;
 			}
 		}	
 		log4AssertValueReturn ([entityDesc isValidated], nil, @"Expected entity %@ to have been validated earlier.", entityDesc);
-		BXPropertyDescription* propertyDesc = [[entityDesc attributesByName] objectForKey: key]; 
-		[pkeyDict setObject: value forKey: propertyDesc];
+		BXAttributeDescription* attributeDesc = [[entityDesc attributesByName] objectForKey: key]; 
+		[pkeyDict setObject: value forKey: attributeDesc];
 		
 		[queryScanner scanUpToString: @"&" intoString: NULL];
 		[queryScanner scanString: @"&" intoString: NULL];
@@ -293,7 +293,7 @@ bail:
 /**
  * Primary key fields.
  * This method is thread-safe.
- * \return      An NSArray of BXPropertyDescriptions
+ * \return      An NSArray of BXAttributeDescriptions
  */
 - (NSArray *) primaryKeyFields;
 {
@@ -308,7 +308,7 @@ bail:
 /**
  * Values for the primary key fields.
  * This method is thread-safe.
- * \return      An NSDictionary with BXPropertyDescriptions as keys.
+ * \return      An NSDictionary with BXAttributeDescriptions as keys.
  */
 - (NSDictionary *) primaryKeyFieldValues;
 {
@@ -328,7 +328,7 @@ bail:
     id rval = nil;
     @synchronized (mPkeyFValues)
     {
-        rval = [mPkeyFValues objectForKey: [self propertyNamed: aKey]];
+        rval = [mPkeyFValues objectForKey: [self attributeNamed: aKey]];
     }
     return rval;
 }
@@ -336,7 +336,7 @@ bail:
 /**
  * Primary key field value for the given key.
  * This method is thread-safe.
- * \param       aKey        A BXPropertyDescription
+ * \param       aKey        A BXAttributeDescription
  */
 - (id) objectForKey: (id) aKey
 {
@@ -352,7 +352,7 @@ bail:
  * Primary key field values for the given keys.
  * At the moment calls NSDictionary's objectsForKeys:notFoundMarker: with the NSNull object as the second argument.
  * This method is thread-safe.
- * \param       keys        An NSArray of BXPropertyDescriptions
+ * \param       keys        An NSArray of BXAttributeDescriptions
  */
 - (id) objectsForKeys: (NSArray *) keys
 {
@@ -401,7 +401,7 @@ bail:
  * \internal
  * The designated initializer.
  * \param   aDesc   The entity.
- * \param   aDict   An NSDictionary in which the keys are BXPropertyDescriptions.
+ * \param   aDict   An NSDictionary in which the keys are BXAttributeDescriptions.
  * \throw   NSException named NSInternalInconsistencyException in case some of the required 
  *          parameters were missing or invalid.
  */
@@ -417,9 +417,9 @@ bail:
 		
 		TSEnumerate (currentDesc, e, [aDict keyEnumerator])
 		{
-			if (NO == [currentDesc isKindOfClass: [BXPropertyDescription class]])
+			if (NO == [currentDesc isKindOfClass: [BXAttributeDescription class]])
 			{
-				reason = @"Expected to receive only BXPropertyDescriptions as keys.";
+				reason = @"Expected to receive only BXAttributeDescriptions as keys.";
 				break;
 			}
 		}
@@ -480,21 +480,21 @@ bail:
     }
 }
 
-- (BXPropertyDescription *) propertyNamed: (NSString *) aName
+- (BXAttributeDescription *) attributeNamed: (NSString *) aName
 {
-    BXPropertyDescription* rval = nil;
+    BXAttributeDescription* retval = nil;
     @synchronized (mPkeyFValues)
     {
         TSEnumerate (currentKey, e, [mPkeyFValues keyEnumerator])
         {
             if ([[currentKey name] isEqual: aName])
             {
-                rval = currentKey;
+                retval = currentKey;
                 break;
             }
         }
     }
-    return rval;
+    return retval;
 }
 
 - (void) setLastModificationType: (enum BXModificationType) aType

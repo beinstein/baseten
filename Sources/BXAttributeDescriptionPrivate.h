@@ -1,5 +1,5 @@
 //
-// BXRelationshipDescription.h
+// BXAttributeDescriptionPrivate.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,24 +26,9 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-
-
-@interface BXRelationshipDescription : BXAbstractDescription 
-{
-    BXEntityDescription* mDestinationEntity;
-    
-    NSMutableArray* mFieldNames;
-    NSMutableArray* mDstFieldNames;
-}
-
-//FIXME: change class hierarchy and move these to a class that
-//mimics NSPropertyDescription.
-- (BXEntityDescription *) entity;
-- (BOOL) isOptional;
-
-- (BXEntityDescription *) destinationEntity;
-- (BXRelationshipDescription *) inverseRelationship;
-- (NSDeleteRule) deleteRule;
-- (BOOL) isToMany;
+@interface BXAttributeDescription (PrivateMethods)
++ (id) attributeWithName: (NSString *) name entity: (BXEntityDescription *) entity;
+- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity;
+- (void) setPrimaryKey: (BOOL) aBool;
+- (void) setExcluded: (BOOL) aBool;
 @end

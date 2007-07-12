@@ -43,13 +43,11 @@ enum BXPropertyFlag
 
 @interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSCoding>
 {
-    BXEntityDescription*	mEntity;
+    BXEntityDescription*  mEntity;
 	enum BXPropertyFlag   mFlags;
 }
 
 - (BXEntityDescription *) entity;
 - (BOOL) isOptional;
-- (BOOL) isPrimaryKey;
-- (BOOL) isExcluded;
 
 @end

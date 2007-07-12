@@ -44,15 +44,15 @@
 #import "BXEntityDescription.h"
 #import "BXEntityDescriptionPrivate.h"
 #import "BXConstants.h"
-#import "BXPropertyDescription.h"
 #import "BXRelationshipDescription.h"
 #import "BXArrayProxy.h"
-#import "BXOneToOneRelationshipDescription.h"
-#import "BXHelperTableMTMRelationshipDescription.h"
-#import "BXRelationshipDescriptionProtocol.h"
 #import "BXException.h"
 #import "BXPGCertificateVerificationDelegate.h"
+#import "BXAttributeDescription.h"
+#import "BXAttributeDescriptionPrivate.h"
 #import "BXPropertyDescriptionPrivate.h"
+#import "BXForeignKeyPrivate.h"
+#import "BXRelationshipDescriptionPrivate.h"
 
 
 static unsigned int savepointIndex;
@@ -126,7 +126,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 @end
 
 
-@implementation BXPropertyDescription (BXPGInterfaceAdditions)
+@implementation BXAttributeDescription (BXPGInterfaceAdditions)
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
 {
     return [NSString stringWithFormat: @"%@.%@", 
@@ -153,8 +153,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [self count]];
     TSEnumerate (currentDesc, e, [self objectEnumerator])
     {
-        log4AssertValueReturn ([currentDesc isKindOfClass: [BXPropertyDescription class]], nil, 
-							   @"Expected to have only BXPropertyDescriptions (%@).", self);
+        log4AssertValueReturn ([currentDesc isKindOfClass: [BXAttributeDescription class]], nil, 
+							   @"Expected to have only BXAttributeDescriptions (%@).", self);
         [rval addObject: [currentDesc BXPGEscapedName: connection]];
     }
     return rval;
@@ -162,7 +162,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 @end
 
 
-
+//FIXME: check this.
 @implementation PGTSForeignKeyDescription (BXPGInterfaceAdditions)
 - (BXRelationshipDescription *) BXPGRelationshipFromEntity: (BXEntityDescription *) srcEntity
 												  toEntity: (BXEntityDescription *) dstEntity
@@ -189,8 +189,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
         [dstProperties addObject: p2];
     }
     
+#if 0
     return [BXRelationshipDescription relationshipWithName: [self name] srcProperties: srcProperties 
                                                 dstProperties: dstProperties];
+#endif
+	return nil;
 }
 @end
 
@@ -216,6 +219,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         logsQueries = NO;
         clearedLocks = NO;
         state = kBXPGQueryIdle;
+		mForeignKeys = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -259,6 +263,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
      
     [locker release];
     [databaseURI release];
+	[mForeignKeys release];
     [super dealloc];
 }
 
@@ -844,173 +849,86 @@ static NSString* SSLMode (enum BXSSLMode mode)
     return rval;    
 }
 
-- (NSArray *) relationshipsWithEntity: (BXEntityDescription *) srcEntity
-							   entity: (BXEntityDescription *) givenDSTEntity
-								types: (enum BXRelationshipType) typeBitmap
-								error: (NSError **) error
+- (NSSet *) relationshipsForEntity: (BXEntityDescription *) entity
+							 error: (NSError **) error
 {    
-    log4AssertValueReturn (nil != srcEntity, nil, @"Expected to have srcEntity.");
+    log4AssertValueReturn (nil != entity, nil, @"Expected to have an entity.");
     log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
     
-	NSMutableArray* rval = nil;
-	
-    NSMutableArray* types = [NSMutableArray arrayWithObject: @"t"];
-    if (typeBitmap == kBXRelationshipUndefined || typeBitmap & kBXRelationshipOneToOne)
-        [types addObject: @"o"];
-    if (typeBitmap == kBXRelationshipUndefined || typeBitmap & kBXRelationshipManyToMany)
-        [types addObject: @"m"];
-    
-    //FIXME: these could be stored procedures or something
-    NSString* query = nil;
-    if (nil == givenDSTEntity)
-    {
-        query = 
-            @"SELECT conoid, refconoids, type, "
-            " srcname, dstname, srcfnames, dstfnames, helperfnames, "
-            " srcrelname, srcnspname, dstnspname, dstrelname, "
-            " (srcnspname = $1 AND srcrelname = $2) AS should_add_m "
-            " FROM baseten.Relationships "
-            " WHERE ((srcnspname = $1 AND srcrelname = $2) OR (type = 't')) "
-            " AND type = ANY ($3) AND dst_is_pkey = true "
-            " ORDER BY type DESC";
-    }
-    else
-    {
-        //Here we need all MTO's from the potential helper table to both destination and source
-        //as well as from destination to source
-        query = 
-            @"SELECT conoid, refconoids, type, "
-            " srcname, dstname, srcfnames, dstfnames, helperfnames, "
-            " srcrelname, srcnspname, dstnspname, dstrelname, "
-            " (srcnspname = $1 AND srcrelname = $2) AS should_add_m "
-            " FROM baseten.Relationships "
-            " WHERE ((srcnspname = $1 AND srcrelname = $2) OR "
-            "         (type = 't' AND "
-            "          (dstnspname = $1 AND dstrelname = $2) OR "
-            "          (dstnspname = $4 AND dstrelname = $5) "
-            "         ) "
-            "       ) AND type = ANY ($3) AND dst_is_pkey = true "
-            " ORDER BY type DESC";
-    }
-    
+	NSMutableSet* retval = [NSMutableSet set];
 	@try
 	{
-		PGTSResultSet* res = [connection executeQuery: query parameters:
-			[srcEntity schemaName], [srcEntity name], types, [givenDSTEntity schemaName], [givenDSTEntity name]];
+		[self fetchForeignKeys];
 		
-		rval = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-		NSMutableDictionary* manyToOne = [NSMutableDictionary dictionary];
-		while ([res advanceRow])
+		NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
+
+		NSString* views [3] = {@"onetomany", @"onetoone", @"manytomany"};
+		for (int i = 0; i < 3; i++)
 		{
-			if (nil != *error) break;
-			
-			unichar type = [[res valueForKey: @"type"] characterAtIndex: 0];
-			Class relationshipClass = Nil;
-			switch (type)
+			NSString* queryString = [NSString stringWithFormat: queryFormat, views [i]];
+			PGTSResultSet* res = [connection executeQuery: queryString];
+			while ([res advanceRow])
 			{
-				case 'o':
-					relationshipClass = [BXOneToOneRelationshipDescription class];
-					//Fall through on purpose
-				case 'm':
+				switch (i)
 				{
-					if (Nil == relationshipClass)
-						relationshipClass = [BXHelperTableMTMRelationshipDescription class];
-					
-					NSArray* conoids = [res valueForKey: @"refconoids"];
-					NSArray* rels = [manyToOne objectsForKeys: conoids notFoundMarker: [NSNull null]];
-					log4AssertValueReturn (NO == [rels containsObject: [NSNull null]], nil, @"Didn't expect NSNulls (rels: %@).", rels);
-					log4AssertValueReturn (2 == [rels count], nil, @"Expected to have two objects in rels (found instead: %@).", rels);
-					
-					id rel = [relationshipClass relationshipWithRelationship1: [rels objectAtIndex: 0]
-																relationship2: [rels objectAtIndex: 1]];
-					NSString* relationName = [res valueForKey: @"dstname"];
-					if ('m' == type)
-						[rel setName: relationName];
-					[rval addObject: rel];
-					break;
-				}
-				case 't':
-				{
-					NSNumber* conoid = [res valueForKey: @"conoid"];
-					
-					//Go through the source columns' names
-					NSMutableArray* srcProperties = nil;
-					NSMutableArray* dstProperties = nil;
-					BXEntityDescription* srcEntity = [context entityForTable: [res valueForKey: @"srcrelname"]
-																	inSchema: [res valueForKey: @"srcnspname"]
-																	   error: error];
-					if (nil != *error)
+					//One-to-many
+					case 0:
 					{
-						//Continue if we were not able to observe the entity.
-						if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
-							*error = nil;
+						NSString* name = [res valueForKey: @"name"];
+						BXRelationshipDescription* rel = [[BXRelationshipDescription alloc] initWithName: name entity: entity];
+						
+						BXEntityDescription* dst = [context entityForTable: [res valueForKey: @"dstrelname"] 
+																  inSchema: [res valueForKey: @"dstnspname"] 
+																	 error: error];
+						if (nil != *error) goto bail;
+						
+						[rel setDestinationEntity: dst];
+						[rel setIsToMany: ![[res valueForKey: @"ismanytoone"] boolValue]];
+						[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
+						
+						[retval addObject: rel];
+						[rel release];
 						break;
 					}
-					
-					BXEntityDescription* dstEntity = [context entityForTable: [res valueForKey: @"dstrelname"]
-																	inSchema: [res valueForKey: @"dstnspname"]
-																	   error: error];
-					if (nil != *error)
+						
+					//One-to-one
+					case 1:
 					{
-						//Continue we were not able to observe the entity.
-						if ([kBXErrorDomain isEqualToString: [*error domain]] && kBXErrorObservingFailed == [*error code])
-							*error = nil;
 						break;
 					}
-					
+						
+					//Many-to-many
+					case 2:
 					{
-						log4AssertValueReturn ([srcEntity isValidated], nil, @"Expected srcEntity to have been validated.");
-						NSArray* srcFNames = [res valueForKey: @"srcfnames"];
-						NSDictionary* srcAttributes = [srcEntity attributesByName];
-						srcProperties = [NSMutableArray arrayWithCapacity: [srcFNames count]];                
-						
-						TSEnumerate (currentFName, e, [srcFNames objectEnumerator])
-						{
-							BXPropertyDescription* desc = [srcAttributes objectForKey: currentFName];
-							[srcProperties addObject: desc];
-						}
-						
-						//Use the information supplied by the database, if the user wants all the relationships
-						//and not just those between given two tables.
-						log4AssertValueReturn ([dstEntity isValidated], nil, @"Expected dstEntity to have been validated.");
-						NSDictionary* dstAttributes = [dstEntity attributesByName];
-						NSArray* dstFNames = [res valueForKey: @"dstfnames"];
-						dstProperties = [NSMutableArray arrayWithCapacity: [dstFNames count]];
-						TSEnumerate (currentFName, e, [dstFNames objectEnumerator])
-						{
-							BXPropertyDescription* desc = [dstAttributes objectForKey: currentFName];
-							[dstProperties addObject: desc];
-						}
+						break;
 					}
-					
-					//Now we have enough information to make the relationship object
-					NSString* relationName = [res valueForKey: @"srcname"];
-					BXRelationshipDescription* rel = 
-						[BXRelationshipDescription relationshipWithName: relationName
-														  srcProperties: srcProperties 
-														  dstProperties: dstProperties];
-					
-					[manyToOne setObject: rel forKey: conoid];
-					
-					//Add the object. At this point rval contains only MTO's, 
-					//so if we are adding a foreign key from any other table than srcEntity,
-					//we only need to check that there isn't one with the same name yet.
-					[rval addObject: rel];
-					
-					break;
 				}
-				default:
-					break;
 			}
-		}		
+		}
+		
+		//One-to-one
+		{
+#if 0
+			NSString* queryString = [NSString stringWithFormat: queryFormat, @"onetoone"];
+#endif
+		}
+		
+		//Many-to-many
+		{
+#if 0
+			NSString* queryString = [NSString stringWithFormat: queryFormat, @"manytomany"];
+#endif
+		}
+		
 	}
 	@catch (PGTSException* exception)
 	{
 		[self packPGError: error exception: exception];
 	}
 	
-	if (NULL != error && nil != *error) rval = nil;
-    return rval;
+bail:
+	if (NULL != error && nil != *error) retval = nil;
+    return retval;
 }
 
 /** 
@@ -1117,7 +1035,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
  * \internal
  * Check that the entity exists.
  * Also tell the entity about the pkey and other fields.
- * \note BXPropertyDescriptions should only be created here and in -[BXEntityDescription setPrimaryKeyFields:]
+ * \note BXAttributeDescriptions should only be created here and in -[BXEntityDescription setPrimaryKeyFields:]
  */
 - (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
@@ -1183,9 +1101,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					NSArray* pkeyFNames = [[[pkey fields] allObjects] valueForKey: @"name"];
 					TSEnumerate (currentFName, e, [pkeyFNames objectEnumerator])
 					{
-						BXPropertyDescription* desc = [attributes objectForKey: currentFName];
+						BXAttributeDescription* desc = [attributes objectForKey: currentFName];
 						if (nil == desc)
-							desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+							desc = [BXAttributeDescription attributeWithName: currentFName entity: entity];
 						[desc setOptional: NO];
 						[desc setPrimaryKey: YES];
 						[attributes setObject: desc forKey: currentFName];
@@ -1201,9 +1119,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					NSString* currentFName = [currentField name];
 					if (nil == [attributes objectForKey: currentFName])
 					{
-						BXPropertyDescription* desc = [attributes objectForKey: currentFName];
+						BXAttributeDescription* desc = [attributes objectForKey: currentFName];
 						if (nil == desc)
-							desc = [BXPropertyDescription propertyWithName: currentFName entity: entity];
+							desc = [BXAttributeDescription attributeWithName: currentFName entity: entity];
 						[desc setOptional: ![currentField isNotNull]];
 						[desc setPrimaryKey: NO];
 						[attributes setObject: desc forKey: currentFName];
@@ -1612,6 +1530,32 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			notifyConnection = connection;
 			connection = tempConnection;
 			log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
+		}
+	}
+}
+
+- (void) fetchForeignKeys
+{
+	if (nil == mForeignKeys)
+	{
+		mForeignKeys = [[NSMutableDictionary alloc] init];
+		NSString* query = @"SELECT * from baseten.foreignkeys";
+		PGTSResultSet* res = [connection executeQuery: query];
+		while (([res advanceRow]))
+		{
+			BXForeignKey* key = [[BXForeignKey alloc] initWithName: [res valueForKey: @"name"]];
+			
+			NSArray* srcFNames = [res valueForKey: @"srcfnames"];
+			NSArray* dstFNames = [res valueForKey: @"dstfnames"];
+			log4AssertVoidReturn ([srcFNames count] == [dstFNames count], 
+								  @"Expected array counts to match. Row: %@.", 
+								  [res currentRowAsArray]);
+			
+			for (unsigned int i = 0, count = [srcFNames count]; i < count; i++)
+				[key addSrcFieldName: [srcFNames objectAtIndex: i] dstFieldName: [dstFNames objectAtIndex: i]];
+			
+			[mForeignKeys setObject: key forKey: [res valueForKey: @"conoid"]];
+			[key release];
 		}
 	}
 }
