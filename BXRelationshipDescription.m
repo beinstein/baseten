@@ -31,4 +31,27 @@
 
 @implementation BXRelationshipDescription
 
+- (BXEntityDescription *) destinationEntity
+{
+    return mDestinationEntity;
+}
+
+- (BXRelationshipDescription *) inverseRelationship
+{
+    //FIXME: this is only a stub.
+    return nil;
+}
+
+- (NSDeleteRule) deleteRule
+{
+    //FIXME: this is only a stub.
+    return NSNoActionDeleteRule;
+}
+
+- (BOOL) isToMany
+{
+    //FIXME: this is only a stub.
+    return NO;
+}
+
 @end
