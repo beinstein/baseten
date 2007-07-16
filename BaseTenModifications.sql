@@ -69,11 +69,12 @@ REVOKE ALL PRIVILEGES ON SEQUENCE "basetenlocksequence" FROM PUBLIC;
 
 -- Helper functions
 
-CREATE OR REPLACE FUNCTION "baseten".array_cat (anyarray, anyarray) 
+CREATE FUNCTION "baseten".array_cat (anyarray, anyarray) 
 	RETURNS anyarray AS $$
 	SELECT $1 || $2;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_cat (anyarray, anyarray) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".array_cat (anyarray, anyarray) TO basetenread;
 
 
 -- From the manual
@@ -102,7 +103,7 @@ GRANT EXECUTE ON FUNCTION "baseten".array_cat (anyarray) TO basetenread;
 -- Takes two one-dimensional arrays the first one of which is smaller or equal in size to the other.
 -- Returns an array where each corresponding element is concatenated so that the third paramter 
 -- comes in the middle
-CREATE OR REPLACE FUNCTION "baseten".array_cat_each (TEXT [], TEXT [], TEXT) 
+CREATE FUNCTION "baseten".array_cat_each (TEXT [], TEXT [], TEXT) 
     RETURNS TEXT [] AS $$
 DECLARE
     source1 ALIAS FOR $1;
@@ -121,7 +122,7 @@ REVOKE ALL PRIVILEGES
 
 
 -- Prepends each element of an array with the first parameter
-CREATE OR REPLACE FUNCTION "baseten".array_prepend_each (TEXT, TEXT []) 
+CREATE FUNCTION "baseten".array_prepend_each (TEXT, TEXT []) 
     RETURNS TEXT [] AS $$
 DECLARE
     prefix ALIAS FOR $1;
@@ -138,7 +139,7 @@ REVOKE ALL PRIVILEGES
 	ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
 
 
-CREATE OR REPLACE FUNCTION "baseten".running_backend_pids () 
+CREATE FUNCTION "baseten".running_backend_pids () 
 RETURNS SETOF INTEGER AS $$
     SELECT 
         pg_stat_get_backend_pid (idset.id) AS pid 
@@ -148,26 +149,44 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".running_backend_pids () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".running_backend_pids () TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".LockNextId () RETURNS BIGINT AS $$
+CREATE FUNCTION "baseten".LockNextId () RETURNS BIGINT AS $$
     SELECT nextval ('basetenlocksequence');
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".LockNextId () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".LockNextId () TO basetenuser;
 
 
+-- No privileges on types
 CREATE TYPE "baseten".TableType AS (
     oid OID,
     description TEXT
 );
--- No privileges on types
 
 
-CREATE OR REPLACE FUNCTION "baseten".TableType (OID, TEXT) RETURNS "baseten".TableType AS $$
+CREATE TYPE "baseten".viewtype AS (
+	oid OID,
+	parent OID,
+	root OID,
+	generation SMALLINT
+);
+
+
+CREATE FUNCTION "baseten".TableType (OID, TEXT) RETURNS "baseten".TableType AS $$
     SELECT $1, $2;
 $$ IMMUTABLE LANGUAGE SQL;
-COMMENT ON FUNCTION "baseten".TableType (OID, TEXT) IS 'Initializer for baseten.tabletype';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".TableType (OID, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".TableType (OID, TEXT) TO basetenread;
+
+
+-- Debugging helper
+CREATE FUNCTION "baseten".oidof (TEXT, TEXT) RETURNS SETOF "baseten".tabletype AS $$
+	SELECT c.oid, c.relname::TEXT
+	FROM pg_class c
+	INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
+	WHERE c.relname = $2 AND n.nspname = $1;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".oidof (TEXT, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".oidof (TEXT, TEXT) TO basetenread;
 
 
 CREATE TABLE "baseten".ViewPrimaryKey (
@@ -207,12 +226,12 @@ CREATE VIEW "baseten".PrimaryKey AS
                 AND c.relkind = 'v'
     ) r
     ORDER BY oid ASC, attnum ASC;
-COMMENT ON VIEW "baseten".PrimaryKey IS 'Primary keys for tables and views';
 REVOKE ALL PRIVILEGES ON "baseten".PrimaryKey FROM PUBLIC;
 GRANT SELECT ON "baseten".PrimaryKey TO basetenread;
 
 
-CREATE VIEW "baseten".viewdependencies AS 
+-- Note that system views aren't correctly listed.
+CREATE VIEW "baseten".viewdependency_v AS 
 	SELECT DISTINCT 
 		d1.refobjid	AS viewoid, 
 		n1.oid		AS viewnamespace, 
@@ -233,14 +252,105 @@ CREATE VIEW "baseten".viewdependencies AS
 	INNER JOIN pg_class c3 ON c3.oid = d1.classid AND c3.relname = 'pg_rewrite'
 	INNER JOIN pg_class c4 ON c4.oid = d1.refclassid AND c4.relname = 'pg_class'
 	WHERE d1.deptype = 'n';
-COMMENT ON VIEW "baseten".viewdependencies IS 'View dependencies; one row per dependent relation. Note that dependencies for system views might not get correctly listed.';
-REVOKE ALL PRIVILEGES ON "baseten".viewdependencies FROM PUBLIC;
-GRANT SELECT ON "baseten".viewdependencies TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten".viewdependency_v FROM PUBLIC;
+GRANT SELECT ON "baseten".viewdependency_v TO basetenread;
+
+
+-- SELECT * FROM viewdependency_v can take ~300 ms.
+CREATE TABLE "baseten".viewdependency AS SELECT * FROM "baseten".viewdependency_v LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten".viewdependency FROM PUBLIC;
+GRANT SELECT ON "baseten".viewdependency TO basetenread;
+
+
+CREATE FUNCTION "baseten".viewhierarchy (OID) RETURNS SETOF "baseten".viewtype AS $$
+DECLARE
+	tableoid ALIAS FOR $1;
+	retval "baseten".viewtype;
+BEGIN
+	-- First return the table itself.
+	retval.root = tableoid;
+	retval.parent = NULL;
+	retval.generation = 0::SMALLINT;
+	retval.oid = tableoid;
+	RETURN NEXT retval;
+
+	-- Fetch dependant views.
+	FOR retval IN SELECT * FROM "baseten".viewhierarchy (tableoid, tableoid, 1) 
+	LOOP
+		RETURN NEXT retval;
+	END LOOP;
+	RETURN;
+END;
+$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".viewhierarchy (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".viewhierarchy (OID) TO basetenread;
+
+
+CREATE FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) 
+	RETURNS SETOF "baseten".viewtype AS $$
+DECLARE
+	parent ALIAS FOR $1;
+	root ALIAS FOR $2;
+	generation ALIAS FOR $3;
+	currentoid OID;
+	retval "baseten".viewtype;
+	subview "baseten".viewtype;
+BEGIN
+	retval.root = root;
+	retval.parent = parent;
+	retval.generation = generation::SMALLINT;
+
+	-- Fetch dependant views
+	FOR currentoid IN SELECT viewoid FROM "baseten".viewdependency WHERE reloid = parent 
+	LOOP
+		retval.oid := currentoid;
+		RETURN NEXT retval;
+
+		-- Recursion to subviews
+		FOR subview IN SELECT * 
+		FROM "baseten".viewhierarchy (currentoid, root, generation + 1) LOOP
+			RETURN NEXT subview;
+		END LOOP;
+	END LOOP;
+	RETURN;
+END;
+$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten".matchingviews (OID, NAME [])
+	RETURNS SETOF OID AS $$
+	SELECT v.oid FROM "baseten".viewhierarchy ($1) v
+	INNER JOIN (
+		SELECT 
+			attrelid, 
+			"baseten".array_accum (attname) AS fnames
+		FROM pg_attribute
+		GROUP BY attrelid
+	) a1 ON (a1.attrelid = v.oid)
+	LEFT JOIN (
+		SELECT
+			attrelid,
+			"baseten".array_accum (attname) AS fnames
+		FROM pg_attribute
+		GROUP BY attrelid
+	) a2 ON (a2.attrelid = v.parent)
+	WHERE (
+		v.parent IS NULL OR 
+		(
+			a1.fnames @> $2 AND
+			a2.fnames @> $2
+		)
+	)
+$$ STABLE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".matchingviews (OID, NAME []) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".matchingviews (OID, NAME []) TO basetenread;
 
 
 -- Constraint names
 -- Helps joining to queries on pg_constraint
-CREATE OR REPLACE VIEW "baseten".conname AS
+CREATE VIEW "baseten".conname AS
 SELECT 
     c.oid,
 	"baseten".array_accum (a1.attnum) AS key,
@@ -257,16 +367,12 @@ INNER JOIN pg_attribute a2 ON (
     a2.attnum = ANY (c.confkey)
 )
 GROUP BY c.oid;
-COMMENT ON VIEW "baseten".conname IS 'Constraint names';
-COMMENT ON COLUMN "baseten".conname.oid IS 'Constraint oid';
-COMMENT ON COLUMN "baseten".conname.keynames IS 'Column names';
-COMMENT ON COLUMN "baseten".conname.fkeynames IS 'Foreign column names';
 REVOKE ALL PRIVILEGES ON "baseten".conname FROM PUBLIC;
 GRANT SELECT ON "baseten".conname TO basetenread;
 
 
 -- Fkeys in pkeys
-CREATE OR REPLACE VIEW "baseten".fkeypkeycount AS
+CREATE VIEW "baseten".fkeypkeycount AS
 -- In the sub-select we search for all primary keys and their columns.
 -- Then we count the foreign keys the columns of which are contained
 -- in those of the primary keys'. Finally we filter out anything irrelevant.
@@ -286,14 +392,11 @@ INNER JOIN (
 )
 WHERE (p1.contype = 'f')
 GROUP BY p1.conrelid;
-COMMENT ON VIEW "baseten".fkeypkeycount IS 'Number of foreign key constraints included in primary keys';
-COMMENT ON COLUMN "baseten".fkeypkeycount.conrelid IS 'Primary key constraint oid';
-COMMENT ON COLUMN "baseten".fkeypkeycount.count IS 'Foreign key constraint count';
 REVOKE ALL PRIVILEGES ON "baseten".fkeypkeycount FROM PUBLIC;
 GRANT SELECT ON "baseten".fkeypkeycount TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".foreignkey AS
+CREATE VIEW "baseten".foreignkey AS
 SELECT
 	c1.oid				AS conoid,
 	c1.conname			AS name,
@@ -325,21 +428,11 @@ INNER JOIN pg_namespace ns1 ON (ns1.oid = cl1.relnamespace)
 INNER JOIN pg_namespace ns2 ON (ns2.oid = cl2.relnamespace)
 -- Only select foreign keys
 WHERE c1.contype = 'f';
-COMMENT ON VIEW "baseten".foreignkey IS 'Foreign keys';
-COMMENT ON COLUMN "baseten".foreignkey.conoid IS 'Constraint oid';
-COMMENT ON COLUMN "baseten".foreignkey.srcoid IS 'Referencing table''s oid';
-COMMENT ON COLUMN "baseten".foreignkey.srcnspname IS 'Referencing namespace''s name';
-COMMENT ON COLUMN "baseten".foreignkey.srcrelname IS 'Referencing table''s name';
-COMMENT ON COLUMN "baseten".foreignkey.srcfnames IS 'Referencing columns'' names';
-COMMENT ON COLUMN "baseten".foreignkey.dstoid IS 'Referenced table''s oid';
-COMMENT ON COLUMN "baseten".foreignkey.dstnspname IS 'Referenced namespace''s name';
-COMMENT ON COLUMN "baseten".foreignkey.dstrelname IS 'Referenced table''s name';
-COMMENT ON COLUMN "baseten".foreignkey.dstfnames IS 'Referenced columns'' names';
 REVOKE ALL PRIVILEGES ON "baseten".foreignkey FROM PUBLIC;
 GRANT SELECT ON "baseten".foreignkey TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".oneto_fk AS
+CREATE VIEW "baseten".oneto_fk AS
 SELECT
 	conoid,
 	name						AS name,
@@ -357,7 +450,7 @@ SELECT
 	true 		AS isinverse,
 	srcisunique	AS istoone
 FROM "baseten".foreignkey
-UNION
+UNION ALL
 SELECT
     conoid,
 	srcrelname || '_' || name	AS name,
@@ -375,14 +468,11 @@ SELECT
 	false						AS isinverse,
 	srcisunique					AS istoone
 FROM "baseten".foreignkey;
-COMMENT ON VIEW "baseten".oneto_fk IS 'One-to-many relationships with foreign key names';
-COMMENT ON COLUMN "baseten".oneto_fk.isinverse IS 'If true for one-to-manys, relationship is many-to-one';
-COMMENT ON COLUMN "baseten".oneto_fk.istoone IS 'If true, relationship is one-to-one';
 REVOKE ALL PRIVILEGES ON "baseten".oneto_fk FROM PUBLIC;
 GRANT SELECT ON "baseten".oneto_fk TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".manytomany_fk AS
+CREATE VIEW "baseten".manytomany_fk AS
 SELECT
 	f1.conoid		AS fk1,
 	f2.conoid		AS fk2,
@@ -412,12 +502,42 @@ INNER JOIN "baseten".fkeypkeycount c ON (
 	c.conrelid = f1.srcoid AND
 	c.count = 2
 );
-COMMENT ON VIEW "baseten".manytomany_fk IS 'Many-to-many relationships';
 REVOKE ALL PRIVILEGES ON "baseten".manytomany_fk FROM PUBLIC;
 GRANT SELECT ON "baseten".manytomany_fk TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".nameconflict1 AS
+CREATE VIEW "baseten".relationship_fk AS
+	SELECT
+		-- These three are sort of a primary key.
+		conoid AS fk1,
+		NULL::OID AS fk2,
+		false AS ismanytomany,
+		
+		srcoid, 
+		dstoid,
+		srcfnames, 
+		dstfnames,
+		isinverse,
+		istoone
+	FROM baseten.oneto_fk
+	UNION ALL
+	SELECT
+		fk1,
+		fk2,
+		true AS ismanytomany,
+		
+		srcoid, 
+		dstoid, 
+		srcfnames, 
+		dstfnames,
+		false AS isinverse,
+		false AS istoone
+	FROM baseten.manytomany_fk;
+REVOKE ALL PRIVILEGES ON "baseten".relationship_fk FROM PUBLIC;
+GRANT SELECT ON "baseten".relationship_fk TO basetenread;
+
+
+CREATE VIEW "baseten".nameconflict1 AS
 SELECT
 	srcoid,
 	dstoid,
@@ -430,7 +550,7 @@ SELECT
 	ARRAY [name] 				AS relationship_names
 FROM "baseten".oneto_fk
 WHERE srcnsp = dstnsp
-UNION
+UNION ALL
 SELECT
 	srcoid,
 	dstoid,
@@ -446,8 +566,9 @@ WHERE srcnsp = dstnsp;
 REVOKE ALL PRIVILEGES ON "baseten".nameconflict1 FROM PUBLIC;
 GRANT SELECT ON "baseten".nameconflict1 TO basetenread;
 
-
-CREATE OR REPLACE VIEW "baseten".nameconflict AS
+ 
+-- Name conflicts for table relationships
+CREATE VIEW "baseten".nameconflict AS
 SELECT
 	srcoid,
 	dstoid,
@@ -469,7 +590,7 @@ REVOKE ALL PRIVILEGES ON "baseten".nameconflict FROM PUBLIC;
 GRANT SELECT ON "baseten".nameconflict TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".oneto_ AS
+CREATE VIEW "baseten".oneto_ AS
 SELECT
 	conoid,
 	name,
@@ -485,7 +606,7 @@ SELECT
 	isinverse,
 	istoone
 FROM "baseten".oneto_fk
-UNION
+UNION ALL
 SELECT
 	fk.conoid,
 	n1.dstrelname,
@@ -515,7 +636,7 @@ REVOKE ALL PRIVILEGES ON "baseten".oneto_ FROM PUBLIC;
 GRANT SELECT ON "baseten".oneto_ TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".onetoone AS
+CREATE VIEW "baseten".onetoone AS
 SELECT *
 FROM "baseten".oneto_
 WHERE istoone = true;
@@ -523,7 +644,7 @@ REVOKE ALL PRIVILEGES ON "baseten".onetoone FROM PUBLIC;
 GRANT SELECT ON "baseten".onetoone TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".onetomany AS
+CREATE VIEW "baseten".onetomany AS
 SELECT *
 FROM "baseten".oneto_
 WHERE istoone = false;
@@ -531,7 +652,7 @@ REVOKE ALL PRIVILEGES ON "baseten".onetomany FROM PUBLIC;
 GRANT SELECT ON "baseten".onetomany TO basetenread;
 
 
-CREATE OR REPLACE VIEW "baseten".manytomany AS
+CREATE VIEW "baseten".manytomany AS
 SELECT
 	fk1,
 	fk2,
@@ -550,7 +671,7 @@ SELECT
 	helperrelname,
 	helperfnames
 FROM "baseten".manytomany_fk
-UNION
+UNION ALL
 SELECT
 	fk.fk1,
 	fk.fk2,
@@ -583,6 +704,90 @@ REVOKE ALL PRIVILEGES ON "baseten".manytomany FROM PUBLIC;
 GRANT SELECT ON "baseten".manytomany TO basetenread;
 
 
+CREATE FUNCTION "baseten".srcdstview ()
+	RETURNS SETOF "baseten".relationship_fk AS $$
+DECLARE
+	retval "baseten".relationship_fk;
+BEGIN
+	FOR retval IN SELECT * FROM "baseten".relationship_fk r
+	LOOP
+		FOR retval.srcoid, retval.dstoid IN 
+			SELECT m1.*, m2.*
+			FROM "baseten".matchingviews (retval.srcoid, retval.srcfnames) m1
+			CROSS JOIN "baseten".matchingviews (retval.dstoid, retval.dstfnames) m2
+		LOOP
+			RETURN NEXT retval;
+		END LOOP;
+	END LOOP;
+	RETURN;
+END;
+$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".srcdstview () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".srcdstview () TO basetenread;
+
+
+CREATE TABLE "baseten".srcdstview AS SELECT * FROM "baseten".srcdstview () LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten".srcdstview FROM PUBLIC;
+GRANT SELECT ON "baseten".srcdstview TO basetenread;
+
+
+CREATE VIEW "baseten".relationship_vv AS
+	SELECT v1.*, 
+		c1.relname AS name,
+		c2.relname AS inversename
+	FROM "baseten".srcdstview () v1
+	INNER JOIN (
+		SELECT srcoid, dstoid,
+			COUNT (srcoid) AS count
+		FROM "baseten".srcdstview ()
+		GROUP BY srcoid, dstoid
+	) v2 ON (
+		v1.srcoid = v2.srcoid AND 
+		v1.dstoid = v2.dstoid
+	) 
+	INNER JOIN pg_class c1 ON (c1.oid = v1.dstoid)
+	INNER JOIN pg_class c2 ON (c2.oid = v2.srcoid)
+	WHERE (1 = v2.count AND c1.relnamespace = c2.relnamespace);
+
+
+CREATE TABLE "baseten".relationship_v AS SELECT * FROM "baseten".relationship_vv LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten".relationship_v FROM PUBLIC;
+GRANT SELECT ON "baseten".relationship_v TO basetenread;
+				
+
+CREATE VIEW "baseten".oneto_v AS
+	SELECT
+		fk1				AS conoid,
+		name,
+		inversename,
+		srcoid,
+		srcfnames,
+		dstoid,
+		dstfnames,
+		isinverse,
+		istoone
+	FROM "baseten".relationship_v
+	WHERE ismanytomany = false;
+REVOKE ALL PRIVILEGES ON "baseten".oneto_v FROM PUBLIC;
+GRANT SELECT ON "baseten".oneto_v TO basetenread;
+
+
+CREATE VIEW "baseten".manytomany_v AS
+	SELECT
+		fk1,
+		fk2,
+		name,
+		inversename,
+		srcoid,
+		srcfnames,
+		dstoid,
+		dstfnames
+	FROM "baseten".relationship_v
+	WHERE ismanytomany = true;
+REVOKE ALL PRIVILEGES ON "baseten".manytomany_v FROM PUBLIC;
+GRANT SELECT ON "baseten".manytomany_v TO basetenread;
+
+
 -- For modification tracking
 CREATE TABLE "baseten".Modification (
     "baseten_modification_id" INTEGER PRIMARY KEY,
@@ -593,7 +798,7 @@ CREATE TABLE "baseten".Modification (
     "baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
 );
 CREATE SEQUENCE "baseten".modification_id_seq CYCLE OWNED BY "baseten".Modification."baseten_modification_id";
-CREATE OR REPLACE FUNCTION "baseten".SetModificationId () RETURNS TRIGGER AS $$
+CREATE FUNCTION "baseten".SetModificationId () RETURNS TRIGGER AS $$
 BEGIN
 	NEW."baseten_modification_id" = nextval ('baseten.modification_id_seq');
 	RETURN NEW;
@@ -625,7 +830,7 @@ COMMIT; -- Schema and classes
 
 BEGIN; -- Functions
 
-CREATE OR REPLACE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
+CREATE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
     SELECT 0.913::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".Version () IS 'Schema version';
@@ -634,7 +839,7 @@ GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
 
 
 
-CREATE OR REPLACE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
+CREATE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
     SELECT 0.12::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".CompatibilityVersion () IS 'Schema compatibility version';
@@ -643,7 +848,7 @@ GRANT EXECUTE ON FUNCTION "baseten".CompatibilityVersion () TO basetenread;
 
 
 -- Clears lock marks for this connection
-CREATE OR REPLACE FUNCTION "baseten".ClearLocks () RETURNS VOID AS $$ 
+CREATE FUNCTION "baseten".ClearLocks () RETURNS VOID AS $$ 
     UPDATE "baseten".Lock SET "baseten_lock_cleared" = true, "baseten_lock_timestamp" = CURRENT_TIMESTAMP 
     WHERE "baseten_lock_backend_pid" = pg_backend_pid ()
         AND "baseten_lock_timestamp" < CURRENT_TIMESTAMP;
@@ -654,7 +859,7 @@ GRANT EXECUTE ON FUNCTION "baseten".ClearLocks () TO basetenuser;
 
 
 -- Step back lock marks
-CREATE OR REPLACE FUNCTION "baseten".LocksStepBack () RETURNS VOID AS $$ 
+CREATE FUNCTION "baseten".LocksStepBack () RETURNS VOID AS $$ 
     UPDATE "baseten".Lock SET "baseten_lock_cleared" = true, "baseten_lock_timestamp" = CURRENT_TIMESTAMP 
     WHERE baseten_lock_backend_pid = pg_backend_pid () 
         AND "baseten_lock_savepoint_idx" = 
@@ -670,7 +875,7 @@ GRANT EXECUTE ON FUNCTION "baseten".LocksStepBack () TO basetenuser;
 
 -- Returns schemaname.tablename corresponding to the given oid.
 -- Raises an exception, if given an invalid oid.
-CREATE OR REPLACE FUNCTION "baseten".TableName (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".TableName (OID) RETURNS TEXT AS $$
 DECLARE
     oid ALIAS FOR $1;
     name TEXT;
@@ -684,12 +889,12 @@ BEGIN
     END IF;
     RETURN name;
 END;
-$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".TableName (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".TableName (OID) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".TableName1 (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".TableName1 (OID) RETURNS TEXT AS $$
 DECLARE
     oid ALIAS FOR $1;
     name TEXT;
@@ -703,35 +908,35 @@ BEGIN
     END IF;
     RETURN name;
 END;
-$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".TableName1 (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".TableName1 (OID) TO basetenread;
 
 
 -- Replaces each underscore with two, each period with an underscore 
 -- and removes double quotes
-CREATE OR REPLACE FUNCTION "baseten".SerializedTableName (TEXT) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".SerializedTableName (TEXT) RETURNS TEXT AS $$
     SELECT replace (replace (replace ($1, '_', '__'), '.', '_'), '"', '');
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".SerializedTableName (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".SerializedTableName (TEXT) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".SerializedTableName (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".SerializedTableName (OID) RETURNS TEXT AS $$
     SELECT "baseten".SerializedTableName ("baseten".TableName1 ($1));
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".SerializedTableName (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".SerializedTableName (OID) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".ModificationTableName1 (TEXT) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ModificationTableName1 (TEXT) RETURNS TEXT AS $$
     SELECT 'modification_' || $1;
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName1 (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName1 (TEXT) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".ModificationTableName1 (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ModificationTableName1 (OID) RETURNS TEXT AS $$
     SELECT "baseten".ModificationTableName1 ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName1 (OID) FROM PUBLIC;
@@ -740,14 +945,14 @@ GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName1 (OID) TO basetenread;
 
 -- Returns the corresponding table where modifications are stored
 -- Expects that the given table name is serialized
-CREATE OR REPLACE FUNCTION "baseten".ModificationTableName (TEXT) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ModificationTableName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ("baseten".ModificationTableName1 ($1));
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName (TEXT) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".ModificationTableName (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ModificationTableName (OID) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ("baseten".ModificationTableName1 ($1));
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableName (OID) FROM PUBLIC;
@@ -755,7 +960,7 @@ GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName (OID) TO basetenread;
 
 
 -- Expects that the given table name is the modification table name
-CREATE OR REPLACE FUNCTION "baseten".ModResultTableName (TEXT) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ModResultTableName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten_' || "baseten".ModificationTableName1 ($1) || '_result');
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModResultTableName (TEXT) FROM PUBLIC;
@@ -763,14 +968,14 @@ GRANT EXECUTE ON FUNCTION "baseten".ModResultTableName (TEXT) TO basetenread;
 
 
 -- Expects that the given table name is serialized
-CREATE OR REPLACE FUNCTION "baseten".LockNotifyFunctionName (TEXT) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".LockNotifyFunctionName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ('LockNotify_' || $1);
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockNotifyFunctionName (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".LockNotifyFunctionName (TEXT) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".LockNotifyFunctionName (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".LockNotifyFunctionName (OID) RETURNS TEXT AS $$
     SELECT "baseten".LockNotifyFunctionName ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockNotifyFunctionName (OID) FROM PUBLIC;
@@ -778,14 +983,14 @@ GRANT EXECUTE ON FUNCTION "baseten".LockNotifyFunctionName (OID) TO basetenread;
 
 
 -- Expects that the given table name is serialized
-CREATE OR REPLACE FUNCTION "baseten".LockTableName (TEXT) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".LockTableName (TEXT) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ('lock_' || $1);
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockTableName (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".LockTableName (TEXT) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".LockTableName (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".LockTableName (OID) RETURNS TEXT AS $$
     SELECT "baseten".LockTableName ("baseten".SerializedTableName ($1));
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".LockTableName (OID) FROM PUBLIC;
@@ -794,7 +999,7 @@ GRANT EXECUTE ON FUNCTION "baseten".LockTableName (OID) TO basetenread;
 
 -- Returns the modification rule name associated with the given operation,
 -- which should be one of insert, update and delete
-CREATE OR REPLACE FUNCTION "baseten".ModificationRuleName (TEXT)
+CREATE FUNCTION "baseten".ModificationRuleName (TEXT)
 RETURNS TEXT AS $$
     SELECT 'basetenModification_' || upper ($1);
 $$ IMMUTABLE LANGUAGE SQL;
@@ -809,7 +1014,7 @@ GRANT EXECUTE ON FUNCTION "baseten".ModificationRuleName (TEXT) TO basetenread;
 -- WHERE "baseten_modification_timestamp" IS NULL 
 --     AND ("baseten_modification_backend_pid" != pg_backend_pid () OR pg_xact_status = 'IDLE');
 -- Also, if the connection is not autocommitting, we might end up doing some unnecessary work.
-CREATE OR REPLACE FUNCTION "baseten".ModificationTableCleanup () RETURNS VOID AS $$
+CREATE FUNCTION "baseten".ModificationTableCleanup () RETURNS VOID AS $$
     DELETE FROM "baseten".Modification 
         WHERE "baseten_modification_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes';
     UPDATE "baseten".Modification SET "baseten_modification_timestamp" = clock_timestamp ()
@@ -821,7 +1026,7 @@ GRANT EXECUTE ON FUNCTION "baseten".ModificationTableCleanup () TO basetenread;
 
 -- Removes tracked locks for which a backend no longer exists
 -- FIXME: add a check to the function to ensure that the connection is autocommitting
-CREATE OR REPLACE FUNCTION "baseten".LockTableCleanup () RETURNS VOID AS $$ 
+CREATE FUNCTION "baseten".LockTableCleanup () RETURNS VOID AS $$ 
     DELETE FROM "baseten".Lock
         WHERE ("baseten_lock_timestamp" < pg_postmaster_start_time ()) -- Locks cannot be older than postmaster
             OR ("baseten_lock_backend_pid" NOT IN  (SELECT pid FROM "baseten".running_backend_pids () AS r (pid))) -- Locks have to be owned by a running backend
@@ -832,7 +1037,7 @@ GRANT EXECUTE ON FUNCTION "baseten".LockTableCleanup () TO basetenread;
 
 
 -- TEXT parameter needs to be the serialized table name
-CREATE OR REPLACE FUNCTION "baseten".ModifyInsertFunctionName (OID)
+CREATE FUNCTION "baseten".ModifyInsertFunctionName (OID)
 RETURNS TEXT AS $$
     SELECT quote_ident ('baseten') || '.' || quote_ident ('ModifyInsert_' || "baseten".SerializedTableName ($1));
 $$ IMMUTABLE LANGUAGE SQL;
@@ -841,7 +1046,7 @@ GRANT EXECUTE ON FUNCTION "baseten".ModifyInsertFunctionName (OID) TO basetenrea
 
 
 -- A trigger function for notifying the front ends and removing old tracked modifications
-CREATE OR REPLACE FUNCTION "baseten".NotifyForModification () RETURNS TRIGGER AS $$
+CREATE FUNCTION "baseten".NotifyForModification () RETURNS TRIGGER AS $$
 BEGIN
     EXECUTE 'NOTIFY ' || quote_ident (baseten.ModificationTableName (TG_ARGV [0]));
     RETURN NEW;
@@ -851,7 +1056,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".NotifyForModification () FROM PUBLIC
 
 
 -- A trigger function for notifying the front ends and removing old tracked locks
-CREATE OR REPLACE FUNCTION "baseten".NotifyForLock () RETURNS TRIGGER AS $$
+CREATE FUNCTION "baseten".NotifyForLock () RETURNS TRIGGER AS $$
 BEGIN
     PERFORM "baseten".LockTableCleanup ();
     EXECUTE 'NOTIFY ' || quote_ident (baseten.LockTableName (TG_ARGV [0]));
@@ -861,18 +1066,18 @@ $$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".NotifyForLock () FROM PUBLIC;
 
 
-CREATE OR REPLACE FUNCTION "baseten".IsObservingCompatible (OID) RETURNS boolean AS $$
+CREATE FUNCTION "baseten".IsObservingCompatible (OID) RETURNS boolean AS $$
     SELECT EXISTS (SELECT c.oid FROM pg_class c, pg_namespace n 
         WHERE c.relnamespace = n.oid 
             AND c.relname = "baseten".ModificationTableName1 ($1)
             AND n.nspname = 'baseten');
-$$ STABLE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ STABLE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
 COMMENT ON FUNCTION "baseten".IsObservingCompatible (OID) IS 'Checks for observing compatibility. Returns a boolean.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".IsObservingCompatible (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".IsObservingCompatible (OID) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".VerifyObservingCompatibility (OID) RETURNS VOID AS $$
+CREATE FUNCTION "baseten".VerifyObservingCompatibility (OID) RETURNS VOID AS $$
 DECLARE
     tableoid ALIAS FOR $1;
 BEGIN
@@ -882,14 +1087,13 @@ BEGIN
     RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
-COMMENT ON FUNCTION "baseten".VerifyObservingCompatibility (OID) IS 'Verifies observing compatibility. Throws on failure.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".VerifyObservingCompatibility (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".VerifyObservingCompatibility (OID) TO basetenread;
 
 
 -- A convenience function for observing modifications
 -- Subscribes the caller to receive the approppriate notification
-CREATE OR REPLACE FUNCTION "baseten".ObserveModifications (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ObserveModifications (OID) RETURNS TEXT AS $$
 DECLARE
     tableoid ALIAS FOR $1;
     nname TEXT;
@@ -905,7 +1109,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ObserveModifications (OID) FROM PUBL
 GRANT EXECUTE ON FUNCTION "baseten".ObserveModifications (OID) TO basetenread;
 
 
-CREATE OR REPLACE FUNCTION "baseten".StopObservingModifications (OID) RETURNS VOID AS $$
+CREATE FUNCTION "baseten".StopObservingModifications (OID) RETURNS VOID AS $$
 DECLARE 
     tableoid ALIAS FOR $1;
 BEGIN
@@ -921,7 +1125,7 @@ GRANT EXECUTE ON FUNCTION "baseten".StopObservingModifications (OID) TO basetenr
 
 -- A convenience function for observing locks
 -- Subscribes the caller to receive the approppriate notification
-CREATE OR REPLACE FUNCTION "baseten".ObserveLocks (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ObserveLocks (OID) RETURNS TEXT AS $$
 DECLARE
     tableoid ALIAS FOR $1;
     nname TEXT;
@@ -939,12 +1143,12 @@ BEGIN
     EXECUTE 'LISTEN ' || quote_ident (nname);
     RETURN nname;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ObserveLocks (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".ObserveLocks (OID) TO basetenuser;
 
 
-CREATE OR REPLACE FUNCTION "baseten".StopObservingLocks (OID) RETURNS VOID AS $$
+CREATE FUNCTION "baseten".StopObservingLocks (OID) RETURNS VOID AS $$
 DECLARE 
     tableoid ALIAS FOR $1;
 BEGIN
@@ -957,7 +1161,7 @@ GRANT EXECUTE ON FUNCTION "baseten".StopObservingLocks (OID) TO basetenuser;
 
 
 -- Remove the modification tracking table, rules and the trigger
-CREATE OR REPLACE FUNCTION "baseten".CancelModificationObserving (OID) RETURNS "baseten".TableType AS $$
+CREATE FUNCTION "baseten".CancelModificationObserving (OID) RETURNS "baseten".TableType AS $$
 DECLARE
     tableoid ALIAS FOR $1;
     tablename TEXT;
@@ -983,7 +1187,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CancelModificationObserving (OID) FR
 
 
 -- A helper function
-CREATE OR REPLACE FUNCTION "baseten".PrepareForModificationObserving1 (TEXT, OID, NAME, NAME [], BOOLEAN) 
+CREATE FUNCTION "baseten".PrepareForModificationObserving1 (TEXT, OID, NAME, NAME [], BOOLEAN) 
 RETURNS VOID AS $marker$
 DECLARE
     querytype   TEXT DEFAULT $1;
@@ -1046,7 +1250,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION
 
 -- Another helper function
 -- Create a function that retrieves only significant rows from the modification table
-CREATE OR REPLACE FUNCTION "baseten".PrepareForModificationObserving2 (OID, TEXT) 
+CREATE FUNCTION "baseten".PrepareForModificationObserving2 (OID, TEXT) 
 RETURNS VOID AS $marker$
 DECLARE
     fdecl       TEXT;           -- Function declaration
@@ -1165,7 +1369,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving2 (OI
 -- Creates a table for tracking modifications to the given table.
 -- The table inherits "baseten".Modification.
 -- Also, rules and a trigger are created to track the changes.
-CREATE OR REPLACE FUNCTION "baseten".PrepareForModificationObserving (OID) RETURNS "baseten".TableType AS $marker$
+CREATE FUNCTION "baseten".PrepareForModificationObserving (OID) RETURNS "baseten".TableType AS $marker$
 DECLARE
     toid        ALIAS FOR $1;   -- Relation OID
     pkeyfields  RECORD;
@@ -1265,6 +1469,17 @@ END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
 COMMENT ON FUNCTION "baseten".PrepareForModificationObserving (OID) IS 'BaseTen-enables a relation';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving (OID) FROM PUBLIC;
+	
+
+CREATE FUNCTION "baseten".refreshcaches () RETURNS void AS $$
+	TRUNCATE "baseten".viewdependency, "baseten".srcdstview, "baseten".relationship_v;
+	INSERT INTO "baseten".viewdependency SELECT * from "baseten".viewdependency_v;
+	INSERT INTO "baseten".srcdstview SELECT * FROM "baseten".srcdstview ();
+	INSERT INTO "baseten".relationship_v SELECT * FROM "baseten".relationship_vv;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refreshcaches () FROM PUBLIC;
+-- Only table owner for now.
+
 
 GRANT basetenread TO basetenuser;
 COMMIT; -- Functions
