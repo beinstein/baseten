@@ -515,8 +515,10 @@ CREATE VIEW "baseten".relationship_fk AS
 		
 		srcoid, 
 		dstoid,
+		NULL::OID AS helperoid,
 		srcfnames, 
 		dstfnames,
+		NULL::NAME [] AS helperfnames,
 		isinverse,
 		istoone
 	FROM baseten.oneto_fk
@@ -528,8 +530,10 @@ CREATE VIEW "baseten".relationship_fk AS
 		
 		srcoid, 
 		dstoid, 
+		helperoid,
 		srcfnames, 
 		dstfnames,
+		helperfnames,
 		false AS isinverse,
 		false AS istoone
 	FROM baseten.manytomany_fk;
@@ -733,20 +737,29 @@ GRANT SELECT ON "baseten".srcdstview TO basetenread;
 
 CREATE VIEW "baseten".relationship_vv AS
 	SELECT v1.*, 
-		c1.relname AS name,
-		c2.relname AS inversename
-	FROM "baseten".srcdstview () v1
+		c2.relname	AS name,
+		c1.relname	AS inversename,
+		n1.nspname	AS srcnspname,
+		c1.relname	AS srcrelname,
+		n1.nspname	AS dstnspname,
+		c2.relname	AS dstrelname,
+		n3.nspname	AS helpernspname,
+		c3.relname	AS helperrelname
+	FROM "baseten".srcdstview v1
 	INNER JOIN (
 		SELECT srcoid, dstoid,
 			COUNT (srcoid) AS count
-		FROM "baseten".srcdstview ()
+		FROM "baseten".srcdstview
 		GROUP BY srcoid, dstoid
 	) v2 ON (
 		v1.srcoid = v2.srcoid AND 
 		v1.dstoid = v2.dstoid
 	) 
-	INNER JOIN pg_class c1 ON (c1.oid = v1.dstoid)
-	INNER JOIN pg_class c2 ON (c2.oid = v2.srcoid)
+	INNER JOIN pg_class c1 ON (c1.oid = v1.srcoid)
+	INNER JOIN pg_class c2 ON (c2.oid = v1.dstoid)
+	INNER JOIN pg_namespace n1 ON (c1.relnamespace = n1.oid)
+	LEFT JOIN pg_class c3 ON (c3.oid = v1.helperoid)
+	LEFT JOIN pg_namespace n3 ON (c3.relnamespace = n3.oid)
 	WHERE (1 = v2.count AND c1.relnamespace = c2.relnamespace);
 
 
@@ -1478,7 +1491,7 @@ CREATE FUNCTION "baseten".refreshcaches () RETURNS void AS $$
 	INSERT INTO "baseten".relationship_v SELECT * FROM "baseten".relationship_vv;
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refreshcaches () FROM PUBLIC;
--- Only table owner for now.
+-- Only owner for now.
 
 
 GRANT basetenread TO basetenuser;
