@@ -77,6 +77,10 @@
 		53596CCE0A37148B009C39E9 /* BXEntityDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 533229E40A024C2500BDB151 /* BXEntityDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53596CCF0A37148B009C39E9 /* BXEntityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 533229E30A024C2500BDB151 /* BXEntityDescription.m */; };
 		53596CF60A3714AC009C39E9 /* datatypeassociations.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53596CF50A3714AC009C39E9 /* datatypeassociations.plist */; };
+		5359D1870C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359D1850C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5359D1880C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */; };
+		5359D18D0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5359D18E0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359D18C0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m */; };
 		537E98390AAF538B00542F9C /* BXContainerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98370AAF538B00542F9C /* BXContainerProxy.h */; };
 		537E983A0AAF538C00542F9C /* BXContainerProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E98380AAF538B00542F9C /* BXContainerProxy.m */; };
 		537E983B0AAF538C00542F9C /* BXContainerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98370AAF538B00542F9C /* BXContainerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -326,6 +330,10 @@
 		5339AB920A7542EC00994B1A /* BXException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXException.m; path = Sources/BXException.m; sourceTree = "<group>"; };
 		5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectIDPrivate.h; path = Sources/BXDatabaseObjectIDPrivate.h; sourceTree = "<group>"; };
 		53596CF50A3714AC009C39E9 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xml; name = datatypeassociations.plist; path = Dependencies/PGTS/Framework/datatypeassociations.plist; sourceTree = "<group>"; };
+		5359D1850C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXOneToOneRelationshipDescription.h; path = Sources/BXOneToOneRelationshipDescription.h; sourceTree = "<group>"; };
+		5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOneToOneRelationshipDescription.m; path = Sources/BXOneToOneRelationshipDescription.m; sourceTree = "<group>"; };
+		5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXManyToManyRelationshipDescription.h; path = Sources/BXManyToManyRelationshipDescription.h; sourceTree = "<group>"; };
+		5359D18C0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXManyToManyRelationshipDescription.m; path = Sources/BXManyToManyRelationshipDescription.m; sourceTree = "<group>"; };
 		5368D60F0A3711C800D136DC /* BaseTen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537E98370AAF538B00542F9C /* BXContainerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXContainerProxy.h; path = Sources/BXContainerProxy.h; sourceTree = "<group>"; };
 		537E98380AAF538B00542F9C /* BXContainerProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXContainerProxy.m; path = Sources/BXContainerProxy.m; sourceTree = "<group>"; };
@@ -496,6 +504,10 @@
 		5328FB7F0C457DB9006DE171 /* Relationships */ = {
 			isa = PBXGroup;
 			children = (
+				5359D1850C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h */,
+				5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */,
+				5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */,
+				5359D18C0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m */,
 				5328FB7D0C457DAF006DE171 /* BXRelatedObjectContainer.h */,
 				5328FB7E0C457DAF006DE171 /* BXRelatedObjectContainer.m */,
 				5328FBD40C4580CD006DE171 /* BXForeignKey.h */,
@@ -666,6 +678,8 @@
 				539EDD810C46243100B6E5EC /* BXAttributeDescriptionPrivate.h in Headers */,
 				5389E1A30C464107002714B8 /* BXRelationshipDescriptionPrivate.h in Headers */,
 				5389E1FA0C465449002714B8 /* BXForeignKeyPrivate.h in Headers */,
+				5359D1870C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h in Headers */,
+				5359D18D0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -982,6 +996,8 @@
 				539EDD680C46204300B6E5EC /* BXRelatedObjectContainer.m in Sources */,
 				539EDD6A0C46204500B6E5EC /* BXForeignKey.m in Sources */,
 				539EDD760C46218B00B6E5EC /* BXAttributeDescription.m in Sources */,
+				5359D1880C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m in Sources */,
+				5359D18E0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

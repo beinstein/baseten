@@ -53,6 +53,8 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXForeignKeyPrivate.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "BXOneToOneRelationshipDescription.h"
+#import "BXManyToManyRelationshipDescription.h"
 
 
 static unsigned int savepointIndex;
@@ -860,66 +862,95 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	{
 		[self fetchForeignKeys];
 		
-		NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
-
-		NSString* views [3] = {@"onetomany", @"onetoone", @"manytomany"};
-		for (int i = 0; i < 3; i++)
+		if (NO == [entity isView])
 		{
-			NSString* queryString = [NSString stringWithFormat: queryFormat, views [i]];
-			PGTSResultSet* res = [connection executeQuery: queryString];
-			while ([res advanceRow])
+			NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
+			NSString* views [4] = {@"onetomany", @"onetoone", @"manytomany", @"relationship_v"};
+
+			//Entities between views and between tables and views are stored in a different place.
+			//If given entity is a view, we only need to check those.
+			int i = 0;
+			if ([entity isView])
+				i = 3;
+			
+			for (int i = 0; i < 4; i++)
 			{
-				switch (i)
+				NSString* queryString = [NSString stringWithFormat: queryFormat, views [i]];
+				PGTSResultSet* res = [connection executeQuery: queryString parameters:
+					[entity schemaName], [entity name]];
+				while ([res advanceRow])
 				{
-					//One-to-many
-					case 0:
+					id rel = nil;
+					NSString* name = [res valueForKey: @"name"];
+					NSString* inverseName = [res valueForKey: @"inversename"];
+					BXEntityDescription* dst = [context entityForTable: [res valueForKey: @"dstrelname"] 
+															  inSchema: [res valueForKey: @"dstnspname"] 
+																 error: error];
+					if (nil != *error) goto bail;
+					
+					int kind = i;
+					if (kind == 3)
 					{
-						NSString* name = [res valueForKey: @"name"];
-						BXRelationshipDescription* rel = [[BXRelationshipDescription alloc] initWithName: name entity: entity];
-						
-						BXEntityDescription* dst = [context entityForTable: [res valueForKey: @"dstrelname"] 
-																  inSchema: [res valueForKey: @"dstnspname"] 
-																	 error: error];
-						if (nil != *error) goto bail;
-						
-						[rel setDestinationEntity: dst];
-						[rel setIsToMany: ![[res valueForKey: @"ismanytoone"] boolValue]];
-						[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
+						if ([[res valueForKey: @"ismanytomany"] boolValue])
+							kind = 2;
+						else if ([[res valueForKey: @"istoone"] boolValue])
+							kind = 1;
+						else
+							kind = 0;
+					}
+					
+					switch (kind)
+					{
+						//One-to-many
+						case 0:
+						{
+							rel = [[BXRelationshipDescription alloc] initWithName: name entity: entity];
+							//Fall through
+						}
+							
+							//One-to-one
+						case 1:
+						{
+							if (nil == rel)
+								rel = [[BXOneToOneRelationshipDescription alloc] initWithName: name entity: entity];
+							
+							[rel setIsToMany: ![[res valueForKey: @"isinverse"] boolValue]];
+							[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
+							break;
+						}
+							
+							//Many-to-many
+						case 2:
+						{
+							BXEntityDescription* helper = [context entityForTable: [res valueForKey: @"helperrelname"] 
+																		 inSchema: [res valueForKey: @"helpernspname"] 
+																			error: error];
+							if (nil != *error) goto bail;
+							
+							rel = [[BXManyToManyRelationshipDescription alloc] initWithName: name entity: entity];
+							
+							[rel setSrcForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"srcfk"]]];
+							[rel setDstForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"dstfk"]]];
+							
+							[rel setHelperEntity: helper];
+							break;
+						}
+							
+						default:
+							break;
+					}
+					
+					if (nil != rel)
+					{
+						[rel setInverseName: inverseName];
+						[(BXRelationshipDescription *) rel setDestinationEntity: dst];
 						
 						[retval addObject: rel];
 						[rel release];
-						break;
-					}
-						
-					//One-to-one
-					case 1:
-					{
-						break;
-					}
-						
-					//Many-to-many
-					case 2:
-					{
-						break;
 					}
 				}
 			}
 		}
-		
-		//One-to-one
-		{
-#if 0
-			NSString* queryString = [NSString stringWithFormat: queryFormat, @"onetoone"];
-#endif
-		}
-		
-		//Many-to-many
-		{
-#if 0
-			NSString* queryString = [NSString stringWithFormat: queryFormat, @"manytomany"];
-#endif
-		}
-		
 	}
 	@catch (PGTSException* exception)
 	{

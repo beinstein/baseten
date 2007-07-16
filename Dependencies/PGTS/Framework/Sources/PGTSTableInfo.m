@@ -328,7 +328,7 @@
 {
     if ('v' == [self kind] && nil == relationOidsBasedOn)
     {
-        NSString* query = @"SELECT reloid FROM \"" PGTS_SCHEMA_NAME "\".viewdependencies WHERE viewoid = $1";
+        NSString* query = @"SELECT reloid FROM \"" PGTS_SCHEMA_NAME "\".viewdependency WHERE viewoid = $1";
         PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
         NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
         while (([res advanceRow]))

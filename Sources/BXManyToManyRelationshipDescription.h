@@ -1,5 +1,5 @@
 //
-// BXRelationshipDescriptionPrivate.h
+// BXManyToManyRelationshipDescription.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,12 +26,16 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
 #import <BaseTen/BXRelationshipDescription.h>
 
 
-@interface BXRelationshipDescription (PrivateMethods)
-- (void) setDestinationEntity: (BXEntityDescription *) entity;
-- (void) setForeignKey: (BXForeignKey *) aKey;
-- (void) setIsToMany: (BOOL) aBool;
-- (void) setInverseName: (NSString *) aString;
+@interface BXManyToManyRelationshipDescription : BXRelationshipDescription {
+
+}
+
+- (void) setSrcForeignKey: (BXForeignKey *) aKey;
+- (void) setDstForeignKey: (BXForeignKey *) aKey;
+- (void) setHelperEntity: (BXEntityDescription *) anEntity;
+
 @end

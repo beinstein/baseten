@@ -23,7 +23,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id$
+// $Id: BXRelationshipDescription.m 225 2007-07-12 08:33:55Z tuukka.norri@karppinen.fi $
 //
 
 #import "BXRelationshipDescription.h"
@@ -113,6 +113,11 @@
 - (void) setIsToMany: (BOOL) aBool
 {
 	mIsToMany = aBool;
+}
+
+- (void) setInverseName: (NSString *) aString
+{
+	//FIXME: stub.
 }
 
 @end

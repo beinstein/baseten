@@ -1,5 +1,5 @@
 //
-// BXRelationshipDescriptionPrivate.h
+// BXOneToOneRelationshipDescription.m
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,12 +26,9 @@
 // $Id$
 //
 
-#import <BaseTen/BXRelationshipDescription.h>
+#import "BXOneToOneRelationshipDescription.h"
 
 
-@interface BXRelationshipDescription (PrivateMethods)
-- (void) setDestinationEntity: (BXEntityDescription *) entity;
-- (void) setForeignKey: (BXForeignKey *) aKey;
-- (void) setIsToMany: (BOOL) aBool;
-- (void) setInverseName: (NSString *) aString;
+@implementation BXOneToOneRelationshipDescription
+
 @end
