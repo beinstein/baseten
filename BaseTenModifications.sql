@@ -840,7 +840,7 @@ GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
 
 
 CREATE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
-    SELECT 0.12::NUMERIC;
+    SELECT 0.13::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".CompatibilityVersion () IS 'Schema compatibility version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CompatibilityVersion () FROM PUBLIC;
