@@ -474,8 +474,8 @@ GRANT SELECT ON "baseten".oneto_fk TO basetenread;
 
 CREATE VIEW "baseten".manytomany_fk AS
 SELECT
-	f1.conoid		AS fk1,
-	f2.conoid		AS fk2,
+	f1.conoid		AS srcfk,
+	f2.conoid		AS dstfk,
 	f1.name			AS name,
 	f2.name			AS inversename,
 	f1.dstoid 		AS srcoid,
@@ -509,8 +509,8 @@ GRANT SELECT ON "baseten".manytomany_fk TO basetenread;
 CREATE VIEW "baseten".relationship_fk AS
 	SELECT
 		-- These three are sort of a primary key.
-		conoid AS fk1,
-		NULL::OID AS fk2,
+		conoid AS srcfk,
+		NULL::OID AS dstfk,
 		false AS ismanytomany,
 		
 		srcoid, 
@@ -522,8 +522,8 @@ CREATE VIEW "baseten".relationship_fk AS
 	FROM baseten.oneto_fk
 	UNION ALL
 	SELECT
-		fk1,
-		fk2,
+		srcfk,
+		dstfk,
 		true AS ismanytomany,
 		
 		srcoid, 
@@ -654,8 +654,8 @@ GRANT SELECT ON "baseten".onetomany TO basetenread;
 
 CREATE VIEW "baseten".manytomany AS
 SELECT
-	fk1,
-	fk2,
+	srcfk,
+	dstfk,
 	name,
 	inversename,
 	srcoid,
@@ -673,8 +673,8 @@ SELECT
 FROM "baseten".manytomany_fk
 UNION ALL
 SELECT
-	fk.fk1,
-	fk.fk2,
+	fk.srcfk,
+	fk.dstfk,
 	n1.dstrelname AS name,
 	COALESCE (n2.dstrelname, fk.inversename) AS inversename,
 	fk.srcoid,
@@ -757,7 +757,7 @@ GRANT SELECT ON "baseten".relationship_v TO basetenread;
 
 CREATE VIEW "baseten".oneto_v AS
 	SELECT
-		fk1				AS conoid,
+		srcfk				AS conoid,
 		name,
 		inversename,
 		srcoid,
@@ -774,8 +774,8 @@ GRANT SELECT ON "baseten".oneto_v TO basetenread;
 
 CREATE VIEW "baseten".manytomany_v AS
 	SELECT
-		fk1,
-		fk2,
+		srcfk,
+		dstfk,
 		name,
 		inversename,
 		srcoid,
