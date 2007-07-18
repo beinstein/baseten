@@ -222,7 +222,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
         logsQueries = NO;
         clearedLocks = NO;
         state = kBXPGQueryIdle;
-		mForeignKeys = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -930,8 +929,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 							
 							rel = [[BXManyToManyRelationshipDescription alloc] initWithName: name entity: entity];
 							
-							[rel setSrcForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"srcfk"]]];
-							[rel setDstForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"dstfk"]]];
+							[rel setSrcForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
+							[rel setDstForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"dstconoid"]]];
 							
 							[rel setHelperEntity: helper];
 							break;
@@ -1575,7 +1574,7 @@ bail:
 	if (nil == mForeignKeys)
 	{
 		mForeignKeys = [[NSMutableDictionary alloc] init];
-		NSString* query = @"SELECT * from baseten.foreignkeys";
+		NSString* query = @"SELECT * from baseten.foreignkey";
 		PGTSResultSet* res = [connection executeQuery: query];
 		while (([res advanceRow]))
 		{

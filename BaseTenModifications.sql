@@ -134,7 +134,7 @@ BEGIN
     END LOOP;
     RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL;
+$$ IMMUTABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES 
 	ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
 
@@ -144,14 +144,14 @@ RETURNS SETOF INTEGER AS $$
     SELECT 
         pg_stat_get_backend_pid (idset.id) AS pid 
     FROM pg_stat_get_backend_idset () AS idset (id);
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".running_backend_pids () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".running_backend_pids () TO basetenread;
 
 
 CREATE FUNCTION "baseten".LockNextId () RETURNS BIGINT AS $$
     SELECT nextval ('basetenlocksequence');
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".LockNextId () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".LockNextId () TO basetenuser;
 
@@ -179,7 +179,7 @@ GRANT EXECUTE ON FUNCTION "baseten".TableType (OID, TEXT) TO basetenread;
 
 
 -- Debugging helper
-CREATE FUNCTION "baseten".oidof (TEXT, TEXT) RETURNS SETOF "baseten".tabletype AS $$
+CREATE FUNCTION "baseten".oidof (TEXT, TEXT) RETURNS "baseten".tabletype AS $$
 	SELECT c.oid, c.relname::TEXT
 	FROM pg_class c
 	INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
@@ -474,8 +474,8 @@ GRANT SELECT ON "baseten".oneto_fk TO basetenread;
 
 CREATE VIEW "baseten".manytomany_fk AS
 SELECT
-	f1.conoid		AS srcfk,
-	f2.conoid		AS dstfk,
+	f1.conoid,
+	f2.conoid		AS dstconoid,
 	f1.name			AS name,
 	f2.name			AS inversename,
 	f1.dstoid 		AS srcoid,
@@ -509,8 +509,8 @@ GRANT SELECT ON "baseten".manytomany_fk TO basetenread;
 CREATE VIEW "baseten".relationship_fk AS
 	SELECT
 		-- These three are sort of a primary key.
-		conoid AS srcfk,
-		NULL::OID AS dstfk,
+		conoid,
+		NULL::OID AS dstconoid,
 		false AS ismanytomany,
 		
 		srcoid, 
@@ -524,8 +524,8 @@ CREATE VIEW "baseten".relationship_fk AS
 	FROM baseten.oneto_fk
 	UNION ALL
 	SELECT
-		srcfk,
-		dstfk,
+		conoid,
+		dstconoid,
 		true AS ismanytomany,
 		
 		srcoid, 
@@ -658,8 +658,8 @@ GRANT SELECT ON "baseten".onetomany TO basetenread;
 
 CREATE VIEW "baseten".manytomany AS
 SELECT
-	srcfk,
-	dstfk,
+	conoid,
+	dstconoid,
 	name,
 	inversename,
 	srcoid,
@@ -677,8 +677,8 @@ SELECT
 FROM "baseten".manytomany_fk
 UNION ALL
 SELECT
-	fk.srcfk,
-	fk.dstfk,
+	fk.conoid,
+	fk.dstconoid,
 	n1.dstrelname AS name,
 	COALESCE (n2.dstrelname, fk.inversename) AS inversename,
 	fk.srcoid,
@@ -770,7 +770,7 @@ GRANT SELECT ON "baseten".relationship_v TO basetenread;
 
 CREATE VIEW "baseten".oneto_v AS
 	SELECT
-		srcfk				AS conoid,
+		conoid,
 		name,
 		inversename,
 		srcoid,
@@ -787,8 +787,8 @@ GRANT SELECT ON "baseten".oneto_v TO basetenread;
 
 CREATE VIEW "baseten".manytomany_v AS
 	SELECT
-		srcfk,
-		dstfk,
+		conoid,
+		dstconoid,
 		name,
 		inversename,
 		srcoid,
@@ -1431,6 +1431,7 @@ BEGIN
         || ' INHERITS ("baseten".Lock)';
     EXECUTE 'REVOKE ALL PRIVILEGES ON ' || ltablename || ' FROM PUBLIC';
     EXECUTE 'GRANT SELECT ON ' || ltablename || ' TO basetenread';
+    EXECUTE 'GRANT INSERT ON ' || ltablename || ' TO basetenuser';
 
     -- Trigger for the _lock_ table
     EXECUTE 'CREATE TRIGGER "basetenLockRow" AFTER INSERT ON ' || ltablename
@@ -1448,7 +1449,7 @@ BEGIN
     -- FIXME: add a check to the function to ensure that the connection is autocommitting
     fargs := ' (CHAR (1), BIGINT, ' || array_to_string (pkeyfields.type, ', ') || ')';
     EXECUTE 'CREATE OR REPLACE FUNCTION ' || lfname || fargs || ' '
-        || ' RETURNS VOID AS $$ ' || fcode || ' $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER';
+        || ' RETURNS VOID AS $$ ' || fcode || ' $$ VOLATILE LANGUAGE SQL';
     EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || lfname || fargs || ' FROM PUBLIC';
     EXECUTE 'GRANT EXECUTE ON FUNCTION '         || lfname || fargs || ' TO basetenuser';
         

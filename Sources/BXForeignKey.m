@@ -57,8 +57,8 @@
 @implementation BXForeignKey (PrivateMethods)
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName
 {
-	log4AssertVoidReturn (nil == srcFName, @"Expected srcFName not to be nil.");
-	log4AssertVoidReturn (nil == dstFName, @"Expected dstFName not to be nil.");
+	log4AssertVoidReturn (nil != srcFName, @"Expected srcFName not to be nil.");
+	log4AssertVoidReturn (nil != dstFName, @"Expected dstFName not to be nil.");
 	[mFieldNames addObject: [NSArray arrayWithObjects: srcFName, dstFName, nil]];
 }
 
