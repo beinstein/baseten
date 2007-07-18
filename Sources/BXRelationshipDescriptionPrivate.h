@@ -28,10 +28,21 @@
 
 #import <BaseTen/BXRelationshipDescription.h>
 
+@class BXForeignKey;
+@class BXDatabaseObject;
 
 @interface BXRelationshipDescription (PrivateMethods)
+- (BXForeignKey *) foreignKey;
 - (void) setDestinationEntity: (BXEntityDescription *) entity;
 - (void) setForeignKey: (BXForeignKey *) aKey;
 - (void) setIsToMany: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
+- (BOOL) affectManySideWithObject: (BXDatabaseObject *) anObject;
+
+//Remember to override these in subclasses.
+- (id) targetForObject: (BXDatabaseObject *) anObject error: (NSError **) error;
+- (void) setTarget: (id) anObject
+		 forObject: (BXDatabaseObject *) aDatabaseObject
+			 error: (NSError **) error;
+
 @end

@@ -88,6 +88,7 @@ enum BXObjectLockStatus
 	BOOL						mNeedsToAwake;
 }
 
+- (BXEntityDescription *) entity;
 - (BXDatabaseObjectID *) objectID;
 - (BXDatabaseContext *) databaseContext;
 

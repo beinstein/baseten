@@ -34,4 +34,8 @@
     id mObject;
 }
 
++ (id) containerWithObject: (id) anObject;
+- (void) setObject: (id) anObject;
+- (id) object;
+
 @end

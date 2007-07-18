@@ -58,5 +58,5 @@ enum BXDatabaseObjectKeyType
 - (void) awakeFromFetchIfNeeded;
 - (NSArray *) keysIncludedInQuery: (id) aKey;
 - (void) awakeFromInsertIfNeeded;
-- (enum BXDatabaseObjectKeyType) keyType: (NSString *) aKey error: (NSError **) error;
+- (enum BXDatabaseObjectKeyType) keyType: (NSString *) aKey;
 @end

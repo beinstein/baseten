@@ -30,10 +30,14 @@
 #import <BaseTen/BXRelationshipDescription.h>
 
 
-@interface BXManyToManyRelationshipDescription : BXRelationshipDescription {
-
+@interface BXManyToManyRelationshipDescription : BXRelationshipDescription 
+{
+	BXForeignKey* mDstForeignKey;
+	BXEntityDescription* mHelperEntity;
 }
 
+- (BXForeignKey *) srcForeignKey;
+- (BXForeignKey *) dstForeignKey;
 - (void) setSrcForeignKey: (BXForeignKey *) aKey;
 - (void) setDstForeignKey: (BXForeignKey *) aKey;
 - (void) setHelperEntity: (BXEntityDescription *) anEntity;

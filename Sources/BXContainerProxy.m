@@ -237,4 +237,10 @@
     }
 }
 
+- (id) copyWithZone: (NSZone *) aZone
+{
+	//Retain on copy.
+	return [self retain];
+}
+
 @end

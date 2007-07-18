@@ -79,5 +79,6 @@ enum BXEntityFlag
   forRelationshipNamed: (NSString *) relationshipName;
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
 - (BOOL) isValidated;
+- (NSDictionary *) relationshipsByName;
 //FIXME: add -hasRelationships?
 @end

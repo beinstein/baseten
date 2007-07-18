@@ -28,6 +28,13 @@
 
 #import <BaseTen/BXForeignKey.h>
 
+@class BXEntityDescription;
+
 @interface BXForeignKey (PrivateMethods)
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
+
+- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
+							  dstEntity: (BXEntityDescription *) dstEntity;
+- (NSArray *) srcFieldNames;
+- (NSArray *) dstFieldNames;
 @end

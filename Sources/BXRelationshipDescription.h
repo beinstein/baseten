@@ -23,7 +23,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id$
+// $Id: BXRelationshipDescription.h 225 2007-07-12 08:33:55Z tuukka.norri@karppinen.fi $
 //
 
 #import <Foundation/Foundation.h>
@@ -42,6 +42,7 @@
     BXEntityDescription* mDestinationEntity; //Weak
 
 	BXForeignKey* mForeignKey;
+	NSString* mInverseName;
 	BOOL mIsToMany;
 }
 

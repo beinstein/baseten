@@ -70,14 +70,14 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 
 @interface NSPredicate (BXDatabaseAdditions)
 + (NSPredicate *) BXAndPredicateWithProperties: (NSArray *) properties
-                             matchingProperties: (NSArray *) otherProperties
-                                           type: (NSPredicateOperatorType) type;
+							matchingProperties: (NSArray *) otherProperties
+										  type: (NSPredicateOperatorType) type;
 + (NSPredicate *) BXOrPredicateWithProperties: (NSArray *) properties
                             matchingProperties: (NSArray *) otherProperites
                                           type: (NSPredicateOperatorType) type;
 + (NSArray *) BXSubpredicatesForProperties: (NSArray *) properties
-                         matchingProperties: (NSArray *) otherProperties
-                                       type: (NSPredicateOperatorType) type;
+						matchingProperties: (NSArray *) otherProperties
+									  type: (NSPredicateOperatorType) type;
 - (NSArray *) BXEntities;
 - (NSSet *) BXEntitySet;
 - (BOOL) BXEvaluateWithObject: (id) anObject;
@@ -114,6 +114,7 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 @interface NSArray (BXDatabaseAdditions)
 - (BOOL) BXContainsObjectsInArray: (NSArray *) anArray;
 - (NSArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate others: (NSMutableArray *) otherArray;
++ (NSArray *) BXNullArray: (unsigned int) count;
 @end
 
 

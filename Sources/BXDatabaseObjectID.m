@@ -507,6 +507,7 @@ bail:
     return mLastModificationType;
 }
 
+#if 0
 - (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view
 {
     log4AssertValueReturn ([view isView], nil, @"Expected given entity (%@) to be a view.", view);
@@ -516,6 +517,7 @@ bail:
     NSArray* values = [self objectsForKeys: myKeys];
     return [[self class] IDWithEntity: view primaryKeyFields: [NSDictionary dictionaryWithObjects: values forKeys: keys]];
 }
+#endif
 
 - (void) setStatus: (enum BXObjectDeletionStatus) status forObjectRegisteredInContext: (BXDatabaseContext *) context
 {

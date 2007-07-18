@@ -26,9 +26,12 @@
 // $Id$
 //
 
+#import <Log4Cocoa/Log4Cocoa.h>
+
 #import "BXForeignKey.h"
 #import "BXForeignKeyPrivate.h"
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "BXEntityDescription.h"
+#import "BXDatabaseAdditions.h"
 
 
 @implementation BXForeignKey
@@ -57,5 +60,44 @@
 	log4AssertVoidReturn (nil == srcFName, @"Expected srcFName not to be nil.");
 	log4AssertVoidReturn (nil == dstFName, @"Expected dstFName not to be nil.");
 	[mFieldNames addObject: [NSArray arrayWithObjects: srcFName, dstFName, nil]];
+}
+
+- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
+							  dstEntity: (BXEntityDescription *) dstEntity
+{
+	log4AssertValueReturn (nil != srcEntity, nil, @"Expected srcEntity to be set.");
+	log4AssertValueReturn (nil != dstEntity, nil, @"Expected dstEntity to be set.");
+	
+	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
+	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	{
+		NSExpression* lhs = [NSExpression expressionForConstantValue: [currentFieldArray objectAtIndex: 0]];
+		NSExpression* rhs = [NSExpression expressionForConstantValue: [currentFieldArray objectAtIndex: 1]];
+		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
+																	rightExpression: rhs
+																		   modifier: NSDirectPredicateModifier
+																			   type: NSEqualToPredicateOperatorType 
+																			options: 0];
+		[subPredicates addObject: predicate];
+	}
+	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];
+}
+
+- (NSArray *) srcFieldNames
+{
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
+	TSEnumerate (currentFName, e, [mFieldNames objectEnumerator])
+		[retval addObject: currentFName];
+	
+	return retval;
+}
+
+- (NSArray *) dstFieldNames
+{
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
+	TSEnumerate (currentFName, e, [mFieldNames objectEnumerator])
+		[retval addObject: currentFName];
+	
+	return retval;
 }
 @end

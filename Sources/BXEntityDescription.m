@@ -404,6 +404,10 @@ static NSMutableSet* gViewEntities;
 	return mFlags & kBXEntityIsValidated;
 }
 
+- (NSDictionary *) relationshipsByName
+{
+	return mRelationships;
+}
 @end
 
 

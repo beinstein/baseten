@@ -27,8 +27,19 @@
 //
 
 #import "BXOneToOneRelationshipDescription.h"
+#import "BXDatabaseObject.h"
 
 
 @implementation BXOneToOneRelationshipDescription
+
+- (BOOL) affectManySideWithObject: (BXDatabaseObject *) anObject
+{
+	return [[anObject entity] isEqual: [self entity]];
+}
+
+- (BOOL) isToMany
+{
+	return NO;
+}
 
 @end

@@ -473,6 +473,16 @@
     return rval;
 }
 
++ (NSArray *) BXNullArray: (unsigned int) count
+{
+	id* buffer = alloca (count * sizeof (id));
+	for (unsigned int i = 0; i < count; i++)
+		buffer [i] = [NSNull null];
+	
+	NSArray* rval = [NSArray arrayWithObjects: buffer count: count];
+	return rval;
+}
+
 @end
 
 

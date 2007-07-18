@@ -31,6 +31,13 @@
 
 @implementation BXRelatedObjectContainer
 
++ (id) containerWithObject: (id) anObject
+{
+	id retval = [[[self alloc] init] autorelease];
+	[retval setObject: anObject];
+	return retval;
+}
+
 - (void) dealloc
 {
     [mObject release];
