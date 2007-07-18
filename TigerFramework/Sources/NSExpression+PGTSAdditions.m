@@ -43,6 +43,9 @@ AddParameter (id parameter, NSMutableDictionary* context)
 {
     NSCAssert (nil != context, @"Expected context not to be nil");
     NSString* rval = nil;
+	if (nil == parameter)
+		parameter = [NSNull null];
+	
 	if (YES == [[context objectForKey: kPGTSExpressionParametersVerbatimKey] boolValue])
 	{
 		PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
