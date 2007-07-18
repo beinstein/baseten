@@ -1,8 +1,8 @@
 //
-// ForeignKeyTests.h
+// ForeignKeyModificationTests.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -30,7 +30,7 @@
 @class BXDatabaseContext;
 
 
-@interface ForeignKeyTests : SenTestCase 
+@interface ForeignKeyModificationTests : SenTestCase 
 {
     BXDatabaseContext* context;
     BXEntityDescription* test1;
@@ -49,9 +49,9 @@
 	BXEntityDescription* mtmrel1;
 }
 
-- (void) many: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
-- (void) one: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity;
-- (void) one: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2;
-- (void) many: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2;
-- (void) MTMHelper: (BXEntityDescription *) entity;
+- (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
+- (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity;
+- (void) modOne: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2;
+- (void) remove1: (BXEntityDescription *) oneEntity;
+- (void) remove2: (BXEntityDescription *) oneEntity;
 @end

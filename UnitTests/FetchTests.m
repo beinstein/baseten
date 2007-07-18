@@ -91,52 +91,6 @@
     STAssertEqualObjects ([object valueForKey: @"value"], nil, @"Database is not in known state!");
 }
 
-- (void) testView
-{
-    NSString* value = @"value";
-    NSString* oldValue = nil;
-    [context setAutocommits: YES];
-
-    BXEntityDescription* viewEntity = [context entityForTable: @"test_v" error: nil];
-#if 0
-    [viewEntity viewIsBasedOnEntities: [NSSet setWithObject: entity]];
-    [viewEntity setPrimaryKeyFields: [NSArray arrayWithObject:
-        [BXPropertyDescription propertyWithName: @"id" entity: viewEntity]]];
-#endif
-    
-    NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = 1"];
-    MKCAssertNotNil (predicate);
-    
-    NSError* error = nil;
-    NSArray* res = [context executeFetchForEntity: entity withPredicate: predicate error: &error];
-    STAssertNil (error, [[error userInfo] objectForKey: kBXErrorMessageKey]);
-    MKCAssertNotNil (res);
-    MKCAssertTrue (1 == [res count]);
-    
-    NSArray* res2 = [context executeFetchForEntity: viewEntity withPredicate: predicate error: &error];
-    STAssertNil (error, [[error userInfo] objectForKey: kBXErrorMessageKey]);
-    MKCAssertNotNil (res);
-    MKCAssertTrue (1 == [res count]);
-    
-    BXDatabaseObject* object = [res objectAtIndex: 0];
-    BXDatabaseObject* viewObject = [res2 objectAtIndex: 0];
-    MKCAssertFalse ([object isFaultKey: nil]);
-    MKCAssertFalse ([viewObject isFaultKey: nil]);
-    oldValue = [object valueForKey: @"value"];
-    MKCAssertEqualObjects ([object valueForKey: @"id"], [viewObject valueForKey: @"id"]);
-    MKCAssertEqualObjects (oldValue, [viewObject valueForKey: @"value"]);
-    
-    [object setValue: value forKey: @"value"];
-    [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
-    MKCAssertTrue ([viewObject isFaultKey: nil]);
-    MKCAssertEqualObjects ([viewObject valueForKey: @"value"], value);
-    
-    //Clean up
-    [object setValue: oldValue forKey: @"value"];
-    
-    [context setAutocommits: NO];
-}
-
 - (void) testMultiColumnPkey
 {
     NSError* error = nil;
@@ -228,7 +182,7 @@
 {
 	NSError* error = nil;
 	NSString* fieldname = @"value";
-	BXPropertyDescription* property = [[entity attributesByName] objectForKey: fieldname];
+	BXAttributeDescription* property = [[entity attributesByName] objectForKey: fieldname];
 	MKCAssertFalse ([property isExcluded]);
 
 	NSArray* result = [context executeFetchForEntity: entity withPredicate: nil 
@@ -244,7 +198,7 @@
 	STAssertNil (error, [error localizedDescription]);
 	MKCAssertTrue (0 == [object isFaultKey: fieldname]);
 	
-	[entity resetPropertyExclusion];
+	[entity resetAttributeExclusion];
 }
 
 - (void) testJoin

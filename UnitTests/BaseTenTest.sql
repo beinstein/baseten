@@ -347,5 +347,7 @@ INSERT INTO fkeytest_add (id, value) VALUES (1, 'fkeytest_add');
 GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add_rel TO baseten_test_user;
 
+SELECT baseten.refreshcaches ();
+
 COMMIT;
 
