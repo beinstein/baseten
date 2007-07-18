@@ -29,10 +29,19 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXAbstractDescription.h>
 
+@class BXEntityDescription;
+@class BXDatabaseObject;
 
 @interface BXForeignKey : BXAbstractDescription 
 {
 	NSMutableSet* mFieldNames;
 }
+- (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
+- (NSArray *) srcFieldNames;
+- (NSArray *) dstFieldNames;
 
+- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject;
+- (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;
+- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
+							  dstEntity: (BXEntityDescription *) dstEntity;	
 @end

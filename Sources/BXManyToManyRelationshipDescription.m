@@ -31,9 +31,10 @@
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
-#import "BXForeignKeyPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContextPrivate.h"
+#import "BXSetHelperTableRelationProxy.h"
+#import "BXForeignKey.h"
 
 
 @implementation BXManyToManyRelationshipDescription
@@ -43,6 +44,12 @@
 	[mDstForeignKey release];
 	[mHelperEntity release];
 	[super dealloc];
+}
+
+- (NSString *) description
+{
+	return [NSString stringWithFormat: @"<%@ (%p) name: %@ entity: %@ destinationEntity: %@ helperEntity: %@>",
+		[self class], self, [self name], [self entity], [self destinationEntity], mHelperEntity];
 }
 
 - (BXForeignKey *) srcForeignKey
@@ -84,35 +91,17 @@
 	log4AssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
 	log4AssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil,
 						  @"Expected aDatabaseObject entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
-
-	BXEntityDescription* targetEntity = mHelperEntity;
-
-	//Make some key arrays for use with queries.
-	NSArray* srcHelperKeyNames = [[self srcForeignKey] srcFieldNames];
-	NSArray* dstHelperKeyNames = [[self dstForeignKey] srcFieldNames];
-	NSArray* srcObjectKeyNames = [[self srcForeignKey] dstFieldNames];
-	NSArray* dstObjectKeyNames = [[self dstForeignKey] dstFieldNames];	
 	
-	NSDictionary* helperAttributes = [mHelperEntity attributesByName];
-	NSArray* srcValues = [aDatabaseObject valuesForKeys: srcObjectKeyNames];
-	NSArray* srcHelperKeys = [helperAttributes objectsForKeys: srcHelperKeyNames notFoundMarker: nil];
-	NSArray* dstHelperKeys = [helperAttributes objectsForKeys: dstHelperKeyNames notFoundMarker: nil];
-	NSArray* dstObjectKeys = [[[self destinationEntity] attributesByName] objectsForKeys: dstObjectKeyNames notFoundMarker: nil];
-	NSPredicate* helperSrcPredicate = [NSPredicate BXAndPredicateWithProperties: srcHelperKeys
-															 matchingProperties: srcValues
-																		   type: NSEqualToPredicateOperatorType];
-	NSPredicate* helperDstPredicate = [NSPredicate BXAndPredicateWithProperties: dstHelperKeys
-															 matchingProperties: dstObjectKeys
-																		   type: NSEqualToPredicateOperatorType];
+	NSPredicate* helperSrcPredicate = [[self srcForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: aDatabaseObject];
+	NSPredicate* helperDstPredicate = [[self dstForeignKey] predicateForSrcEntity: mHelperEntity dstEntity: [self destinationEntity]];
 	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: 
 		[NSArray arrayWithObjects: helperSrcPredicate, helperDstPredicate, nil]];
 	
-	//FIXME: should returnedClass be self-updating?
-	NSSet* res = [[aDatabaseObject databaseContext] executeFetchForEntity: targetEntity
+	NSSet* res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
 															withPredicate: predicate 
 														  returningFaults: YES
 														  excludingFields: nil
-															returnedClass: [NSMutableSet class]
+															returnedClass: [BXSetHelperTableRelationProxy class]
 																	error: error];
 	
 	return res;

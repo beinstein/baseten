@@ -32,10 +32,10 @@
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
 #import "BXForeignKey.h"
-#import "BXForeignKeyPrivate.h"
 #import "BXDatabaseContext.h"
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseAdditions.h"
+#import "BXSetRelationProxy.h"
 
 @implementation BXRelationshipDescription
 
@@ -43,6 +43,12 @@
 {
 	[mForeignKey release];
 	[super dealloc];
+}
+
+- (NSString *) description
+{
+	return [NSString stringWithFormat: @"<%@ (%p) name: %@ entity: %@ destinationEntity: %@>",
+		[self class], self, [self name], [self entity], [self destinationEntity]];
 }
 
 - (BXEntityDescription *) destinationEntity
@@ -141,38 +147,39 @@
 {
 	log4AssertValueReturn (NULL != error, nil , @"Expected error to be set.");
 	log4AssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
+	log4AssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil, 
+						   @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
 
 	id retval = nil;
-	BXEntityDescription* targetEntity = nil;
-	BXEntityDescription* otherEntity = nil;
+	NSPredicate* predicate = nil;
 	
 	if ([self affectManySideWithObject: aDatabaseObject])
 	{
-		targetEntity = [self entity];
-		otherEntity = [self destinationEntity];
+		//We want to select from foreign key's src entity, which is our destination entity.
+		predicate = [mForeignKey predicateForSrcEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
 	}
 	else
 	{
-		targetEntity = [self destinationEntity];
-		otherEntity = [self entity];
+		//We want to select from foreign key's dst entity, which is our destination entity as well.
+		predicate = [mForeignKey predicateForDstEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
 	}
 	
-	log4AssertValueReturn ([otherEntity isEqual: [aDatabaseObject entity]], nil, 
-						   @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
-	
-	//Expression order doesn't actually matter.
-	//FIXME: should returnedClass be self-updating?
-	NSPredicate* predicate = [mForeignKey predicateForSrcEntity: targetEntity dstEntity: otherEntity];
-	NSSet* res = [[aDatabaseObject databaseContext] executeFetchForEntity: targetEntity
+	//Expression order matters since foreign key is always in src table or view.
+	NSSet* res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
 															withPredicate: predicate 
 														  returningFaults: YES
 														  excludingFields: nil
-															returnedClass: [NSMutableSet class]
+															returnedClass: [BXSetRelationProxy class]
 																	error: error];
 	if ([self isToMany])
 		retval = res;
-	else if (0 < [res count])
-		retval = [res anyObject];
+	else
+	{
+		if (0 < [res count])
+			retval = [res anyObject];
+		else
+			retval = [NSNull null];
+	}
 	return retval;
 }
 
@@ -206,6 +213,7 @@
 		//FIXME: these should be inside a transaction. Use the undo manager?
 		[aDatabaseObject willChangeValueForKey: name];
 		
+		//FIXME: we need attribute descriptions instead of strings.
 		NSPredicate* predicate = [removedObjects BXOrPredicateForObjects];
 		NSArray* values = [NSArray BXNullArray: [keys count]];
 		[[aDatabaseObject databaseContext] executeUpdateEntity: targetEntity

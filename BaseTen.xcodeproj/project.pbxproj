@@ -315,8 +315,6 @@
 		5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = Dependencies/PGTS/Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = "<group>"; };
 		5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
 		5328FB6C0C457AC4006DE171 /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelationshipDescription.m; path = Sources/BXRelationshipDescription.m; sourceTree = "<group>"; };
-		5328FB7D0C457DAF006DE171 /* BXRelatedObjectContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelatedObjectContainer.h; path = Sources/BXRelatedObjectContainer.h; sourceTree = "<group>"; };
-		5328FB7E0C457DAF006DE171 /* BXRelatedObjectContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelatedObjectContainer.m; path = Sources/BXRelatedObjectContainer.m; sourceTree = "<group>"; };
 		5328FBD40C4580CD006DE171 /* BXForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKey.h; path = Sources/BXForeignKey.h; sourceTree = "<group>"; };
 		5328FBD50C4580CD006DE171 /* BXForeignKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXForeignKey.m; path = Sources/BXForeignKey.m; sourceTree = "<group>"; };
 		532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; lineEnding = 0; name = BXConnectionSetupManagerProtocol.h; path = Sources/BXConnectionSetupManagerProtocol.h; sourceTree = "<group>"; };
@@ -506,8 +504,6 @@
 				5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */,
 				5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */,
 				5359D18C0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m */,
-				5328FB7D0C457DAF006DE171 /* BXRelatedObjectContainer.h */,
-				5328FB7E0C457DAF006DE171 /* BXRelatedObjectContainer.m */,
 				5328FBD40C4580CD006DE171 /* BXForeignKey.h */,
 				5389E1F90C465449002714B8 /* BXForeignKeyPrivate.h */,
 				5328FBD50C4580CD006DE171 /* BXForeignKey.m */,

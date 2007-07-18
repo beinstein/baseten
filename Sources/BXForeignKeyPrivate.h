@@ -31,10 +31,8 @@
 @class BXEntityDescription;
 
 @interface BXForeignKey (PrivateMethods)
-- (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
-
-- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
-							  dstEntity: (BXEntityDescription *) dstEntity;
-- (NSArray *) srcFieldNames;
-- (NSArray *) dstFieldNames;
+- (NSPredicate *) predicateForEntity: (BXEntityDescription *) entity 
+					  valuesInObject: (BXDatabaseObject *) anObject
+						 entityIndex: (unsigned int) ei 
+						 objectIndex: (unsigned int) oi;
 @end

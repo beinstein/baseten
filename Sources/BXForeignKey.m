@@ -32,6 +32,7 @@
 #import "BXForeignKeyPrivate.h"
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
+#import "BXDatabaseObject.h"
 
 
 @implementation BXForeignKey
@@ -51,36 +52,11 @@
 	[super dealloc];
 }
 
-@end
-
-
-@implementation BXForeignKey (PrivateMethods)
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName
 {
 	log4AssertVoidReturn (nil != srcFName, @"Expected srcFName not to be nil.");
 	log4AssertVoidReturn (nil != dstFName, @"Expected dstFName not to be nil.");
 	[mFieldNames addObject: [NSArray arrayWithObjects: srcFName, dstFName, nil]];
-}
-
-- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
-							  dstEntity: (BXEntityDescription *) dstEntity
-{
-	log4AssertValueReturn (nil != srcEntity, nil, @"Expected srcEntity to be set.");
-	log4AssertValueReturn (nil != dstEntity, nil, @"Expected dstEntity to be set.");
-	
-	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
-	{
-		NSExpression* lhs = [NSExpression expressionForConstantValue: [currentFieldArray objectAtIndex: 0]];
-		NSExpression* rhs = [NSExpression expressionForConstantValue: [currentFieldArray objectAtIndex: 1]];
-		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
-																	rightExpression: rhs
-																		   modifier: NSDirectPredicateModifier
-																			   type: NSEqualToPredicateOperatorType 
-																			options: 0];
-		[subPredicates addObject: predicate];
-	}
-	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];
 }
 
 - (NSArray *) srcFieldNames
@@ -100,4 +76,75 @@
 	
 	return retval;
 }
+
+- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject
+{
+	return [self predicateForEntity: srcEntity valuesInObject: anObject entityIndex: 0 objectIndex: 1];
+}
+
+- (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject
+{
+	return [self predicateForEntity: dstEntity valuesInObject: anObject entityIndex: 1 objectIndex: 0];
+}
+
+- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
+							  dstEntity: (BXEntityDescription *) dstEntity
+{
+	log4AssertValueReturn (nil != srcEntity, nil, @"Expected srcEntity to be set.");
+	log4AssertValueReturn (nil != dstEntity, nil, @"Expected dstEntity to be set.");
+	
+	NSDictionary* srcAttributes = [srcEntity attributesByName];
+	NSDictionary* dstAttributes = [dstEntity attributesByName];
+	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
+	
+	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	{
+		BXAttributeDescription* lhAttribute = [srcAttributes objectForKey: [currentFieldArray objectAtIndex: 0]];
+		BXAttributeDescription* rhAttribute = [dstAttributes objectForKey: [currentFieldArray objectAtIndex: 1]];
+		NSExpression* lhs = [NSExpression expressionForConstantValue: lhAttribute];
+		NSExpression* rhs = [NSExpression expressionForConstantValue: rhAttribute];
+		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
+																	rightExpression: rhs
+																		   modifier: NSDirectPredicateModifier
+																			   type: NSEqualToPredicateOperatorType 
+																			options: 0];
+		[subPredicates addObject: predicate];
+	}
+	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];
+}
+
+
+@end
+
+
+@implementation BXForeignKey (PrivateMethods)
+
+- (NSPredicate *) predicateForEntity: (BXEntityDescription *) entity 
+					  valuesInObject: (BXDatabaseObject *) anObject
+						 entityIndex: (unsigned int) ei 
+						 objectIndex: (unsigned int) oi
+{
+	log4AssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
+	
+	NSDictionary* attributes = [entity attributesByName];
+	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
+	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	{
+		id entityKey = [currentFieldArray objectAtIndex: ei];
+		id objectKey = [currentFieldArray objectAtIndex: oi];
+		BXAttributeDescription* attribute = [attributes objectForKey: entityKey];
+		id value = [anObject primitiveValueForKey: objectKey];
+		
+		NSExpression* lhs = [NSExpression expressionForConstantValue: attribute];
+		NSExpression* rhs = [NSExpression expressionForConstantValue: value];
+		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
+																	rightExpression: rhs
+																		   modifier: NSDirectPredicateModifier
+																			   type: NSEqualToPredicateOperatorType 
+																			options: 0];
+		[subPredicates addObject: predicate];
+	}
+	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];	
+}
+
 @end

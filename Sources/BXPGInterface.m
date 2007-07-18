@@ -51,11 +51,11 @@
 #import "BXAttributeDescription.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXPropertyDescriptionPrivate.h"
-#import "BXForeignKeyPrivate.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXOneToOneRelationshipDescription.h"
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXEntityDescriptionPrivate.h"
+#import "BXForeignKey.h"
 
 
 static unsigned int savepointIndex;
@@ -862,92 +862,89 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	{
 		[self fetchForeignKeys];
 		
-		if (NO == [entity isView])
+		NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
+		NSString* views [4] = {@"onetomany", @"onetoone", @"manytomany", @"relationship_v"};
+		
+		//Entities between views and between tables and views are stored in a different place.
+		//If given entity is a view, we only need to check those.
+		int i = 0;
+		if ([entity isView])
+			i = 3;
+		
+		for (int i = 0; i < 4; i++)
 		{
-			NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
-			NSString* views [4] = {@"onetomany", @"onetoone", @"manytomany", @"relationship_v"};
-
-			//Entities between views and between tables and views are stored in a different place.
-			//If given entity is a view, we only need to check those.
-			int i = 0;
-			if ([entity isView])
-				i = 3;
-			
-			for (int i = 0; i < 4; i++)
+			NSString* queryString = [NSString stringWithFormat: queryFormat, views [i]];
+			PGTSResultSet* res = [connection executeQuery: queryString parameters:
+				[entity schemaName], [entity name]];
+			while ([res advanceRow])
 			{
-				NSString* queryString = [NSString stringWithFormat: queryFormat, views [i]];
-				PGTSResultSet* res = [connection executeQuery: queryString parameters:
-					[entity schemaName], [entity name]];
-				while ([res advanceRow])
+				id rel = nil;
+				NSString* name = [res valueForKey: @"name"];
+				NSString* inverseName = [res valueForKey: @"inversename"];
+				BXEntityDescription* dst = [context entityForTable: [res valueForKey: @"dstrelname"] 
+														  inSchema: [res valueForKey: @"dstnspname"] 
+															 error: error];
+				if (nil != *error) goto bail;
+				
+				int kind = i;
+				if (kind == 3)
 				{
-					id rel = nil;
-					NSString* name = [res valueForKey: @"name"];
-					NSString* inverseName = [res valueForKey: @"inversename"];
-					BXEntityDescription* dst = [context entityForTable: [res valueForKey: @"dstrelname"] 
-															  inSchema: [res valueForKey: @"dstnspname"] 
-																 error: error];
-					if (nil != *error) goto bail;
-					
-					int kind = i;
-					if (kind == 3)
+					if ([[res valueForKey: @"ismanytomany"] boolValue])
+						kind = 2;
+					else if ([[res valueForKey: @"istoone"] boolValue])
+						kind = 1;
+					else
+						kind = 0;
+				}
+				
+				switch (kind)
+				{
+					//One-to-many
+					case 0:
 					{
-						if ([[res valueForKey: @"ismanytomany"] boolValue])
-							kind = 2;
-						else if ([[res valueForKey: @"istoone"] boolValue])
-							kind = 1;
-						else
-							kind = 0;
+						rel = [[BXRelationshipDescription alloc] initWithName: name entity: entity];
+						//Fall through
 					}
-					
-					switch (kind)
-					{
-						//One-to-many
-						case 0:
-						{
-							rel = [[BXRelationshipDescription alloc] initWithName: name entity: entity];
-							//Fall through
-						}
-							
-							//One-to-one
-						case 1:
-						{
-							if (nil == rel)
-								rel = [[BXOneToOneRelationshipDescription alloc] initWithName: name entity: entity];
-							
-							[rel setIsToMany: ![[res valueForKey: @"isinverse"] boolValue]];
-							[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
-							break;
-						}
-							
-							//Many-to-many
-						case 2:
-						{
-							BXEntityDescription* helper = [context entityForTable: [res valueForKey: @"helperrelname"] 
-																		 inSchema: [res valueForKey: @"helpernspname"] 
-																			error: error];
-							if (nil != *error) goto bail;
-							
-							rel = [[BXManyToManyRelationshipDescription alloc] initWithName: name entity: entity];
-							
-							[rel setSrcForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
-							[rel setDstForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"dstconoid"]]];
-							
-							[rel setHelperEntity: helper];
-							break;
-						}
-							
-						default:
-							break;
-					}
-					
-					if (nil != rel)
-					{
-						[rel setInverseName: inverseName];
-						[(BXRelationshipDescription *) rel setDestinationEntity: dst];
 						
-						[retval setObject: rel forKey: [rel name]];
-						[rel release];
+						//One-to-one
+					case 1:
+					{
+						if (nil == rel)
+							rel = [[BXOneToOneRelationshipDescription alloc] initWithName: name entity: entity];
+						
+						[rel setIsToMany: ![[res valueForKey: @"isinverse"] boolValue]];
+						[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
+						break;
 					}
+						
+						//Many-to-many
+					case 2:
+					{
+						BXEntityDescription* helper = [context entityForTable: [res valueForKey: @"helperrelname"] 
+																	 inSchema: [res valueForKey: @"helpernspname"] 
+																		error: error];
+						if (nil != *error) goto bail;
+						
+						rel = [[BXManyToManyRelationshipDescription alloc] initWithName: name entity: entity];
+						
+						[rel setSrcForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
+						[rel setDstForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"dstconoid"]]];
+						
+						[rel setHelperEntity: helper];
+						break;
+					}
+						
+					default:
+						break;
+				}
+				
+				if (nil != rel)
+				{
+					[rel setInverseName: inverseName];
+					[(BXRelationshipDescription *) rel setDestinationEntity: dst];
+					
+					[retval setObject: rel forKey: [rel name]];
+					[rel release];
 				}
 			}
 		}
