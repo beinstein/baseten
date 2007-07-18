@@ -31,6 +31,8 @@
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObject.h"
+#import "BXRelationshipDescription.h"
+#import "BXRelationshipDescriptionPrivate.h"
 
 
 //Sadly, this is needed to receive the set proxy
@@ -100,60 +102,42 @@
                          change: (NSDictionary *) change
                         context: (void *) context
 {
-    mChanging = YES;
-    switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
-    {
-        case NSKeyValueChangeInsertion:
-        {
-            NSSet* objects = [change objectForKey: NSKeyValueChangeNewKey];
-            BXEntityDescription* entity = [[[objects anyObject] objectID] entity];
-            [mRelationship addObjects: objects
-                        referenceFrom: mReferenceObject
-                                   to: entity
-                                 name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
-                                error: NULL];
-            
-            //For autocommit
-            if ([mContext autocommits])
-            {
-                [[[mContext undoManager] prepareWithInvocationTarget: mRelationship]
-                    removeObjects: objects 
-                    referenceFrom: mReferenceObject 
-                               to: entity 
-                             name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
-                            error: NULL];
-            }
-            break;
-        }
-        case NSKeyValueChangeRemoval:
-        {
-            NSSet* objects = [change objectForKey: NSKeyValueChangeOldKey];
-            BXEntityDescription* entity = [[[objects anyObject] objectID] entity];
-            [mRelationship removeObjects: objects
-                           referenceFrom: mReferenceObject
-                                      to: entity
-                                    name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
-                                   error: NULL];
-            
-            //For autocommit
-            if ([mContext autocommits])
-            {
-                [[[mContext undoManager] prepareWithInvocationTarget: mRelationship]
-                    addObjects: objects 
-                 referenceFrom: mReferenceObject 
-                            to: entity 
-                          name: [mRelationship nameFromEntity: [[mReferenceObject objectID] entity]]
-                         error: NULL];
-            }
-            break;
-        }
-        default:
-            break;
-    }
-    mChanging = NO;
+	NSMutableSet* oldValue = nil;
+	if ([mContext autocommits])
+	{
+		oldValue = [NSMutableSet setWithSet: mContainer];
+		switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
+		{
+			case NSKeyValueChangeInsertion:
+				[oldValue minusSet: [change objectForKey: NSKeyValueChangeNewKey]];
+				break;
+			
+			case NSKeyValueChangeRemoval:
+				[oldValue unionSet: [change objectForKey: NSKeyValueChangeOldKey]];
+				break;
+			
+			default:
+				break;
+		}
+	}
+	[self updateDatabaseWithNewValue: mContainer oldValue: oldValue];
 }
 
-- (void) setRelationship: (id <BXRelationshipDescription>) relationship
+- (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old
+{
+	mChanging = YES;
+	//If context isn't autocommitting, we don't care for the old value since undo and redo happen differently.
+	if ([mContext autocommits])
+	{
+		[[[mContext undoManager] prepareWithInvocationTarget: self]
+			updateDatabaseWithNewValue: old oldValue: new];
+	}
+	
+	[mRelationship setTarget: new forObject: mReferenceObject error: NULL];
+	mChanging = NO;
+}
+
+- (void) setRelationship: (BXRelationshipDescription *) relationship
 {
     if (mRelationship != relationship)
     {

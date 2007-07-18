@@ -371,13 +371,13 @@
     return [[self BXAttribute] entity];
 }
 
-- (BXAttributeDesription *) BXAttribute
+- (BXAttributeDescription *) BXAttribute
 {
-    BXAttributeDesription* rval = nil;
+    BXAttributeDescription* rval = nil;
     if ([self expressionType] == NSConstantValueExpressionType)
     {
         id constantValue = [self constantValue];
-        if ([constantValue isKindOfClass: [BXAttributeDesription class]])
+        if ([constantValue isKindOfClass: [BXAttributeDescription class]])
             rval = constantValue;
     }
     return rval;
@@ -419,7 +419,7 @@
         if (NSConstantValueExpressionType == [expressions [i] expressionType])
         {
             id attribute = [expressions [i] constantValue];
-            if ([attribute isKindOfClass: [BXAttributeDesription class]])
+            if ([attribute isKindOfClass: [BXAttributeDescription class]])
             {
                 createNew = YES;
                 expressions [i] = [NSExpression expressionForConstantValue: 

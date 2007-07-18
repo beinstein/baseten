@@ -33,7 +33,6 @@
 #import <BaseTen/BXDatabaseObject.h>
 
 @protocol BXObjectAsynchronousLocking;
-@protocol BXRelationshipDescription;
 @protocol PGTSConnectionDelegate;
 @protocol PGTSResultRowProtocol;
 @class PGTSConnection;

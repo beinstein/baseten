@@ -42,7 +42,7 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 #define BXSafeCFRelease( CF_VAL ) ( NULL != CF_VAL ? CFRelease( CF_VAL ) : NULL )
 
 @class BXDatabaseObjectID;
-@class BXAttributeDesription;
+@class BXAttributeDescription;
 @class BXEntityDescription;
 
 
@@ -107,7 +107,7 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 
 @interface NSExpression (BXDatabaseAdditions)
 - (BXEntityDescription *) BXEntity;
-- (BXAttributeDesription *) BXAttribute;
+- (BXAttributeDescription *) BXAttribute;
 @end
 
 

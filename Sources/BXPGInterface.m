@@ -55,6 +55,7 @@
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXOneToOneRelationshipDescription.h"
 #import "BXManyToManyRelationshipDescription.h"
+#import "BXEntityDescriptionPrivate.h"
 
 
 static unsigned int savepointIndex;
@@ -851,13 +852,13 @@ static NSString* SSLMode (enum BXSSLMode mode)
     return rval;    
 }
 
-- (NSSet *) relationshipsForEntity: (BXEntityDescription *) entity
-							 error: (NSError **) error
+- (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) entity
+									error: (NSError **) error
 {    
     log4AssertValueReturn (nil != entity, nil, @"Expected to have an entity.");
     log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
     
-	NSMutableSet* retval = [NSMutableSet set];
+	NSMutableDictionary* retval = [NSMutableDictionary dictionary];
 	@try
 	{
 		[self fetchForeignKeys];
@@ -945,7 +946,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						[rel setInverseName: inverseName];
 						[(BXRelationshipDescription *) rel setDestinationEntity: dst];
 						
-						[retval addObject: rel];
+						[retval setObject: rel forKey: [rel name]];
 						[rel release];
 					}
 				}
@@ -1161,7 +1162,14 @@ bail:
 			}
 			[entity setAttributes: attributes];
 		}
-			
+				
+		if ('v' == [tableInfo kind])
+			[entity setIsView: YES];
+		
+		//And relationships
+		[entity setRelationships: [self relationshipsForEntity: entity error: error]];
+		
+#if 0
         //If the entity is a view, set the dependent entities.
         if ('v' == [tableInfo kind] && nil == [entity entitiesBasedOn])
         {
@@ -1181,6 +1189,7 @@ bail:
             }
             [entity viewIsBasedOnEntities: dependentEntities];
         }
+#endif
         
         if (nil != *error) tableInfo = nil;
         [self observeIfNeeded: entity error: error];

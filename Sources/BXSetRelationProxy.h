@@ -30,18 +30,19 @@
 #import <BaseTen/BXSetProxy.h>
 
 
-@protocol BXRelationshipDescription;
 @class BXDatabaseObject;
+@class BXRelationshipDescription;
 
 
 @interface BXSetRelationProxy : BXSetProxy
 {
     id mHelper;
-    id <BXRelationshipDescription> mRelationship;
+    BXRelationshipDescription* mRelationship;
     BXDatabaseObject* mReferenceObject;
 }
 
 - (void) setReferenceObject: (BXDatabaseObject *) aReferenceObject;
-- (void) setRelationship: (id <BXRelationshipDescription>) relationship;
+- (void) setRelationship: (BXRelationshipDescription *) relationship;
+- (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old;
 
 @end

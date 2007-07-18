@@ -52,7 +52,7 @@
 
 - (BXRelationshipDescription *) inverseRelationship
 {
-	return [mDestinationEntity inverseRelationshipFor: self];
+	return [[mDestinationEntity relationshipsByName] objectForKey: mInverseName];
 }
 
 - (NSDeleteRule) deleteRule

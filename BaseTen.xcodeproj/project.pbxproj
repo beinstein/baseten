@@ -54,6 +54,7 @@
 		5339AB960A7542ED00994B1A /* BXException.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339AB920A7542EC00994B1A /* BXException.m */; };
 		533A91590A0B5AAC00E46C4E /* BXAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B872800A0A4CEC007315BC /* BXAbstractDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5347BB520B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		534BA1740C4E0F530094957C /* BXPGCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */; };
 		53596CB90A37147C009C39E9 /* BaseTen.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADD8309ED21EF004A13C3 /* BaseTen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53596CBA0A37147C009C39E9 /* BXDatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301300B09D437030037C485 /* BXDatabaseContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53596CBB0A37147D009C39E9 /* BXDatabaseContext.m in Sources */ = {isa = PBXBuildFile; fileRef = 5301300C09D437030037C485 /* BXDatabaseContext.m */; };
@@ -992,6 +993,7 @@
 				539EDD760C46218B00B6E5EC /* BXAttributeDescription.m in Sources */,
 				5359D1880C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m in Sources */,
 				5359D18E0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m in Sources */,
+				534BA1740C4E0F530094957C /* BXPGCertificateVerificationDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

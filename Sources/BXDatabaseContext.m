@@ -1326,6 +1326,7 @@ extern void BXInit ()
         
         //Handle the views.
         //This method will be called recursively, when the changed rows have been determined.
+#if 0
         if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
         {
             NSSet* dependentViews = [entity dependentViews];
@@ -1342,6 +1343,7 @@ extern void BXInit ()
                 [self updatedObjectsInDatabase: viewIDs faultObjects: YES];
             }
         }        
+#endif
     }
 }
 
@@ -1351,8 +1353,6 @@ extern void BXInit ()
     {
         //If we can find objects with matching partial keys, send update notifications instead
         BXEntityDescription* entity = [[objectIDs objectAtIndex: 0] entity];
-        NSMutableArray* insertedIDs = nil;
-        NSMutableArray* updatedIDs = nil;
         NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
 		
         //Send the notifications
@@ -1366,11 +1366,12 @@ extern void BXInit ()
             [nc postNotificationName: notificationNames [i] object: entity userInfo: userInfo];
         }
         
+#if 0
         if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
         {
             NSSet* dependentViews = [entity dependentViews];
-            insertedIDs = [NSMutableArray array];
-            updatedIDs = [NSMutableArray array];
+            NSMutableArray* insertedIDs = [NSMutableArray array];
+            NSMutableArray* updatedIDs = [NSMutableArray array];
             TSEnumerate (currentView, e, [dependentViews objectEnumerator])
             {
                 [insertedIDs removeAllObjects];
@@ -1407,7 +1408,8 @@ extern void BXInit ()
                     }
                 }
             }
-        }        
+        }
+#endif
     }
 }
 
@@ -1437,6 +1439,7 @@ extern void BXInit ()
                                                               userInfo: userInfo];
         }
         
+#if 0
         //This method will be called recursively, when the changed rows have been determined
         if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
         {
@@ -1453,6 +1456,7 @@ extern void BXInit ()
                 [self deletedObjectsFromDatabase: [knownIDs allObjects]];
             }
         }
+#endif
     }
 }
 

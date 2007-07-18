@@ -30,7 +30,6 @@
 #import <BaseTen/BXAbstractDescription.h>
 
 
-@protocol BXRelationshipDescription;
 @class BXDatabaseContext;
 @class BXDatabaseObjectID;
 
@@ -39,7 +38,8 @@ enum BXEntityFlag
 {
 	kBXEntityNoFlag					= 0,
 	//kBXEntityHasAllRelationships	= 1 << 0, //Not needed
-	kBXEntityIsValidated			= 1 << 1
+	kBXEntityIsValidated			= 1 << 1,
+	kBXEntityIsView					= 1 << 2
 };
 
 @interface BXEntityDescription : BXAbstractDescription <NSCopying, NSCoding>
@@ -47,18 +47,14 @@ enum BXEntityFlag
     NSURL*                  mDatabaseURI;
     NSString*               mSchemaName;
     Class                   mDatabaseObjectClass;
-    NSSet*                  mViewEntities;
-    NSMutableDictionary*    mTargetViews;
 	NSDictionary*			mAttributes;
 
-    NSMutableSet*           mDependentViewEntities;
     id                      mObjectIDs;    
-    NSMutableDictionary*    mRelationships; //FIXME: this should be moved to a class similar to NSManagedObjectModel.
-    NSMutableDictionary*    mInverseRelationships; //FIXME: this should be moved to a class similar to NSManagedObjectModel.
+    NSMutableDictionary*    mRelationships;			//FIXME: this should be moved to a class similar to NSManagedObjectModel.
     enum BXEntityFlag       mFlags;
 }
 
-+ (NSSet *) views;
+//+ (NSSet *) views;
 - (NSURL *) databaseURI;
 - (NSString *) schemaName;
 - (BOOL) isEqual: (id) anObject;
@@ -69,16 +65,15 @@ enum BXEntityFlag
 - (NSDictionary *) attributesByName;
 - (NSArray *) primaryKeyFields;
 - (NSArray *) fields;
-- (BOOL) viewIsBasedOnTablesInItsSchema: (NSSet *) tableNames;
-- (BOOL) viewIsBasedOnEntities: (NSSet *) entities;
+//- (BOOL) viewIsBasedOnTablesInItsSchema: (NSSet *) tableNames;
+//- (BOOL) viewIsBasedOnEntities: (NSSet *) entities;
 - (BOOL) isView;
-- (NSSet *) entitiesBasedOn;
-- (NSSet *) dependentViews;
+//- (NSSet *) entitiesBasedOn;
+//- (NSSet *) dependentViews;
 - (NSArray *) objectIDs;
-- (void) setTargetView: (BXEntityDescription *) viewEntity 
-  forRelationshipNamed: (NSString *) relationshipName;
+/*- (void) setTargetView: (BXEntityDescription *) viewEntity 
+  forRelationshipNamed: (NSString *) relationshipName; */
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
 - (BOOL) isValidated;
 - (NSDictionary *) relationshipsByName;
-//FIXME: add -hasRelationships?
 @end

@@ -58,10 +58,6 @@ static NSMutableSet* gViewEntities;
  * different threads the result is undefined.
  */
 @implementation BXEntityDescription
-+ (NSSet *) views
-{
-    return gViewEntities;
-}
 
 + (void) initialize
 {
@@ -91,12 +87,9 @@ static NSMutableSet* gViewEntities;
 - (void) dealloc
 {
     [mRelationships release];
-	[mInverseRelationships release];
 	[mAttributes release];
     [mDatabaseURI release];
     [mSchemaName release];
-    [mDependentViewEntities release];
-    [mViewEntities release];
     [super dealloc];
 }
 
@@ -285,87 +278,10 @@ static NSMutableSet* gViewEntities;
 	return rval;
 }
 
-/**
- * Mark the entity as a view.
- * The database contect cannot determine this information by itself. Also the primary key needs
- * to be set manually.
- * \see             - setPrimaryKeyFields:
- * \param           tableNames          NSSet containing names of the tables that are in the same schema
- *                                      as the view.
- * \return                              A BOOL indicating whether the operation was succcessful or not.
- */
-- (BOOL) viewIsBasedOnTablesInItsSchema: (NSSet *) tableNames
-{
-    BOOL rval = NO;
-    if (nil == mViewEntities)
-    {
-        NSMutableSet* entities = [NSMutableSet setWithCapacity: [tableNames count]];
-        TSEnumerate (currentName, e, [tableNames objectEnumerator])
-        {
-            [entities addObject: [BXEntityDescription entityWithDatabaseURI: mDatabaseURI 
-																	  table: currentName
-																   inSchema: mSchemaName]];
-        }
-        rval = [self viewIsBasedOnEntities: entities];
-    }
-    return rval;
-}
-
-/**
- * Mark the entity as a view.
- * The database context cannot read this information from the database. The primary key also needs
- * to be set manually.
- * \see             - setPrimaryKeyFields:
- * \param           entities          NSSet containing the entities.
- * \return                              Whether the operation was succcessful or not.
- */
-- (BOOL) viewIsBasedOnEntities: (NSSet *) entities
-{
-    BOOL rval = NO;
-    if (nil == mViewEntities)
-    {
-        log4AssertValueReturn (NO == [entities containsObject: self], NO, @"A view cannot be based on itself.");
-        mViewEntities = [entities retain];
-        [gViewEntities addObject: self];
-        [mViewEntities makeObjectsPerformSelector: @selector (addDependentView:) withObject: self];
-        rval = YES;
-    }
-    return rval;
-}
-
 /** Whether this entity is marked as a view or not. */
 - (BOOL) isView
 {
-    return (nil != mViewEntities);
-}
-
-/** The entities this view is based on. */
-- (NSSet *) entitiesBasedOn
-{
-    return mViewEntities;
-}
-
-/** The views that depend on this entity. */
-- (NSSet *) dependentViews
-{
-    return mDependentViewEntities;
-}
-
-/** 
- * Make a relationship return objects from a view. 
- * \param viewEntity The target view or nil to reset.
- * \param relationshipName Name of the relationship.
- */
-- (void) setTargetView: (BXEntityDescription *) viewEntity 
-  forRelationshipNamed: (NSString *) relationshipName
-{
-    log4AssertVoidReturn (nil == viewEntity || [viewEntity isView], 
-					@"Expected to receive a view entity or nil (%@)", viewEntity);
-    
-    if (nil == viewEntity)
-        [mTargetViews removeObjectForKey: relationshipName];
-    else
-        [mTargetViews setObject: viewEntity forKey: relationshipName];
+    return mFlags & kBXEntityIsView;
 }
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity
@@ -469,10 +385,7 @@ static NSMutableSet* gViewEntities;
         {
             [gEntities addObject: self];
             mRelationships = [[NSMutableDictionary alloc] init];
-			mInverseRelationships = [[NSMutableDictionary alloc] init];
-            mDependentViewEntities = [[NSMutableSet alloc] init];
             mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
-            mTargetViews = [[NSMutableDictionary alloc] init];
         }
         else
         {
@@ -483,129 +396,6 @@ static NSMutableSet* gViewEntities;
     return self;
 }
 //@}
-
-- (void) setViewEntities: (NSSet *) aSet
-{
-	if (aSet != mViewEntities)
-	{
-		[mViewEntities release];
-		mViewEntities = [aSet retain];
-	}
-}
-
-- (void) addDependentView: (BXEntityDescription *) viewEntity
-{
-    log4AssertLog ([viewEntity isView], 
-				   @"Attempted to add a view dependency to an entity that is not a view.\n\t self:\t%@ \n\t entity:\t%@",
-				   self, viewEntity);
-    if ([viewEntity isView])
-        [mDependentViewEntities addObject: viewEntity];
-}
-
-- (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName
-                                             context: (BXDatabaseContext *) context
-                                               error: (NSError **) error
-{
-	//FIXME: this needs to be rewritten.
-	return nil;
-#if 0
-	//FIXME: Consider moving the recursion to -[BXDatabaseContext relationshipsByNameWithEntity:entity:]
-    id rval = nil;
-	if (nil == mViewEntities)
-	{
-		//FIXME: this might cause cached some objects to be ignored.
-		[self fetchRelationshipsIfNeeded: context error: error];
-		rval = [mRelationships objectForKey: aName];
-	}
-	else if (nil == (rval = [mRelationships objectForKey: aName]))
-	{
-		//If there is a view named like the sought relationship, try to find a path between this entity and the view.
-		//FIXME: if aName is formatted like schema.table, we needn't make the assumption below.
-		NSError* localError = nil;
-		BXEntityDescription* target = [context entityForTable: aName inSchema: [self schemaName] error: &localError];
-		if (nil != target && [target isView])
-		{
-			rval = [self findPathToEntity: target 
-					 usingPropertiesNamed: [[self attributesByName] allKeys]
-					targetPropertiesNamed: [[target attributesByName] allKeys]
-								  context: context
-									error: error];
-			if (nil != rval)
-			{
-				[mRelationships setObject: rval forKey: aName];
-				//FIXME: this shouldn't be set here but rather in the relationship.
-				[self setTargetView: target forRelationshipNamed: aName];
-			}
-		}
-		else
-		{
-			//Enumerate the tables the view is based on and
-			//try to find the correct relationship.
-			TSEnumerate (currentViewEntity, e, [mViewEntities objectEnumerator])
-		{
-				rval = [currentViewEntity relationshipNamed: aName context: context error: error];
-				if (nil != rval || (NULL != error && nil != *error))
-				{
-					[mRelationships setObject: rval forKey: aName];
-					break;
-				}
-		}		
-		}		
-	}
-	return rval;
-#endif
-}
-
-- (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 
-							   usingPropertiesNamed: (NSArray *) srcNames
-							  targetPropertiesNamed: (NSArray *) dstNames
-											context: (BXDatabaseContext *) context
-											  error: (NSError **) error
-{
-	//FIXME: performance is something like O (n * m) instead of O (n + m).
-	log4AssertValueReturn (NULL != error, nil , @"Expected error not to be NULL.");
-	id <BXRelationshipDescription> retval = nil;
-	if ([self isView])
-	{
-		TSEnumerate (currentViewEntity, e, [mViewEntities objectEnumerator])
-		{
-			retval = [currentViewEntity findPathToEntity: anEntity 
-								 usingPropertiesNamed: srcNames
-								targetPropertiesNamed: dstNames
-											  context: context
-												error: error];
-			if (nil != retval || nil != *error)
-				break;
-		}
-	}
-	else if ([anEntity isView])
-	{
-		TSEnumerate (currentEntity, e, [[anEntity entitiesBasedOn] objectEnumerator])
-		{
-			retval = [self findPathToEntity: currentEntity 
-					usingPropertiesNamed: srcNames
-				   targetPropertiesNamed: dstNames
-								 context: context
-								   error: error];
-			if (nil != retval || nil != *error)
-				break;
-		}
-	}
-	else
-	{
-		id <BXRelationshipDescription> rel = [self relationshipNamed: [anEntity name] context: context error: error];
-		if (nil != rel)
-		{
-			NSArray* currentSrcNames = [[rel propertiesForEntity: self] valueForKey: @"name"];
-			NSArray* currentDstNames = [[rel propertiesForEntity: anEntity] valueForKey: @"name"];
-			if ([srcNames BXContainsObjectsInArray: currentSrcNames] && 
-				[dstNames BXContainsObjectsInArray: currentDstNames])
-				retval = rel;
-		}
-	}
-	
-	return retval;
-}
 
 - (void) registerObjectID: (BXDatabaseObjectID *) anID
 {
@@ -619,84 +409,6 @@ static NSMutableSet* gViewEntities;
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID
 {
     [mObjectIDs removeObject: anID];
-}
-
-- (BXEntityDescription *) targetForRelationship: (NSString *) name
-{
-    return [mTargetViews objectForKey: name];
-}
-
-//FIXME: this method could be going away soon.
-/**
- * \internal
- * Property descriptions for table columns that correspond to view columns.
- * Retrieving attribute descriptions is done by comparing attribute or column names; 
- * columns in views need to have the same names as in tables. We iterate through 
- * the given attributes and compare their names first to primary key field names, 
- * then others.
- * \param properties Attributes in a view that is based on this table.
- */
-- (NSArray *) correspondingAttributes: (NSArray *) properties
-{
-    id rval = nil;
-    
-    if (0 < [properties count])
-    {
-        //First check if we are eligible
-        if ([[[properties objectAtIndex: 0] entity] isEqual: self])
-        {
-            rval = properties;            
-#ifndef L4_BLOCK_ASSERTIONS
-            TSEnumerate (currentField, e, [properties objectEnumerator])
-            {
-				if ([currentField entity] != self || 
-					nil == [mAttributes objectForKey: [currentField name]])
-					log4AssertValueReturn (NO, nil, @"Expected given properties to have self as entity (self: %@ properties: %@).", self, properties);
-            }
-#endif
-        }
-        else
-        {
-            //If not, give the corresponding properties.
-            rval = [NSMutableArray arrayWithCapacity: [properties count]];
-            TSEnumerate (currentProperty, e, [properties objectEnumerator])
-            {
-                NSString* propertyName = [currentProperty name];
-                BXAttributeDescription* attr = [mAttributes objectForKey: propertyName];
-				if (nil == attr)
-				{
-					[[NSException exceptionWithName: NSInternalInconsistencyException 
-											 reason: [NSString stringWithFormat: @"Nonexistent attribute %@ given", currentProperty]
-										   userInfo: nil] raise];
-				}
-                [rval addObject: attr];
-            }
-        }
-    }
-    return rval;
-}
-
-- (BOOL) hasAncestor: (BXEntityDescription *) entity
-{
-    BOOL rval = NO;
-    if ([self isView])
-    {
-        NSSet* parents = [self entitiesBasedOn];
-        if ([parents containsObject: entity])
-            rval = YES;
-        else
-        {
-            TSEnumerate (currentParent, e, [parents objectEnumerator])
-            {
-                if ([currentParent hasAncestor: entity])
-                {
-                    rval = YES;
-                    break;
-                }
-            }
-        }
-    }
-    return rval;
 }
 
 - (void) setAttributes: (NSDictionary *) attributes
@@ -760,9 +472,21 @@ static NSMutableSet* gViewEntities;
 		mFlags &= ~kBXEntityIsValidated;
 }
 
-- (BXRelationshipDescription *) inverseRelationshipFor: (BXRelationshipDescription *) aRel
+- (void) setIsView: (BOOL) flag
 {
-	return [mInverseRelationships objectForKey: aRel];
+	if (flag)
+		mFlags |= kBXEntityIsView;
+	else
+		mFlags &= ~kBXEntityIsView;
+}
+
+- (void) setRelationships: (NSDictionary *) aDict
+{
+	if (mRelationships != aDict)
+	{
+		[mRelationships release];
+		mRelationships = [aDict retain];
+	}
 }
 
 @end

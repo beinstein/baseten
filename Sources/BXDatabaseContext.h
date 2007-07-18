@@ -46,7 +46,6 @@
 
 @protocol BXInterface;
 @protocol BXObjectAsynchronousLocking;
-@protocol BXRelationshipDescription;
 @protocol BXConnectionSetupManager;
 @class BXDatabaseObject;
 @class BXEntityDescription;

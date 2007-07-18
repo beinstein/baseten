@@ -31,7 +31,6 @@
 #import <Security/Security.h>
 
 @protocol BXObjectAsynchronousLocking;
-@protocol BXRelationshipDescription;
 @class BXDatabaseContext;
 @class BXDatabaseObject;
 @class BXDatabaseObjectID;
@@ -120,7 +119,7 @@
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;
 
-- (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
+- (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
 /**
  * \internal
