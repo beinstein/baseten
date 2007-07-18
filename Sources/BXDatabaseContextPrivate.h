@@ -82,6 +82,7 @@ struct trustResult
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
 - (void) setCanConnect: (BOOL) aBool;
+- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 @end
 
 

@@ -99,7 +99,7 @@
 - (BOOL) isEqual: (id) anObject
 {
     BOOL retval = NO;
-    if ([anObject isKindOfClass: [self class]] && [super isEqual: anObject])
+    if ([anObject isKindOfClass: [self class]])
     {
         BXAbstractDescription* aDesc = (BXAbstractDescription *) anObject;
         retval = [mName isEqualToString: aDesc->mName];

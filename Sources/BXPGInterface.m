@@ -1165,10 +1165,6 @@ bail:
 				
 		if ('v' == [tableInfo kind])
 			[entity setIsView: YES];
-		
-		//And relationships
-		[entity setRelationships: [self relationshipsForEntity: entity error: error]];
-		
 #if 0
         //If the entity is a view, set the dependent entities.
         if ('v' == [tableInfo kind] && nil == [entity entitiesBasedOn])

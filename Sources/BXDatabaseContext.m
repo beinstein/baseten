@@ -1269,10 +1269,9 @@ extern void BXInit ()
 			{
 				//This might have changed during connection.
 				[currentEntity setDatabaseURI: mDatabaseURI];
-				[mDatabaseInterface validateEntity: currentEntity error: &localError];
+				[self validateEntity: currentEntity error: &localError];
 				if (nil != localError)
 					break;
-				[currentEntity setValidated: YES];
 				[mLazilyValidatedEntities removeObject: currentEntity];
 			}
 		}
@@ -1627,8 +1626,7 @@ extern void BXInit ()
 		{
 			[self connectIfNeeded: &localError];
 			BXHandleError (error, localError);
-			if ([mDatabaseInterface validateEntity: rval error: &localError])
-				[rval setValidated: YES];
+			[self validateEntity: rval error: &localError];
 		}
 	}
 	BXHandleError (error, localError);
@@ -2160,6 +2158,23 @@ extern void BXInit ()
 		BXHandleError (NULL, localError);
 	}
 	return relationships;
+}
+
+- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
+{
+	log4AssertValueReturn (NULL != error, NO, @"Expected error not to be NULL.");
+	
+	BOOL retval = NO;
+	if ([entity isValidated])
+		retval = YES;
+	else if ([mDatabaseInterface validateEntity: entity error: error])
+	{
+		[entity setValidated: YES];
+		[entity setRelationships: [mDatabaseInterface relationshipsForEntity: entity error: error]];
+		if (NULL == *error)
+			retval = YES;
+	}
+	return retval;
 }
 
 @end
