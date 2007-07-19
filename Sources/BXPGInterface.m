@@ -145,7 +145,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 {
     PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
     log4AssertValueReturn (nil != connection, nil, @"Expected connection not to be nil.");
-    return [self PGTSEscapedName: connection];
+    return [self PGTSQualifiedName: connection];
 }
 @end
 
