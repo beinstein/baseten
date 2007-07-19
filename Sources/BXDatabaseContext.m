@@ -1817,7 +1817,7 @@ extern void BXInit ()
 				{
 					rval = [[[returnedClass alloc] BXInitWithArray: rval] autorelease];
 					[rval setDatabaseContext: self];
-					[rval setEntity: entity];
+					[(BXContainerProxy *) rval setEntity: entity];
 				}
 				else if (0 == [rval count])
 				{

@@ -33,9 +33,9 @@
 #import <BaseTen/BXEntityDescription.h>
 #import <BaseTen/BXAttributeDescription.h>
 #import <BaseTen/BXDatabaseObjectID.h>
-#import <BaseTen/BXRelationshipDescriptionProtocol.h>
 #import <BaseTen/BXException.h>
 #import <BaseTen/BXPolicyDelegate.h>
+#import <BaseTen/BXRelationshipDescription.h>
 
 
 /**
