@@ -195,26 +195,12 @@
 
 - (void) one: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
 {
-	//FIXME: this needs attention
-#if 0
     NSError* error = nil;
         
-    //-[BXDatabaseContext relationshipsByNameWithEntity:entity:] doesn't 
-    //currently search the relationships recursively
-    id <BXRelationshipDescription> foobar = nil;
-    if ([entity1 isView] || [entity2 isView])
-        foobar = [entity1 relationshipNamed: [entity2 name] context: context error: nil];
-    else
-    {
-        NSDictionary* rels = [context relationshipsByNameWithEntity: entity1 entity: entity2 error: nil];
-        MKCAssertTrue (0 < [rels count]);
-        foobar = [rels objectForKey: @"bar"];
-    }    
+    BXRelationshipDescription* foobar = [[entity1 relationshipsByName] objectForKey: [entity2 name]];
     MKCAssertNotNil (foobar);
-    MKCAssertEqualObjects ([foobar nameFromEntity: entity2], @"foo");
-    MKCAssertTrue ([foobar isOneToOne]);
-    MKCAssertFalse ([foobar isToManyFromEntity: entity1]);
-    MKCAssertFalse ([foobar isToManyFromEntity: entity2]);
+    MKCAssertFalse ([foobar isToMany]);
+	MKCAssertFalse ([[foobar inverseRelationship] isToMany]);
 
     NSArray* res = [context executeFetchForEntity: entity1 
                                     withPredicate: [NSPredicate predicateWithFormat: @"1 <= id && id <= 2"]
@@ -226,11 +212,11 @@
         BXDatabaseObject* object = [res objectAtIndex: i];
         
         BXDatabaseObject* foreignObject  = [object valueForKey: [entity2 name]];
-        BXDatabaseObject* foreignObject2 = [foobar resolveFrom: object to: entity2 error: &error];
+        BXDatabaseObject* foreignObject2 = [foobar targetForObject: object error: &error];
         MKCAssertNil (error);
         
-        BXDatabaseObject* object2 = [foreignObject valueForKey: [entity1 name]];
-        BXDatabaseObject* object3 = [foobar resolveFrom: foreignObject to: entity1 error: &error];
+        BXDatabaseObject* object2 = [foreignObject primitiveValueForKey: [entity1 name]];
+        BXDatabaseObject* object3 = [[foobar inverseRelationship] targetForObject: foreignObject error: &error];
         MKCAssertNil (error);
         
         MKCAssertTrue ([[foreignObject  objectID] entity] == entity2);
@@ -262,7 +248,6 @@
     BXDatabaseObject* object = [res objectAtIndex: 0];
     MKCAssertNil ([object valueForKey: [entity1 name]]);
     MKCAssertTrue ([[object objectID] entity] == entity2);
-#endif
 }
 
 - (void) testMTM

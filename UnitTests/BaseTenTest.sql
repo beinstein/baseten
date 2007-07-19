@@ -105,14 +105,11 @@ INSERT INTO test2 (value, fkt1id) VALUES ('23', null);
 CREATE TABLE ototest1 (
     id INTEGER PRIMARY KEY
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'ototest1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
-
 CREATE TABLE ototest2 (
     id INTEGER PRIMARY KEY,
-    r1 INTEGER CONSTRAINT foo REFERENCES ototest1 (id)
+    r1 INTEGER UNIQUE CONSTRAINT foo REFERENCES ototest1 (id)
 );
-ALTER TABLE ototest1 ADD COLUMN r2 INTEGER CONSTRAINT bar REFERENCES ototest2 (id);
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'ototest2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname IN ('ototest1', 'ototest2') AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW ototest1_v AS SELECT * FROM ototest1;
 CREATE VIEW ototest2_v AS SELECT * FROM ototest2;
@@ -123,7 +120,7 @@ CREATE RULE "insert_ototest1" AS ON INSERT TO ototest1_v DO INSTEAD
 CREATE RULE "insert_ototest2" AS ON INSERT TO ototest2_v DO INSTEAD
     INSERT INTO ototest2 (r1) VALUES (NEW.r1) RETURNING *;
 CREATE RULE "update_ototest1" AS ON UPDATE TO ototest1_v DO INSTEAD 
-    UPDATE ototest1 SET id = NEW.id, r2 = NEW.r2 WHERE id = OLD.id RETURNING *;
+    UPDATE ototest1 SET id = NEW.id WHERE id = OLD.id RETURNING *;
 CREATE RULE "update_ototest2" AS ON UPDATE TO ototest2_v DO INSTEAD 
     UPDATE ototest2 SET id = NEW.id, r1 = NEW.r1 WHERE id = OLD.id RETURNING *;
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'ototest1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
@@ -139,8 +136,6 @@ INSERT INTO ototest1 (id) VALUES (2);
 INSERT INTO ototest2 (id, r1) VALUES (1, 2);
 INSERT INTO ototest2 (id, r1) VALUES (2, 1);
 INSERT INTO ototest2 (id, r1) VALUES (3, null);
-UPDATE ototest1 SET r2 = 2 WHERE id = 1;
-UPDATE ototest1 SET r2 = 1 WHERE id = 2;
 
 
 -- Many-to-many
