@@ -134,8 +134,6 @@
 	//FIXME: this could be configurable by the user unless we want to look for
 	//       non-empty or maximum size constraints, which are likely CHECK clauses.
 	//FIXME: these should be inside a transaction. Use the undo manager?
-	[target willChangeValueForKey: name];
-
 	BXDatabaseContext* context = [aDatabaseObject databaseContext];
 	
 	//Remove all objects from current object's set.
@@ -167,8 +165,6 @@
 				break;
 		}
 	}
-	
-	[target didChangeValueForKey: name];		
 }
 
 @end

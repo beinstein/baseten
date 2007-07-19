@@ -1818,6 +1818,7 @@ extern void BXInit ()
 					rval = [[[returnedClass alloc] BXInitWithArray: rval] autorelease];
 					[rval setDatabaseContext: self];
 					[(BXContainerProxy *) rval setEntity: entity];
+					[rval setFilterPredicate: predicate];
 				}
 				else if (0 == [rval count])
 				{
@@ -1860,26 +1861,12 @@ extern void BXInit ()
     NSError* localError = nil;
 	NSArray* objectIDs = nil;
 	if ([self checkDatabaseURI: &localError])
-	{
-#if 0
-        //FIXME: this should be done even if anObject is nil but then we won't be able to determine the objects beforehand.
-        if (nil != anObject)
-        {
-            TSEnumerate (currentKey, e, [aDict keyEnumerator])
-                [anObject willChangeValueForKey: currentKey];
-        }
-#endif
-        
+	{        
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
-        
-#if 0
-        if (nil != anObject)
-        {
-            TSEnumerate (currentKey, e, [aDict keyEnumerator])
-                [anObject didChangeValueForKey: currentKey];
-        }
-#endif
+		
+		//FIXME: if object's primary keys were changed, its relationships should be iterated and cached collections'
+		//filter predicates should be reset.
         
 		if (nil == localError)
 		{
@@ -1887,13 +1874,13 @@ extern void BXInit ()
 			//It won't be handled, though, since it originates from the same connection.
 			//Therefore, we need to notify about the change.
 			if (YES == [mDatabaseInterface autocommits])
-				[self updatedObjectsInDatabase: objectIDs faultObjects: NO];
+				[self updatedObjectsInDatabase: objectIDs faultObjects: YES];
 			else
 			{
 				BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 				if (nil == localError)
 				{
-					[self updatedObjectsInDatabase: objectIDs faultObjects: NO];
+					[self updatedObjectsInDatabase: objectIDs faultObjects: YES];
 					
 					[mModifiedObjectIDs addObjectsFromArray: objectIDs];
 					

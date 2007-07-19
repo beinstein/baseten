@@ -38,12 +38,19 @@
 - (BOOL) isInverse;
 - (void) setIsInverse: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
-- (BOOL) affectManySideWithObject: (BXDatabaseObject *) anObject;
 
 //Remember to override these in subclasses.
 - (id) targetForObject: (BXDatabaseObject *) anObject error: (NSError **) error;
 - (void) setTarget: (id) anObject
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error;
+
+- (BOOL) shouldRemoveForTarget: (id) target 
+				databaseObject: (BXDatabaseObject *) databaseObject
+					 predicate: (NSPredicate **) predicatePtr;
+- (BOOL) shouldAddForTarget: (id) target
+			 databaseObject: (BXDatabaseObject *) databaseObject
+				  predicate: (NSPredicate **) predicatePtr 
+					 values: (NSDictionary **) valuePtr;
 
 @end

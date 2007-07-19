@@ -446,7 +446,7 @@ ParseSelector (SEL aSelector, NSString** key)
 			case kBXDatabaseObjectPrimaryKey:
 				//Primary key values are stored into the object ID but can be queried 
 				//through this object.
-				//FIXME: why don't we call willChange and didChange for non-primary keys?
+				//FIXME: why do we call willChange and didChange here?
 				[self willChangeValueForKey: aKey];
 				//Fall through.
 				
@@ -830,21 +830,15 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     @synchronized (mValues)
     {
-        BOOL didChange = NO;
         //Emptying the cache sends a KVO notification.
-        if (! ([aValue isKindOfClass: [BXDatabaseObject class]]))
-        {
-            didChange = YES;
-            [self willChangeValueForKey: aKey];
-        }
-        
+		[self willChangeValueForKey: aKey];
+
         if (nil == aValue)
             [mValues removeObjectForKey: aKey];
         else
             [mValues setValue: aValue forKey: aKey];
         
-        if (didChange)
-            [self didChangeValueForKey: aKey];
+		[self didChangeValueForKey: aKey];
     }
 }
 
