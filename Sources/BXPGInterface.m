@@ -912,7 +912,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						if (nil == rel)
 							rel = [[BXOneToOneRelationshipDescription alloc] initWithName: name entity: entity];
 						
-						[rel setIsToMany: ![[res valueForKey: @"isinverse"] boolValue]];
+						[rel setIsInverse: [[res valueForKey: @"isinverse"] boolValue]];
 						[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
 						break;
 					}

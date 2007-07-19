@@ -130,9 +130,9 @@
 	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
 	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
 	{
-		id entityKey = [currentFieldArray objectAtIndex: ei];
+		id attributeKey = [currentFieldArray objectAtIndex: ei];
 		id objectKey = [currentFieldArray objectAtIndex: oi];
-		BXAttributeDescription* attribute = [attributes objectForKey: entityKey];
+		BXAttributeDescription* attribute = [attributes objectForKey: attributeKey];
 		id value = [anObject primitiveValueForKey: objectKey];
 		
 		NSExpression* lhs = [NSExpression expressionForConstantValue: attribute];

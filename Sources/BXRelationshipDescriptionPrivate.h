@@ -35,7 +35,8 @@
 - (BXForeignKey *) foreignKey;
 - (void) setDestinationEntity: (BXEntityDescription *) entity;
 - (void) setForeignKey: (BXForeignKey *) aKey;
-- (void) setIsToMany: (BOOL) aBool;
+- (BOOL) isInverse;
+- (void) setIsInverse: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
 - (BOOL) affectManySideWithObject: (BXDatabaseObject *) anObject;
 

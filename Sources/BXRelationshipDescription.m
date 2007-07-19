@@ -69,7 +69,7 @@
 
 - (BOOL) isToMany
 {
-	return mIsToMany;
+	return !mIsInverse;
 }
 
 /** Retain on copy. */
@@ -123,9 +123,9 @@
 	}
 }
 
-- (void) setIsToMany: (BOOL) aBool
+- (void) setIsInverse: (BOOL) aBool
 {
-	mIsToMany = aBool;
+	mIsInverse = aBool;
 }
 
 - (void) setInverseName: (NSString *) aString
@@ -135,12 +135,6 @@
 		[mInverseName release];
 		mInverseName = [aString retain];
 	}
-}
-
-/** \internal Helps inheriting in BXOneToOneRelationshipDescription. */
-- (BOOL) affectManySideWithObject: (BXDatabaseObject *) anObject
-{
-	return [self isToMany];
 }
 
 - (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
@@ -153,15 +147,15 @@
 	id retval = nil;
 	NSPredicate* predicate = nil;
 	
-	if ([self affectManySideWithObject: aDatabaseObject])
-	{
-		//We want to select from foreign key's src entity, which is our destination entity.
-		predicate = [mForeignKey predicateForSrcEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
-	}
-	else
+	if (mIsInverse)
 	{
 		//We want to select from foreign key's dst entity, which is our destination entity as well.
 		predicate = [mForeignKey predicateForDstEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
+	}
+	else
+	{
+		//We want to select from foreign key's src entity, which is our destination entity.
+		predicate = [mForeignKey predicateForSrcEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
 	}
 	
 	//Expression order matters since foreign key is always in src table or view.
@@ -192,7 +186,24 @@
 	
 	NSString* name = [self name];
 	
-	if ([self affectManySideWithObject: aDatabaseObject])
+	if (mIsInverse)
+	{
+		BXEntityDescription* targetEntity = [self destinationEntity];
+		NSArray* keys = [mForeignKey dstFieldNames];
+		NSArray* values = [aDatabaseObject valuesForKeys: keys];
+		
+		log4AssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
+							  @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
+		
+		NSPredicate* predicate = [target BXOrPredicateForObjects];
+		
+		[aDatabaseObject willChangeValueForKey: name];
+		[[aDatabaseObject databaseContext] executeUpdateEntity: targetEntity
+												withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
+													 predicate: predicate error: error];
+		[aDatabaseObject didChangeValueForKey: name];		
+	}
+	else
 	{
 		BXEntityDescription* targetEntity = [self entity];
 		NSArray* keys = [mForeignKey srcFieldNames];
@@ -228,23 +239,6 @@
 													 predicate: predicate 
 														 error: error];
 		
-		[aDatabaseObject didChangeValueForKey: name];		
-	}
-	else
-	{
-		BXEntityDescription* targetEntity = [self destinationEntity];
-		NSArray* keys = [mForeignKey dstFieldNames];
-		NSArray* values = [aDatabaseObject valuesForKeys: keys];
-		
-		log4AssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
-							  @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
-		
-		NSPredicate* predicate = [target BXOrPredicateForObjects];
-		
-		[aDatabaseObject willChangeValueForKey: name];
-		[[aDatabaseObject databaseContext] executeUpdateEntity: targetEntity
-												withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
-													 predicate: predicate error: error];
 		[aDatabaseObject didChangeValueForKey: name];		
 	}
 }

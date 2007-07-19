@@ -43,7 +43,7 @@
 
 	BXForeignKey* mForeignKey;
 	NSString* mInverseName;
-	BOOL mIsToMany;
+	BOOL mIsInverse;
 }
 
 - (BXEntityDescription *) destinationEntity;

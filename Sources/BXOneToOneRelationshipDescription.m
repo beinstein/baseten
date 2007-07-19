@@ -32,11 +32,6 @@
 
 @implementation BXOneToOneRelationshipDescription
 
-- (BOOL) affectManySideWithObject: (BXDatabaseObject *) anObject
-{
-	return [[anObject entity] isEqual: [self entity]];
-}
-
 - (BOOL) isToMany
 {
 	return NO;
