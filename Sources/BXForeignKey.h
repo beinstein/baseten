@@ -44,4 +44,6 @@
 - (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
 							  dstEntity: (BXEntityDescription *) dstEntity;	
+- (NSDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object;
+- (NSDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object;
 @end

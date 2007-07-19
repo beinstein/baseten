@@ -62,8 +62,8 @@
 - (NSArray *) srcFieldNames
 {
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	TSEnumerate (currentFName, e, [mFieldNames objectEnumerator])
-		[retval addObject: currentFName];
+	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+		[retval addObject: [currentFieldArray objectAtIndex: 0]];
 	
 	return retval;
 }
@@ -71,8 +71,8 @@
 - (NSArray *) dstFieldNames
 {
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	TSEnumerate (currentFName, e, [mFieldNames objectEnumerator])
-		[retval addObject: currentFName];
+	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+		[retval addObject: [currentFieldArray objectAtIndex: 1]];
 	
 	return retval;
 }
@@ -113,6 +113,15 @@
 	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];
 }
 
+- (NSDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object
+{
+	return [self valueDictionaryForEntity: entity valuesInObject: object entityIndex: 0 objectIndex: 1];
+}
+
+- (NSDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object
+{
+	return [self valueDictionaryForEntity: entity valuesInObject: object entityIndex: 1 objectIndex: 0];
+}
 
 @end
 
@@ -145,6 +154,23 @@
 		[subPredicates addObject: predicate];
 	}
 	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];	
+}
+
+- (NSDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
+								entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi
+{
+	log4AssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
+	
+	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
+	NSDictionary* attributes = [entity attributesByName];
+	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	{
+		NSString* attributeKey = [currentFieldArray objectAtIndex: ei];
+		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
+		[retval setObject: (object ? [object primitiveValueForKey: objectKey] : [NSNull null])
+				   forKey: [attributes objectForKey: attributeKey]];
+	}	
+	return retval;
 }
 
 @end

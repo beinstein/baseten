@@ -58,13 +58,13 @@ enum BXPGQueryState
 
 
 @interface BXEntityDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
+- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end
 
 
 @interface BXAttributeDescription (BXPGInterfaceAdditions)
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context;
-- (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
+- (NSString *) PGTSEscapedName: (PGTSConnection *) connection;
 @end
 
 

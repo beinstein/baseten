@@ -36,6 +36,7 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXSetRelationProxy.h"
+#import "BXDatabaseObjectPrivate.h"
 
 @implementation BXRelationshipDescription
 
@@ -183,34 +184,26 @@
 {
 	log4AssertVoidReturn (NULL != error, @"Expected error to be set.");
 	log4AssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
-	
+	log4AssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
+						  @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
+
 	NSString* name = [self name];
 	
+	//We always want to modify the foreign key's (or corresponding view's) entity, hence the branch here.
 	if (mIsInverse)
-	{
-		BXEntityDescription* targetEntity = [self destinationEntity];
-		NSArray* keys = [mForeignKey dstFieldNames];
-		NSArray* values = [aDatabaseObject valuesForKeys: keys];
-		
-		log4AssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
-							  @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
-		
-		NSPredicate* predicate = [target BXOrPredicateForObjects];
+	{		
+		NSPredicate* predicate = [[aDatabaseObject objectID] predicate];
+		NSDictionary* values = [mForeignKey srcDictionaryFor: [self entity] valuesFromDstObject: aDatabaseObject];
 		
 		[aDatabaseObject willChangeValueForKey: name];
-		[[aDatabaseObject databaseContext] executeUpdateEntity: targetEntity
-												withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
+		[aDatabaseObject setCachedValue: target forKey: [self name]];
+		[[aDatabaseObject databaseContext] executeUpdateEntity: [self entity]
+												withDictionary: values
 													 predicate: predicate error: error];
 		[aDatabaseObject didChangeValueForKey: name];		
 	}
 	else
 	{
-		BXEntityDescription* targetEntity = [self entity];
-		NSArray* keys = [mForeignKey srcFieldNames];
-		
-		log4AssertVoidReturn ([[self destinationEntity] isEqual: [aDatabaseObject entity]], 
-							  @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
-		
 		//Compare collection to cached values.
 		NSSet* oldObjects = [aDatabaseObject primitiveValueForKey: name];
 		NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
@@ -224,18 +217,15 @@
 		//FIXME: these should be inside a transaction. Use the undo manager?
 		[aDatabaseObject willChangeValueForKey: name];
 		
-		//FIXME: we need attribute descriptions instead of strings.
 		NSPredicate* predicate = [removedObjects BXOrPredicateForObjects];
-		NSArray* values = [NSArray BXNullArray: [keys count]];
-		[[aDatabaseObject databaseContext] executeUpdateEntity: targetEntity
-												withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
+		[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
+												withDictionary: [mForeignKey dstDictionaryFor: nil valuesFromSrcObject: nil]
 													 predicate: predicate 
 														 error: error];
 		
 		predicate = [addedObjects BXOrPredicateForObjects];
-		values = [aDatabaseObject valuesForKeys: keys];
-		[[aDatabaseObject databaseContext] executeUpdateEntity: targetEntity
-												withDictionary: [NSDictionary dictionaryWithObjects: values forKeys: keys]
+		[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
+												withDictionary: [mForeignKey dstDictionaryFor: nil valuesFromSrcObject: aDatabaseObject]
 													 predicate: predicate 
 														 error: error];
 		

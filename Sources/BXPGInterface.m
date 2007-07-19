@@ -121,31 +121,31 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 
 @implementation BXEntityDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
+- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection
 {
-    return [NSString stringWithFormat: @"\"%@\".\"%@\"", 
-        [[self schemaName] PGTSEscapedString: connection], [[self name] PGTSEscapedString: connection]];
+    return [NSString stringWithFormat: @"%@.%@", 
+        [[self schemaName] PGTSEscapedName: connection], [[self name] PGTSEscapedName: connection]];
 }
 @end
 
 
 @implementation BXAttributeDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
-{
-    return [NSString stringWithFormat: @"%@.%@", 
-        [[self entity] BXPGQualifiedName: connection], [self BXPGEscapedName: connection]];
+- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection
+{    
+	return [NSString stringWithFormat: @"%@.%@", 
+		[[self entity] PGTSQualifiedName: connection], [[self name] PGTSEscapedName: connection]];
 }
 
-- (NSString *) BXPGEscapedName: (PGTSConnection *) connection
+- (NSString *) PGTSEscapedName: (PGTSConnection *) connection
 {
-    return [NSString stringWithFormat: @"\"%@\"", [[self name] PGTSEscapedString: connection]];
+	return [[self name] PGTSEscapedName: connection];
 }
 
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context
 {
     PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
     log4AssertValueReturn (nil != connection, nil, @"Expected connection not to be nil.");
-    return [self BXPGQualifiedName: connection];
+    return [self PGTSEscapedName: connection];
 }
 @end
 
@@ -158,7 +158,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     {
         log4AssertValueReturn ([currentDesc isKindOfClass: [BXAttributeDescription class]], nil, 
 							   @"Expected to have only BXAttributeDescriptions (%@).", self);
-        [rval addObject: [currentDesc BXPGEscapedName: connection]];
+        [rval addObject: [currentDesc PGTSEscapedName: connection]];
     }
     return rval;
 }
@@ -362,11 +362,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			//Inserted values
 			NSString* queryFormat = nil;
 			if (0 == [valueDict count])
-				queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ DEFAULT VALUES RETURNING %%@", [entity BXPGQualifiedName: connection]];
+				queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ DEFAULT VALUES RETURNING %%@", [entity PGTSQualifiedName: connection]];
 			else
 			{
 				queryFormat = [NSString stringWithFormat: @"INSERT INTO %@ (%@) VALUES (%@) RETURNING %%@",
-					[entity BXPGQualifiedName: connection], (nil == fieldNames ? @"" : [fieldNames componentsJoinedByString: @", "]), 
+					[entity PGTSQualifiedName: connection], (nil == fieldNames ? @"" : [fieldNames componentsJoinedByString: @", "]), 
 					[NSString PGTSFieldAliases: [fieldNames count]]];
 			}
 			
@@ -374,12 +374,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSArray* pkeyfields = [entity primaryKeyFields];
 			NSMutableArray* pkeyQNames = [NSMutableArray arrayWithCapacity: [pkeyfields count]];            
 			TSEnumerate (currentField, e, [pkeyfields objectEnumerator])
-				[pkeyQNames addObject: [currentField BXPGEscapedName: connection]];			
+				[pkeyQNames addObject: [currentField PGTSEscapedName: connection]];			
 			NSMutableArray* remainingFields = [NSMutableArray arrayWithArray: pkeyQNames];
 			TSEnumerate (currentField, e, [fields objectEnumerator])
 			{
 				if (![currentField isExcluded])
-					[remainingFields addObject: [currentField BXPGEscapedName: connection]];
+					[remainingFields addObject: [currentField PGTSEscapedName: connection]];
 			}
 
 			//Make the query
@@ -445,7 +445,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				unsigned int count = [pkeyfields count];
 				NSMutableArray* pkeyQNames = [NSMutableArray arrayWithCapacity: count];            
 				TSEnumerate (currentField, e, [pkeyfields objectEnumerator])
-					[pkeyQNames addObject: [currentField BXPGQualifiedName: connection]];
+					[pkeyQNames addObject: [currentField PGTSQualifiedName: connection]];
 				
 				//What to query
 				NSString* queryFields = nil;
@@ -457,7 +457,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					TSEnumerate (currentField, e, [fields objectEnumerator])
 					{
 						if (![currentField isExcluded])
-							[remainingFields addObject: [currentField BXPGQualifiedName: connection]];
+							[remainingFields addObject: [currentField PGTSQualifiedName: connection]];
 					}
 					queryFields = [remainingFields componentsJoinedByString: @", "];
 				}            
@@ -476,7 +476,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					[entitySet addObject: entity];
 					NSMutableArray* components = [NSMutableArray arrayWithCapacity: [entitySet count]];
 					TSEnumerate (currentEntity, e, [entitySet objectEnumerator])
-						[components addObject: [currentEntity BXPGQualifiedName: connection]];
+						[components addObject: [currentEntity PGTSQualifiedName: connection]];
 					fromClause = [components componentsJoinedByString: @", "];
 					log4AssertValueReturn (nil != fromClause, nil, @"Expected to have a from clause (predicate: %@).", predicate);
 				}
@@ -516,7 +516,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				{
 					if (! ([[currentEntity name] isEqualToString: [tableInfo name]] && 
 						   [[currentEntity schemaName] isEqualToString: [tableInfo schemaName]]))
-						[fromItems addObject: [currentEntity BXPGQualifiedName: connection]];
+						[fromItems addObject: [currentEntity PGTSQualifiedName: connection]];
 				}
 				NSArray* locks = [lockNotifier locksForTable: tableInfo fromItems: fromItems whereClause: whereClause parameters: parameters];
 				NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyfields forKeys: pkeyFNames];
@@ -554,10 +554,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
         NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 		NSMutableArray* escapedKeys = [NSMutableArray arrayWithCapacity: [keys count]];
 		TSEnumerate (currentKey, e, [keys objectEnumerator])
-			[escapedKeys addObject: [currentKey BXPGEscapedName: connection]];
+			[escapedKeys addObject: [currentKey PGTSEscapedName: connection]];
         NSString* query = [NSString stringWithFormat: @"SELECT %@ FROM %@ WHERE %@", 
 			[escapedKeys componentsJoinedByString: @", "],
-			[[objectID entity] BXPGQualifiedName: connection],
+			[[objectID entity] PGTSQualifiedName: connection],
 			[[objectID predicate] PGTSWhereClauseWithContext: ctx]];
         PGTSResultSet* res = [connection executeQuery: query parameterArray: [ctx objectForKey: kPGTSParametersKey]];
         if (YES == [res advanceRow])
@@ -633,7 +633,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSArray* pkeyFields = [entity primaryKeyFields];
 			NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
 			NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyFields forKeys: pkeyFNames];        
-			NSString* name = [entity BXPGQualifiedName: connection];
+			NSString* name = [entity PGTSQualifiedName: connection];
 			
 			//Check if pkey should be updated
 			BOOL updatedPkey = NO;
@@ -656,7 +656,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			{
 				//Send the UPDATE query
 				queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@ RETURNING %@", 
-					name, [aDict PGTSSetClauseParameters: parameters], whereClause,
+					name, 
+					[aDict PGTSSetClauseParameters: parameters connection: connection], 
+					whereClause,
 					[[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
 				PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
 				
@@ -759,7 +761,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         //This is needed if the entity is passed from one context to another.
         if (nil != [self validateEntity: entity error: error])
 		{
-			NSString* name = [entity BXPGQualifiedName: connection];
+			NSString* name = [entity PGTSQualifiedName: connection];
 			NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 			NSString* whereClause = [predicate PGTSWhereClauseWithContext: ctx];
 			NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
@@ -977,7 +979,7 @@ bail:
 		//There was a strange problem with views in january 2007. This might not be needed in the future.
 		if (NO == [entity isView])
 		{
-			NSString* name = [entity BXPGQualifiedName: connection];
+			NSString* name = [entity PGTSQualifiedName: connection];
 			NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 			NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
 			
@@ -1351,7 +1353,7 @@ bail:
     //objectID is optional
     log4AssertValueReturn (entity && whereClause, nil, @"Expected to be called with parameters.");
     NSArray* rval = nil;
-    NSString* name = [entity BXPGQualifiedName: connection];
+    NSString* name = [entity PGTSQualifiedName: connection];
     if (nil != objectID)
     {
         //We only need to lock the row, since we already know the object ID.
@@ -1410,7 +1412,7 @@ bail:
         log4AssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
         NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
         NSString* query = [NSString stringWithFormat: format, funcname, SavepointIndex(),
-            [pkeyFNames componentsJoinedByString: @"\", \""], [entity BXPGQualifiedName: notifyConnection], whereClause];
+            [pkeyFNames componentsJoinedByString: @"\", \""], [entity PGTSQualifiedName: notifyConnection], whereClause];
 
         //No error handling since all this is optional.
 		[notifyConnection executeQuery: query parameterArray: parameters];

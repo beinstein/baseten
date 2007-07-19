@@ -35,4 +35,6 @@
 					  valuesInObject: (BXDatabaseObject *) anObject
 						 entityIndex: (unsigned int) ei 
 						 objectIndex: (unsigned int) oi;
+- (NSDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
+								entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi;
 @end
