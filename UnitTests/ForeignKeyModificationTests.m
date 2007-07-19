@@ -92,11 +92,6 @@
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
-#if 0
-    [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: @"test1"];
-    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"test2"];
-#endif
-
     //Change reference in foreignObject from id=1 to id=2
     NSError* error = nil;
     MKCAssertTrue (NO == [context autocommits]);
@@ -111,20 +106,21 @@
     MKCAssertTrue ([[foreignObject objectID] entity] == manyEntity);
 
     res = [context executeFetchForEntity: oneEntity
-                                    withPredicate: [NSPredicate predicateWithFormat: @"id = 2"]
-                                            error: &error];
+						   withPredicate: [NSPredicate predicateWithFormat: @"id = 2"]
+								   error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
     MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
-    MKCAssertFalse ([[foreignObject valueForKey: [oneEntity name]] isEqual: object]);
+    MKCAssertFalse ([[foreignObject primitiveValueForKey: [oneEntity name]] isEqual: object]);
     [foreignObject setPrimitiveValue: object forKey: [oneEntity name]];
-    MKCAssertEqualObjects ([foreignObject valueForKey: [oneEntity name]], object);
+    MKCAssertEqualObjects ([foreignObject primitiveValueForKey: [oneEntity name]], object);
     
     [context rollback];
 }
 
+#if 0
 - (void) testModOTM
 {
     [self modOne: test1 toMany: test2];
@@ -278,5 +274,6 @@
     
     [context rollback];
 }
+#endif
 
 @end
