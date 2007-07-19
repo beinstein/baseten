@@ -82,6 +82,25 @@ AddParameter (id parameter, NSMutableDictionary* context)
 }
 
 
+static NSString*
+EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
+{
+	NSMutableString* retval = [NSMutableString string];
+	TSEnumerate (currentComponent, e, [[keyPath componentsSeparatedByString: @"."] objectEnumerator])
+	{
+		[retval appendString: [currentComponent PGTSEscapedName: connection]];
+		[retval appendString: @"."];
+	}
+	unsigned int length = [retval length];
+	if (0 < length)
+	{
+		NSRange lastCharacterRange = NSMakeRange (length - 1, 1);
+		[retval deleteCharactersInRange: lastCharacterRange];
+	}
+	return retval;
+}
+
+
 @implementation NSExpression (PGTSAdditions)
 
 + (NSDictionary *) PGTSAggregateNameConversionDictionary
@@ -140,8 +159,8 @@ AddParameter (id parameter, NSMutableDictionary* context)
 			if ([evaluated isKindOfClass: [NSExpression class]] && [evaluated expressionType] == NSKeyPathExpressionType)
 			{
                 //Simple dividing into components for now
-                NSArray* components = [[[evaluated keyPath] componentsSeparatedByString: @"."] valueForKey: @"PGTSQuotedString"];
-                rval = [components componentsJoinedByString: @"."];
+				PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
+				rval = EscapedKeyPath ([evaluated keyPath], connection);
                 break;
 			}
 			else
@@ -153,8 +172,8 @@ AddParameter (id parameter, NSMutableDictionary* context)
             
         case NSKeyPathExpressionType:
         {
-            NSArray* components = [[[self keyPath] componentsSeparatedByString: @"."] valueForKey: @"PGTSQuotedString"];
-            rval = [components componentsJoinedByString: @"."];
+			PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
+			rval = EscapedKeyPath ([self keyPath], connection);
             break;
             
             //FIXME: this is for functions, which we don't support.
@@ -164,7 +183,7 @@ AddParameter (id parameter, NSMutableDictionary* context)
             //The first object is always the parameter
             NSEnumerator* e = [components objectEnumerator];
             
-            NSString* parameter = [[anObject keyPath] PGTSQuotedString];
+            NSString* parameter = [[anObject keyPath] PGTSEscapedString: connection];
             NSDictionary* conversionDict = [[self class] PGTSFunctionNameConversionDictionary];
             TSEnumerate (currentFunction, e, [components objectEnumerator])
             {

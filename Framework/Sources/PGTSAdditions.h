@@ -43,13 +43,14 @@
 - (int) PGTSParameterCount;
 + (NSString *) PGTSFieldAliases: (unsigned int) count;
 + (NSString *) PGTSFieldAliases: (unsigned int) count start: (unsigned int) start;
-- (NSString *) PGTSQuotedString;
 @end
 
 @interface NSObject (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo;
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
 - (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection;
+- (NSString *) PGTSEscapedName: (PGTSConnection *) connection;
+- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end
 
 @interface NSArray (PGTSAdditions)
@@ -60,8 +61,8 @@
 - (NSString *) PGTSConnectionString;
 + (id) PGTSDeserializationDictionary;
 - (NSDictionary *) PGTSFieldsSortedByTable;
-- (NSString *) PGTSSetClauseParameters: (NSMutableArray *) parameters;
-- (NSString *) PGTSWhereClauseParameters: (NSMutableArray *) parameters;
+- (NSString *) PGTSSetClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
+- (NSString *) PGTSWhereClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
 @end
 
 @interface NSMutableDictionary (PGTSAdditions) <PGTSResultRowProtocol>

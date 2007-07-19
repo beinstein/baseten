@@ -55,7 +55,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @interface NSDictionary (PGTSAdditionsPrivate)
-- (NSArray *) PGTSParameters1: (NSMutableArray *) parameters;
+- (NSArray *) PGTSParameters1: (NSMutableArray *) parameters connection: (PGTSConnection *) connection qualified: (BOOL) qualified;
 @end
 
 
@@ -88,6 +88,16 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 											 encoding: NSUTF8StringEncoding freeWhenDone: YES] autorelease];
 	}
 	return rval;
+}
+
+- (NSString *) PGTSEscapedName: (PGTSConnection *) connection
+{
+	return [NSString stringWithFormat: @"\"%@\"", [[self description] PGTSEscapedString: connection]];
+}
+
+- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection
+{
+	return [self PGTSEscapedName: connection];
 }
 @end
 
@@ -168,9 +178,9 @@ strtof (const char * restrict nptr, char ** restrict endptr);
  * Use the keys and values to form a SET clause and append the values to an array.
  * \param parameters the value array
  */
-- (NSString *) PGTSSetClauseParameters: (NSMutableArray *) parameters;
+- (NSString *) PGTSSetClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
 {
-    return [[self PGTSParameters1: parameters] componentsJoinedByString: @", "];
+    return [[self PGTSParameters1: parameters connection: connection qualified: NO] componentsJoinedByString: @", "];
 }
 
 
@@ -178,9 +188,9 @@ strtof (const char * restrict nptr, char ** restrict endptr);
  * Use the keys and values to form a WHERE clause and append the values to an array.
  * \param parameters the value array
  */
-- (NSString *) PGTSWhereClauseParameters: (NSMutableArray *) parameters
+- (NSString *) PGTSWhereClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
 {
-    return [[self PGTSParameters1: parameters] componentsJoinedByString: @" AND "];
+    return [[self PGTSParameters1: parameters connection: connection qualified: YES] componentsJoinedByString: @" AND "];
 }
 
 @end
@@ -199,7 +209,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
  * Make a key-value-pair of each item in the dictionary.
  * Keys and values are presented as follows: "key" = $n, where n ranges from 1 to number of items
  */
-- (NSArray *) PGTSParameters1: (NSMutableArray *) parameters
+- (NSArray *) PGTSParameters1: (NSMutableArray *) parameters connection: (PGTSConnection *) connection qualified: (BOOL) qualified
 {
     NSMutableArray* fields = [NSMutableArray arrayWithCapacity: [self count]];
     //Postgres's indexing is one-based
@@ -207,7 +217,12 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     TSEnumerate (field, e, [self keyEnumerator])
     {
         [parameters addObject: [self objectForKey: field]];
-        [fields addObject: [NSString stringWithFormat: @"\"%@\" = $%u", field, i]];
+		NSString* name = nil;
+		if (qualified)
+			name = [field PGTSQualifiedName: connection];
+		else
+			name = [field PGTSEscapedName: connection];
+        [fields addObject: [NSString stringWithFormat: @"%@ = $%u", name, i]];
         i++;
     }
     return fields;
@@ -304,6 +319,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     return paramCount;
 }
 
+//FIXME: do we really need to escape field names?
 - (NSString *) PGTSQuotedString
 {
     return [NSString stringWithFormat: @"\"%@\"", self];
