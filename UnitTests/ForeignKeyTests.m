@@ -29,6 +29,7 @@
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseAdditions.h>
 #import <BaseTen/BXEntityDescriptionPrivate.h>
+#import <BaseTen/BXRelationshipDescriptionPrivate.h>
 
 #import "ForeignKeyTests.h"
 #import "MKCSenTestCaseAdditions.h"
@@ -141,8 +142,6 @@
 
 - (void) one: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity
 {
-	//FIXME: this needs attention.
-#if 0
     NSError* error = nil;
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
     MKCAssertNotNil (predicate);
@@ -156,14 +155,14 @@
     //See that the object has the given entity
     MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
-    //-[BXDatabaseContext relationshipsByNameWithEntity:entity:] doesn't 
-    //currently search the relationships recursively
-    id <BXRelationshipDescription> rel = [[manyEntity relationshipsByName] objectForKey: [oneEntity name]];
+    BXRelationshipDescription* rel = [[manyEntity relationshipsByName] objectForKey: [oneEntity name]];
     MKCAssertNotNil (rel);
-    MKCAssertTrue ([rel isToManyFromEntity: oneEntity]);
+    MKCAssertFalse ([rel isToMany]);
+	rel = [rel inverseRelationship];
+    MKCAssertNotNil (rel);
+    MKCAssertTrue ([rel isToMany]);
         
-    [oneEntity setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"test2"];
-    NSArray* foreignObjects = [rel resolveFrom: object to: [oneEntity targetForRelationship: @"test2"] error: &error];
+    NSSet* foreignObjects = [rel targetForObject: object error: &error];
     MKCAssertNil (error);
     MKCAssertTrue (2 == [foreignObjects count]);
     NSArray* values = [foreignObjects valueForKey: @"value"];
@@ -173,7 +172,7 @@
     TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 
-    foreignObjects = [object valueForKey: @"test2"];
+    foreignObjects = [object valueForKey: [manyEntity name]];
     MKCAssertNil (error);
     MKCAssertTrue (2 == [foreignObjects count]);
     values = [foreignObjects valueForKey: @"value"];
@@ -182,7 +181,6 @@
     //See that the objects have the given entities
     TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
-#endif
 }
 
 - (void) testOTO
