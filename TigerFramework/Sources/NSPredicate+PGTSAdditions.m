@@ -75,16 +75,16 @@
     NSString* glue = nil;
     NSCompoundPredicateType type = [self compoundPredicateType];
     if (NSNotPredicateType == type)
-        rval = [NSString stringWithFormat: @"(NOT (%@))", [parts objectAtIndex: 0]];
+        rval = [NSString stringWithFormat: @"(NOT %@)", [parts objectAtIndex: 0]];
     else
     {
         switch (type)
         {
             case NSAndPredicateType:
-                glue = @") AND (";
+                glue = @" AND ";
                 break;
             case NSOrPredicateType:
-                glue = @") OR (";
+                glue = @" OR ";
                 break;
             default:
                 //FIXME: exception
@@ -104,7 +104,7 @@
 
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
-    NSString* rval = [NSString stringWithFormat: @"(%@) %@ (%@)",
+    NSString* rval = [NSString stringWithFormat: @"(%@ %@ %@)",
         [[self leftExpression] PGTSValueWithObject: anObject context: context], 
         [self PGTSOperator], 
         [[self rightExpression] PGTSValueWithObject: anObject context: context]];
