@@ -50,9 +50,9 @@
 }
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;
-#if 0
 - (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity;
 - (void) modOne: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2;
+#if 0
 - (void) remove1: (BXEntityDescription *) oneEntity;
 - (void) remove2: (BXEntityDescription *) oneEntity;
 #endif

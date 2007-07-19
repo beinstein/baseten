@@ -120,7 +120,6 @@
     [context rollback];
 }
 
-#if 0
 - (void) testModOTM
 {
     [self modOne: test1 toMany: test2];
@@ -135,12 +134,7 @@
 {
     //Create an object to oneEntity and add referencing objects to manyEntity
     NSError* error = nil;
-    
-#if 0
-    [manyEntity setTargetView: ([oneEntity  isView] ? oneEntity  : nil) forRelationshipNamed: [oneEntity name]];
-    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: [manyEntity name]];
-#endif
-    
+        
     BXDatabaseObject* object = [context createObjectForEntity: oneEntity withFieldValues: nil error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (object);
@@ -159,9 +153,7 @@
     }
     MKCAssertTrue (count == [foreignObjects count]);
     
-    //FIXME: Reversing this should work better, since one query would be enough.
-    //i.e. [object setValue: foreignObjects forKey: @"fkt1"];
-    [foreignObjects setValue: object forKey: [oneEntity name]];
+	[object setPrimitiveValue: foreignObjects forKey: [manyEntity name]];
     
     NSSet* referencedObjects = [NSSet setWithSet: [object valueForKey: [manyEntity name]]];
     MKCAssertEqualObjects (referencedObjects, foreignObjects);
@@ -184,14 +176,8 @@
     //Change a reference in entity1 and entity2
     
     NSError* error = nil;
-    MKCAssertTrue ([[entity1 relationshipNamed: [entity2 name] context: context error: &error] isOneToOne]);
-    STAssertNil (error, [error localizedDescription]);
-    MKCAssertTrue ([[entity2 relationshipNamed: [entity1 name] context: context error: &error] isOneToOne]);
-    STAssertNil (error, [error localizedDescription]);
-#if 0
-    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: [entity2 name]];
-    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: [entity1 name]];
-#endif
+    MKCAssertFalse ([[[entity1 relationshipsByName] objectForKey: [entity2 name]] isToMany]);
+    MKCAssertFalse ([[[entity2 relationshipsByName] objectForKey: [entity1 name]] isToMany]);
     
     NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
@@ -216,15 +202,16 @@
     
     [object setPrimitiveValue: foreignObject1 forKey: [entity2 name]];
     NSNumber* n1 = [NSNumber numberWithInt: 1];
-    MKCAssertEqualObjects (n1, [object valueForKey: @"r2"]);
-    MKCAssertEqualObjects (n1, [foreignObject1 valueForKey: @"r1"]);
-    MKCAssertEqualObjects (n1, [object valueForKey: @"id"]);
-    MKCAssertEqualObjects (n1, [foreignObject1 valueForKey: @"id"]);
-    MKCAssertTrue (nil == [foreignObject2 valueForKey: @"r1"]);
-    MKCAssertFalse ([n1 isEqual: [foreignObject2 valueForKey: @"id"]]);
+    MKCAssertEqualObjects (n1, [foreignObject1 primitiveValueForKey: @"r1"]);
+    MKCAssertEqualObjects (n1, [object primitiveValueForKey: @"id"]);
+    MKCAssertEqualObjects (n1, [foreignObject1 primitiveValueForKey: @"id"]);
+    MKCAssertTrue (nil == [foreignObject2 primitiveValueForKey: @"r1"]);
+    MKCAssertFalse ([n1 isEqual: [foreignObject2 primitiveValueForKey: @"id"]]);
 
     [context rollback];
 }
+
+#if 0
 
 - (void) testRemove1
 {
