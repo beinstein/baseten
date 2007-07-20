@@ -110,28 +110,32 @@
                         context: (void *) context
 {
 	NSMutableSet* oldValue = [NSMutableSet setWithSet: mContainer];
+	NSSet* changed = nil;
+	NSKeyValueSetMutationKind mutationKind = 0;
 	
 	switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
 	{
 		case NSKeyValueChangeInsertion:
 		{
-			NSSet* added = [change objectForKey: NSKeyValueChangeNewKey];
-			[oldValue minusSet: added];
+			changed = [change objectForKey: NSKeyValueChangeNewKey];
+			[oldValue minusSet: changed];
+			mutationKind = NSKeyValueUnionSetMutation;
 			
 			//If context isn't autocommitting, undo and redo happen differently.
 			if ([mContext autocommits])
-				[[[mContext undoManager] prepareWithInvocationTarget: self] minusSet: added];
+				[[[mContext undoManager] prepareWithInvocationTarget: self] minusSet: changed];
 			break;
 		}
 			
 		case NSKeyValueChangeRemoval:
 		{
-			NSSet* removed = [change objectForKey: NSKeyValueChangeOldKey];
-			[oldValue unionSet: removed];
+			changed = [change objectForKey: NSKeyValueChangeOldKey];
+			[oldValue unionSet: changed];
+			mutationKind = NSKeyValueMinusSetMutation;
 
 			//If context isn't autocommitting, undo and redo happen differently.
 			if ([mContext autocommits])
-				[[[mContext undoManager] prepareWithInvocationTarget: self] unionSet: removed];
+				[[[mContext undoManager] prepareWithInvocationTarget: self] unionSet: changed];
 			break;
 		}
 			
@@ -139,10 +143,13 @@
 			break;
 	}
 	
-	[self updateDatabaseWithNewValue: mContainer oldValue: oldValue];
+	[self updateDatabaseWithNewValue: mContainer oldValue: oldValue changed: changed mutationKind: mutationKind];
 }
 
-- (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old
+- (void) updateDatabaseWithNewValue: (NSSet *) new 
+						   oldValue: (NSSet *) old
+							changed: (NSSet *) changed 
+					   mutationKind: (NSKeyValueSetMutationKind) mutationKind
 {
 	mChanging = YES;
 	
@@ -152,7 +159,9 @@
 	id realContainer = mContainer;
 	mContainer = old;
 	mForwardToHelper = NO;
-	[mReferenceObject willChangeValueForKey: [mRelationship name]];
+	[mReferenceObject willChangeValueForKey: [mRelationship name]
+							withSetMutation: mutationKind
+							   usingObjects: changed];
 		
 	//Make the change.
 	NSError* localError = nil;
@@ -163,7 +172,9 @@
 	//Switch back.
 	mContainer = realContainer;
 	mForwardToHelper = YES;
-	[mReferenceObject didChangeValueForKey: [mRelationship name]];
+	[mReferenceObject didChangeValueForKey: [mRelationship name]
+						   withSetMutation: mutationKind
+							  usingObjects: changed];
 	
 	mChanging = NO;
 }
