@@ -105,7 +105,6 @@
     [context rollback];
 }
 
-#if 0
 - (void) testModMTOCollection2
 {
     [self modMany2: mtocollectiontest2 toOne: mtocollectiontest1];
@@ -165,7 +164,6 @@
     
     [context rollback];
 }
-#endif
 
 @end
  
