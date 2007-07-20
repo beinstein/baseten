@@ -41,7 +41,7 @@
 
 //Remember to override these in subclasses.
 - (id) targetForObject: (BXDatabaseObject *) anObject error: (NSError **) error;
-- (void) setTarget: (id) anObject
+- (void) setTarget: (id) target
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error;
 - (void) setTarget: (id) anObject

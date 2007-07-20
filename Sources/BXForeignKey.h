@@ -37,6 +37,7 @@
 	NSMutableSet* mFieldNames;
 }
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
+- (NSSet *) fieldNames;
 - (NSArray *) srcFieldNames;
 - (NSArray *) dstFieldNames;
 
@@ -44,6 +45,6 @@
 - (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
 							  dstEntity: (BXEntityDescription *) dstEntity;	
-- (NSDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object;
-- (NSDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object;
+- (NSMutableDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object;
+- (NSMutableDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object;
 @end

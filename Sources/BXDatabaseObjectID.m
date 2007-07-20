@@ -128,8 +128,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
 			}
 		}	
 		log4AssertValueReturn ([entityDesc isValidated], nil, @"Expected entity %@ to have been validated earlier.", entityDesc);
-		BXAttributeDescription* attributeDesc = [[entityDesc attributesByName] objectForKey: key]; 
-		[pkeyDict setObject: value forKey: attributeDesc];
+		[pkeyDict setObject: value forKey: key];
 		
 		[queryScanner scanUpToString: @"&" intoString: NULL];
 		[queryScanner scanString: @"&" intoString: NULL];
@@ -211,7 +210,7 @@ bail:
                 }
                 
                 [parts addObject: [NSString stringWithFormat: @"%@,%c=%@", 
-                    [[currentKey name] stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
+                    [currentKey stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
                     argtype, valueForURL]];
             }
         }
@@ -249,13 +248,14 @@ bail:
 {
     NSPredicate* predicate = nil;
     NSMutableArray* predicates = nil;
+	NSDictionary* attributes = [mEntity attributesByName];
     @synchronized (mPkeyFValues)
     {
         predicates = [NSMutableArray arrayWithCapacity: [mPkeyFValues count]];
         TSEnumerate (currentKey, e, [mPkeyFValues keyEnumerator])
         {
             NSExpression* rhs = [NSExpression expressionForConstantValue: [mPkeyFValues objectForKey: currentKey]];
-            NSExpression* lhs = [NSExpression expressionForConstantValue: currentKey];
+            NSExpression* lhs = [NSExpression expressionForConstantValue: [attributes objectForKey: currentKey]];
             NSPredicate* predicate = 
                 [NSComparisonPredicate predicateWithLeftExpression: lhs
                                                    rightExpression: rhs
@@ -278,7 +278,7 @@ bail:
     else
     {
         BXDatabaseObjectID* anId = (BXDatabaseObjectID *) anObject;
-        if (0 == anId->mHash || anId->mHash == mHash)
+        if (0 == anId->mHash || 0 == mHash || anId->mHash == mHash)
         {
             @synchronized (mPkeyFValues)
             {
@@ -291,11 +291,11 @@ bail:
 }
 
 /**
- * Primary key fields.
+ * Primary key field names.
  * This method is thread-safe.
- * \return      An NSArray of BXAttributeDescriptions
+ * \return      An NSArray of NSStrings
  */
-- (NSArray *) primaryKeyFields;
+- (NSArray *) primaryKeyFieldNames;
 {
     id rval = nil;
     @synchronized (mPkeyFValues)
@@ -308,7 +308,7 @@ bail:
 /**
  * Values for the primary key fields.
  * This method is thread-safe.
- * \return      An NSDictionary with BXAttributeDescriptions as keys.
+ * \return      An NSDictionary with NSStrings as keys.
  */
 - (NSDictionary *) primaryKeyFieldValues;
 {
@@ -328,7 +328,7 @@ bail:
     id rval = nil;
     @synchronized (mPkeyFValues)
     {
-        rval = [mPkeyFValues objectForKey: [self attributeNamed: aKey]];
+        rval = [mPkeyFValues objectForKey: aKey];
     }
     return rval;
 }
@@ -336,42 +336,34 @@ bail:
 /**
  * Primary key field value for the given key.
  * This method is thread-safe.
- * \param       aKey        A BXAttributeDescription
+ * \param       aKey        A BXPropertyDescription
  */
 - (id) objectForKey: (id) aKey
 {
-    id rval = nil;
-    @synchronized (mPkeyFValues)
-    {
-        rval = [mPkeyFValues objectForKey: aKey];
-    }
-    return rval;
-}
-
-/**
- * Primary key field values for the given keys.
- * At the moment calls NSDictionary's objectsForKeys:notFoundMarker: with the NSNull object as the second argument.
- * This method is thread-safe.
- * \param       keys        An NSArray of BXAttributeDescriptions
- */
-- (id) objectsForKeys: (NSArray *) keys
-{
-    id rval = nil;
-    @synchronized (mPkeyFValues)
-    {
-        rval = [mPkeyFValues objectsForKeys: keys notFoundMarker: [NSNull null]];
-    }
-    return rval;
+    id retval = nil;
+	//FIXME: lock for entity as well?
+	if (mEntity == [aKey entity])
+	{
+		@synchronized (mPkeyFValues)
+		{
+			retval = [mPkeyFValues objectForKey: [aKey name]];
+		}
+	}
+    return retval;
 }
 
 - (NSDictionary *) allObjects
 {
-	id rval = nil;
+	NSMutableDictionary* retval = nil;
+	NSDictionary* attributes = [mEntity attributesByName];
 	@synchronized (mPkeyFValues)
 	{
-		rval = [[mPkeyFValues copy] autorelease];
+		retval = [NSMutableDictionary dictionaryWithCapacity: [mPkeyFValues count]];
+		TSEnumerate (currentKey, e, [mPkeyFValues keyEnumerator])
+			[retval setObject: [mPkeyFValues objectForKey: currentKey] forKey: [attributes objectForKey: currentKey]];
 	}
-	return rval;
+	
+	return retval;
 }
 
 @end
@@ -401,7 +393,7 @@ bail:
  * \internal
  * The designated initializer.
  * \param   aDesc   The entity.
- * \param   aDict   An NSDictionary in which the keys are BXAttributeDescriptions.
+ * \param   aDict   An NSDictionary in which the keys are NSStrings.
  * \throw   NSException named NSInternalInconsistencyException in case some of the required 
  *          parameters were missing or invalid.
  */
@@ -417,9 +409,9 @@ bail:
 		
 		TSEnumerate (currentDesc, e, [aDict keyEnumerator])
 		{
-			if (NO == [currentDesc isKindOfClass: [BXAttributeDescription class]])
+			if (NO == [currentDesc isKindOfClass: [NSString class]])
 			{
-				reason = @"Expected to receive only BXAttributeDescriptions as keys.";
+				reason = @"Expected to receive only NSStrings as keys.";
 				break;
 			}
 		}
@@ -478,23 +470,6 @@ bail:
     {
         [mPkeyFValues addEntriesFromDictionary: aDict];
     }
-}
-
-- (BXAttributeDescription *) attributeNamed: (NSString *) aName
-{
-    BXAttributeDescription* retval = nil;
-    @synchronized (mPkeyFValues)
-    {
-        TSEnumerate (currentKey, e, [mPkeyFValues keyEnumerator])
-        {
-            if ([[currentKey name] isEqual: aName])
-            {
-                retval = currentKey;
-                break;
-            }
-        }
-    }
-    return retval;
 }
 
 - (void) setLastModificationType: (enum BXModificationType) aType

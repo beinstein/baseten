@@ -49,12 +49,12 @@
 
 - (BOOL) isEqual: (id) anObject;
 
-- (NSArray *) primaryKeyFields;
+- (NSArray *) primaryKeyFieldNames;
 - (NSDictionary *) primaryKeyFieldValues;
 
 - (id) objectForKey: (id) aKey;
-- (id) objectsForKeys: (NSArray *) keys;
 - (NSDictionary *) allObjects;
+
 @end
 
 

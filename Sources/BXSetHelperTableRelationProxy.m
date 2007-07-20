@@ -31,6 +31,9 @@
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseContext.h"
+#import "BXRelationshipDescriptionPrivate.h"
+#import "BXManyToManyRelationshipDescription.h"
+#import "BXForeignKey.h"
 
 
 /**
@@ -38,38 +41,11 @@
  */
 @implementation BXSetHelperTableRelationProxy
 
-- (void) setMainEntity: (BXEntityDescription *) aMainEntity
-{
-    if (mMainEntity != aMainEntity) 
-    {
-        [mMainEntity release];
-        mMainEntity = [aMainEntity retain];
-    }
-}
-
-- (void) setMainEntityProperties: (NSArray *) aMainEntityProperties
-{
-    if (mMainEntityProperties != aMainEntityProperties) 
-    {
-        [mMainEntityProperties release];
-        mMainEntityProperties = [aMainEntityProperties retain];
-    }
-}
-
-- (void) setHelperProperties: (NSArray *) anHelperProperties
-{
-    if (mHelperProperties != anHelperProperties) 
-    {
-        [mHelperProperties release];
-        mHelperProperties = [anHelperProperties retain];
-    }
-}
-
 - (NSArray *) objectIDsFromHelperObjectIDs: (NSArray *) ids others: (NSMutableArray *) otherObjectIDs
 {
-    NSMutableArray* rval = [NSMutableArray array];
-    NSMutableArray* otherHelperIDs = nil;
-    
+	NSMutableArray* retval = [NSMutableArray array];
+	NSMutableArray* otherHelperIDs = nil;
+	
     //Iterate two times if ids that don't pass the filter should be added to otherObjectIDs
     unsigned int count = 1;
     if (nil != otherObjectIDs)
@@ -77,28 +53,36 @@
         otherHelperIDs = [NSMutableArray arrayWithCapacity: [ids count]];
         count = 2;
     }
-    
-    NSArray* helperIDs = [ids BXFilteredArrayUsingPredicate: mFilterPredicate others: otherHelperIDs];
-    id filteredIDs [2] = {helperIDs, otherHelperIDs};
-    id targetArrays [2] = {rval, otherObjectIDs};
-    
-    for (int i = 0; i < count; i++)
-    {
-        unsigned int count = [filteredIDs [i] count];
-        if (0 < count)
-        {
-            TSEnumerate (currentHelperID, e, [filteredIDs [i] objectEnumerator])
-            {
-                NSArray* helperValues = [currentHelperID objectsForKeys: mHelperProperties];
-                NSDictionary* pkfvalues = [NSDictionary dictionaryWithObjects: helperValues
-                                                                      forKeys: mMainEntityProperties];
-                BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: mMainEntity
-                                                               primaryKeyFields: pkfvalues];
-                [targetArrays [i] addObject: objectID];
-            }
-        }
-    }
-    return rval;
+	
+	NSArray* helperIDs = [ids BXFilteredArrayUsingPredicate: mFilterPredicate others: otherHelperIDs];
+	id filteredIDs [2] = {helperIDs, otherObjectIDs};
+	id targetArrays [2] = {retval, otherObjectIDs};
+	NSSet* fieldNames = [[(BXManyToManyRelationshipDescription *) mRelationship dstForeignKey] fieldNames];
+	NSMutableDictionary* pkeyFValues = [NSMutableDictionary dictionaryWithCapacity: [fieldNames count]];
+
+	for (int i = 0; i < count; i++)
+	{
+		unsigned int count = [filteredIDs [i] count];
+		if (0 < count)
+		{
+			TSEnumerate (currentHelperID, e, [filteredIDs [i] objectEnumerator])
+			{
+				[pkeyFValues removeAllObjects];
+				TSEnumerate (currentFieldArray, e, [fieldNames objectEnumerator])
+				{
+					NSString* helperFName = [currentFieldArray objectAtIndex: 0];
+					NSString* fName = [currentFieldArray objectAtIndex: 1];
+					
+					[pkeyFValues setObject: [currentHelperID valueForKey: helperFName] forKey: fName];
+					BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: [mRelationship destinationEntity] 
+																   primaryKeyFields: pkeyFValues];
+					[targetArrays [i] addObject: objectID];
+				}
+			}
+		}
+	}
+	
+	return retval;
 }
 
 - (void) addedObjectsWithIDs: (NSArray *) ids

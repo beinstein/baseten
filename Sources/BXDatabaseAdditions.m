@@ -410,7 +410,7 @@
 
 - (BOOL) BXEvaluateWithObject: (id) anObject
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     id expressions [2] = {[self leftExpression], [self rightExpression]};
     BOOL createNew = NO;
     
@@ -429,7 +429,7 @@
     }
     
     if (NO == createNew)
-        rval = [self evaluateWithObject: anObject];
+        retval = [self evaluateWithObject: anObject];
     else
     {
         //Custom selectors needn't be supported, since Postgres interface won't handle them anyway.
@@ -438,9 +438,9 @@
                                                                            modifier: [self comparisonPredicateModifier]
                                                                                type: [self predicateOperatorType]
                                                                             options: [self options]];
-        rval = [predicate evaluateWithObject: anObject];
+        retval = [predicate evaluateWithObject: anObject];
     }
-    return rval;
+    return retval;
 }
 @end
 

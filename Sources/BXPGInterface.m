@@ -435,7 +435,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSArray* pkeyfields = [entity primaryKeyFields];
 			
 			//While we're at it, set the fields as well
-			NSArray* pkeyFNames = [pkeyfields valueForKey: @"name"];
 			NSArray* fields = [entity fields];
 			
 			//Execute the query
@@ -519,10 +518,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						[fromItems addObject: [currentEntity PGTSQualifiedName: connection]];
 				}
 				NSArray* locks = [lockNotifier locksForTable: tableInfo fromItems: fromItems whereClause: whereClause parameters: parameters];
-				NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyfields forKeys: pkeyFNames];
 				TSEnumerate (currentLock, e, [locks objectEnumerator])
 				{
-					NSDictionary* pkey = [currentLock BXTranslateUsingKeys: translationDict];
+					NSDictionary* pkey = currentLock;
 					BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
 																   primaryKeyFields: pkey];
 					BXDatabaseObject* object = [context registeredObjectWithID: objectID];
@@ -632,7 +630,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 			NSArray* pkeyFields = [entity primaryKeyFields];
 			NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
-			NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyFields forKeys: pkeyFNames];        
 			NSString* name = [entity PGTSQualifiedName: connection];
 			
 			//Check if pkey should be updated
@@ -678,16 +675,14 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					{                
 						//If 1 == [objectIDs count], then information about last modification 
 						//can be used, since the modification is unambiguous.
-						NSDictionary* lastModification = [[self lastModificationForEntity: entity] objectForKey: kPGTSRowsKey];
-						NSArray* pkeyFValues = [lastModification objectsForKeys: pkeyFNames
-																 notFoundMarker: nil];
-						pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFields];
+						[res advanceRow];
+						pkeyDict = [res currentRowAsDictionary];
 					}
 					else
 					{
 						//Updating the primary key is safer to do one by one, since now
 						//we don't check the values from the database.
-						pkeyDict = [aDict BXTranslateUsingKeys: translationDict];
+						pkeyDict = aDict;
 					}
 				}
 				else
@@ -697,8 +692,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					log4AssertValueReturn (nil != entity, nil, @"Expected entity not to be nil.");
 					while (([res advanceRow]))
 					{
-						BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields:
-							[[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict]];
+						BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: [res currentRowAsDictionary]];
 						[ids addObject: currentID];
 					}
 					rval = ids;
@@ -779,11 +773,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
 			
 			NSMutableArray* objectIDs = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-			NSArray* pkeyfields = [entity primaryKeyFields];
-			NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyfields forKeys: [pkeyfields valueForKey: @"name"]];
 			while ([res advanceRow])
 			{
-				NSDictionary* pkey = [[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict];
+				NSDictionary* pkey = [res currentRowAsDictionary];
 				BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
 															   primaryKeyFields: pkey];
 				[objectIDs addObject: objectID];
@@ -1370,7 +1362,7 @@ bail:
         NSMutableArray* objectIDs = [NSMutableArray arrayWithCapacity: [res countOfRows]];
         while (([res advanceRow]))
         {
-            NSDictionary* pkey = [[res currentRowAsDictionary] BXTranslateUsingKeys: translationDict];
+            NSDictionary* pkey = [res currentRowAsDictionary];
             BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
                                                            primaryKeyFields: pkey];
             [objectIDs addObject: objectID];
@@ -1488,7 +1480,10 @@ bail:
             NSMutableDictionary* pkeyValues = [NSMutableDictionary dictionaryWithCapacity: [pkeyFields count]];
             
             TSEnumerate (currentField, e, [pkeyFields objectEnumerator])
-                [pkeyValues setValue: [currentRow valueForKey: [currentField name]] forKey: currentField];
+			{
+				NSString* name = [currentField name];
+                [pkeyValues setValue: [currentRow valueForKey: name] forKey: name];
+			}
             [ids addObject: [BXDatabaseObjectID IDWithEntity: desc primaryKeyFields: pkeyValues]];
         }
         if (NULL != status)

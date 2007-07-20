@@ -33,13 +33,8 @@
 
 @interface BXSetHelperTableRelationProxy : BXSetRelationProxy 
 {
-    BXEntityDescription* mMainEntity;
-    NSArray* mMainEntityProperties;
-    NSArray* mHelperProperties;
 }
 
-- (void) setMainEntityProperties: (NSArray *) anArray;
-- (void) setMainEntity: (BXEntityDescription *) aMainEntity;
-- (void) setHelperProperties: (NSArray *) anHelperProperties;
+- (NSArray *) objectIDsFromHelperObjectIDs: (NSArray *) ids others: (NSMutableArray *) otherObjectIDs;
 
 @end

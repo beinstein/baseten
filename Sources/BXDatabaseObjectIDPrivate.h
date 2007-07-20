@@ -40,7 +40,6 @@
 - (void) setLastModificationType: (enum BXModificationType) aType;
 - (enum BXModificationType) lastModificationType;
 - (void) replaceValuesWith: (NSDictionary *) aDict;
-- (BXAttributeDescription *) attributeNamed: (NSString *) aName;
 //- (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view;
 - (void) setStatus: (enum BXObjectDeletionStatus) status forObjectRegisteredInContext: (BXDatabaseContext *) context;
 @end

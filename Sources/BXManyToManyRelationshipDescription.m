@@ -97,17 +97,22 @@
 	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: 
 		[NSArray arrayWithObjects: helperSrcPredicate, helperDstPredicate, nil]];
 	
-	NSSet* res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
-															withPredicate: predicate 
-														  returningFaults: YES
-														  excludingFields: nil
-															returnedClass: [BXSetHelperTableRelationProxy class]
-																	error: error];
-	
+	id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
+														withPredicate: predicate 
+													  returningFaults: YES
+													  excludingFields: nil
+														returnedClass: [BXSetHelperTableRelationProxy class]
+																error: error];
+	//We want the helper to be observed instead of our destination entity.
+	[(BXSetHelperTableRelationProxy *) res setEntity: mHelperEntity];
+	[res setFilterPredicate: helperSrcPredicate];
+	[res setRelationship: self];
+	[res setReferenceObject: aDatabaseObject];
 	return res;
 }
 
 - (void) setTarget: (id) target
+		 replacing: (NSSet *) oldObjects
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error
 {
@@ -119,16 +124,12 @@
 	NSString* name = [self name];
 		
 	//Compare collection to cached values.
-	NSSet* oldObjects = [aDatabaseObject primitiveValueForKey: name];
+	if (nil == oldObjects)
+		oldObjects = [aDatabaseObject primitiveValueForKey: name];
 	NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
 	[removedObjects minusSet: target];
 	NSMutableSet* addedObjects = [[target mutableCopy] autorelease];
 	[addedObjects minusSet: oldObjects];
-	
-	//Make some key arrays for use with queries.
-	NSArray* srcHelperKeyNames = [[self srcForeignKey] srcFieldNames];
-	NSArray* srcObjectKeyNames = [[self srcForeignKey] dstFieldNames];
-	NSArray* dstHelperKeyNames = [[self dstForeignKey] srcFieldNames];
 	
 	//First remove old objects from the relationship, then add new ones.
 	//FIXME: this could be configurable by the user unless we want to look for
@@ -137,27 +138,31 @@
 	BXDatabaseContext* context = [aDatabaseObject databaseContext];
 	
 	//Remove all objects from current object's set.
-	NSArray* values = [aDatabaseObject valuesForKeys: srcObjectKeyNames];
-	NSArray* srcHelperProperties = [[mHelperEntity attributesByName] objectsForKeys: srcHelperKeyNames notFoundMarker: nil];
-	NSPredicate* predicate = [NSPredicate BXAndPredicateWithProperties: srcHelperProperties
-													matchingProperties: values
-																  type: NSEqualToPredicateOperatorType];
-	[context executeDeleteFromEntity: mHelperEntity
-					   withPredicate: predicate 
-							   error: error];
+	if (0 < [removedObjects count])
+	{
+		NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [removedObjects count]];
+		
+		TSEnumerate (currentObject, e, [removedObjects objectEnumerator])
+			[parts addObject: [[self dstForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: currentObject]];
+		
+		NSPredicate* srcPredicate = [[self srcForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: aDatabaseObject];
+		NSPredicate* dstPredicates = [NSCompoundPredicate orPredicateWithSubpredicates: parts];
+		NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: [NSArray arrayWithObjects: srcPredicate, dstPredicates, nil]];
+		[context executeDeleteFromEntity: mHelperEntity
+						   withPredicate: predicate 
+								   error: error];
+	}
 	
 	if (nil == *error)
 	{
 		//Add objects to current object's set.
-		NSDictionary* srcHelperValues = [NSDictionary dictionaryWithObjects: values forKeys: srcHelperKeyNames];
-		NSArray* dstHelperProperties = [[[self destinationEntity] attributesByName] objectsForKeys: dstHelperKeyNames notFoundMarker: nil];
-		
+		//First get values for helper entity from source foreign key and then add values from each destination object.
+		//Here, src for the foreign key is always mHelper.
+		NSDictionary* srcHelperValues = [[self srcForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: aDatabaseObject];
 		TSEnumerate (currentObject, e, [addedObjects objectEnumerator])
 		{
-			NSArray* dstHelperValues = [(BXDatabaseObject *) currentObject valuesForKeys: dstHelperValues];
-			NSMutableDictionary* values = [NSMutableDictionary dictionaryWithObjects: dstHelperValues forKeys: dstHelperProperties];
+			NSMutableDictionary* values = [[self dstForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: currentObject];
 			[values addEntriesFromDictionary: srcHelperValues];
-			
 			[context createObjectForEntity: mHelperEntity
 						   withFieldValues: values 
 									 error: error];

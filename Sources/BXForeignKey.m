@@ -76,6 +76,10 @@
 	
 	return retval;
 }
+- (NSSet *) fieldNames
+{
+	return mFieldNames;
+}
 
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject
 {
@@ -113,12 +117,12 @@
 	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];
 }
 
-- (NSDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object
+- (NSMutableDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object
 {
 	return [self valueDictionaryForEntity: entity valuesInObject: object entityIndex: 0 objectIndex: 1];
 }
 
-- (NSDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object
+- (NSMutableDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object
 {
 	return [self valueDictionaryForEntity: entity valuesInObject: object entityIndex: 1 objectIndex: 0];
 }
@@ -156,7 +160,7 @@
 	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];	
 }
 
-- (NSDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
+- (NSMutableDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
 								entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi
 {
 	log4AssertValueReturn (nil != entity, nil, @"Expected entity to be set.");

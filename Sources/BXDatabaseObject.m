@@ -569,9 +569,8 @@ ParseSelector (SEL aSelector, NSString** key)
     {
         rval = 0;
     }
-    else if (nil != [mObjectID attributeNamed: aKey])
+    else if (nil != [mObjectID valueForKey: aKey])
     {
-        //Primary key fields are never faults
         rval = 0;
     }
     else if ([[[[mObjectID entity] fields] valueForKey: @"name"] containsObject: aKey])
@@ -726,10 +725,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     log4AssertVoidReturn (nil != mObjectID, @"Expected to have an object ID.");
     TSEnumerate (currentKey, e, [[mObjectID primaryKeyFieldValues] keyEnumerator])
-    {
-        NSString* name = [currentKey name];
-        [self setCachedValue: nil forKey: name];
-    }
+        [self setCachedValue: nil forKey: currentKey];
 }
 
 /**
@@ -745,15 +741,15 @@ ParseSelector (SEL aSelector, NSString** key)
     if (nil == mContext)
     {
         //Object ID
-        NSArray* pkeyFields = [entity primaryKeyFields];
+        NSArray* pkeyFNames = [[entity primaryKeyFields] valueForKey: @"name"];
         NSArray* pkeyFValues = nil;
 		
         @synchronized (mValues)
         {
-            pkeyFValues = [mValues objectsForKeys: [pkeyFields valueForKey: @"name"] notFoundMarker: nil];
+            pkeyFValues = [mValues objectsForKeys: pkeyFNames notFoundMarker: nil];
         }
         
-        NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFields];
+        NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFNames];
         
         BXDatabaseObjectID* objectID = [[BXDatabaseObjectID alloc] initWithEntity: entity
 																 primaryKeyFields: pkeyDict];
