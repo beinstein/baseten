@@ -74,12 +74,7 @@
     BOOL autocommits = [context autocommits];
     [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
-    
-#if 0
-    [entity1 setTargetView: ([entity2 isView] ? entity2 : nil) forRelationshipNamed: @"mtmtest2"];
-    [entity2 setTargetView: ([entity1 isView] ? entity1 : nil) forRelationshipNamed: @"mtmtest1"];
-#endif
-
+	
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: nil error: &error];
