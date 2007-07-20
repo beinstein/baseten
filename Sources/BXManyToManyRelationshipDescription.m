@@ -112,7 +112,6 @@
 }
 
 - (void) setTarget: (id) target
-		 replacing: (NSSet *) oldObjects
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error
 {
@@ -124,8 +123,7 @@
 	NSString* name = [self name];
 		
 	//Compare collection to cached values.
-	if (nil == oldObjects)
-		oldObjects = [aDatabaseObject primitiveValueForKey: name];
+	NSSet* oldObjects = [aDatabaseObject primitiveValueForKey: name];
 	NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
 	[removedObjects minusSet: target];
 	NSMutableSet* addedObjects = [[target mutableCopy] autorelease];
@@ -166,9 +164,12 @@
 			[context createObjectForEntity: mHelperEntity
 						   withFieldValues: values 
 									 error: error];
+			
 			if (nil != *error)
 				break;
 		}
+		
+		//Don't set since if the object has the collection cached, it will be self-updating one.
 	}
 }
 

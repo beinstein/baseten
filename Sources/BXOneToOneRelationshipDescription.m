@@ -42,12 +42,10 @@
 }
 
 - (BOOL) shouldRemoveForTarget: (id) target 
-					 replacing: (id) oldValue
 				databaseObject: (BXDatabaseObject *) databaseObject
 					 predicate: (NSPredicate **) predicatePtr
 {
 	log4AssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
-	log4AssertLog (nil == oldValue, @"Expected passed oldValue to be nil (was: %@).", oldValue);
 	BOOL retval = NO;
 	BXDatabaseObject* oldObject = [databaseObject primitiveValueForKey: [self name]];
 	if (nil != oldObject)
@@ -60,13 +58,11 @@
 }
 
 - (BOOL) shouldAddForTarget: (id) target 
-				  replacing: (id) oldValue
 			 databaseObject: (BXDatabaseObject *) databaseObject
 				  predicate: (NSPredicate **) predicatePtr 
 					 values: (NSDictionary **) valuePtr
 {
 	log4AssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
-	log4AssertLog (nil == oldValue, @"Expected passed oldValue to be nil (was: %@).", oldValue);
 	BOOL retval = NO;
 	if (nil != target)
 	{

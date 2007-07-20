@@ -44,17 +44,11 @@
 - (void) setTarget: (id) target
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error;
-- (void) setTarget: (id) anObject
-		 replacing: (id) oldObject
-		 forObject: (BXDatabaseObject *) aDatabaseObject
-			 error: (NSError **) error;
 
 - (BOOL) shouldRemoveForTarget: (id) target 
-					 replacing: (id) oldObject
 				databaseObject: (BXDatabaseObject *) databaseObject
 					 predicate: (NSPredicate **) predicatePtr;
 - (BOOL) shouldAddForTarget: (id) target 
-				  replacing: (id) oldObject
 			 databaseObject: (BXDatabaseObject *) databaseObject
 				  predicate: (NSPredicate **) predicatePtr 
 					 values: (NSDictionary **) valuePtr;

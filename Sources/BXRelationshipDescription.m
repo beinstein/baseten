@@ -191,14 +191,6 @@
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error
 {
-	[self setTarget: target replacing: nil forObject: aDatabaseObject error: error];
-}
-
-- (void) setTarget: (id) target
-		 replacing: (id) oldObject
-		 forObject: (BXDatabaseObject *) aDatabaseObject
-			 error: (NSError **) error
-{
 	log4AssertVoidReturn (NULL != error, @"Expected error to be set.");
 	log4AssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
 	log4AssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
@@ -226,7 +218,7 @@
 		NSPredicate* predicate = nil;
 		NSDictionary* values = nil;
 		
-		if ([self shouldRemoveForTarget: target replacing: oldObject databaseObject: aDatabaseObject predicate: &predicate])
+		if ([self shouldRemoveForTarget: target databaseObject: aDatabaseObject predicate: &predicate])
 		{
 			values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: nil];
 			[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
@@ -237,16 +229,17 @@
 		
 		if (nil == *error)
 		{
-			if ([self shouldAddForTarget: target replacing: oldObject databaseObject: aDatabaseObject predicate: &predicate values: &values])
+			if ([self shouldAddForTarget: target databaseObject: aDatabaseObject predicate: &predicate values: &values])
 			{
 				[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
 														withDictionary: values
 															 predicate: predicate 
 																 error: error];
 			}
-		
-			//FIXME: if target is a mutable collection, will change notifications be posted?
-			if (nil == *error)
+
+			//Don't set if we are updating a collection because if the object has the
+			//value, it will be self-updating one.
+			if (nil == *error && NO == [self isToMany])
 				[aDatabaseObject setCachedValue: target forKey: [self name]];
 		}
 	}
@@ -259,7 +252,6 @@
 
 //Subclassing helpers
 - (BOOL) shouldRemoveForTarget: (id) target 
-					 replacing: (id) oldObjects
 				databaseObject: (BXDatabaseObject *) databaseObject
 					 predicate: (NSPredicate **) predicatePtr
 {
@@ -267,8 +259,7 @@
 	BOOL retval = NO;
 	
 	//Compare collection to cached values.
-	if (nil == oldObjects)
-		oldObjects = [databaseObject primitiveValueForKey: [self name]];
+	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];	
 	
 	NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
 	[removedObjects minusSet: target];
@@ -283,7 +274,6 @@
 }
 
 - (BOOL) shouldAddForTarget: (id) target 
-				  replacing: (id) oldObjects
 			 databaseObject: (BXDatabaseObject *) databaseObject
 				  predicate: (NSPredicate **) predicatePtr 
 					 values: (NSDictionary **) valuePtr
@@ -292,9 +282,7 @@
 	BOOL retval = NO;
 	
 	//Compare collection to cached values.
-	if (nil == oldObjects)
-		oldObjects = [databaseObject primitiveValueForKey: [self name]];
-	
+	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];	
 	NSMutableSet* addedObjects = [[target mutableCopy] autorelease];
 	[addedObjects minusSet: oldObjects];
 

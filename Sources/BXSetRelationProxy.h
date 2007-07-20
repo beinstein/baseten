@@ -37,6 +37,7 @@
 @interface BXSetRelationProxy : BXSetProxy
 {
     id mHelper;
+	BOOL mForwardToHelper;
     BXRelationshipDescription* mRelationship;
     BXDatabaseObject* mReferenceObject;
 }

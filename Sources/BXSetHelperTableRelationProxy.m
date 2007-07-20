@@ -89,24 +89,41 @@
 {
     NSArray* objectIDs = [self objectIDsFromHelperObjectIDs: ids others: nil];
     if (0 < [objectIDs count])
+	{
+		//Post notifications since modifying a self-updating collection won't cause
+		//value cache to be changed.
+		[mReferenceObject willChangeValueForKey: [mRelationship name]];
         [self handleAddedObjects: [mContext faultsWithIDs: objectIDs]];
+		[mReferenceObject didChangeValueForKey: [mRelationship name]];
+	}
 }
 
 - (void) removedObjectsWithIDs: (NSArray *) ids
 {
     NSArray* objectIDs = [self objectIDsFromHelperObjectIDs: ids others: nil];
     if (0 < [objectIDs count])
+	{
+		//See above.
+		[mReferenceObject willChangeValueForKey: [mRelationship name]];
         [self handleRemovedObjects: [mContext registeredObjectsWithIDs: objectIDs]];
+		[mReferenceObject didChangeValueForKey: [mRelationship name]];
+	}
 }
 
 - (void) updatedObjectsWithIDs: (NSArray *) ids
 {
     NSMutableArray* removedIDs = [NSMutableArray arrayWithCapacity: [ids count]];
     NSArray* addedIDs = [self objectIDsFromHelperObjectIDs: ids others: removedIDs];
-    if (0 < [removedIDs count])
-        [self handleRemovedObjects: [mContext registeredObjectsWithIDs: removedIDs]];
-    if (0 < [addedIDs count])
-        [self handleAddedObjects: [mContext faultsWithIDs: addedIDs]];
+	if (0 < [removedIDs count] || 0 < [addedIDs count])
+	{
+		//See above.
+		[mReferenceObject willChangeValueForKey: [mRelationship name]];
+		if (0 < [removedIDs count])
+			[self handleRemovedObjects: [mContext registeredObjectsWithIDs: removedIDs]];
+		if (0 < [addedIDs count])
+			[self handleAddedObjects: [mContext faultsWithIDs: addedIDs]];
+		[mReferenceObject didChangeValueForKey: [mRelationship name]];
+	}
 }
 
 @end

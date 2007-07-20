@@ -36,13 +36,14 @@
 #import "BXDatabaseContextPrivate.h"
 
 
-//Sadly, this is needed to receive the set proxy
+//Sadly, this is needed to receive the set proxy and to get a method signature.
 @interface BXSetRelationProxyHelper : NSObject
 {
     NSMutableSet* set;
     id observer;
 }
 - (id) initWithProxy: (id) aProxy container: (NSMutableSet *) aContainer;
+- (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old;
 @end
 
 
@@ -72,7 +73,11 @@
                         context: (void *) context
 {
     [observer observeValueForKeyPath: keyPath ofObject: object change: change context: context];
-}   
+}
+
+- (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old
+{
+}
 @end
 
 
@@ -86,6 +91,7 @@
     if ((self = [super BXInitWithArray: anArray]))
     {
         //From now on, receive notifications
+		mForwardToHelper = YES;
         mHelper = [[BXSetRelationProxyHelper alloc] initWithProxy: self container: mContainer];
     }
     return self;
@@ -104,15 +110,30 @@
                         context: (void *) context
 {
 	NSMutableSet* oldValue = [NSMutableSet setWithSet: mContainer];
+	
 	switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
 	{
 		case NSKeyValueChangeInsertion:
-			[oldValue minusSet: [change objectForKey: NSKeyValueChangeNewKey]];
+		{
+			NSSet* added = [change objectForKey: NSKeyValueChangeNewKey];
+			[oldValue minusSet: added];
+			
+			//If context isn't autocommitting, undo and redo happen differently.
+			if ([mContext autocommits])
+				[[[mContext undoManager] prepareWithInvocationTarget: self] minusSet: added];
 			break;
+		}
 			
 		case NSKeyValueChangeRemoval:
-			[oldValue unionSet: [change objectForKey: NSKeyValueChangeOldKey]];
+		{
+			NSSet* removed = [change objectForKey: NSKeyValueChangeOldKey];
+			[oldValue unionSet: removed];
+
+			//If context isn't autocommitting, undo and redo happen differently.
+			if ([mContext autocommits])
+				[[[mContext undoManager] prepareWithInvocationTarget: self] unionSet: removed];
 			break;
+		}
 			
 		default:
 			break;
@@ -124,17 +145,26 @@
 - (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old
 {
 	mChanging = YES;
-	//If context isn't autocommitting, undo and redo happen differently.
-	if ([mContext autocommits])
-	{
-		[[[mContext undoManager] prepareWithInvocationTarget: self]
-			updateDatabaseWithNewValue: old oldValue: new];
-	}
 	
+	//Set mContainer temporarily to old since someone might be KVC-observing.
+	//We also send the KVC posting since we have to replace the container again
+	//before didChange gets sent.
+	id realContainer = mContainer;
+	mContainer = old;
+	mForwardToHelper = NO;
+	[mReferenceObject willChangeValueForKey: [mRelationship name]];
+		
+	//Make the change.
 	NSError* localError = nil;
-	[mRelationship setTarget: new replacing: old forObject: mReferenceObject error: &localError];
+	[mRelationship setTarget: new forObject: mReferenceObject error: &localError];
 	if (nil != localError)
 		[mContext handleError: localError];
+	
+	//Switch back.
+	mContainer = realContainer;
+	mForwardToHelper = YES;
+	[mReferenceObject didChangeValueForKey: [mRelationship name]];
+	
 	mChanging = NO;
 }
 
@@ -159,7 +189,11 @@
 - (void) forwardInvocation: (NSInvocation *) anInvocation
 {
     //Unless we modify the helper's proxy object, changes won't be notified.
-    [anInvocation invokeWithTarget: [mHelper mutableSetValueForKey: @"set"]];
+	//Do otherwise only under special circumstances.
+	if (mForwardToHelper)
+		[anInvocation invokeWithTarget: [mHelper mutableSetValueForKey: @"set"]];
+	else
+		[anInvocation invokeWithTarget: mContainer];
 }
 
 @end
