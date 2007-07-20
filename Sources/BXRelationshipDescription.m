@@ -166,12 +166,15 @@
 	}
 	
 	//Expression order matters since foreign key is always in src table or view.
-	NSSet* res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
-															withPredicate: predicate 
-														  returningFaults: YES
-														  excludingFields: nil
-															returnedClass: [BXSetRelationProxy class]
-																	error: error];
+	id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
+														withPredicate: predicate 
+													  returningFaults: YES
+													  excludingFields: nil
+														returnedClass: [BXSetRelationProxy class]
+																error: error];
+	[res setRelationship: self];
+	[res setReferenceObject: aDatabaseObject];
+	
 	if ([self isToMany])
 		retval = res;
 	else
@@ -185,6 +188,14 @@
 }
 
 - (void) setTarget: (id) target
+		 forObject: (BXDatabaseObject *) aDatabaseObject
+			 error: (NSError **) error
+{
+	[self setTarget: target replacing: nil forObject: aDatabaseObject error: error];
+}
+
+- (void) setTarget: (id) target
+		 replacing: (id) oldObject
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error
 {
@@ -215,7 +226,7 @@
 		NSPredicate* predicate = nil;
 		NSDictionary* values = nil;
 		
-		if ([self shouldRemoveForTarget: target databaseObject: aDatabaseObject predicate: &predicate])
+		if ([self shouldRemoveForTarget: target replacing: oldObject databaseObject: aDatabaseObject predicate: &predicate])
 		{
 			values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: nil];
 			[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
@@ -226,7 +237,7 @@
 		
 		if (nil == *error)
 		{
-			if ([self shouldAddForTarget: target databaseObject: aDatabaseObject predicate: &predicate values: &values])
+			if ([self shouldAddForTarget: target replacing: oldObject databaseObject: aDatabaseObject predicate: &predicate values: &values])
 			{
 				[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
 														withDictionary: values
@@ -234,6 +245,7 @@
 																 error: error];
 			}
 		
+			//FIXME: if target is a mutable collection, will change notifications be posted?
 			if (nil == *error)
 				[aDatabaseObject setCachedValue: target forKey: [self name]];
 		}
@@ -246,14 +258,18 @@
 }
 
 //Subclassing helpers
-- (BOOL) shouldRemoveForTarget: (id) target databaseObject: (BXDatabaseObject *) databaseObject
+- (BOOL) shouldRemoveForTarget: (id) target 
+					 replacing: (id) oldObjects
+				databaseObject: (BXDatabaseObject *) databaseObject
 					 predicate: (NSPredicate **) predicatePtr
 {
 	log4AssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
 	BOOL retval = NO;
 	
 	//Compare collection to cached values.
-	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];
+	if (nil == oldObjects)
+		oldObjects = [databaseObject primitiveValueForKey: [self name]];
+	
 	NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
 	[removedObjects minusSet: target];
 	
@@ -266,14 +282,19 @@
 	return retval;
 }
 
-- (BOOL) shouldAddForTarget: (id) target databaseObject: (BXDatabaseObject *) databaseObject
-				  predicate: (NSPredicate **) predicatePtr values: (NSDictionary **) valuePtr
+- (BOOL) shouldAddForTarget: (id) target 
+				  replacing: (id) oldObjects
+			 databaseObject: (BXDatabaseObject *) databaseObject
+				  predicate: (NSPredicate **) predicatePtr 
+					 values: (NSDictionary **) valuePtr
 {
 	log4AssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
 	BOOL retval = NO;
 	
 	//Compare collection to cached values.
-	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];
+	if (nil == oldObjects)
+		oldObjects = [databaseObject primitiveValueForKey: [self name]];
+	
 	NSMutableSet* addedObjects = [[target mutableCopy] autorelease];
 	[addedObjects minusSet: oldObjects];
 

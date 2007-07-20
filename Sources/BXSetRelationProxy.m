@@ -33,6 +33,7 @@
 #import "BXDatabaseObject.h"
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "BXDatabaseContextPrivate.h"
 
 
 //Sadly, this is needed to receive the set proxy
@@ -102,38 +103,38 @@
                          change: (NSDictionary *) change
                         context: (void *) context
 {
-	NSMutableSet* oldValue = nil;
-	if ([mContext autocommits])
+	NSMutableSet* oldValue = [NSMutableSet setWithSet: mContainer];
+	switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
 	{
-		oldValue = [NSMutableSet setWithSet: mContainer];
-		switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
-		{
-			case NSKeyValueChangeInsertion:
-				[oldValue minusSet: [change objectForKey: NSKeyValueChangeNewKey]];
-				break;
+		case NSKeyValueChangeInsertion:
+			[oldValue minusSet: [change objectForKey: NSKeyValueChangeNewKey]];
+			break;
 			
-			case NSKeyValueChangeRemoval:
-				[oldValue unionSet: [change objectForKey: NSKeyValueChangeOldKey]];
-				break;
+		case NSKeyValueChangeRemoval:
+			[oldValue unionSet: [change objectForKey: NSKeyValueChangeOldKey]];
+			break;
 			
-			default:
-				break;
-		}
+		default:
+			break;
 	}
+	
 	[self updateDatabaseWithNewValue: mContainer oldValue: oldValue];
 }
 
 - (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old
 {
 	mChanging = YES;
-	//If context isn't autocommitting, we don't care for the old value since undo and redo happen differently.
+	//If context isn't autocommitting, undo and redo happen differently.
 	if ([mContext autocommits])
 	{
 		[[[mContext undoManager] prepareWithInvocationTarget: self]
 			updateDatabaseWithNewValue: old oldValue: new];
 	}
 	
-	[mRelationship setTarget: new forObject: mReferenceObject error: NULL];
+	NSError* localError = nil;
+	[mRelationship setTarget: new replacing: old forObject: mReferenceObject error: &localError];
+	if (nil != localError)
+		[mContext handleError: localError];
 	mChanging = NO;
 }
 
