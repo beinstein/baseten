@@ -211,8 +211,6 @@
     [context rollback];
 }
 
-#if 0
-
 - (void) testRemove1
 {
     [self remove1: test1];
@@ -261,6 +259,5 @@
     
     [context rollback];
 }
-#endif
 
 @end

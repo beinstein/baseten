@@ -67,12 +67,7 @@
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     NSError* error = nil;
-    
-#if 0
-    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"mtocollectiontest2"];
-    [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"mtocollectiontest1"];
-#endif
-    
+        
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: oneEntity
                                     withPredicate: nil error: &error];
@@ -110,6 +105,7 @@
     [context rollback];
 }
 
+#if 0
 - (void) testModMTOCollection2
 {
     [self modMany2: mtocollectiontest2 toOne: mtocollectiontest1];
@@ -123,11 +119,6 @@
 - (void) modMany2: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     NSError* error = nil;
-
-#if 0
-    [oneEntity  setTargetView: ([manyEntity isView] ? manyEntity : nil) forRelationshipNamed: @"m"];
-    [manyEntity setTargetView: ([oneEntity isView]  ? oneEntity  : nil) forRelationshipNamed: @"m"];
-#endif
 
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: oneEntity
@@ -174,6 +165,7 @@
     
     [context rollback];
 }
+#endif
 
 @end
  

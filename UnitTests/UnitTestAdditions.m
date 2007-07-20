@@ -27,7 +27,7 @@
 //
 
 #import "UnitTestAdditions.h"
-#import <BaseTen/BXEntityDescriptionPrivate.h>
+#import <BaseTen/BXRelationshipDescriptionPrivate.h>
 
 
 @implementation BXDatabaseObject (UnitTestAdditions)
@@ -36,9 +36,8 @@
 	NSError* error = nil;
 	//BXDatabaseObject caches related objects so for testing purposes we need to fetch using the relationship.
 	BXEntityDescription* entity = [[self objectID] entity];
-	id <BXRelationshipDescription> rel = [entity relationshipNamed: aName context: mContext error: &error];
-	NSAssert (nil == error, [error localizedDescription]);
-	id rval = [rel resolveFrom: self to: [entity targetForRelationship: aName] error: &error];
+	BXRelationshipDescription* rel = [[entity relationshipsByName] objectForKey: aName];
+	id rval = [rel targetForObject: self error: &error];
 	NSAssert (nil == error, [error localizedDescription]);
 	return rval;
 }
