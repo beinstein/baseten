@@ -231,7 +231,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 
     PGTSDatabaseInfo* dbInfo = [connection databaseInfo];
-    TSEnumerate (currentEntity, e, [[context seenEntities] objectEnumerator])
+    TSEnumerate (currentEntity, e, [mObservedEntities objectEnumerator])
     {
         PGTSTableInfo* tableInfo = [dbInfo tableInfoForTableNamed: [currentEntity name] inSchemaNamed: [currentEntity schemaName]];
 		if (nil != tableInfo)
@@ -246,6 +246,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
     }
     [modificationNotifier release];
     [lockNotifier release];
+    [mObservedEntities release];
+    
     if (NO == clearedLocks && [notifyConnection connected])
     {
         clearedLocks = YES;
@@ -1063,7 +1065,7 @@ bail:
 {
     log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
     log4AssertValueReturn (nil != notifyConnection, nil, @"Expected notifyConnection to be set.");
-
+    
     PGTSDatabaseInfo* database = [notifyConnection databaseInfo];
     PGTSTableInfo* tableInfo = [database tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
     if (nil == tableInfo)
@@ -1080,7 +1082,7 @@ bail:
             nil];
         *error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
     }
-    else
+    else if (NO == [entity isValidated])
     {
 		//Get the primary key
 		NSMutableDictionary* attributes = nil;
@@ -1178,9 +1180,11 @@ bail:
 #endif
         
         if (nil != *error) tableInfo = nil;
-        [self observeIfNeeded: entity error: error];
-        if (nil != *error) tableInfo = nil;
     }
+    
+    [self observeIfNeeded: entity error: error];
+    if (nil != *error) tableInfo = nil;
+
     return tableInfo;
 }
 
@@ -1234,84 +1238,88 @@ bail:
     log4AssertValueReturn (NO == [connection overlooksFailedQueries], NO, @"Connection should throw when a query fails");
 	
     BOOL rval = NO;
-    if (nil == modificationNotifier)
-    {
-        //PostgreSQL backends don't deliver notifications to interfaces during transactions
-        log4AssertValueReturn (connection == notifyConnection || PQTRANS_IDLE == [notifyConnection transactionStatus], NO,
-							   @"Connection %p was expected to be in PQTRANS_IDLE (status: %d connection: %p notifyconnection: %p).", 
-							   notifyConnection, [notifyConnection transactionStatus], connection, notifyConnection);
-        
-        modificationNotifier = [[PGTSModificationNotifier alloc] init];
-        [modificationNotifier setConnection: notifyConnection];
-        [modificationNotifier setObservesSelfGenerated: NO];
-		[modificationNotifier setDelegate: self];
-    }
-    if (nil == lockNotifier)
-    {
-        lockNotifier = [[PGTSLockNotifier alloc] init];
-        [lockNotifier setConnection: notifyConnection];
-		[lockNotifier setDelegate: self];
-    }
-    
-    if (YES == [context hasSeenEntity: entity])
-        rval = [entity isValidated];
+    if ([mObservedEntities containsObject: entity])
+        rval = YES;
     else
     {
-		//Connection should throw on error.
-		@try
-		{
-			PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
-			{
-				SEL selectors [] = {@selector (rowsInserted:), @selector (rowsUpdated:), @selector (rowsDeleted:)};
-				NSString* notificationNames [] = {kPGTSInsertModification, kPGTSUpdateModification, kPGTSDeleteModification};
-				for (int i = 0; i < 3; i++)
-				{
-					[modificationNotifier observeTable: table
-											  selector: selectors [i] 
-									  notificationName: notificationNames [i]];
-				}
-			}
-			
-			{
-				SEL selectors [] = {@selector (rowsLocked:), @selector (rowsLocked:), @selector (rowsUnlocked:)};
-				NSString* notificationNames [] = {kPGTSLockedForUpdate, kPGTSLockedForDelete, kPGTSUnlockedRowsNotification};
-				for (int i = 0; i < 3; i++)
-				{
-					[lockNotifier observeTable: table 
-									  selector: selectors [i]
-							  notificationName: notificationNames [i]];
-				}
-			}
-			
-			[context setHasSeen: YES entity: entity];
-			[[NSNotificationCenter defaultCenter] addObserver: self
-													 selector: @selector (notifyConnectionWillClose:)
-														 name: kPGTSWillDisconnectNotification 
-													   object: notifyConnection];
-			rval = YES;			
-		}
-		@catch (PGTSQueryException* e)
-		{
-			if (NULL != error)
-			{
-				NSString* message = BXLocalizedString (@"observingErrorFmt", 
-													   @"Table %@ in schema %@ has not been prepared for modification observing.", 
-													   @"Error description format");
-				message = [NSString stringWithFormat: message, [entity name], [entity schemaName]];
-				NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-					BXSafeObj (context), kBXDatabaseContextKey,
-					BXSafeObj (entity),  kBXEntityDescriptionKey,
-					BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-					BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
-					BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
-					nil];
-				*error = [NSError errorWithDomain: kBXErrorDomain
-											 code: kBXErrorObservingFailed
-										 userInfo: userInfo];
-			}			
-		}
-	}
-	return rval;
+        if (nil == mObservedEntities)
+            mObservedEntities = [[NSMutableSet alloc] init];
+        
+        if (nil == modificationNotifier)
+        {
+            //PostgreSQL backends don't deliver notifications to interfaces during transactions
+            log4AssertValueReturn (connection == notifyConnection || PQTRANS_IDLE == [notifyConnection transactionStatus], NO,
+                                   @"Connection %p was expected to be in PQTRANS_IDLE (status: %d connection: %p notifyconnection: %p).", 
+                                   notifyConnection, [notifyConnection transactionStatus], connection, notifyConnection);
+            
+            modificationNotifier = [[PGTSModificationNotifier alloc] init];
+            [modificationNotifier setConnection: notifyConnection];
+            [modificationNotifier setObservesSelfGenerated: NO];
+            [modificationNotifier setDelegate: self];
+        }
+        
+        if (nil == lockNotifier)
+        {
+            lockNotifier = [[PGTSLockNotifier alloc] init];
+            [lockNotifier setConnection: notifyConnection];
+            [lockNotifier setDelegate: self];
+        }
+        
+        //Connection should throw on error.
+        @try
+        {
+            PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
+            {
+                SEL selectors [] = {@selector (rowsInserted:), @selector (rowsUpdated:), @selector (rowsDeleted:)};
+                NSString* notificationNames [] = {kPGTSInsertModification, kPGTSUpdateModification, kPGTSDeleteModification};
+                for (int i = 0; i < 3; i++)
+                {
+                    [modificationNotifier observeTable: table
+                                              selector: selectors [i] 
+                                      notificationName: notificationNames [i]];
+                }
+            }
+            
+            {
+                SEL selectors [] = {@selector (rowsLocked:), @selector (rowsLocked:), @selector (rowsUnlocked:)};
+                NSString* notificationNames [] = {kPGTSLockedForUpdate, kPGTSLockedForDelete, kPGTSUnlockedRowsNotification};
+                for (int i = 0; i < 3; i++)
+                {
+                    [lockNotifier observeTable: table 
+                                      selector: selectors [i]
+                              notificationName: notificationNames [i]];
+                }
+            }
+            
+            [mObservedEntities addObject: entity];
+            [[NSNotificationCenter defaultCenter] addObserver: self
+                                                     selector: @selector (notifyConnectionWillClose:)
+                                                         name: kPGTSWillDisconnectNotification 
+                                                       object: notifyConnection];
+            rval = YES;			
+        }
+        @catch (PGTSQueryException* e)
+        {
+            if (NULL != error)
+            {
+                NSString* message = BXLocalizedString (@"observingErrorFmt", 
+                                                       @"Table %@ in schema %@ has not been prepared for modification observing.", 
+                                                       @"Error description format");
+                message = [NSString stringWithFormat: message, [entity name], [entity schemaName]];
+                NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                    BXSafeObj (context), kBXDatabaseContextKey,
+                    BXSafeObj (entity),  kBXEntityDescriptionKey,
+                    BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+                    BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+                    BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
+                    nil];
+                *error = [NSError errorWithDomain: kBXErrorDomain
+                                             code: kBXErrorObservingFailed
+                                         userInfo: userInfo];
+            }			
+        }
+    }
+    return rval;
 }
 
 /**

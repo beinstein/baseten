@@ -49,7 +49,7 @@
 
 - (void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[mContext notificationCenter] removeObserver: self];
     [mContainer release];    
     [mContext release];
     [mFilterPredicate release];
@@ -219,12 +219,14 @@
 
 - (void) setEntity: (BXEntityDescription *) entity
 {
+    log4AssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
+    
     //Set up the modification notification
     if (mEntity != entity) 
     {
         mEntity = entity; //Retain not needed since the entities won't be released
 
-        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+        NSNotificationCenter* nc = [mContext notificationCenter];
         [nc removeObserver: self];
         
         SEL addSelector = @selector (addedObjects:);

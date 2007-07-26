@@ -181,13 +181,15 @@ extern void BXInit ()
     
     [mDatabaseInterface release];
     [mDatabaseURI release];
-    [mSeenEntities release];
     [mObjects release];
     [mModifiedObjectIDs release];
     [mUndoManager release];
 	[mLazilyValidatedEntities release];
 	[mUndoGroupingLevels release];
 	[mConnectionSetupManager release];
+    [mNotificationCenter release];
+    [mEntities release];
+    [mRelationships release];
     
     if (NULL != mKeychainPasswordItem)
         CFRelease (mKeychainPasswordItem);
@@ -309,7 +311,7 @@ extern void BXInit ()
         NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
                                                                      object: self
                                                                    userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
-        [[NSNotificationCenter defaultCenter] postNotification: notification];
+        [[self notificationCenter] postNotification: notification];
 	}	
 }
 
@@ -333,16 +335,6 @@ extern void BXInit ()
 - (BOOL) isConnected
 {
 	return [[self databaseInterface] connected];
-}
-
-- (BOOL) hasSeenEntity: (BXEntityDescription *) entity
-{
-    return [mSeenEntities containsObject: entity];
-}
-
-- (NSSet *) seenEntities
-{
-    return mSeenEntities;
 }
 
 /**
@@ -596,7 +588,18 @@ extern void BXInit ()
         [object faultKey: nil];
 }
 
+- (NSNotificationCenter *) notificationCenter
+{
+    if (nil == mNotificationCenter)
+        mNotificationCenter = [[NSNotificationCenter alloc] init];
+    
+    return mNotificationCenter;
+}
+
 @end
+
+
+#pragma mark UnnamedCategoryEnd
 
 
 @implementation BXDatabaseContext (Undoing)
@@ -915,9 +918,7 @@ extern void BXInit ()
 					}
 				}
 			}
-		}
-		
-		[mSeenEntities addObject: entity];
+		}		
 	}
 	BXHandleError (error, localError);
 	return rval;
@@ -1248,7 +1249,7 @@ extern void BXInit ()
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 																			 object: self 
 																		   userInfo: (mDidDisconnect ? nil : [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey])];
-				[[NSNotificationCenter defaultCenter] postNotification: notification];
+				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
 				NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: @""];
@@ -1274,6 +1275,9 @@ extern void BXInit ()
 					break;
 				[mLazilyValidatedEntities removeObject: currentEntity];
 			}
+            
+            [mLazilyValidatedEntities release];
+            mLazilyValidatedEntities = nil;
 		}
 		
 		mRetryingConnection = NO;
@@ -1291,7 +1295,7 @@ extern void BXInit ()
 														 object: self
 													   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
 		}
-		[[NSNotificationCenter defaultCenter] postNotification: notification];
+		[[self notificationCenter] postNotification: notification];
 	}
 }
 
@@ -1317,9 +1321,9 @@ extern void BXInit ()
             id notificationNames [2] = {kBXUpdateEarlyNotification, kBXUpdateNotification};
             for (int i = 0; i < 2; i++)
             {
-                [[NSNotificationCenter defaultCenter] postNotificationName: notificationNames [i]
-                                                                    object: entity
-                                                                  userInfo: userInfo];
+                [[self notificationCenter] postNotificationName: notificationNames [i]
+                                                         object: entity
+                                                       userInfo: userInfo];
             }
         }
         
@@ -1352,7 +1356,7 @@ extern void BXInit ()
     {
         //If we can find objects with matching partial keys, send update notifications instead
         BXEntityDescription* entity = [[objectIDs objectAtIndex: 0] entity];
-        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+        NSNotificationCenter* nc = [self notificationCenter];
 		
         //Send the notifications
         NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1433,9 +1437,9 @@ extern void BXInit ()
         NSString* notificationNames [2] = {kBXDeleteEarlyNotification, kBXDeleteNotification};
         for (int i = 0; i < count; i++)
         {
-            [[NSNotificationCenter defaultCenter] postNotificationName: notificationNames [i]
-                                                                object: entity
-                                                              userInfo: userInfo];
+            [[self notificationCenter] postNotificationName: notificationNames [i]
+                                                     object: entity
+                                                   userInfo: userInfo];
         }
         
 #if 0
@@ -1490,9 +1494,9 @@ extern void BXInit ()
             foundObjects, kBXObjectsKey,
             [NSValue valueWithBytes: &status objCType: @encode (enum BXObjectLockStatus)], kBXObjectLockStatusKey,
             nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName: kBXLockNotification
-                                                            object: [[objectIDs objectAtIndex: 0] entity]
-                                                          userInfo: userInfo];
+        [[self notificationCenter] postNotificationName: kBXLockNotification
+                                                 object: [[objectIDs objectAtIndex: 0] entity]
+                                               userInfo: userInfo];
     }
 }
 
@@ -1516,9 +1520,9 @@ extern void BXInit ()
             self, kBXDatabaseContextKey, 
             iteratedObjects, kBXObjectsKey,
             nil];
-        [[NSNotificationCenter defaultCenter] postNotificationName: kBXUnlockNotification
-                                                            object: [[objectIDs objectAtIndex: 0] entity]
-                                                          userInfo: userInfo];
+        [[self notificationCenter] postNotificationName: kBXUnlockNotification
+                                                 object: [[objectIDs objectAtIndex: 0] entity]
+                                               userInfo: userInfo];
     }
 }
 
@@ -1629,6 +1633,7 @@ extern void BXInit ()
 			[self validateEntity: rval error: &localError];
 		}
 	}
+    
 	BXHandleError (error, localError);
 	if (nil != localError)
 		rval = nil;
@@ -1810,7 +1815,6 @@ extern void BXInit ()
 													   error: &localError];
 			if (nil == localError)
 			{
-				[mSeenEntities addObject: entity];
 				[rval makeObjectsPerformSelector: @selector (awakeFromFetchIfNeeded)];
 				
 				if (Nil != returnedClass)
@@ -2025,8 +2029,11 @@ extern void BXInit ()
 	if (nil == mUndoManager)
 		mUndoManager = [[NSUndoManager alloc] init];
 	
-	if (nil == mSeenEntities)
-		mSeenEntities = [[NSMutableSet alloc] init];
+	if (nil == mEntities)
+		mEntities = [[NSMutableSet alloc] init];
+    
+    if (nil == mRelationships)
+        mRelationships = [[NSMutableSet alloc] init];
 	
 	if (nil == mObjects)
 		mObjects = [[TSNonRetainedObjectDictionary alloc] init];
@@ -2118,11 +2125,6 @@ extern void BXInit ()
     [mObjects removeObjectForKey: [anObject objectID]];
 }
 
-- (void) setHasSeen: (BOOL) aBool entity: (BXEntityDescription *) anEntity
-{
-    [mSeenEntities addObject: anEntity];
-}
-
 - (void) setCanConnect: (BOOL) aBool
 {
 	if (aBool != mCanConnect)
@@ -2152,15 +2154,30 @@ extern void BXInit ()
 	log4AssertValueReturn (NULL != error, NO, @"Expected error not to be NULL.");
 	
 	BOOL retval = NO;
-	if ([entity isValidated])
+	if ([mEntities containsObject: entity])
 		retval = YES;
 	else if ([mDatabaseInterface validateEntity: entity error: error])
 	{
-		[entity setValidated: YES];
-		[entity setRelationships: [mDatabaseInterface relationshipsForEntity: entity error: error]];
-		if (NULL == *error)
-			retval = YES;
+		if (NULL != *error) goto bail;
+
+        if ([entity isValidated])
+            [mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+        else
+        {
+            [entity setValidated: YES];
+
+            NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
+            if (NULL != *error) goto bail;
+
+            [entity setRelationships: relationships];
+            [mRelationships addObjectsFromArray: [relationships allValues]];
+
+            retval = YES;
+        }
+        [mEntities addObject: entity];
 	}
+
+bail:
 	return retval;
 }
 

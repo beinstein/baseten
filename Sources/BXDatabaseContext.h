@@ -58,7 +58,6 @@
 {
     BXHiddenId <BXInterface>				mDatabaseInterface;
     NSURL*									mDatabaseURI;
-    NSMutableSet*							mSeenEntities;
     TSNonRetainedObjectDictionary*			mObjects;
     NSMutableSet*							mModifiedObjectIDs;
     NSUndoManager*							mUndoManager;
@@ -66,6 +65,9 @@
 	NSMutableIndexSet*						mUndoGroupingLevels;
 	BXHiddenId <BXConnectionSetupManager>	mConnectionSetupManager;
     SecKeychainItemRef                      mKeychainPasswordItem;
+    NSNotificationCenter*                   mNotificationCenter;
+    NSMutableSet*                           mEntities;
+    NSMutableSet*                           mRelationships;
 	
 	/** An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;
@@ -95,9 +97,6 @@
 
 - (BOOL) retainsRegisteredObjects;
 - (void) setRetainsRegisteredObjects:(BOOL)flag;
-
-- (BOOL) hasSeenEntity: (BXEntityDescription *) anEntity;
-- (NSSet *) seenEntities;
 
 - (void) setAutocommits: (BOOL) aBool;
 - (BOOL) autocommits;
@@ -129,6 +128,8 @@
 - (BOOL) connectsOnAwake;
 
 - (void) refreshObject: (BXDatabaseObject *) object mergeChanges: (BOOL) flag;
+
+- (NSNotificationCenter *) notificationCenter;
 @end
 
 

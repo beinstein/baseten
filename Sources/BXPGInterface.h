@@ -82,6 +82,7 @@ enum BXPGQueryState
     PGTSLockNotifier*  lockNotifier;
  	BXPGCertificateVerificationDelegate* cvDelegate;
 	NSMutableDictionary* mForeignKeys;
+    NSMutableSet* mObservedEntities;
    
     enum BXPGQueryState state; /** What kind of query has been sent recently? */
     id <BXObjectAsynchronousLocking> locker;
