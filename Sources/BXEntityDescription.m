@@ -345,7 +345,7 @@ bail:
 
 - (NSDictionary *) relationshipsByName
 {
-	return mRelationships;
+	return [mRelationships dictionary];
 }
 @end
 
@@ -413,7 +413,7 @@ bail:
         mDatabaseObjectClass = [BXDatabaseObject class];
         mDatabaseURI = [anURI copy];
         mSchemaName = [sName copy];
-		mRelationships = [[NSMutableDictionary alloc] init];
+		mRelationships = [[TSNonRetainedObjectDictionary alloc] init];
 		mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
 		mValidationLock = [[NSRecursiveLock alloc] init];
     }
@@ -512,10 +512,14 @@ bail:
 
 - (void) setRelationships: (NSDictionary *) aDict
 {
-	if (mRelationships != aDict)
+	//FIXME: this is a bit bad.
+	TSEnumerate (currentKey, e, [mRelationships keyEnumerator])
+		[mRelationships removeObjectForKey: currentKey];
+	
+	TSEnumerate (currentKey, e, [aDict keyEnumerator])
 	{
-		[mRelationships release];
-		mRelationships = [aDict retain];
+		[mRelationships setObject: [aDict objectForKey: currentKey]
+						   forKey: currentKey];
 	}
 }
 

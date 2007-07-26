@@ -51,7 +51,7 @@ enum BXEntityFlag
 	NSLock*					mValidationLock;
 
     id                      mObjectIDs;    
-    NSMutableDictionary*    mRelationships;			//FIXME: this should be moved to a class similar to NSManagedObjectModel.
+    id						mRelationships;
     enum BXEntityFlag       mFlags;
 }
 
