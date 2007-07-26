@@ -154,4 +154,18 @@
     }
     return rval;
 }
+
+- (NSDictionary *) dictionary
+{
+	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [self count]];
+	NSEnumerator* e = [self keyEnumerator];
+	id currentKey = nil;
+	while ((currentKey = [e nextObject]))
+	{
+		[retval setObject: [self objectForKey: currentKey]
+				   forKey: currentKey];
+	}
+	return retval;
+}
+
 @end
