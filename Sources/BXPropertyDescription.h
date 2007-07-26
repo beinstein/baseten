@@ -47,6 +47,7 @@ enum BXPropertyFlag
 	enum BXPropertyFlag   mFlags;
 }
 
+- (void) dealloc2;
 - (BXEntityDescription *) entity;
 - (BOOL) isOptional;
 

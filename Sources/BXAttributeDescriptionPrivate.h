@@ -28,7 +28,6 @@
 
 @interface BXAttributeDescription (PrivateMethods)
 + (id) attributeWithName: (NSString *) name entity: (BXEntityDescription *) entity;
-- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity;
 - (void) setPrimaryKey: (BOOL) aBool;
 - (void) setExcluded: (BOOL) aBool;
 @end

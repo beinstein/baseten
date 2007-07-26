@@ -30,13 +30,10 @@
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
+#import "BXPropertyDescriptionPrivate.h"
 
 #import <Log4Cocoa/Log4Cocoa.h>
 
-
-#ifndef L4_BLOCK_ASSERTIONS
-static NSMutableDictionary* gAttributes;
-#endif
 
 
 /**
@@ -44,30 +41,10 @@ static NSMutableDictionary* gAttributes;
  */
 @implementation BXAttributeDescription
 
-+ (void) initialize
-{
-	static BOOL tooLate = NO;
-	if (NO == tooLate)
-	{
-		tooLate = YES;
-#ifndef L4_BLOCK_ASSERTIONS
-		gAttributes = [[NSMutableDictionary alloc] init];
-#endif
-	}
-}
-
-
-/** Retain on copy. */
-- (id) copyWithZone: (NSZone *) zone
-{
-    return [self retain];
-}
-
 - (id) initWithCoder: (NSCoder *) decoder
 {
 	if ((self = [super initWithCoder: decoder]))
 	{
-		//FIXME: change -initWithName:entity: so that attributes are checked with gAttributes.
 		[self setPrimaryKey: [decoder decodeBoolForKey: @"isPrimaryKey"]];
 		[self setExcluded: [decoder decodeBoolForKey: @"isExcluded"]];
 	}
@@ -114,49 +91,7 @@ static NSMutableDictionary* gAttributes;
 {
     return [[[self alloc] initWithName: aName entity: anEntity] autorelease];
 }
-
-/**
- * \internal
- * The designated initializer.
- * Create an attribute description.
- * \param       aName       Name of the attribute
- * \param       anEntity    The entity which contains the attribute.
- * \return                  The attribute description.
- */
-- (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity
-{
-    if ((self = [super initWithName: aName]))
-    {
-        log4AssertValueReturn (nil != anEntity, nil, @"Expected entity not to be nil.");
-        mEntity = anEntity; //Weak since entities are not released anyway
-		
-		//Enforcing this shouldn't be necessary since properties should only get created in our code.
-#ifndef L4_BLOCK_ASSERTIONS
-		NSMutableSet* entities = [gAttributes objectForKey: aName];
-		if (nil == entities)
-		{
-			entities = [NSMutableSet set];
-			[gAttributes setObject: entities forKey: aName];
-		}
-		
-		TSEnumerate (currentEntity, e, [entities objectEnumerator])
-		{
-			if (currentEntity == anEntity)
-				log4AssertValueReturn (NO, nil, @"Expected to have only single instance of attribute %@", self);
-		}
-
-		[entities addObject: anEntity];
-#endif
-    }
-    return self;
-}
 //@}
-
-- (id) initWithName: (NSString *) name
-{
-    [self release];
-    return nil;
-}
 
 - (void) setPrimaryKey: (BOOL) aBool
 {

@@ -867,7 +867,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		if ([entity isView])
 			i = 3;
 		
-		for (int i = 0; i < 4; i++)
+		while (i < 4)
 		{
 			NSString* queryString = [NSString stringWithFormat: queryFormat, views [i]];
 			PGTSResultSet* res = [connection executeQuery: queryString parameters:
@@ -943,6 +943,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					[rel release];
 				}
 			}
+			i++;
 		}
 	}
 	@catch (PGTSException* exception)
@@ -1265,59 +1266,73 @@ bail:
             [lockNotifier setDelegate: self];
         }
         
-        //Connection should throw on error.
+        //Connection should throw on error. We need to convert the exception into an NSError, though.
+		BOOL errorOccured = NO;
+		NSString* message = nil;
         @try
         {
             PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
-            {
-                SEL selectors [] = {@selector (rowsInserted:), @selector (rowsUpdated:), @selector (rowsDeleted:)};
-                NSString* notificationNames [] = {kPGTSInsertModification, kPGTSUpdateModification, kPGTSDeleteModification};
-                for (int i = 0; i < 3; i++)
-                {
-                    [modificationNotifier observeTable: table
-                                              selector: selectors [i] 
-                                      notificationName: notificationNames [i]];
-                }
-            }
-            
-            {
-                SEL selectors [] = {@selector (rowsLocked:), @selector (rowsLocked:), @selector (rowsUnlocked:)};
-                NSString* notificationNames [] = {kPGTSLockedForUpdate, kPGTSLockedForDelete, kPGTSUnlockedRowsNotification};
-                for (int i = 0; i < 3; i++)
-                {
-                    [lockNotifier observeTable: table 
-                                      selector: selectors [i]
-                              notificationName: notificationNames [i]];
-                }
-            }
-            
-            [mObservedEntities addObject: entity];
-            [[NSNotificationCenter defaultCenter] addObserver: self
-                                                     selector: @selector (notifyConnectionWillClose:)
-                                                         name: kPGTSWillDisconnectNotification 
-                                                       object: notifyConnection];
-            rval = YES;			
-        }
+			if (nil == table)
+			{
+				errorOccured = YES;
+                message = BXLocalizedString (@"existenceErrorFmt", 
+											 @"Table %@ in schema %@ does not exist.", 
+											 @"Error description format");
+			}
+			else
+			{
+				{
+					SEL selectors [] = {@selector (rowsInserted:), @selector (rowsUpdated:), @selector (rowsDeleted:)};
+					NSString* notificationNames [] = {kPGTSInsertModification, kPGTSUpdateModification, kPGTSDeleteModification};
+					for (int i = 0; i < 3; i++)
+					{
+						[modificationNotifier observeTable: table
+												  selector: selectors [i] 
+										  notificationName: notificationNames [i]];
+					}
+				}
+				
+				{
+					SEL selectors [] = {@selector (rowsLocked:), @selector (rowsLocked:), @selector (rowsUnlocked:)};
+					NSString* notificationNames [] = {kPGTSLockedForUpdate, kPGTSLockedForDelete, kPGTSUnlockedRowsNotification};
+					for (int i = 0; i < 3; i++)
+					{
+						[lockNotifier observeTable: table 
+										  selector: selectors [i]
+								  notificationName: notificationNames [i]];
+					}
+				}
+				
+				[mObservedEntities addObject: entity];
+				[[NSNotificationCenter defaultCenter] addObserver: self
+														 selector: @selector (notifyConnectionWillClose:)
+															 name: kPGTSWillDisconnectNotification 
+														   object: notifyConnection];
+				rval = YES;			
+			}
+		}
         @catch (PGTSQueryException* e)
         {
-            if (NULL != error)
-            {
-                NSString* message = BXLocalizedString (@"observingErrorFmt", 
-                                                       @"Table %@ in schema %@ has not been prepared for modification observing.", 
-                                                       @"Error description format");
-                message = [NSString stringWithFormat: message, [entity name], [entity schemaName]];
-                NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                    BXSafeObj (context), kBXDatabaseContextKey,
-                    BXSafeObj (entity),  kBXEntityDescriptionKey,
-                    BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                    BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
-                    BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
-                    nil];
-                *error = [NSError errorWithDomain: kBXErrorDomain
-                                             code: kBXErrorObservingFailed
-                                         userInfo: userInfo];
-            }			
+			errorOccured = YES;
+			message = BXLocalizedString (@"observingErrorFmt", 
+										 @"Table %@ in schema %@ has not been prepared for modification observing.", 
+										 @"Error description format");
         }
+		
+		if (errorOccured && NULL != error)
+		{
+			message = [NSString stringWithFormat: message, [entity name], [entity schemaName]];
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+				BXSafeObj (context), kBXDatabaseContextKey,
+				BXSafeObj (entity),  kBXEntityDescriptionKey,
+				BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+				BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
+				BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
+				nil];
+			*error = [NSError errorWithDomain: kBXErrorDomain
+										 code: kBXErrorObservingFailed
+									 userInfo: userInfo];
+		}			
     }
     return rval;
 }

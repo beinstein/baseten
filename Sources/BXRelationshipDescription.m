@@ -41,10 +41,10 @@
 
 @implementation BXRelationshipDescription
 
-- (void) dealloc
+- (void) dealloc2
 {
 	[mForeignKey release];
-	[super dealloc];
+	[super dealloc2];
 }
 
 - (NSString *) description
@@ -74,35 +74,12 @@
 	return !mIsInverse;
 }
 
-/** Retain on copy. */
-- (id) copyWithZone: (NSZone *) zone
-{
-    return [self retain];
-}
-
-- (unsigned int) hash
-{
-	if (0 == mHash)
-	{
-		mHash = [super hash] ^ [mDestinationEntity hash] ^ [mForeignKey hash];
-	}
-	return mHash;
-}
-
 - (BOOL) isEqual: (id) anObject
 {
 	BOOL retval = NO;
-	if (anObject == self)
+	//Foreign keys and destination entities needn't be compared, because relationship names are unique in their entities.
+	if (anObject == self || ([super isEqual: anObject] && [anObject isKindOfClass: [self class]]))
 		retval = YES;
-	else if ([super isEqual: anObject] && [anObject isKindOfClass: [self class]])
-	{
-		BXRelationshipDescription* aDesc = (BXRelationshipDescription *) anObject;
-		if ([mDestinationEntity isEqual: aDesc->mDestinationEntity] &&
-			[mForeignKey isEqual: aDesc->mForeignKey])
-		{
-			retval = YES;
-		}
-	}
     return retval;	
 }
 

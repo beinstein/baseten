@@ -32,7 +32,7 @@
 @class BXEntityDescription;
 
 
-@interface BXAttributeDescription : BXPropertyDescription <NSCopying, NSCoding>
+@interface BXAttributeDescription : BXPropertyDescription <NSCoding>
 {
 }
 

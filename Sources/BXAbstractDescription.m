@@ -61,8 +61,9 @@
 
 - (void) setName: (NSString *) aName
 {
-    if (nil == mName) {
-        mName = [aName retain];
+    if (nil == mName) 
+	{
+		mName = [aName retain];
     }
 }
 

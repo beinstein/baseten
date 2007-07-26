@@ -31,14 +31,27 @@
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
 
+#import <TSDataTypes/TSDataTypes.h>
 #import <Log4Cocoa/Log4Cocoa.h>
+
+
+static TSNonRetainedObjectSet* gProperties;
 
 
 @implementation BXPropertyDescription
 
+/** \note Override dealloc2 in subclasses instead! */
 - (void) dealloc
 {
-	[mEntity release];
+	[[self class] unregisterProperty: self];
+	[self dealloc2];
+	
+	//Suppress a compiler warning.
+	if (0) [super dealloc];
+}
+
+- (void) dealloc2
+{
 	[super dealloc];
 }
 
@@ -54,12 +67,15 @@
     return [self retain];
 }
 
+//FIXME: should we have init2... as well?
 - (id) initWithCoder: (NSCoder *) decoder
 {
 	if ((self = [super initWithCoder: decoder]))
 	{
 		[self setEntity: [decoder decodeObjectForKey: @"entity"]];
 		[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
+		log4AssertLog ([[self class] registerProperty: self], 
+					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
 }
@@ -124,22 +140,64 @@
 
 @implementation BXPropertyDescription (PrivateMethods)
 
++ (void) initialize
+{
+	static BOOL tooLate = NO;
+	if (!tooLate)
+	{
+		tooLate = YES;
+		gProperties = [[TSNonRetainedObjectSet alloc] init];
+	}
+}
+
++ (BOOL) registerProperty: (id) aProperty
+{
+	BOOL retval = NO;
+	@synchronized (gProperties)
+	{
+		if (! [gProperties containsObject: aProperty])
+		{
+			retval = YES;
+			[gProperties addObject: aProperty];
+		}
+	}
+	return retval;
+}
+
++ (void) unregisterProperty: (id) aProperty
+{
+	@synchronized (gProperties)
+	{
+		[gProperties removeObject: aProperty];
+	}
+}
+
+/**
+ * \internal
+ * The designated initializer.
+ */
 - (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity
 {
     if ((self = [super initWithName: aName]))
     {
 		[self setEntity: anEntity];
+		//Check only since only our code is supposed to create new properties.
+		log4AssertLog ([[self class] registerProperty: self], 
+					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
 }
 
+- (id) initWithName: (NSString *) name
+{
+	log4Error (@"This initializer should not have been called (name: %@).", name);
+    [self release];
+    return nil;
+}
+
 - (void) setEntity: (BXEntityDescription *) anEntity
 {
-	if (mEntity != anEntity)
-	{
-		[mEntity release];
-		mEntity = [anEntity retain];
-	}
+	mEntity = anEntity; //Weak
 }
 
 - (void) setOptional: (BOOL) aBool

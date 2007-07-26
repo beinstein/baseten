@@ -35,7 +35,7 @@
 /**
  * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  */
-@interface BXRelationshipDescription : BXPropertyDescription <NSCopying>
+@interface BXRelationshipDescription : BXPropertyDescription
 {
 	//FIXME: If entity objects are made non-persistent, 
 	//this field should be nullified when the corresponding entity gets dealloced.

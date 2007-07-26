@@ -48,12 +48,14 @@ enum BXEntityFlag
     NSString*               mSchemaName;
     Class                   mDatabaseObjectClass;
 	NSDictionary*			mAttributes;
+	NSLock*					mValidationLock;
 
     id                      mObjectIDs;    
     NSMutableDictionary*    mRelationships;			//FIXME: this should be moved to a class similar to NSManagedObjectModel.
     enum BXEntityFlag       mFlags;
 }
 
+- (void) dealloc2;
 //+ (NSSet *) views;
 - (NSURL *) databaseURI;
 - (NSString *) schemaName;

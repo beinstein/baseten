@@ -1611,12 +1611,12 @@ extern void BXInit ()
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error
 {
     NSError* localError = nil;
-	BXEntityDescription* rval = nil;
+	BXEntityDescription* retval = nil;
 	if ([self checkDatabaseURI: &localError])
 	{
-		rval =  [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
-													 table: tableName
-												  inSchema: schemaName];
+		retval =  [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
+													   table: tableName
+													inSchema: schemaName];
 		
 		//If we don't have a connection, return an entity which will be validated later.
 		if (NO == [mDatabaseInterface connected])
@@ -1624,21 +1624,19 @@ extern void BXInit ()
 			if (nil == mLazilyValidatedEntities)
 				mLazilyValidatedEntities = [[NSMutableSet alloc] init];
 			
-			[mLazilyValidatedEntities addObject: rval];
+			[mLazilyValidatedEntities addObject: retval];
 		}
 		else
 		{
-			[self connectIfNeeded: &localError];
-			BXHandleError (error, localError);
-			[self validateEntity: rval error: &localError];
+			[self validateEntity: retval error: &localError];
 		}
 	}
     
 	BXHandleError (error, localError);
 	if (nil != localError)
-		rval = nil;
+		retval = nil;
 	
-    return rval;
+    return retval;
 }
 
 /** Entity for a table in the default schema */
@@ -1807,8 +1805,11 @@ extern void BXInit ()
 		[self connectIfNeeded: &localError];
 		if (nil == localError)
 		{
-			excludedFields = [entity attributes: excludedFields];
-			[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
+			if (nil != excludedFields)
+			{
+				excludedFields = [entity attributes: excludedFields];
+				[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
+			}
 			rval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
 											 returningFaults: returnFaults 
 													   class: [entity databaseObjectClass] 
@@ -2096,7 +2097,7 @@ extern void BXInit ()
 }
 
 /**
-* \internal
+ * \internal
  * Register an object to the context
  * After fetching objects from the database, a database interface should register them with a context.
  * This enables updating the database as well as automatic synchronization, if this has been implemented
@@ -2152,32 +2153,43 @@ extern void BXInit ()
 - (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
 	log4AssertValueReturn (NULL != error, NO, @"Expected error not to be NULL.");
+	//FIXME: this will get called recursively. I'm not sure if we really want that.
 	
 	BOOL retval = NO;
 	if ([mEntities containsObject: entity])
 		retval = YES;
-	else if ([mDatabaseInterface validateEntity: entity error: error])
+	else
 	{
-		if (NULL != *error) goto bail;
+		NSLock* lock = [entity validationLock];
+		[lock lock];
+		
+		//Even if an entity has already been validated, allow a database interface to do something with it.
+		[mDatabaseInterface validateEntity: entity error: error];
+		if (NULL == *error)
+		{
+			if ([entity isValidated])
+			{
+				[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+				[mEntities addObject: entity];
+			}
+			else
+			{
+				[entity setValidated: YES];
+				
+				NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
+				if (NULL == *error)
+				{
+					[entity setRelationships: relationships];
+					[mRelationships addObjectsFromArray: [relationships allValues]];
 
-        if ([entity isValidated])
-            [mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
-        else
-        {
-            [entity setValidated: YES];
-
-            NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
-            if (NULL != *error) goto bail;
-
-            [entity setRelationships: relationships];
-            [mRelationships addObjectsFromArray: [relationships allValues]];
-
-            retval = YES;
-        }
-        [mEntities addObject: entity];
+					[mEntities addObject: entity];
+					retval = YES;
+				}
+			}
+        }		
+		[lock unlock];
 	}
 
-bail:
 	return retval;
 }
 

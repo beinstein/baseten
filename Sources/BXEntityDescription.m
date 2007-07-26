@@ -40,11 +40,7 @@
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
-//This cannot be a non-retaining set, since the entities might have been used to
-//subscribe notifications. If an entity for a table gets deallocated and created again,
-//the notifications won't be received.
-static NSMutableSet* gEntities;
-static NSMutableSet* gViewEntities;
+static TSNonRetainedObjectDictionary* gEntities;
 
 
 /**
@@ -65,37 +61,55 @@ static NSMutableSet* gViewEntities;
     if (NO == tooLate)
     {
         tooLate = YES;
-        gEntities = [[NSMutableSet alloc] init];
-        gViewEntities = [[NSMutableSet alloc] init];
+        gEntities = [[TSNonRetainedObjectDictionary alloc] init];
     }
 }
 
 - (id) init
 {
-    //This initializer should not be used
+	log4Error (@"This initializer should not have been called.");
     [self release];
     return nil;
 }
 
 - (id) initWithName: (NSString *) aName
 {
-    //This initializer should not be used
+	log4Error (@"This initializer should not have been called (name: %@).", aName);
     [self release];
     return nil;
 }
 
+/** \note Override dealloc2 in subclasses instead! */
 - (void) dealloc
 {
-    [mRelationships release];
-	[mAttributes release];
-    [mDatabaseURI release];
-    [mSchemaName release];
-    [super dealloc];
+	@synchronized (gEntities)
+	{
+		[gEntities removeObjectForKey: [self entityKey]];
+	}
+	[self dealloc2];
+	
+	//Suppress a compiler warning.
+	if (0) [super dealloc];
 }
 
-- (void) release
+- (void) dealloc2
 {
-    //Never released
+	[mRelationships release];
+	mRelationships = nil;
+	
+	[mAttributes release];
+	mAttributes = nil;
+	
+	[mDatabaseURI release];
+	mDatabaseURI = nil;
+	
+	[mSchemaName release];
+	mSchemaName = nil;
+	
+	[mValidationLock release];
+	mValidationLock = nil;
+	
+    [super dealloc];
 }
 
 /** The schema name. */
@@ -115,13 +129,14 @@ static NSMutableSet* gViewEntities;
     NSURL* databaseURI = [decoder decodeObjectForKey: @"databaseURI"];
     NSString* schemaName = [decoder decodeObjectForKey: @"schemaName"];
     NSString* name = [decoder decodeObjectForKey: @"name"];
-    id rval = [self initWithDatabaseURI: databaseURI table: name inSchema: schemaName];
+    id rval = [[[self class] entityWithDatabaseURI: databaseURI table: name inSchema: schemaName] retain];
     
     Class cls = NSClassFromString ([decoder decodeObjectForKey: @"databaseObjectClassName"]);
     if (Nil != cls)
         [rval setDatabaseObjectClass: cls];
 		
 	[self setAttributes: [decoder decodeObjectForKey: @"attributes"]];
+	//FIXME: relationships as well?
  	        
     return rval;
 }
@@ -133,6 +148,7 @@ static NSMutableSet* gViewEntities;
     [encoder encodeObject: mDatabaseURI forKey: @"databaseURI"];
     [encoder encodeObject: NSStringFromClass (mDatabaseObjectClass) forKey: @"databaseObjectClassName"];
 	[encoder encodeObject: mAttributes forKey: @"attributes"];
+	//FIXME: relationships as well?
 }
 
 /** Retain on copy. */
@@ -157,9 +173,16 @@ static NSMutableSet* gViewEntities;
 		log4AssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
 							   @"Properties should not be nil in -isEqual:.");
 		
-		retval = ([mSchemaName isEqualToString: aDesc->mSchemaName] &&
-				  [mDatabaseURI isEqual: aDesc->mDatabaseURI]);
+		
+		if (![mSchemaName isEqualToString: aDesc->mSchemaName])
+			goto bail;
+		
+		if (![mDatabaseURI isEqual: aDesc->mDatabaseURI])
+			goto bail;
+			
+		retval = YES;
 	}
+bail:
     return retval;
 }
 
@@ -211,7 +234,7 @@ static NSMutableSet* gViewEntities;
  * Set the primary key fields for this entity.
  * Normally the database context determines the primary key, when
  * an entity is used in a database query. However, when an entity is a view, the fields
- * have to be set manually before using the entity in a query.
+ * may need to be set manually before using the entity in a query.
  * \param   anArray     An NSArray of NSStrings.
  * \internal
  * \note BXAttributeDescriptions should only be created here and in -[BXInterface validateEntity:]
@@ -248,7 +271,7 @@ static NSMutableSet* gViewEntities;
  */
 - (NSArray *) objectIDs
 {
-    return [mObjectIDs allObjects];
+	return [mObjectIDs allObjects];
 }
 
 /**
@@ -329,6 +352,16 @@ static NSMutableSet* gViewEntities;
 
 @implementation BXEntityDescription (PrivateMethods)
 
+- (NSURL *) entityKey
+{
+	return [[self class] entityKeyForDatabaseURI: mDatabaseURI schema: mSchemaName table: mName];
+}
+
++ (NSURL *) entityKeyForDatabaseURI: (NSURL *) databaseURI schema: (NSString *) schemaName table: (NSString *) tableName
+{
+	return [NSURL URLWithString: [NSString stringWithFormat: @"%@/%@", schemaName, tableName] relativeToURL: databaseURI];
+}
+
 /**
  * \internal
  * \name Retrieving an entity description
@@ -343,18 +376,23 @@ static NSMutableSet* gViewEntities;
  */
 + (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
 {
-    return [[[self alloc] initWithDatabaseURI: anURI table: tName inSchema: sName] autorelease];
-}
-
-/**
- * \internal
- * Create the entity using the default schema.
- * \param       anURI   The database URI
- * \param       tName   Table name
- */
-+ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName
-{
-    return [self entityWithDatabaseURI: anURI table: tName inSchema: nil];
+	id retval = nil;
+	@synchronized (gEntities)
+	{
+		if (nil == sName)
+			sName = @"public";
+		
+		NSURL* uri = [self entityKeyForDatabaseURI: anURI schema: sName table: tName];
+		
+		retval = [gEntities objectForKey: uri];
+		if (nil == retval)
+		{
+			retval = [[[self alloc] initWithDatabaseURI: anURI table: tName inSchema: sName] autorelease];
+			[gEntities setObject: retval forKey: uri];
+		}		
+	}
+	
+	return retval;
 }
 
 /**
@@ -367,31 +405,17 @@ static NSMutableSet* gViewEntities;
  */
 - (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
 {
+	log4AssertValueReturn (nil != sName, nil, @"Expected sName not to be nil.");
+	log4AssertValueReturn (nil != anURI, nil, @"Expected anURI to be set.");
+	
     if ((self = [super initWithName: tName]))
     {
         mDatabaseObjectClass = [BXDatabaseObject class];
-        if (nil == sName)
-            sName = @"public";
-        log4AssertValueReturn (nil != anURI, nil, @"Expected anURI to be set.");
         mDatabaseURI = [anURI copy];
         mSchemaName = [sName copy];
-        
-        id anObject = [gEntities member: self];
-        log4AssertValueReturn ([gEntities containsObject: self] ? nil != anObject : YES, nil, 
-							   @"gEntities contains the current entity but it could not be found."
-							   " \n\tself: \t%@ \n\tgEntities: \t%@",
-							   self, gEntities);
-        if (nil == anObject)
-        {
-            [gEntities addObject: self];
-            mRelationships = [[NSMutableDictionary alloc] init];
-            mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
-        }
-        else
-        {
-            [self dealloc];
-            self = [anObject retain];
-        }
+		mRelationships = [[NSMutableDictionary alloc] init];
+		mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
+		mValidationLock = [[NSRecursiveLock alloc] init];
     }
     return self;
 }
@@ -399,16 +423,22 @@ static NSMutableSet* gViewEntities;
 
 - (void) registerObjectID: (BXDatabaseObjectID *) anID
 {
-    log4AssertVoidReturn ([anID entity] == self, 
-						  @"Attempted to register an object ID the entity of which is other than self.\n"
-						  "\tanID:\t%@ \n\tself:\t%@", anID, self);
-    if (self == [anID entity])
-        [mObjectIDs addObject: anID];
+	@synchronized (mObjectIDs)
+	{
+		log4AssertVoidReturn ([anID entity] == self, 
+							  @"Attempted to register an object ID the entity of which is other than self.\n"
+							  "\tanID:\t%@ \n\tself:\t%@", anID, self);
+		if (self == [anID entity])
+			[mObjectIDs addObject: anID];
+	}
 }
 
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID
 {
-    [mObjectIDs removeObject: anID];
+	@synchronized (mObjectIDs)
+	{
+		[mObjectIDs removeObject: anID];
+	}
 }
 
 - (void) setAttributes: (NSDictionary *) attributes
@@ -425,16 +455,16 @@ static NSMutableSet* gViewEntities;
 	//In case we really modify the URI, remove self from collections and have the hash calculated again.
 	if (anURI != mDatabaseURI && NO == [anURI isEqual: mDatabaseURI])
 	{
-		[gEntities removeObject: self];
-		[gViewEntities removeObject: self];
-		mHash = 0;
-		
-		[mDatabaseURI release];
-		mDatabaseURI = [anURI retain];
-		
-		[gEntities addObject: self];
-		if ([self isView])
-			[gViewEntities addObject: self];
+		@synchronized (gEntities)
+		{
+			[gEntities removeObjectForKey: [self entityKey]];
+			mHash = 0;
+			
+			[mDatabaseURI release];
+			mDatabaseURI = [anURI retain];
+			
+			[gEntities setObject: self forKey: [self entityKey]];
+		}
 	}
 }
 
@@ -487,6 +517,11 @@ static NSMutableSet* gViewEntities;
 		[mRelationships release];
 		mRelationships = [aDict retain];
 	}
+}
+
+- (NSLock *) validationLock
+{
+	return mValidationLock;
 }
 
 @end

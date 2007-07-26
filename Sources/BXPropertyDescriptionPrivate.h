@@ -27,6 +27,8 @@
 //
 
 @interface BXPropertyDescription (PrivateMethods)
++ (BOOL) registerProperty: (id) aProperty;
++ (void) unregisterProperty: (id) aProperty;
 - (void) setEntity: (BXEntityDescription *) anEntity;
 - (void) setOptional: (BOOL) aBool;
 - (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity;

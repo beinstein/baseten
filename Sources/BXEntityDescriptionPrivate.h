@@ -35,7 +35,8 @@
 
 
 @interface BXEntityDescription (PrivateMethods)
-+ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) eName;
+- (NSURL *) entityKey;
++ (NSURL *) entityKeyForDatabaseURI: (NSURL *) databaseURI schema: (NSString *) schemaName table: (NSString *) tableName;
 + (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 //- (void) addDependentView: (BXEntityDescription *) viewEntity;
@@ -52,6 +53,7 @@
 - (void) setValidated: (BOOL) flag;
 - (void) setIsView: (BOOL) flag;
 - (void) setRelationships: (NSDictionary *) aDict;
+- (NSLock *) validationLock;
 
 /*
 - (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 

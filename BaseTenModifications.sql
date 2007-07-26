@@ -712,13 +712,18 @@ CREATE FUNCTION "baseten".srcdstview ()
 	RETURNS SETOF "baseten".relationship_fk AS $$
 DECLARE
 	retval "baseten".relationship_fk;
+	srcoid OID;
+	dstoid OID;
 BEGIN
 	FOR retval IN SELECT * FROM "baseten".relationship_fk r
 	LOOP
+		srcoid := retval.srcoid;
+		dstoid := retval.dstoid;
 		FOR retval.srcoid, retval.dstoid IN 
 			SELECT m1.*, m2.*
-			FROM "baseten".matchingviews (retval.srcoid, retval.srcfnames) m1
-			CROSS JOIN "baseten".matchingviews (retval.dstoid, retval.dstfnames) m2
+			FROM "baseten".matchingviews (retval.srcoid, retval.srcfnames) m1 (oid)
+			CROSS JOIN "baseten".matchingviews (retval.dstoid, retval.dstfnames) m2 (oid)
+			WHERE NOT (m1.oid = srcoid AND m2.oid = dstoid)
 		LOOP
 			RETURN NEXT retval;
 		END LOOP;
