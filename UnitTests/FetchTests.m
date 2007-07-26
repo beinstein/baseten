@@ -182,6 +182,8 @@
 {
 	NSError* error = nil;
 	NSString* fieldname = @"value";
+	[context connectIfNeeded: &error];
+	STAssertNil (error, [error localizedDescription]);
 	BXAttributeDescription* property = [[entity attributesByName] objectForKey: fieldname];
 	MKCAssertFalse ([property isExcluded]);
 
