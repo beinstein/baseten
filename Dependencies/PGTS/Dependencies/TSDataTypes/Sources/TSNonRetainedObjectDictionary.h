@@ -47,6 +47,7 @@
 - (NSArray *) allKeys;
 - (void) makeObjectsPerformSelector: (SEL) aSelector withObject: (id) anObject;
 - (NSArray *) objectsForKeys: (NSArray *) keys notFoundMarker: (id) anObject;
+- (NSDictionary *) dictionary;
 
 @end
 
