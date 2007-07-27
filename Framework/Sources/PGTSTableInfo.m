@@ -63,8 +63,6 @@
     [fields        makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
     [uniqueIndexes makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
 
-    //FIXME: foreign keys?
-    
     [fields release];
     [uniqueIndexes release];
     [schemaName release];
@@ -149,6 +147,7 @@
                                                                                            name: aName 
                                                                                    sourceFields: sourceFields 
                                                                                 referenceFields: refFields];
+		[desc setDeleteRule: [[res valueForKey: @"deltype"] characterAtIndex: 0]];
         [foreignKeys addObject: desc];
         [desc release];
         
@@ -289,7 +288,8 @@
         "c.conname AS name, "
         "c.confrelid AS oid, "          //Referenced table's OID
         "c.conkey AS sources, "         //Constrained columns
-        "c.confkey AS references "       //Referenced columns
+        "c.confkey AS references, "     //Referenced columns
+		"c.confdeltype AS deltype "		//Delete rule
         "FROM pg_constraint c "
         "WHERE c.contype = 'f' AND "    //Foreign keys
         "c.conrelid = $1 ";             //Source's OID
@@ -311,7 +311,8 @@
         "c.conname AS name, "
         "c.conrelid AS oid, "           //Source table's OID
         "c.conkey AS sources, "         //Constrained columns
-        "c.confkey AS references "      //Referenced columns
+        "c.confkey AS references, "     //Referenced columns
+		"c.confdeltype AS deltype "		//Delete rule
         "FROM pg_constraint c "
         "WHERE c.contype = 'f' AND "    //Foreign keys
         "c.confrelid = $1 ";            //Reference's OID

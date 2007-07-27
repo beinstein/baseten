@@ -26,9 +26,10 @@
 // $Id$
 //
 
-#import <PGTS/PGTSForeignKeyDescription.h>
-#import <PGTS/PGTSTableInfo.h>
-#import <PGTS/PGTSFieldInfo.h>
+#import "PGTSForeignKeyDescription.h"
+#import "PGTSTableInfo.h"
+#import "PGTSFieldInfo.h"
+#import "PGTSFunctions.h"
 #import <TSDataTypes/TSDataTypes.h>
 
 
@@ -77,6 +78,7 @@ static TSNonRetainedObjectSet* gForeignKeys;
         name = [aName copy];
         sourceFields = [sFields copy];
         referenceFields = [rFields copy];
+		deleteRule = kPGTSDeleteRuleUnknown;
     }
     
     id anObject = nil;
@@ -97,6 +99,16 @@ static TSNonRetainedObjectSet* gForeignKeys;
         hash = ([super hash] ^ [sourceFields hash] ^ [referenceFields hash]);
     }
     return hash;
+}
+
+- (enum PGTSDeleteRule) deleteRule
+{
+	return deleteRule;
+}
+
+- (void) setDeleteRule: (const unichar) rule
+{
+	deleteRule = PGTSDeleteRule (rule);
 }
 
 @end

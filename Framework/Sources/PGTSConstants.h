@@ -103,6 +103,7 @@ enum PGTSErrors
 enum PGTSACLItemPrivilege
 {
     kPGTSPrivilegeNone            = 0,
+	//1 << 0 missing
     kPGTSPrivilegeSelect          = 1 << 1,
     kPGTSPrivilegeSelectGrant     = 1 << 2,
     kPGTSPrivilegeUpdate          = 1 << 3,
@@ -125,4 +126,15 @@ enum PGTSACLItemPrivilege
     kPGTSPrivilegeConnectGrant    = 1 << 20,
     kPGTSPrivilegeTemporary       = 1 << 21,
     kPGTSPrivilegeTemporaryGrant  = 1 << 22
+};
+
+enum PGTSDeleteRule
+{
+	kPGTSDeleteRuleUnknown		  = 0,
+	kPGTSDeleteRuleNone,
+	kPGTSDeleteRuleNoAction,
+	kPGTSDeleteRuleRestrict,
+	kPGTSDeleteRuleCascade,
+	kPGTSDeleteRuleSetNull,
+	kPGTSDeleteRuleSetDefault
 };
