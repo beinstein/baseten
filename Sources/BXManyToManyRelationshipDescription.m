@@ -85,6 +85,13 @@
 	}
 }
 
+- (NSDeleteRule) deleteRule
+{
+	//Many-to-manys have always this delete rule, since our implementation 
+	//modifies the helper table.
+	return NSNullifyDeleteRule;
+}
+
 - (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
 {
 	log4AssertValueReturn (NULL != error, nil , @"Expected error to be set.");

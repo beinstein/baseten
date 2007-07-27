@@ -112,6 +112,9 @@ enum BXObjectLockStatus
 
 - (void) faultKey: (NSString *) aKey;
 - (int) isFaultKey: (NSString *) aKey;
+
+- (BOOL) validateValue: (id *) ioValue forKey: (NSString *) key error: (NSError **) outError;
+- (BOOL) validateForDelete: (NSError **) outError;
 @end
 
 

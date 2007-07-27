@@ -71,8 +71,8 @@
 
 - (NSDeleteRule) deleteRule
 {
-    //FIXME: this is only a stub.
-    return NSNoActionDeleteRule;
+	//See relationship creation in BXPGInterface.
+	return mDeleteRule;
 }
 
 - (BOOL) isToMany
@@ -231,6 +231,11 @@
 - (BXForeignKey *) foreignKey
 {
 	return mForeignKey;
+}
+
+- (void) setDeleteRule: (NSDeleteRule) aRule
+{
+	mDeleteRule = aRule;
 }
 
 //Subclassing helpers

@@ -230,6 +230,38 @@ ParseSelector (SEL aSelector, NSString** key)
 	return rval;
 }
 
+/**
+ * Determines whether the receiver can be deleted in its current state.
+ * Currently, only inverse relationships' delete rules are checked.
+ * This method could cause a fault to fire.
+ */
+- (BOOL) validateForDelete: (NSError **) outError
+{
+	BOOL retval = NO;
+	if ([self isDeleted])
+	{
+		//Already deleted.
+		//FIXME: set outError.
+	}
+	else
+	{
+		retval = YES;
+		TSEnumerate (currentRel, e, [[[self entity] relationshipsByName] objectEnumerator])
+		{
+			BXRelationshipDescription* inverse = [(BXRelationshipDescription *) currentRel inverseRelationship];
+			if (NSDenyDeleteRule == [inverse deleteRule] && 
+				nil != [self primitiveValueForKey: [currentRel name]])
+			{
+				//Deletion denied.
+				//FIXME: set outError.
+				retval = NO;
+				break;
+			}
+		}
+	}
+	return retval;
+}
+
 /** 
  * The object's ID. 
  * This method doesn't cause a fault to fire.

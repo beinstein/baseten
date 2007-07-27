@@ -902,18 +902,23 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						//Fall through
 					}
 						
-						//One-to-one
+					//One-to-one
 					case 1:
 					{
 						if (nil == rel)
 							rel = [[BXOneToOneRelationshipDescription alloc] initWithName: name entity: entity];
 						
-						[rel setIsInverse: [[res valueForKey: @"isinverse"] boolValue]];
+						[rel setIsInverse: [[res valueForKey: @"isinverse"] boolValue]];						
 						[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
+						
+						//We only have a delete rule for the foreign key's source table.
+						//If it isn't also the relationship's source table, we have no way of controlling deletion.
+						[(BXRelationshipDescription *) rel setDeleteRule: ([rel isInverse] ? NSNullifyDeleteRule : [[rel foreignKey] deleteRule])];
+							
 						break;
 					}
 						
-						//Many-to-many
+					//Many-to-many
 					case 2:
 					{
 						BXEntityDescription* helper = [context entityForTable: [res valueForKey: @"helperrelname"] 
@@ -1605,6 +1610,30 @@ bail:
 			
 			for (unsigned int i = 0, count = [srcFNames count]; i < count; i++)
 				[key addSrcFieldName: [srcFNames objectAtIndex: i] dstFieldName: [dstFNames objectAtIndex: i]];
+			
+			NSDeleteRule deleteRule = NSDenyDeleteRule;
+			enum PGTSDeleteRule pgDeleteRule = PGTSDeleteRule ([[res valueForKey: @"deltype"] characterAtIndex: 0]);
+			switch (pgDeleteRule)
+			{
+				case kPGTSDeleteRuleUnknown:
+				case kPGTSDeleteRuleNone:
+				case kPGTSDeleteRuleNoAction:
+				case kPGTSDeleteRuleRestrict:
+					deleteRule = NSDenyDeleteRule;
+					
+				case kPGTSDeleteRuleCascade:
+					deleteRule = NSCascadeDeleteRule;
+					break;
+					
+				case kPGTSDeleteRuleSetNull:
+				case kPGTSDeleteRuleSetDefault:
+					deleteRule = NSNullifyDeleteRule;
+					break;
+					
+				default:
+					break;
+			}
+			[key setDeleteRule: deleteRule];
 			
 			[mForeignKeys setObject: key forKey: [res valueForKey: @"conoid"]];
 			[key release];

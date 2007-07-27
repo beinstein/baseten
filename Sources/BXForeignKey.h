@@ -27,6 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 #import <BaseTen/BXAbstractDescription.h>
 
 @class BXEntityDescription;
@@ -35,11 +36,18 @@
 @interface BXForeignKey : BXAbstractDescription 
 {
 	NSMutableSet* mFieldNames;
+	
+	//FIXME: this shouldn't really be here but unfortunately we are not using
+	//the PGTS metadata classes to fetch foreign keys and we have to store this somewhere.
+	NSDeleteRule mDeleteRule;
 }
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
 - (NSSet *) fieldNames;
 - (NSArray *) srcFieldNames;
 - (NSArray *) dstFieldNames;
+
+- (NSDeleteRule) deleteRule;
+- (void) setDeleteRule: (NSDeleteRule) aRule;
 
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject;
 - (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;

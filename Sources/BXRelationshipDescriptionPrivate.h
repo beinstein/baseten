@@ -38,6 +38,7 @@
 - (BOOL) isInverse;
 - (void) setIsInverse: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
+- (void) setDeleteRule: (NSDeleteRule) aRule;
 
 //Remember to override these in subclasses.
 - (id) targetForObject: (BXDatabaseObject *) anObject error: (NSError **) error;

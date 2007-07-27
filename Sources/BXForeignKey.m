@@ -81,6 +81,16 @@
 	return mFieldNames;
 }
 
+- (NSDeleteRule) deleteRule
+{
+	return mDeleteRule;
+}
+
+- (void) setDeleteRule: (NSDeleteRule) aRule
+{
+	mDeleteRule = aRule;
+}
+
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject
 {
 	return [self predicateForEntity: srcEntity valuesInObject: anObject entityIndex: 0 objectIndex: 1];
