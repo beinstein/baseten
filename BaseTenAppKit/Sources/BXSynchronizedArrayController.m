@@ -123,7 +123,7 @@
 
 - (void) dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    [[databaseContext notificationCenter] removeObserver: self];
     [databaseContext release];
     [mEntityDescription release];
     [super dealloc];
@@ -171,7 +171,7 @@
 {
     if (desc != mEntityDescription)
     {
-        NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+        NSNotificationCenter* nc = [databaseContext notificationCenter];
         [nc removeObserver: self name: kBXInsertNotification object: mEntityDescription];
         [nc removeObserver: self name: kBXDeleteNotification object: mEntityDescription];
         [mEntityDescription release];
@@ -184,6 +184,7 @@
                        name: kBXInsertNotification object: mEntityDescription];
             [nc addObserver: self selector: @selector (BXDeletedObjects:)
                        name: kBXDeleteNotification object: mEntityDescription];
+            //FIXME: add BXUpdatedObjects to check objects using a filter predicate.
         }
     }
 }
