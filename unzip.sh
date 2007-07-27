@@ -3,7 +3,13 @@ TARGET_FILE_PATH=$2
 
 unzip ()
 {
-	open -a "/System/Library/CoreServices/Archive Utility.app" "$ZIP_FILE_PATH"
+    if [ $MAC_OS_X_VERSION_ACTUAL -ge 1050 ]
+    then
+        open -a "/System/Library/CoreServices/Archive Utility.app" "$ZIP_FILE_PATH"
+    else
+        open -a "/System/Library/CoreServices/BOMArchiveHelper.app" "$ZIP_FILE_PATH"
+    fi
+
 	sleep 2
 	if [ -e "$TARGET_FILE_PATH" ]
 	then
