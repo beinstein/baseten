@@ -43,7 +43,6 @@
     id observer;
 }
 - (id) initWithProxy: (id) aProxy container: (NSMutableSet *) aContainer;
-- (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old;
 @end
 
 
@@ -73,10 +72,6 @@
                         context: (void *) context
 {
     [observer observeValueForKeyPath: keyPath ofObject: object change: change context: context];
-}
-
-- (void) updateDatabaseWithNewValue: (NSSet *) new oldValue: (NSSet *) old
-{
 }
 @end
 
@@ -115,6 +110,18 @@
 	
 	switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
 	{
+        case NSKeyValueChangeReplacement:
+        {
+            changed = [change objectForKey: NSKeyValueChangeNewKey];
+            [oldValue unionSet: [change objectForKey: NSKeyValueChangeOldKey]];
+            mutationKind = NSKeyValueSetSetMutation;
+            
+            //If context isn't autocommitting, undo and redo happen differently.
+			if ([mContext autocommits])
+				[[[mContext undoManager] prepareWithInvocationTarget: self] setSet: changed];
+            break;
+        }
+        
 		case NSKeyValueChangeInsertion:
 		{
 			changed = [change objectForKey: NSKeyValueChangeNewKey];

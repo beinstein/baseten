@@ -90,13 +90,12 @@
     if (NO == mChanging)
     {
         NSDictionary* userInfo = [notification userInfo];
-        BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
-        if (mContext == sendingContext)
-        {            
-            NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];        
-            log4Debug (@"Adding object ids: %@", ids);
-            [self addedObjectsWithIDs: ids];
-        }
+        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
+                              @"Expected to observe another context.");
+
+        NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];        
+        log4Debug (@"Adding object ids: %@", ids);
+        [self addedObjectsWithIDs: ids];
     }
 }
 
@@ -124,13 +123,12 @@
     if (NO == mChanging)
     {
         NSDictionary* userInfo = [notification userInfo];
-        BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
-        if (mContext == sendingContext)
-        {        
-            NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
-            log4Debug (@"Removing object ids: %@", ids);
-            [self removedObjectsWithIDs: ids];
-        }
+        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
+                              @"Expected to observe another context.");
+
+        NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
+        log4Debug (@"Removing object ids: %@", ids);
+        [self removedObjectsWithIDs: ids];
     }
 }
 
@@ -151,13 +149,12 @@
     if (NO == mChanging)
     {
         NSDictionary* userInfo = [notification userInfo];
-        BXDatabaseContext* sendingContext = [userInfo objectForKey: kBXContextKey];
-        if (mContext == sendingContext)
-        {
-            NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
-            log4Debug (@"Updating for object ids: %@", ids);
-            [self updatedObjectsWithIDs: ids];
-        }
+        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
+                              @"Expected to observe another context.");
+
+        NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
+        log4Debug (@"Updating for object ids: %@", ids);
+        [self updatedObjectsWithIDs: ids];
     }
 }
 

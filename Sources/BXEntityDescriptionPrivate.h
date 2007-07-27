@@ -54,6 +54,7 @@
 - (void) setIsView: (BOOL) flag;
 - (void) setRelationships: (NSDictionary *) aDict;
 - (NSLock *) validationLock;
+- (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
 
 /*
 - (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 

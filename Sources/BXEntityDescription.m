@@ -86,6 +86,16 @@ static TSNonRetainedObjectDictionary* gEntities;
 	{
 		[gEntities removeObjectForKey: [self entityKey]];
 	}
+    
+    @synchronized (mRelationships)
+    {
+        TSEnumerate (currentRel, e, [mRelationships objectEnumerator])
+        {
+            [currentRel setEntity: nil];
+            [[currentRel inverseRelationship] setDestinationEntity: nil];
+        }
+    }
+    
 	[self dealloc2];
 	
 	//Suppress a compiler warning.
@@ -513,19 +523,30 @@ bail:
 - (void) setRelationships: (NSDictionary *) aDict
 {
 	//FIXME: this is a bit bad.
-	TSEnumerate (currentKey, e, [mRelationships keyEnumerator])
-		[mRelationships removeObjectForKey: currentKey];
+    @synchronized (mRelationships)
+    {
+        TSEnumerate (currentKey, e, [mRelationships keyEnumerator])
+            [mRelationships removeObjectForKey: currentKey];
 	
-	TSEnumerate (currentKey, e, [aDict keyEnumerator])
-	{
-		[mRelationships setObject: [aDict objectForKey: currentKey]
-						   forKey: currentKey];
-	}
+        TSEnumerate (currentKey, e, [aDict keyEnumerator])
+        {
+            [mRelationships setObject: [aDict objectForKey: currentKey]
+                               forKey: currentKey];
+        }
+    }
 }
 
 - (NSLock *) validationLock
 {
 	return mValidationLock;
+}
+
+- (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
+{
+    @synchronized (mRelationships)
+    {
+        [mRelationships removeObjectForKey: [aRelationship name]];
+    }
 }
 
 @end

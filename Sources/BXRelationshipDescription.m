@@ -23,7 +23,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: BXRelationshipDescription.m 225 2007-07-12 08:33:55Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
 #import <Log4Cocoa/Log4Cocoa.h>
@@ -40,6 +40,12 @@
 #import "BXDatabaseObjectPrivate.h"
 
 @implementation BXRelationshipDescription
+
+- (void) dealloc
+{
+    [[self entity] removeRelationship: self];
+    [super dealloc];
+}
 
 - (void) dealloc2
 {
