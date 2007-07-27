@@ -436,8 +436,8 @@ GRANT SELECT ON "baseten".foreignkey TO basetenread;
 CREATE VIEW "baseten".oneto_fk AS
 SELECT
 	conoid,
-	name						AS name,
-	srcrelname || '_' || name	AS inversename,
+	name		AS name,
+	srcnspname || '_' || srcrelname || '_' || name AS inversename,
 	srcoid,
 	srcnsp,
 	srcnspname,
@@ -454,7 +454,7 @@ FROM "baseten".foreignkey
 UNION ALL
 SELECT
     conoid,
-	srcrelname || '_' || name	AS name,
+	srcnspname || '_' || srcrelname || '_' || name AS name,
 	name						AS inversename,
 	dstoid						AS srcoid,
 	dstnsp						AS srcnsp,
