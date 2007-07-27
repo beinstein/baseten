@@ -410,7 +410,8 @@ SELECT
 	ns2.nspname			AS dstnspname,
 	cl2.relname			AS dstrelname,
 	n.fkeynames 		AS dstfnames,
-	c2.oid IS NOT NULL	AS srcisunique
+	c2.oid IS NOT NULL	AS srcisunique,
+	c1.confdeltype		AS deltype
 FROM pg_constraint c1
 -- Constrained fields' names
 INNER JOIN "baseten".conname n ON (c1.oid = n.oid)
