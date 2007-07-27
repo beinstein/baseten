@@ -167,3 +167,42 @@ PGTSVerifySSLCertificate (int preverify_ok, void* x509_ctx)
 	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
 	return rval;
 }
+
+
+enum PGTSDeleteRule
+PGTSDeleteRule (const unichar rule)
+{
+	enum PGTSDeleteRule deleteRule = kPGTSDeleteRuleUnknown;
+	switch (rule)
+	{
+		case ' ':
+			deleteRule = kPGTSDeleteRuleNone;
+			break;
+			
+		case 'c':
+			deleteRule = kPGTSDeleteRuleCascade;
+			break;
+			
+		case 'n':
+			deleteRule = kPGTSDeleteRuleSetNull;
+			break;
+			
+		case 'd':
+			deleteRule = kPGTSDeleteRuleSetDefault;
+			break;
+			
+		case 'r':
+			deleteRule = kPGTSDeleteRuleRestrict;
+			break;
+			
+		case 'a':
+			deleteRule = kPGTSDeleteRuleNone;
+			break;
+			
+		default:
+			deleteRule = kPGTSDeleteRuleUnknown;
+			break;
+	}	
+	
+	return deleteRule;
+}

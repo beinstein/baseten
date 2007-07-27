@@ -27,6 +27,7 @@
 //
 
 #import <PGTS/postgresql/libpq-fe.h>
+#import <PGTS/PGTSConstants.h>
 
 
 #undef TSEnumerate
@@ -41,3 +42,4 @@ extern void PGTSNoticeProcessor (void* sender, const char* message);
 extern NSString* PGTSModificationName (unichar type);
 extern NSString* PGTSLockOperation (unichar type);
 extern int PGTSSSLConnectionExIndex ();
+extern enum PGTSDeleteRule PGTSDeleteRule (const unichar rule);

@@ -27,6 +27,7 @@
 //
 
 #import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/PGTSConstants.h>
 
 @class PGTSConnection;
 @class PGTSTableInfo;
@@ -35,6 +36,7 @@
 {
     NSArray* sourceFields;
     NSArray* referenceFields;
+	enum PGTSDeleteRule deleteRule;
 }
 
 - (id) initWithConnection: (PGTSConnection *) connection name: (NSString *) aName sourceFields: (NSArray *) sFields referenceFields: (NSArray *) rFields;
@@ -42,5 +44,7 @@
 - (NSArray *) referenceFields;
 - (PGTSTableInfo *) sourceTable;
 - (PGTSTableInfo *) referenceTable;
+- (enum PGTSDeleteRule) deleteRule;
+- (void) setDeleteRule: (const unichar) rule;
 
 @end
