@@ -346,3 +346,4 @@ SELECT baseten.refreshcaches ();
 
 COMMIT;
 
+VACUUM FULL ANALYZE;
