@@ -29,9 +29,10 @@
 #import <TSDataTypes/TSDataTypes.h>
 #import <PGTS/PGTS.h>
 #import <PGTS/PGTSFunctions.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 #import <stdlib.h>
 #import <string.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+#import <pthread.h>
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
@@ -1716,7 +1717,8 @@ extern void BXInit ()
 {
 	if (NO == [[self databaseInterface] connected])
 	{
-		if (nil == mConnectionSetupManager)
+		if (nil == mConnectionSetupManager && 0 != pthread_main_np () &&
+            [self respondsToSelector: @selector (copyDefaultConnectionSetupManager)])
 		{
 			mConnectionSetupManager = [self copyDefaultConnectionSetupManager];
 			[mConnectionSetupManager setDatabaseContext: self];

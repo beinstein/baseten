@@ -202,7 +202,7 @@
 {
     if (ctx != databaseContext)
     {
-		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+		NSNotificationCenter* nc = [ctx notificationCenter];
 		//databaseContext may be nil here since we don't observe multiple contexts.
 		[nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
 		
@@ -211,6 +211,7 @@
 		
 		if (nil != databaseContext)
 		{
+            nc = [databaseContext notificationCenter];
             [databaseContext retain];
 			if (mFetchesOnConnect)
 				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
