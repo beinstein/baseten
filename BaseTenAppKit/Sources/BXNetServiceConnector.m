@@ -44,7 +44,7 @@
 
 - (void) dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[[databaseContext notificationCenter] removeObserver: self];
 	[mAuthenticationPanel release];
     [mPanel release];
 	[super dealloc];
@@ -206,10 +206,11 @@
 
 - (void) setDatabaseContext: (BXDatabaseContext *) aContext
 {
-    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    NSNotificationCenter* nc = nil;
     
     if (nil != databaseContext)
     {
+        nc = [databaseContext notificationCenter];
         [nc removeObserver: self name: kBXConnectionFailedNotification object: databaseContext];
         [nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
     }
@@ -217,6 +218,7 @@
     if (nil != aContext)
     {
 		databaseContext = aContext;
+        nc = [databaseContext notificationCenter];
         [nc addObserver: self selector: @selector (endConnecting:) 
                    name: kBXConnectionFailedNotification object: databaseContext];
         [nc addObserver: self selector: @selector (endConnecting:) 

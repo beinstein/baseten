@@ -79,7 +79,7 @@ static TSNonRetainedObjectDictionary* gEntities;
     return nil;
 }
 
-/** \note Override dealloc2 in subclasses instead! */
+/** \note In subclasses override dealloc2 instead! */
 - (void) dealloc
 {
 	@synchronized (gEntities)
@@ -369,6 +369,7 @@ bail:
 
 + (NSURL *) entityKeyForDatabaseURI: (NSURL *) databaseURI schema: (NSString *) schemaName table: (NSString *) tableName
 {
+    databaseURI = [databaseURI BXURIForHost: nil database: nil username: @"" password: @""];
 	return [NSURL URLWithString: [NSString stringWithFormat: @"%@/%@", schemaName, tableName] relativeToURL: databaseURI];
 }
 

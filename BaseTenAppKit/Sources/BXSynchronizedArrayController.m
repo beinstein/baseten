@@ -250,7 +250,7 @@
 		mFetchesOnConnect = aBool;
 		if (nil != databaseContext)
 		{
-			NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+			NSNotificationCenter* nc = [databaseContext notificationCenter];
 			if (YES == mFetchesOnConnect)
 				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
 			else

@@ -1252,6 +1252,7 @@ extern void BXInit ()
 				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
+                //FIXME: should we remove the username as well?
 				NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: @""];
 				[self setDatabaseURIInternal: newURI];				
 			}

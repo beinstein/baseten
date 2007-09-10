@@ -78,7 +78,7 @@
 		NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 																	 object: self 
 																   userInfo: nil];
-		[[NSNotificationCenter defaultCenter] postNotification: notification];
+		[[self notificationCenter] postNotification: notification];
 	}
 }
 

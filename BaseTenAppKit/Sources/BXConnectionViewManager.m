@@ -69,7 +69,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 
 - (void) dealloc
 {
-	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[[mDatabaseContext notificationCenter] removeObserver: self];
     
     //Top level objects
 	[mBonjourListView release];
@@ -176,13 +176,14 @@ static NSArray* gManuallyNotifiedKeys = nil;
 {
 	if (mDatabaseContext != ctx)
 	{
-		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+		NSNotificationCenter* nc = [mDatabaseContext notificationCenter];
 		[nc removeObserver: self name: kBXConnectionSuccessfulNotification object: mDatabaseContext];
 		[nc removeObserver: self name: kBXConnectionFailedNotification object: mDatabaseContext];
 		
 		[mDatabaseContext release];
 		mDatabaseContext = [ctx retain];
 	
+        nc = [mDatabaseContext notificationCenter];
 		[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: mDatabaseContext];
 		[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionFailedNotification object: mDatabaseContext];
 	}
