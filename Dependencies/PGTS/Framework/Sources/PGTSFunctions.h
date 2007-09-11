@@ -34,6 +34,7 @@
 #define TSEnumerate( LOOP_VAR, ENUMERATOR_VAR, ENUMERATION )  \
 for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
      nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
+#define SafeCFRelease( CF_VAL )  if (NULL != CF_VAL) { CFRelease (CF_VAL); CF_VAL = NULL; }
 
 
 extern /*inline*/ id PGTSOidAsObject (Oid o);

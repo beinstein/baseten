@@ -72,6 +72,14 @@ PGTSSSLConnectionExIndex ()
 	return sslConnectionExIndex;
 }
 
+
+static void 
+DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address, const void* data, void* info)
+{
+	[(id) info dataAvailable];
+}
+
+
 @interface NSObject (PGTSKeyValueObserving)
 + (BOOL) automaticallyNotifiesObserversForKey: (NSString *) key;
 - (void) willChangeValueForKey: (NSString *) key;
@@ -267,8 +275,8 @@ PGTSSSLConnectionExIndex ()
 - (void) disconnectAndCleanup
 {
 	//N.B. No locking
-	[stream release];
-	stream = nil;
+	SafeCFRelease (socket);
+	SafeCFRelease (socketSource);
 	if (NULL != cancelRequest)
 	{
 		PQfreeCancel (cancelRequest);
@@ -344,7 +352,8 @@ PGTSSSLConnectionExIndex ()
 {
     [workerThreadLock lock];
     NSAutoreleasePool* threadPool = [[NSAutoreleasePool alloc] init];
-    stream = nil;
+    socket = NULL;
+	socketSource = NULL;
     
     NSString* mode = NSDefaultRunLoopMode;
     NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
@@ -372,7 +381,9 @@ PGTSSSLConnectionExIndex ()
     }
 	workerProxy = nil;
     returningWorkerProxy = nil;
-    stream = nil;
+	SafeCFRelease (socket);
+	SafeCFRelease (socketSource);
+
 	
     log4Debug (@"Worker: exiting");
     [threadPool release];    
@@ -403,8 +414,8 @@ PGTSSSLConnectionExIndex ()
 		sslSetUp = NO;
         if (YES == reset)
         {
-            [stream release];
-            stream = nil;
+			SafeCFRelease (socket);
+			SafeCFRelease (socketSource);
         }
         
         //Polling loop
@@ -473,10 +484,12 @@ PGTSSSLConnectionExIndex ()
 			PQexec (connection, "SET datestyle TO 'ISO, YMD'");
             //FIXME: set other things as well?
             PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
-
-            CFStreamCreatePairWithSocket (NULL, bsdSocket, (CFReadStreamRef *) &stream, NULL);
-            [stream setDelegate: self];
-            [stream scheduleInRunLoop: [NSRunLoop currentRunLoop] forMode: NSDefaultRunLoopMode];
+			
+			CFSocketContext context = {0, self, NULL, NULL, NULL};
+			socket = CFSocketCreateWithNative (NULL, bsdSocket, kCFSocketReadCallBack, &DataAvailable, &context);
+			socketSource = CFSocketCreateRunLoopSource (NULL, socket, 0);
+			//FIXME: check that the source got created?
+			CFRunLoopAddSource (CFRunLoopGetCurrent (), socketSource, kCFRunLoopDefaultMode);
             cancelRequest = PQgetCancel (connection);
         }
     }
@@ -513,24 +526,13 @@ PGTSSSLConnectionExIndex ()
 }
 
 /** Called when data is available from the libpq socket */
-- (void) stream: (NSStream *) theStream handleEvent: (NSStreamEvent) streamEvent
+- (void) dataAvailable
 {
-    //NSLog (@"streamEvent: %d", streamEvent);
-    switch (streamEvent) 
-    {
-        case NSStreamEventHasBytesAvailable:
-        {
-            log4Debug (@"worker: availableData thread: %p", [NSThread currentThread]);
-            [connectionLock lock];
-            PQconsumeInput (connection);
-            [self postPGnotifications];
-            [connectionLock unlock];
-            break;
-        }
-            
-        default:
-            break;
-    }
+	log4Debug (@"worker: availableData thread: %p", [NSThread currentThread]);
+	[connectionLock lock];
+	PQconsumeInput (connection);
+	[self postPGnotifications];
+	[connectionLock unlock];
 }
 
 - (void) postPGnotifications

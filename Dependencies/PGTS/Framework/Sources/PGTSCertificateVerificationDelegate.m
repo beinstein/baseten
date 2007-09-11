@@ -27,10 +27,10 @@
 //
 
 #import "PGTSCertificateVerificationDelegate.h"
+#import "PGTSFunctions.h"
 #import <Security/Security.h>
 #import <openssl/ssl.h>
 
-#define SafeCFRelease( CF_VAL ) ( NULL != CF_VAL ? CFRelease( CF_VAL ) : NULL )
 
 @implementation PGTSCertificateVerificationDelegate
 

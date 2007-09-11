@@ -51,8 +51,8 @@ CREATE ROLE basetenuser WITH
 	NOCREATEDB
 	NOCREATEROLE
 	NOLOGIN;
-COMMENT ON ROLE basetenread IS 'Read-only rights for BaseTen relations';
-COMMENT ON ROLE basetenuser IS 'Read and write access to BaseTen relations';
+-- COMMENT ON ROLE basetenread IS 'Read-only rights for BaseTen relations';
+-- COMMENT ON ROLE basetenuser IS 'Read and write access to BaseTen relations';
 COMMIT;
 
 
