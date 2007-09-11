@@ -27,6 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreFoundation/CoreFoundation.h>
 #import <sys/time.h>
 #import <PGTS/postgresql/libpq-fe.h>
 
@@ -48,7 +49,8 @@
 	PGconn* connection;			//Deallocated in disconnect
     PGcancel* cancelRequest;	//Deallocated in disconnect
     
-    NSInputStream* stream;											//Deallocated in workerThreadMain
+    CFSocketRef socket;												//Deallocated in workerThreadMain
+	CFRunLoopSourceRef socketSource;								//Deallocated in workerThreadMain
     volatile PGTSConnection *workerProxy, *returningWorkerProxy;	//Deallocated in workerThreadMain
 	volatile PGTSConnection *mainProxy, *returningMainProxy;		//Deallocated in endWorkerThread
 	

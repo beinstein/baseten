@@ -74,4 +74,5 @@
 - (void) logNotification: (id) anObject;
 - (void) postPGnotifications;
 - (void) updateConnectionStatus;
+- (void) dataAvailable;
 @end
