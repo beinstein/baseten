@@ -267,8 +267,8 @@ PGTSSSLConnectionExIndex ()
 - (void) disconnectAndCleanup
 {
 	//N.B. No locking
-	[socket release];
-	socket = nil;
+	[stream release];
+	stream = nil;
 	if (NULL != cancelRequest)
 	{
 		PQfreeCancel (cancelRequest);
@@ -344,7 +344,7 @@ PGTSSSLConnectionExIndex ()
 {
     [workerThreadLock lock];
     NSAutoreleasePool* threadPool = [[NSAutoreleasePool alloc] init];
-    socket = nil;
+    stream = nil;
     
     NSString* mode = NSDefaultRunLoopMode;
     NSRunLoop* runLoop = [NSRunLoop currentRunLoop];
@@ -372,7 +372,7 @@ PGTSSSLConnectionExIndex ()
     }
 	workerProxy = nil;
     returningWorkerProxy = nil;
-    socket = nil;
+    stream = nil;
 	
     log4Debug (@"Worker: exiting");
     [threadPool release];    
@@ -403,8 +403,8 @@ PGTSSSLConnectionExIndex ()
 		sslSetUp = NO;
         if (YES == reset)
         {
-            [socket release];
-            socket = nil;
+            [stream release];
+            stream = nil;
         }
         
         //Polling loop
@@ -474,13 +474,9 @@ PGTSSSLConnectionExIndex ()
             //FIXME: set other things as well?
             PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
 
-			socket = [[NSFileHandle alloc] initWithFileDescriptor: bsdSocket closeOnDealloc: NO];
-            [socket waitForDataInBackgroundAndNotify];
-            [[NSNotificationCenter defaultCenter] addObserver: self 
-                                                     selector: @selector (dataAvailableFromLib:)
-                                                         name: NSFileHandleDataAvailableNotification 
-                                                       object: socket];
-
+            CFStreamCreatePairWithSocket (NULL, bsdSocket, (CFReadStreamRef *) &stream, NULL);
+            [stream setDelegate: self];
+            [stream scheduleInRunLoop: [NSRunLoop currentRunLoop] forMode: NSDefaultRunLoopMode];
             cancelRequest = PQgetCancel (connection);
         }
     }
@@ -517,14 +513,24 @@ PGTSSSLConnectionExIndex ()
 }
 
 /** Called when data is available from the libpq socket */
-- (void) dataAvailableFromLib: (NSNotification *) aNotification
+- (void) stream: (NSStream *) theStream handleEvent: (NSStreamEvent) streamEvent
 {
-    log4Debug (@"worker: availableData thread: %p", [NSThread currentThread]);
-    [connectionLock lock];
-    PQconsumeInput (connection);
-    [self postPGnotifications];
-    [socket waitForDataInBackgroundAndNotify];
-    [connectionLock unlock];
+    //NSLog (@"streamEvent: %d", streamEvent);
+    switch (streamEvent) 
+    {
+        case NSStreamEventHasBytesAvailable:
+        {
+            log4Debug (@"worker: availableData thread: %p", [NSThread currentThread]);
+            [connectionLock lock];
+            PQconsumeInput (connection);
+            [self postPGnotifications];
+            [connectionLock unlock];
+            break;
+        }
+            
+        default:
+            break;
+    }
 }
 
 - (void) postPGnotifications

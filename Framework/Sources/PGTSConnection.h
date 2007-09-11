@@ -48,7 +48,7 @@
 	PGconn* connection;			//Deallocated in disconnect
     PGcancel* cancelRequest;	//Deallocated in disconnect
     
-    NSFileHandle* socket;											//Deallocated in workerThreadMain
+    NSInputStream* stream;											//Deallocated in workerThreadMain
     volatile PGTSConnection *workerProxy, *returningWorkerProxy;	//Deallocated in workerThreadMain
 	volatile PGTSConnection *mainProxy, *returningMainProxy;		//Deallocated in endWorkerThread
 	
