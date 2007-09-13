@@ -476,9 +476,8 @@ ParseSelector (SEL aSelector, NSString** key)
 		switch (keyType)
 		{
 			case kBXDatabaseObjectPrimaryKey:
-				//Primary key values are stored into the object ID but can be queried 
-				//through this object.
-				//FIXME: why do we call willChange and didChange here?
+				//Object ID stores primary key values. We call -willChange and -didChange for them at this point,
+				//since other values and related objects make KVO notifications when -setCachedValue:forKey: is called.				
 				[self willChangeValueForKey: aKey];
 				//Fall through.
 				
