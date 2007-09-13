@@ -1803,36 +1803,33 @@ extern void BXInit ()
 {
     NSError* localError = nil;
     id rval = nil;
-	if ([self checkDatabaseURI: &localError])
+	[self connectIfNeeded: &localError];
+	if (nil == localError)
 	{
-		[self connectIfNeeded: &localError];
+		if (nil != excludedFields)
+		{
+			excludedFields = [entity attributes: excludedFields];
+			[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
+		}
+		rval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
+										 returningFaults: returnFaults 
+												   class: [entity databaseObjectClass] 
+												   error: &localError];
 		if (nil == localError)
 		{
-			if (nil != excludedFields)
+			[rval makeObjectsPerformSelector: @selector (awakeFromFetchIfNeeded)];
+			
+			if (Nil != returnedClass)
 			{
-				excludedFields = [entity attributes: excludedFields];
-				[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
+				rval = [[[returnedClass alloc] BXInitWithArray: rval] autorelease];
+				[rval setDatabaseContext: self];
+				[(BXContainerProxy *) rval setEntity: entity];
+				[rval setFilterPredicate: predicate];
 			}
-			rval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
-											 returningFaults: returnFaults 
-													   class: [entity databaseObjectClass] 
-													   error: &localError];
-			if (nil == localError)
+			else if (0 == [rval count])
 			{
-				[rval makeObjectsPerformSelector: @selector (awakeFromFetchIfNeeded)];
-				
-				if (Nil != returnedClass)
-				{
-					rval = [[[returnedClass alloc] BXInitWithArray: rval] autorelease];
-					[rval setDatabaseContext: self];
-					[(BXContainerProxy *) rval setEntity: entity];
-					[rval setFilterPredicate: predicate];
-				}
-				else if (0 == [rval count])
-				{
-					//If an automatically updating container wasn't desired, we could also return nil.
-					rval = nil;
-				}
+				//If an automatically updating container wasn't desired, we could also return nil.
+				rval = nil;
 			}
 		}
 	}

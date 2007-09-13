@@ -131,7 +131,8 @@ enum BXPGQueryState
 - (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error;
 
 - (void) prepareConnection: (enum BXSSLMode) mode;
-- (void) checkConnectionStatus: (NSError **) error;
+- (void) checkConnectionStatusAndAutocommit: (NSError **) error;
+- (BOOL) checkConnectionStatus: (PGTSConnection *) conn error: (NSError **) error;
 
 - (void) fetchForeignKeys;
 @end

@@ -271,6 +271,12 @@ static NSString* SSLMode (enum BXSSLMode mode)
     [super dealloc];
 }
 
+- (NSString *) description
+{
+	return [NSString stringWithFormat: @"<%@: %p (%@, %@)>", [self class], self, 
+		[connection errorMessage], [notifyConnection errorMessage]];
+}
+
 - (void) setDatabaseURI: (NSURL *) anURI
 {
     if (databaseURI != anURI)
@@ -285,14 +291,14 @@ static NSString* SSLMode (enum BXSSLMode mode)
 	enum BXSSLMode mode = [context sslMode];
 	[self prepareConnection: mode];
 	[connection connect];
-	[self checkConnectionStatus: error];
+	[self checkConnectionStatusAndAutocommit: error];
 	
 	if (NO == invalidCertificate && nil != *error && mode == kBXSSLModePrefer)
 	{
 		*error = nil;
 		[self prepareConnection: kBXSSLModeDisable];
 		[connection connect];
-		[self checkConnectionStatus: error];
+		[self checkConnectionStatusAndAutocommit: error];
 	}
 	
 	[self setDatabaseURI: nil];
@@ -1555,22 +1561,9 @@ bail:
 	invalidCertificate = NO;
 }
 
-- (void) checkConnectionStatus: (NSError **) error
+- (void) checkConnectionStatusAndAutocommit: (NSError **) error
 {
-	log4AssertVoidReturn (NULL != error, @"Expected error to be set.", error);
-	if (CONNECTION_OK != [connection connectionStatus])
-	{
-		NSString* errorMessage = [connection errorMessage];
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-			errorMessage, NSLocalizedFailureReasonErrorKey,
-			errorMessage, NSLocalizedRecoverySuggestionErrorKey,
-			errorMessage, kBXErrorMessageKey,
-			BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-			nil];
-		*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionFailed
-		   						 userInfo: userInfo];
-	}
-	else
+	if ([self checkConnectionStatus: connection error: error])
 	{
 		if (YES == autocommits)
 			notifyConnection = [connection retain];
@@ -1586,9 +1579,32 @@ bail:
 			[tempConnection connect];
 			notifyConnection = connection;
 			connection = tempConnection;
+			
+			[self checkConnectionStatus: connection error: error];
 			log4Debug (@"notifyConnection is %p, backend %d\n", notifyConnection, [notifyConnection backendPID]);                
 		}
 	}
+}
+
+- (BOOL) checkConnectionStatus: (PGTSConnection *) conn error: (NSError **) error 
+{
+	BOOL retval = NO;
+	log4AssertValueReturn (NULL != error, retval, @"Expected error to be set.", error);
+	if (CONNECTION_OK == [connection connectionStatus])
+		retval = YES;
+	else
+	{
+		NSString* errorMessage = [connection errorMessage];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+			errorMessage, NSLocalizedFailureReasonErrorKey,
+			errorMessage, NSLocalizedRecoverySuggestionErrorKey,
+			errorMessage, kBXErrorMessageKey,
+			BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
+			nil];
+		*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionFailed
+		   						 userInfo: userInfo];
+	}
+	return retval;
 }
 
 - (void) fetchForeignKeys
@@ -1819,7 +1835,7 @@ bail:
 - (void) PGTSConnectionEstablished: (PGTSConnection *) aConnection
 {
     NSError* error = nil;
-    [self checkConnectionStatus: &error];
+    [self checkConnectionStatusAndAutocommit: &error];
 	[context connectedToDatabase: YES async: YES error: &error];
 }
 
