@@ -71,7 +71,7 @@
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: oneEntity
                                     withPredicate: nil error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [res count]);
     
     //Get an object from the result
@@ -92,7 +92,7 @@
     //Get the objects from the second table
     NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: manyEntity
                                                             withPredicate: nil error: &error]];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (3 == [objects2 count]);
     
     //Set the referenced objects
@@ -122,7 +122,7 @@
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: oneEntity
                                     withPredicate: nil error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [res count]);
     
     //Get an object from the result
@@ -145,7 +145,7 @@
     //Get the objects from the second table
     NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: manyEntity
                                                             withPredicate: nil error: &error]];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (3 == [objects2 count]);
     
     NSMutableSet* mock = [NSMutableSet set];

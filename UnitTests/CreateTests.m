@@ -68,7 +68,7 @@
     
     BXDatabaseObject* object = [context createObjectForEntity: entity withFieldValues: nil error: &error];
     MKCAssertNotNil (object);
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     [context rollback];
     [pool release];
 }
@@ -96,7 +96,7 @@
     
     BXDatabaseObject* object = [context createObjectForEntity: entity withFieldValues: nil error: &error];
     MKCAssertNotNil (object);
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue ([object isKindOfClass: objectClass]);    
     [context rollback];
     [pool release];
@@ -109,7 +109,7 @@
     array = [context executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
 					   updateAutomatically: YES error: &error];
         
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertNotNil (array);
     unsigned int count = [array count];
     
@@ -120,12 +120,12 @@
     MKCAssertNotNil (context2);
     
     BXDatabaseObject* object = [context2 createObjectForEntity: entity withFieldValues: nil error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertNotNil (object);
     
     //Commit the modification so we can see some results
     [context2 save: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     
     //Wait for the notification
     [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];

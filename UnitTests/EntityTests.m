@@ -52,7 +52,7 @@
 	NSString* schemaName = @"Fkeytest";
 	NSString* entityName = @"mtocollectiontest1";
 	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
-	MKCAssertNil (error);
+	STAssertNil (error, [error description]);
 	MKCAssertNotNil (entity);
 	MKCAssertEqualObjects ([entity name], entityName);
 	MKCAssertEqualObjects ([entity schemaName], schemaName);
@@ -98,7 +98,7 @@
 	
 	//Now the entity should be validated lazily
 	MKCAssertFalse ([ctx2 isConnected]);
-	MKCAssertNil (error);
+	STAssertNil (error, [error description]);
 }
 
 - (void) testHash

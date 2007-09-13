@@ -101,7 +101,7 @@
         NSArray* res = [context executeFetchForEntity: manyEntity
                                         withPredicate: predicate
                                                 error: &error];
-        MKCAssertNil (error);
+        STAssertNil (error, [error description]);
         MKCAssertTrue (1 == [res count]);
     
         BXDatabaseObject* object = [res objectAtIndex: 0];
@@ -148,7 +148,7 @@
     NSArray* res = [context executeFetchForEntity: oneEntity
                                     withPredicate: predicate
                                             error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
 
@@ -163,7 +163,7 @@
     MKCAssertTrue ([rel isToMany]);
         
     NSSet* foreignObjects = [rel targetForObject: object error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [foreignObjects count]);
     NSArray* values = [foreignObjects valueForKey: @"value"];
     MKCAssertTrue ([values containsObject: @"21"]);
@@ -173,7 +173,7 @@
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 
     foreignObjects = [object valueForKey: [manyEntity name]];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [foreignObjects count]);
     values = [foreignObjects valueForKey: @"value"];
     MKCAssertTrue ([values containsObject: @"21"]);
@@ -205,7 +205,7 @@
     NSArray* res = [context executeFetchForEntity: entity1 
                                     withPredicate: [NSPredicate predicateWithFormat: @"1 <= id && id <= 2"]
                                             error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [res count]);
     for (int i = 0; i < 2; i++)
     {
@@ -213,11 +213,11 @@
         
         BXDatabaseObject* foreignObject  = [object valueForKey: [entity2 name]];
         BXDatabaseObject* foreignObject2 = [foobar targetForObject: object error: &error];
-        MKCAssertNil (error);
+        STAssertNil (error, [error description]);
         
         BXDatabaseObject* object2 = [foreignObject primitiveValueForKey: [entity1 name]];
         BXDatabaseObject* object3 = [[foobar inverseRelationship] targetForObject: foreignObject error: &error];
-        MKCAssertNil (error);
+        STAssertNil (error, [error description]);
         
         MKCAssertTrue ([[foreignObject  objectID] entity] == entity2);
         MKCAssertTrue ([[foreignObject2 objectID] entity] == entity2);
@@ -243,7 +243,7 @@
     res = [context executeFetchForEntity: entity2
                            withPredicate: [NSPredicate predicateWithFormat: @"id = 3"]
                                    error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
     MKCAssertNil ([object valueForKey: [entity1 name]]);
@@ -264,7 +264,7 @@
 {
     NSError* error = nil;
     NSArray* res = [context executeFetchForEntity: entity1 withPredicate: nil error: &error];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (4 == [res count]);
     
     NSSet* expected1 = [NSSet setWithObjects: @"a1", @"b1", @"c1", nil];

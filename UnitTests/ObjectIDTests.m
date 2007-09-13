@@ -63,7 +63,7 @@
 	//Change the URI back to a object id
 	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [ctx databaseURI]];
 	BXDatabaseObjectID* objectID2 = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx2 error: &error] autorelease];
-	MKCAssertNil (error);
+	STAssertNil (error, [error description]);
 	MKCAssertEqualObjects (objectID, objectID2);
 	
 	BXDatabaseObject* fault = [[ctx2 faultsWithIDs: [NSArray arrayWithObject: objectID2]] objectAtIndex: 0];
@@ -76,7 +76,7 @@
 	NSError* error = nil;
 	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=12345" relativeToURL: [ctx databaseURI]];
 	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx error: &error] autorelease];
-	MKCAssertNil (error);
+	STAssertNil (error, [error description]);
 	
 	[ctx connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
@@ -93,7 +93,7 @@
 	NSError* error = nil;
 	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=1" relativeToURL: [ctx databaseURI]];
 	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx error: &error] autorelease];
-	MKCAssertNil (error);
+	STAssertNil (error, [error description]);
 	
 	[ctx connectIfNeeded: &error];
 	STAssertNil (error, [error description]);

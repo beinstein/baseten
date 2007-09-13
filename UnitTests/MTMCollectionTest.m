@@ -103,7 +103,7 @@
     NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: entity2
                                                             withPredicate: [NSPredicate predicateWithFormat:  @"value2 != 'd2'"]
                                                                     error: &error]];
-    MKCAssertNil (error);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (3 == [objects2 count]);
     
     NSMutableSet* mock = [NSMutableSet set];
