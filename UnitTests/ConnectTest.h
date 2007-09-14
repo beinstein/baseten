@@ -32,6 +32,7 @@
 @interface ConnectTest : SenTestCase 
 {
     BXDatabaseContext* ctx;
+	int expectedCount;
 }
 
 @end

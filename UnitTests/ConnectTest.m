@@ -37,6 +37,7 @@
 {
     ctx = [[BXDatabaseContext alloc] init];
 	[ctx setAutocommits: NO];
+	expectedCount = 0;
 }
 
 - (void) tearDown
@@ -84,6 +85,30 @@
 	MKCAssertNotNil (error);
 	rval = [ctx createObjectForEntity: entity withFieldValues: nil error: &error];
 	MKCAssertNotNil (error);
+}
+
+- (void) testConnectFail4
+{
+	[ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]];
+	[[ctx notificationCenter] addObserver: self selector: @selector (expected:) name: kBXConnectionFailedNotification object: nil];
+	[[ctx notificationCenter] addObserver: self selector: @selector (unexpected:) name: kBXConnectionSuccessfulNotification object: nil];
+	[ctx connect];
+	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2.0]];
+	[ctx connect];
+	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2.0]];
+	[ctx connect];
+	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2.0]];
+	MKCAssertTrue (3 == expectedCount);
+}
+
+- (void) expected: (NSNotification *) n
+{
+	expectedCount++;
+}
+
+- (void) unexpected: (NSNotification *) n
+{
+	STAssertTrue (NO, @"Expected connection not to have been made.");
 }
 
 @end
