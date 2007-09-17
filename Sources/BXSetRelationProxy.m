@@ -107,6 +107,7 @@
 	NSMutableSet* oldValue = [NSMutableSet setWithSet: mContainer];
 	NSSet* changed = nil;
 	NSKeyValueSetMutationKind mutationKind = 0;
+    SEL undoSelector = NULL;
 	
 	switch ([[change objectForKey: NSKeyValueChangeKindKey] intValue])
 	{
@@ -115,10 +116,7 @@
             changed = [change objectForKey: NSKeyValueChangeNewKey];
             [oldValue unionSet: [change objectForKey: NSKeyValueChangeOldKey]];
             mutationKind = NSKeyValueSetSetMutation;
-            
-            //If context isn't autocommitting, undo and redo happen differently.
-			if ([mContext autocommits])
-				[[[mContext undoManager] prepareWithInvocationTarget: self] setSet: changed];
+            undoSelector = @selector (setSet:);
             break;
         }
         
@@ -127,10 +125,7 @@
 			changed = [change objectForKey: NSKeyValueChangeNewKey];
 			[oldValue minusSet: changed];
 			mutationKind = NSKeyValueUnionSetMutation;
-			
-			//If context isn't autocommitting, undo and redo happen differently.
-			if ([mContext autocommits])
-				[[[mContext undoManager] prepareWithInvocationTarget: self] minusSet: changed];
+            undoSelector = @selector (minusSet:);
 			break;
 		}
 			
@@ -139,10 +134,7 @@
 			changed = [change objectForKey: NSKeyValueChangeOldKey];
 			[oldValue unionSet: changed];
 			mutationKind = NSKeyValueMinusSetMutation;
-
-			//If context isn't autocommitting, undo and redo happen differently.
-			if ([mContext autocommits])
-				[[[mContext undoManager] prepareWithInvocationTarget: self] unionSet: changed];
+            undoSelector = @selector (unionSet:);
 			break;
 		}
 			
@@ -150,40 +142,39 @@
 			break;
 	}
 	
-	[self updateDatabaseWithNewValue: mContainer oldValue: oldValue changed: changed mutationKind: mutationKind];
-}
-
-- (void) updateDatabaseWithNewValue: (NSSet *) new 
-						   oldValue: (NSSet *) old
-							changed: (NSSet *) changed 
-					   mutationKind: (NSKeyValueSetMutationKind) mutationKind
-{
-	mChanging = YES;
-	
-	//Set mContainer temporarily to old since someone might be KVC-observing.
-	//We also send the KVC posting since we have to replace the container again
-	//before didChange gets sent.
-	id realContainer = mContainer;
-	mContainer = old;
-	mForwardToHelper = NO;
-	[mReferenceObject willChangeValueForKey: [mRelationship name]
-							withSetMutation: mutationKind
-							   usingObjects: changed];
+    if (0 != mutationKind)
+    {
+        mChanging = YES;
+        
+        //If context isn't autocommitting, undo and redo happen differently.
+        if ([mContext autocommits] && NULL != undoSelector)
+            [[mContext undoManager] registerUndoWithTarget: self selector: undoSelector object: changed];
+        
+        //Set mContainer temporarily to old since someone might be KVC-observing.
+        //We also send the KVC posting since we have to replace the container again
+        //before didChange gets sent.
+        id realContainer = mContainer;
+        mContainer = oldValue;
+        mForwardToHelper = NO;
+        [mOwner willChangeValueForKey: [self key]
+                      withSetMutation: mutationKind
+                         usingObjects: changed];
 		
-	//Make the change.
-	NSError* localError = nil;
-	[mRelationship setTarget: new forObject: mReferenceObject error: &localError];
-	if (nil != localError)
-		[mContext handleError: localError];
-	
-	//Switch back.
-	mContainer = realContainer;
-	mForwardToHelper = YES;
-	[mReferenceObject didChangeValueForKey: [mRelationship name]
-						   withSetMutation: mutationKind
-							  usingObjects: changed];
-	
-	mChanging = NO;
+        //Make the change.
+        NSError* localError = nil;
+        [mRelationship setTarget: realContainer forObject: mOwner error: &localError];
+        if (nil != localError)
+            [mContext handleError: localError];
+        
+        //Switch back.
+        mContainer = realContainer;
+        mForwardToHelper = YES;
+        [mOwner didChangeValueForKey: [self key]
+                     withSetMutation: mutationKind
+                            usingObjects: changed];
+        
+        mChanging = NO;
+    }
 }
 
 - (void) setRelationship: (BXRelationshipDescription *) relationship
@@ -195,15 +186,6 @@
     }
 }
 
-- (void) setReferenceObject: (BXDatabaseObject *) aReferenceObject
-{
-    if (mReferenceObject != aReferenceObject) 
-    {
-        [mReferenceObject release];
-        mReferenceObject = [aReferenceObject retain];
-    }
-}
-
 - (void) forwardInvocation: (NSInvocation *) anInvocation
 {
     //Unless we modify the helper's proxy object, changes won't be notified.
@@ -212,6 +194,11 @@
 		[anInvocation invokeWithTarget: [mHelper mutableSetValueForKey: @"set"]];
 	else
 		[anInvocation invokeWithTarget: mContainer];
+}
+
+- (NSString *) key
+{
+    return [mRelationship name];
 }
 
 @end

@@ -39,13 +39,7 @@
     id mHelper;
 	BOOL mForwardToHelper;
     BXRelationshipDescription* mRelationship;
-    BXDatabaseObject* mReferenceObject;
 }
 
-- (void) setReferenceObject: (BXDatabaseObject *) aReferenceObject;
 - (void) setRelationship: (BXRelationshipDescription *) relationship;
-- (void) updateDatabaseWithNewValue: (NSSet *) new 
-						   oldValue: (NSSet *) old
-							changed: (NSSet *) changed 
-					   mutationKind: (NSKeyValueSetMutationKind) mutationKind;
 @end

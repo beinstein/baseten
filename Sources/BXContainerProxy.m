@@ -85,6 +85,18 @@
     return [mContainer isEqual: anObject];
 }
 
+
+- (id) copyWithZone: (NSZone *) aZone
+{
+	//Retain on copy.
+	return [self retain];
+}
+
+@end
+
+
+@implementation BXContainerProxy (Notifications)
+
 - (void) addedObjects: (NSNotification *) notification
 {
     if (NO == mChanging)
@@ -92,56 +104,11 @@
         NSDictionary* userInfo = [notification userInfo];
         log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
                               @"Expected to observe another context.");
-
+        
         NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];        
         log4Debug (@"Adding object ids: %@", ids);
         [self addedObjectsWithIDs: ids];
     }
-}
-
-- (void) addedObjectsWithIDs: (NSArray *) ids
-{    
-    NSArray* objects = [mContext faultsWithIDs: ids];
-	log4Debug (@"Adding objects: %@", objects);
-    if (nil != mFilterPredicate)
-        objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
-    [self handleAddedObjects: objects];
-    log4Debug (@"Contents after adding: %@", mContainer);
-}
-
-- (void) handleAddedObjects: (NSArray *) objectArray
-{
-    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
-	{
-		if (NO == [mContainer containsObject: currentObject])
-			[mContainer addObject: currentObject];
-	}
-}
-
-- (void) deletedObjects: (NSNotification *) notification
-{
-    if (NO == mChanging)
-    {
-        NSDictionary* userInfo = [notification userInfo];
-        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
-                              @"Expected to observe another context.");
-
-        NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
-        log4Debug (@"Removing object ids: %@", ids);
-        [self removedObjectsWithIDs: ids];
-    }
-}
-
-- (void) removedObjectsWithIDs: (NSArray *) ids
-{
-    [self handleRemovedObjects: [mContext registeredObjectsWithIDs: ids]];
-    log4Debug (@"Contents after removal: %@", mContainer);
-}
-
-- (void) handleRemovedObjects: (NSArray *) objectArray
-{
-    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
-        [mContainer removeObject: currentObject];
 }
 
 - (void) updatedObjects: (NSNotification *) notification
@@ -151,11 +118,56 @@
         NSDictionary* userInfo = [notification userInfo];
         log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
                               @"Expected to observe another context.");
-
+        
         NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
         log4Debug (@"Updating for object ids: %@", ids);
         [self updatedObjectsWithIDs: ids];
     }
+}
+
+- (void) deletedObjects: (NSNotification *) notification
+{
+    if (NO == mChanging)
+    {
+        NSDictionary* userInfo = [notification userInfo];
+        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
+                              @"Expected to observe another context.");
+        
+        NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
+        log4Debug (@"Removing object ids: %@", ids);
+        [self removedObjectsWithIDs: ids];
+    }
+}
+
+@end
+
+
+@implementation BXContainerProxy (Callbacks)
+
+- (void) addedObjectsWithIDs: (NSArray *) ids
+{    
+    NSArray* objects = [mContext faultsWithIDs: ids];
+	log4Debug (@"Adding objects: %@", objects);
+    if (nil != mFilterPredicate)
+        objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
+    
+    //Post notifications since modifying a self-updating collection won't cause
+    //value cache to be changed.
+    [mOwner willChangeValueForKey: [self key]];    
+    [self handleAddedObjects: objects];
+    [mOwner didChangeValueForKey: [self key]];
+    
+    log4Debug (@"Contents after adding: %@", mContainer);
+}
+
+- (void) removedObjectsWithIDs: (NSArray *) ids
+{
+    //Post notifications since modifying a self-updating collection won't cause
+    //value cache to be changed.
+    [mOwner willChangeValueForKey: [self key]];    
+    [self handleRemovedObjects: [mContext registeredObjectsWithIDs: ids]];
+    [mOwner didChangeValueForKey: [self key]];
+    log4Debug (@"Contents after removal: %@", mContainer);
 }
 
 - (void) updatedObjectsWithIDs: (NSArray *) ids
@@ -180,11 +192,35 @@
 	log4Debug (@"Removing:\t%@", removedObjects);
 	log4Debug (@"Adding:\t%@", addedObjects);
 	
+    //Post notifications since modifying a self-updating collection won't cause
+    //value cache to be changed.
+    [mOwner willChangeValueForKey: [self key]];    
     [self handleRemovedObjects: removedObjects];
     [self handleAddedObjects: addedObjects];
+    [mOwner didChangeValueForKey: [self key]];
 	
 	log4Debug (@"Count after operation:\t%d", [mContainer count]);
 }
+
+- (void) handleAddedObjects: (NSArray *) objectArray
+{
+    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
+	{
+		if (NO == [mContainer containsObject: currentObject])
+			[mContainer addObject: currentObject];
+	}
+}
+
+- (void) handleRemovedObjects: (NSArray *) objectArray
+{
+    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
+        [mContainer removeObject: currentObject];
+}
+
+@end
+
+
+@implementation BXContainerProxy (Accessors)
 
 - (BXDatabaseContext *) context
 {
@@ -222,24 +258,37 @@
     if (mEntity != entity) 
     {
         mEntity = entity; //Retain not needed since the entities won't be released
-
+        
         NSNotificationCenter* nc = [mContext notificationCenter];
         [nc removeObserver: self];
         
         SEL addSelector = @selector (addedObjects:);
         SEL delSelector = @selector (deletedObjects:);
         SEL updSelector = @selector (updatedObjects:);
-    
+        
         [nc addObserver: self selector: addSelector name: kBXInsertEarlyNotification object: entity];
         [nc addObserver: self selector: delSelector name: kBXDeleteEarlyNotification object: entity];                    
         [nc addObserver: self selector: updSelector name: kBXUpdateEarlyNotification object: entity];
     }
 }
 
-- (id) copyWithZone: (NSZone *) aZone
+- (void) setOwner: (BXDatabaseObject *) anObject
 {
-	//Retain on copy.
-	return [self retain];
+    mOwner = anObject;
+}
+
+- (NSString *) key
+{
+    return mKey;
+}
+
+- (void) setKey: (NSString *) aString
+{
+    if (mKey != aString)
+    {
+        [mKey release];
+        mKey = [aString retain];
+    }
 }
 
 @end

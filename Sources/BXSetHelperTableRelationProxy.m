@@ -92,9 +92,9 @@
 	{
 		//Post notifications since modifying a self-updating collection won't cause
 		//value cache to be changed.
-		[mReferenceObject willChangeValueForKey: [mRelationship name]];
+		[mOwner willChangeValueForKey: [self key]];
         [self handleAddedObjects: [mContext faultsWithIDs: objectIDs]];
-		[mReferenceObject didChangeValueForKey: [mRelationship name]];
+		[mOwner didChangeValueForKey: [self key]];
 	}
 }
 
@@ -104,9 +104,9 @@
     if (0 < [objectIDs count])
 	{
 		//See above.
-		[mReferenceObject willChangeValueForKey: [mRelationship name]];
+		[mOwner willChangeValueForKey: [self key]];
         [self handleRemovedObjects: [mContext registeredObjectsWithIDs: objectIDs]];
-		[mReferenceObject didChangeValueForKey: [mRelationship name]];
+		[mOwner didChangeValueForKey: [self key]];
 	}
 }
 
@@ -117,12 +117,12 @@
 	if (0 < [removedIDs count] || 0 < [addedIDs count])
 	{
 		//See above.
-		[mReferenceObject willChangeValueForKey: [mRelationship name]];
+		[mOwner willChangeValueForKey: [self key]];
 		if (0 < [removedIDs count])
 			[self handleRemovedObjects: [mContext registeredObjectsWithIDs: removedIDs]];
 		if (0 < [addedIDs count])
 			[self handleAddedObjects: [mContext faultsWithIDs: addedIDs]];
-		[mReferenceObject didChangeValueForKey: [mRelationship name]];
+		[mOwner didChangeValueForKey: [self key]];
 	}
 }
 

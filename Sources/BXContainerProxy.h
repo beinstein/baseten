@@ -30,32 +30,48 @@
 
 @class BXDatabaseContext;
 @class BXEntityDescription;
+@class BXDatabaseObject;
 
 @interface BXContainerProxy : NSProxy 
 {
     BXDatabaseContext* mContext;
     id mContainer;
+    id mOwner;
+    NSString* mKey;
     Class mNonMutatingClass;
-    BOOL mIsMutable;
-    BOOL mChanging;
     NSPredicate* mFilterPredicate;
     BXEntityDescription* mEntity;
+    BOOL mIsMutable;
+    BOOL mChanging;
 }
 
 - (id) BXInitWithArray: (NSMutableArray *) anArray;
+@end
+
+
+@interface BXContainerProxy (Accessors)
 - (BXDatabaseContext *) context;
 - (void) setDatabaseContext: (BXDatabaseContext *) aContext;
 - (NSPredicate *) filterPredicate;
 - (void) setFilterPredicate: (NSPredicate *) aPredicate;
 - (void) setEntity: (BXEntityDescription *) anEntity;
+- (void) setOwner: (BXDatabaseObject *) anObject;
+- (void) setKey: (NSString *) aString;
+- (NSString *) key;
+@end
 
+
+@interface BXContainerProxy (Callbacks)
 - (void) handleAddedObjects: (NSArray *) objectArray;
 - (void) handleRemovedObjects: (NSArray *) objectArray;
 - (void) addedObjectsWithIDs: (NSArray *) ids;
 - (void) removedObjectsWithIDs: (NSArray *) ids;
 - (void) updatedObjectsWithIDs: (NSArray *) ids;
+@end
+
+
+@interface BXContainerProxy (Notifications)
 - (void) addedObjects: (NSNotification *) notification;
 - (void) deletedObjects: (NSNotification *) notification;
 - (void) updatedObjects: (NSNotification *) notification;
-
 @end

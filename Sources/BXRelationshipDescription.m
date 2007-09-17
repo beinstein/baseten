@@ -156,7 +156,7 @@
 														returnedClass: [BXSetRelationProxy class]
 																error: error];
 	[res setRelationship: self];
-	[res setReferenceObject: aDatabaseObject];
+	[res setOwner: aDatabaseObject];
 	
 	if ([self isToMany])
 		retval = res;

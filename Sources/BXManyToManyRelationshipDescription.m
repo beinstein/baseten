@@ -114,7 +114,7 @@
 	[(BXSetHelperTableRelationProxy *) res setEntity: mHelperEntity];
 	[res setFilterPredicate: helperSrcPredicate];
 	[res setRelationship: self];
-	[res setReferenceObject: aDatabaseObject];
+	[res setOwner: aDatabaseObject];
 	return res;
 }
 
