@@ -130,6 +130,7 @@
     }
 }
 
+
 - (void) testOTM
 {
     [self one: test1 toMany: test2];
@@ -196,7 +197,10 @@
 - (void) one: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
 {
     NSError* error = nil;
-        
+	
+	[context connectIfNeeded: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
     BXRelationshipDescription* foobar = [[entity1 relationshipsByName] objectForKey: [entity2 name]];
     MKCAssertNotNil (foobar);
     MKCAssertFalse ([foobar isToMany]);
