@@ -52,7 +52,9 @@
     [[mContext notificationCenter] removeObserver: self];
     [mContainer release];    
     [mContext release];
+    [mKey release];
     [mFilterPredicate release];
+    [mEntity release];
     [super dealloc];
 }
 
@@ -257,7 +259,7 @@
     //Set up the modification notification
     if (mEntity != entity) 
     {
-        mEntity = entity; //Retain not needed since the entities won't be released
+        mEntity = [entity retain];
         
         NSNotificationCenter* nc = [mContext notificationCenter];
         [nc removeObserver: self];

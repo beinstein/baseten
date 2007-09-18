@@ -426,7 +426,7 @@ bail:
         mSchemaName = [sName copy];
 		mRelationships = [[TSNonRetainedObjectDictionary alloc] init];
 		mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
-		mValidationLock = [[NSRecursiveLock alloc] init];
+		mValidationLock = [[NSLock alloc] init];
     }
     return self;
 }
@@ -546,6 +546,9 @@ bail:
 {
     @synchronized (mRelationships)
     {
+        //FIXME: this is a bit bad but there seems to be an over-retain for BXEntityDescription somewhere.
+        [self setValidated: NO];
+        
         [mRelationships removeObjectForKey: [aRelationship name]];
     }
 }

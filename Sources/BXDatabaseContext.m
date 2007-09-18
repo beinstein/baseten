@@ -1261,26 +1261,16 @@ extern void BXInit ()
 	}
 	else //YES == connected
 	{
+		NSError* localError = nil;
+
 		//Strip password from the URI
 		NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: @""];
 		[self setDatabaseURIInternal: newURI];
 		
-		NSError* localError = nil;
-		if (NULL == error || nil == *error)
-		{
-			TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
-			{
-				//This might have changed during connection.
-				[currentEntity setDatabaseURI: mDatabaseURI];
-				[self validateEntity: currentEntity error: &localError];
-				if (nil != localError)
-					break;
-				[mLazilyValidatedEntities removeObject: currentEntity];
-			}
-            
-            [mLazilyValidatedEntities release];
-            mLazilyValidatedEntities = nil;
-		}
+        //This might have changed during connection.
+        TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
+            [currentEntity setDatabaseURI: mDatabaseURI];
+        [self iterateValidationQueue: &localError];
 		
 		mRetryingConnection = NO;
 		NSNotification* notification = nil;
@@ -1292,7 +1282,7 @@ extern void BXInit ()
 		}
 		else
 		{
-			//FIXME: what is the state in this case? Connected?
+			//FIXME: what is the state in this case? Connected? Perhaps we should disconnect if entity validation fails?
 			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 														 object: self
 													   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
@@ -1612,33 +1602,10 @@ extern void BXInit ()
 /** Entity for a table in a given schema */
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error
 {
-    NSError* localError = nil;
-	BXEntityDescription* retval = nil;
-	if ([self checkDatabaseURI: &localError])
-	{
-		retval =  [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
-													   table: tableName
-													inSchema: schemaName];
-		
-		//If we don't have a connection, return an entity which will be validated later.
-		if (NO == [mDatabaseInterface connected])
-		{
-			if (nil == mLazilyValidatedEntities)
-				mLazilyValidatedEntities = [[NSMutableSet alloc] init];
-			
-			[mLazilyValidatedEntities addObject: retval];
-		}
-		else
-		{
-			[self validateEntity: retval error: &localError];
-		}
-	}
-    
-	BXHandleError (error, localError);
-	if (nil != localError)
-		retval = nil;
-	
-    return retval;
+    return [self entityForTable: tableName
+                       inSchema: schemaName
+            validateImmediately: [self isConnected]
+                          error: error];
 }
 
 /** Entity for a table in the default schema */
@@ -2136,6 +2103,64 @@ extern void BXInit ()
 	}
 }
 
+- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName 
+                     validateImmediately: (BOOL) validateImmediately error: (NSError **) error
+{
+    NSError* localError = nil;
+    BXEntityDescription* retval = nil;
+    if ([self checkDatabaseURI: &localError])
+    {
+        retval = [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
+                                                       table: tableName
+                                                    inSchema: schemaName];
+        
+        if (! [retval isValidated])
+        {
+            if (validateImmediately)
+            {
+                [self connectIfNeeded: &localError];
+                if (nil == localError)
+                    [self validateEntity: retval error: &localError];
+                [self iterateValidationQueue: &localError];
+            }
+            else
+            {
+                //Return an entity which will be validated later.
+                if (nil == mLazilyValidatedEntities)
+                    mLazilyValidatedEntities = [[NSMutableSet alloc] init];
+                
+                [mLazilyValidatedEntities addObject: retval];            
+            }
+        }
+    }
+    
+    BXHandleError (error, localError);
+    if (nil != localError)
+        retval = nil;
+    
+    return retval;
+}
+
+- (void) iterateValidationQueue: (NSError **) error
+{
+    log4AssertVoidReturn (NULL != error, @"Expected error to be set.");
+    while (0 < [mLazilyValidatedEntities count])
+    {
+        NSSet* entities = [[mLazilyValidatedEntities copy] autorelease];
+        [mLazilyValidatedEntities removeAllObjects];
+        TSEnumerate (currentEntity, e, [entities objectEnumerator])
+        {
+            [self validateEntity: currentEntity error: error];
+            if (nil != *error)
+            {
+                //Remember the remaining objects.
+                [mLazilyValidatedEntities addObjectsFromArray: [e allObjects]];
+                return;
+            }
+        }
+    }
+}
+
 - (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
 {
 	NSError* localError = nil;
@@ -2150,47 +2175,39 @@ extern void BXInit ()
 	return relationships;
 }
 
-- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
+- (void) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
-	log4AssertValueReturn (NULL != error, NO, @"Expected error not to be NULL.");
-	//FIXME: this will get called recursively. I'm not sure if we really want that.
+	log4AssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
 	
-	BOOL retval = NO;
-	if ([mEntities containsObject: entity])
-		retval = YES;
-	else
+	//This should be safe even with multiple threads.
+	if (! [mEntities containsObject: entity])
 	{
 		NSLock* lock = [entity validationLock];
 		[lock lock];
 		
 		//Even if an entity has already been validated, allow a database interface to do something with it.
 		[mDatabaseInterface validateEntity: entity error: error];
-		if (NULL == *error)
+		if (nil == *error)
 		{
+			if (! [entity isValidated])
+			{
+				NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
+				if (nil == *error)
+				{
+					[entity setRelationships: relationships];
+					[entity setValidated: YES];
+				}
+			}
+			
 			if ([entity isValidated])
 			{
 				[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
 				[mEntities addObject: entity];
 			}
-			else
-			{
-				[entity setValidated: YES];
-				
-				NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
-				if (NULL == *error)
-				{
-					[entity setRelationships: relationships];
-					[mRelationships addObjectsFromArray: [relationships allValues]];
-
-					[mEntities addObject: entity];
-					retval = YES;
-				}
-			}
-        }		
+		}
+		
 		[lock unlock];
 	}
-
-	return retval;
 }
 
 @end

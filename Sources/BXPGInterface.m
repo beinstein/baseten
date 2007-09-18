@@ -358,7 +358,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     NSArray* fieldNames = [fields BXPGEscapedNames: connection];
     NSArray* fieldValues = [valueDict objectsForKeys: fields notFoundMarker: nil];
 
-    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set (was %p)", error);
+    log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
     log4AssertValueReturn (NO == [connection overlooksFailedQueries], nil, @"Connection should throw when a query fails");
     @try
     {
@@ -884,7 +884,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				NSString* name = [res valueForKey: @"name"];
 				NSString* inverseName = [res valueForKey: @"inversename"];
 				BXEntityDescription* dst = [context entityForTable: [res valueForKey: @"dstrelname"] 
-														  inSchema: [res valueForKey: @"dstnspname"] 
+														  inSchema: [res valueForKey: @"dstnspname"]
+                                               validateImmediately: NO
 															 error: error];
 				if (nil != *error) goto bail;
 				
@@ -929,6 +930,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					{
 						BXEntityDescription* helper = [context entityForTable: [res valueForKey: @"helperrelname"] 
 																	 inSchema: [res valueForKey: @"helpernspname"] 
+                                                          validateImmediately: NO
 																		error: error];
 						if (nil != *error) goto bail;
 						
