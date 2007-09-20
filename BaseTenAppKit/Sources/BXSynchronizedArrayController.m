@@ -29,6 +29,8 @@
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseAdditions.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/BXContainerProxy.h>
+#import <Log4Cocoa/Log4Cocoa.h>
 #import "BXSynchronizedArrayController.h"
 #import "NSController+BXAppKitAdditions.h"
 
@@ -68,9 +70,11 @@
 - (void) awakeFromNib
 {
     NSError* error = nil;
+	[databaseContext retain];
+	
     if (nil == mEntityDescription && nil != mTableName)
         [self setEntityDescription: [databaseContext entityForTable: mTableName inSchema: mSchemaName error: &error]];
-    
+	    
     if (nil != error)
         [self BXHandleError: error];
     else
@@ -95,71 +99,15 @@
     return window;
 }
 
-- (BOOL) fetchObjectsMerging: (BOOL) merge error: (NSError **) error
-{    
-    BOOL rval = NO;
-    NSArray* result = [databaseContext executeFetchForEntity: mEntityDescription withPredicate: [self fetchPredicate] error: error];
-    if (nil != result)
-    {
-        rval = YES;
-        if (NO == merge)
-        {
-            //Do not really remove, since we do not want to affect the database.
-            [super removeObjects: [self arrangedObjects]];
-            [self addObjects: result];
-        }
-        else
-        {
-            NSArray* ids = [[self arrangedObjects] valueForKey: @"objectID"];
-            TSEnumerate (currentObject, e, [result objectEnumerator])
-            {
-                if (NO == [ids containsObject: [currentObject objectID]])
-                    [self addObject: currentObject];
-            }
-        }        
-    }
-    return rval;
-}
-
 - (void) dealloc
 {
-    [[databaseContext notificationCenter] removeObserver: self];
     [databaseContext release];
     [mEntityDescription release];
+	[mSchemaName release];
+	[mTableName release];
+	[mDBObjectClassName release];
+	[mBXContent release];
     [super dealloc];
-}
-
-- (void) BXAddedObjects: (NSNotification *) notification
-{
-    if (NO == mChanging)
-    {
-        NSError* error = nil;
-        NSArray* ids = [[notification userInfo] valueForKey: kBXObjectIDsKey];
-        NSSet* result = [databaseContext objectsWithIDs: ids error: &error];
-        if (nil != error)
-            [self BXHandleError: error];
-        else
-        {
-            id content = [self content];
-            TSEnumerate (currentObject, e, [result objectEnumerator])
-            {
-                //FIXME: addObject shouldn't be called here since it causes 
-                //-setPrimitiveValue:forKey: to be called in bound related objects with the
-                //content array as argument. This is redundant since this method is called as 
-                //a result of the object having been already added. On the other hand other
-                //observers might not get notified if the object was added more directly so
-                //for now we try to detect this in BXDatabaseObject instead.
-                if (NO == [content containsObject: currentObject])
-                    [self addObject: currentObject];
-            }
-        }
-    }
-}
-
-- (void) BXDeletedObjects: (NSNotification *) notification
-{
-    NSArray* objects = [[notification userInfo] valueForKey: kBXObjectsKey];
-    [self removeObjects: objects];
 }
 
 - (BXEntityDescription *) entityDescription
@@ -169,24 +117,7 @@
 
 - (void) setEntityDescription: (BXEntityDescription *) desc
 {
-    if (desc != mEntityDescription)
-    {
-        NSNotificationCenter* nc = [databaseContext notificationCenter];
-        [nc removeObserver: self name: kBXInsertNotification object: mEntityDescription];
-        [nc removeObserver: self name: kBXDeleteNotification object: mEntityDescription];
-        [mEntityDescription release];
-        
-        mEntityDescription = desc;
-        if (nil != mEntityDescription)
-        {
-            [mEntityDescription retain];
-            [nc addObserver: self selector: @selector (BXAddedObjects:)
-                       name: kBXInsertNotification object: mEntityDescription];
-            [nc addObserver: self selector: @selector (BXDeletedObjects:)
-                       name: kBXDeleteNotification object: mEntityDescription];
-            //FIXME: add BXUpdatedObjects to check objects using a filter predicate.
-        }
-    }
+	mEntityDescription = desc;
 }
 
 - (BXDatabaseContext *) databaseContext
@@ -262,14 +193,25 @@
 
 - (void) objectDidBeginEditing: (id) editor
 {
-    [self BXLockKey: nil status: kBXObjectLockedStatus editor: editor];
-    [super objectDidBeginEditing: editor];
+	//This is a bit bad. Since we have bound one of our own attributes to 
+	//one of our bindings, -commitEditing might get called recursively ad infinitum.
+	//We prevent this by not starting to edit in this object; it doesn't happen
+	//normally in 10.4, either.
+	if (self != editor)
+	{
+		[self BXLockKey: nil status: kBXObjectLockedStatus editor: editor];
+		[super objectDidBeginEditing: editor];
+	}
 }
 
 - (void) objectDidEndEditing: (id) editor
 {
-    [super objectDidEndEditing: editor];
-    [self BXUnlockKey: nil editor: editor];
+	//See -objectDidBeginEditing:.
+	if (self != editor)
+	{
+		[super objectDidEndEditing: editor];
+		[self BXUnlockKey: nil editor: editor];
+	}
 }
 
 - (NSString *) schemaName
@@ -279,7 +221,8 @@
 
 - (void) setSchemaName: (NSString *) aSchemaName
 {
-    if (mSchemaName != aSchemaName) {
+    if (mSchemaName != aSchemaName) 
+	{
         [mSchemaName release];
         mSchemaName = [aSchemaName retain];
     }
@@ -292,7 +235,8 @@
 
 - (void) setTableName: (NSString *) aTableName
 {
-    if (mTableName != aTableName) {
+    if (mTableName != aTableName) 
+	{
         [mTableName release];
         mTableName = [aTableName retain];
     }
@@ -305,7 +249,8 @@
 
 - (void) setDatabaseObjectClassName: (NSString *) aDBObjectClassName
 {
-    if (mDBObjectClassName != aDBObjectClassName) {
+    if (mDBObjectClassName != aDBObjectClassName) 
+	{
         [mDBObjectClassName release];
         mDBObjectClassName = [aDBObjectClassName retain];
     }
@@ -315,6 +260,20 @@
 {
 	if (YES == mFetchesOnConnect)
 		[self fetch: nil];
+}
+
+- (void) setBXContent: (id) anObject
+{
+	if (mBXContent != anObject)
+	{
+		[mBXContent release];
+		mBXContent = [anObject retain];
+	}
+}
+
+- (id) BXContent
+{
+	return mBXContent;
 }
 
 @end
@@ -337,14 +296,35 @@
 - (void) fetch: (id) sender
 {
     NSError* error = nil;
-    [self fetchObjectsMerging: YES error: &error];
+	[self fetchWithRequest: nil merge: NO error: &error];
     if (nil != error)
         [self BXHandleError: error];
 }
 
 - (BOOL) fetchWithRequest: (NSFetchRequest *) fetchRequest merge: (BOOL) merge error: (NSError **) error
 {
-    return [self fetchObjectsMerging: merge error: error];
+    BOOL retval = NO;
+	if (merge && nil != [self content])
+	{
+		//This should happen automatically. Currently we don't have an API to refresh an
+		//automatically-updated collection.
+		retval = YES;
+	}
+	else
+	{
+		id result = [databaseContext executeFetchForEntity: mEntityDescription 
+											 withPredicate: [self fetchPredicate]
+										   returningFaults: NO
+									   updateAutomatically: YES
+													 error: error];
+
+		[self setBXContent: result];
+		[result setOwner: self];
+		[result setKey: @"BXContent"];
+		[self bind: @"contentArray" toObject: self withKeyPath: @"BXContent" options: nil];
+	}
+	
+    return retval;
 }
 
 - (id) newObject

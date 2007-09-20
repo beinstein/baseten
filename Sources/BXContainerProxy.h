@@ -55,7 +55,7 @@
 - (NSPredicate *) filterPredicate;
 - (void) setFilterPredicate: (NSPredicate *) aPredicate;
 - (void) setEntity: (BXEntityDescription *) anEntity;
-- (void) setOwner: (BXDatabaseObject *) anObject;
+- (void) setOwner: (id) anObject;
 - (void) setKey: (NSString *) aString;
 - (NSString *) key;
 @end

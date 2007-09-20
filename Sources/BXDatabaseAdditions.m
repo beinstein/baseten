@@ -460,17 +460,17 @@
     return rval;
 }
 
-- (NSArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate others: (NSMutableArray *) otherArray
+- (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate others: (NSMutableArray *) otherArray
 {
-    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [self count]];
+    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [self count]];
     TSEnumerate (currentObject, e, [self objectEnumerator])
     {
         if ([predicate BXEvaluateWithObject: currentObject])
-            [rval addObject: currentObject];
+            [retval addObject: currentObject];
         else
             [otherArray addObject: currentObject];
     }
-    return rval;
+    return retval;
 }
 
 + (NSArray *) BXNullArray: (unsigned int) count

@@ -41,6 +41,7 @@
     IBOutlet NSWindow* window;
         
     BXEntityDescription* mEntityDescription;
+	id mBXContent;
     
     //For the IB Palette
     NSString* mSchemaName;
@@ -58,13 +59,15 @@
 - (NSString *) databaseObjectClassName;
 - (void) setDatabaseObjectClassName: (NSString *) aDBObjectClassName;
 
-- (BOOL) fetchObjectsMerging: (BOOL) merge error: (NSError **) error;
 - (BXDatabaseContext *) databaseContext;
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXEntityDescription *) entityDescription;
 - (void) setEntityDescription: (BXEntityDescription *) desc;
 - (BOOL) fetchesOnConnect;
 - (void) setFetchesOnConnect: (BOOL) aBool;
+
+- (void) setBXContent: (id) anObject;
+
 @end
 
 

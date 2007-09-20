@@ -113,7 +113,7 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 
 @interface NSArray (BXDatabaseAdditions)
 - (BOOL) BXContainsObjectsInArray: (NSArray *) anArray;
-- (NSArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate others: (NSMutableArray *) otherArray;
+- (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate others: (NSMutableArray *) otherArray;
 + (NSArray *) BXNullArray: (unsigned int) count;
 @end
 

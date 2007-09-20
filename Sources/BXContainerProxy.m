@@ -175,14 +175,13 @@
 - (void) updatedObjectsWithIDs: (NSArray *) ids
 {
     NSArray* objects = [mContext faultsWithIDs: ids];
-    
-    NSArray* addedObjects = nil;
+    NSMutableArray* addedObjects = nil;
     NSMutableArray* removedObjects = nil;
     if (nil == mFilterPredicate)
     {
         //If filter predicate is not set, then every object in the entity should be added.
         //FIXME: this might need a reality check.
-        addedObjects = objects;
+        addedObjects = [[objects mutableCopy] autorelease];
     }
     else
     {
@@ -190,16 +189,33 @@
         removedObjects = [NSMutableArray arrayWithCapacity: [objects count]];
         addedObjects   = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: removedObjects];
     }
+
+	//Remove redundant objects
+	TSEnumerate (currentObject, e, [[[addedObjects copy] autorelease] objectEnumerator])
+	{
+		if ([mContainer containsObject: currentObject])
+			[addedObjects removeObject: currentObject];
+	}
+	TSEnumerate (currentObject, e, [[[removedObjects copy] autorelease] objectEnumerator])
+	{
+		if (! [mContainer containsObject: currentObject])
+			[removedObjects removeObject: currentObject];
+	}
+	
+	BOOL changed = (0 < [removedObjects count] || 0 < [addedObjects count]);
     
 	log4Debug (@"Removing:\t%@", removedObjects);
 	log4Debug (@"Adding:\t%@", addedObjects);
 	
     //Post notifications since modifying a self-updating collection won't cause
     //value cache to be changed.
-    [mOwner willChangeValueForKey: [self key]];    
-    [self handleRemovedObjects: removedObjects];
-    [self handleAddedObjects: addedObjects];
-    [mOwner didChangeValueForKey: [self key]];
+	if (changed)
+	{
+		[mOwner willChangeValueForKey: [self key]];    
+		[self handleRemovedObjects: removedObjects];
+		[self handleAddedObjects: addedObjects];
+		[mOwner didChangeValueForKey: [self key]];
+	}
 	
 	log4Debug (@"Count after operation:\t%d", [mContainer count]);
 }
@@ -274,7 +290,7 @@
     }
 }
 
-- (void) setOwner: (BXDatabaseObject *) anObject
+- (void) setOwner: (id) anObject
 {
     mOwner = anObject;
 }
