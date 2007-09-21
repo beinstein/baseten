@@ -264,7 +264,7 @@
 
 - (void) setBXContent: (id) anObject
 {
-    log4AssertLog ([anObject isKindOfClass: [BXContainerProxy class]], 
+    log4AssertLog (nil == mBXContent || [anObject isKindOfClass: [BXContainerProxy class]], 
                    @"Expected anObject to be an instance of BXContainerProxy (was: %@).", 
                    [anObject class]);
 	if (mBXContent != anObject)
