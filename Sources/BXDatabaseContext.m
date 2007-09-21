@@ -63,17 +63,6 @@ static NSMutableDictionary* gInterfaceClassSchemes = nil;
 static BOOL gHaveAppKitFramework = NO;
 
 
-extern void BXInit ()
-{
-    static BOOL tooLate = NO;
-    if (NO == tooLate)
-    {
-        tooLate = YES;
-        PGTSInit ();
-    }
-}
-
-
 /** 
  * The database context. 
  * A database context connects to a given database, creates objects

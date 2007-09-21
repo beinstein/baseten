@@ -3,7 +3,6 @@ OTHER_LDFLAGS_ppc = -seg1addr 0xc2000000 -prebind
 PREBINDING = NO
 DYLIB_CURRENT_VERSION = 1
 DYLIB_COMPATIBILITY_VERSION = 1
-INIT_ROUTINE = _PGTSInit
 TS_BASE_LDFLAGS = -headerpad_max_install_names -lssl -framework TSDataTypes -framework JaguarCompatibility
 OTHER_LDFLAGS = $(TS_BASE_LDFLAGS)
 SEPARATE_STRIP = YES

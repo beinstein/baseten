@@ -40,59 +40,6 @@
 
 
 void 
-PGTSInit ()
-{   
-    static int tooLate = 0;
-    if (0 == tooLate)
-    {
-        tooLate = 1;
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-        
-        kPGTSSentQuerySelector                  = @selector (PGTSConnection:sentQuery:);
-        kPGTSFailedToSendQuerySelector          = @selector (PGTSConnection:failedToSendQuery:);
-        kPGTSAcceptCopyingDataSelector          = @selector (PGTSConnection:acceptCopyingData:errorMessage:);
-        kPGTSReceivedDataSelector               = @selector (PGTSConnection:receivedData:);
-        kPGTSReceivedResultSetSelector          = @selector (PGTSConnection:receivedResultSet:);
-        kPGTSReceivedErrorSelector              = @selector (PGTSConnection:receivedError:);
-        kPGTSReceivedNoticeSelector             = @selector (PGTSConnection:receivedNotice:);
-        
-        kPGTSConnectionFailedSelector           = @selector (PGTSConnectionFailed:);
-        kPGTSConnectionEstablishedSelector      = @selector (PGTSConnectionEstablished:);
-        kPGTSStartedReconnectingSelector        = @selector (PGTSConnectionStartedReconnecting:);
-        kPGTSDidReconnectSelector               = @selector (PGTSConnectionDidReconnect:);
-        
-        {
-            NSMutableArray* keys = [NSMutableArray array];
-            kPGTSDefaultConnectionDictionary = [[NSMutableDictionary alloc] init];
-            
-            PQconninfoOption *option = PQconndefaults ();
-            char* keyword = NULL;
-            while ((keyword = option->keyword))
-            {
-                NSString* key = [NSString stringWithUTF8String: keyword];
-                [keys addObject: key];
-                char* value = option->val;
-                if (NULL == value)
-                    value = getenv ([key UTF8String]);
-                if (NULL == value)
-                    value = option->compiled;
-                if (NULL != value)
-                {
-                    [(NSMutableDictionary *) kPGTSDefaultConnectionDictionary setObject: 
-                                      [NSString stringWithUTF8String: value] forKey: key];
-                }
-                option++;
-            }
-            kPGTSConnectionDictionaryKeys = [keys copy];
-			
-			//sslmode is disabled by default??
-			[(NSMutableDictionary *) kPGTSDefaultConnectionDictionary setObject: @"prefer" forKey: @"sslmode"];
-        }
-        [pool release];
-    }
-}
-
-void 
 PGTSNoticeProcessor (void* connection, const char* message)
 {
     if (NULL != message)

@@ -29,9 +29,6 @@
 #import <BaseTen/BaseTen.h>
 
 
-extern void BXInit ();
-
-
 struct trustResult
 {
 	SecTrustRef trust;
