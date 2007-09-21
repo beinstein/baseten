@@ -161,6 +161,36 @@
     [context rollback];
 }
 
+- (void) testModOTM2
+{
+    //FIXME: also write a view test?
+    BOOL autocommits = [context autocommits];
+    [context setAutocommits: NO];
+    
+    NSError* error = nil;
+    NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
+    MKCAssertNotNil (predicate);
+    NSArray* res = [context executeFetchForEntity: test1
+                                    withPredicate: predicate
+                                            error: &error];
+    STAssertNil (error, [error description]);
+    MKCAssertTrue (1 == [res count]);
+    BXDatabaseObject* object = [res objectAtIndex: 0];
+    //Create a self-updating container to see if it interferes with object creation.
+    id collection = [object valueForKey: @"test2"];
+    
+    NSDictionary* values = [NSDictionary dictionaryWithObjectsAndKeys:
+        [object primitiveValueForKey: @"id"], @"fkt1id",
+        @"test", @"value",
+        nil];
+    [context createObjectForEntity: test2 withFieldValues: values error: &error];
+    STAssertNil (error, [error description]);
+    
+    collection = nil;
+    [context rollback];
+    [context setAutocommits: autocommits];
+}
+
 - (void) testModOTO
 {
     [self modOne: ototest1 toOne: ototest2];
