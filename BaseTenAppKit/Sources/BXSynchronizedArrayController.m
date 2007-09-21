@@ -344,22 +344,25 @@
     return object;
 }
 
-- (void) removeObject: (id) object
+- (void) insertObject: (id) object atArrangedObjectIndex: (unsigned int) index
+{
+    //Don't invoke super's implementation since it replaces BXContent.
+    //-newObject creates the row already.
+}
+
+- (void) removeObjectsAtArrangedObjectIndexes: (NSIndexSet *) indexes
 {
     NSError* error = nil;
-    [databaseContext executeDeleteObject: object error: &error];
+    NSArray* objects = [[self BXContent] objectsAtIndexes: indexes];
+    NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [objects count]];
+    TSEnumerate (currentObject, e, [objects objectEnumerator])
+        [predicates addObject: [[(BXDatabaseObject *) currentObject objectID] predicate]];
+    [databaseContext executeDeleteFromEntity: [self entityDescription]
+                               withPredicate: [NSCompoundPredicate andPredicateWithSubpredicates: predicates]
+                                       error: &error];
     if (nil != error)
         [self BXHandleError: error];
-    else
-        [super removeObject: object];
 }
-
-- (void) remove: (id) sender
-{
-    TSEnumerate (currentObject, e, [[self selectedObjects] objectEnumerator])
-        [self removeObject: currentObject];
-}
-
 @end
 
 

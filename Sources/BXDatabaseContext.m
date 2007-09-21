@@ -1357,9 +1357,7 @@ extern void BXInit ()
             nil];
         NSString* notificationNames [2] = {kBXInsertEarlyNotification, kBXInsertNotification};
         for (int i = 0; i < 2; i++)
-        {
             [nc postNotificationName: notificationNames [i] object: entity userInfo: userInfo];
-        }
         
 #if 0
         if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])

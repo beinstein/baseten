@@ -283,7 +283,7 @@
         SEL addSelector = @selector (addedObjects:);
         SEL delSelector = @selector (deletedObjects:);
         SEL updSelector = @selector (updatedObjects:);
-        
+
         [nc addObserver: self selector: addSelector name: kBXInsertEarlyNotification object: entity];
         [nc addObserver: self selector: delSelector name: kBXDeleteEarlyNotification object: entity];                    
         [nc addObserver: self selector: updSelector name: kBXUpdateEarlyNotification object: entity];
