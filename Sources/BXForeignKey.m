@@ -157,11 +157,9 @@
 		id attributeKey = [currentFieldArray objectAtIndex: ei];
 		id objectKey = [currentFieldArray objectAtIndex: oi];
 		BXAttributeDescription* attribute = [attributes objectForKey: attributeKey];
-		//id value = [anObject primitiveValueForKey: objectKey];
 		
 		NSExpression* lhs = [NSExpression expressionForConstantValue: attribute];
-		//NSExpression* rhs = [NSExpression expressionForConstantValue: value];
-		id rhs = [BXObjectKeyPathExpression expressionForKeyPath: objectKey object: [[anObject retain] autorelease]];
+		NSExpression* rhs = [BXObjectKeyPathExpression expressionForKeyPath: objectKey object: [[anObject retain] autorelease]];
 		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
 																	rightExpression: rhs
 																		   modifier: NSDirectPredicateModifier
