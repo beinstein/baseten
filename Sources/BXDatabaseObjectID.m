@@ -157,7 +157,10 @@ bail:
 {
     if (YES == mRegistered)
     {
-        [gObjectIDs removeObject: self];
+        @synchronized (gObjectIDs)
+        {
+            [gObjectIDs removeObject: self];
+        }
         [mEntity unregisterObjectID: self];
     }
     
@@ -436,21 +439,24 @@ bail:
         mLastModificationType = kBXNoModification;
         
         //Only single instance allowed
-        id anID = [gObjectIDs member: self];
-        log4AssertValueReturn ([gObjectIDs containsObject: self] ? nil != anID : YES, nil,
-							   @"gObjectIDs contains the current objectID but it could not be found."
-							   " \n\tself: \t%@ \n\tgObjectIDs: \t%@",
-							   self, gObjectIDs);
-        if (nil == anID)
+        @synchronized (gObjectIDs)
         {
-            [gObjectIDs addObject: self];
-            mRegistered = YES;
-            [mEntity registerObjectID: self];
-        }
-        else
-        {
-            [self release];
-            self = [anID retain];
+            id anID = [gObjectIDs member: self];
+            log4AssertValueReturn ([gObjectIDs containsObject: self] ? nil != anID : YES, nil,
+                                   @"gObjectIDs contains the current objectID but it could not be found."
+                                   " \n\tself: \t%@ \n\tgObjectIDs: \t%@",
+                                   self, gObjectIDs);
+            if (nil == anID)
+            {
+                [gObjectIDs addObject: self];
+                mRegistered = YES;
+                [mEntity registerObjectID: self];
+            }
+            else
+            {
+                [self release];
+                self = [anID retain];
+            }
         }
     }
     return self;
@@ -466,12 +472,19 @@ bail:
 
 - (void) replaceValuesWith: (NSDictionary *) aDict
 {
-    @synchronized (mPkeyFValues)
+    @synchronized (gObjectIDs)
     {
-        [mPkeyFValues addEntriesFromDictionary: aDict];
-		[mURIRepresentation release];
-		mURIRepresentation = nil;
-		mHash = 0;
+        [gObjectIDs removeObject: self];
+
+        @synchronized (mPkeyFValues)
+        {
+            [mPkeyFValues addEntriesFromDictionary: aDict];
+            [mURIRepresentation release];
+            mURIRepresentation = nil;
+            mHash = 0;
+        }
+        
+        [gObjectIDs addObject: self];
     }
 }
 
