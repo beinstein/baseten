@@ -33,6 +33,7 @@
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseObject.h"
+#import "BXObjectKeyPathExpression.h"
 
 
 @implementation BXForeignKey
@@ -156,10 +157,11 @@
 		id attributeKey = [currentFieldArray objectAtIndex: ei];
 		id objectKey = [currentFieldArray objectAtIndex: oi];
 		BXAttributeDescription* attribute = [attributes objectForKey: attributeKey];
-		id value = [anObject primitiveValueForKey: objectKey];
+		//id value = [anObject primitiveValueForKey: objectKey];
 		
 		NSExpression* lhs = [NSExpression expressionForConstantValue: attribute];
-		NSExpression* rhs = [NSExpression expressionForConstantValue: value];
+		//NSExpression* rhs = [NSExpression expressionForConstantValue: value];
+		id rhs = [BXObjectKeyPathExpression expressionForKeyPath: objectKey object: [[anObject retain] autorelease]];
 		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
 																	rightExpression: rhs
 																		   modifier: NSDirectPredicateModifier

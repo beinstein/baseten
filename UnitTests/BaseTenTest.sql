@@ -75,7 +75,7 @@ SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_names
 CREATE TABLE test2 (
     id SERIAL PRIMARY KEY,
     value VARCHAR (255),
-    fkt1id INTEGER CONSTRAINT fkt1 REFERENCES test1 (id)
+    fkt1id INTEGER CONSTRAINT fkt1 REFERENCES test1 (id) ON UPDATE CASCADE ON DELETE SET NULL
 );
 SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 

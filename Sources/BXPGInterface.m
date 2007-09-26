@@ -510,8 +510,6 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					//If the object is already in memory, don't make a copy
 					if (NO == [currentRow registerWithContext: context entity: entity])
 						currentRow = [context registeredObjectWithID: [currentRow objectID]];
-					if (YES == returnFaults)
-						[currentRow faultKey: nil];
 					[rows addObject: currentRow];
 				}
 				
@@ -708,14 +706,18 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				}
 				
 				//Update the object
-				//Also mark the objects locked        
+				//Also mark the objects locked. Setting cached values sends -didChangeValueForKey:
+				//which we don't want to do for pkey values.
+				NSMutableDictionary* nonPkeyDict = [[aDict mutableCopy] autorelease];
+				TSEnumerate (currentKey, e, [pkeyDict keyEnumerator])
+					[nonPkeyDict removeObjectForKey: currentKey];
 				TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 				{
 					BXDatabaseObject* object = [context registeredObjectWithID: currentID];
 					if (nil != object)
 					{
-						[object setCachedValuesForKeysWithDictionary: aDict];
-						//Object ID remembers the pkey
+						[object setCachedValuesForKeysWithDictionary: nonPkeyDict];
+						//Object ID remembers the pkey. Do this only to make sure.
 						[object removePrimaryKeyValuesFromStore];
 						
 						//Update the object ID. 

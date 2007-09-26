@@ -1444,7 +1444,7 @@ BEGIN
         || ' FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".NotifyForLock (''' || stablename || ''')';
         
     -- Locking function
-    -- First argument is the modification type
+    -- First argument is the modification type, second one the savepoint number.
     FOR i IN 1..(2 + array_upper (pkeyfields.fname, 1)) LOOP
         iitems [i] := '$' || i;
     END LOOP;

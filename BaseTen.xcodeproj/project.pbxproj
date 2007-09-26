@@ -122,6 +122,8 @@
 		53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8010B666C3B00C3D20A /* libcrypto.dylib */; };
 		53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8120B666C7900C3D20A /* libssl.dylib */; };
+		53E01F4D0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53E01F4E0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */; };
 		53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
 		53E11A270A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
 		53EFEA960BA98028008666B7 /* BXDatabaseObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -361,6 +363,8 @@
 		53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGCertificateVerificationDelegate.m; path = Sources/BXPGCertificateVerificationDelegate.m; sourceTree = "<group>"; };
 		53DBE8010B666C3B00C3D20A /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53DBE8120B666C7900C3D20A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
+		53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectKeyPathExpression.h; path = Sources/BXObjectKeyPathExpression.h; sourceTree = "<group>"; };
+		53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectKeyPathExpression.m; path = Sources/BXObjectKeyPathExpression.m; sourceTree = "<group>"; };
 		53E11A250A791A8D00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
 		53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = "<group>"; };
 		53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenPalette.xcodeproj; path = Palette/BaseTenPalette.xcodeproj; sourceTree = "<group>"; };
@@ -480,6 +484,8 @@
 				5301302709D43A450037C485 /* BXConstants.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
+				53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */,
+				53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */,
 				53D0D1980B6F908A00D2D101 /* PostgreSQL Interface */,
 				53B8730F0A0A53D9007315BC /* Descriptions */,
 				537E983E0AAF539E00542F9C /* Automatically-updating containers */,
@@ -673,6 +679,7 @@
 				5389E1FA0C465449002714B8 /* BXForeignKeyPrivate.h in Headers */,
 				5359D1870C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h in Headers */,
 				5359D18D0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h in Headers */,
+				53E01F4D0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -990,6 +997,7 @@
 				5359D1880C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m in Sources */,
 				5359D18E0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m in Sources */,
 				534BA1740C4E0F530094957C /* BXPGCertificateVerificationDelegate.m in Sources */,
+				53E01F4E0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

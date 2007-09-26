@@ -469,6 +469,9 @@ bail:
     @synchronized (mPkeyFValues)
     {
         [mPkeyFValues addEntriesFromDictionary: aDict];
+		[mURIRepresentation release];
+		mURIRepresentation = nil;
+		mHash = 0;
     }
 }
 
