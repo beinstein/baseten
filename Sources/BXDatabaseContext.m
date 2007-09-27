@@ -1823,10 +1823,7 @@ static BOOL gHaveAppKitFramework = NO;
 	{        
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
-		
-		//FIXME: if object's primary keys were changed, its relationships should be iterated and cached collections'
-		//filter predicates should be reset.
-        
+		        
 		if (nil == localError)
 		{
 			//If autocommit is on, the update notification will be received immediately.
@@ -1839,6 +1836,7 @@ static BOOL gHaveAppKitFramework = NO;
 				BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 				if (nil == localError)
 				{
+                    //FIXME: this causes cache misses.
 					[self updatedObjectsInDatabase: objectIDs faultObjects: YES];
 					
 					[mModifiedObjectIDs addObjectsFromArray: objectIDs];

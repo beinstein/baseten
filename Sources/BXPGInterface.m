@@ -588,7 +588,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     log4AssertValueReturn (NULL != error, nil, @"Expected error to be set (was %p)", error);
     NSString* queryString = nil;
     
-    NSArray* rval = nil;
+    NSArray* retval = nil;
     @try
     {   
         //Check for a previously locked row
@@ -690,6 +690,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						//we don't check the values from the database.
 						pkeyDict = aDict;
 					}
+                    retval = objectIDs;
 				}
 				else
 				{
@@ -701,7 +702,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: [res currentRowAsDictionary]];
 						[ids addObject: currentID];
 					}
-					rval = ids;
+					retval = ids;
 					objectIDs = ids;
 				}
 				
@@ -740,7 +741,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     {
         [self packPGError: error exception: exception];
     }
-    return rval;    
+    return retval;    
 }
 
 - (NSArray *) executeDeleteObjectWithID: (BXDatabaseObjectID *) objectID 
