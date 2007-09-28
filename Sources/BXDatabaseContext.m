@@ -1841,8 +1841,10 @@ static BOOL gHaveAppKitFramework = NO;
 				BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 				if (nil == localError)
 				{
+#if 0
                     //FIXME: this causes cache misses.
 					[self updatedObjectsInDatabase: objectIDs faultObjects: YES];
+#endif
 					
 					[mModifiedObjectIDs addObjectsFromArray: objectIDs];
 					
@@ -1860,7 +1862,7 @@ static BOOL gHaveAppKitFramework = NO;
 					[[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
                     //If the primary key was updated, change it back.
 					if (updatedPkey)
-						[[mUndoManager prepareWithInvocationTarget: [anObject objectID]] replaceValuesWith: oldPkey];
+                        [[mUndoManager prepareWithInvocationTarget: self] updateObjectIDAndEmitKVOFor: anObject values: oldPkey];
 					if (createdSavepoint)
 						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 					[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
@@ -2203,6 +2205,15 @@ static BOOL gHaveAppKitFramework = NO;
 		[lock unlock];
 	}
 }
+
+- (void) updateObjectIDAndEmitKVOFor: (BXDatabaseObject *) anObject values: (NSDictionary *) values
+{
+    TSEnumerate (currentKey, e, [values keyEnumerator])
+        [anObject willChangeValueForKey: currentKey];
+    [[anObject objectID] replaceValuesWith: values];
+    TSEnumerate (currentKey, e, [values keyEnumerator])
+        [anObject didChangeValueForKey: currentKey];
+}    
 
 @end
 

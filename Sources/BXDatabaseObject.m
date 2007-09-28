@@ -1038,4 +1038,12 @@ ParseSelector (SEL aSelector, NSString** key)
     return retval;
 }
 
+//DEBUG
+- (void) willChangeValueForKey: (NSString *) aKey
+{
+    if (! [aKey isEqualToString: @"id"])
+        NSLog (@"aKey: %@", aKey);
+    [super willChangeValueForKey: aKey];
+}
+
 @end
