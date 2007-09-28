@@ -1820,7 +1820,12 @@ static BOOL gHaveAppKitFramework = NO;
     NSError* localError = nil;
 	NSArray* objectIDs = nil;
 	if ([self checkDatabaseURI: &localError])
-	{        
+	{
+        BOOL updatedPkey = (nil != [[[anObject objectID] primaryKeyFieldNames] firstObjectCommonWithArray: [aDict allKeys]]);
+		NSDictionary* oldPkey = nil;
+		if (updatedPkey)
+			oldPkey = [[anObject objectID] primaryKeyFieldValues];
+        
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
 		        
@@ -1845,6 +1850,7 @@ static BOOL gHaveAppKitFramework = NO;
 					TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
 					[[recorder recordWithPersistentTarget: self] executeUpdateObject: anObject entity: anEntity 
 																		   predicate: predicate withDictionary: aDict error: NULL];
+                    //Finally fault the object.
 					[[recorder recordWithPersistentTarget: self] faultKeys: [aDict allKeys] inObjectsWithIDs: objectIDs];
 					
 					//Undo manager does things in reverse order
@@ -1852,6 +1858,9 @@ static BOOL gHaveAppKitFramework = NO;
     					[mUndoManager beginUndoGrouping];
 					//Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
 					[[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
+                    //If the primary key was updated, change it back.
+					if (updatedPkey)
+						[[mUndoManager prepareWithInvocationTarget: [anObject objectID]] replaceValuesWith: oldPkey];
 					if (createdSavepoint)
 						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 					[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
