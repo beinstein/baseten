@@ -45,6 +45,7 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 @class BXAttributeDescription;
 @class BXEntityDescription;
 
+enum BXModificationType;
 
 @interface NSURL (BXDatabaseAdditions)
 - (unsigned int) BXHash;
@@ -122,3 +123,8 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 - (NSPredicate *) BXOrPredicateForObjects;
 @end
 
+
+@interface NSMutableDictionary (BXDatabaseAdditions)
+- (void) BXSetModificationType: (enum BXModificationType) aType forKey: (BXDatabaseObjectID *) aKey;
+- (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey;
+@end

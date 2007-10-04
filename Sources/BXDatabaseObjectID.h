@@ -33,28 +33,26 @@
 @class BXDatabaseContext;
 @class BXAttributeDescription;
 
-@interface BXDatabaseObjectID : NSObject {
+@interface BXDatabaseObjectID : NSObject 
+{
     BOOL                        mRegistered;
     unsigned int                mHash;
     NSURL*                      mURIRepresentation;
     BXEntityDescription*		mEntity;
-    NSMutableDictionary*        mPkeyFValues;
-    enum BXModificationType		mLastModificationType;
 }
+
++ (NSURL *) URIRepresentationForEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) pkeyDict;
++ (BOOL) parseURI: (NSURL *) anURI
+           entity: (NSString **) outEntityName
+           schema: (NSString **) outSchemaName
+ primaryKeyFields: (NSDictionary **) outPkeyDict;
+
 - (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error;
+- (NSURL *) URIRepresentation;
 
 - (BXEntityDescription *) entity;
-- (NSURL *) URIRepresentation;
 - (NSPredicate *) predicate;
-
 - (BOOL) isEqual: (id) anObject;
-
-- (NSArray *) primaryKeyFieldNames;
-- (NSDictionary *) primaryKeyFieldValues;
-
-- (id) objectForKey: (id) aKey;
-- (NSDictionary *) allObjects;
-
 @end
 
 

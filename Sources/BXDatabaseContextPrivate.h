@@ -82,7 +82,6 @@ struct trustResult
                      validateImmediately: (BOOL) validateImmediately error: (NSError **) error;
 - (void) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 - (void) iterateValidationQueue: (NSError **) error;
-- (void) updateObjectIDAndEmitKVOFor: (BXDatabaseObject *) anObject values: (NSDictionary *) values;
 @end
 
 

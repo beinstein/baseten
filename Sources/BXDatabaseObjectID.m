@@ -42,9 +42,6 @@
 #import <TSDataTypes/TSDataTypes.h>
 
 
-static TSNonRetainedObjectSet* gObjectIDs;
-
-
 /**
  * A unique identifier for a database object.
  * This class is not thread-safe, i.e. 
@@ -53,24 +50,72 @@ static TSNonRetainedObjectSet* gObjectIDs;
  */
 @implementation BXDatabaseObjectID
 
-+ (void) initialize
++ (NSURL *) URIRepresentationForEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) pkeyDict
 {
-    static BOOL tooLate = NO;
-    if (NO == tooLate)
+    NSURL* databaseURI = [anEntity databaseURI];
+    NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [pkeyDict count]];
+    
+    //If the pkey fields are unknown, we have to trust the user on this one.
+    NSArray* keys = nil;
+    if ([anEntity primaryKeyFields])
     {
-        tooLate = YES;
-        gObjectIDs = [[TSNonRetainedObjectSet alloc] init];
+        NSMutableArray* temp = [NSMutableArray array];
+        TSEnumerate (currentKey, e, [[anEntity primaryKeyFields] objectEnumerator])
+        {
+            if ([currentKey isPrimaryKey])
+                [temp addObject: [currentKey name]];
+        }
+        [temp sortUsingSelector: @selector (compare:)];
+        keys = temp;
     }
+    else
+    {
+        keys = [pkeyDict keysSortedByValueUsingSelector: @selector (compare:)];
+    }
+    
+    TSEnumerate (currentKey, e, [keys objectEnumerator])
+    {
+        id currentValue = [pkeyDict objectForKey: currentKey];
+        NSString* valueForURL = @"";
+        char argtype = 'd';
+        //NSStrings and NSNumbers get a special treatment
+        if ([currentValue isKindOfClass: [NSString class]])
+        {
+            valueForURL = currentValue;
+            argtype = 's';
+        }
+        else if ([currentValue isKindOfClass: [NSNumber class]])
+        {
+            valueForURL = [currentValue stringValue];
+            argtype = 'n';
+        }
+        else
+        {
+            //Just use NSData
+            valueForURL = [NSString BXURLEncodedData: [NSArchiver archivedDataWithRootObject: currentValue]];            
+        }
+        
+        [parts addObject: [NSString stringWithFormat: @"%@,%c=%@", 
+            [currentKey stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
+            argtype, valueForURL]];
+    }
+    
+    NSString* absolutePath = [[NSString stringWithFormat: @"/%@/%@/%@?",
+        [databaseURI path],
+        [[anEntity schemaName] stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
+        [[anEntity name] stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]] stringByStandardizingPath];
+    absolutePath = [absolutePath stringByAppendingString: [parts componentsJoinedByString: @"&"]];
+    
+    NSURL* URIRepresentation = [[NSURL URLWithString: absolutePath relativeToURL: databaseURI] absoluteURL];
+    return URIRepresentation;
 }
 
-/** 
- * Create an object identifier from an NSURL
- * \note This is not the designated initializer.
- */
-- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error
++ (BOOL) parseURI: (NSURL *) anURI
+           entity: (NSString **) outEntityName
+           schema: (NSString **) outSchemaName
+ primaryKeyFields: (NSDictionary **) outPkeyDict
 {
-    id rval = nil;
-    NSError* localError = nil;
+    //FIXME: URI validation?
     NSString* absoluteURI = [anURI absoluteString];
     NSString* query = [anURI query];
     NSString* path = [anURI path];
@@ -82,15 +127,7 @@ static TSNonRetainedObjectSet* gObjectIDs;
     NSString* dbAddress = [absoluteURI substringToIndex: [absoluteURI length] - ([tableName length] + 1 + [query length])];
     //FIXME: object address and context address should be compared.
     dbAddress = nil; //Suppress a warning
-
-    BXEntityDescription* entityDesc = [context entityForTable: tableName inSchema: schemaName error: &localError];
-    if (nil != localError) goto bail;
-	if (NO == [entityDesc isValidated])
-	{
-		[context connectIfNeeded: &localError];
-		if (nil != localError) goto bail;
-	}
-    
+        
 	NSMutableDictionary* pkeyDict = [NSMutableDictionary dictionary];
 	NSScanner* queryScanner = [NSScanner scannerWithString: query];
 	while (NO == [queryScanner isAtEnd])
@@ -118,7 +155,6 @@ static TSNonRetainedObjectSet* gObjectIDs;
 				break;
 			}
 			case 'd':
-			default:
 			{
 				NSString* encodedString = nil;
 				[queryScanner scanUpToString: @"&" intoString: &encodedString];
@@ -126,50 +162,60 @@ static TSNonRetainedObjectSet* gObjectIDs;
 				value = [NSUnarchiver unarchiveObjectWithData: archivedData];
 				break;
 			}
+			default:
+                goto bail;
+                break;
 		}	
-		log4AssertValueReturn ([entityDesc isValidated], nil, @"Expected entity %@ to have been validated earlier.", entityDesc);
 		[pkeyDict setObject: value forKey: key];
 		
 		[queryScanner scanUpToString: @"&" intoString: NULL];
 		[queryScanner scanString: @"&" intoString: NULL];
 	}
-	rval = [self initWithEntity: entityDesc primaryKeyFields: pkeyDict];
-	return rval;
+    
+    if (NULL != outEntityName) *outEntityName = tableName;
+    if (NULL != outSchemaName) *outSchemaName = schemaName;
+    if (NULL != outPkeyDict) *outPkeyDict = pkeyDict;
+    
+	return YES;
 	
 bail:
 	{
-		BXHandleError (error, localError);
-		return nil;
+		return NO;
 	}
+}
+
+/** 
+ * Create an object identifier from an NSURL.
+ * \note This is not the designated initializer.
+ */
+- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error
+{
+    NSString* entityName = nil;
+    NSString* schemaName = nil;
+    NSDictionary* pkeyDict = nil;
+
+    if ([[self class] parseURI: anURI entity: &entityName
+                        schema: &schemaName primaryKeyFields: &pkeyDict])
+    {
+        BXEntityDescription* entity = [context entityForTable: entityName inSchema: schemaName error: error];
+        [[self class] verifyPkey: pkeyDict entity: entity];
+        self = [self initWithEntity: entity objectURI: anURI];
+    }
+    return self;
 }
 
 - (NSString *) description
 {
-    NSString* rval = nil;
-    @synchronized (mPkeyFValues)
-    {
-        rval = [NSString stringWithFormat: @"%@ (%p) e: %@ pkeyFV: %@", [self class], self, mEntity, mPkeyFValues];
-    }
-    return rval;
+    return [NSString stringWithFormat: @"<%@ (%p) %@>", [self class], self, [self URIRepresentation]];
 }
 
 - (void) dealloc
 {
     if (YES == mRegistered)
-    {
-        @synchronized (gObjectIDs)
-        {
-            [gObjectIDs removeObject: self];
-        }
         [mEntity unregisterObjectID: self];
-    }
     
     [mURIRepresentation release];
     [mEntity release];
-    @synchronized (mPkeyFValues)
-    {
-        [mPkeyFValues release];
-    }
     [super dealloc];
 }
 
@@ -182,50 +228,6 @@ bail:
 /** URI representation of the receiver. */
 - (NSURL *) URIRepresentation
 {
-    if (nil == mURIRepresentation)
-    {
-        NSURL* databaseURI = [mEntity databaseURI];
-        NSMutableArray* parts = nil;
-        @synchronized (mPkeyFValues)
-        {
-            parts = [NSMutableArray arrayWithCapacity: [mPkeyFValues count]];
-            NSArray* keys = [mPkeyFValues keysSortedByValueUsingSelector: @selector (compare:)];
-            TSEnumerate (currentKey, e, [keys objectEnumerator])
-            {
-                id currentValue = [mPkeyFValues objectForKey: currentKey];
-                NSString* valueForURL = @"";
-                char argtype = 'd';
-                //NSStrings and NSNumbers get a special treatment
-                if ([currentValue isKindOfClass: [NSString class]])
-                {
-                    valueForURL = currentValue;
-                    argtype = 's';
-                }
-                else if ([currentValue isKindOfClass: [NSNumber class]])
-                {
-                    valueForURL = [currentValue stringValue];
-                    argtype = 'n';
-                }
-                else
-                {
-                    //Just use NSData
-                    valueForURL = [NSString BXURLEncodedData: [NSArchiver archivedDataWithRootObject: currentValue]];            
-                }
-                
-                [parts addObject: [NSString stringWithFormat: @"%@,%c=%@", 
-                    [currentKey stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
-                    argtype, valueForURL]];
-            }
-        }
-        NSString* absolutePath = [[NSString stringWithFormat: @"/%@/%@/%@?",
-            [databaseURI path],
-            [[mEntity schemaName] stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding],
-            [[mEntity name] stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]] stringByStandardizingPath];
-        absolutePath = [absolutePath stringByAppendingString: [parts componentsJoinedByString: @"&"]];
-            
-        mURIRepresentation = [[[NSURL URLWithString: absolutePath relativeToURL: databaseURI] 
-            absoluteURL] retain];
-    }
     return mURIRepresentation;
 }
 
@@ -233,12 +235,7 @@ bail:
 {
     if (0 == mHash)
     {
-        mHash = [mEntity hash];
-        @synchronized (mPkeyFValues)
-        {
-            TSEnumerate (currentValue, e, [mPkeyFValues objectEnumerator])
-                mHash ^= [currentValue hash];
-        }
+        mHash = [mURIRepresentation BXHash];
     }
     return mHash;
 }
@@ -249,15 +246,17 @@ bail:
  */
 - (NSPredicate *) predicate
 {
-    NSPredicate* predicate = nil;
-    NSMutableArray* predicates = nil;
-	NSDictionary* attributes = [mEntity attributesByName];
-    @synchronized (mPkeyFValues)
+    NSPredicate* retval = nil;
+    NSDictionary* pkeyFValues = nil;
+    BOOL ok = [[self class] parseURI: mURIRepresentation entity: NULL schema: NULL primaryKeyFields: &pkeyFValues];
+    if (ok)
     {
-        predicates = [NSMutableArray arrayWithCapacity: [mPkeyFValues count]];
-        TSEnumerate (currentKey, e, [mPkeyFValues keyEnumerator])
+        NSDictionary* attributes = [mEntity attributesByName];
+        NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [pkeyFValues count]];
+    
+        TSEnumerate (currentKey, e, [pkeyFValues keyEnumerator])
         {
-            NSExpression* rhs = [NSExpression expressionForConstantValue: [mPkeyFValues objectForKey: currentKey]];
+            NSExpression* rhs = [NSExpression expressionForConstantValue: [pkeyFValues objectForKey: currentKey]];
             NSExpression* lhs = [NSExpression expressionForConstantValue: [attributes objectForKey: currentKey]];
             NSPredicate* predicate = 
                 [NSComparisonPredicate predicateWithLeftExpression: lhs
@@ -267,106 +266,28 @@ bail:
                                                            options: 0];
             [predicates addObject: predicate];
         }
+        
+        if (0 < [predicates count])
+            retval = [NSCompoundPredicate andPredicateWithSubpredicates: predicates];
     }
-    if (0 < [predicates count])
-        predicate = [NSCompoundPredicate andPredicateWithSubpredicates: predicates];
-    return predicate;
+    
+    return retval;
 }
 
 - (BOOL) isEqual: (id) anObject
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     if (NO == [anObject isKindOfClass: [BXDatabaseObjectID class]])
-        rval = [super isEqual: anObject];
+        retval = [super isEqual: anObject];
     else
     {
         BXDatabaseObjectID* anId = (BXDatabaseObjectID *) anObject;
         if (0 == anId->mHash || 0 == mHash || anId->mHash == mHash)
         {
-            @synchronized (mPkeyFValues)
-            {
-                rval = ([mEntity isEqual: anId->mEntity] && 
-                        [mPkeyFValues isEqualToDictionary: anId->mPkeyFValues]);
-            }
+            retval = [mURIRepresentation isEqual: anId->mURIRepresentation];
         }
     }
-    return rval;
-}
-
-/**
- * Primary key field names.
- * This method is thread-safe.
- * \return      An NSArray of NSStrings
- */
-- (NSArray *) primaryKeyFieldNames;
-{
-    id rval = nil;
-    @synchronized (mPkeyFValues)
-    {
-        rval = [mPkeyFValues allKeys];
-    }
-    return rval;
-}
-
-/**
- * Values for the primary key fields.
- * This method is thread-safe.
- * \return      An NSDictionary with NSStrings as keys.
- */
-- (NSDictionary *) primaryKeyFieldValues;
-{
-    id rval = nil;
-    @synchronized (mPkeyFValues)
-    {
-        rval = [[mPkeyFValues copy] autorelease];
-    }
-    return rval;
-}
-
-- (id) valueForUndefinedKey: (NSString *) aKey
-{
-    //Don't call super's implementation since it raises an exception and
-    //we don't want that even if nil gets returned
-    
-    id rval = nil;
-    @synchronized (mPkeyFValues)
-    {
-        rval = [mPkeyFValues objectForKey: aKey];
-    }
-    return rval;
-}
-
-/**
- * Primary key field value for the given key.
- * This method is thread-safe.
- * \param       aKey        A BXPropertyDescription
- */
-- (id) objectForKey: (id) aKey
-{
-    id retval = nil;
-	//FIXME: lock for entity as well?
-	if (mEntity == [aKey entity])
-	{
-		@synchronized (mPkeyFValues)
-		{
-			retval = [mPkeyFValues objectForKey: [aKey name]];
-		}
-	}
     return retval;
-}
-
-- (NSDictionary *) allObjects
-{
-	NSMutableDictionary* retval = nil;
-	NSDictionary* attributes = [mEntity attributesByName];
-	@synchronized (mPkeyFValues)
-	{
-		retval = [NSMutableDictionary dictionaryWithCapacity: [mPkeyFValues count]];
-		TSEnumerate (currentKey, e, [mPkeyFValues keyEnumerator])
-			[retval setObject: [mPkeyFValues objectForKey: currentKey] forKey: [attributes objectForKey: currentKey]];
-	}
-	
-	return retval;
 }
 
 @end
@@ -382,82 +303,57 @@ bail:
 
 
 @implementation BXDatabaseObjectID (PrivateMethods)
+
++ (void) verifyPkey: (NSDictionary *) pkeyDict entity: (BXEntityDescription *) entity
+{
+    NSArray* pkeyFields = [entity primaryKeyFields];
+    if (nil != pkeyFields)
+    {
+        log4AssertVoidReturn ([pkeyFields count] <= [pkeyDict count],
+                              @"Expected to have received values for all primary key fields.");
+        TSEnumerate (currentAttribute, e, [pkeyFields objectEnumerator])
+        {
+            log4AssertVoidReturn (nil != [pkeyDict objectForKey: [currentAttribute name]], 
+                                  @"Primary key not included: %@ given: %@", currentAttribute, pkeyDict);
+        }
+    }
+}
+
 /** 
  * \internal
  * \name Creating object IDs */
 //@{
-/** A convenience method */
-+ (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) aDict
+/** A convenience method. */
++ (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) pkeyFValues
 {
-    return [[[self class] alloc] initWithEntity: aDesc primaryKeyFields: aDict];
+    NSArray* keys = [pkeyFValues allKeys];
+    TSEnumerate (currentKey, e, [keys objectEnumerator])
+    {
+        log4AssertValueReturn ([currentKey isKindOfClass: [NSString class]],
+                               nil, @"Expected to receive only NSStrings as keys.");
+    }
+    [self verifyPkey: pkeyFValues entity: aDesc];
+
+    NSURL* uri = [[self class] URIRepresentationForEntity: aDesc primaryKeyFields: pkeyFValues];
+    log4AssertValueReturn (nil != uri, nil, @"Expected to have received an URI.");
+    return [[[self class] alloc] initWithEntity: aDesc objectURI: uri];
 }
 
 /** 
  * \internal
  * The designated initializer.
- * \param   aDesc   The entity.
- * \param   aDict   An NSDictionary in which the keys are NSStrings.
- * \throw   NSException named NSInternalInconsistencyException in case some of the required 
- *          parameters were missing or invalid.
  */
-- (id) initWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) aDict
+- (id) initWithEntity: (BXEntityDescription *) anEntity objectURI: (NSURL *) anURI
 {
+    log4AssertValueReturn (nil != anEntity, nil, @"Expected entity not to be nil.");
+    log4AssertValueReturn (nil != anURI, nil, @"Expected anURI not to be nil.");
+    
     if ((self = [super init]))
     {
-		NSString* reason = nil;
-        if (nil == aDesc)
-			reason = @"Entity was nil.";
-		else if (0 == [aDict count])
-			reason = @"Primary key values were not set.";
-		
-		TSEnumerate (currentDesc, e, [aDict keyEnumerator])
-		{
-			if (NO == [currentDesc isKindOfClass: [NSString class]])
-			{
-				reason = @"Expected to receive only NSStrings as keys.";
-				break;
-			}
-		}
-		
-		if (nil != reason)
-        {
-            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                self,   kBXObjectIDKey,
-                aDesc,  kBXEntityDescriptionKey,
-                aDict,  kBXPrimaryKeyFieldsKey,
-                nil];
-            NSException* exception = [NSException exceptionWithName: NSInternalInconsistencyException
-                                                             reason: reason
-                                                           userInfo: userInfo];
-            [exception raise];
-        }
-        
+        mURIRepresentation = [anURI retain];
+        mEntity = [anEntity retain];
         mRegistered = NO;
         mHash = 0;
-        mEntity = [aDesc copy];
-        mPkeyFValues = [aDict mutableCopy];
-        mLastModificationType = kBXNoModification;
-        
-        //Only single instance allowed
-        @synchronized (gObjectIDs)
-        {
-            id anID = [gObjectIDs member: self];
-            log4AssertValueReturn ([gObjectIDs containsObject: self] ? nil != anID : YES, nil,
-                                   @"gObjectIDs contains the current objectID but it could not be found."
-                                   " \n\tself: \t%@ \n\tgObjectIDs: \t%@",
-                                   self, gObjectIDs);
-            if (nil == anID)
-            {
-                [gObjectIDs addObject: self];
-                mRegistered = YES;
-                [mEntity registerObjectID: self];
-            }
-            else
-            {
-                [self release];
-                self = [anID retain];
-            }
-        }
     }
     return self;
 }
@@ -468,34 +364,6 @@ bail:
     //We need either an URI or an entity and primary key fields
     [self release];
     return nil;
-}
-
-- (void) replaceValuesWith: (NSDictionary *) aDict
-{
-    @synchronized (gObjectIDs)
-    {
-        [gObjectIDs removeObject: self];
-
-        @synchronized (mPkeyFValues)
-        {
-            [mPkeyFValues addEntriesFromDictionary: aDict];
-            [mURIRepresentation release];
-            mURIRepresentation = nil;
-            mHash = 0;
-        }
-        
-        [gObjectIDs addObject: self];
-    }
-}
-
-- (void) setLastModificationType: (enum BXModificationType) aType
-{
-    mLastModificationType = aType;
-}
-
-- (enum BXModificationType) lastModificationType
-{
-    return mLastModificationType;
 }
 
 #if 0
@@ -514,4 +382,5 @@ bail:
 {
 	[[context registeredObjectWithID: self] setDeleted: status];
 }
+
 @end

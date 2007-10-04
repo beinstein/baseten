@@ -86,7 +86,7 @@
 	STAssertNil (error, [error localizedDescription]);
     BXDatabaseObject* object = [context objectWithID: anId error: &error];
 	STAssertNil (error, [error localizedDescription]);
-    MKCAssertEqualObjects ([object valueForKey: @"id"], [anId valueForKey: @"id"]);
+    MKCAssertEqualObjects ([object primitiveValueForKey: @"id"], [NSNumber numberWithInt: 1]);
     //if this is not nil, then another test has failed or the database is not in known state
     STAssertEqualObjects ([object valueForKey: @"value"], nil, @"Database is not in known state!");
 }
@@ -288,7 +288,7 @@
 	MKCAssertFalse ([object isFaultKey: @"id"]);
 	
 	object->didTurnIntoFault = NO;
-	[object valueForKey: @"value"];
+	[object primitiveValueForKey: @"value"];
 	[object faultKey: nil];
 	MKCAssertTrue (object->didTurnIntoFault);	
 	MKCAssertTrue ([object isFaultKey: nil]);

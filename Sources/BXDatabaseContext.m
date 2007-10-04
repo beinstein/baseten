@@ -172,7 +172,7 @@ static BOOL gHaveAppKitFramework = NO;
     [mDatabaseInterface release];
     [mDatabaseURI release];
     [mObjects release];
-    [mModifiedObjectIDs release];
+    [(id) mModifiedObjectIDs release];
     [mUndoManager release];
 	[mLazilyValidatedEntities release];
 	[mUndoGroupingLevels release];
@@ -878,7 +878,6 @@ static BOOL gHaveAppKitFramework = NO;
 					BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 					if (nil == localError)
 					{
-						objectID = [mModifiedObjectIDs BXConditionalAdd: objectID];
 						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
 						[rval awakeFromInsertIfNeeded];
 						
@@ -886,7 +885,6 @@ static BOOL gHaveAppKitFramework = NO;
 						TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
 						NSMutableDictionary* values = [NSMutableDictionary dictionary];
 						[values addEntriesFromDictionary: [rval cachedObjects]];
-						[values addEntriesFromDictionary: [[rval objectID] allObjects]];
 						[[recorder recordWithPersistentTarget: self] createObjectForEntity: entity 
 																		   withFieldValues: values
 																					 error: NULL];
@@ -899,12 +897,13 @@ static BOOL gHaveAppKitFramework = NO;
 						if (createdSavepoint)
 							[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 						[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: invocations];
-						[[mUndoManager prepareWithInvocationTarget: objectID] setLastModificationType: [objectID lastModificationType]];
+						[[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType: 
+                                               [(id) mModifiedObjectIDs BXModificationTypeForKey: objectID] forKey: objectID];
 						if (![mUndoManager groupsByEvent])
     						[mUndoManager endUndoGrouping];        
 						
 						//Remember the modification type for ROLLBACK
-						[objectID setLastModificationType: kBXInsertModification];
+                        [(id) mModifiedObjectIDs BXSetModificationType: kBXInsertModification forKey: objectID];
 					}
 				}
 			}
@@ -960,10 +959,10 @@ static BOOL gHaveAppKitFramework = NO;
         //FIXME: order by entity either here or in addedObjects and deletedObjects methods
         NSMutableArray* added = [NSMutableArray array];
         NSMutableArray* deleted = [NSMutableArray array];
-        TSEnumerate (currentID, e, [mModifiedObjectIDs objectEnumerator])
+        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
         {
 			BXDatabaseObject* registeredObject = [self registeredObjectWithID: currentID];
-            switch ([currentID lastModificationType])
+            switch ([(id) mModifiedObjectIDs BXModificationTypeForKey: currentID])
             {
                 case kBXUpdateModification:
                     [registeredObject faultKey: nil];
@@ -977,7 +976,6 @@ static BOOL gHaveAppKitFramework = NO;
                 default:
                     break;
             }
-            [currentID setLastModificationType: kBXNoModification];
 			
 			if (kBXObjectDeletePending == [registeredObject deletionStatus])
 			{
@@ -993,7 +991,7 @@ static BOOL gHaveAppKitFramework = NO;
 			[registeredObject clearStatus];
 			[registeredObject setDeleted: kBXObjectExists];
         }
-        [mModifiedObjectIDs removeAllObjects];
+        [(id) mModifiedObjectIDs removeAllObjects];
         //In case of rollback, the objects deleted during the last transaction 
         //appear as inserted and vice-versa
         //If we are deallocating, don't bother to send the notification.
@@ -1018,16 +1016,14 @@ static BOOL gHaveAppKitFramework = NO;
     if (NO == [mDatabaseInterface autocommits])
     {
         NSError* localError = nil;
-        TSEnumerate (currentID, e, [mModifiedObjectIDs objectEnumerator])
+        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
 		{
-            [currentID setLastModificationType: kBXNoModification];
-			
 			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
 			[currentObject setCreatedInCurrentTransaction: NO];
 			if ([currentObject isDeleted])
 				[currentObject setDeleted: kBXObjectDeleted];
 		}
-        [mModifiedObjectIDs removeAllObjects];
+        [(id) mModifiedObjectIDs removeAllObjects];
 
         [mUndoManager removeAllActions];
         rval = [mDatabaseInterface save: &localError];
@@ -1821,10 +1817,12 @@ static BOOL gHaveAppKitFramework = NO;
 	NSArray* objectIDs = nil;
 	if ([self checkDatabaseURI: &localError])
 	{
-        BOOL updatedPkey = (nil != [[[anObject objectID] primaryKeyFieldNames] firstObjectCommonWithArray: [aDict allKeys]]);
+#if 0
+        BOOL updatedPkey = (nil != [[[[[anObject objectID] entity] primaryKeyFields] valueForKey: @"name"] firstObjectCommonWithArray: [aDict allKeys]]);
 		NSDictionary* oldPkey = nil;
 		if (updatedPkey)
-			oldPkey = [[anObject objectID] primaryKeyFieldValues];
+			oldPkey = [anObject primaryKeyFieldValues];
+#endif
         
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
@@ -1846,8 +1844,6 @@ static BOOL gHaveAppKitFramework = NO;
 					[self updatedObjectsInDatabase: objectIDs faultObjects: YES];
 #endif
 					
-					[mModifiedObjectIDs addObjectsFromArray: objectIDs];
-					
 					//For redo
 					TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
 					[[recorder recordWithPersistentTarget: self] executeUpdateObject: anObject entity: anEntity 
@@ -1860,22 +1856,18 @@ static BOOL gHaveAppKitFramework = NO;
     					[mUndoManager beginUndoGrouping];
 					//Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
 					[[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
-                    //If the primary key was updated, change it back.
-					if (updatedPkey)
-                        [[mUndoManager prepareWithInvocationTarget: self] updateObjectIDAndEmitKVOFor: anObject values: oldPkey];
 					if (createdSavepoint)
 						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 					[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 					{
-						enum BXModificationType modificationType = [currentID lastModificationType];
-						
-						[[mUndoManager prepareWithInvocationTarget: currentID] setLastModificationType: modificationType];            
+						enum BXModificationType modificationType = [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID];						
+						[[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType: modificationType forKey: currentID];
 						
 						//Remember the modification type for ROLLBACK
-                        //FIXME: should the undo manager be the target instead of currentID?
+                        //FIXME: should the undo manager be the target instead of the dict?
 						if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
-							[currentID setLastModificationType: kBXUpdateModification];
+                            [(id) mModifiedObjectIDs BXSetModificationType: kBXUpdateModification forKey: currentID];
 					}
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager endUndoGrouping];
@@ -1914,7 +1906,6 @@ static BOOL gHaveAppKitFramework = NO;
 				if (nil == localError)
 				{
 					[self deletedObjectsFromDatabase: objectIDs];
-					[mModifiedObjectIDs addObjectsFromArray: objectIDs];
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 						[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeletePending];
 
@@ -1938,9 +1929,11 @@ static BOOL gHaveAppKitFramework = NO;
 					[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 					{
-						[[mUndoManager prepareWithInvocationTarget: currentID] setLastModificationType: [currentID lastModificationType]];
+                        [[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType:
+                                              [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID] forKey: currentID];
+                        
 						//Remember the modification type for ROLLBACK
-						[currentID setLastModificationType: kBXDeleteModification];
+                        [(id) mModifiedObjectIDs BXSetModificationType: kBXDeleteModification forKey: currentID];
 					}
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager endUndoGrouping];
@@ -2003,7 +1996,7 @@ static BOOL gHaveAppKitFramework = NO;
 		mObjects = [[TSNonRetainedObjectDictionary alloc] init];
 	
 	if (nil == mModifiedObjectIDs)
-		mModifiedObjectIDs = [[NSMutableSet alloc] init];        
+        mModifiedObjectIDs = CFDictionaryCreateMutable (NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
 	
 	if (nil == mUndoGroupingLevels)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
@@ -2206,15 +2199,6 @@ static BOOL gHaveAppKitFramework = NO;
 	}
 }
 
-- (void) updateObjectIDAndEmitKVOFor: (BXDatabaseObject *) anObject values: (NSDictionary *) values
-{
-    TSEnumerate (currentKey, e, [values keyEnumerator])
-        [anObject willChangeValueForKey: currentKey];
-    [[anObject objectID] replaceValuesWith: values];
-    TSEnumerate (currentKey, e, [values keyEnumerator])
-        [anObject didChangeValueForKey: currentKey];
-}    
-
 @end
 
 
@@ -2278,7 +2262,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     AddKeychainAttribute (kSecAuthenticationTypeItemAttr, &authType, 
                           sizeof (SecAuthenticationType), attributeBuffer);
 
-    //For some reason we can't look for non-invalid items
+    //For some reason we can't look for only non-invalid items
 #if 0
     Boolean allowNegative = FALSE;
     AddKeychainAttribute (kSecNegativeItemAttr, &allowNegative, sizeof (Boolean), attributeBuffer);

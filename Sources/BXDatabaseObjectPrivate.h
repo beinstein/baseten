@@ -53,10 +53,10 @@ enum BXDatabaseObjectKeyType
 - (void) setLockedForKey: (NSString *) aKey;
 - (BOOL) registerWithContext: (BXDatabaseContext *) ctx entity: (BXEntityDescription *) entity;
 - (BOOL) registerWithContext: (BXDatabaseContext *) ctx objectID: (BXDatabaseObjectID *) anID;
-- (void) removePrimaryKeyValuesFromStore;
 - (BOOL) lockedForDelete;
 - (void) awakeFromFetchIfNeeded;
 - (NSArray *) keysIncludedInQuery: (id) aKey;
 - (void) awakeFromInsertIfNeeded;
 - (enum BXDatabaseObjectKeyType) keyType: (NSString *) aKey;
+- (NSDictionary *) primaryKeyFieldValues;
 @end

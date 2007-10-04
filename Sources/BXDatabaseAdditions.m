@@ -500,3 +500,18 @@
     return rval;
 }
 @end
+
+
+@implementation NSMutableDictionary (BXDatabaseAdditions)
+- (void) BXSetModificationType: (enum BXModificationType) aType forKey: (BXDatabaseObjectID *) aKey
+{
+    CFDictionarySetValue ((CFMutableDictionaryRef) self, aKey, &aType);
+}
+
+- (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey
+{
+    enum BXModificationType retval = (enum BXModificationType)
+        CFDictionaryGetValue ((CFDictionaryRef) self, aKey);
+    return retval;
+}
+@end

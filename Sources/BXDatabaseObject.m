@@ -115,7 +115,7 @@ ParseSelector (SEL aSelector, NSString** key)
 /** 
  * A class that represents a single row in a database table.
  * The objects returned by the database context are instances of this class 
- * or its subclasses. The class is KVC-compliant. It class is not 
+ * or its subclasses. The class is KVC-compliant. It is not 
  * thread-safe, i.e. if methods of an BXDatabaseObject instance will be called from 
  * different threads the result is undefined and deadlocks are possible.
  */
@@ -295,7 +295,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * \internal
- * Returns cached non-foreign objects.
+ * Returns cached objects.
  */
 - (NSDictionary *) cachedObjects
 {
@@ -371,26 +371,24 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Value from the object's cache.
- * This method is thread-safe. Primary key values should be accessed using the object ID instead.
- * This method doesn't cause a fault to fire.
+ * This method is thread-safe and doesn't cause a fault to fire.
  * \return      The value in question or nil, if it has not been fetched from the database yet.
  */
 - (id) cachedValueForKey: (NSString *) aKey
 {
-    id rval = nil;
+    id retval = nil;
     @synchronized (mValues)
     {
-        rval = [mValues valueForKey: aKey];
+        retval = [mValues valueForKey: aKey];
     }
-    return rval;
+    return retval;
 }
 
 /**
  * Value or objects from the database.
  * Look up the value from the cache or ask the database context to fetch it.
- * \param   aKey    Name of the column, a foreign key in the table,
- *                  a foreign key pointing to the object's table or a helper table.
- * \return          An object or an NSArray of BXDatabaseObjects.
+ * \param   aKey    Name of the column or a relationship.
+ * \return          An object or a self-updating NSSet-style collection of BXDatabaseObjects.
  */
 - (id) primitiveValueForKey: (NSString *) aKey
 {
@@ -400,16 +398,15 @@ ParseSelector (SEL aSelector, NSString** key)
 	enum BXDatabaseObjectKeyType keyType = [self keyType: aKey];
 	switch (keyType)
 	{
-		case kBXDatabaseObjectPrimaryKey:
-			retval = [mObjectID valueForKey: aKey];
-			break;
-		
+        case kBXDatabaseObjectPrimaryKey:
 		case kBXDatabaseObjectKnownKey:
 			retval = [self cachedValueForKey: aKey];
 			
 			if (nil == retval)
 			{
 				log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+                log4AssertValueReturn (! [[[[[self objectID] entity] attributesByName] objectForKey: aKey] isPrimaryKey],
+                                       nil, @"Expected primary key values not to have been faulted.");
 				if (NO == [mContext fireFault: self key: aKey error: &error])
 					[self queryFailed: error];
 				retval = [self cachedValueForKey: aKey];				
@@ -466,7 +463,7 @@ ParseSelector (SEL aSelector, NSString** key)
     //We only need the non-cached value when autocommitting.
     id oldValue = nil;
     if ([mContext autocommits] && nil != [mContext undoManager])
-        oldValue = [self valueForKey: aKey];
+        oldValue = [self primitiveValueForKey: aKey];
     else
         oldValue = [self cachedValueForKey: aKey];
     
@@ -476,20 +473,11 @@ ParseSelector (SEL aSelector, NSString** key)
 		switch (keyType)
 		{
 			case kBXDatabaseObjectPrimaryKey:
-				//Object ID stores primary key values. We call -willChange and -didChange for them at this point,
-				//since other values and related objects make KVO notifications when -setCachedValue:forKey: is called.				
-				[self willChangeValueForKey: aKey];
-				//Fall through.
-				
 			case kBXDatabaseObjectKnownKey:
 			{            
 				if (nil == aVal)
 					aVal = [NSNull null];
 				[mContext executeUpdateObject: self key: aKey value: aVal error: &error];            
-				
-				if (kBXDatabaseObjectPrimaryKey == keyType)
-					[self didChangeValueForKey: aKey];
-				break;
 			}
 				
 			case kBXDatabaseObjectForeignKey:
@@ -548,23 +536,24 @@ ParseSelector (SEL aSelector, NSString** key)
 - (void) faultKey: (NSString *) aKey
 {
 	BOOL didBecomeFault = NO;
+    NSArray* pkeyFNames = [[[[self objectID] entity] primaryKeyFields] valueForKey: @"name"];
     @synchronized (mValues)
     {
-		didBecomeFault = ((nil == aKey && 0 < [mValues count]) || nil != [mValues objectForKey: aKey]);
         if (nil == aKey)
         {
-            NSArray* keys = [mValues allKeys];
-            TSEnumerate (currentKey, e, [keys objectEnumerator])
-                [self willChangeValueForKey: currentKey];
-            [mValues removeAllObjects];
-            TSEnumerate (currentKey, e, [keys objectEnumerator])
-                [self didChangeValueForKey: currentKey];
+            TSEnumerate (currentKey, e, [mValues keyEnumerator])
+            {
+                if (! [pkeyFNames containsObject: currentKey])
+                {
+                    didBecomeFault = YES;
+                    [mValues removeObjectForKey: currentKey];
+                }
+            }
         }
-        else
+        else if (! [pkeyFNames containsObject: aKey] && [mValues objectForKey: aKey])
         {
-            [self willChangeValueForKey: aKey];
+            didBecomeFault = YES;
             [mValues removeObjectForKey: aKey];
-            [self didChangeValueForKey: aKey];
         }
     }
 	if (didBecomeFault)
@@ -597,10 +586,6 @@ ParseSelector (SEL aSelector, NSString** key)
         }
     }
     else if (nil != [self cachedValueForKey: aKey])
-    {
-        rval = 0;
-    }
-    else if (nil != [mObjectID valueForKey: aKey])
     {
         rval = 0;
     }
@@ -748,19 +733,6 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * \internal
- * Remove the primary key values from store.
- * This should be done after setting the object ID, since
- * it will be used to fetch the values thereafter.
- */
-- (void) removePrimaryKeyValuesFromStore
-{
-    log4AssertVoidReturn (nil != mObjectID, @"Expected to have an object ID.");
-    TSEnumerate (currentKey, e, [[mObjectID primaryKeyFieldValues] keyEnumerator])
-        [self setCachedValue: nil forKey: currentKey];
-}
-
-/**
- * \internal
  * Register the object with a context.
  * In order to function properly, the database object needs to know about its context and its entity.
  * Registration is possible only if the object has not already been assigned a context. 
@@ -782,10 +754,8 @@ ParseSelector (SEL aSelector, NSString** key)
         
         NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFNames];
         
-        BXDatabaseObjectID* objectID = [[BXDatabaseObjectID alloc] initWithEntity: entity
-																 primaryKeyFields: pkeyDict];
+        BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: pkeyDict];
 		rval = [self registerWithContext: ctx objectID: objectID];
-		[objectID release];
     }
     return rval;
 }
@@ -798,20 +768,22 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (BOOL) registerWithContext: (BXDatabaseContext *) ctx objectID: (BXDatabaseObjectID *) anID
 {
-    BOOL rval = NO;
+    log4AssertValueReturn (nil != ctx,  NO, @"Expected ctx not to be nil.");
+    log4AssertValueReturn (nil != anID, NO, @"Expected anID not to be nil.");
+    BOOL retval = NO;
     if (nil == mContext)
     {
+        //FIXME: memory leak?
         mObjectID = [anID retain];
         if (YES == [ctx registerObject: self])
         {
-            rval = YES;
-            [self removePrimaryKeyValuesFromStore];
+            retval = YES;
             
             //Context
             mContext = ctx; //Weak
         }        
     }
-    return rval;
+    return retval;
 }
 
 /**
@@ -1038,12 +1010,13 @@ ParseSelector (SEL aSelector, NSString** key)
     return retval;
 }
 
-//DEBUG
-- (void) willChangeValueForKey: (NSString *) aKey
+- (NSDictionary *) primaryKeyFieldValues
 {
-    if (! [aKey isEqualToString: @"id"])
-        NSLog (@"aKey: %@", aKey);
-    [super willChangeValueForKey: aKey];
+    NSArray* pkeyFields = [[[self objectID] entity] primaryKeyFields];
+    NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [pkeyFields count]];
+    TSEnumerate (currentKey, e, [pkeyFields objectEnumerator])
+        [retval setObject: [self cachedValueForKey: [currentKey name]] forKey: currentKey];
+    return retval;
 }
 
 @end

@@ -34,12 +34,10 @@
 
 
 @interface BXDatabaseObjectID (PrivateMethods)
-+ (id) IDWithEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) aDict;
-- (id) initWithEntity: (BXEntityDescription *) anEntity primaryKeyFields: (NSDictionary *) aDict;
-
-- (void) setLastModificationType: (enum BXModificationType) aType;
-- (enum BXModificationType) lastModificationType;
-- (void) replaceValuesWith: (NSDictionary *) aDict;
-//- (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view;
++ (void) verifyPkey: (NSDictionary *) pkeyDict entity: (BXEntityDescription *) entity;
++ (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) pkeyFValues;
+- (id) initWithEntity: (BXEntityDescription *) anEntity objectURI: (NSURL *) anURI;
 - (void) setStatus: (enum BXObjectDeletionStatus) status forObjectRegisteredInContext: (BXDatabaseContext *) context;
+
+//- (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view;
 @end
