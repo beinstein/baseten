@@ -865,6 +865,9 @@ static BOOL gHaveAppKitFramework = NO;
 			//Then use the values received from the database with the redo invocation
 			if (nil != rval && nil == localError)
 			{
+                //If registration fails, there should be a suitable object in memory.
+                if (NO == [rval registerWithContext: self entity: entity])
+                    rval = [self registeredObjectWithID: [rval objectID]];
 				BXDatabaseObjectID* objectID = [rval objectID];
 				
 				if (YES == [mDatabaseInterface autocommits])
@@ -1817,63 +1820,69 @@ static BOOL gHaveAppKitFramework = NO;
 	NSArray* objectIDs = nil;
 	if ([self checkDatabaseURI: &localError])
 	{
+        NSArray* primaryKeyFields = [[[anObject objectID] entity] primaryKeyFields];
+        if (nil == primaryKeyFields)
+            primaryKeyFields = [anEntity primaryKeyFields];
+        BOOL updatedPkey = (nil != [[primaryKeyFields valueForKey: @"name"] firstObjectCommonWithArray: [aDict allKeys]]);
+        log4AssertValueReturn (!updatedPkey || anObject, nil, 
+                               @"Expected anObject to be known in case its pkey should be modified.");
 #if 0
-        BOOL updatedPkey = (nil != [[[[[anObject objectID] entity] primaryKeyFields] valueForKey: @"name"] firstObjectCommonWithArray: [aDict allKeys]]);
 		NSDictionary* oldPkey = nil;
 		if (updatedPkey)
 			oldPkey = [anObject primaryKeyFieldValues];
 #endif
-        
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
 		        
-		if (nil == localError)
-		{
-			//If autocommit is on, the update notification will be received immediately.
-			//It won't be handled, though, since it originates from the same connection.
-			//Therefore, we need to notify about the change.
-			if (YES == [mDatabaseInterface autocommits])
-				[self updatedObjectsInDatabase: objectIDs faultObjects: YES];
-			else
-			{
-				BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
-				if (nil == localError)
-				{
-#if 0
-                    //FIXME: this causes cache misses.
-					[self updatedObjectsInDatabase: objectIDs faultObjects: YES];
-#endif
-					
-					//For redo
-					TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
-					[[recorder recordWithPersistentTarget: self] executeUpdateObject: anObject entity: anEntity 
-																		   predicate: predicate withDictionary: aDict error: NULL];
+		if (nil == localError && NO == [mDatabaseInterface autocommits])
+        {
+            NSArray* oldIDs = objectIDs;
+            if (updatedPkey)
+                oldIDs = [NSArray arrayWithObject: [anObject objectID]];
+            
+            //If autocommit is on, the update notification will be received immediately.
+            //It won't be handled, though, since it originates from the same connection.
+            //Therefore, we need to notify about the change.
+            if (YES == [mDatabaseInterface autocommits])
+                [self updatedObjectsInDatabase: oldIDs faultObjects: NO];
+            else
+            {
+                BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
+                if (nil == localError)
+                {
+                    //This is needed for self-updating collections.
+                    [self updatedObjectsInDatabase: oldIDs faultObjects: NO];
+                    
+                    //For redo
+                    TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
+                    [[recorder recordWithPersistentTarget: self] executeUpdateObject: anObject entity: anEntity 
+                                                                           predicate: predicate withDictionary: aDict error: NULL];
                     //Finally fault the object.
-					[[recorder recordWithPersistentTarget: self] faultKeys: [aDict allKeys] inObjectsWithIDs: objectIDs];
-					
-					//Undo manager does things in reverse order
-					if (![mUndoManager groupsByEvent])
-    					[mUndoManager beginUndoGrouping];
-					//Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
-					[[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
-					if (createdSavepoint)
-						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
-					[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
-					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-					{
-						enum BXModificationType modificationType = [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID];						
-						[[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType: modificationType forKey: currentID];
-						
-						//Remember the modification type for ROLLBACK
-                        //FIXME: should the undo manager be the target instead of the dict?
-						if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
+                    //FIXME: do we need this either?
+                    [[recorder recordWithPersistentTarget: self] faultKeys: [aDict allKeys] inObjectsWithIDs: objectIDs];
+                    
+                    //Undo manager does things in reverse order
+                    if (![mUndoManager groupsByEvent])
+                        [mUndoManager beginUndoGrouping];
+                    //Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
+                    [[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: NO];
+                    if (createdSavepoint)
+                        [[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
+                    [[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
+                    TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+                    {
+                        enum BXModificationType modificationType = [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID];						
+                        [[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType: modificationType forKey: currentID];
+                        
+                        //Remember the modification type for ROLLBACK.
+                        if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
                             [(id) mModifiedObjectIDs BXSetModificationType: kBXUpdateModification forKey: currentID];
-					}
-					if (![mUndoManager groupsByEvent])
-    					[mUndoManager endUndoGrouping];
-				}
-			}
-		}
+                    }
+                    if (![mUndoManager groupsByEvent])
+                        [mUndoManager endUndoGrouping];
+                }
+            }
+        }
     }
     BXHandleError (error, localError);
     return objectIDs;
@@ -1905,34 +1914,34 @@ static BOOL gHaveAppKitFramework = NO;
 				BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 				if (nil == localError)
 				{
-					[self deletedObjectsFromDatabase: objectIDs];
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-						[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeletePending];
+                        [[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeletePending];
+					[self deletedObjectsFromDatabase: objectIDs];
 
 					//For redo
 					TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
 					[[recorder recordWithPersistentTarget: self] executeDeleteObject: anObject entity: entity 
 																		   predicate: predicate error: NULL];
-					[[recorder recordWithPersistentTarget: self] deletedObjectsFromDatabase: objectIDs];
 					
 					//Undo manager does things in reverse order
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager beginUndoGrouping];
-					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+					[[mUndoManager prepareWithInvocationTarget: self] addedObjectsToDatabase: objectIDs];
+                    //Object status.
+                    TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 					{
 						enum BXObjectDeletionStatus status = [[self registeredObjectWithID: currentID] deletionStatus];
 						[[mUndoManager prepareWithInvocationTarget: currentID] setStatus: status forObjectRegisteredInContext: self];
 					}
-					[[mUndoManager prepareWithInvocationTarget: self] addedObjectsToDatabase: objectIDs];
+                    //Do the actual rollback.
 					if (createdSavepoint)
 						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 					[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
+                    //Remember the modification type for ROLLBACK.
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 					{
                         [[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType:
-                                              [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID] forKey: currentID];
-                        
-						//Remember the modification type for ROLLBACK
+                                              [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID] forKey: currentID];                        
                         [(id) mModifiedObjectIDs BXSetModificationType: kBXDeleteModification forKey: currentID];
 					}
 					if (![mUndoManager groupsByEvent])

@@ -271,6 +271,31 @@ ParseSelector (SEL aSelector, NSString** key)
     return mObjectID;
 }
 
+/**
+ * Predicate for this object.
+ * This method doesn't cause a fault to fire.
+ */
+- (NSPredicate *) predicate
+{
+    NSMutableArray* predicates = [NSMutableArray array];
+    NSDictionary* attrs = [[[self objectID] entity] attributesByName];
+    TSEnumerate (currentAttr, e, [attrs objectEnumerator])
+    {
+        if ([currentAttr isPrimaryKey])
+        {
+            NSExpression* lhs = [NSExpression expressionForConstantValue: currentAttr];
+            NSExpression* rhs = [NSExpression expressionForConstantValue: 
+                [self cachedValueForKey: [currentAttr name]]];
+            [predicates addObject: [NSComparisonPredicate predicateWithLeftExpression: lhs 
+                                                                      rightExpression: rhs
+                                                                             modifier: NSDirectPredicateModifier
+                                                                                 type: NSEqualToPredicateOperatorType
+                                                                              options: 0]];
+        }
+    }
+    return [NSCompoundPredicate andPredicateWithSubpredicates: predicates];
+}
+
 - (id) valueForKeyPath: (NSString *) keyPath
 {
     id rval = nil;
@@ -477,7 +502,15 @@ ParseSelector (SEL aSelector, NSString** key)
 			{            
 				if (nil == aVal)
 					aVal = [NSNull null];
-				[mContext executeUpdateObject: self key: aKey value: aVal error: &error];            
+				[mContext executeUpdateObject: self key: aKey value: aVal error: &error];
+                
+                if (kBXDatabaseObjectPrimaryKey == keyType)
+                {
+                    [mContext unregisterObject: self];
+                    [self registerWithContext: mContext entity: nil];
+                }
+                
+                break;
 			}
 				
 			case kBXDatabaseObjectForeignKey:
@@ -740,24 +773,28 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (BOOL) registerWithContext: (BXDatabaseContext *) ctx entity: (BXEntityDescription *) entity
 {
-    BOOL rval = NO;
-    if (nil == mContext)
+    BOOL retval = NO;
+    log4AssertValueReturn (nil != ctx, NO, @"Expected ctx not to be nil.");
+    log4AssertValueReturn ((nil == mContext && nil != entity) || (ctx == mContext && nil == entity),
+                           NO, @"Attempted to re-register: %@ ctx: %@ entity: %@", self, ctx, entity);
+    if (nil == entity)
+        entity = [mObjectID entity];
+
+    //Object ID
+    NSArray* pkeyFNames = [[entity primaryKeyFields] valueForKey: @"name"];
+    NSArray* pkeyFValues = nil;
+    
+    @synchronized (mValues)
     {
-        //Object ID
-        NSArray* pkeyFNames = [[entity primaryKeyFields] valueForKey: @"name"];
-        NSArray* pkeyFValues = nil;
-		
-        @synchronized (mValues)
-        {
-            pkeyFValues = [mValues objectsForKeys: pkeyFNames notFoundMarker: nil];
-        }
-        
-        NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFNames];
-        
-        BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: pkeyDict];
-		rval = [self registerWithContext: ctx objectID: objectID];
+        pkeyFValues = [mValues objectsForKeys: pkeyFNames notFoundMarker: nil];
     }
-    return rval;
+    
+    NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFNames];
+    
+    BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: pkeyDict];
+    retval = [self registerWithContext: ctx objectID: objectID];
+    
+    return retval;
 }
 
 /**
@@ -770,19 +807,20 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     log4AssertValueReturn (nil != ctx,  NO, @"Expected ctx not to be nil.");
     log4AssertValueReturn (nil != anID, NO, @"Expected anID not to be nil.");
+    log4AssertValueReturn (nil == mContext || ctx == mContext, 
+                           NO, @"Attempted to re-register: %@ ctx: %@", self, ctx);
     BOOL retval = NO;
-    if (nil == mContext)
+
+    [mObjectID release];
+    mObjectID = [anID retain];
+    if (YES == [ctx registerObject: self])
     {
-        //FIXME: memory leak?
-        mObjectID = [anID retain];
-        if (YES == [ctx registerObject: self])
-        {
-            retval = YES;
-            
-            //Context
-            mContext = ctx; //Weak
-        }        
-    }
+        retval = YES;
+        
+        //Context
+        mContext = ctx; //Weak
+    }        
+
     return retval;
 }
 

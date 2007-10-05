@@ -386,7 +386,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			NSMutableArray* remainingFields = [NSMutableArray arrayWithArray: pkeyQNames];
 			TSEnumerate (currentField, e, [fields objectEnumerator])
 			{
-				if (![currentField isExcluded])
+				if (! [currentField isExcluded])
 					[remainingFields addObject: [currentField PGTSEscapedName: connection]];
 			}
 
@@ -394,13 +394,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			queryFormat = [NSString stringWithFormat: queryFormat, [remainingFields componentsJoinedByString: @", "]];
 			res = [connection executeQuery: queryFormat parameterArray: fieldValues];
 			
-			//If registration fails, there should be a suitable object in memory.
 			[res setRowClass: aClass];
 			[res advanceRow];
 			rval = [res currentRowAsObject];
-			if (NO == [rval registerWithContext: context entity: entity])
-				rval = [context registeredObjectWithID: [rval objectID]];
-			[rval faultKey: nil];
 		}
     }
     @catch (PGTSQueryException* exception)
@@ -645,6 +641,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			{
 				updatedPkey = YES;
 
+                //Currently we assume that the user knows the updated objects' IDs.
+#if 0
 				//Transaction for locking the rows (?)
 				if (YES == autocommits)
 					[self beginSubtransactionIfNeeded];
@@ -653,6 +651,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				NSArray* res = [self executeFetchForEntity: entity withPredicate: predicate returningFaults: YES
 													 class: [entity databaseObjectClass] forUpdate: YES error: error];
 				objectIDs = [res valueForKey: @"objectID"];
+#endif
 			}
 			
 			if (nil == *error)
@@ -674,6 +673,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				[self endSubtransactionIfNeeded]; 
 				
 				//Handle the result and get new pkey values
+                //Currently we assume that the user knows the updated objects' IDs.
+#if 0
 				NSDictionary* pkeyDict = nil;
 				if (YES == updatedPkey)
 				{
@@ -693,6 +694,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                     retval = objectIDs;
 				}
 				else
+#endif
 				{
 					//Otherwise get the ids from the result
 					NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
@@ -733,7 +735,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                               predicate: (NSPredicate *) predicate 
                                   error: (NSError **) error
 {
-    NSArray* rval = nil;
+    NSArray* retval = nil;
     log4AssertValueReturn (NO == [connection overlooksFailedQueries], nil, @"Connection should throw when a query fails");
     log4AssertValueReturn (objectID || entity, nil, @"Expected to be called either with an objectID or with an entity.");
     log4AssertValueReturn (NULL != error, nil, @"Expected error to be set (was %p)", error);
@@ -780,7 +782,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nObjectIDs: %@",
 						   objectID, predicate, objectIDs);
 			
-			rval = objectIDs;
+			retval = objectIDs;
 		}
     }
     @catch (BXException* exception)
@@ -792,7 +794,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         [self packPGError: error exception: exception];
     }
     
-    return rval;
+    return retval;
 }
 
 /**

@@ -67,9 +67,9 @@
     MKCAssertEquals ([[object valueForKey: @"Id"] intValue], 1);
     MKCAssertEqualObjects ([object valueForKey: @"value"], @"a");
     
-    [object setValue: [NSNumber numberWithInt: 4] forKey: @"Id"];
+    [object setPrimitiveValue: [NSNumber numberWithInt: 4] forKey: @"Id"];
     MKCAssertEquals ([[object valueForKey: @"Id"] intValue], 4);
-    [object setValue: @"d" forKey: @"value"];
+    [object setPrimitiveValue: @"d" forKey: @"value"];
     
     res = [[context executeFetchForEntity: pkeytest withPredicate: nil error: &error]
         sortedArrayUsingDescriptors: [NSArray arrayWithObject: 

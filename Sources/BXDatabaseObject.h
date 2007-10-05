@@ -91,6 +91,7 @@ enum BXObjectLockStatus
 - (BXEntityDescription *) entity;
 - (BXDatabaseObjectID *) objectID;
 - (BXDatabaseContext *) databaseContext;
+- (NSPredicate *) predicate;
 
 - (id) objectForKey: (BXAttributeDescription *) aKey;
 - (NSArray *) valuesForKeys: (NSArray *) keys;
