@@ -1206,65 +1206,125 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CancelModificationObserving (OID) FR
 
 
 -- A helper function
-CREATE FUNCTION "baseten".PrepareForModificationObserving1 (TEXT, OID, NAME, NAME [], BOOLEAN) 
+CREATE FUNCTION "baseten".PrepareForMOTableInsert (TEXT, OID, NAME, NAME []) 
 RETURNS VOID AS $marker$
 DECLARE
-    querytype   TEXT DEFAULT $1;
-    tableoid    ALIAS FOR $2;
-    tablename   ALIAS FOR $3;
-    fieldnames  NAME [] DEFAULT $4;
-    isview      ALIAS FOR $5;
-    referencename TEXT DEFAULT 'NEW.';
-    query TEXT;
-    mtablename TEXT;
-    funcname TEXT;
-    fdecl TEXT;
+    querytype		TEXT DEFAULT $1;
+    tableoid		ALIAS FOR $2;
+    tablename		ALIAS FOR $3;
+    fieldnames		NAME [] DEFAULT $4;
+    query			TEXT;
+    mtablename		TEXT;
+    funcname		TEXT;
+    fdecl			TEXT;
 BEGIN
     mtablename := "baseten".ModificationTableName (tableoid);
-    querytype := upper (querytype);
-    
-    -- With views, triggers cannot be used.
-    -- Instead, rules may be used, since values corresponding to the primary key have to be
-    -- specified on insert and sequences are not used.
-    IF querytype = 'INSERT' AND false = isview THEN
-        funcname := "baseten".ModifyInsertFunctionName (tableoid);
-        -- Trigger functions cannot be written in SQL
-        fdecl :=
-            'CREATE OR REPLACE FUNCTION  ' || funcname || ' () RETURNS TRIGGER AS $$             ' ||
-            'BEGIN                                                                               ' ||
-            '    INSERT INTO ' || mtablename                                                       ||
-            '        ("baseten_modification_type", ' || array_to_string (fieldnames, ', ') || ') ' ||
-            '       VALUES (''I'', ' || array_to_string (
-                        "baseten".array_prepend_each ('NEW.', fieldnames), ', ') || ');          ' || -- f. values
-            '    RETURN NEW;                                                                     ' ||
-            'END;                                                                                ' ||
-            '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER';
-        query := 
-            'CREATE TRIGGER ' || "baseten".ModificationRuleName ('INSERT')                         ||
-            '    AFTER INSERT ON ' || tablename || ' FOR EACH ROW EXECUTE PROCEDURE              ' || 
-                 funcname || ' ()'; 
-        EXECUTE fdecl;
-        EXECUTE query;
-        EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || funcname || ' () FROM PUBLIC';
-    ELSE
-        IF querytype = 'DELETE' THEN
-            referencename = 'OLD.';
-        END IF;
-        
-        query := 
-            'CREATE RULE ' || "baseten".ModificationRuleName (querytype) || ' AS ON ' || querytype ||
-            '   TO ' || tablename || ' DO ALSO INSERT '                                            ||
-            '   INTO ' || "baseten".ModificationTableName (tableoid)                               ||
-            '   ("baseten_modification_type", ' || array_to_string (fieldnames, ', ') || ')'       ||
-            '   VALUES (''' || substring (querytype from 1 for 1) || ''','                         ||
-                array_to_string ("baseten".array_prepend_each (referencename, fieldnames), ', ')   || ')';
-        EXECUTE query;
-    END IF;
+    funcname := "baseten".ModifyInsertFunctionName (tableoid);
+    -- Trigger functions cannot be written in SQL
+    fdecl :=
+        'CREATE OR REPLACE FUNCTION  ' || funcname || ' () RETURNS TRIGGER AS $$             ' ||
+        'BEGIN                                                                               ' ||
+        '    INSERT INTO ' || mtablename                                                       ||
+        '        ("baseten_modification_type", ' || array_to_string (fieldnames, ', ') || ') ' ||
+        '       VALUES (''I'', ' || array_to_string (
+                    "baseten".array_prepend_each ('NEW.', fieldnames), ', ') || ');          ' || -- f. values
+        '    RETURN NEW;                                                                     ' ||
+        'END;                                                                                ' ||
+        '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER';
+    query := 
+        'CREATE TRIGGER ' || "baseten".ModificationRuleName ('INSERT')                         ||
+        '    AFTER INSERT ON ' || tablename || ' FOR EACH ROW EXECUTE PROCEDURE              ' || 
+             funcname || ' ()'; 
+    EXECUTE fdecl;
+    EXECUTE query;
+    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || funcname || ' () FROM PUBLIC';
     RETURN;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".PrepareForModificationObserving1 (TEXT, OID, NAME, NAME [], BOOLEAN) FROM PUBLIC;
+	"baseten".PrepareForMOTableInsert (TEXT, OID, NAME, NAME []) 
+	FROM PUBLIC;
+
+
+-- Another helper function
+CREATE FUNCTION "baseten".PrepareForMOOther (TEXT, OID, NAME, NAME []) 
+RETURNS VOID AS $marker$
+DECLARE
+    querytype		TEXT DEFAULT $1;
+    tableoid		ALIAS FOR $2;
+    tablename		ALIAS FOR $3;
+    fieldnames		NAME [] DEFAULT $4;	--pkey
+	operation		CHAR;
+    mtablename		TEXT;
+	mrulename		TEXT;
+    query			TEXT;
+	insertion		TEXT;
+	whereclause		TEXT DEFAULT '';
+BEGIN
+    querytype	:= upper (querytype);
+	operation	:= substring (querytype from 1 for 1);
+	mrulename	:= "baseten".ModificationRuleName (querytype);
+
+    IF querytype = 'INSERT' THEN
+		insertion := "baseten".PrepareForMOIQuery (tableoid, 'I', 'NEW.', fieldnames);
+	ELSIF querytype = 'DELETE' THEN
+		insertion := "baseten".PrepareForMOIQuery (tableoid, 'D', 'OLD.', fieldnames);
+	ELSE
+		whereclause := array_to_string (
+			"baseten".array_cat_each (
+				"baseten".array_prepend_each ('OLD.', fieldnames),
+				"baseten".array_prepend_each ('NEW.', fieldnames),
+				' = '
+			), ' AND '
+		);
+		IF querytype = 'UPDATE' THEN
+			insertion := "baseten".PrepareForMOIQuery (tableoid, 'U', 'NEW.', fieldnames);
+		ELSIF querytype = 'UPDATE_PK' THEN
+			querytype = 'UPDATE';
+			insertion := 
+				"baseten".PrepareForMOIQuery (tableoid, 'D', 'OLD.', fieldnames) || '; ' ||
+				"baseten".PrepareForMOIQuery (tableoid, 'I', 'NEW.', fieldnames);
+			whereclause := 'NOT (' || whereclause || ')';
+		END IF;
+		whereclause := ' WHERE ' || whereclause;
+    END IF;
+
+    query := 
+        'CREATE RULE ' || mrulename || ' AS ON ' || querytype ||
+        ' TO ' || tablename || whereclause || ' DO ALSO (' || insertion || ')';
+    EXECUTE query;
+    RETURN;
+END;
+$marker$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION
+	"baseten".PrepareForMOOther (TEXT, OID, NAME, NAME [])
+	FROM PUBLIC;
+
+
+-- Another helper function
+CREATE FUNCTION "baseten".PrepareForMOIQuery (OID, CHAR, TEXT, NAME [])
+RETURNS TEXT AS $$
+DECLARE
+	tableoid	ALIAS FOR $1;
+	operation	ALIAS FOR $2;
+	refname		ALIAS FOR $3;
+	mtablename	TEXT;
+	fieldnames	TEXT;
+	rfieldnames	TEXT;
+BEGIN
+	fieldnames := array_to_string ($4, ', ');
+	rfieldnames := array_to_string ("baseten".array_prepend_each (refname, $4), ', ');
+    mtablename	:= "baseten".ModificationTableName (tableoid);
+
+	RETURN
+		'INSERT INTO ' || mtablename ||
+	    '   ("baseten_modification_type", ' || fieldnames || ')' ||
+	    '   VALUES (''' || operation || ''',' || rfieldnames || ')';
+END;
+$$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION
+	"baseten".PrepareForMOIQuery (OID, CHAR, TEXT, NAME [])
+	FROM PUBLIC;
 
 
 -- Another helper function
@@ -1477,10 +1537,17 @@ BEGIN
     	'CREATE TRIGGER "setModificationID" BEFORE INSERT ON ' || mtablename ||
 		'   FOR EACH ROW EXECUTE PROCEDURE "baseten".SetModificationID ()';
 
-
-    PERFORM "baseten".PrepareForModificationObserving1 ('insert', toid, tname, pkeyfields.fname, isview);
-    PERFORM "baseten".PrepareForModificationObserving1 ('update', toid, tname, pkeyfields.fname, isview);
-    PERFORM "baseten".PrepareForModificationObserving1 ('delete', toid, tname, pkeyfields.fname, isview);
+	-- With views, triggers are not available.
+	-- Instead, rules may be used, since values corresponding to the primary key have to be
+	-- specified on insert and sequences are not used.
+	IF isview THEN
+		PERFORM "baseten".PrepareForMOOther ('insert', toid, tname, pkeyfields.fname);
+	ELSE
+		PERFORM "baseten".PrepareForMOTableInsert ('insert', toid, tname, pkeyfields.fname) ;
+	END IF;
+	PERFORM "baseten".PrepareForMOOther ('delete', toid, tname, pkeyfields.fname);
+	PERFORM "baseten".PrepareForMOOther ('update', toid, tname, pkeyfields.fname);
+	PERFORM "baseten".PrepareForMOOther ('update_pk', toid, tname, pkeyfields.fname);
     PERFORM "baseten".PrepareForModificationObserving2 (toid, pkeyfnames);
 
     rval := ROW (toid, tname)::"baseten".TableType;
