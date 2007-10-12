@@ -187,9 +187,11 @@
 		NSPredicate* predicate = [[aDatabaseObject objectID] predicate];
 		NSDictionary* values = [mForeignKey srcDictionaryFor: [self entity] valuesFromDstObject: target];
 		
-		[[aDatabaseObject databaseContext] executeUpdateEntity: [self entity]
+		[[aDatabaseObject databaseContext] executeUpdateObject: nil
+														entity: [self entity]
+													 predicate: predicate
 												withDictionary: values
-													 predicate: predicate error: error];
+														 error: error];
 		if (nil == *error)
 			[aDatabaseObject setCachedValue: target forKey: [self name]];
 	}
@@ -206,9 +208,10 @@
 		if ([self shouldRemoveForTarget: target databaseObject: aDatabaseObject predicate: &predicate])
 		{
 			values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: nil];
-			[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
-													withDictionary: values
+			[[aDatabaseObject databaseContext] executeUpdateObject: nil
+															entity: [self destinationEntity]
 														 predicate: predicate 
+													withDictionary: values
 															 error: error];
 		}
 		
@@ -216,9 +219,10 @@
 		{
 			if ([self shouldAddForTarget: target databaseObject: aDatabaseObject predicate: &predicate values: &values])
 			{
-				[[aDatabaseObject databaseContext] executeUpdateEntity: [self destinationEntity]
-														withDictionary: values
+				[[aDatabaseObject databaseContext] executeUpdateObject: nil
+																entity: [self destinationEntity]
 															 predicate: predicate 
+														withDictionary: values
 																 error: error];
 			}
 

@@ -674,6 +674,19 @@ static BOOL gHaveAppKitFramework = NO;
 	[self handleError: error];	
 }
 
+- (void) reregisterObjects: (NSArray *) objectIDs values: (NSDictionary *) pkeyValues
+{
+	TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+	{
+		BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
+		if (nil != currentObject)
+		{
+			[currentObject setCachedValuesForKeysWithDictionary: pkeyValues];
+			[self unregisterObject: currentObject];
+			[currentObject registerWithContext: self entity: nil];
+		}
+	}
+}
 @end
 
 
@@ -927,7 +940,6 @@ static BOOL gHaveAppKitFramework = NO;
 		[anObject awakeFromFetchIfNeeded];
     BXHandleError (error, localError);
     return rval;
-
 }
 
 /** \name Deleting database objects */
@@ -1699,29 +1711,6 @@ static BOOL gHaveAppKitFramework = NO;
     return (nil != [self executeDeleteObject: nil entity: anEntity predicate: predicate error: error]);
 }
 
-/** 
- * \internal
- * \name Updating existing database objects.
- * These methods should be rarely needed. BXDatabaseObject's -setValue:forKey: should be used instead.
- */
-//@{
-/** Update a single field in an object. */
-- (BOOL) executeUpdateObject: (BXDatabaseObject *) anObject key: (id) aKey value: (id) aValue error: (NSError **) error
-{
-    return [self executeUpdateObject: anObject 
-                      withDictionary: [NSDictionary dictionaryWithObject: aValue forKey: aKey] 
-                               error: error];
-}
-
-/** Update multiple fields in an object at the same time. */
-- (BOOL) executeUpdateObject: (BXDatabaseObject *) anObject withDictionary: (NSDictionary *) aDict error: (NSError **) error
-{
-    return (nil != [self executeUpdateObject: anObject entity: nil predicate: nil 
-                              withDictionary: aDict error: error]);    
-}
-//@}
-
-
 /**
  * \internal
  * \param aKey Currently ignored, since PostgreSQL only supports row-level locks.
@@ -1790,18 +1779,6 @@ static BOOL gHaveAppKitFramework = NO;
     return rval;    
 }
 
-/** 
- * \internal
- * Update multiple objects at the same time. 
- * \note Redoing this re-executes the query with the given predicate and thus
- *       might cause modifications in other objects than in the original invocation.
- */
-- (NSArray *) executeUpdateEntity: (BXEntityDescription *) anEntity withDictionary: (NSDictionary *) aDict 
-                        predicate: (NSPredicate *) predicate error: (NSError **) error
-{
-    return [self executeUpdateObject: nil entity: anEntity predicate: predicate withDictionary: aDict error: error];
-}
-
 //FIXME: do the following methods set modification types correctly in undo & redo, or do they get set in callbacks?
 /** 
  * \internal
@@ -1826,14 +1803,14 @@ static BOOL gHaveAppKitFramework = NO;
         BOOL updatedPkey = (nil != [[primaryKeyFields valueForKey: @"name"] firstObjectCommonWithArray: [aDict allKeys]]);
         log4AssertValueReturn (!updatedPkey || anObject, nil, 
                                @"Expected anObject to be known in case its pkey should be modified.");
-#if 0
+
 		NSDictionary* oldPkey = nil;
 		if (updatedPkey)
 			oldPkey = [anObject primaryKeyFieldValues];
-#endif
+
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
-		        
+		
 		if (nil == localError && NO == [mDatabaseInterface autocommits])
         {
             NSArray* oldIDs = objectIDs;
@@ -1863,10 +1840,13 @@ static BOOL gHaveAppKitFramework = NO;
                     
 					//For undo
                     //Undo manager does things in reverse order
+					NSLog (@"old: %@ new: %@ oldvals: %@", oldIDs, objectIDs, oldPkey);
                     if (![mUndoManager groupsByEvent])
                         [mUndoManager beginUndoGrouping];
                     //Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
-                    [[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
+                    [[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: oldIDs faultObjects: YES];
+					if (updatedPkey)
+						[[mUndoManager prepareWithInvocationTarget: self] reregisterObjects: objectIDs values: oldPkey];
                     if (createdSavepoint)
                         [[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
                     [[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];

@@ -38,10 +38,6 @@ struct trustResult
 
 @interface BXDatabaseContext (PrivateMethods)
 /* Moved from the context. */
-- (BOOL) executeUpdateObject: (BXDatabaseObject *) anObject key: (id) aKey value: (id) aValue error: (NSError **) error;
-- (BOOL) executeUpdateObject: (BXDatabaseObject *) anObject withDictionary: (NSDictionary *) aDict error: (NSError **) error;
-- (NSArray *) executeUpdateEntity: (BXEntityDescription *) anEntity withDictionary: (NSDictionary *) aDict 
-                        predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (BOOL) executeDeleteFromEntity: (BXEntityDescription *) anEntity withPredicate: (NSPredicate *) predicate 
                            error: (NSError **) error;
 - (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
@@ -91,6 +87,7 @@ struct trustResult
 - (void) undoWithRedoInvocations: (NSArray *) invocations;
 - (void) redoInvocations: (NSArray *) invocations;
 - (void) rollbackToLastSavepoint;
+- (void) reregisterObjects: (NSArray *) objectIDs values: (NSDictionary *) pkeyValues;
 @end
 
 

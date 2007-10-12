@@ -623,103 +623,106 @@ static NSString* SSLMode (enum BXSSLMode mode)
         if (nil != [self validateEntity: entity error: error])
 		{
 			NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
-			NSString* whereClause = [predicate PGTSWhereClauseWithContext: ctx];
-			NSMutableArray* parameters = [ctx objectForKey: kPGTSParametersKey];
-			if (nil == whereClause)
-				whereClause = @"(true)";
-            if (nil == parameters)
-				parameters = [NSMutableArray array];
-
-			NSArray* pkeyFields = [entity primaryKeyFields];
-			NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
-			NSString* name = [entity PGTSQualifiedName: connection];
-			
-			//Check if pkey should be updated
 			BOOL updatedPkey = NO;
-			NSArray* objectIDs = nil;
-			if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
-			{
-				updatedPkey = YES;
-
-                //Currently we assume that the user knows the updated objects' IDs.
-				objectIDs = [NSArray arrayWithObject: objectID];
-#if 0
-				//Transaction for locking the rows (?)
-				if (YES == autocommits)
-					[self beginSubtransactionIfNeeded];
-				
-				//Since we are reading committed changes, SELECT the object IDs FOR UPDATE.
-				NSArray* res = [self executeFetchForEntity: entity withPredicate: predicate returningFaults: YES
-													 class: [entity databaseObjectClass] forUpdate: YES error: error];
-				objectIDs = [res valueForKey: @"objectID"];
-#endif
-			}
+			NSArray* pkeyFNames = nil;
+			PGTSResultSet* res = nil;
 			
-			if (nil == *error)
+			//Make and send the query.
 			{
+				NSString* whereClause = [predicate PGTSWhereClauseWithContext: ctx];
+				NSMutableArray* parameters = [ctx objectForKey: kPGTSParametersKey];
+				if (nil == whereClause)
+					whereClause = @"(true)";
+				if (nil == parameters)
+					parameters = [NSMutableArray array];
+				
+				NSArray* pkeyFields = [entity primaryKeyFields];
+				NSString* name = [entity PGTSQualifiedName: connection];
+				pkeyFNames = [pkeyFields valueForKey: @"name"];
+				
+				//Check if pkey should be updated
+				if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
+					updatedPkey = YES;
+									
 				//Send the UPDATE query
 				queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@ RETURNING %@", 
 					name, 
 					[aDict PGTSSetClauseParameters: parameters connection: connection], 
 					whereClause,
 					[[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
-				PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
-				
+				res = [connection executeQuery: queryString parameterArray: parameters];
+
 				//Notify only if we are not updating a view.
 				if (NO == [entity isView])
 					[self lockAndNotifyForEntity: entity whereClause: whereClause parameters: parameters willDelete: NO];        
 				
 				//FIXME: if we are continuously updating the value in autocommit mode, we are going to lose the lock here.
 				//See -lockObject:key:lockType:sender:
-				[self endSubtransactionIfNeeded]; 
+				[self endSubtransactionIfNeeded]; 				
+			}
 				
-				//Handle the result and get new pkey values
-                //Currently we assume that the user knows the updated objects' IDs.
-#if 0
-				NSDictionary* pkeyDict = nil;
-				if (YES == updatedPkey)
+			//Handle the result and get new pkey values.
+			//Currently we assume that the user knows the updated objects' IDs.
+			NSMutableDictionary* updatingDict = [[aDict mutableCopy] autorelease];
+			NSArray* objectIDs = nil;
+			{
+				NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
+				log4AssertValueReturn (nil != entity, nil, @"Expected entity not to be nil.");
+				while (([res advanceRow]))
 				{
-					if (1 == [objectIDs count])
-					{                
-						//If 1 == [objectIDs count], then information about last modification 
-						//can be used, since the modification is unambiguous.
-						[res advanceRow];
-						pkeyDict = [res currentRowAsDictionary];
-					}
-					else
-					{
-						//Updating the primary key is safer to do one by one, since now
-						//we don't check the values from the database.
-						pkeyDict = aDict;
-					}
-                    retval = objectIDs;
-				}
-				else
-#endif
-				{
-					//Otherwise get the ids from the result
-					NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-					log4AssertValueReturn (nil != entity, nil, @"Expected entity not to be nil.");
-					while (([res advanceRow]))
-					{
-						BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: [res currentRowAsDictionary]];
-						[ids addObject: currentID];
-					}
-					retval = ids;
+					BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: [res currentRowAsDictionary]];
+					[ids addObject: currentID];
 					
-					//FIXME: if the preprocessor if above gets removed, this if could be removed as well.
-					//If the ids have been set earlier, don't replace them.
-					if (nil == objectIDs)
-						objectIDs = ids;
+					if (YES == updatedPkey)
+						[updatingDict addEntriesFromDictionary: [res currentRowAsDictionary]];
+				}
+				retval = ids;
+
+				//Currently we assume that the user knows the updated objects' IDs.
+				if (YES == updatedPkey)
+					objectIDs = [NSArray arrayWithObject: objectID];
+				else
+					objectIDs = ids;
+			}
+			
+			//Update the objects.
+			//Also mark the objects locked. Setting cached values sends -didChangeValueForKey:.
+			{
+				//Compare the given objects' classes to those they are supposed to be.
+				//If mismatches are found, fault the fiven keys.
+				PGTSTableInfo* tableInfo = [[connection databaseInfo] tableInfoForTableNamed: [entity name] 
+																			   inSchemaNamed: [entity schemaName]];
+				NSDictionary* classDict = [connection deserializationDictionary];
+				if (nil == classDict)
+					classDict = [NSDictionary PGTSDeserializationDictionary];
+				NSMutableArray* faultedKeys = nil;
+				//We're only interested in other than pkey values for now, so we can use aDict here.
+				TSEnumerate (currentKey, e, [aDict keyEnumerator])
+				{
+					if (! [pkeyFNames containsObject: currentKey])
+					{
+						NSString* fieldType = [[[tableInfo fieldInfoForFieldNamed: currentKey] typeInfo] name];
+						Class expectedClass = [classDict objectForKey: fieldType];
+						if (Nil != expectedClass && ![currentKey isKindOfClass: expectedClass])
+						{
+							if (nil == faultedKeys)
+								faultedKeys = [NSMutableArray arrayWithCapacity: [aDict count]];
+							
+							[faultedKeys addObject: currentKey];
+						}
+					}
 				}
 				
-				//Update the object
-				//Also mark the objects locked. Setting cached values sends -didChangeValueForKey:.
+				//Update the objects using updatingDict instead.
 				TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 				{
 					BXDatabaseObject* object = [context registeredObjectWithID: currentID];
 					if (nil != object)
-						[object setCachedValuesForKeysWithDictionary: aDict];
+					{
+						[object setCachedValuesForKeysWithDictionary: updatingDict];
+						TSEnumerate (currentKey, e, [faultedKeys objectEnumerator])
+							[object faultKey: currentKey];
+					}
 				}
 			}
 		}

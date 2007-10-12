@@ -430,8 +430,6 @@ ParseSelector (SEL aSelector, NSString** key)
 			if (nil == retval)
 			{
 				log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-                log4AssertValueReturn (! [[[[[self objectID] entity] attributesByName] objectForKey: aKey] isPrimaryKey],
-                                       nil, @"Expected primary key values not to have been faulted.");
 				if (NO == [mContext fireFault: self key: aKey error: &error])
 					[self queryFailed: error];
 				retval = [self cachedValueForKey: aKey];				
@@ -502,14 +500,17 @@ ParseSelector (SEL aSelector, NSString** key)
 			{            
 				if (nil == aVal)
 					aVal = [NSNull null];
-				[mContext executeUpdateObject: self key: aKey value: aVal error: &error];
-                
-                if (kBXDatabaseObjectPrimaryKey == keyType)
-                {
-                    [mContext unregisterObject: self];
-                    [self registerWithContext: mContext entity: nil];
-                }
-                
+
+				[mContext executeUpdateObject: self entity: nil predicate: nil
+							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: aKey]
+										error: &error];
+				
+				if (kBXDatabaseObjectPrimaryKey == keyType)
+				{
+					[mContext unregisterObject: self];
+					[self registerWithContext: mContext entity: nil];
+				}
+				
                 break;
 			}
 				
@@ -556,7 +557,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     log4AssertVoidReturn (nil != mContext, @"Expected to have a database context.");
     NSError* error = nil;
-    if (NO == [mContext executeUpdateObject: self withDictionary: aDict error: &error])
+    if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: aDict error: &error])
         [self queryFailed: error];
 }
 
@@ -575,13 +576,13 @@ ParseSelector (SEL aSelector, NSString** key)
         if (nil == aKey)
         {
             TSEnumerate (currentKey, e, [mValues keyEnumerator])
-            {
+			{
                 if (! [pkeyFNames containsObject: currentKey])
                 {
                     didBecomeFault = YES;
                     [mValues removeObjectForKey: currentKey];
                 }
-            }
+			}
         }
         else if (! [pkeyFNames containsObject: aKey] && [mValues objectForKey: aKey])
         {
@@ -784,7 +785,7 @@ ParseSelector (SEL aSelector, NSString** key)
                            NO, @"Attempted to re-register: %@ ctx: %@ entity: %@", self, ctx, entity);
     if (nil == entity)
         entity = [mObjectID entity];
-
+	
     //Object ID
     NSArray* pkeyFNames = [[entity primaryKeyFields] valueForKey: @"name"];
     NSArray* pkeyFValues = nil;

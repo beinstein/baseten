@@ -110,9 +110,10 @@
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %@", [object valueForKey: @"id"]];
 
     //First update just one object
-    [context executeUpdateEntity: updatetest 
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
+    [context executeUpdateObject: nil
+						  entity: updatetest 
                        predicate: predicate
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertEqualObjects (number, [object valueForKey: @"value1"]);
@@ -120,9 +121,10 @@
     
     //Then update multiple objects
     number = [NSNumber numberWithInt: 2];
-    [context executeUpdateEntity: updatetest 
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
+    [context executeUpdateObject: nil
+						  entity: updatetest 
                        predicate: nil
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     NSArray* values = [res valueForKey: @"value1"];
