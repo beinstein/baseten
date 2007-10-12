@@ -138,6 +138,7 @@
     BXDatabaseObject* object = [context createObjectForEntity: oneEntity withFieldValues: nil error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertNotNil (object);
+	//If the set proxy wasn't created earlier, here it will be. This might be useful for debugging.
     STAssertTrue (0 == [[object valueForKey: [manyEntity name]] count], [[object valueForKey: [manyEntity name]] description]);
     MKCAssertTrue ([[object objectID] entity] == oneEntity);
     

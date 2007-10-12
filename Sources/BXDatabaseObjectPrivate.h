@@ -27,6 +27,8 @@
 //
 
 
+#import <BaseTen/BXDatabaseObject.h>
+
 enum BXDatabaseObjectKeyType
 {
 	kBXDatabaseObjectNoKeyType = 0,
@@ -44,6 +46,7 @@ enum BXDatabaseObjectKeyType
 - (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError;
 - (void) setCachedValue: (id) aValue forKey: (NSString *) aKey;
 - (void) setCachedValuesForKeysWithDictionary: (NSDictionary *) aDict;
+- (void) setCachedValue2: (id) aValue forKey: (NSString *) aKey;
 - (void) BXDatabaseContextWillDealloc;
 - (id) valueForUndefinedKey: (NSString *) aKey;
 - (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey;
@@ -59,4 +62,5 @@ enum BXDatabaseObjectKeyType
 - (void) awakeFromInsertIfNeeded;
 - (enum BXDatabaseObjectKeyType) keyType: (NSString *) aKey;
 - (NSDictionary *) primaryKeyFieldValues;
+- (NSDictionary *) allValues;
 @end

@@ -642,6 +642,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				updatedPkey = YES;
 
                 //Currently we assume that the user knows the updated objects' IDs.
+				objectIDs = [NSArray arrayWithObject: objectID];
 #if 0
 				//Transaction for locking the rows (?)
 				if (YES == autocommits)
@@ -705,7 +706,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						[ids addObject: currentID];
 					}
 					retval = ids;
-					objectIDs = ids;
+					
+					//FIXME: if the preprocessor if above gets removed, this if could be removed as well.
+					//If the ids have been set earlier, don't replace them.
+					if (nil == objectIDs)
+						objectIDs = ids;
 				}
 				
 				//Update the object

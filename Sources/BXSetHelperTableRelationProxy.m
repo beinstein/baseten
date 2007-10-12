@@ -68,12 +68,13 @@
 			TSEnumerate (currentHelperID, e, [filteredIDs [i] objectEnumerator])
 			{
 				[pkeyFValues removeAllObjects];
+				NSDictionary* helperValues = [(BXDatabaseObjectID *) currentHelperID allValues];
 				TSEnumerate (currentFieldArray, e, [fieldNames objectEnumerator])
 				{
 					NSString* helperFName = [currentFieldArray objectAtIndex: 0];
 					NSString* fName = [currentFieldArray objectAtIndex: 1];
 					
-					[pkeyFValues setObject: [currentHelperID valueForKey: helperFName] forKey: fName];
+					[pkeyFValues setObject: [helperValues objectForKey: helperFName] forKey: fName];
 					BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: [mRelationship destinationEntity] 
 																   primaryKeyFields: pkeyFValues];
 					[targetArrays [i] addObject: objectID];

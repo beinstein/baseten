@@ -27,6 +27,7 @@
 //
 
 #import "BXDatabaseAdditions.h"
+#import "BXDatabaseObjectPrivate.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXConstants.h"
@@ -199,6 +200,11 @@
         }
     }
     return rval;
+}
+
+- (NSString *) BXAttributeName
+{
+	return self;
 }
 @end
 
@@ -413,7 +419,9 @@
     BOOL retval = NO;
     id expressions [2] = {[self leftExpression], [self rightExpression]};
     BOOL createNew = NO;
-    
+    NSDictionary* values = nil;
+	
+	//FIXME: reconsider this in the future.
     for (int i = 0; i < 2; i++)
     {
         if (NSConstantValueExpressionType == [expressions [i] expressionType])
@@ -422,8 +430,17 @@
             if ([attribute isKindOfClass: [BXAttributeDescription class]])
             {
                 createNew = YES;
-                expressions [i] = [NSExpression expressionForConstantValue: 
-                    [anObject objectForKey: attribute]];
+				
+				//Stupid optimizations for objectIDs and database objects.
+				//In case we have an object id or only need a fault, get the value dict.
+				if (nil == values)
+					values = [(BXDatabaseObject *) anObject allValues];
+				NSString* name = [attribute name];
+				id value = [values objectForKey: name];
+				if (nil == value)
+					value = [anObject primitiveValueForKey: name];
+					
+                expressions [i] = [NSExpression expressionForConstantValue: value];
             }
         }
     }

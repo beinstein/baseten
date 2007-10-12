@@ -56,7 +56,9 @@
 - (NSString *) description
 {
 	return [NSString stringWithFormat: @"<%@ (%p) name: %@ entity: %@ destinationEntity: %@>",
-		[self class], self, [self name], [self entity], [self destinationEntity]];
+		[self class], self, [self name], 
+		(void *) [[self entity] name] ?: [self entity], 
+		(void *) [[self destinationEntity] name] ?: [self destinationEntity]];
 }
 
 - (BXEntityDescription *) destinationEntity

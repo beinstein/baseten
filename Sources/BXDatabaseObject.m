@@ -764,6 +764,11 @@ ParseSelector (SEL aSelector, NSString** key)
 
 @implementation BXDatabaseObject (PrivateMethods)
 
+- (NSDictionary *) allValues
+{
+	return [self cachedValues];
+}
+
 /**
  * \internal
  * Register the object with a context.
@@ -867,15 +872,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     @synchronized (mValues)
     {
-        //Emptying the cache sends a KVO notification.
-		[self willChangeValueForKey: aKey];
-
-        if (nil == aValue)
-            [mValues removeObjectForKey: aKey];
-        else
-            [mValues setValue: aValue forKey: aKey];
-        
-		[self didChangeValueForKey: aKey];
+		[self setCachedValue2: aValue forKey: aKey];
     }
 }
 
@@ -888,11 +885,21 @@ ParseSelector (SEL aSelector, NSString** key)
     @synchronized (mValues)
     {
 		TSEnumerate (currentKey, e, [aDict keyEnumerator])
-			[self willChangeValueForKey: currentKey];
-        [mValues addEntriesFromDictionary: aDict];
-		TSEnumerate (currentKey, e, [aDict keyEnumerator])
-			[self didChangeValueForKey: currentKey];
+			[self setCachedValue2: [aDict objectForKey: currentKey] forKey: currentKey];
     }
+}
+
+- (void) setCachedValue2: (id) aValue forKey: (NSString *) aKey
+{
+	//Emptying the cache sends a KVO notification.
+	[self willChangeValueForKey: aKey];
+	
+	if (nil == aValue)
+		[mValues removeObjectForKey: aKey];
+	else
+		[mValues setValue: aValue forKey: [aKey BXAttributeName]];
+	
+	[self didChangeValueForKey: aKey];	
 }
 
 - (void) setCreatedInCurrentTransaction: (BOOL) aBool

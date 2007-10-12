@@ -383,4 +383,15 @@ bail:
 	[[context registeredObjectWithID: self] setDeleted: status];
 }
 
+- (NSDictionary *) allValues
+{
+	NSDictionary* retval = nil;
+	BOOL ok = [[self class] parseURI: mURIRepresentation
+							  entity: NULL
+							  schema: NULL
+					primaryKeyFields: &retval];
+	log4AssertLog (ok, @"Expected URI to have been parsed correctly: %@", mURIRepresentation);
+	return retval;
+}
+
 @end

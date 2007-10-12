@@ -117,4 +117,9 @@
 	}
 }
 
+- (NSString *) BXAttributeName
+{
+	return mName;
+}
+
 @end

@@ -132,13 +132,14 @@
     //Then update an object's primary key
     number = [NSNumber numberWithInt: -1];
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
-    [context executeUpdateEntity: updatetest
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"id"]
+    [context executeUpdateObject: object
+						  entity: updatetest
                        predicate: predicate
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"id"]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
-    MKCAssertEqualObjects (number, [object valueForKey: @"id"]);
+    MKCAssertEqualObjects ([object valueForKey: @"id"], number);
     
     //Then delete an object
     predicate = [NSPredicate predicateWithFormat: @"id = -1"];

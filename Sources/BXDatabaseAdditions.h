@@ -60,6 +60,7 @@ enum BXModificationType;
 + (NSString *) BXURLEncodedData: (NSData *) data;
 - (NSData *) BXURLDecodedData;
 - (NSArray *) BXKeyPathComponentsWithQuote: (NSString *) quoteString;
+- (NSString *) BXAttributeName;
 @end
 
 

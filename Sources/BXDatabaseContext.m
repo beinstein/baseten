@@ -1861,11 +1861,12 @@ static BOOL gHaveAppKitFramework = NO;
                     //FIXME: do we need this either?
                     [[recorder recordWithPersistentTarget: self] faultKeys: [aDict allKeys] inObjectsWithIDs: objectIDs];
                     
+					//For undo
                     //Undo manager does things in reverse order
                     if (![mUndoManager groupsByEvent])
                         [mUndoManager beginUndoGrouping];
                     //Fault the keys since it probably wouldn't make sense to do it in -undoWithRedoInvocations:
-                    [[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: NO];
+                    [[mUndoManager prepareWithInvocationTarget: self] updatedObjectsInDatabase: objectIDs faultObjects: YES];
                     if (createdSavepoint)
                         [[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
                     [[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
