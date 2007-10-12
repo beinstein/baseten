@@ -316,6 +316,21 @@ static unsigned int _serial;
     return rval;
 }
 
+- (Class) classForFieldNamed: (NSString *) aName
+{
+	return [self classForFieldAtIndex: [fieldnames tagForKey: aName]];
+}
+
+- (Class) classForFieldAtIndex: (int) fieldIndex
+{
+	Class retval = Nil;
+	if (!deserializedFields)
+		[self beginDeserialization];
+	if (fieldIndex < fields)
+        retval = valueClassArray [fieldIndex];
+	return retval;
+}
+
 - (BOOL) setFieldClassesFromArray: (NSArray *) classes
 {
     int count = [classes count];

@@ -84,6 +84,8 @@
 @interface PGTSResultSet (Serialization)
 - (void) setDeterminesFieldClassesAutomatically: (BOOL) aBool;
 - (BOOL) determinesFieldClassesAutomatically;
+- (Class) classForFieldNamed: (NSString *) aName;
+- (Class) classForFieldAtIndex: (int) fieldIndex;
 - (BOOL) setClass: (Class) aClass forFieldNamed: (NSString *) aName;
 - (BOOL) setClass: (Class) aClass forFieldAtIndex: (int) fieldIndex;
 - (BOOL) setFieldClassesFromArray: (NSArray *) classes;

@@ -192,6 +192,21 @@
     return rval;
 }
 
+- (PGTSFieldInfo *) fieldInfoForFieldNamed: (NSString *) aName
+{
+	PGTSFieldInfo* retval = nil;
+	NSArray* allFields = [self allFields];
+	TSEnumerate (currentField, e, [allFields objectEnumerator])
+	{
+		if ([[currentField name] isEqualToString: aName])
+		{
+			retval = currentField;
+			break;
+		}
+	}
+	return retval;
+}
+
 - (NSArray *) uniqueIndexes;
 {
     if (nil == uniqueIndexes)

@@ -65,6 +65,7 @@
 - (NSArray *) uniqueIndexes;
 - (PGTSIndexInfo *) primaryKey;
 - (PGTSFieldInfo *) fieldInfoForFieldAtIndex: (unsigned int) anIndex;
+- (PGTSFieldInfo *) fieldInfoForFieldNamed: (NSString *) aName;
 - (NSArray *) allFields;
 - (NSSet *) foreignKeys;
 - (NSSet *) referencingForeignKeys;
