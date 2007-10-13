@@ -46,7 +46,7 @@ enum BXDatabaseObjectKeyType
 - (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError;
 - (void) setCachedValue: (id) aValue forKey: (NSString *) aKey;
 - (void) setCachedValuesForKeysWithDictionary: (NSDictionary *) aDict;
-- (void) setCachedValue2: (id) aValue forKey: (NSString *) aKey;
+- (void) setCachedValue2: (id) aValue forKey: (id) aKey;
 - (void) BXDatabaseContextWillDealloc;
 - (id) valueForUndefinedKey: (NSString *) aKey;
 - (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey;

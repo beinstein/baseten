@@ -87,7 +87,13 @@ struct trustResult
 - (void) undoWithRedoInvocations: (NSArray *) invocations;
 - (void) redoInvocations: (NSArray *) invocations;
 - (void) rollbackToLastSavepoint;
-- (void) reregisterObjects: (NSArray *) objectIDs values: (NSDictionary *) pkeyValues;
+//- (void) reregisterObjects: (NSArray *) objectIDs values: (NSDictionary *) pkeyValues;
+- (void) undoUpdateObjects: (NSArray *) objectIDs 
+					oldIDs: (NSArray *) oldIDs 
+		  createdSavepoint: (BOOL) createdSavepoint 
+			   updatedPkey: (BOOL) updatedPkey 
+				   oldPkey: (NSDictionary *) oldPkey
+		   redoInvocations: (NSArray *) redoInvocations;
 @end
 
 

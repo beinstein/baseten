@@ -504,13 +504,6 @@ ParseSelector (SEL aSelector, NSString** key)
 				[mContext executeUpdateObject: self entity: nil predicate: nil
 							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: aKey]
 										error: &error];
-				
-				if (kBXDatabaseObjectPrimaryKey == keyType)
-				{
-					[mContext unregisterObject: self];
-					[self registerWithContext: mContext entity: nil];
-				}
-				
                 break;
 			}
 				
@@ -890,17 +883,19 @@ ParseSelector (SEL aSelector, NSString** key)
     }
 }
 
-- (void) setCachedValue2: (id) aValue forKey: (NSString *) aKey
+- (void) setCachedValue2: (id) aValue forKey: (id) givenKey
 {
+	NSString* key = [givenKey BXAttributeName];
+	
 	//Emptying the cache sends a KVO notification.
-	[self willChangeValueForKey: aKey];
+	[self willChangeValueForKey: key];
 	
 	if (nil == aValue)
-		[mValues removeObjectForKey: aKey];
+		[mValues removeObjectForKey: key];
 	else
-		[mValues setValue: aValue forKey: [aKey BXAttributeName]];
+		[mValues setValue: aValue forKey: key];
 	
-	[self didChangeValueForKey: aKey];	
+	[self didChangeValueForKey: key];
 }
 
 - (void) setCreatedInCurrentTransaction: (BOOL) aBool
