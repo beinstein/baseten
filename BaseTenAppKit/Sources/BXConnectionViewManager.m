@@ -277,9 +277,8 @@ static NSArray* gManuallyNotifiedKeys = nil;
     {
         NSString* scheme = [baseURI scheme];
         NSString* uriString = mGivenHostname;
-        if (NO == [uriString hasPrefix: scheme])
-            uriString = [scheme stringByAppendingString: uriString];
-		NSURL* userURI = [NSURL URLWithString: uriString];
+		NSURL* userURI = [[[NSURL alloc] initWithScheme: scheme host: uriString 
+                                                   path: [baseURI path]] autorelease];
 		if (nil != userURI)
 		{
 			databaseURI = [baseURI BXURIForHost: [userURI host] database: mDatabaseName
