@@ -705,8 +705,17 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * Callback for saving the row into the database.
  * \note BXDatabaseContext may create new objects during redo causing awakeFromInsert to be invoked for them.
+ *       This could be checked by sending -isRedoing to the context's undo manager.
  */
 - (void) awakeFromInsert
+{
+}
+
+/**
+ * Callback for turning into a fault.
+ * This method will be called if any of the object's fields is faulted.
+ */
+- (void) didTurnIntoFault
 {
 }
 
@@ -745,13 +754,10 @@ ParseSelector (SEL aSelector, NSString** key)
     return NO;
 }
 
+/** Returns NO. */
 + (BOOL) automaticallyNotifiesObserversForKey: (NSString *) aKey
 {
 	return NO;
-}
-
-- (void) didTurnIntoFault
-{
 }
 @end
 

@@ -68,7 +68,7 @@
 }
 
 
-/** Name of the object */
+/** Name of the object. */
 - (NSString *) name
 {
     return [[mName retain] autorelease];

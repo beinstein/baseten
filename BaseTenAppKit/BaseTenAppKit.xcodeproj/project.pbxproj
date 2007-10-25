@@ -212,8 +212,6 @@
 				53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */,
 				532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */,
 				532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */,
-				53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */,
-				53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */,
 				531060190B905E44009329AD /* NSController Subclasses */,
 				5310601A0B905E59009329AD /* Panels */,
 				53726DAD0A30E8FD0086BB60 /* Transformers */,
@@ -233,6 +231,8 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */,
+				53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */,
 				5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */,
 				5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */,
 				537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */,
@@ -550,7 +550,6 @@
 					"$(BUILT_PRODUCTS_DIR)",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INIT_ROUTINE = _BaseTenAppKitInitFramework;
 				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
@@ -595,7 +594,6 @@
 					"$(BUILT_PRODUCTS_DIR)",
 				);
 				INFOPLIST_FILE = Info.plist;
-				INIT_ROUTINE = _BaseTenAppKitInitFramework;
 				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
 				LIBRARY_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
 				OTHER_LDFLAGS = "-headerpad_max_install_names";

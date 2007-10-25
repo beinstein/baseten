@@ -38,6 +38,9 @@
 static TSNonRetainedObjectSet* gProperties;
 
 
+/**
+ * A superclass for various description classes.
+ */
 @implementation BXPropertyDescription
 
 /** \note Override dealloc2 in subclasses instead! */

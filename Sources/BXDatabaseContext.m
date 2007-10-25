@@ -366,11 +366,23 @@ static BOOL gHaveAppKitFramework = NO;
     return [mObjects objectForKey: objectID];
 }
 
+/**
+ * Registered database objects.
+ * Looks up objects from the cache. The database is not queried in any case.
+ * \return An NSArray of cached objects and NSNulls.
+ */
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs
 {
     return [self registeredObjectsWithIDs: objectIDs nullObjects: YES];
 }
 
+/**
+ * Registered database objects.
+ * Looks up objects from the cache. The database is not queried in any case.
+ * \param returnNullObjects Whether the returned array should be filled with NSNulls
+ *                          if corresponding objects were not found.
+ * \return An NSArray of cached objects and possibly NSNulls.
+ */
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs nullObjects: (BOOL) returnNullObjects
 {
     NSArray* rval = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
@@ -578,6 +590,11 @@ static BOOL gHaveAppKitFramework = NO;
         [object faultKey: nil];
 }
 
+/**
+ * The notification center for this context.
+ * Context-related notifications, such as the connection notifications,
+ * are posted to this notification center instead of the default notification center.
+ */
 - (NSNotificationCenter *) notificationCenter
 {
     if (nil == mNotificationCenter)
@@ -717,6 +734,7 @@ static BOOL gHaveAppKitFramework = NO;
 	}
 	[self updatedObjectsInDatabase: oldIDs faultObjects: YES];
 }
+
 @end
 
 
@@ -1134,7 +1152,12 @@ static BOOL gHaveAppKitFramework = NO;
     return rval;
 }
 
-
+/**
+ * Objects with given IDs.
+ * If the objects do not exists yet, they get created.
+ * The database is not queried in any case. It is the user's responsibility to
+ * provide this method with valid IDs.
+ */
 - (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error
 {
     NSMutableSet* rval = nil;
@@ -1624,7 +1647,7 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * \name Convenience methods for getting entity descriptions
+ * \name Getting entity descriptions
  */
 //@{
 /** Entity for a table in a given schema */
@@ -2300,7 +2323,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     AddKeychainAttribute (kSecAuthenticationTypeItemAttr, &authType, 
                           sizeof (SecAuthenticationType), attributeBuffer);
 
-    //For some reason we can't look for only non-invalid items
+    //FIXME: For some reason we can't look for only non-invalid items
 #if 0
     Boolean allowNegative = FALSE;
     AddKeychainAttribute (kSecNegativeItemAttr, &allowNegative, sizeof (Boolean), attributeBuffer);

@@ -49,9 +49,9 @@ static TSNonRetainedObjectDictionary* gEntities;
  * Only one entity description instance is created for a combination of a database,
  * a schema and a table.
  *
- * This class is not thread-safe, i.e. 
- * if methods of an BXEntityDescription instance will be called from 
- * different threads the result is undefined.
+ * \note This class is not thread-safe, i.e. 
+ *       if methods of an BXEntityDescription instance will be called from 
+ *       different threads the result is undefined.
  */
 @implementation BXEntityDescription
 
@@ -212,7 +212,7 @@ bail:
 }
 
 /**
- * Set the class for the entity.
+ * Set the class for this entity.
  * Objects fetched using this entity are instances of
  * the given class, which needs to be a subclass of BXDatabaseObject.
  * \param       cls         The object class
@@ -232,7 +232,7 @@ bail:
 }
 
 /**
- * The class for the entity
+ * The class for this entity
  * \return          The default class is BXDatabaseObject
  */
 - (Class) databaseObjectClass
@@ -346,13 +346,17 @@ bail:
 /**
  * Entity validation.
  * The entity will be validated after database connection has been made. Afterwards, 
- * -fields, -primaryKeyFields and -attributesByName return meaningful values.
+ * -fields, -primaryKeyFields, -attributesByName and -relationshipsByName return meaningful values.
  */
 - (BOOL) isValidated
 {
 	return mFlags & kBXEntityIsValidated;
 }
 
+/**
+ * Relationships for this entity.
+ * \return An NSDictionary with NSStrings as keys and BXRelationshipDescriptions as objects.
+ */
 - (NSDictionary *) relationshipsByName
 {
 	return [mRelationships dictionary];

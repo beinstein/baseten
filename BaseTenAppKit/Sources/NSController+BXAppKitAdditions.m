@@ -49,6 +49,9 @@
 @end
 
 
+/**
+ * Some methods used by BaseTen in BXArrayController.
+ */
 @implementation NSController (BXCocoaAdditions)
 
 /** 
@@ -104,8 +107,7 @@
 }
 
 /** 
- * \internal
- * Return the database context. 
+ * The database context. 
  */
 - (BXDatabaseContext *) BXDatabaseContext
 {
@@ -116,7 +118,6 @@
 }
 
 /** 
- * \internal 
  * The window in which all the edited NSControls are. 
  */
 - (NSWindow *) BXWindow
@@ -124,6 +125,9 @@
     return nil;
 }
 
+/**
+ * An error handler.
+ */
 - (void) BXHandleError: (NSError *) error
 {
     [[NSAlert alertWithError: error] beginSheetModalForWindow: [self BXWindow] 

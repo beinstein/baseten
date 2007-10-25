@@ -2,7 +2,7 @@
 // Functions.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2007 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -31,21 +31,3 @@
 #import "BXObjectStatusToColorTransformer.h"
 #import "BXObjectStatusToEditableTransformer.h"
 
-
-extern void BaseTenAppKitInitFramework ()
-{
-    static int tooLate = 0;
-    if (0 == tooLate)
-    {
-        tooLate = 1;
-        
-        // Register the transformers with the names that we refer to them with
-        BXObjectStatusToColorTransformer* transformer = [[BXObjectStatusToColorTransformer alloc] init];        
-        [NSValueTransformer setValueTransformer: transformer
-                                        forName: @"BXObjectStatusToColorTransformer"];
-        [transformer release];
-        transformer = [[BXObjectStatusToEditableTransformer alloc] init];
-        [NSValueTransformer setValueTransformer: transformer
-                                        forName: @"BXObjectStatusEditable"];
-    }
-}

@@ -51,6 +51,17 @@
 	if (NO == tooLate)
 	{
 		tooLate = YES;
+        
+        // Register the transformers with the names that we refer to them with
+        BXObjectStatusToColorTransformer* transformer = [[BXObjectStatusToColorTransformer alloc] init];        
+        [NSValueTransformer setValueTransformer: transformer
+                                        forName: @"BXObjectStatusToColorTransformer"];
+        [transformer release];
+        transformer = [[BXObjectStatusToEditableTransformer alloc] init];
+        [NSValueTransformer setValueTransformer: transformer
+                                        forName: @"BXObjectStatusToEditableTransformer"];
+        [transformer release];
+        
 		[BXDatabaseContext loadedAppKitFramework];
 	}
 }
@@ -110,11 +121,17 @@
     [super dealloc];
 }
 
+/**
+ * The entity used with this array controller.
+ */
 - (BXEntityDescription *) entityDescription
 {
     return mEntityDescription;
 }
 
+/**
+ * Set the entity used with this array controller.
+ */
 - (void) setEntityDescription: (BXEntityDescription *) desc
 {
 	mEntityDescription = desc;
@@ -126,6 +143,7 @@
 }
 
 /**
+ * Set the database context.
  * \internal
  * \see setFetchesOnAwake:
  */
@@ -172,6 +190,8 @@
 }
 
 /**
+ * Whether this controller fetches on connect.
+ * \note Controllers bound to an automatically-fetching controller should not fetch on connect.
  * \internal
  * \see setDatabaseContext:
  */
@@ -214,11 +234,17 @@
 	}
 }
 
+/**
+ * Database schema name for this controller.
+ */
 - (NSString *) schemaName
 {
     return mSchemaName; 
 }
 
+/**
+ * Set the database schema name for this controller.
+ */
 - (void) setSchemaName: (NSString *) aSchemaName
 {
     if (mSchemaName != aSchemaName) 
@@ -228,11 +254,17 @@
     }
 }
 
+/**
+ * Database table name for this controller.
+ */
 - (NSString *) tableName
 {
     return mTableName; 
 }
 
+/**
+ * Set the database table name for this controller.
+ */
 - (void) setTableName: (NSString *) aTableName
 {
     if (mTableName != aTableName) 
@@ -242,11 +274,18 @@
     }
 }
 
+/**
+ * Database object class name for this controller.
+ * When setting the database context, this will be changed into a Class.
+ */
 - (NSString *) databaseObjectClassName
 {
     return mDBObjectClassName; 
 }
 
+/**
+ * Set the database object class name for this controller.
+ */
 - (void) setDatabaseObjectClassName: (NSString *) aDBObjectClassName
 {
     if (mDBObjectClassName != aDBObjectClassName) 

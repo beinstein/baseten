@@ -39,6 +39,10 @@
 #import "BXSetRelationProxy.h"
 #import "BXDatabaseObjectPrivate.h"
 
+/**
+ * A description for one-to-many relationships as well as a superclass for others.
+ * Relationships between entities are defined with foreign keys in the database.
+ */
 @implementation BXRelationshipDescription
 
 - (void) dealloc
@@ -61,22 +65,35 @@
 		(void *) [[self destinationEntity] name] ?: [self destinationEntity]];
 }
 
+/**
+ * Destination entity for this relationship.
+ */
 - (BXEntityDescription *) destinationEntity
 {
     return mDestinationEntity;
 }
 
+/**
+ * Inverse relationship for this relationship.
+ * In BaseTen, inverse relationships always exist.
+ */
 - (BXRelationshipDescription *) inverseRelationship
 {
 	return [[mDestinationEntity relationshipsByName] objectForKey: mInverseName];
 }
 
+/**
+ * Delete rule for this relationship.
+ */
 - (NSDeleteRule) deleteRule
 {
 	//See relationship creation in BXPGInterface.
 	return mDeleteRule;
 }
 
+/**
+ * Whether this relationship is one-to-many.
+ */
 - (BOOL) isToMany
 {
 	return !mIsInverse;
