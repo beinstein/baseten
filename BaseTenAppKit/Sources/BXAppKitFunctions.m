@@ -28,6 +28,4 @@
 
 #import <Cocoa/Cocoa.h>
 #import "BXAppKitFunctions.h"
-#import "BXObjectStatusToColorTransformer.h"
-#import "BXObjectStatusToEditableTransformer.h"
 

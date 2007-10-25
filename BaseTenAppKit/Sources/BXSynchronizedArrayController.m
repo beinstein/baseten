@@ -33,6 +33,8 @@
 #import <Log4Cocoa/Log4Cocoa.h>
 #import "BXSynchronizedArrayController.h"
 #import "NSController+BXAppKitAdditions.h"
+#import "BXObjectStatusToColorTransformer.h"
+#import "BXObjectStatusToEditableTransformer.h"
 
 
 #define LOG_POSITION() fprintf( stderr, "Now at %s:%d\n", __FILE__, __LINE__ )
