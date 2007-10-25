@@ -697,7 +697,6 @@ static BOOL gHaveAppKitFramework = NO;
 				   oldPkey: (NSDictionary *) oldPkey
 		   redoInvocations: (NSArray *) redoInvocations
 {
-	NSLog (@"old: %@ new: %@ oldvals: %@", oldIDs, objectIDs, oldPkey);
 	[[mUndoManager prepareWithInvocationTarget: self] redoInvocations: redoInvocations];
 	
 	TSEnumerate (currentID, e, [objectIDs objectEnumerator])
