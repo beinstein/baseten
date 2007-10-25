@@ -42,6 +42,7 @@
 /**
  * A description for one-to-many relationships as well as a superclass for others.
  * Relationships between entities are defined with foreign keys in the database.
+ * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  */
 @implementation BXRelationshipDescription
 

@@ -23,7 +23,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: BXRelationshipDescription.h 225 2007-07-12 08:33:55Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
 #import <Foundation/Foundation.h>
@@ -32,9 +32,6 @@
 
 @class BXForeignKey;
 
-/**
- * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
- */
 @interface BXRelationshipDescription : BXPropertyDescription
 {
 	//FIXME: If entity objects are made non-persistent, 

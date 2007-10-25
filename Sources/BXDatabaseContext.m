@@ -359,7 +359,7 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * A registered database object.
  * Looks up an object from the cache. The database is not queried in any case.
- * \return The cached object or nil
+ * \return The cached object or nil.
  */
 - (BXDatabaseObject *) registeredObjectWithID: (BXDatabaseObjectID *) objectID
 {
@@ -369,6 +369,7 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Registered database objects.
  * Looks up objects from the cache. The database is not queried in any case.
+ * \param objectIDs         The object IDs to look for.
  * \return An NSArray of cached objects and NSNulls.
  */
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs
@@ -379,6 +380,7 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Registered database objects.
  * Looks up objects from the cache. The database is not queried in any case.
+ * \param objectIDs         The object IDs to look for.
  * \param returnNullObjects Whether the returned array should be filled with NSNulls
  *                          if corresponding objects were not found.
  * \return An NSArray of cached objects and possibly NSNulls.
