@@ -325,6 +325,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		rval = [res resultAsArray];
 	else
 	{
+        //FIXME: reason for error?
 		*error = [NSError errorWithDomain: kBXErrorDomain
 									 code: kBXErrorUnsuccessfulQuery
 								 userInfo: nil];
@@ -340,6 +341,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		rval = [res numberOfRowsAffectedByCommand];
 	else
 	{
+        //FIXME: reason for error?
 		*error = [NSError errorWithDomain: kBXErrorDomain
 									 code: kBXErrorUnsuccessfulQuery
 								 userInfo: nil];		

@@ -699,16 +699,6 @@ static BOOL gHaveAppKitFramework = NO;
 {
 	[[mUndoManager prepareWithInvocationTarget: self] redoInvocations: redoInvocations];
 	
-	TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-	{
-		enum BXModificationType modificationType = [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID];
-		[(id) mModifiedObjectIDs BXSetModificationType: modificationType forKey: currentID];
-		
-		//Remember the modification type for ROLLBACK.
-		if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
-			[(id) mModifiedObjectIDs BXSetModificationType: kBXUpdateModification forKey: currentID];
-	}
-
 	if (createdSavepoint)
 		[self rollbackToLastSavepoint];
 	
@@ -763,7 +753,7 @@ static BOOL gHaveAppKitFramework = NO;
  * Fetch objects from the database.
  * Instead of fetching the field values, the context can retrieve objects that
  * contain only the object ID. The other values get fetched on-demand.\n
- * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:updateAutomatically:error: with updateAutomatically set to NO.
+ * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:updateAutomatically:error: with \c updateAutomatically set to NO.
  *
  * \param       entity          The entity from which the information is retrieved
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
@@ -791,7 +781,7 @@ static BOOL gHaveAppKitFramework = NO;
  * that are excluded from the query results. The returned objects are 
  * faults. Values for the non-excluded fields are cached, though.\n
  * Essentially calls #executeFetchForEntity:withPredicate:excludingFields:updateAutomatically:error:
- * with updateAutomatically set to NO.
+ * with \c updateAutomatically set to NO.
  *
  * \param       entity          The entity from which the information is retrieved
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
@@ -1889,12 +1879,22 @@ static BOOL gHaveAppKitFramework = NO;
 #endif
                     
 					//For undo
+                    //Undo manager does things in reverse order.
 					[[mUndoManager prepareWithInvocationTarget: self] undoUpdateObjects: objectIDs
 																				 oldIDs: oldIDs
 																	   createdSavepoint: createdSavepoint
 																			updatedPkey: updatedPkey
 																				oldPkey: oldPkey
-																		redoInvocations: [recorder recordedInvocations]];
+																		redoInvocations: [recorder recordedInvocations]];                    
+
+                    //Set the modification type. No need for undo since insert and delete override this anyway.
+                    TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+                    {
+                        enum BXModificationType modificationType = [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID];
+                        if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
+                            [(id) mModifiedObjectIDs BXSetModificationType: kBXUpdateModification forKey: currentID];
+                    }
+                    
 					//FIXME: move this to the if block where oldIDs are set.
 					if (updatedPkey)
 					{
@@ -2063,7 +2063,15 @@ static BOOL gHaveAppKitFramework = NO;
     TSEnumerate (currentObject, e, [[self registeredObjectsWithIDs: ids] objectEnumerator])
     {
         if ([NSNull null] != currentObject)
-            [currentObject faultKey: nil]; //TODO: set the keys correctly
+        {
+            if (nil == keys)
+                [currentObject faultKey: nil];
+            else
+            {
+                TSEnumerate (currentKey, e, [keys objectEnumerator])
+                    [currentObject faultKey: currentKey];
+            }
+        }
     }
 }
 
