@@ -795,9 +795,9 @@
 			);
 			projectRoot = "";
 			targets = (
+				53EFE9F20BA96464008666B7 /* BaseTen */,
 				5368D60E0A3711C800D136DC /* BaseTen Static */,
 				8DC2EF4F0486A6940098B216 /* BaseTen subframeworks */,
-				53EFE9F20BA96464008666B7 /* BaseTen */,
 			);
 		};
 /* End PBXProject section */
