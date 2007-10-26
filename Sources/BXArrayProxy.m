@@ -33,6 +33,7 @@
 
 /**
  * An NSArray or NSMutableArray-style self-updating container proxy.
+ * \ingroup BaseTen
  */
 @implementation BXArrayProxy
 

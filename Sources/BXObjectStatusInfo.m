@@ -33,6 +33,7 @@
 
 /**
  * A proxy for retrieving database object status.
+ * \ingroup BaseTen
  */
 @implementation BXObjectStatusInfo
 

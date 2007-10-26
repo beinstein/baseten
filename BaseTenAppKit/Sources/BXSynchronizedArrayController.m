@@ -44,6 +44,7 @@
 
 /**
  * An NSArrayController subclass for use with BaseTen.
+ * \ingroup BaseTenAppKit
  */
 @implementation BXSynchronizedArrayController
 

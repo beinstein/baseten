@@ -71,6 +71,7 @@ static BOOL gHaveAppKitFramework = NO;
  * This class is not thread-safe, i.e. 
  * if methods of a BXDatabaseContext instance will be called from 
  * different threads the result is undefined and deadlocks are possible.
+ * \ingroup BaseTen
  */
 @implementation BXDatabaseContext
 

@@ -40,6 +40,7 @@ static TSNonRetainedObjectSet* gProperties;
 
 /**
  * A superclass for various description classes.
+ * \ingroup BaseTen
  */
 @implementation BXPropertyDescription
 

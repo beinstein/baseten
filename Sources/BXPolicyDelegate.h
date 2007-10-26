@@ -30,8 +30,9 @@
 #import <Security/Security.h>
 
 /**
- * A protocol for SSL connection delegate.
+ * A protocol for an SSL connection delegate.
  * In the future the delegate might have influence on other policies.
+ * \ingroup BaseTen
  */
 @interface NSObject (BXPolicyDelegate)
 /**

@@ -124,7 +124,6 @@
 		53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8120B666C7900C3D20A /* libssl.dylib */; };
 		53E01F4D0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53E01F4E0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */; };
-		53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
 		53E11A270A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A250A791A8D00D0107C /* ExceptionHandling.framework */; };
 		53EFEA960BA98028008666B7 /* BXDatabaseObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		8DC2EF530486A6940098B216 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
@@ -390,7 +389,6 @@
 			files = (
 				5314B1A60A371968001D8F54 /* Foundation.framework in Frameworks */,
 				531B00DA0A519FD4006AEF08 /* libPGTSTiger.a in Frameworks */,
-				53E11A260A791A8D00D0107C /* ExceptionHandling.framework in Frameworks */,
 				53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */,
 				53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */,
 				531266E50B68F9CA00637EDA /* Security.framework in Frameworks */,

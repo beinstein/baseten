@@ -39,7 +39,29 @@
 
 
 /**
+ * \defgroup BaseTen
+ * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
+ * has been designed with familiar, Core Data -like semantics and APIs. With this 1.0 Release Candidate 
+ * 2 version, a final 1.0 release is very near and it is safe to start development with the current BaseTen API.
+ *
+ * The BaseTen feature highlights include:
+ * \li BaseTen Assistant imports Core Data / Xcode data models
+ * \li Discovers the database schema automatically at runtime, including 1-1, 1-many and many-many relationships
+ * \li Database changes are propagated to clients automatically, without polling
+ * \li In-memory database objects are uniqued, and objects fetched via relationships are faults by default
+ * \li Support for RDBMS features like database-driven data validation, multi-column primary keys and updateable views
+ * \li Autocommit and manual save/rollback modes, both with NSUndoManager integration
+ * \li A BaseTen-aware NSArrayController subclass automates locking and change propagation
+ * \li Fetches are specified with NSPredicates (the relevant portions of which are evaluated on the database)
+ *
+ * BaseTen is linked to Foundation and Security frameworks and libcrypto and libssl dynamic libraries. 
+ * Therefore it can be used to develop applications that don't require the graphical user interface.
+ * CoreData is used only for some constants and is only needed when the framework itself is being built. 
+ */
+
+/**
  * \page postgreSQLInstallation PostgreSQL installation
+ * Here's a brief tutorial on PostgreSQL installation.
  * \li Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.
  * \li Uncompress, configure, make, [sudo] make install. No special options are required, so 
  *     \c <tt>./configure && make && sudo make install</tt> is enough.
@@ -66,9 +88,11 @@
  */
  
 /**
- * \page dpLimitations Limitations in Developer Preview
- * \li Renaming tables after having them prepared for modification observing will not work. Should tables need to be renamed, 
- *     first cancel modification observing, then rename the table and finally prepare it again.
+ * \page limitations Limitations in current version
+ * 
+ * These are some of the most severe limitations in the current version.
+ * \li Renaming tables after having them prepared for modification observing will not work.
+ *     Should tables need to be renamed, first cancel modification observing, then rename the table and finally prepare it again.
  * \li Changing tables' primary keys after having them prepared for modification observing will not work. Use the method 
  *     described above.
  * \li Practically all public classes are non-thread-safe, so thread safety must be enforced externally if it's required.

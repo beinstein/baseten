@@ -30,6 +30,7 @@
 
 /**
  * A BaseTen-specific exception.
+ * \ingroup BaseTen
  */
 @implementation BXException
 @end

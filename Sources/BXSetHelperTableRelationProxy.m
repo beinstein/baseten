@@ -38,6 +38,7 @@
 
 /**
  * An NSCountedSet-style self-updating container proxy for many-to-many relationships.
+ * \ingroup BaseTen
  */
 @implementation BXSetHelperTableRelationProxy
 

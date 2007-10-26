@@ -32,6 +32,7 @@
 /**
  * Determines whether an object is editable based on its status.
  * If object has been edited or deleted in another transaction, it won't be editable.
+ * \ingroup BaseTenAppKit
  */
 @implementation BXObjectStatusToEditableTransformer
 

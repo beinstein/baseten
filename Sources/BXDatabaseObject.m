@@ -118,6 +118,7 @@ ParseSelector (SEL aSelector, NSString** key)
  * or its subclasses. The class is KVC-compliant. It is not 
  * thread-safe, i.e. if methods of an BXDatabaseObject instance will be called from 
  * different threads the result is undefined and deadlocks are possible.
+ * \ingroup BaseTen
  */
 @implementation BXDatabaseObject
 

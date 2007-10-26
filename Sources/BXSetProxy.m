@@ -31,6 +31,7 @@
 
 /**
  * An NSCountedSet-style self-updating container proxy.
+ * \ingroup BaseTen
  */
 @implementation BXSetProxy
 
