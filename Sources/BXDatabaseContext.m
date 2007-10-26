@@ -309,7 +309,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Disconnect from the database during an asynchronous connection attempt.
- * Cancels a connection attempt. Presently this method should be invoked after -connect or -connect: if desired.
+ * Cancels a connection attempt. Presently this method should be invoked after #connect or #connect: if desired.
  * After the connection has been made, it has no effect.
  */
 - (void) disconnect
@@ -481,7 +481,7 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Set the policy delegate.
  * The delegate object will not be retained.
- * \see BXPolicyDelegate
+ * \see NSObject(BXPolicyDelegate)
  */
 - (void) setPolicyDelegate: (id) anObject
 {
@@ -1729,9 +1729,8 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Connect to the database.
  * Hand over the connection setup to \c mConnectionSetupManager. In BaseTenAppKit 
- * applications, a \c BXNetServiceConnector will be created automatically if 
+ * applications, a BXNetServiceConnector will be created automatically if 
  * one doesn't exist.
- * \see BXNetServiceConnector
  */
 - (IBAction) connect: (id) sender
 {

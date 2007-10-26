@@ -40,7 +40,7 @@ static TSNonRetainedObjectSet* gProperties;
 
 /**
  * A superclass for various description classes.
- * \ingroup BaseTen
+ * \ingroup Descriptions
  */
 @implementation BXPropertyDescription
 
@@ -54,6 +54,7 @@ static TSNonRetainedObjectSet* gProperties;
 	if (0) [super dealloc];
 }
 
+/** Deallocation helper. */
 - (void) dealloc2
 {
 	[super dealloc];

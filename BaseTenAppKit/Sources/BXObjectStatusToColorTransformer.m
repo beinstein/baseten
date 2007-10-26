@@ -33,7 +33,7 @@
 /**
  * Transforms an object status to a colour.
  * Presently, grey corresponds to a locked object and red to a deleted object.
- * \ingroup BaseTenAppKit
+ * \ingroup ValueTransformers
  */
 @implementation BXObjectStatusToColorTransformer
 

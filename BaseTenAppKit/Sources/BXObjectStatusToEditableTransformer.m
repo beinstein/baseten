@@ -30,9 +30,9 @@
 #import <BaseTen/BXDatabaseObject.h>
 
 /**
- * Determines whether an object is editable based on its status.
+ * Transforms and object's status into a boolean indicating, whether it's editable or not.
  * If object has been edited or deleted in another transaction, it won't be editable.
- * \ingroup BaseTenAppKit
+ * \ingroup ValueTransformers
  */
 @implementation BXObjectStatusToEditableTransformer
 

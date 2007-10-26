@@ -71,7 +71,7 @@
 	
 	/** An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;
-	/** A delegate for policies. Currently used with SSL connections. */
+	/** A delegate for policies. Currently used with SSL connections. \see NSObject(BXPolicyDelegate) */
 	IBOutlet id								policyDelegate;
 
     BOOL									mLogsQueries;

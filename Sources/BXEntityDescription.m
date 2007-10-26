@@ -52,7 +52,7 @@ static TSNonRetainedObjectDictionary* gEntities;
  * \note This class is not thread-safe, i.e. 
  *       if methods of an BXEntityDescription instance will be called from 
  *       different threads the result is undefined.
- * \ingroup BaseTen
+ * \ingroup Descriptions
  */
 @implementation BXEntityDescription
 
@@ -80,7 +80,7 @@ static TSNonRetainedObjectDictionary* gEntities;
     return nil;
 }
 
-/** \note In subclasses override -dealloc2 instead! */
+/** \note Override -dealloc2 in subclasses instead! */
 - (void) dealloc
 {
 	@synchronized (gEntities)
@@ -351,7 +351,7 @@ bail:
 /**
  * Entity validation.
  * The entity will be validated after a database connection has been made. Afterwards, 
- * -fields, -primaryKeyFields, -attributesByName and -relationshipsByName return meaningful values.
+ * #fields, #primaryKeyFields, #attributesByName and #relationshipsByName return meaningful values.
  */
 - (BOOL) isValidated
 {

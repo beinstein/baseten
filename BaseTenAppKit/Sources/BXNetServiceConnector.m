@@ -38,7 +38,7 @@
  * A connection setup manager for use with Bonjour.
  * Determines connection information from the database URI
  * and then presents dialogs for the missing information.
- * \note Presently one is created automatically in -[BXDatabaseContext connect:].
+ * \note Presently one is created automatically in BXDatabaseContext::connect:.
  * \ingroup BaseTenAppKit
  */
 @implementation BXNetServiceConnector 

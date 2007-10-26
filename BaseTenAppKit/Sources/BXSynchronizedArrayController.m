@@ -148,7 +148,7 @@
 /**
  * Set the database context.
  * \internal
- * \see setFetchesOnAwake:
+ * \see #setFetchesOnAwake:
  */
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx
 {
@@ -196,7 +196,7 @@
  * Whether this controller fetches on connect.
  * \note Controllers bound to an automatically-fetching controller should not fetch on connect.
  * \internal
- * \see setDatabaseContext:
+ * \see #setDatabaseContext:
  */
 - (void) setFetchesOnConnect: (BOOL) aBool
 {

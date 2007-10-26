@@ -198,7 +198,7 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * Value or objects from the database.
  * Look up the value from cache or ask the database context to fetch it.
- * Currently this method calls -primitiveValueForKey:.
+ * Currently this method calls #primitiveValueForKey:.
  * \param   aKey    A BXAttributeDescription.
  * \return          An object or an NSArray of BXDatabaseObjects.
  */
@@ -547,7 +547,7 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * Set multiple values.
  * This is not merely a convenience method; invoking this is potentially much faster than 
- * repeatedly using -setPrimitiveValue:forKey:. However, for foreign keys, -setPrimitiveValue:forKey: 
+ * repeatedly using #setPrimitiveValue:forKey:. However, for foreign keys, #setPrimitiveValue:forKey: 
  * should be used instead or the collection proxy be modified directly.
  */
 - (void) setPrimitiveValuesForKeysWithDictionary: (NSDictionary *) aDict
@@ -694,7 +694,7 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * \name Methods that subclasses might override
  * \brief
- * \note When fetching values, -primitiveValueForKey: will always be used.
+ * \note When fetching values, #primitiveValueForKey: will always be used.
  */
 //@{
 //

@@ -36,10 +36,7 @@
 
 /**
  * A generic self-updating container proxy.
- * The context will change the container's contents according to its filter predicate 
- * after each relevant modification to the database. NSKeyValueObserving is 
- * implemented in the container.
- * \ingroup BaseTen
+ * \ingroup AutoContainers
  */
 @implementation BXContainerProxy
 

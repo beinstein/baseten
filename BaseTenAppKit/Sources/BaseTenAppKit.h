@@ -32,9 +32,15 @@
 #import <BaseTenAppKit/BXAuthenticationPanel.h>
 
 /**
- * \defgroup BaseTenAppKit
+ * \defgroup BaseTenAppKit BaseTenAppKit
  * BaseTenAppKit is a separate framework with AppKit bindings.
  * Its contains a subclass of NSArrayController, namely 
  * BXArrayController, generic connection panels for use with
  * Bonjour and manually entered addresses and value transformers.
  */
+
+/**
+ * \defgroup ValueTransformers Value Transformers
+ * \ingroup BaseTenAppKit
+ */
+

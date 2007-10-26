@@ -33,7 +33,7 @@
 
 /**
  * An abstract superclass for various description classes.
- * \ingroup BaseTen
+ * \ingroup Descriptions
  */
 @implementation BXAbstractDescription
 
