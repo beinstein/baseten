@@ -59,13 +59,16 @@
 	[super encodeWithCoder: coder];
 }
 
-/** Whether the attribute is part of the primary key for its entity. */
+/** Whether the attribute is part of the primary key of its entity. */
 - (BOOL) isPrimaryKey
 {
 	return (mFlags & kBXPropertyPrimaryKey ? YES : NO);
 }
 
-/** Whether the attribute will be excluded from fetches and queried only when needed. */
+/** 
+ * Whether the attribute will be excluded from fetches and queried only when needed. 
+ * \see BXDatabaseContext::executeFetchForEntity:withPredicate:excludingFields:error:
+ */
 - (BOOL) isExcluded
 {
 	return (mFlags & kBXPropertyExcluded ? YES : NO);

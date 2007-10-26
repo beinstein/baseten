@@ -46,8 +46,8 @@ static TSNonRetainedObjectDictionary* gEntities;
 /**
  * An entity description contains information about a specific table
  * in a given database.
- * Only one entity description instance is created for a combination of a database,
- * a schema and a table.
+ * Only one entity description instance is created for a combination of a database
+ * URI, a schema and a table.
  *
  * \note This class is not thread-safe, i.e. 
  *       if methods of an BXEntityDescription instance will be called from 
@@ -80,7 +80,7 @@ static TSNonRetainedObjectDictionary* gEntities;
     return nil;
 }
 
-/** \note In subclasses override dealloc2 instead! */
+/** \note In subclasses override -dealloc2 instead! */
 - (void) dealloc
 {
 	@synchronized (gEntities)
@@ -103,6 +103,7 @@ static TSNonRetainedObjectDictionary* gEntities;
 	if (0) [super dealloc];
 }
 
+/** Deallocation helper. */
 - (void) dealloc2
 {
 	[mRelationships release];
@@ -214,9 +215,9 @@ bail:
 
 /**
  * Set the class for this entity.
- * Objects fetched using this entity are instances of
+ * Objects fetched using this entity will be instances of
  * the given class, which needs to be a subclass of BXDatabaseObject.
- * \param       cls         The object class
+ * \param       cls         The object class.
  */
 - (void) setDatabaseObjectClass: (Class) cls
 {
@@ -234,7 +235,7 @@ bail:
 
 /**
  * The class for this entity
- * \return          The default class is BXDatabaseObject
+ * \return          The default class is BXDatabaseObject.
  */
 - (Class) databaseObjectClass
 {
@@ -289,6 +290,7 @@ bail:
  * Primary key fields for this entity.
  * The fields get determined automatically after database connection has been made.
  * \return          An array of BXAttributeDescriptions
+ * \see #isValidated
  */
 - (NSArray *) primaryKeyFields
 {
@@ -300,8 +302,9 @@ bail:
 }
 
 /** 
- * Fields for this entity.
+ * Non-primary key fields for this entity.
  * \return          An array of BXAttributeDescriptions
+ * \see #isValidated
  */
 - (NSArray *) fields
 {
@@ -338,6 +341,7 @@ bail:
  * Attributes for this entity.
  * Primary key fields and other fields for this entity.
  * \return          An NSDictionary with NSStrings as keys and BXAttributeDescriptions as objects.
+ * \see #isValidated
  */
 - (NSDictionary *) attributesByName
 {
@@ -346,7 +350,7 @@ bail:
 
 /**
  * Entity validation.
- * The entity will be validated after database connection has been made. Afterwards, 
+ * The entity will be validated after a database connection has been made. Afterwards, 
  * -fields, -primaryKeyFields, -attributesByName and -relationshipsByName return meaningful values.
  */
 - (BOOL) isValidated

@@ -181,7 +181,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /** 
  * A convenience method for retrieving values for multiple keys. 
- * \param   keys    An NSArray of NSStrings
+ * \param   keys    An NSArray of NSStrings.
  * \return          The requested values.
  */
 - (NSArray *) valuesForKeys: (NSArray *) keys
@@ -197,7 +197,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Value or objects from the database.
- * Look up the value from the cache or ask the database context to fetch it.
+ * Look up the value from cache or ask the database context to fetch it.
  * Currently this method calls -primitiveValueForKey:.
  * \param   aKey    A BXAttributeDescription.
  * \return          An object or an NSArray of BXDatabaseObjects.
@@ -209,7 +209,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /** 
  * A convenience method for retrieving values for multiple keys. 
- * \param   keys    An NSArray of BXAttributeDescriptions 
+ * \param   keys    An NSArray of BXAttributeDescriptions.
  * \return          The requested values.
  */
 - (NSArray *) objectsForKeys: (NSArray *) keys
@@ -264,7 +264,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * The object's ID. 
+ * The object ID. 
  * This method doesn't cause a fault to fire.
  */
 - (BXDatabaseObjectID *) objectID
@@ -274,7 +274,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Predicate for this object.
- * This method doesn't cause a fault to fire.
+ * This method might cause a fault to fire.
  */
 - (NSPredicate *) predicate
 {
@@ -286,7 +286,7 @@ ParseSelector (SEL aSelector, NSString** key)
         {
             NSExpression* lhs = [NSExpression expressionForConstantValue: currentAttr];
             NSExpression* rhs = [NSExpression expressionForConstantValue: 
-                [self cachedValueForKey: [currentAttr name]]];
+                [self primitiveValueForKey: [currentAttr name]]];
             [predicates addObject: [NSComparisonPredicate predicateWithLeftExpression: lhs 
                                                                       rightExpression: rhs
                                                                              modifier: NSDirectPredicateModifier
@@ -344,7 +344,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * A proxy for monitoring the object status.
+ * A proxy for monitoring the object's status.
  * Returns a proxy that can be used with BXObjectStatusToEditableTransformer and
  * BXObjectStatusToColorTransformer.
  * This method doesn't cause a fault to fire.
@@ -399,6 +399,7 @@ ParseSelector (SEL aSelector, NSString** key)
  * Value from the object's cache.
  * This method is thread-safe and doesn't cause a fault to fire.
  * \return      The value in question or nil, if it has not been fetched from the database yet.
+ *              NSNulls represent nil values.
  */
 - (id) cachedValueForKey: (NSString *) aKey
 {
@@ -412,9 +413,11 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Value or objects from the database.
- * Look up the value from the cache or ask the database context to fetch it.
+ * Look up the value from cache or ask the database context to fetch it.
+ * Calls super's implementation of -valueForUndefinedKey: if the key isn't known.
  * \param   aKey    Name of the column or a relationship.
- * \return          An object or a self-updating NSSet-style collection of BXDatabaseObjects.
+ * \return          nil for null values. Otherwise an object or a 
+ *                  self-updating NSSet-style collection of BXDatabaseObjects.
  */
 - (id) primitiveValueForKey: (NSString *) aKey
 {
@@ -476,7 +479,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /** 
  * Set value for a given key in the database.
- * \param   aVal    The new value.
+ * \param   aVal    The new value. May be nil for ordinary columns.
  * \param   aKey    An NSString.
  */
 - (void) setPrimitiveValue: (id) aVal forKey: (NSString *) aKey
@@ -544,8 +547,8 @@ ParseSelector (SEL aSelector, NSString** key)
 /**
  * Set multiple values.
  * This is not merely a convenience method; invoking this is potentially much faster than 
- * repeatedly using -setPrimitiveValue:forKey:. For foreign keys, -setPrimitiveValue:forKey: 
- * should be used instead.
+ * repeatedly using -setPrimitiveValue:forKey:. However, for foreign keys, -setPrimitiveValue:forKey: 
+ * should be used instead or the collection proxy be modified directly.
  */
 - (void) setPrimitiveValuesForKeysWithDictionary: (NSDictionary *) aDict
 {
@@ -589,13 +592,13 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * Whether the given key s faulted or not.
+ * Whether the given key is faulted or not.
  * This method doesn't cause a fault to fire.
  * \param   aKey    An NSString. May be nil, in which case the object
  *                  is considered a fault if value for any of its keys is
  *                  not cached.
  * \return  0 if the corresponding value is in cache, 1 if not, 
- *          -1 if the key is presently unknown.
+ *          -1 if the key is unknown.
  */
 - (int) isFaultKey: (NSString *) aKey
 {
@@ -627,8 +630,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Values from the object's cache.
- * This method is thread-safe.
- * This method doesn't cause a fault to fire.
+ * This method is thread-safe and doesn't cause a fault to fire.
  * \return      An NSDictionary which contains the cached values.
  */
 - (NSDictionary *) cachedValues
@@ -654,7 +656,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Whether the object has beed deleted or is going to be deleted after the next commit.
+ * Whether the object has beed deleted or is going to be deleted in the next commit.
  * This method doesn't cause a fault to fire.
  */
 - (BOOL) isDeleted
@@ -662,8 +664,9 @@ ParseSelector (SEL aSelector, NSString** key)
     return (kBXObjectExists != mDeleted);
 }
 
+//FIXME: documentation bug? This method's behaviour should be checked with Core Data.
 /**
- * Whether the object has been inserted in a previous transaction.
+ * Whether the object has been inserted to the database in a previous transaction.
  * If the object has been deleted, this method returns YES.
  * This method doesn't cause a fault to fire.
  */
@@ -690,14 +693,14 @@ ParseSelector (SEL aSelector, NSString** key)
 @implementation BXDatabaseObject (Subclassing)
 /**
  * \name Methods that subclasses might override
- * \note Subclasses should not assume that their accessors would be used
- *       when resolving relationships. Instead, -primitiveValueForKey: will be used.
+ * \brief
+ * \note When fetching values, -primitiveValueForKey: will always be used.
  */
 //@{
 //
 /**
  * Callback for deserializing the row.
- * Called once after fetch or firing a fault.
+ * Called once after a fetch or firing a fault.
  */
 - (void) awakeFromFetch
 {
@@ -705,8 +708,9 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * Callback for saving the row into the database.
- * \note BXDatabaseContext may create new objects during redo causing awakeFromInsert to be invoked for them.
- *       This could be checked by sending -isRedoing to the context's undo manager.
+ * \note BXDatabaseContext may create new objects during redo causing their 
+ *       -awakeFromInsert method to be invoked. This could be checked by 
+ *       sending -isRedoing to the context's undo manager.
  */
 - (void) awakeFromInsert
 {

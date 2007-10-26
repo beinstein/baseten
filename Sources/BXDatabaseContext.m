@@ -65,12 +65,12 @@ static BOOL gHaveAppKitFramework = NO;
 
 /** 
  * The database context. 
- * A database context connects to a given database, creates objects
- * using the rows and sends commands to the database.
+ * A database context connects to a given database, sends queries and commands to it and
+ * creates objects from rows in its tables.
  *
- * This class is not thread-safe, i.e. 
- * if methods of a BXDatabaseContext instance will be called from 
- * different threads the result is undefined and deadlocks are possible.
+ * \note This class is not thread-safe, i.e. 
+ *		 if methods of a BXDatabaseContext instance will be called from 
+ *		 different threads the result is undefined and deadlocks are possible.
  * \ingroup BaseTen
  */
 @implementation BXDatabaseContext
@@ -277,7 +277,8 @@ static BOOL gHaveAppKitFramework = NO;
  * Connect to the database.
  * This method returns immediately.
  * After the attempt, either a \c kBXConnectionSuccessfulNotification or a 
- * \c kBXConnectionFailedNotification will be posted.
+ * \c kBXConnectionFailedNotification will be posted to the context's
+ * notification center.
  */
 - (void) connect
 {
@@ -307,7 +308,7 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * Disconnect from a database during asynchronous connection attempt.
+ * Disconnect from the database during an asynchronous connection attempt.
  * Cancels a connection attempt. Presently this method should be invoked after -connect or -connect: if desired.
  * After the connection has been made, it has no effect.
  */
@@ -330,12 +331,12 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Set the query execution method.
- * When autocommit is not on, savepoints are inserted after each query
- * and undo is available. Changes do not get propagated immediately.
+ * In manual commit mode, savepoints are inserted after each query
+ * Changes don't get propagated immediately to other clients.
  * Instead, other users get information about locked rows.
  * If the context gets deallocated during a transaction, a ROLLBACK
  * is sent to the database.
- * \param   aBool   Whether or not to use autocommit
+ * \param   aBool   Whether or not to use autocommit.
  */
 - (void) setAutocommits: (BOOL) aBool
 {
@@ -347,7 +348,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Query execution method
- * \return          A BOOL indicating whether autocommit is in use or not.
+ * \return          A BOOL indicating whether or not autocommit is in use.
  */
 - (BOOL) autocommits
 {
@@ -358,7 +359,7 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * A registered database object.
+ * Retrieve a registered database object.
  * Looks up an object from the cache. The database is not queried in any case.
  * \return The cached object or nil.
  */
@@ -368,7 +369,7 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * Registered database objects.
+ * Retrieve registered database objects.
  * Looks up objects from the cache. The database is not queried in any case.
  * \param objectIDs         The object IDs to look for.
  * \return An NSArray of cached objects and NSNulls.
@@ -379,7 +380,7 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * Registered database objects.
+ * Retrieve registered database objects.
  * Looks up objects from the cache. The database is not queried in any case.
  * \param objectIDs         The object IDs to look for.
  * \param returnNullObjects Whether the returned array should be filled with NSNulls
@@ -419,7 +420,7 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Enable or disable query logging.
  * \param   aBool       A boolean indicating whether query logging 
- *                      should be enabled or not
+ *                      should be enabled or not.
  */
 - (void) setLogsQueries: (BOOL) aBool
 {
@@ -429,8 +430,7 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * The undo manager used by the context.
- * \return          The undo manager.
+ * The undo manager used by this context.
  */
 - (NSUndoManager *) undoManager
 {
@@ -443,7 +443,7 @@ static BOOL gHaveAppKitFramework = NO;
  * can be sent to a window's undo manager, for example. The change is done only if there isn't an
  * open undo group in the current undo manager.
  * \param       aManager    The supplied undo manager
- * \return                  Whether changing the undo manager was successful or not
+ * \return                  Whether or not changing the undo manager was successful.
  */
 - (BOOL) setUndoManager: (NSUndoManager *) aManager
 {
@@ -467,7 +467,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Set the NSWindow used with various sheets.
- * If set to nil, ordinary panels will be used.
+ * If set to nil, application modal alerts will be used.
  */
 - (void) setModalWindow: (NSWindow *) aWindow
 {
@@ -479,8 +479,9 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * Set a policy delegate.
+ * Set the policy delegate.
  * The delegate object will not be retained.
+ * \see BXPolicyDelegate
  */
 - (void) setPolicyDelegate: (id) anObject
 {
@@ -583,7 +584,7 @@ static BOOL gHaveAppKitFramework = NO;
  *               If YES, this is a no-op.
  * \param object The object to fault.
  * \note         Since changes always get sent to the database immediately, this method's behaviour
- *		         is a bit different than its counterpart's in Core Data. When firing a fault, the database
+ *		         is a bit different than in Core Data. When firing a fault, the database
  *               gets queried in any case.
  * \see          BXDatabaseObject::faultKey:
  */
@@ -595,8 +596,8 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * The notification center for this context.
- * Context-related notifications, such as the connection notifications,
- * are posted to this notification center instead of the default notification center.
+ * Context-related notifications, such as connection notifications,
+ * are posted to this notification center instead of the default center.
  */
 - (NSNotificationCenter *) notificationCenter
 {
@@ -745,7 +746,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 /** 
  * \name Retrieving objects from the database.
- * The methods block until the query result has been retrieved.\n
+ * These methods block until the result has been retrieved.\n
  * If the method execution fails and the \c error parameter is NULL, a BXException named 
  * \c kBXExceptionUnhandledError is thrown.\n
  * If the method execution fails and the \c error parameter is not NULL, the given 
@@ -756,11 +757,11 @@ static BOOL gHaveAppKitFramework = NO;
  * Fetch objects from the database.
  * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:error: with \c returningFaults set to NO.
  *  
- * \param       entity          The entity from which the information is retrieved
+ * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
+ * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
  *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time.
@@ -776,13 +777,13 @@ static BOOL gHaveAppKitFramework = NO;
  * contain only the object ID. The other values get fetched on-demand.\n
  * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:updateAutomatically:error: with \c updateAutomatically set to NO.
  *
- * \param       entity          The entity from which the information is retrieved
+ * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
  * \param       returnFaults    A boolean indicating whether faults should
  *                              be returned or not.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
+ * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
  *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time.
@@ -804,13 +805,13 @@ static BOOL gHaveAppKitFramework = NO;
  * Essentially calls #executeFetchForEntity:withPredicate:excludingFields:updateAutomatically:error:
  * with \c updateAutomatically set to NO.
  *
- * \param       entity          The entity from which the information is retrieved
+ * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
  * \param       excludedFields  An NSArray containing the BXPropertyDescriptors for the columns
  *                              that should be excluded. May be nil.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
+ * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
  *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time.
@@ -828,18 +829,17 @@ static BOOL gHaveAppKitFramework = NO;
 /** 
  * Fetch objects from the database.
  * The result array can be set to be updated automatically. 
- * \param       entity          The entity from which the information is retrieved
+ * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
- * \param       returnFaults    A boolean indicating whether faults should be returned or not
+ * \param       returnFaults    A boolean indicating whether faults should be returned or not.
  * \param       shouldUpdate    A boolean indicating whether the results 
- *                              should be updated by the context or not
+ *                              should be updated by the context or not.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
+ * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
  *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
- *                              execution time, or a subclass of NSProxy that forwards
- *                              messages to the array
+ *                              execution time, or an automatically updating NSArray proxy.
  */
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     returningFaults: (BOOL) returnFaults updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
@@ -853,19 +853,18 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Fetch objects from the database.
  * The result array can be set to be updated automatically.
- * \param       entity          The entity from which the information is retrieved
+ * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
  * \param       excludedFields  An NSArray containing the BXPropertyDescriptors for the columns
  *                              that should be excluded. May be nil.
  * \param       shouldUpdate    A boolean indicating whether the results 
- *                              should be updated by the context or not
+ *                              should be updated by the context or not.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
+ * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
  *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
- *                              execution time, or a subclass of NSProxy that forwards
- *                              messages to the array
+ *                              execution time, or an automatically updating NSArray proxy.
  */
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     excludingFields: (NSArray *) excludedFields updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
@@ -884,13 +883,13 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Create a new database object.
  * Essentially inserts a new row into the database and retrieves it.
- * \param       entity           The target entity
+ * \param       entity           The target entity.
  * \param       givenFieldValues Initial values for fields. May be nil or left empty if
  *                               values for the primary key can be determined by the database.
  * \param       error            If an error occurs, this pointer is set to an NSError instance.
  *                               May be NULL.
- * \return                       A subclass of BXDatabaseObject or nil, if an error has occured
- * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
+ * \return                       A subclass of BXDatabaseObject or nil, if an error has occured.
+ * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
  *              and a database object couldn't be created.
  */
 - (id) createObjectForEntity: (BXEntityDescription *) entity 
@@ -998,11 +997,11 @@ static BOOL gHaveAppKitFramework = NO;
 /**
  * Delete a database object.
  * Essentially this method deletes a single row from the database.
- * \param       anObject        The object to be deleted
+ * \param       anObject        The object to be deleted.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \return                      A boolean indicating whether the deletion was successful or not
- * \throw       BXException with name \c kBXExceptionUnhandledError if \c error is NULL 
+ * \return                      A boolean indicating whether the deletion was successful or not.
+ * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
  *                              and a database object couldn't be deleted.
  */
 - (BOOL) executeDeleteObject: (BXDatabaseObject *) anObject error: (NSError **) error
@@ -1012,8 +1011,8 @@ static BOOL gHaveAppKitFramework = NO;
 //@}
 
 /**
- * Rollback the transaction.
- * Guaranteed to succeed
+ * Rollback the transaction ina manual commit mode.
+ * Guaranteed to succeed.
  */
 - (void) rollback
 {
@@ -1072,9 +1071,9 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * Commit the current transaction.
+ * Commit the current transaction in manual commit mode.
  * Undo will be disabled after this.
- * \return      A boolean indicating whether the commit was successful or not
+ * \return      A boolean indicating whether the commit was successful or not.
  */
 - (BOOL) save: (NSError **) error
 {
@@ -1100,7 +1099,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Fetch an object with a given ID.
- * The database is queried only if the object is not cached.
+ * The database is queried only if the object isn't in cache.
  */
 - (id) objectWithID: (BXDatabaseObjectID *) anID error: (NSError **) error
 {
@@ -1129,7 +1128,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Objects with given IDs.
- * If the objects do not exists yet, they get created.
+ * If the objects do not exist yet, they get created.
  * The database is not queried in any case. It is the user's responsibility to
  * provide this method with valid IDs.
  */
@@ -1156,10 +1155,8 @@ static BOOL gHaveAppKitFramework = NO;
 }
 
 /**
- * Objects with given IDs.
- * If the objects do not exists yet, they get created.
- * The database is not queried in any case. It is the user's responsibility to
- * provide this method with valid IDs.
+ * Fetch objects with given IDs.
+ * The database is queried only if the object aren't in cache.
  */
 - (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error
 {
@@ -1653,7 +1650,7 @@ static BOOL gHaveAppKitFramework = NO;
  * \name Getting entity descriptions
  */
 //@{
-/** Entity for a table in a given schema */
+/** Entity for a table in the given schema */
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error
 {
     return [self entityForTable: tableName
@@ -1708,7 +1705,7 @@ static BOOL gHaveAppKitFramework = NO;
 /** 
  * Commit the changes.
  * \param sender Ignored.
- * \throw A BXException named \c kBXFailedToExecuteQueryException if commit fails
+ * \throw A BXException named \c kBXFailedToExecuteQueryException if commit fails.
  */
 - (IBAction) saveDocument: (id) sender
 {
@@ -1722,7 +1719,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Rollback the changes.
- * \param sender Ignored
+ * \param sender Ignored.
  */
 - (IBAction) revertDocumentToSaved: (id) sender
 {
@@ -1731,8 +1728,10 @@ static BOOL gHaveAppKitFramework = NO;
 
 /**
  * Connect to the database.
- * Hand over the connection setup to mConnectionSetupManager. Presently, a 
- * \c BXNetServiceConnector will be created automatically if one doesn't exist.
+ * Hand over the connection setup to \c mConnectionSetupManager. In BaseTenAppKit 
+ * applications, a \c BXNetServiceConnector will be created automatically if 
+ * one doesn't exist.
+ * \see BXNetServiceConnector
  */
 - (IBAction) connect: (id) sender
 {
@@ -1745,8 +1744,11 @@ static BOOL gHaveAppKitFramework = NO;
 			[mConnectionSetupManager setDatabaseContext: self];
 			[mConnectionSetupManager setModalWindow: modalWindow];
 		}
-		[mConnectionSetupManager connect: sender];
-		[self setCanConnect: NO];
+		if (nil != mConnectionSetupManager)
+		{
+			[mConnectionSetupManager connect: sender];
+			[self setCanConnect: NO];
+		}
 	}
 }
 //@}
