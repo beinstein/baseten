@@ -30,6 +30,8 @@
 #import <string.h>
 #import <ctype.h>
 #import <Log4Cocoa/Log4Cocoa.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
@@ -577,14 +579,18 @@ ParseSelector (SEL aSelector, NSString** key)
                 if (! [pkeyFNames containsObject: currentKey])
                 {
                     didBecomeFault = YES;
+					[self willChangeValueForKey: currentKey];
                     [mValues removeObjectForKey: currentKey];
+					[self didChangeValueForKey: currentKey];
                 }
 			}
         }
         else if (! [pkeyFNames containsObject: aKey] && [mValues objectForKey: aKey])
         {
             didBecomeFault = YES;
+			[self willChangeValueForKey: aKey];
             [mValues removeObjectForKey: aKey];
+			[self didChangeValueForKey: aKey];
         }
     }
 	if (didBecomeFault)
