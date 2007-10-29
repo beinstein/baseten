@@ -39,7 +39,8 @@
 
 
 /**
- * \defgroup BaseTen BaseTen
+ * \mainpage Introduction
+ *
  * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
  * has been designed with familiar, Core Data -like semantics and APIs. With this 1.0 Release Candidate 
  * 2 version, a final 1.0 release is very near and it is safe to start development with the current BaseTen API.
@@ -53,7 +54,10 @@
  * \li Autocommit and manual save/rollback modes, both with NSUndoManager integration
  * \li A BaseTen-aware NSArrayController subclass automates locking and change propagation
  * \li Fetches are specified with NSPredicates (the relevant portions of which are evaluated on the database)
- *
+ */
+
+/**
+ * \defgroup BaseTen BaseTen
  * BaseTen is linked to Foundation and Security frameworks and libcrypto and libssl dynamic libraries. 
  * Therefore it can be used to develop applications that don't require the graphical user interface.
  * CoreData is used only for some constants and is only needed when the framework itself is being built. 
