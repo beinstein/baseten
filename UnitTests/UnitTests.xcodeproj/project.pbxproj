@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
 		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
+		535059B40CDA1CFC00DA25EC /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
 		538263C70CD0EC8000CF7E2D /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		538263C90CD0EC8200CF7E2D /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
@@ -68,6 +69,8 @@
 		531E118C0A6A3A6C003A0F23 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntityTests.m; sourceTree = "<group>"; };
 		5321BEAB0AD4DCDD0011D0C8 /* MTMCollectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MTMCollectionTest.h; sourceTree = "<group>"; };
 		5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTMCollectionTest.m; sourceTree = "<group>"; };
+		535059B20CDA1CFC00DA25EC /* TestLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestLoader.h; sourceTree = "<group>"; };
+		535059B30CDA1CFC00DA25EC /* TestLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestLoader.m; sourceTree = "<group>"; };
 		5373A65C0A6D3F9A0036424B /* ModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModificationTests.h; sourceTree = "<group>"; };
 		5373A65D0A6D3F9A0036424B /* ModificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModificationTests.m; sourceTree = "<group>"; };
 		539C4F5C0C4E389700080667 /* PropagatedModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropagatedModificationTests.h; sourceTree = "<group>"; };
@@ -110,6 +113,8 @@
 				53CEB9EF0B28516F007DAF0D /* MKCSenTestCaseAdditions.h */,
 				53A494830BD4D92E008E850E /* UnitTestAdditions.h */,
 				53A494840BD4D92F008E850E /* UnitTestAdditions.m */,
+				535059B20CDA1CFC00DA25EC /* TestLoader.h */,
+				535059B30CDA1CFC00DA25EC /* TestLoader.m */,
 				530A439D0A5C114E00A4722B /* ConnectTest.h */,
 				530A439E0A5C114E00A4722B /* ConnectTest.m */,
 				531E118B0A6A3A6C003A0F23 /* EntityTests.h */,
@@ -260,7 +265,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Run the unit tests in this test bundle.\nexport NSZombieEnabled=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+			shellScript = "# Run the unit tests in this test bundle.\nexport NSZombieEnabled=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/otest\" -SenTest TestLoader \"build/${BUILD_STYLE}/UnitTests.octest\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -281,6 +286,7 @@
 				538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */,
 				538263C90CD0EC8200CF7E2D /* MTMCollectionTest.m in Sources */,
 				538263CA0CD0EC8300CF7E2D /* UndoTests.m in Sources */,
+				535059B40CDA1CFC00DA25EC /* TestLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
