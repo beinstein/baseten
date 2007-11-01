@@ -66,7 +66,7 @@
 
 
 @interface PGTSConnection (WorkerPrivateMethods)
-- (void) workerThreadMain: (NSLock *) threadLock;
+- (void) workerThreadMain: (NSConditionLock *) threadLock;
 - (BOOL) workerPollConnectionResetting: (BOOL) reset;
 - (void) workerEnd;
 - (void) logQuery: (NSString *) query message: (BOOL) messageDelegate parameters: (NSArray *) parameters;
