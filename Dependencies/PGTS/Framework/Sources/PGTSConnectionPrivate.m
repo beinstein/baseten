@@ -348,7 +348,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 /**
  * Run loop for the worker thread
  */
-- (void) workerThreadMain: (NSLock *) threadStartLock
+- (void) workerThreadMain: (NSConditionLock *) threadStartLock
 {
     [workerThreadLock lock];
     NSAutoreleasePool* threadPool = [[NSAutoreleasePool alloc] init];
@@ -370,7 +370,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
     //Prevent the run loop from exiting immediately
     [runLoop addPort: [NSPort port] forMode: mode];
     
-    [threadStartLock unlock];
+    [threadStartLock unlockWithCondition: 1];
     
     while (haveInputSources && shouldContinueThread)
     {
@@ -396,6 +396,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
  */
 - (BOOL) workerPollConnectionResetting: (BOOL) reset
 {
+	[asyncConnectionLock lock];
     fd_set mask;    
     struct timeval ltimeout = timeout;
     int selectStatus = 0;
@@ -496,7 +497,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
     
     if (messageDelegateAfterConnecting)
         [mainProxy sendFinishedConnectingMessage: connectionStatus reconnect: reset];
-    [asyncConnectionLock unlock];
+    [asyncConnectionLock unlockWithCondition: 1];
 
     return rval;
 }

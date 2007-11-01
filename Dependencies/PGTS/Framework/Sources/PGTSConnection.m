@@ -53,12 +53,11 @@
 
 #define BlockWhileConnecting( CONNECTION_CALL ) { \
     messageDelegateAfterConnecting = NO; \
-    [asyncConnectionLock lock]; \
-    \
     if (YES == CONNECTION_CALL) \
-        [asyncConnectionLock lock]; \
-    \
-    [asyncConnectionLock unlock]; \
+	{ \
+        [asyncConnectionLock lockWhenCondition: 1]; \
+		[asyncConnectionLock unlockWithCondition: 0]; \
+	} \
     messageDelegateAfterConnecting = YES; \
     [self finishConnecting]; \
 }
@@ -187,7 +186,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
         timeout.tv_usec = 0;
         
         workerThreadLock = [[NSLock alloc] init];
-        asyncConnectionLock = [[NSLock alloc] init];
+        asyncConnectionLock = [[NSConditionLock alloc] initWithCondition: 0];
         
         postgresNotificationCenter = [[NSNotificationCenter PGTSNotificationCenter] retain];
         notificationCounts = [[NSCountedSet alloc] init];
@@ -214,12 +213,11 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
         id messenger = [TSRunloopMessenger runLoopMessengerForCurrentRunLoop];
         mainProxy          = [[messenger target: self withResult: NO]  retain];
         returningMainProxy = [[messenger target: self withResult: YES] retain];
-        NSLock* threadStartLock = [[NSLock alloc] init];
+        NSConditionLock* threadStartLock = [[NSConditionLock alloc] initWithCondition: 0];
 
         //Wait for the worker thread to start
-        [threadStartLock lock];
         [NSThread detachNewThreadSelector: @selector (workerThreadMain:) toTarget: self withObject: threadStartLock];
-        [threadStartLock lock];
+        [threadStartLock lockWhenCondition: 1];
         [threadStartLock unlock];
         [threadStartLock release];        
     }
@@ -909,7 +907,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
             messageDelegateAfterConnecting = YES;
             
             //socket               is set in workerThreadMain:
-            asyncConnectionLock  = [[NSLock alloc] init];
+            asyncConnectionLock  = [[NSConditionLock alloc] initWithCondition: 0];
             workerThreadLock     = [[NSLock alloc] init];
             //shouldContinueThread is set in workerThreadMain:
             //threadRunning        is set in workerThreadMain:

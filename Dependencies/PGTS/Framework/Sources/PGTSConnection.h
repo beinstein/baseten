@@ -63,7 +63,7 @@
     NSMutableDictionary* notificationAssociations;
 
 	NSLock* connectionLock;	
-    NSLock* asyncConnectionLock;
+    NSConditionLock* asyncConnectionLock;
     NSLock* workerThreadLock;
 	
     NSString* connectionString;
