@@ -30,17 +30,17 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import <BaseTen/BXDatabaseAdditions.h>
 
-@class ConnectTest;
-@class EntityTests;
-@class ObjectIDTests;
-@class FetchTests;
-@class CreateTests;
-@class ModificationTests;
-@class ForeignKeyTests;
-@class ForeignKeyModificationTests;
-@class MTOCollectionTest;
-@class MTMCollectionTest;
-@class UndoTests;
+#import "ConnectTest.h"
+#import "EntityTests.h"
+#import "ObjectIDTests.h"
+#import "FetchTests.h"
+#import "CreateTests.h"
+#import "ModificationTests.h"
+#import "ForeignKeyTests.h"
+#import "ForeignKeyModificationTests.h"
+#import "MTOCollectionTest.h"
+#import "MTMCollectionTest.h"
+#import "UndoTests.h"
 
 @interface SenTestSuite (BXAdditions)
 - (void) addSuitesForClasses: (NSArray *) anArray;
