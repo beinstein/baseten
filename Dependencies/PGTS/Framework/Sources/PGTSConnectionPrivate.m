@@ -276,7 +276,12 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 {
 	//N.B. No locking
 	SafeCFRelease (socket);
-	SafeCFRelease (socketSource);
+	if (NULL != socketSource)
+	{
+		CFRunLoopSourceInvalidate (socketSource);
+		CFRelease (socketSource);
+		socketSource = NULL;
+	}
 	if (NULL != cancelRequest)
 	{
 		PQfreeCancel (cancelRequest);
@@ -351,6 +356,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 - (void) workerThreadMain: (NSConditionLock *) threadStartLock
 {
     [workerThreadLock lock];
+	[threadStartLock lock];
     NSAutoreleasePool* threadPool = [[NSAutoreleasePool alloc] init];
     socket = NULL;
 	socketSource = NULL;
@@ -381,15 +387,20 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
     }
 	workerProxy = nil;
     returningWorkerProxy = nil;
+	if (NULL != socketSource)
+	{
+		CFRunLoopSourceInvalidate (socketSource);
+		CFRelease (socketSource);
+		socketSource = NULL;
+	}
 	SafeCFRelease (socket);
-	SafeCFRelease (socketSource);
-
 	
     log4Debug (@"Worker: exiting");
     [threadPool release];    
     
     [workerThreadLock unlock];
 }
+
 
 /**
  * Connect or reconnect to the database
@@ -415,8 +426,13 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 		sslSetUp = NO;
         if (YES == reset)
         {
+			if (NULL != socketSource)
+			{
+				CFRunLoopSourceInvalidate (socketSource);
+				CFRelease (socketSource);
+				socketSource = NULL;
+			}
 			SafeCFRelease (socket);
-			SafeCFRelease (socketSource);
         }
         
         //Polling loop
