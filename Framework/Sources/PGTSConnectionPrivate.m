@@ -272,25 +272,6 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
     }    
 }
 
-- (void) disconnectAndCleanup
-{
-	//N.B. No locking
-	SafeCFRelease (socket);
-	if (NULL != socketSource)
-	{
-		CFRunLoopSourceInvalidate (socketSource);
-		CFRelease (socketSource);
-		socketSource = NULL;
-	}
-	if (NULL != cancelRequest)
-	{
-		PQfreeCancel (cancelRequest);
-		cancelRequest = NULL;
-	}
-	PQfinish (connection);
-	connection = NULL;
-}	
-
 - (void) setErrorMessage: (NSString *) aMessage
 {
 	if (errorMessage != aMessage)
@@ -387,13 +368,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
     }
 	workerProxy = nil;
     returningWorkerProxy = nil;
-	if (NULL != socketSource)
-	{
-		CFRunLoopSourceInvalidate (socketSource);
-		CFRelease (socketSource);
-		socketSource = NULL;
-	}
-	SafeCFRelease (socket);
+	[self workerCleanUpDisconnecting: YES];
 	
     log4Debug (@"Worker: exiting");
     [threadPool release];    
@@ -424,16 +399,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
     else
     {
 		sslSetUp = NO;
-        if (YES == reset)
-        {
-			if (NULL != socketSource)
-			{
-				CFRunLoopSourceInvalidate (socketSource);
-				CFRelease (socketSource);
-				socketSource = NULL;
-			}
-			SafeCFRelease (socket);
-        }
+		[self workerCleanUpDisconnecting: NO];
         
         //Polling loop
         while (1)
@@ -505,8 +471,19 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 			CFSocketContext context = {0, self, NULL, NULL, NULL};
 			socket = CFSocketCreateWithNative (NULL, bsdSocket, kCFSocketReadCallBack, &DataAvailable, &context);
 			socketSource = CFSocketCreateRunLoopSource (NULL, socket, 0);
-			//FIXME: check that the source got created?
-			CFRunLoopAddSource (CFRunLoopGetCurrent (), socketSource, kCFRunLoopDefaultMode);
+			log4AssertLog (NULL != socket, @"Expected source to have been created.");
+			log4AssertLog (TRUE == CFSocketIsValid (socket), @"Expected socket to be valid.");
+			log4AssertLog (NULL != socketSource, @"Expected socketSource to have been created.");
+			log4AssertLog (TRUE == CFRunLoopSourceIsValid (socketSource), @"Expected socketSource to be valid.");
+			
+			CFRunLoopRef rl = CFRunLoopGetCurrent ();
+			CFStringRef mode = kCFRunLoopCommonModes;
+			log4AssertLog (FALSE == CFRunLoopContainsSource (rl, socketSource, mode), 
+						   @"Expected run loop not to have socketSource.");
+			CFRunLoopAddSource (rl, socketSource, mode);
+			log4AssertLog (TRUE == CFRunLoopContainsSource (rl, socketSource, mode), 
+						   @"Expected run loop to have socketSource.");
+			
             cancelRequest = PQgetCancel (connection);
         }
     }
@@ -524,6 +501,30 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 	//we also need to cause some action in worker's run loop by invoking this method.
 	shouldContinueThread = NO;
     log4Debug (@"workerEnd");
+}
+
+- (void) workerCleanUpDisconnecting: (BOOL) disconnect
+{
+	[connectionLock lock];
+	SafeCFRelease (socket);
+	if (NULL != socketSource)
+	{
+		CFRunLoopRemoveSource (CFRunLoopGetCurrent (), socketSource, kCFRunLoopCommonModes);
+		CFRunLoopSourceInvalidate (socketSource);
+		CFRelease (socketSource);
+		socketSource = NULL;
+	}
+	if (NULL != cancelRequest)
+	{
+		PQfreeCancel (cancelRequest);
+		cancelRequest = NULL;
+	}
+	if (disconnect && NULL != connection)
+	{
+		PQfinish (connection);
+		connection = NULL;
+	}
+	[connectionLock unlock];	   
 }
 
 - (void) logQuery: (NSString *) query message: (BOOL) messageDelegate parameters: (NSArray *) parameters

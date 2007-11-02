@@ -52,7 +52,6 @@
 - (PGTSResultSet *) resultFromProxy: (volatile PGTSConnection *) proxy status: (int) status;
 - (int) sendResultsToDelegate: (int) status;
 - (void) handleFailedQuery;
-- (void) disconnectAndCleanup;
 - (void) setErrorMessage: (NSString *) aMessage;
 @end
 
@@ -69,6 +68,7 @@
 - (void) workerThreadMain: (NSConditionLock *) threadLock;
 - (BOOL) workerPollConnectionResetting: (BOOL) reset;
 - (void) workerEnd;
+- (void) workerCleanUpDisconnecting: (BOOL) disconnect;
 - (void) logQuery: (NSString *) query message: (BOOL) messageDelegate parameters: (NSArray *) parameters;
 - (void) logNotice: (id) anObject;
 - (void) logNotification: (id) anObject;

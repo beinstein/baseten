@@ -374,9 +374,7 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
        [nc postNotificationName: kPGTSWillDisconnectNotification object: self];
        [[PGTSConnectionPool sharedInstance] removeConnection: self];
        
-       [connectionLock lock];
-	   [self disconnectAndCleanup];       
-       [connectionLock unlock];
+	   [returningWorkerProxy workerCleanUpDisconnecting: YES];	   
        [nc postNotificationName: kPGTSDidDisconnectNotification object: self];
    }
 }
