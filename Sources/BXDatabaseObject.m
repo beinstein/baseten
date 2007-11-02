@@ -574,7 +574,7 @@ ParseSelector (SEL aSelector, NSString** key)
     {
         if (nil == aKey)
         {
-            TSEnumerate (currentKey, e, [mValues keyEnumerator])
+            TSEnumerate (currentKey, e, [[mValues allKeys] objectEnumerator])
 			{
                 if (! [pkeyFNames containsObject: currentKey])
                 {
@@ -802,7 +802,8 @@ ParseSelector (SEL aSelector, NSString** key)
     
     @synchronized (mValues)
     {
-        pkeyFValues = [mValues objectsForKeys: pkeyFNames notFoundMarker: nil];
+        pkeyFValues = [mValues objectsForKeys: pkeyFNames notFoundMarker: [NSNull null]];
+		//FIXME: check for NSNulls.
     }
     
     NSDictionary* pkeyDict = [NSDictionary dictionaryWithObjects: pkeyFValues forKeys: pkeyFNames];

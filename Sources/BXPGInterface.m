@@ -358,7 +358,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
     id rval = nil;
     NSArray* fields = [valueDict allKeys];
     NSArray* fieldNames = [fields BXPGEscapedNames: connection];
-    NSArray* fieldValues = [valueDict objectsForKeys: fields notFoundMarker: nil];
+    NSArray* fieldValues = [valueDict objectsForKeys: fields notFoundMarker: [NSNull null]];
+	//FIXME: check for NSNulls.
 
     log4AssertValueReturn (NULL != error, nil, @"Expected error to be set.");
     log4AssertValueReturn (NO == [connection overlooksFailedQueries], nil, @"Connection should throw when a query fails");

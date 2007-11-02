@@ -40,13 +40,6 @@
 			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
 		};
-		530A43920A5C0FD600A4722B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
-			remoteInfo = "BaseTen Static";
-		};
 		5381F73D0BC282BD008642BA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
@@ -196,7 +189,6 @@
 			);
 			dependencies = (
 				5381F73E0BC282BD008642BA /* PBXTargetDependency */,
-				530A43930A5C0FD600A4722B /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -209,6 +201,7 @@
 		530A43530A5C0DC500A4722B /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 530A43540A5C0DC500A4722B /* Build configuration list for PBXProject "UnitTests" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 530A43510A5C0DC500A4722B;
 			productRefGroup = 530A438D0A5C0FD000A4722B /* Products */;
@@ -293,11 +286,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		530A43930A5C0FD600A4722B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "BaseTen Static";
-			targetProxy = 530A43920A5C0FD600A4722B /* PBXContainerItemProxy */;
-		};
 		5381F73E0BC282BD008642BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = BaseTen;
@@ -310,6 +298,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
@@ -317,6 +306,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
@@ -375,6 +365,7 @@
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;

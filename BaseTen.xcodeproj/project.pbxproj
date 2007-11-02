@@ -15,7 +15,6 @@
 			dependencies = (
 				53EFE9F40BA96469008666B7 /* PBXTargetDependency */,
 				53EFE9F60BA9646D008666B7 /* PBXTargetDependency */,
-				53EFE9F80BA96472008666B7 /* PBXTargetDependency */,
 			);
 			name = BaseTen;
 			productName = BaseTen;
@@ -255,13 +254,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = BaseTenAppKit;
-		};
-		53EFE9F70BA96472008666B7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8D1AC9600486D14A00FE50C9;
-			remoteInfo = BaseTenPalette;
 		};
 		53F523570A51A24D00E7DDC4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -763,6 +755,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "BaseTen" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* BXDatabase */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -1055,11 +1048,6 @@
 			name = BaseTenAppKit;
 			targetProxy = 53EFE9F50BA9646D008666B7 /* PBXContainerItemProxy */;
 		};
-		53EFE9F80BA96472008666B7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BaseTenPalette;
-			targetProxy = 53EFE9F70BA96472008666B7 /* PBXContainerItemProxy */;
-		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1091,12 +1079,14 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
