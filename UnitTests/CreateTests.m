@@ -102,6 +102,7 @@
     [pool release];
 }
 
+//FIXME: perhaps this should be in another test suite?
 - (void) testCreateAndDeleteWithArray
 {	
     NSError* error = nil;

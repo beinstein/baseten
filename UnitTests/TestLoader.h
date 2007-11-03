@@ -30,8 +30,8 @@
 #import <SenTestingKit/SenTestingKit.h>
 
 
-@interface TestLoader : SenTestCase {
-
+@interface TestLoader : SenTestCase 
+{
 }
 
 @end

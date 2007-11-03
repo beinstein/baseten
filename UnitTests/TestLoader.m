@@ -28,7 +28,9 @@
 
 #import "TestLoader.h"
 #import <SenTestingKit/SenTestingKit.h>
+#import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseAdditions.h>
+#import "MKCSenTestCaseAdditions.h"
 
 #import "ConnectTest.h"
 #import "EntityTests.h"
@@ -96,7 +98,8 @@
 		relationshipSuite,
 		nil] objectEnumerator]];
 	
-	[bxSuite run];
+	SenTestRun* run = [bxSuite run];
+	STAssertTrue (0 == [run failureCount], @"Expected tests to succeed.");
 }
 	
 @end

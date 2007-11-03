@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
 		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
-		535059B40CDA1CFC00DA25EC /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
+		53505ADC0CDB54F900DA25EC /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
+		53505ADD0CDB54FA00DA25EC /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
 		538263C70CD0EC8000CF7E2D /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		538263C90CD0EC8200CF7E2D /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
@@ -22,7 +23,6 @@
 		53F8EA680CBFDD0500C000C5 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
 		53F8EA690CBFDD0500C000C5 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
 		53F8EA6B0CBFDD0700C000C5 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
-		53F8EA6C0CBFDD0700C000C5 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,12 +40,12 @@
 			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
 		};
-		5381F73D0BC282BD008642BA /* PBXContainerItemProxy */ = {
+		53D059730CDB8F5800430536 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 53EFE9F20BA96464008666B7;
-			remoteInfo = BaseTen;
+			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
+			remoteInfo = "BaseTen Static";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -188,7 +188,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5381F73E0BC282BD008642BA /* PBXTargetDependency */,
+				53D059740CDB8F5800430536 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -201,7 +201,6 @@
 		530A43530A5C0DC500A4722B /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 530A43540A5C0DC500A4722B /* Build configuration list for PBXProject "UnitTests" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 530A43510A5C0DC500A4722B;
 			productRefGroup = 530A438D0A5C0FD000A4722B /* Products */;
@@ -258,7 +257,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Run the unit tests in this test bundle.\nexport NSZombieEnabled=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/otest\" -SenTest TestLoader \"build/${BUILD_STYLE}/UnitTests.octest\"\n";
+			shellScript = "# Run the unit tests in this test bundle.\n#export NSZombieEnabled=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/otest\" -SenTest TestLoader \"build/${BUILD_STYLE}/UnitTests.octest\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -274,22 +273,22 @@
 				53F8EA680CBFDD0500C000C5 /* FetchTests.m in Sources */,
 				53F8EA690CBFDD0500C000C5 /* ObjectIDTests.m in Sources */,
 				53F8EA6B0CBFDD0700C000C5 /* EntityTests.m in Sources */,
-				53F8EA6C0CBFDD0700C000C5 /* ConnectTest.m in Sources */,
 				538263C70CD0EC8000CF7E2D /* ForeignKeyTests.m in Sources */,
 				538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */,
 				538263C90CD0EC8200CF7E2D /* MTMCollectionTest.m in Sources */,
 				538263CA0CD0EC8300CF7E2D /* UndoTests.m in Sources */,
-				535059B40CDA1CFC00DA25EC /* TestLoader.m in Sources */,
+				53505ADC0CDB54F900DA25EC /* ConnectTest.m in Sources */,
+				53505ADD0CDB54FA00DA25EC /* TestLoader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5381F73E0BC282BD008642BA /* PBXTargetDependency */ = {
+		53D059740CDB8F5800430536 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = BaseTen;
-			targetProxy = 5381F73D0BC282BD008642BA /* PBXContainerItemProxy */;
+			name = "BaseTen Static";
+			targetProxy = 53D059730CDB8F5800430536 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -363,6 +362,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../..\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
