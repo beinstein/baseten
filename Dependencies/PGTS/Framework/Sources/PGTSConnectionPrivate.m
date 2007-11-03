@@ -470,6 +470,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 			
 			CFSocketContext context = {0, self, NULL, NULL, NULL};
 			socket = CFSocketCreateWithNative (NULL, bsdSocket, kCFSocketReadCallBack, &DataAvailable, &context);
+			CFSocketSetSocketFlags (socket, ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (socket));
 			socketSource = CFSocketCreateRunLoopSource (NULL, socket, 0);
 			log4AssertLog (NULL != socket, @"Expected source to have been created.");
 			log4AssertLog (TRUE == CFSocketIsValid (socket), @"Expected socket to be valid.");
@@ -506,13 +507,20 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 - (void) workerCleanUpDisconnecting: (BOOL) disconnect
 {
 	[connectionLock lock];
-	SafeCFRelease (socket);
 	if (NULL != socketSource)
 	{
-		CFRunLoopRemoveSource (CFRunLoopGetCurrent (), socketSource, kCFRunLoopCommonModes);
+		//CFRunLoopRemoveSource (CFRunLoopGetCurrent (), socketSource, kCFRunLoopCommonModes);
 		CFRunLoopSourceInvalidate (socketSource);
 		CFRelease (socketSource);
 		socketSource = NULL;
+	}
+	if (NULL != socket)
+	{
+		//We have earlier set socket options so that it doesn't get closed automatically.
+		//PQfinish does that for us.
+		CFSocketInvalidate (socket);
+		CFRelease (socket);
+		socket = NULL;
 	}
 	if (NULL != cancelRequest)
 	{
@@ -524,7 +532,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 		PQfinish (connection);
 		connection = NULL;
 	}
-	[connectionLock unlock];	   
+	[connectionLock unlock];
 }
 
 - (void) logQuery: (NSString *) query message: (BOOL) messageDelegate parameters: (NSArray *) parameters

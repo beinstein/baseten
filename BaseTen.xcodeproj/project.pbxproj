@@ -380,10 +380,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				5314B1A60A371968001D8F54 /* Foundation.framework in Frameworks */,
-				531B00DA0A519FD4006AEF08 /* libPGTSTiger.a in Frameworks */,
 				53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */,
 				53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */,
 				531266E50B68F9CA00637EDA /* Security.framework in Frameworks */,
+				531B00DA0A519FD4006AEF08 /* libPGTSTiger.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -755,7 +755,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "BaseTen" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* BXDatabase */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
