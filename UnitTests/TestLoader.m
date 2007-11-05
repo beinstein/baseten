@@ -43,6 +43,7 @@
 #import "MTOCollectionTest.h"
 #import "MTMCollectionTest.h"
 #import "UndoTests.h"
+#import "ObjectTests.h"
 
 @interface SenTestSuite (BXAdditions)
 - (void) addSuitesForClasses: (NSArray *) anArray;
@@ -67,6 +68,7 @@
 	NSArray* simpleTestClasses = [NSArray arrayWithObjects:
 		[ConnectTest class],
 		[EntityTests class],
+        //[ObjectTests class], //FIXME: enable this.
 		[ObjectIDTests class],
 		nil];
 	NSArray* useCaseTestClasses = [NSArray arrayWithObjects:

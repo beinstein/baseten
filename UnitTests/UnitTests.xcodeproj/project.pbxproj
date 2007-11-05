@@ -11,6 +11,8 @@
 		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
 		53505ADC0CDB54F900DA25EC /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
 		53505ADD0CDB54FA00DA25EC /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
+		535717AE0CDE69C60084DD92 /* ObjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535717AD0CDE69C60084DD92 /* ObjectTests.m */; };
+		535717B60CDE6B2F0084DD92 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 535717B50CDE6B2F0084DD92 /* OCMock.framework */; };
 		538263C70CD0EC8000CF7E2D /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		538263C90CD0EC8200CF7E2D /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
@@ -64,6 +66,9 @@
 		5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MTMCollectionTest.m; sourceTree = "<group>"; };
 		535059B20CDA1CFC00DA25EC /* TestLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestLoader.h; sourceTree = "<group>"; };
 		535059B30CDA1CFC00DA25EC /* TestLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestLoader.m; sourceTree = "<group>"; };
+		535717AC0CDE69C60084DD92 /* ObjectTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectTests.h; sourceTree = "<group>"; };
+		535717AD0CDE69C60084DD92 /* ObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectTests.m; sourceTree = "<group>"; };
+		535717B50CDE6B2F0084DD92 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = /Library/Frameworks/OCMock.framework; sourceTree = "<absolute>"; };
 		5373A65C0A6D3F9A0036424B /* ModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModificationTests.h; sourceTree = "<group>"; };
 		5373A65D0A6D3F9A0036424B /* ModificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModificationTests.m; sourceTree = "<group>"; };
 		539C4F5C0C4E389700080667 /* PropagatedModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PropagatedModificationTests.h; sourceTree = "<group>"; };
@@ -94,6 +99,7 @@
 				530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */,
 				539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */,
 				53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */,
+				535717B60CDE6B2F0084DD92 /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,28 +114,7 @@
 				53A494840BD4D92F008E850E /* UnitTestAdditions.m */,
 				535059B20CDA1CFC00DA25EC /* TestLoader.h */,
 				535059B30CDA1CFC00DA25EC /* TestLoader.m */,
-				530A439D0A5C114E00A4722B /* ConnectTest.h */,
-				530A439E0A5C114E00A4722B /* ConnectTest.m */,
-				531E118B0A6A3A6C003A0F23 /* EntityTests.h */,
-				531E118C0A6A3A6C003A0F23 /* EntityTests.m */,
-				530987C60B57B1C30010765D /* ObjectIDTests.h */,
-				530987C70B57B1C30010765D /* ObjectIDTests.m */,
-				53BD965A0A5C1BA5001C950C /* FetchTests.h */,
-				53BD965B0A5C1BA5001C950C /* FetchTests.m */,
-				53BD96750A5C1DC3001C950C /* CreateTests.h */,
-				53BD96760A5C1DC3001C950C /* CreateTests.m */,
-				5373A65C0A6D3F9A0036424B /* ModificationTests.h */,
-				5373A65D0A6D3F9A0036424B /* ModificationTests.m */,
-				53EAD1B40A668733008F3CE5 /* ForeignKeyTests.h */,
-				53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */,
-				539C51280C4E4EE000080667 /* ForeignKeyModificationTests.h */,
-				539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */,
-				53DAE20F0AC4A0D200536DD0 /* MTOCollectionTest.h */,
-				53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */,
-				5321BEAB0AD4DCDD0011D0C8 /* MTMCollectionTest.h */,
-				5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */,
-				53B2C1380BE88608002B66B1 /* UndoTests.h */,
-				53B2C1390BE88608002B66B1 /* UndoTests.m */,
+				5357179C0CDE69950084DD92 /* Tests */,
 				539C4FA20C4E39F700080667 /* Disabled tests */,
 				53BD96D30A5C2506001C950C /* Dependencies */,
 				530A438D0A5C0FD000A4722B /* Products */,
@@ -154,6 +139,37 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		5357179C0CDE69950084DD92 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				530A439D0A5C114E00A4722B /* ConnectTest.h */,
+				530A439E0A5C114E00A4722B /* ConnectTest.m */,
+				531E118B0A6A3A6C003A0F23 /* EntityTests.h */,
+				531E118C0A6A3A6C003A0F23 /* EntityTests.m */,
+				535717AC0CDE69C60084DD92 /* ObjectTests.h */,
+				535717AD0CDE69C60084DD92 /* ObjectTests.m */,
+				530987C60B57B1C30010765D /* ObjectIDTests.h */,
+				530987C70B57B1C30010765D /* ObjectIDTests.m */,
+				53BD965A0A5C1BA5001C950C /* FetchTests.h */,
+				53BD965B0A5C1BA5001C950C /* FetchTests.m */,
+				53BD96750A5C1DC3001C950C /* CreateTests.h */,
+				53BD96760A5C1DC3001C950C /* CreateTests.m */,
+				5373A65C0A6D3F9A0036424B /* ModificationTests.h */,
+				5373A65D0A6D3F9A0036424B /* ModificationTests.m */,
+				53EAD1B40A668733008F3CE5 /* ForeignKeyTests.h */,
+				53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */,
+				539C51280C4E4EE000080667 /* ForeignKeyModificationTests.h */,
+				539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */,
+				53DAE20F0AC4A0D200536DD0 /* MTOCollectionTest.h */,
+				53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */,
+				5321BEAB0AD4DCDD0011D0C8 /* MTMCollectionTest.h */,
+				5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */,
+				53B2C1380BE88608002B66B1 /* UndoTests.h */,
+				53B2C1390BE88608002B66B1 /* UndoTests.m */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 		539C4FA20C4E39F700080667 /* Disabled tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,6 +185,7 @@
 				53193E8D0BC51701009A77EC /* Foundation.framework */,
 				53BD96BE0A5C2501001C950C /* SenTestingKit.framework */,
 				530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */,
+				535717B50CDE6B2F0084DD92 /* OCMock.framework */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
@@ -279,6 +296,7 @@
 				538263CA0CD0EC8300CF7E2D /* UndoTests.m in Sources */,
 				53505ADC0CDB54F900DA25EC /* ConnectTest.m in Sources */,
 				53505ADD0CDB54FA00DA25EC /* TestLoader.m in Sources */,
+				535717AE0CDE69C60084DD92 /* ObjectTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
