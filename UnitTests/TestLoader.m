@@ -68,12 +68,12 @@
 	NSArray* simpleTestClasses = [NSArray arrayWithObjects:
 		[ConnectTest class],
 		[EntityTests class],
-        //[ObjectTests class], //FIXME: enable this.
+        //[ObjectTests class], //FIXME: enable this. It still requires a modified OCMock, though.
 		[ObjectIDTests class],
+		[CreateTests class],
 		nil];
 	NSArray* useCaseTestClasses = [NSArray arrayWithObjects:
 		[FetchTests class],
-		[CreateTests class],
 		[ModificationTests class],
 		nil];
 	NSArray* relationshipTestClasses = [NSArray arrayWithObjects:

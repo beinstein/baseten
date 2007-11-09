@@ -165,4 +165,47 @@
     [context rollback];
 }
 
+- (void) testCreateAndDeleteWithArray
+{	
+    NSError* error = nil;
+    NSArray* array = nil;
+    BXEntityDescription* entity = [[context entityForTable: @"test" error: nil] retain];
+    array = [context executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
+					   updateAutomatically: YES error: &error];
+    
+    STAssertNil (error, [error description]);
+    MKCAssertNotNil (array);
+    unsigned int count = [array count];
+    
+    //Create an object into the array using another connection
+    BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: 
+        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
+    [context2 setAutocommits: NO];
+    MKCAssertNotNil (context2);
+    
+    BXDatabaseObject* object = [context2 createObjectForEntity: entity withFieldValues: nil error: &error];
+    STAssertNil (error, [error description]);
+    MKCAssertNotNil (object);
+    
+    //Commit the modification so we can see some results
+    [context2 save: &error];
+    STAssertNil (error, [error description]);
+    
+    //Wait for the notification
+    [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
+    MKCAssertEquals ([array count], count + 1);
+    
+    [context2 executeDeleteObject: object error: &error];
+    STAssertNil (error, [error description]);
+    
+    //Again, commit
+    [context2 save: &error];
+    STAssertNil (error, [error description]);
+    
+    //Wait for the notification
+    [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
+    
+    MKCAssertEquals (count, [array count]);
+}
+
 @end
