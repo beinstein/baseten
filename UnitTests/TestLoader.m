@@ -101,6 +101,7 @@
 		nil] objectEnumerator]];
 	
 	SenTestRun* run = [bxSuite run];
+    //SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [ObjectTests class]] run];
 	STAssertTrue (0 == [run failureCount], @"Expected tests to succeed.");
 }
 	

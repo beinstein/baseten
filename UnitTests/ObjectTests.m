@@ -161,4 +161,41 @@
     MKCAssertTrue ([mObject validateValue: &value forKey: @"key" error: &error]);
     STAssertNil (error, [error localizedDescription]);
 }
+
+- (void) testStatusInfo
+{
+    //We need an objectID for -[BXDatabaseObject isEqual:].
+    [mObject registerWithContext: mContext entity: mEntity];
+
+    enum BXObjectLockStatus status = kBXObjectNoLockStatus;
+    id statusInfo = [mObject statusInfo];
+    id observer = [OCMockObject mockForClass: [NSObject class]];
+    
+    [statusInfo addObserver: observer forKeyPath: @"id" options: 0 context: NULL];
+    
+    [[statusInfo valueForKey: @"id"] getValue: &status];
+    MKCAssertTrue (status == kBXObjectNoLockStatus);
+
+    //Key path will be statusInfo instead of the actual key.
+    [[observer expect] observeValueForKeyPath: OCMOCK_ANY ofObject: mObject change: OCMOCK_ANY context: NULL];
+    [mObject setLockedForKey: @"id"];
+    [observer verify];
+    [[statusInfo valueForKey: @"id"] getValue: &status];
+    MKCAssertTrue (status == kBXObjectLockedStatus);
+    
+    [[observer expect] observeValueForKeyPath: OCMOCK_ANY ofObject: mObject change: OCMOCK_ANY context: NULL];
+    [mObject setDeleted: kBXObjectDeletePending];
+    [observer verify];
+    [[statusInfo valueForKey: @"id"] getValue: &status];
+    MKCAssertTrue (status == kBXObjectDeletedStatus);
+    
+    [[observer expect] observeValueForKeyPath: OCMOCK_ANY ofObject: mObject change: OCMOCK_ANY context: NULL];
+    [mObject setDeleted: kBXObjectExists];
+    [observer verify];
+    [[observer expect] observeValueForKeyPath: OCMOCK_ANY ofObject: mObject change: OCMOCK_ANY context: NULL];
+    [mObject lockForDelete];
+    [observer verify];
+    [[statusInfo valueForKey: @"id"] getValue: &status];
+    MKCAssertTrue (status == kBXObjectDeletedStatus);
+}
 @end

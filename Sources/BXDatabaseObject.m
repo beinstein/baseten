@@ -164,6 +164,7 @@ ParseSelector (SEL aSelector, NSString** key)
     BOOL rval = NO;
     if (YES == [anObject isKindOfClass: [BXDatabaseObject class]])
     {
+        log4AssertValueReturn (nil != mObjectID, NO, @"isEqual: invoked when mObjectID is nil.");
         if (mContext == [anObject databaseContext] && [mObjectID isEqual: [anObject objectID]])
             rval = YES;
     }
