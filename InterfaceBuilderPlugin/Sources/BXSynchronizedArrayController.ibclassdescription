@@ -1,0 +1,10 @@
+{
+    ClassName = BXSynchronizedArrayController;
+    SuperClass = NSArrayController;
+    Outlets = {
+            databaseContext = id;
+            modalWindow = NSWindow;
+    };
+    Actions = {
+    };
+};

@@ -1,0 +1,10 @@
+{
+    ClassName = BXDatabaseContext;
+    SuperClass = NSObject;
+    Outlets = {
+            policyDelegate = id;
+            modalWindow = NSWindow;
+    };
+    Actions = {
+    };
+};
