@@ -110,7 +110,7 @@
 
 - (NSWindow *) BXWindow
 {
-    return window;
+    return modalWindow;
 }
 
 - (void) dealloc
