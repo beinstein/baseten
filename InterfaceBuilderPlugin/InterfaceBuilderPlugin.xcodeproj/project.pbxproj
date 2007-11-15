@@ -30,35 +30,35 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 537E4A860A14C91800A22080 /* BaseTenAppKit.framework */;
+			remoteGlobalIDString = 537E4A860A14C91800A22080;
 			remoteInfo = BaseTenAppKit;
 		};
 		53978FD20CEC764300B93B3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 5368D60F0A3711C800D136DC /* BaseTen.framework */;
+			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
 		};
 		53978FD40CEC764300B93B3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* BaseTen.framework */;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
 			remoteInfo = "BaseTen subframeworks";
 		};
 		53978FD80CEC766900B93B3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* BaseTenAppKit */;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = BaseTenAppKit;
 		};
 		53978FDA0CEC766900B93B3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5368D60E0A3711C800D136DC /* BaseTen Static */;
+			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
 		};
 /* End PBXContainerItemProxy section */
@@ -80,7 +80,6 @@
 		53978F8C0CEC709200B93B3C /* Palette5.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Palette5.icns; sourceTree = "<group>"; };
 		53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = ../BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
-		53DF68FE067E5B5A0090B5B0 /* InterfaceBuilderPluginFramework-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "InterfaceBuilderPluginFramework-Info.plist"; sourceTree = "<group>"; };
 		8D1AC9730486D14A00FE50C9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1AC9740486D14A00FE50C9 /* InterfaceBuilderPlugin.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterfaceBuilderPlugin.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D1AC97B0486D23100FE50C9 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -127,7 +126,6 @@
 				53978F850CEC671900B93B3C /* BXSynchronizedArrayControllerInspector.nib */,
 				53978F830CEC66D500B93B3C /* InterfaceBuilderPluginLibrary.nib */,
 				8D1AC9730486D14A00FE50C9 /* Info.plist */,
-				53DF68FE067E5B5A0090B5B0 /* InterfaceBuilderPluginFramework-Info.plist */,
 				8D1AC97F0486D23B00FE50C9 /* InfoPlist.strings */,
 			);
 			name = Resources;
