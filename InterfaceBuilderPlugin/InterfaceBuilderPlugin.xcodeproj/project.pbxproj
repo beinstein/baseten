@@ -10,6 +10,8 @@
 		5373A1580CEC8F5C006B581B /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373A1570CEC8F5C006B581B /* ExceptionHandling.framework */; };
 		5373A2180CEC9894006B581B /* BXDatabaseContext.classdescription in Resources */ = {isa = PBXBuildFile; fileRef = 53978F5D0CEC640200B93B3C /* BXDatabaseContext.classdescription */; };
 		5373A2190CEC9895006B581B /* BXSynchronizedArrayController.classdescription in Resources */ = {isa = PBXBuildFile; fileRef = 53978F5C0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription */; };
+		5373A24D0CECA493006B581B /* BXDatabaseContextInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A24C0CECA493006B581B /* BXDatabaseContextInspector.m */; };
+		5373A2500CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A24F0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m */; };
 		53978F590CEC63DD00B93B3C /* BXIBPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F520CEC63DD00B93B3C /* BXIBPlugin.m */; };
 		53978F5A0CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F570CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m */; };
 		53978F5B0CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F580CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.m */; };
@@ -66,6 +68,10 @@
 
 /* Begin PBXFileReference section */
 		5373A1570CEC8F5C006B581B /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
+		5373A24B0CECA493006B581B /* BXDatabaseContextInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextInspector.h; path = Sources/BXDatabaseContextInspector.h; sourceTree = "<group>"; };
+		5373A24C0CECA493006B581B /* BXDatabaseContextInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextInspector.m; path = Sources/BXDatabaseContextInspector.m; sourceTree = "<group>"; };
+		5373A24E0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSynchronizedArrayControllerInspector.h; path = Sources/BXSynchronizedArrayControllerInspector.h; sourceTree = "<group>"; };
+		5373A24F0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSynchronizedArrayControllerInspector.m; path = Sources/BXSynchronizedArrayControllerInspector.m; sourceTree = "<group>"; };
 		53978F520CEC63DD00B93B3C /* BXIBPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXIBPlugin.m; path = Sources/BXIBPlugin.m; sourceTree = "<group>"; };
 		53978F530CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXDatabaseContext+IBAdditions.h"; path = "Sources/BXDatabaseContext+IBAdditions.h"; sourceTree = "<group>"; };
 		53978F540CEC63DD00B93B3C /* InterfaceBuilderPlugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterfaceBuilderPlugin_Prefix.pch; path = Sources/InterfaceBuilderPlugin_Prefix.pch; sourceTree = "<group>"; };
@@ -193,6 +199,10 @@
 			children = (
 				53978F550CEC63DD00B93B3C /* BXIBPlugin.h */,
 				53978F520CEC63DD00B93B3C /* BXIBPlugin.m */,
+				5373A24B0CECA493006B581B /* BXDatabaseContextInspector.h */,
+				5373A24C0CECA493006B581B /* BXDatabaseContextInspector.m */,
+				5373A24E0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.h */,
+				5373A24F0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m */,
 				53978F530CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.h */,
 				53978F570CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m */,
 				53978F560CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.h */,
@@ -302,6 +312,8 @@
 				53978F590CEC63DD00B93B3C /* BXIBPlugin.m in Sources */,
 				53978F5A0CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m in Sources */,
 				53978F5B0CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.m in Sources */,
+				5373A24D0CECA493006B581B /* BXDatabaseContextInspector.m in Sources */,
+				5373A2500CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

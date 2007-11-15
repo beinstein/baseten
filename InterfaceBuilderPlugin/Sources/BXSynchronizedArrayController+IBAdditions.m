@@ -27,6 +27,7 @@
 //
 
 #import "BXSynchronizedArrayController+IBAdditions.h"
+#import "BXSynchronizedArrayControllerInspector.h"
 
 
 @implementation BXSynchronizedArrayController (IBAdditions)
@@ -39,6 +40,56 @@
         @"tableName", @"schemaName", @"databaseObjectClassName", @"fetchesOnConnect", @"fetchPredicate", nil]];
     [[keyPaths objectForKey: IBToOneRelationshipKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
         @"databaseContext", @"modalWindow", nil]];
+}
+
+- (void) ibPopulateAttributeInspectorClasses: (NSMutableArray *) classes
+{
+    [super ibPopulateAttributeInspectorClasses: classes];
+    [classes addObject: [BXSynchronizedArrayControllerInspector class]];
+}
+
+#if 0
+//FIXME: move alert stuff elsewhere.
+- (void) alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	[alert release];
+}
+#endif
+
+- (void) setIBFetchPredicate: (NSString *) predicateString
+{
+	@try
+	{
+		NSPredicate* predicate = nil;
+		
+		if ([predicateString length] > 0)
+			predicate = [NSPredicate predicateWithFormat:predicateString];
+		
+		[self setFetchPredicate: predicate];
+	}
+	@catch (NSException* e)
+	{
+        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  [e reason], NSLocalizedRecoverySuggestionErrorKey, 
+								  NSLocalizedString (@"NSPredicate parse error", nil), NSLocalizedDescriptionKey, 
+								  nil];
+		NSError* error = [NSError errorWithDomain: NSCocoaErrorDomain code: 1 userInfo: userInfo];
+		
+		error = nil;
+#if 0
+		//FIXME: move alert stuff elsewhere.
+		NSAlert* alert = [[NSAlert alertWithError: error] retain];
+		[alert beginSheetModalForWindow: [self window] 
+                          modalDelegate: self 
+                         didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) 
+                            contextInfo: NULL];
+#endif
+	}
+}
+
+- (NSString *) IBFetchPredicate
+{
+	return [[self fetchPredicate] predicateFormat];
 }
 
 @end

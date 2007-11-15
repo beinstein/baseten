@@ -1,5 +1,5 @@
 //
-// BXDatabaseContext+IBAdditions.m
+// BXDatabaseContextInspector.m
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,41 +26,13 @@
 // $Id$
 //
 
-#import "BXDatabaseContext+IBAdditions.h"
 #import "BXDatabaseContextInspector.h"
 
+@implementation BXDatabaseContextInspector
 
-@implementation BXDatabaseContext (IBAdditions)
-
-- (void) ibDidAddToDesignableDocument: (IBDocument *) document
+- (NSString *) viewNibName 
 {
-	[self setConnectsOnAwake: YES];
-}
-
-- (void) ibPopulateKeyPaths: (NSMutableDictionary *) keyPaths
-{
-    [super ibPopulateKeyPaths: keyPaths];
-    
-    [[keyPaths objectForKey: IBAttributeKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
-        @"databaseURI", @"logsQueries", @"autocommits", @"connectsOnAwake", nil]];
-    [[keyPaths objectForKey: IBToOneRelationshipKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
-        @"policyDelegate", @"modalWindow", nil]];
-}
-
-- (void) ibPopulateAttributeInspectorClasses: (NSMutableArray *) classes
-{
-    [super ibPopulateAttributeInspectorClasses: classes];
-    [classes addObject: [BXDatabaseContextInspector class]];
-}
-
-- (NSString *) IBDatabaseURI
-{
-	return [[self databaseURI] absoluteString];
-}
-
-- (void) setIBDatabaseURI: (NSURL *) anURI
-{
-	//FIXME: create an NSURI and check.
+    return @"BXDatabaseContextInspector";
 }
 
 @end
