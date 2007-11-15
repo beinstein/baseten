@@ -157,7 +157,7 @@ static BOOL gHaveAppKitFramework = NO;
         mDeallocating = NO;
         mRetainRegisteredObjects = NO;
 		mCanConnect = YES;
-		mConnectsOnAwake = YES;
+		mConnectsOnAwake = NO;
     }
     return self;
 }
@@ -187,20 +187,6 @@ static BOOL gHaveAppKitFramework = NO;
     
     log4Debug (@"Deallocating BXDatabaseContext");
     [super dealloc];
-}
-
-- (void) checkURIScheme: (NSURL *) url
-{
-    if (Nil == [[self class] interfaceClassForScheme: [url scheme]])
-    {
-        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-            self,   kBXDatabaseContextKey,
-            url,    kBXURIKey,
-            nil];
-        @throw [NSException exceptionWithName: kBXUnsupportedDatabaseException 
-                                       reason: nil
-                                     userInfo: userInfo];
-    }
 }
 
 /**
@@ -2073,10 +2059,11 @@ static BOOL gHaveAppKitFramework = NO;
 {
 	if (uri != mDatabaseURI)
     {
-        if (nil != uri)
-            [self checkURIScheme: uri];
-        [mDatabaseURI release];
-        mDatabaseURI = [uri retain];
+        if (nil != uri && [self checkURIScheme: uri error: NULL])
+		{
+			[mDatabaseURI release];
+			mDatabaseURI = [uri retain];
+		}
     }	
 }
 
@@ -2262,6 +2249,24 @@ static BOOL gHaveAppKitFramework = NO;
 		
 		[lock unlock];
 	}
+}
+
+- (BOOL) checkURIScheme: (NSURL *) url error: (NSError **) error
+{
+	//FIXME: set error instead of raising an exception.
+	BOOL retval = YES;
+    if (Nil == [[self class] interfaceClassForScheme: [url scheme]])
+    {
+		retval = NO;
+        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  self,   kBXDatabaseContextKey,
+								  url,    kBXURIKey,
+								  nil];
+        @throw [NSException exceptionWithName: kBXUnsupportedDatabaseException 
+                                       reason: nil
+                                     userInfo: userInfo];
+    }
+	return retval;
 }
 
 @end

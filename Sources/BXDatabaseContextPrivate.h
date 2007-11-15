@@ -63,6 +63,7 @@ struct trustResult
                         predicate: (NSPredicate *) predicate
                             error: (NSError **) error;
 - (BOOL) checkDatabaseURI: (NSError **) error;
+- (BOOL) checkURIScheme: (NSURL *) url error: (NSError **) error;
 - (id <BXInterface>) databaseInterface;
 - (void) lazyInit;
 - (void) setDatabaseURIInternal: (NSURL *) uri;
