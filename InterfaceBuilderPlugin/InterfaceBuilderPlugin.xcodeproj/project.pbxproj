@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5373A1580CEC8F5C006B581B /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373A1570CEC8F5C006B581B /* ExceptionHandling.framework */; };
+		5373A2180CEC9894006B581B /* BXDatabaseContext.classdescription in Resources */ = {isa = PBXBuildFile; fileRef = 53978F5D0CEC640200B93B3C /* BXDatabaseContext.classdescription */; };
+		5373A2190CEC9895006B581B /* BXSynchronizedArrayController.classdescription in Resources */ = {isa = PBXBuildFile; fileRef = 53978F5C0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription */; };
 		53978F590CEC63DD00B93B3C /* BXIBPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F520CEC63DD00B93B3C /* BXIBPlugin.m */; };
 		53978F5A0CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F570CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m */; };
 		53978F5B0CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F580CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.m */; };
-		53978F5E0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription in Resources */ = {isa = PBXBuildFile; fileRef = 53978F5C0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription */; };
-		53978F5F0CEC640200B93B3C /* BXDatabaseContext.classdescription in Resources */ = {isa = PBXBuildFile; fileRef = 53978F5D0CEC640200B93B3C /* BXDatabaseContext.classdescription */; };
 		53978F820CEC66BB00B93B3C /* BXDatabaseContextInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53978F800CEC66BB00B93B3C /* BXDatabaseContextInspector.nib */; };
 		53978F840CEC66D500B93B3C /* InterfaceBuilderPluginLibrary.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53978F830CEC66D500B93B3C /* InterfaceBuilderPluginLibrary.nib */; };
 		53978F870CEC671900B93B3C /* BXSynchronizedArrayControllerInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53978F850CEC671900B93B3C /* BXSynchronizedArrayControllerInspector.nib */; };
@@ -64,6 +65,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5373A1570CEC8F5C006B581B /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
 		53978F520CEC63DD00B93B3C /* BXIBPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXIBPlugin.m; path = Sources/BXIBPlugin.m; sourceTree = "<group>"; };
 		53978F530CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXDatabaseContext+IBAdditions.h"; path = "Sources/BXDatabaseContext+IBAdditions.h"; sourceTree = "<group>"; };
 		53978F540CEC63DD00B93B3C /* InterfaceBuilderPlugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterfaceBuilderPlugin_Prefix.pch; path = Sources/InterfaceBuilderPlugin_Prefix.pch; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 				C0D069560A49DF9100C95564 /* InterfaceBuilderKit.framework in Frameworks */,
 				53978FD60CEC765800B93B3C /* BaseTen.framework in Frameworks */,
 				53978FD70CEC765C00B93B3C /* BaseTenAppKit.framework in Frameworks */,
+				5373A1580CEC8F5C006B581B /* ExceptionHandling.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,6 +147,7 @@
 			children = (
 				53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */,
 				53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */,
+				5373A1570CEC8F5C006B581B /* ExceptionHandling.framework */,
 				DD92D38A0106425D02CA0E72 /* Cocoa.framework */,
 				C0D069550A49DF9100C95564 /* InterfaceBuilderKit.framework */,
 			);
@@ -277,14 +281,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D1AC9800486D23B00FE50C9 /* InfoPlist.strings in Resources */,
-				53978F5E0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription in Resources */,
-				53978F5F0CEC640200B93B3C /* BXDatabaseContext.classdescription in Resources */,
 				53978F840CEC66D500B93B3C /* InterfaceBuilderPluginLibrary.nib in Resources */,
 				53978F820CEC66BB00B93B3C /* BXDatabaseContextInspector.nib in Resources */,
 				53978F870CEC671900B93B3C /* BXSynchronizedArrayControllerInspector.nib in Resources */,
 				53978F8D0CEC709200B93B3C /* BXArrayController.png in Resources */,
 				53978F8E0CEC709200B93B3C /* BXDatabaseObject.png in Resources */,
 				53978F8F0CEC709200B93B3C /* Palette5.icns in Resources */,
+				5373A2180CEC9894006B581B /* BXDatabaseContext.classdescription in Resources */,
+				5373A2190CEC9895006B581B /* BXSynchronizedArrayController.classdescription in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

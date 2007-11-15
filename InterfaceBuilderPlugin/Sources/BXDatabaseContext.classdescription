@@ -1,10 +1,19 @@
-{
-    ClassName = BXDatabaseContext;
-    SuperClass = NSObject;
-    Outlets = {
-            policyDelegate = id;
-            modalWindow = NSWindow;
-    };
-    Actions = {
-    };
-};
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ClassName</key>
+	<string>BXDatabaseContext</string>
+	<key>SuperClass</key>
+	<string>NSObject</string>
+	<key>Outlets</key>
+	<dict>
+		<key>policyDelegate</key>
+		<string>id</string>
+		<key>modalWindow</key>
+		<string>NSWindow</string>
+	</dict>
+	<key>Actions</key>
+	<dict />
+</dict>
+</plist>
