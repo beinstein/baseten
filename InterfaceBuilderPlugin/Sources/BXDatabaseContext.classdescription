@@ -14,6 +14,13 @@
 		<string>NSWindow</string>
 	</dict>
 	<key>Actions</key>
-	<dict />
+	<dict>
+		<key>connect:</key>
+		<string>id</string>
+		<key>saveDocument:</key>
+		<string>id</string>
+		<key>revertDocumentToSaved:</key>
+		<string>id</string>
+	</dict>
 </dict>
 </plist>

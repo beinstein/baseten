@@ -92,4 +92,9 @@
 	return [[self fetchPredicate] predicateFormat];
 }
 
+- (NSImage *) ibDefaultImage
+{
+	return [NSImage imageNamed: @"BXArrayController"];
+}
+
 @end

@@ -58,9 +58,84 @@
 	return [[self databaseURI] absoluteString];
 }
 
+- (BOOL) validateIBDatabaseURI: (id *) ioValue error: (NSError **) outError 
+{
+    BOOL succeeded = NO;
+	id givenURI = *ioValue;
+    NSURL* newURI = nil;
+
+	//FIXME: move validation to BXDatabaseContext.
+	if (nil == givenURI)
+		succeeded = YES;
+	else
+	{
+		NSString* errorMessage = nil;
+		
+		if ([givenURI isKindOfClass: [NSURL class]])
+		{
+			newURI = givenURI;
+		}
+		else if ([givenURI isKindOfClass: [NSString class]])
+		{
+		    if (0 != [string length])
+				newURI = [NSURL URLWithString: givenURI];
+			else
+			{
+				succeeded = YES;
+				*ioValue = nil;
+				goto bail;
+			}
+		}
+		else
+		{
+			errorMessage = @"Expected to receive either an NSString or an NSURL.";
+			goto bail;
+		}
+		
+		if (nil == newURI)
+		{
+			errorMessage = @"The URI was malformed.";
+			goto bail;
+		}
+		if (! [@"pgsql" isEqualToString: [newURI scheme]])
+		{
+			errorMessage = @"The only supported scheme is pgsql.";
+			goto bail;
+		}
+		//The first path component is the initial slash.
+		if (2 != [[[newURI path] pathComponents] count])
+		{
+			errorMessage = @"The URI path should only contain the database name.";
+			goto bail;
+		}
+		succeeded = YES;
+
+		bail:
+		if (succeeded)
+			*ioValue = newURI;
+		else
+		{
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+	            BXSafeObj (errorMessage), NSLocalizedFailureReasonErrorKey,
+	            BXSafeObj (errorMessaage), NSLocalizedRecoverySuggestionErrorKey,
+				nil];
+			NSError* error = [NSError errorWithDomain: kBXErrorDomain 
+												 code: kBXErrorMalformedDatabaseURI 
+											 userInfo: userInfo];
+		}
+	}
+	
+	return succeeded;
+}
+
 - (void) setIBDatabaseURI: (NSURL *) anURI
 {
-	//FIXME: create an NSURI and check.
+	[self setDatabaseURI: anURI];
+}
+
+- (NSImage *) ibDefaultImage
+{
+	return [NSImage imageNamed: @"BXDatabaseObject"];
 }
 
 @end

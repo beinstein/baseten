@@ -35,4 +35,9 @@
     return @"BXDatabaseContextInspector";
 }
 
+- (BOOL) supportsMultipleObjectInspection
+{
+	return NO;
+}
+
 @end
