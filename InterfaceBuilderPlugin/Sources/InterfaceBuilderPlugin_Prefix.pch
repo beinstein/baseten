@@ -1,5 +1,5 @@
 //
-// BXSynchronizedArrayController+IBAdditions.h
+// InterfaceBuilderPlugin_Prefix.pch
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,10 +26,8 @@
 // $Id$
 //
 
-#import <Cocoa/Cocoa.h>
-#import <BaseTen/BaseTen.h>
-#import <BaseTenAppKit/BaseTenAppKit.h>
-
-
-@interface BXSynchronizedArrayController (IBAdditions) 
-@end
+#ifdef __OBJC__
+    #import <Cocoa/Cocoa.h>
+    #import <InterfaceBuilderKit/InterfaceBuilderKit.h>
+	#import <BaseTen/BaseTen.h>
+#endif

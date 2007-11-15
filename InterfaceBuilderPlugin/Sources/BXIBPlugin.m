@@ -34,7 +34,7 @@
 - (NSArray *) libraryNibNames
 {
     //FIXME: real names.
-    return [NSArray arrayWithObjects: @"myLibraryNibFile1", @"myLibraryNibFile2", nil];
+    return [NSArray arrayWithObjects: @"InterfaceBuilderPluginLibrary", nil];
 }
 
 - (NSArray *) requiredFrameworks
