@@ -23,6 +23,8 @@
 		53978F8F0CEC709200B93B3C /* Palette5.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53978F8C0CEC709200B93B3C /* Palette5.icns */; };
 		53978FD60CEC765800B93B3C /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FD30CEC764300B93B3C /* BaseTen.framework */; };
 		53978FD70CEC765C00B93B3C /* BaseTenAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FCB0CEC763A00B93B3C /* BaseTenAppKit.framework */; };
+		53C8C3140CEDDB8C00676C98 /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FD30CEC764300B93B3C /* BaseTen.framework */; };
+		53C8C3150CEDDB8C00676C98 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FCB0CEC763A00B93B3C /* BaseTenAppKit.framework */; };
 		8D1AC9700486D14A00FE50C9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD92D38A0106425D02CA0E72 /* Cocoa.framework */; };
 		8D1AC9800486D23B00FE50C9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D1AC97F0486D23B00FE50C9 /* InfoPlist.strings */; };
 		C0D069560A49DF9100C95564 /* InterfaceBuilderKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0D069550A49DF9100C95564 /* InterfaceBuilderKit.framework */; };
@@ -65,6 +67,21 @@
 			remoteInfo = "BaseTen Static";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		53C8C3170CEDDBAA00676C98 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				53C8C3140CEDDB8C00676C98 /* BaseTen.framework in Copy Frameworks */,
+				53C8C3150CEDDB8C00676C98 /* BaseTenAppKit.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5373A1570CEC8F5C006B581B /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
@@ -218,6 +235,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C056398308A954F8003078D8 /* Build configuration list for PBXNativeTarget "InterfaceBuilderPlugin" */;
 			buildPhases = (
+				53C8C31A0CEDDBE800676C98 /* Copy Per Project Build Dir Items */,
+				53C8C3170CEDDBAA00676C98 /* Copy Frameworks */,
 				8D1AC9660486D14A00FE50C9 /* Resources */,
 				8D1AC96A0486D14A00FE50C9 /* Sources */,
 				8D1AC96E0486D14A00FE50C9 /* Frameworks */,
@@ -334,6 +353,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "BASETEN_PROJECT_DIR=\"$PROJECT_DIR\"/../\n\nICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenPaletteIcon\"\n\n\"$BASETEN_PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenPaletteIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$BASETEN_PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+		};
+		53C8C31A0CEDDBE800676C98 /* Copy Per Project Build Dir Items */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Per Project Build Dir Items";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nBASE_TEN_FRAMEWORK=\"$PROJECT_DIR/../build/$BUILD_STYLE/BaseTen.framework\"\n\nif [ -e \"$BASE_TEN_FRAMEWORK\" ] && [ \"$BASE_TEN_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTen.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTen.framework\"\n\tcp -pfR \"$BASE_TEN_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\nBASE_TEN_APPKIT_FRAMEWORK=\"$PROJECT_DIR/../BaseTenAppKit/build/$BUILD_STYLE/BaseTenAppKit.framework\"\n\nif [ -e \"$BASE_TEN_APPKIT_FRAMEWORK\" ] && [ \"$BASE_TEN_APPKIT_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\"\n\tcp -pfR \"$BASE_TEN_APPKIT_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
