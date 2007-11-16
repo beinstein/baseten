@@ -28,6 +28,7 @@
 
 #import <InterfaceBuilderKit/InterfaceBuilderKit.h>
 
-@interface BXDatabaseContextInspector : IBInspector {
+@interface BXDatabaseContextInspector : IBInspector 
+{
 }
 @end

@@ -28,6 +28,7 @@
 
 #import <InterfaceBuilderKit/InterfaceBuilderKit.h>
 
-@interface BXSynchronizedArrayControllerInspector : IBInspector {
+@interface BXSynchronizedArrayControllerInspector : IBInspector 
+{
 }
 @end

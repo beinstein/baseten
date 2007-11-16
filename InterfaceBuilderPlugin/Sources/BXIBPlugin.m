@@ -28,19 +28,17 @@
 
 #import "BXIBPlugin.h"
 
-//FIXME: debugging code
-#import <ExceptionHandling/ExceptionHandling.h>
+//#define BXIB_USE_EXCEPTION_HANDLER
 
+#ifdef BXIB_USE_EXCEPTION_HANDLER
+#import <ExceptionHandling/ExceptionHandling.h>
+#endif
 
 @implementation BXIBPlugin
 
-//FIXME: debugging code
-- (void) didLoad
+- (NSString *) label
 {
-	[super didLoad];
-	id eh = [NSExceptionHandler defaultExceptionHandler];
-	[eh setDelegate: self];
-	[eh setExceptionHandlingMask: NSLogAndHandleEveryExceptionMask];
+	return @"BaseTen";
 }
 
 - (NSArray *) libraryNibNames
@@ -55,9 +53,19 @@
     return [NSArray arrayWithObjects: baseTenBundle, baseTenAppKitBundle, nil];
 }
 
-- (BOOL)exceptionHandler:(NSExceptionHandler *)sender shouldHandleException:(NSException *)exception mask:(NSUInteger)aMask
+#ifdef BXIB_USE_EXCEPTION_HANDLER
+- (void) didLoad
+{
+	[super didLoad];
+	id eh = [NSExceptionHandler defaultExceptionHandler];
+	[eh setDelegate: self];
+	[eh setExceptionHandlingMask: NSLogAndHandleEveryExceptionMask];
+}
+
+- (BOOL) exceptionHandler: (NSExceptionHandler *) sender shouldHandleException: (NSException *) exception mask: (NSUInteger) aMask
 {
 	return YES;
 }
+#endif
 
 @end
