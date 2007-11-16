@@ -89,7 +89,7 @@
 		53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = ../BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		8D1AC9730486D14A00FE50C9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		8D1AC9740486D14A00FE50C9 /* InterfaceBuilderPlugin.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = InterfaceBuilderPlugin.ibplugin; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D1AC9740486D14A00FE50C9 /* BaseTen Plug-in.ibplugin */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "BaseTen Plug-in.ibplugin"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D1AC97B0486D23100FE50C9 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		C0D069550A49DF9100C95564 /* InterfaceBuilderKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = InterfaceBuilderKit.framework; path = Library/Frameworks/InterfaceBuilderKit.framework; sourceTree = SYSTEM_DEVELOPER_DIR; };
 		D1AEDE460A6C289C0010C343 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/InterfaceBuilderPluginLibrary.nib; sourceTree = "<group>"; };
@@ -143,7 +143,7 @@
 		1ED78706FE9D4A0611CA0C5A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D1AC9740486D14A00FE50C9 /* InterfaceBuilderPlugin.ibplugin */,
+				8D1AC9740486D14A00FE50C9 /* BaseTen Plug-in.ibplugin */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -221,6 +221,8 @@
 				8D1AC9660486D14A00FE50C9 /* Resources */,
 				8D1AC96A0486D14A00FE50C9 /* Sources */,
 				8D1AC96E0486D14A00FE50C9 /* Frameworks */,
+				53C8C30A0CEDD31000676C98 /* Run install_name_tool */,
+				53C8C30C0CEDD34500676C98 /* Set plug-in icon */,
 			);
 			buildRules = (
 			);
@@ -231,7 +233,7 @@
 			name = InterfaceBuilderPlugin;
 			productInstallPath = "$(HOME)/Developer/Palettes";
 			productName = InterfaceBuilderPlugin;
-			productReference = 8D1AC9740486D14A00FE50C9 /* InterfaceBuilderPlugin.ibplugin */;
+			productReference = 8D1AC9740486D14A00FE50C9 /* BaseTen Plug-in.ibplugin */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -304,6 +306,37 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		53C8C30A0CEDD31000676C98 /* Run install_name_tool */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run install_name_tool";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "BASETEN_FRAMEWORK_PATH=\"../Frameworks/BaseTen.framework/Versions/A/BaseTen\"\nBASETENAPPKIT_FRAMEWORK_PATH=\"../Frameworks/BaseTenAppKit.framework/Versions/A/BaseTenAppKit\"\n\ninstall_name_tool \\\n\t-change \"@executable_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/../../../$BASETEN_FRAMEWORK_PATH\" \\\n\t\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/$BASETENAPPKIT_FRAMEWORK_PATH\"\n\ninstall_name_tool \\\n\t-change \"@executable_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t-change \"@executable_path/$BASETENAPPKIT_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/$BASETENAPPKIT_FRAMEWORK_PATH\" \\\n\t\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n";
+		};
+		53C8C30C0CEDD34500676C98 /* Set plug-in icon */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set plug-in icon";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "BASETEN_PROJECT_DIR=\"$PROJECT_DIR\"/../\n\nICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenPaletteIcon\"\n\n\"$BASETEN_PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenPaletteIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$BASETEN_PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		8D1AC96A0486D14A00FE50C9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -371,7 +404,6 @@
 		C056398408A954F8003078D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/InterfaceBuilderPluginFramework.framework/Resources/";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
@@ -389,7 +421,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/InterfaceBuilderPlugin_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = InterfaceBuilderPlugin;
+				PRODUCT_NAME = "BaseTen Plug-in";
 				WRAPPER_EXTENSION = ibplugin;
 				ZERO_LINK = YES;
 			};
@@ -398,7 +430,6 @@
 		C056398508A954F8003078D8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)/InterfaceBuilderPluginFramework.framework/Resources/";
 				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)$(CONFIGURATION)";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
