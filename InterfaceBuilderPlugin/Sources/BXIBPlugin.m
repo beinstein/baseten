@@ -45,7 +45,6 @@
 
 - (NSArray *) libraryNibNames
 {
-    //FIXME: real names.
     return [NSArray arrayWithObjects: @"InterfaceBuilderPluginLibrary", nil];
 }
 

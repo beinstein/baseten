@@ -28,6 +28,7 @@
 
 #import "BXSynchronizedArrayController+IBAdditions.h"
 #import "BXSynchronizedArrayControllerInspector.h"
+#import "BXIBPlugin.h"
 
 
 @implementation BXSynchronizedArrayController (IBAdditions)
@@ -46,26 +47,22 @@
 {
     [super ibPopulateAttributeInspectorClasses: classes];
     [classes addObject: [BXSynchronizedArrayControllerInspector class]];
+	
+	//Get rid of the object controller inspector.
+	[classes removeObjectAtIndex: 0];
 }
 
-#if 0
-//FIXME: move alert stuff elsewhere.
-- (void) alertDidEnd:(NSAlert *)alert returnCode:(int)returnCode contextInfo:(void *)contextInfo
+- (BOOL) validateIBFetchPredicate: (id *) ioValue error: (NSError **) outError 
 {
-	[alert release];
-}
-#endif
-
-- (void) setIBFetchPredicate: (NSString *) predicateString
-{
+	BOOL retval = NO;
 	@try
 	{
-		NSPredicate* predicate = nil;
-		
+		NSString* predicateString = *ioValue;
+		NSPredicate* predicate = nil;		
 		if ([predicateString length] > 0)
 			predicate = [NSPredicate predicateWithFormat:predicateString];
-		
-		[self setFetchPredicate: predicate];
+		*ioValue = predicate;
+		retval = YES;
 	}
 	@catch (NSException* e)
 	{
@@ -74,17 +71,15 @@
 								  NSLocalizedString (@"NSPredicate parse error", nil), NSLocalizedDescriptionKey, 
 								  nil];
 		NSError* error = [NSError errorWithDomain: NSCocoaErrorDomain code: 1 userInfo: userInfo];
-		
-		error = nil;
-#if 0
-		//FIXME: move alert stuff elsewhere.
-		NSAlert* alert = [[NSAlert alertWithError: error] retain];
-		[alert beginSheetModalForWindow: [self window] 
-                          modalDelegate: self 
-                         didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) 
-                            contextInfo: NULL];
-#endif
+		if (NULL != outError)
+			*outError = error;
 	}
+	return retval;	
+}
+
+- (void) setIBFetchPredicate: (NSPredicate *) predicate
+{
+	[self setFetchPredicate: predicate];
 }
 
 - (NSString *) IBFetchPredicate
@@ -94,7 +89,8 @@
 
 - (NSImage *) ibDefaultImage
 {
-	return [NSImage imageNamed: @"BXArrayController"];
+	NSString* path = [[NSBundle bundleForClass: [BXIBPlugin class]] pathForImageResource: @"BXArrayController"];
+	return [[[NSImage alloc] initByReferencingFile: path] autorelease];
 }
 
 @end

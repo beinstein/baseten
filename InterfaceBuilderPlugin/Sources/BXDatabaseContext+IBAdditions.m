@@ -28,6 +28,8 @@
 
 #import "BXDatabaseContext+IBAdditions.h"
 #import "BXDatabaseContextInspector.h"
+#import "BXIBPlugin.h"
+#import <BaseTen/BXDatabaseAdditions.h>
 
 
 @implementation BXDatabaseContext (IBAdditions)
@@ -77,7 +79,7 @@
 		}
 		else if ([givenURI isKindOfClass: [NSString class]])
 		{
-		    if (0 != [string length])
+		    if (0 != [givenURI length])
 				newURI = [NSURL URLWithString: givenURI];
 			else
 			{
@@ -102,26 +104,33 @@
 			errorMessage = @"The only supported scheme is pgsql.";
 			goto bail;
 		}
+		NSArray* pathComponents = [[newURI path] pathComponents];
 		//The first path component is the initial slash.
-		if (2 != [[[newURI path] pathComponents] count])
+		if ([pathComponents count] < 2 || [@"/" isEqualToString: [pathComponents objectAtIndex: 1]])
+		{
+			errorMessage = @"The URI path should contain the database name.";
+			goto bail;
+		}
+		if (2 < [pathComponents count])
 		{
 			errorMessage = @"The URI path should only contain the database name.";
 			goto bail;
-		}
+		}		
 		succeeded = YES;
 
 		bail:
 		if (succeeded)
 			*ioValue = newURI;
-		else
+		else if (NULL != outError)
 		{
 			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-	            BXSafeObj (errorMessage), NSLocalizedFailureReasonErrorKey,
-	            BXSafeObj (errorMessaage), NSLocalizedRecoverySuggestionErrorKey,
+	            @"", NSLocalizedFailureReasonErrorKey,
+	            BXSafeObj (errorMessage), NSLocalizedRecoverySuggestionErrorKey,
 				nil];
 			NSError* error = [NSError errorWithDomain: kBXErrorDomain 
 												 code: kBXErrorMalformedDatabaseURI 
 											 userInfo: userInfo];
+			*outError = error;
 		}
 	}
 	
@@ -135,7 +144,8 @@
 
 - (NSImage *) ibDefaultImage
 {
-	return [NSImage imageNamed: @"BXDatabaseObject"];
+	NSString* path = [[NSBundle bundleForClass: [BXIBPlugin class]] pathForImageResource: @"BXDatabaseObject"];
+	return [[[NSImage alloc] initByReferencingFile: path] autorelease];
 }
 
 @end
