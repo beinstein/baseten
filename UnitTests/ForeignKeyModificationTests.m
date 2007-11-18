@@ -80,16 +80,6 @@
     context = nil;
 }
 
-- (void) testModMTO
-{
-    [self modMany: test2 toOne: test1];
-}
-
-- (void) testModMTOView
-{
-    [self modMany: test2v toOne: test1v];
-}
-
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     //Change reference in foreignObject from id=1 to id=2
@@ -118,16 +108,6 @@
     MKCAssertEqualObjects ([foreignObject primitiveValueForKey: [oneEntity name]], object);
     
     [context rollback];
-}
-
-- (void) testModOTM
-{
-    [self modOne: test1 toMany: test2];
-}
-
-- (void) testModOTMView
-{
-    [self modOne: test1v toMany: test2v];
 }
 
 - (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity
@@ -160,46 +140,6 @@
     MKCAssertEqualObjects (referencedObjects, foreignObjects);
 
     [context rollback];
-}
-
-- (void) testModOTM2
-{
-    //FIXME: also write a view test?
-    BOOL autocommits = [context autocommits];
-    [context setAutocommits: NO];
-    
-    NSError* error = nil;
-    NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
-    MKCAssertNotNil (predicate);
-    NSArray* res = [context executeFetchForEntity: test1
-                                    withPredicate: predicate
-                                            error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertTrue (1 == [res count]);
-    BXDatabaseObject* object = [res objectAtIndex: 0];
-    //Create a self-updating container to see if it interferes with object creation.
-    id collection = [object valueForKey: @"test2"];
-    
-    NSDictionary* values = [NSDictionary dictionaryWithObjectsAndKeys:
-        [object primitiveValueForKey: @"id"], @"fkt1id",
-        @"test", @"value",
-        nil];
-    [context createObjectForEntity: test2 withFieldValues: values error: &error];
-    STAssertNil (error, [error description]);
-    
-    collection = nil;
-    [context rollback];
-    [context setAutocommits: autocommits];
-}
-
-- (void) testModOTO
-{
-    [self modOne: ototest1 toOne: ototest2];
-}
-
-- (void) testModOTOView
-{
-    [self modOne: ototest1v toOne: ototest2v];
 }
 
 - (void) modOne: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
@@ -242,26 +182,6 @@
     [context rollback];
 }
 
-- (void) testRemove1
-{
-    [self remove1: test1];
-}
-
-- (void) testRemoveView1
-{
-    [self remove1: test1v];
-}
-
-- (void) testRemove2
-{
-    [self remove2: test1];
-}
-
-- (void) testRemoveView2
-{
-    [self remove2: test1v];
-}
-
 - (BXDatabaseObject *) removeRefObject: (BXEntityDescription *) entity
 {
     NSError* error = nil;
@@ -285,10 +205,95 @@
 {
     BXDatabaseObject* object = [self removeRefObject: oneEntity];
     NSSet* refObjects = [object primitiveValueForKey: @"test2"];
-    TSEnumerate (currentObject, e, [refObjects objectEnumerator])
+    TSEnumerate (currentObject, e, [[refObjects allObjects] objectEnumerator])
         [currentObject setPrimitiveValue: nil forKey: @"test1"];
     
     [context rollback];
+}
+
+@end
+
+
+@implementation ForeignKeyModificationTests (Tests)
+
+- (void) testRemove1
+{
+    [self remove1: test1];
+}
+
+- (void) testRemoveView1
+{
+    [self remove1: test1v];
+}
+
+- (void) testRemove2
+{
+    [self remove2: test1];
+}
+
+- (void) testRemoveView2
+{
+    [self remove2: test1v];
+}
+
+- (void) testModMTO
+{
+    [self modMany: test2 toOne: test1];
+}
+
+- (void) testModMTOView
+{
+    [self modMany: test2v toOne: test1v];
+}
+
+- (void) testModOTM
+{
+    [self modOne: test1 toMany: test2];
+}
+
+- (void) testModOTMView
+{
+    [self modOne: test1v toMany: test2v];
+}
+
+- (void) testModOTM2
+{
+    //FIXME: also write a view test?
+    BOOL autocommits = [context autocommits];
+    [context setAutocommits: NO];
+    
+    NSError* error = nil;
+    NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
+    MKCAssertNotNil (predicate);
+    NSArray* res = [context executeFetchForEntity: test1
+                                    withPredicate: predicate
+                                            error: &error];
+    STAssertNil (error, [error description]);
+    MKCAssertTrue (1 == [res count]);
+    BXDatabaseObject* object = [res objectAtIndex: 0];
+    //Create a self-updating container to see if it interferes with object creation.
+    id collection = [object valueForKey: @"test2"];
+    
+    NSDictionary* values = [NSDictionary dictionaryWithObjectsAndKeys:
+							[object primitiveValueForKey: @"id"], @"fkt1id",
+							@"test", @"value",
+							nil];
+    [context createObjectForEntity: test2 withFieldValues: values error: &error];
+    STAssertNil (error, [error description]);
+    
+    collection = nil;
+    [context rollback];
+    [context setAutocommits: autocommits];
+}
+
+- (void) testModOTO
+{
+    [self modOne: ototest1 toOne: ototest2];
+}
+
+- (void) testModOTOView
+{
+    [self modOne: ototest1v toOne: ototest2v];
 }
 
 @end
