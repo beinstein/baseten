@@ -118,7 +118,7 @@
  */
 - (void) terminate
 {
-    [connections makeObjectsPerformSelector: @selector (disconnect)];
+    [[connections allObjects] makeObjectsPerformSelector: @selector (disconnect)];
     [connections removeAllObjects];
 }
 
