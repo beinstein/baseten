@@ -26,6 +26,8 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
+
 #if defined(PGTS_EXPORT)
 #undef PGTS_EXPORT
 #endif
