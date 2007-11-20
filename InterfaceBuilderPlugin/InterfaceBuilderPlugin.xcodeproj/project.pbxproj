@@ -479,7 +479,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/InterfaceBuilderPlugin_Prefix.pch;
 				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = InterfaceBuilderPlugin;
+				PRODUCT_NAME = "BaseTen Plug-in";
 				WRAPPER_EXTENSION = ibplugin;
 			};
 			name = Release;
