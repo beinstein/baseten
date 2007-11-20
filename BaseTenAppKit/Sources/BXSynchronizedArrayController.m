@@ -44,6 +44,10 @@
 
 /**
  * An NSArrayController subclass for use with BaseTen.
+ * A BXSynchronizedArrayController updates its contents automatically based on notifications received 
+ * from a database context. In order to function, its databaseContext outlet needs to be connected. 
+ * It may also fetch objects when the context connects. However, this option should not be enabled 
+ * if the controller's contents are bound to a relationship in a database object.
  * \ingroup BaseTenAppKit
  */
 @implementation BXSynchronizedArrayController
