@@ -53,10 +53,11 @@
 #import "BXDatabaseContextAdditions.h"
 #import "BXConnectionSetupManagerProtocol.h"
 #import "BXConstantsPrivate.h"
+#import "BXErrorHandlerDelegate.h"
 
 #undef BXHandleError
 #define BXHandleError( ERROR, LOCAL_ERROR ) \
-    if ( nil != LOCAL_ERROR ) { if ( NULL != ERROR ) *(NSError **)ERROR = LOCAL_ERROR; else [self handleError: LOCAL_ERROR]; }
+	if (nil != localError) [errorHandlerDelegate BXDatabaseContext: self hadError: LOCAL_ERROR willBePassedOn: ( NULL != ERROR )]
             
 
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
@@ -72,6 +73,7 @@ static BOOL gHaveAppKitFramework = NO;
  * \note This class is not thread-safe, i.e. 
  *		 if methods of a BXDatabaseContext instance will be called from 
  *		 different threads the result is undefined and deadlocks are possible.
+ * \see BXDatabaseContext(DefaultErrorHandler)
  * \ingroup BaseTen
  */
 @implementation BXDatabaseContext
@@ -158,6 +160,7 @@ static BOOL gHaveAppKitFramework = NO;
         mRetainRegisteredObjects = NO;
 		mCanConnect = YES;
 		mConnectsOnAwake = NO;
+		errorHandlerDelegate = self;
     }
     return self;
 }
@@ -451,6 +454,30 @@ static BOOL gHaveAppKitFramework = NO;
     return rval;
 }
 
+/** The NSWindow used with various sheets. */
+- (NSWindow *) modalWindow
+{
+	return modalWindow;
+}
+
+/** 
+ * The policy delegate. 
+ * \see NSObject(BXPolicyDelegate)
+ */
+- (id) policyDelegate
+{
+	return policyDelegate;
+}
+
+/**
+ * The error handler delegate.
+ * \see NSObject(BXErrorHandlerDelegate)
+ */ 
+- (id) errorHandlerDelegate
+{
+	return errorHandlerDelegate;
+}
+
 /**
  * Set the NSWindow used with various sheets.
  * If set to nil, application modal alerts will be used.
@@ -472,6 +499,16 @@ static BOOL gHaveAppKitFramework = NO;
 - (void) setPolicyDelegate: (id) anObject
 {
 	policyDelegate = anObject;
+}
+
+/**
+ * Set the error handler delegate.
+ * The delegate object will not be retained.
+ * \see NSObject(BXErrorHandlerDelegate)
+ */
+- (void) setErrorHandlerDelegate: (id) anObject
+{
+	errorHandlerDelegate = anObject;
 }
 
 /**
@@ -618,7 +655,8 @@ static BOOL gHaveAppKitFramework = NO;
 	{
 		NSError* localError = nil;
 		[mDatabaseInterface establishSavepoint: &localError];
-		[self handleError: localError];
+		if (nil != localError)
+			[errorHandlerDelegate BXDatabaseContext: self hadError: localError willBePassedOn: NO];
 		[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 	}
 }
@@ -678,7 +716,8 @@ static BOOL gHaveAppKitFramework = NO;
 	NSError* error = nil;
     [mDatabaseInterface rollbackToLastSavepoint: &error];
 	//FIXME: in which case does the query fail? Should we be prepared for that?
-	[self handleError: error];	
+	if (nil != error)
+		[errorHandlerDelegate BXDatabaseContext: self hadError: error willBePassedOn: NO];
 }
 
 #if 0
@@ -2094,11 +2133,6 @@ static BOOL gHaveAppKitFramework = NO;
 	mConnectionSetupManager = anObject;
 }
 
-- (void) handleError: (NSError *) anError
-{
-    [[anError BXExceptionWithName: kBXExceptionUnhandledError] raise];
-}
-
 - (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject
 {
     [mObjects removeObjectForKey: [anObject objectID]];
@@ -2463,5 +2497,27 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 {
 	if (NO == [self isConnected])
 		[self setCanConnect: YES];
+}
+@end
+
+
+/**
+ * The default error handler. 
+ * Various methods in BXDatabaseContext have an NSError** parameter. In addition,
+ * the context has an errorHandlerDelegate outlet. If no error handler has been 
+ * set, the database context will handle errors itself. 
+ * 
+ * When the NSError** parameter has been supplied to the methods, no action 
+ * will be taken and the error is assumed to have been handled. If the parameter
+ * is NULL and an error occurs, a BXException named \c kBXExceptionUnhandledError
+ * will be thrown.
+ */
+@implementation BXDatabaseContext (DefaultErrorHandler)
+- (void) BXDatabaseContext: (BXDatabaseContext *) context 
+				  hadError: (NSError *) anError 
+			willBePassedOn: (BOOL) willBePassedOn;
+{
+	if (! willBePassedOn)
+		@throw [anError BXExceptionWithName: kBXExceptionUnhandledError];
 }
 @end

@@ -70,7 +70,6 @@ struct trustResult
 - (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject;
 - (BOOL) registerObject: (BXDatabaseObject *) anObject;
 - (void) unregisterObject: (BXDatabaseObject *) anObject;
-- (void) handleError: (NSError *) anError;
 - (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
 - (NSArray *) keyPathComponents: (NSString *) keyPath;

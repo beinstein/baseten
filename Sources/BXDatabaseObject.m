@@ -30,8 +30,8 @@
 #import <string.h>
 #import <ctype.h>
 #import <Log4Cocoa/Log4Cocoa.h>
-#include <sys/types.h>
-#include <unistd.h>
+#import <sys/types.h>
+#import <unistd.h>
 
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
@@ -47,6 +47,7 @@
 #import "BXObjectStatusInfo.h"
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "BXErrorHandlerDelegate.h"
 
 
 static NSString* 
@@ -174,17 +175,6 @@ ParseSelector (SEL aSelector, NSString** key)
             rval = YES;
     }
     return rval;
-}
-
-- (void) queryFailed: (NSError *) error
-{
-    NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-        mContext,    kBXContextKey,
-        error,       kBXErrorKey,
-        nil];
-    @throw [NSException exceptionWithName: kBXFailedToExecuteQueryException
-                                   reason: [error localizedDescription]
-                                 userInfo: userInfo];
 }
 
 /** 
@@ -437,18 +427,20 @@ ParseSelector (SEL aSelector, NSString** key)
 	{
         case kBXDatabaseObjectPrimaryKey:
 		case kBXDatabaseObjectKnownKey:
+		{
 			retval = [self cachedValueForKey: aKey];
 			
 			if (nil == retval)
 			{
 				log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-				if (NO == [mContext fireFault: self key: aKey error: &error])
-					[self queryFailed: error];
-				retval = [self cachedValueForKey: aKey];				
+				if ([mContext fireFault: self key: aKey error: &error])
+					retval = [self cachedValueForKey: aKey];
 			}
 			break;
-		
+		}
+			
 		case kBXDatabaseObjectForeignKey:
+		{
 			retval = [self cachedValueForKey: aKey];
 			
 			if (nil == retval)
@@ -457,30 +449,35 @@ ParseSelector (SEL aSelector, NSString** key)
 				BXRelationshipDescription* rel = [[[self entity] relationshipsByName] objectForKey: aKey];
 				if (nil != rel)
 				{
-					NSError* error = nil;
 					retval = [rel targetForObject: self error: &error];
-					if (nil != error) [self queryFailed: error];
-					
-					//Caching the result might cause a retain cycle.
-					[self setCachedValue: retval forKey: aKey];					
+					if (nil == error)
+					{
+						//Caching the result might cause a retain cycle.
+						[self setCachedValue: retval forKey: aKey];
+					}
 				}									
 			}
 			break;
-
+		}
+			
 		case kBXDatabaseObjectUnknownKey:
 			break;
-
+			
 		case kBXDatabaseObjectNoKeyType:
 		default:
 			log4AssertValueReturn (NO, nil, @"keyType had a strange value (%d).", keyType);
 			break;
-			
 	}
-	    
-    if (nil == retval)
-        retval = [super valueForUndefinedKey: aKey];
-    if ([NSNull null] == retval)
-        retval = nil;
+	
+	if (nil == error)
+		[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
+	else
+	{
+		if (nil == retval)
+			retval = [super valueForUndefinedKey: aKey];
+		if ([NSNull null] == retval)
+			retval = nil;
+	}		
     
     return [[retval retain] autorelease];
 }
@@ -547,7 +544,7 @@ ParseSelector (SEL aSelector, NSString** key)
         }
         else
         {
-            [self queryFailed: error];
+			[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
         }
     }
 }
@@ -563,7 +560,7 @@ ParseSelector (SEL aSelector, NSString** key)
     log4AssertVoidReturn (nil != mContext, @"Expected to have a database context.");
     NSError* error = nil;
     if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: aDict error: &error])
-        [self queryFailed: error];
+		[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
 }
 
 /** 

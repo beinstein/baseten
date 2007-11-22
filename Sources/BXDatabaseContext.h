@@ -73,6 +73,8 @@
 	IBOutlet NSWindow*						modalWindow;
 	/** A delegate for policies. Currently used with SSL connections. \see NSObject(BXPolicyDelegate) */
 	IBOutlet id								policyDelegate;
+	/** A delegate for error handling. \see NSObject(BXErrorHandlerDelegate) */
+	IBOutlet id								errorHandlerDelegate;
 
     BOOL									mLogsQueries;
     BOOL									mAutocommits;
@@ -115,8 +117,12 @@
 - (NSUndoManager *) undoManager;
 - (BOOL) setUndoManager: (NSUndoManager *) aManager;
 
+- (NSWindow *) modalWindow;
+- (id) policyDelegate;
+- (id) errorHandlerDelegate;
 - (void) setModalWindow: (NSWindow *) aWindow;
 - (void) setPolicyDelegate: (id) anObject;
+- (void) setErrorHandlerDelegate: (id) anObject;
 
 - (BOOL) usesKeychain;
 - (void) setUsesKeychain: (BOOL) usesKeychain;
