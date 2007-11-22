@@ -73,7 +73,6 @@ static BOOL gHaveAppKitFramework = NO;
  * \note This class is not thread-safe, i.e. 
  *		 if methods of a BXDatabaseContext instance will be called from 
  *		 different threads the result is undefined and deadlocks are possible.
- * \see BXDatabaseContext(DefaultErrorHandler)
  * \ingroup BaseTen
  */
 @implementation BXDatabaseContext
@@ -2501,6 +2500,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 @end
 
 
+@implementation BXDatabaseContext (DefaultErrorHandler)
 /**
  * The default error handler. 
  * Various methods in BXDatabaseContext have an NSError** parameter. In addition,
@@ -2512,7 +2512,6 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
  * is NULL and an error occurs, a BXException named \c kBXExceptionUnhandledError
  * will be thrown.
  */
-@implementation BXDatabaseContext (DefaultErrorHandler)
 - (void) BXDatabaseContext: (BXDatabaseContext *) context 
 				  hadError: (NSError *) anError 
 			willBePassedOn: (BOOL) willBePassedOn;
