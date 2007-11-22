@@ -70,12 +70,34 @@
  */
 
 /**
- * \defgroup AutoContainers Self-updating containers
+ * \defgroup AutoContainers Self-updating collections
  * \ingroup BaseTen
- * Containers updated by the database context.
- * The context will change the container's contents according to its filter predicate 
- * after each relevant modification to the database. NSKeyValueObserving is 
- * implemented in the container.
+ * Collections updated by the database context.
+ * The context will change the collection's contents according to its filter predicate 
+ * after each relevant modification to the database. 
+ */
+
+/**
+ * \page changeTracking Tracking database changes
+ *
+ * BXDatabaseObject conforms to NSKeyValueObserving and uses self-updating collections for storing 
+ * related objects; changes in them may thus be tracked with KVO. 
+ * 
+ * BXSynchronizedArrayController's contents will be updated automatically. BXDatabaseContext's fetch 
+ * methods also have the option to return a self-updating array instead of an 
+ * ordinary one. In this case, KVO won't work since the object doesn't have an owner known to the context. 
+ * (This will be addressed in the future.) 
+ *
+ * Another, a more low-level means of tracking changes is observing NSNotifications. Notifications on 
+ * entity changes will be posted to the relevant context's notification center. The notification object
+ * will be a BXEntityDescription which corresponds to the table where the change happened. The names 
+ * of the notifications are:
+ * \li \c kBXInsertNotification on database \c INSERT
+ * \li \c kBXUpdateNotification on database \c UPDATE
+ * \li \c kBXDeleteNotification on database \c DELETE
+ *
+ * At the time the notifications are posted, database objects and self-updating collections will 
+ * already have been updated.
  */
 
 /**
@@ -115,8 +137,7 @@
  * \li Changing tables' primary keys after having them prepared for modification observing will not work. Use the method 
  *     described above.
  * \li Practically all public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
- *     Furthermore, all queries should be performed from the main thread. Exceptions to this are BXDatabaseObject 
- *     and BXDatabaseObjectID the thread-safe methods of which have been documented.
+ *     Furthermore, all queries should be performed from the main thread.
  * \li NSCoding has not been implemented for BXDatabaseObject.
  * \li BaseTen is currently suitable for inserting small data sets into the database. 
  *     Insertion of larger data sets (thousands of objects) takes considerable amount of time and 
@@ -124,41 +145,5 @@
  *     Fetching large data sets should be fast enough.  
  * \li The query logging system is not very consistent at the moment. Mostly, however, the queries are logged with the 
  *     performing connection object's address prepended.
- * \li Automatically updating collections currently don't post KVO notifications. Instead of binding, one should subscribe to NSNotifications kBXInsertNotification, kBXUpdateNotification and kBXDeleteNotification with the entity description as the notification object.
  */
-
-/**
- * \page usingAppKitClasses Using the NSController subclasses provided with the framework
- * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
- * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
- * some NSController subclasses have been provided with the framework. For now, the only directly usable one is 
- * BXSynchronizedArrayController. Additionally, there is BXController and additions to NSController for creating
- * controller subclasses.
- *
- * \section BXSynchronizedArrayControllerIB Using BXSyncronizedArrayController from Interface Builder
- * <ol>
- *     <li>Load the BaseTen palette.</li>
- *     <li>Create a new nib file.</li>
- *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
- *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a valid database URI. 
- *         <ul>
- *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
- *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
- *                 should be used to commit and rollback. Undo may be used between commits.</li>
- *             <li>If query logging is enabled, all queries will be logged to standard output.</li>
- *         </ul>
- *     </li>
- *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a table name into the field.
- *         <ul>
- *             <li>The schema field may be left empty, in which case <tt>public</tt> will be used.</li>
- *             <li>Please note that the table needs to be enabled for change observing. This can be 
- *                 done using the Setup Application.</li>
- *         </ul>
- *     </li>
- *     <li>Bind the Cocoa views to the controller.</li> 
- *     <li>Test the interface. The views should be populated using the database.</li>
- * </ol>
- */ 
 

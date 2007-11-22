@@ -67,7 +67,7 @@ static BOOL gHaveAppKitFramework = NO;
  * The database context. 
  * A database context connects to a given database, sends queries and commands to it and
  * creates objects from rows in its tables. In order to function properly, it needs an URI formatted 
- * like pgsql://username:password@hostname/database_name/. 
+ * like pgsql://username:password\@hostname/database_name/. 
  *
  * \note This class is not thread-safe, i.e. 
  *		 if methods of a BXDatabaseContext instance will be called from 
@@ -134,7 +134,6 @@ static BOOL gHaveAppKitFramework = NO;
  * An initializer.
  * The database URI has to be set afterwards.
  * \return          The database context
- * \throw           NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 - (id) init
 {

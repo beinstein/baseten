@@ -329,7 +329,7 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		8DC2EF4F0486A6940098B216 /* BaseTenAppKit */ = {
+		8DC2EF4F0486A6940098B216 /* BaseTen subframeworks */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "BaseTenAppKit" */;
 			buildPhases = (
@@ -374,7 +374,7 @@
 			);
 			projectRoot = "";
 			targets = (
-				8DC2EF4F0486A6940098B216 /* BaseTenAppKit */,
+				8DC2EF4F0486A6940098B216 /* BaseTen subframeworks */,
 			);
 		};
 /* End PBXProject section */

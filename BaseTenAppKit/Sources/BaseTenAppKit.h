@@ -41,6 +41,48 @@
 
 /**
  * \defgroup ValueTransformers Value Transformers
+ * Transform database objects' status to various information.
+ * BXDatabaseObject has BXDatabaseObject#statusInfo method which
+ * returns a proxy for retrieving object's status. The status may
+ * then be passed to NSValueTransformer subclasses. For example, 
+ * an NSTableColumn's editable binding may be bound to a key path
+ * like arrayController.arrangedObjects.statusInfo.some_key_name
+ * and the value transformer may then be set to
+ * BXObjectStatusToEditableTransformer.
  * \ingroup BaseTenAppKit
  */
 
+/**
+ * \page usingAppKitClasses Using the controller subclasses provided with the framework
+ * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
+ * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
+ * some NSController subclasses have been provided with the framework. For now, the only directly usable one is 
+ * BXSynchronizedArrayController. Additionally, there is BXController and additions to NSController for creating
+ * controller subclasses.
+ *
+ * \section BXSynchronizedArrayControllerIB Using BXSyncronizedArrayController from Interface Builder
+ * <ol>
+ *     <li>Load the BaseTen plug-in or palette.</li>
+ *     <li>Create a new nib file.</li>
+ *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
+ *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
+ *     <li>Enter a valid database URI. 
+ *         <ul>
+ *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
+ *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
+ *                 should be used to commit and rollback. Undo may be used between commits.</li>
+ *             <li>If query logging is enabled, all queries will be logged to standard output.</li>
+ *         </ul>
+ *     </li>
+ *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
+ *     <li>Enter a table name into the field.
+ *         <ul>
+ *             <li>The schema field may be left empty, in which case <tt>public</tt> will be used.</li>
+ *             <li>Please note that the table needs to be enabled for change observing. This can be 
+ *                 done using the Setup Application.</li>
+ *         </ul>
+ *     </li>
+ *     <li>Bind the Cocoa views to the controller.</li> 
+ *     <li>Test the interface. The views should be populated using the database.</li>
+ * </ol>
+ */ 

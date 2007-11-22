@@ -54,7 +54,13 @@ static TSNonRetainedObjectSet* gProperties;
 	if (0) [super dealloc];
 }
 
-/** Deallocation helper. */
+/**
+ * Deallocation helper. 
+ * Subclasses should override this instead of dealloc and then call 
+ * super's implementation of dealloc2. This is because BXPropertyDescriptions 
+ * will be stored into a non-retaining collection on creation and removed from 
+ * it on dealloc.
+ */
 - (void) dealloc2
 {
 	[super dealloc];

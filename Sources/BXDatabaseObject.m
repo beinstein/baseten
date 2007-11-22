@@ -117,9 +117,14 @@ ParseSelector (SEL aSelector, NSString** key)
 /** 
  * A class that represents a single row in a database table.
  * The objects returned by the database context are instances of this class 
- * or its subclasses. The class is KVC-compliant. It is not 
- * thread-safe, i.e. if methods of an BXDatabaseObject instance will be called from 
- * different threads the result is undefined and deadlocks are possible.
+ * or its subclasses. The class is KVC-compliant. It is not thread-safe
+ * for the most part, i.e. if methods of an BXDatabaseObject instance will 
+ * be called from different threads the result is undefined and deadlocks are possible.
+ *
+ * Retrieving cached values is thread safe. This could be useful in situations, where 
+ * worker threads need access to the object's contents but the contents have been 
+ * fetched earlier.
+ *
  * \ingroup BaseTen
  */
 @implementation BXDatabaseObject
