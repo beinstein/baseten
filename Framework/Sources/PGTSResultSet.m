@@ -39,7 +39,7 @@
 #import <stdlib.h>
 #import <limits.h>
 #import <PGTS/postgresql/libpq-fe.h> 
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 #import "PGTSResultSet.h"
 #import "PGTSResultSetPrivate.h"
@@ -182,7 +182,7 @@ static unsigned int _serial;
 
 - (id) valueForFieldNamed: (NSString *) aName row: (int) rowIndex
 {
-    unsigned int columnIndex = [fieldnames tagForKey: aName];
+    unsigned int columnIndex = [fieldnames integerForKey: aName];
     if (NSNotFound == columnIndex)
     {
         [[NSException exceptionWithName: kPGTSFieldNotFoundException reason: nil 
@@ -213,7 +213,7 @@ static unsigned int _serial;
 
 - (unsigned int) indexOfFieldNamed: (NSString *) aName
 {
-    return [fieldnames tagForKey: aName];
+    return [fieldnames integerForKey: aName];
 }
 
 - (int) currentRow
@@ -300,7 +300,7 @@ static unsigned int _serial;
  */
 - (BOOL) setClass: (Class) aClass forFieldNamed: (NSString *) aName
 {
-    return [self setClass: aClass forFieldAtIndex: [fieldnames tagForKey: aName]];
+    return [self setClass: aClass forFieldAtIndex: [fieldnames integerForKey: aName]];
 }
 
 - (BOOL) setClass: (Class) aClass forFieldAtIndex: (int) fieldIndex
@@ -318,7 +318,7 @@ static unsigned int _serial;
 
 - (Class) classForFieldNamed: (NSString *) aName
 {
-	return [self classForFieldAtIndex: [fieldnames tagForKey: aName]];
+	return [self classForFieldAtIndex: [fieldnames integerForKey: aName]];
 }
 
 - (Class) classForFieldAtIndex: (int) fieldIndex
@@ -394,7 +394,7 @@ static unsigned int _serial;
 {
     TSEnumerate (fieldname, e, [fieldnames keyEnumerator])
     {
-        id value = [self valueForFieldAtIndex: [fieldnames tagForKey: fieldname] row: rowIndex];
+        id value = [self valueForFieldAtIndex: [fieldnames integerForKey: fieldname] row: rowIndex];
         if (nil == value)
         {
             value = anObject;
@@ -475,7 +475,9 @@ static unsigned int _serial;
     serial = _serial;
     
     
-    fieldnames = [TSObjectTagDictionary dictionaryWithCapacity: fields];
+    fieldnames = [MKCDictionary copyDictionaryWithCapacity: fields 
+                                                   keyType: kMKCCollectionTypeObject 
+                                                 valueType: kMKCCollectionTypeInteger];
     for (int i = 0; i < fields; i++)
     {
         //FIXME: workaround for what seems to be a bug in libpq
@@ -487,7 +489,7 @@ static unsigned int _serial;
             fields = i;
             break;
         }
-        [fieldnames setTag: i forKey: [NSString stringWithUTF8String: fname]];
+        [fieldnames setInteger: i forKey: [NSString stringWithUTF8String: fname]];
     }
     
     determinesFieldClassesAutomatically = YES;
@@ -560,7 +562,7 @@ static unsigned int _serial;
 
 - (PGTSTableInfo *) tableInfoForFieldNamed: (NSString *) aName
 {
-    return [self tableInfoForFieldAtIndex: [fieldnames tagForKey: aName]];
+    return [self tableInfoForFieldAtIndex: [fieldnames integerForKey: aName]];
 }
 
 - (PGTSTableInfo *) tableInfoForFieldAtIndex: (unsigned int) fieldIndex
@@ -570,7 +572,7 @@ static unsigned int _serial;
 
 - (Oid) tableOidForFieldNamed: (NSString *) aName
 {
-    return [self tableOidForFieldAtIndex: [fieldnames tagForKey: aName]];
+    return [self tableOidForFieldAtIndex: [fieldnames integerForKey: aName]];
 }
 
 - (Oid) tableOidForFieldAtIndex: (unsigned int) index
@@ -585,12 +587,12 @@ static unsigned int _serial;
 
 - (Oid) typeOidForFieldNamed: (NSString *) aName
 {
-    return [self typeOidForFieldAtIndex: [fieldnames tagForKey: aName]];
+    return [self typeOidForFieldAtIndex: [fieldnames integerForKey: aName]];
 }
 
 - (PGTSFieldInfo *) fieldInfoForFieldNamed: (NSString *) aName
 {
-    return [self fieldInfoForFieldAtIndex: [fieldnames tagForKey: aName]];
+    return [self fieldInfoForFieldAtIndex: [fieldnames integerForKey: aName]];
 }
 
 - (PGTSFieldInfo *) fieldInfoForFieldAtIndex: (unsigned int) anIndex

@@ -27,7 +27,6 @@
 //
 
 #import <Foundation/Foundation.h>
-@class TSIndexDictionary;
 @class PGTSTableInfo;
 @class PGTSConnection;
 
@@ -37,7 +36,7 @@
     PGTSConnection* connection;
     NSCountedSet* observedTables;
 	NSCountedSet* postedNotifications;
-    TSIndexDictionary* notificationNames; //From Postgres
+    id notificationNames; //From Postgres
 	NSMutableDictionary* lastChecks;
     NSArray* sentNotifications;
     id delegate;

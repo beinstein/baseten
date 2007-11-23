@@ -27,7 +27,7 @@
 //
 
 #import <PGTS/postgresql/libpq-fe.h>
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import "PGTSNotifier.h"
 #import "PGTSFunctions.h"
 #import "PGTSConnection.h"
@@ -69,7 +69,8 @@
     if ((self = [super init]))
     {
         observedTables = [[NSCountedSet alloc] init];
-        notificationNames = [[TSIndexDictionary alloc] init];
+        notificationNames = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger 
+                                                           valueType: kMKCCollectionTypeObject];
         observesSelfGenerated = NO;
 		lastChecks = [[NSMutableDictionary alloc] init];
 		postedNotifications = [[NSCountedSet alloc] init];

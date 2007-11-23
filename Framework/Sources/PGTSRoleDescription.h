@@ -26,8 +26,6 @@
 // $Id$
 //
 
-@class TSIndexDictionary;
-
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTSAbstractInfo.h>
 #import <PGTS/PGTSAbstractObjectDescription.h>
@@ -35,7 +33,7 @@
 
 @interface PGTSRoleDescription : PGTSAbstractObjectDescription
 {
-    TSIndexDictionary* roles;
+    id roles;
 }
 @end
 

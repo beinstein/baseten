@@ -35,7 +35,6 @@
 @class PGTSResultRow;
 @class PGTSTableInfo;
 @class PGTSFieldInfo;
-@class TSObjectTagDictionary;
 
 
 @interface PGTSResultSet : NSObject {
@@ -46,7 +45,7 @@
 	int currentRow, fields, tuples;
     unsigned int serial;
 	
-    TSObjectTagDictionary* fieldnames;
+    id fieldnames;
     
     BOOL determinesFieldClassesAutomatically;
     Class rowClass;

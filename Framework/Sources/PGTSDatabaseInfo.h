@@ -33,15 +33,14 @@
 
 @class PGTSTableInfo;
 @class PGTSTypeInfo;
-@class TSIndexDictionary;
 @class PGTSConnectionPoolItem;
 @class PGTSRoleDescription;
 
 
 @interface PGTSDatabaseInfo : PGTSAbstractInfo 
 {
-    TSIndexDictionary* tables;
-    TSIndexDictionary* types;
+    id tables;
+    id types;
     NSMutableDictionary* schemas;
     PGTSConnectionPoolItem* poolItem;
     NSString* connectionPoolKey;

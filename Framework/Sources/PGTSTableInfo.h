@@ -34,13 +34,12 @@
 @class PGTSDatabaseInfo;
 @class PGTSIndexInfo;
 @class PGTSResultSet;
-@class TSIndexDictionary;
 
 
 @interface PGTSTableInfo : PGTSAbstractClassInfo 
 {
     unsigned int fieldCount;
-    TSIndexDictionary* fields;
+    id fields;
     NSArray* uniqueIndexes;
     PGTSDatabaseInfo* database;
 
