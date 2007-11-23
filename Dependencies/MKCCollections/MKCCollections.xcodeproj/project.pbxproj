@@ -1,0 +1,435 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		53C4CAA10CF6FED100E09BC3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		53C4CAA50CF6FF0200E09BC3 /* MKCDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CAA30CF6FF0200E09BC3 /* MKCDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CAA60CF6FF0200E09BC3 /* MKCDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAA40CF6FF0200E09BC3 /* MKCDictionary.m */; };
+		53C4CAE30CF7141D00E09BC3 /* MKCObjectDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAE20CF7141D00E09BC3 /* MKCObjectDictionary.m */; };
+		53C4CAEA0CF7147F00E09BC3 /* MKCIntegerDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAE90CF7147F00E09BC3 /* MKCIntegerDictionary.m */; };
+		53C4CAED0CF7148F00E09BC3 /* MKCIntegerKeyDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAEC0CF7148F00E09BC3 /* MKCIntegerKeyDictionary.m */; };
+		53C4CB400CF7193A00E09BC3 /* MKCCollections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CB3F0CF7193A00E09BC3 /* MKCCollections.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CB630CF71D5400E09BC3 /* MKCDictionaryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB620CF71D5400E09BC3 /* MKCDictionaryEnumerator.m */; };
+		53C4CB660CF71D6500E09BC3 /* MKCIntegerDictionaryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB650CF71D6500E09BC3 /* MKCIntegerDictionaryEnumerator.m */; };
+		53C4CB810CF71FE300E09BC3 /* MKCDictionaryKeyEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB800CF71FE300E09BC3 /* MKCDictionaryKeyEnumerator.m */; };
+		53C4CB840CF71FFB00E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB830CF71FFB00E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m */; };
+		53C4CBA90CF7222400E09BC3 /* MKCDictionaryEnumerators.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CBA80CF7222400E09BC3 /* MKCDictionaryEnumerators.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CBCE0CF7309000E09BC3 /* MKCHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CBCD0CF7309000E09BC3 /* MKCHashTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CBD10CF7309B00E09BC3 /* MKCHashTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CBD00CF7309B00E09BC3 /* MKCHashTable.m */; };
+		53C4CC450CF73ED000E09BC3 /* MKCAbstractIntegerDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CC440CF73ED000E09BC3 /* MKCAbstractIntegerDictionary.m */; };
+		53C4CD5A0CF7514100E09BC3 /* MKCCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CD590CF7514100E09BC3 /* MKCCompatibility.h */; };
+		53C4CDC70CF755D000E09BC3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		53C4CDC90CF755D200E09BC3 /* MKCAbstractIntegerDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CC440CF73ED000E09BC3 /* MKCAbstractIntegerDictionary.m */; };
+		53C4CDCA0CF755D400E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB830CF71FFB00E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m */; };
+		53C4CDCC0CF755D600E09BC3 /* MKCIntegerKeyDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAEC0CF7148F00E09BC3 /* MKCIntegerKeyDictionary.m */; };
+		53C4CDCD0CF755D600E09BC3 /* MKCIntegerDictionaryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB650CF71D6500E09BC3 /* MKCIntegerDictionaryEnumerator.m */; };
+		53C4CDCE0CF755D700E09BC3 /* MKCHashTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CBD00CF7309B00E09BC3 /* MKCHashTable.m */; };
+		53C4CDCF0CF755D800E09BC3 /* MKCIntegerDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAE90CF7147F00E09BC3 /* MKCIntegerDictionary.m */; };
+		53C4CDD00CF755DA00E09BC3 /* MKCHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CBCD0CF7309000E09BC3 /* MKCHashTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CDD10CF755DB00E09BC3 /* MKCDictionaryKeyEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB800CF71FE300E09BC3 /* MKCDictionaryKeyEnumerator.m */; };
+		53C4CDD20CF755DC00E09BC3 /* MKCDictionaryEnumerators.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CBA80CF7222400E09BC3 /* MKCDictionaryEnumerators.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CDD30CF755DD00E09BC3 /* MKCDictionaryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CB620CF71D5400E09BC3 /* MKCDictionaryEnumerator.m */; };
+		53C4CDD40CF755DD00E09BC3 /* MKCDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAA40CF6FF0200E09BC3 /* MKCDictionary.m */; };
+		53C4CDD50CF755DE00E09BC3 /* MKCDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CAA30CF6FF0200E09BC3 /* MKCDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CDD60CF755DF00E09BC3 /* MKCCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CD590CF7514100E09BC3 /* MKCCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CDD80CF755E100E09BC3 /* MKCCollections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CB3F0CF7193A00E09BC3 /* MKCCollections.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53C4CDEE0CF75ADE00E09BC3 /* MKCObjectDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAE20CF7141D00E09BC3 /* MKCObjectDictionary.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		53C4CC1D0CF7393C00E09BC3 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32DBCF5E0370ADEE00C91783 /* MKCCollections_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCCollections_Prefix.pch; sourceTree = "<group>"; };
+		53C4CAA30CF6FF0200E09BC3 /* MKCDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionary.h; path = Source/MKCDictionary.h; sourceTree = "<group>"; };
+		53C4CAA40CF6FF0200E09BC3 /* MKCDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionary.m; path = Source/MKCDictionary.m; sourceTree = "<group>"; };
+		53C4CAE20CF7141D00E09BC3 /* MKCObjectDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCObjectDictionary.m; path = Source/MKCObjectDictionary.m; sourceTree = "<group>"; };
+		53C4CAE90CF7147F00E09BC3 /* MKCIntegerDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerDictionary.m; path = Source/MKCIntegerDictionary.m; sourceTree = "<group>"; };
+		53C4CAEC0CF7148F00E09BC3 /* MKCIntegerKeyDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerKeyDictionary.m; path = Source/MKCIntegerKeyDictionary.m; sourceTree = "<group>"; };
+		53C4CB3F0CF7193A00E09BC3 /* MKCCollections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCCollections.h; sourceTree = "<group>"; };
+		53C4CB620CF71D5400E09BC3 /* MKCDictionaryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCDictionaryEnumerator.m; sourceTree = "<group>"; };
+		53C4CB650CF71D6500E09BC3 /* MKCIntegerDictionaryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCIntegerDictionaryEnumerator.m; sourceTree = "<group>"; };
+		53C4CB800CF71FE300E09BC3 /* MKCDictionaryKeyEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCDictionaryKeyEnumerator.m; sourceTree = "<group>"; };
+		53C4CB830CF71FFB00E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCIntegerDictionaryKeyEnumerator.m; sourceTree = "<group>"; };
+		53C4CBA80CF7222400E09BC3 /* MKCDictionaryEnumerators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCDictionaryEnumerators.h; sourceTree = "<group>"; };
+		53C4CBCD0CF7309000E09BC3 /* MKCHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCHashTable.h; path = Source/MKCHashTable.h; sourceTree = "<group>"; };
+		53C4CBD00CF7309B00E09BC3 /* MKCHashTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCHashTable.m; path = Source/MKCHashTable.m; sourceTree = "<group>"; };
+		53C4CC440CF73ED000E09BC3 /* MKCAbstractIntegerDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAbstractIntegerDictionary.m; path = Source/MKCAbstractIntegerDictionary.m; sourceTree = "<group>"; };
+		53C4CD550CF74E0C00E09BC3 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = xcconfig/release.xcconfig; sourceTree = "<group>"; };
+		53C4CD590CF7514100E09BC3 /* MKCCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCCompatibility.h; sourceTree = "<group>"; };
+		53C4CDC30CF7553E00E09BC3 /* libMKCCollections.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMKCCollections.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		D2AAC0C705546C1D00DB518D /* MKCCollections.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = MKCCollections.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		53C4CDC10CF7553E00E09BC3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C4CDC70CF755D000E09BC3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC0C505546C1D00DB518D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C4CAA10CF6FED100E09BC3 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		034768DFFF38A50411DB9C8B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2AAC0C705546C1D00DB518D /* MKCCollections.dylib */,
+				53C4CDC30CF7553E00E09BC3 /* libMKCCollections.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0867D691FE84028FC02AAC07 /* MKCCollections */ = {
+			isa = PBXGroup;
+			children = (
+				08FB77AEFE84172EC02AAC07 /* Classes */,
+				32C88DFF0371C24200C91783 /* Other Sources */,
+				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				034768DFFF38A50411DB9C8B /* Products */,
+				53C4CD550CF74E0C00E09BC3 /* release.xcconfig */,
+			);
+			name = MKCCollections;
+			sourceTree = "<group>";
+		};
+		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				53C4CB870CF7201D00E09BC3 /* Dictionaries */,
+				53C4CBCD0CF7309000E09BC3 /* MKCHashTable.h */,
+				53C4CBD00CF7309B00E09BC3 /* MKCHashTable.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		32C88DFF0371C24200C91783 /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				53C4CD590CF7514100E09BC3 /* MKCCompatibility.h */,
+				53C4CB3F0CF7193A00E09BC3 /* MKCCollections.h */,
+				32DBCF5E0370ADEE00C91783 /* MKCCollections_Prefix.pch */,
+			);
+			name = "Other Sources";
+			path = Source;
+			sourceTree = "<group>";
+		};
+		53C4CB860CF7200900E09BC3 /* Enumerators */ = {
+			isa = PBXGroup;
+			children = (
+				53C4CBA80CF7222400E09BC3 /* MKCDictionaryEnumerators.h */,
+				53C4CB620CF71D5400E09BC3 /* MKCDictionaryEnumerator.m */,
+				53C4CB800CF71FE300E09BC3 /* MKCDictionaryKeyEnumerator.m */,
+				53C4CB650CF71D6500E09BC3 /* MKCIntegerDictionaryEnumerator.m */,
+				53C4CB830CF71FFB00E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m */,
+			);
+			name = Enumerators;
+			path = Source;
+			sourceTree = "<group>";
+		};
+		53C4CB870CF7201D00E09BC3 /* Dictionaries */ = {
+			isa = PBXGroup;
+			children = (
+				53C4CAA30CF6FF0200E09BC3 /* MKCDictionary.h */,
+				53C4CAA40CF6FF0200E09BC3 /* MKCDictionary.m */,
+				53C4CC440CF73ED000E09BC3 /* MKCAbstractIntegerDictionary.m */,
+				53C4CAE20CF7141D00E09BC3 /* MKCObjectDictionary.m */,
+				53C4CAE90CF7147F00E09BC3 /* MKCIntegerDictionary.m */,
+				53C4CAEC0CF7148F00E09BC3 /* MKCIntegerKeyDictionary.m */,
+				53C4CB860CF7200900E09BC3 /* Enumerators */,
+			);
+			name = Dictionaries;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		53C4CDBF0CF7553E00E09BC3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C4CDD00CF755DA00E09BC3 /* MKCHashTable.h in Headers */,
+				53C4CDD20CF755DC00E09BC3 /* MKCDictionaryEnumerators.h in Headers */,
+				53C4CDD50CF755DE00E09BC3 /* MKCDictionary.h in Headers */,
+				53C4CDD60CF755DF00E09BC3 /* MKCCompatibility.h in Headers */,
+				53C4CDD80CF755E100E09BC3 /* MKCCollections.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC0C305546C1D00DB518D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C4CAA50CF6FF0200E09BC3 /* MKCDictionary.h in Headers */,
+				53C4CB400CF7193A00E09BC3 /* MKCCollections.h in Headers */,
+				53C4CBA90CF7222400E09BC3 /* MKCDictionaryEnumerators.h in Headers */,
+				53C4CBCE0CF7309000E09BC3 /* MKCHashTable.h in Headers */,
+				53C4CD5A0CF7514100E09BC3 /* MKCCompatibility.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		53C4CDC20CF7553E00E09BC3 /* Static library */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53C4CDDA0CF7561D00E09BC3 /* Build configuration list for PBXNativeTarget "Static library" */;
+			buildPhases = (
+				53C4CDBF0CF7553E00E09BC3 /* Headers */,
+				53C4CDC00CF7553E00E09BC3 /* Sources */,
+				53C4CDC10CF7553E00E09BC3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Static library";
+			productName = MKCCollections;
+			productReference = 53C4CDC30CF7553E00E09BC3 /* libMKCCollections.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		D2AAC0C605546C1D00DB518D /* Dynamic library */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB917D08733D990010E9CD /* Build configuration list for PBXNativeTarget "Dynamic library" */;
+			buildPhases = (
+				D2AAC0C305546C1D00DB518D /* Headers */,
+				D2AAC0C405546C1D00DB518D /* Sources */,
+				D2AAC0C505546C1D00DB518D /* Frameworks */,
+				53C4CC1D0CF7393C00E09BC3 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Dynamic library";
+			productName = MKCCollections;
+			productReference = D2AAC0C705546C1D00DB518D /* MKCCollections.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		0867D690FE84028FC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB918108733D990010E9CD /* Build configuration list for PBXProject "MKCCollections" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 0867D691FE84028FC02AAC07 /* MKCCollections */;
+			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				53C4CDC20CF7553E00E09BC3 /* Static library */,
+				D2AAC0C605546C1D00DB518D /* Dynamic library */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		53C4CDC00CF7553E00E09BC3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C4CDC90CF755D200E09BC3 /* MKCAbstractIntegerDictionary.m in Sources */,
+				53C4CDCA0CF755D400E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m in Sources */,
+				53C4CDCC0CF755D600E09BC3 /* MKCIntegerKeyDictionary.m in Sources */,
+				53C4CDCD0CF755D600E09BC3 /* MKCIntegerDictionaryEnumerator.m in Sources */,
+				53C4CDCE0CF755D700E09BC3 /* MKCHashTable.m in Sources */,
+				53C4CDCF0CF755D800E09BC3 /* MKCIntegerDictionary.m in Sources */,
+				53C4CDD10CF755DB00E09BC3 /* MKCDictionaryKeyEnumerator.m in Sources */,
+				53C4CDD30CF755DD00E09BC3 /* MKCDictionaryEnumerator.m in Sources */,
+				53C4CDD40CF755DD00E09BC3 /* MKCDictionary.m in Sources */,
+				53C4CDEE0CF75ADE00E09BC3 /* MKCObjectDictionary.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D2AAC0C405546C1D00DB518D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53C4CAA60CF6FF0200E09BC3 /* MKCDictionary.m in Sources */,
+				53C4CAE30CF7141D00E09BC3 /* MKCObjectDictionary.m in Sources */,
+				53C4CAEA0CF7147F00E09BC3 /* MKCIntegerDictionary.m in Sources */,
+				53C4CAED0CF7148F00E09BC3 /* MKCIntegerKeyDictionary.m in Sources */,
+				53C4CB630CF71D5400E09BC3 /* MKCDictionaryEnumerator.m in Sources */,
+				53C4CB660CF71D6500E09BC3 /* MKCIntegerDictionaryEnumerator.m in Sources */,
+				53C4CB810CF71FE300E09BC3 /* MKCDictionaryKeyEnumerator.m in Sources */,
+				53C4CB840CF71FFB00E09BC3 /* MKCIntegerDictionaryKeyEnumerator.m in Sources */,
+				53C4CBD10CF7309B00E09BC3 /* MKCHashTable.m in Sources */,
+				53C4CC450CF73ED000E09BC3 /* MKCAbstractIntegerDictionary.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB917E08733D990010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MKCCollections_Prefix.pch;
+				INSTALL_PATH = "";
+				PRIVATE_HEADERS_FOLDER_PATH = MKCCollections/private;
+				PRODUCT_NAME = MKCCollections;
+				PUBLIC_HEADERS_FOLDER_PATH = MKCCollections;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB917F08733D990010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53C4CD550CF74E0C00E09BC3 /* release.xcconfig */;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = MKCCollections_Prefix.pch;
+				INSTALL_PATH = "@loader_path";
+				PRIVATE_HEADERS_FOLDER_PATH = MKCCollections/private;
+				PRODUCT_NAME = MKCCollections;
+				PUBLIC_HEADERS_FOLDER_PATH = MKCCollections;
+				WARNING_CFLAGS = "-Wall";
+			};
+			name = Release;
+		};
+		1DEB918208733D990010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+			};
+			name = Debug;
+		};
+		1DEB918308733D990010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					i386,
+					ppc,
+					ppc64,
+					x86_64,
+				);
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+			};
+			name = Release;
+		};
+		53C4CDC40CF7554000E09BC3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Source/MKCCollections_Prefix.pch;
+				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				INSTALL_PATH = "";
+				PREBINDING = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = MKCCollections/private;
+				PRODUCT_NAME = MKCCollections;
+				PUBLIC_HEADERS_FOLDER_PATH = MKCCollections;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		53C4CDC50CF7554000E09BC3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53C4CD550CF74E0C00E09BC3 /* release.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Source/MKCCollections_Prefix.pch;
+				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				INSTALL_PATH = "";
+				PREBINDING = NO;
+				PRIVATE_HEADERS_FOLDER_PATH = MKCCollections/private;
+				PRODUCT_NAME = MKCCollections;
+				PUBLIC_HEADERS_FOLDER_PATH = MKCCollections;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB917D08733D990010E9CD /* Build configuration list for PBXNativeTarget "Dynamic library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB917E08733D990010E9CD /* Debug */,
+				1DEB917F08733D990010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB918108733D990010E9CD /* Build configuration list for PBXProject "MKCCollections" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB918208733D990010E9CD /* Debug */,
+				1DEB918308733D990010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53C4CDDA0CF7561D00E09BC3 /* Build configuration list for PBXNativeTarget "Static library" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53C4CDC40CF7554000E09BC3 /* Debug */,
+				53C4CDC50CF7554000E09BC3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 0867D690FE84028FC02AAC07 /* Project object */;
+}
