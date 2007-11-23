@@ -35,7 +35,6 @@
 
 @class PGTSResultSet;
 @class PGTSDatabaseInfo;
-@class TSObjectTagDictionary;
 @protocol PGTSConnectionDelegate;
 @protocol PGTSCertificateVerificationDelegate;
 
@@ -67,7 +66,7 @@
     NSLock* workerThreadLock;
 	
     NSString* connectionString;
-    TSObjectTagDictionary* parameterCounts;
+    id parameterCounts;
     NSMutableDictionary* deserializationDictionary;
     NSString* initialCommands;
 

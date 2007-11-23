@@ -30,7 +30,6 @@
 #import <PGTS/PGTSAbstractObjectDescription.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 
-@class TSIndexDictionary;
 @class PGTSRoleDescription;
 @class PGTSACLItem;
 
@@ -39,7 +38,7 @@
 {
     Oid schemaOid;
     NSString* schemaName;
-    TSIndexDictionary* aclItems;
+    id aclItems;
     PGTSRoleDescription* owner;
     char relkind;
 }

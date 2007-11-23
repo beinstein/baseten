@@ -28,7 +28,7 @@
 
 
 #import <Foundation/Foundation.h>
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 #import <PGTS/postgresql/libpq-fe.h>
 #import "PGTSModificationNotifier.h"

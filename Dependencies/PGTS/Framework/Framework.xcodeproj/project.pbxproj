@@ -32,6 +32,7 @@
 		5312665D0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5312665E0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */; };
 		531746A7095C07E00098D3D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		5321F5EF0CF7712300E663CE /* libMKCCollections.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5321F5EC0CF7711F00E663CE /* libMKCCollections.a */; };
 		53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
 		53298DF20B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -179,6 +180,27 @@
 			remoteGlobalIDString = 53BF4A350A36F6680065845D;
 			remoteInfo = "Static archive";
 		};
+		5321F5EB0CF7711F00E663CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3 /* libMKCCollections.a */;
+			remoteInfo = "Static library";
+		};
+		5321F5ED0CF7711F00E663CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC0C705546C1D00DB518D /* MKCCollections.dylib */;
+			remoteInfo = "Dynamic library";
+		};
+		5321F5F40CF7714700E663CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53C4CDC20CF7553E00E09BC3 /* Static library */;
+			remoteInfo = "Static library";
+		};
 		538971BB0B821A710092E1B8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -221,13 +243,6 @@
 			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA;
 			remoteInfo = libLog4Cocoa;
 		};
-		53F524D50A51A28900E7DDC4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 53BF4A340A36F6680065845D;
-			remoteInfo = "Static archive";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -253,6 +268,7 @@
 		531266130B68E28100637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCertificateVerificationDelegate.h; path = Sources/PGTSCertificateVerificationDelegate.h; sourceTree = "<group>"; };
 		5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSCertificateVerificationDelegate.m; path = Sources/PGTSCertificateVerificationDelegate.m; sourceTree = "<group>"; };
+		5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MKCCollections.xcodeproj; path = ../../MKCCollections/MKCCollections.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5325EAD70A1B2EF600FEA842 /* postgresql */ = {isa = PBXFileReference; lastKnownFileType = folder; name = postgresql; path = "PGTS-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSRoleDescription.h; path = Sources/PGTSRoleDescription.h; sourceTree = "<group>"; };
 		53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSRoleDescription.m; path = Sources/PGTSRoleDescription.m; sourceTree = "<group>"; };
@@ -355,6 +371,7 @@
 				531266140B68E28100637EDA /* Security.framework in Frameworks */,
 				53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */,
 				53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */,
+				5321F5EF0CF7712300E663CE /* libMKCCollections.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,6 +441,7 @@
 		1058C7B0FEA5585E11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */,
 				5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */,
 				53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */,
 				53BA503E08804FBC00BFAFB5 /* psql */,
@@ -467,6 +485,15 @@
 			children = (
 				531B02660A51A1EA006AEF08 /* TSDataTypes.framework */,
 				531B02680A51A1EA006AEF08 /* libTSDataTypes.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5321F5E70CF7711F00E663CE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5321F5EC0CF7711F00E663CE /* libMKCCollections.a */,
+				5321F5EE0CF7711F00E663CE /* MKCCollections.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -701,7 +728,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				53F524D60A51A28900E7DDC4 /* PBXTargetDependency */,
+				5321F5F50CF7714700E663CE /* PBXTargetDependency */,
 				53D044210B4C1E0D00DB9308 /* PBXTargetDependency */,
 				538971BC0B821A710092E1B8 /* PBXTargetDependency */,
 			);
@@ -738,7 +765,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53BA4FD208804E6B00BFAFB5 /* Build configuration list for PBXProject "Framework" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -747,6 +773,10 @@
 				{
 					ProductGroup = 53D0440F0B4C1DFD00DB9308 /* Products */;
 					ProjectRef = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+				},
+				{
+					ProductGroup = 5321F5E70CF7711F00E663CE /* Products */;
+					ProjectRef = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
 				},
 				{
 					ProductGroup = 531B02600A51A1EA006AEF08 /* Products */;
@@ -775,6 +805,20 @@
 			fileType = archive.ar;
 			path = libTSDataTypes.a;
 			remoteRef = 531B02670A51A1EA006AEF08 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5321F5EC0CF7711F00E663CE /* libMKCCollections.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMKCCollections.a;
+			remoteRef = 5321F5EB0CF7711F00E663CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5321F5EE0CF7711F00E663CE /* MKCCollections.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = MKCCollections.dylib;
+			remoteRef = 5321F5ED0CF7711F00E663CE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */ = {
@@ -951,6 +995,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5321F5F50CF7714700E663CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static library";
+			targetProxy = 5321F5F40CF7714700E663CE /* PBXContainerItemProxy */;
+		};
 		538971BC0B821A710092E1B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 538971AF0B821A570092E1B8 /* PostgreSQL-8.2.5 */;
@@ -960,11 +1009,6 @@
 			isa = PBXTargetDependency;
 			name = libLog4Cocoa;
 			targetProxy = 53D044200B4C1E0D00DB9308 /* PBXContainerItemProxy */;
-		};
-		53F524D60A51A28900E7DDC4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Static archive";
-			targetProxy = 53F524D50A51A28900E7DDC4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

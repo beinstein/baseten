@@ -35,7 +35,7 @@
 #import "PGTSRoleDescription.h"
 #import "PGTSACLItem.h"
 #import "PGTSDatabaseInfo.h"
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 
 /** 
  * Abstract base class for database class objects
@@ -47,7 +47,8 @@
     if ((self = [super initWithConnection: aConn]))
     {
         schemaOid = InvalidOid;
-        aclItems = [[TSIndexDictionary alloc] init];
+        aclItems = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger
+                                                  valueType: kMKCCollectionTypeObject];
     }
     return self;
 }

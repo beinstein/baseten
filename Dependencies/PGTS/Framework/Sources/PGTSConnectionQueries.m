@@ -34,7 +34,7 @@
 #import <PGTS/PGTSAdditions.h>
 #import <PGTS/PGTSFunctions.h>
 #import <PGTS/PGTSConnectionDelegate.h>
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
@@ -160,7 +160,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
 - (PGTSResultSet *) executePrepareQuery: (NSString *) queryString name: (NSString *) aName parameterTypes: (Oid *) types
 {
     int count = [queryString PGTSParameterCount];
-    [parameterCounts setTag: count forKey: aName];
+    [parameterCounts setInteger: count forKey: aName];
     return [self resultFromProxy: returningWorkerProxy status: 
         [returningWorkerProxy prepareQuery2: queryString name: aName parameterCount: count 
                              parameterTypes: types messageDelegate: NO]];
@@ -174,15 +174,15 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
 - (PGTSResultSet *) executePreparedQuery: (NSString *) aName parameters: (id) p1, ...
 {
     NSArray* parameters = nil;
-    StdargToNSArray (parameters, [parameterCounts tagForKey: aName], p1, YES);
+    StdargToNSArray (parameters, [parameterCounts integerForKey: aName], p1, YES);
     return [self executePreparedQuery: aName parameterArray: parameters];
 }
 
 - (PGTSResultSet *) executePreparedQuery: (NSString *) aName parameterArray: (NSArray *) parameters
 {
-    log4AssertValueReturn ([parameters count] == [parameterCounts tagForKey: aName], nil,
+    log4AssertValueReturn ([parameters count] == [parameterCounts integerForKey: aName], nil,
 						   @"Expected to know parameter count beforehand (parameters: %@ expected count: %d).",
-						   parameters, [parameterCounts tagForKey: aName]);
+						   parameters, [parameterCounts integerForKey: aName]);
     return [self resultFromProxy: returningWorkerProxy status: 
         [returningWorkerProxy sendPreparedQuery2: aName parameterArray: parameters
                                  messageDelegate: NO]];
@@ -261,7 +261,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
     if (CheckExceptionTable (self, kPGTSRaiseForAsync))
     {
         int count = [queryString PGTSParameterCount];
-        [parameterCounts setTag: count forKey: aName];
+        [parameterCounts setInteger: count forKey: aName];
         rval = [self sendResultsToDelegate: 
             [returningWorkerProxy prepareQuery2: queryString name: aName 
                                  parameterCount: count parameterTypes: types messageDelegate: NO]];
@@ -272,7 +272,7 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
 - (int) sendPreparedQuery: (NSString *) aName parameters: (id) p1, ...
 {
     NSArray* parameters = nil;
-    StdargToNSArray (parameters, [parameterCounts tagForKey: aName], p1, YES);
+    StdargToNSArray (parameters, [parameterCounts integerForKey: aName], p1, YES);
     return [self sendPreparedQuery: aName parameterArray: parameters];
 }
 
@@ -281,9 +281,9 @@ CheckExceptionTable (PGTSConnection* sender, unsigned int flags)
     int rval = -1;
     if (CheckExceptionTable (self, kPGTSRaiseForAsync))
     {
-		log4AssertValueReturn ([parameters count] == [parameterCounts tagForKey: aName], -1, 
+		log4AssertValueReturn ([parameters count] == [parameterCounts integerForKey: aName], -1, 
 							   @"Expected to know parameter count beforehand (parameters: %@ expected count: %d).",
-							   parameters, [parameterCounts tagForKey: aName]);
+							   parameters, [parameterCounts integerForKey: aName]);
         rval = [self sendResultsToDelegate: 
             [returningWorkerProxy sendPreparedQuery2: aName parameterArray: parameters
                                      messageDelegate: NO]];

@@ -33,7 +33,6 @@
 
 @class PGTSTableInfo;
 @class PGTSTypeInfo;
-@class TSIndexDictionary;
 @class PGTSConnectionPoolItem;
 
 

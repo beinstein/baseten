@@ -45,7 +45,7 @@
 #import "PGTSFunctions.h"
 #import "PGTSDatabaseInfo.h"
 #import "PGTSCertificateVerificationDelegate.h"
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
@@ -196,7 +196,8 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
         
         resultSetClass = [PGTSResultSet class];
         
-        parameterCounts = [[TSObjectTagDictionary alloc] init];
+        parameterCounts = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject 
+                                                         valueType: kMKCCollectionTypeInteger];
         delegateProcessesNotices = NO;
         overlooksFailedQueries = YES;
         connectsAutomatically = NO;
@@ -923,7 +924,8 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 
             cancelRequest = NULL;
             //databaseInfo is set after the connection has been made
-            parameterCounts = [[TSObjectTagDictionary alloc] init];
+            parameterCounts = [MKCDictionary dictionaryWithKeyType: kMKCCollectionTypeObject
+                                                         valueType: kMKCCollectionTypeInteger];
             deserializationDictionary = [decoder decodeObjectForKey: @"deserializationDictionary"];
             connectsAutomatically =  [decoder decodeBoolForKey: @"connectsAutomatically"];
             reconnectsAutomatically =  [decoder decodeBoolForKey: @"reconnectsAutomatically"];

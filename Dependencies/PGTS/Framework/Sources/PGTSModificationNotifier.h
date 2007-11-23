@@ -31,7 +31,6 @@
 
 @class PGTSTableInfo;
 @class PGTSConnection;
-@class TSIndexDictionary;
 
 
 enum PGTSTableOperation 

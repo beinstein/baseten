@@ -30,10 +30,10 @@
 #import "PGTSTableInfo.h"
 #import "PGTSFieldInfo.h"
 #import "PGTSFunctions.h"
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 
 
-static TSNonRetainedObjectSet* gForeignKeys;
+static id gForeignKeys;
 
 @implementation PGTSForeignKeyDescription
 
@@ -43,7 +43,7 @@ static TSNonRetainedObjectSet* gForeignKeys;
     if (NO == tooLate)
     {
         tooLate = YES;
-        gForeignKeys = [[TSNonRetainedObjectSet alloc] init];
+        gForeignKeys = [[MKCHashTable alloc] init];
     }
 }
 

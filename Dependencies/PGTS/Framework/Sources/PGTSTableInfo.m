@@ -35,7 +35,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSDatabaseInfo.h"
 #import "PGTSForeignKeyDescription.h"
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 
 
 /** 
@@ -48,8 +48,8 @@
     if ((self = [super initWithConnection: aConnection]))
     {
         fieldCount = NSNotFound;
-        fields = [[TSIndexDictionary alloc] init];
-
+        fields = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger
+                                                valueType: kMKCCollectionTypeObject];
         hasForeignKeys = NO;
         foreignKeys = [[NSMutableSet alloc] init];
         hasReferencingForeignKeys = NO;

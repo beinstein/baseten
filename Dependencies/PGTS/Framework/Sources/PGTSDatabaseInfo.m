@@ -34,7 +34,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSFunctions.h"
 #import "PGTSRoleDescription.h"
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
@@ -84,8 +84,10 @@
 {
     if ((self = [super initWithConnection: aConnection]))
     {
-        tables = [[TSIndexDictionary alloc] init];
-        types  = [[TSIndexDictionary alloc] init];
+        tables = [MKCDictionary dictionaryWithKeyType: kMKCCollectionTypeInteger 
+                                            valueType: kMKCCollectionTypeObject];
+        types  = [MKCDictionary dictionaryWithKeyType: kMKCCollectionTypeInteger 
+                                            valueType: kMKCCollectionTypeObject];
         schemas = [[NSMutableDictionary alloc] init];
         roles = [[NSMutableDictionary alloc] init];
     }

@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <PGTS/postgresql/libpq-fe.h>
 #import "PGTSIndexInfo.h"
 #import "PGTSLockNotifier.h"
