@@ -34,7 +34,7 @@
 #define NSInteger int
 #define NSUInteger unsigned int
 
-typedef NSFastEnumerationState;
+typedef void* NSFastEnumerationState;
 
 @protocol NSFastEnumeration;
 

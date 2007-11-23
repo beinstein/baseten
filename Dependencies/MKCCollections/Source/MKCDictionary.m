@@ -27,17 +27,29 @@
 //
 
 
-#import "MKCDictionary.h"
+#import "MKCDictionaryPrivate.h"
 #import "MKCDictionaryEnumerators.h"
 
 
 @implementation MKCDictionary
+
++ (id) dictionaryWithKeyType: (enum MKCCollectionType) keyType 
+                   valueType: (enum MKCCollectionType) valueType;
+{
+    return [self dictionaryWithCapacity: 0 keyType: keyType valueType: valueType];
+}
 
 + (id) dictionaryWithCapacity: (NSUInteger) capacity 
 					  keyType: (enum MKCCollectionType) keyType 
 					valueType: (enum MKCCollectionType) valueType
 {
 	return [[self copyDictionaryWithCapacity: capacity keyType: keyType valueType: valueType] autorelease];
+}
+
++ (id) copyDictionaryWithKeyType: (enum MKCCollectionType) keyType 
+                       valueType: (enum MKCCollectionType) valueType;
+{
+    return [self copyDictionaryWithCapacity: 0 keyType: keyType valueType: valueType];
 }
 
 + (id) copyDictionaryWithCapacity: (NSUInteger) capacity 
@@ -126,6 +138,33 @@
 {
 	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
 	return nil;
+}
+
+- (void) setObject: (id) anObject forKey: (id) aKey
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+}
+
+- (NSUInteger) integerForKey: (id) aKey
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+	return 0;
+}
+
+- (void) setInteger: (NSUInteger) anInt forKey: (id) aKey
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+}
+
+- (id) objectAtIndex: (NSUInteger) anIndex
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+	return nil;
+}
+
+- (void) setObject: (id) anObject atIndex: (NSUInteger) aKey
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
 }
 
 @end

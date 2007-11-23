@@ -27,7 +27,7 @@
 //
 
 
-#import "MKCDictionary.h"
+#import "MKCDictionaryPrivate.h"
 
 @implementation MKCAbstractIntegerDictionary
 

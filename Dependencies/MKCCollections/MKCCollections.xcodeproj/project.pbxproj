@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5321F6DD0CF777B700E663CE /* MKCDictionaryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321F6DC0CF777B700E663CE /* MKCDictionaryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5321F6DE0CF777B700E663CE /* MKCDictionaryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321F6DC0CF777B700E663CE /* MKCDictionaryPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53C4CAA10CF6FED100E09BC3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		53C4CAA50CF6FF0200E09BC3 /* MKCDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4CAA30CF6FF0200E09BC3 /* MKCDictionary.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53C4CAA60CF6FF0200E09BC3 /* MKCDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4CAA40CF6FF0200E09BC3 /* MKCDictionary.m */; };
@@ -56,6 +58,7 @@
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32DBCF5E0370ADEE00C91783 /* MKCCollections_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCCollections_Prefix.pch; sourceTree = "<group>"; };
+		5321F6DC0CF777B700E663CE /* MKCDictionaryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionaryPrivate.h; path = Source/MKCDictionaryPrivate.h; sourceTree = "<group>"; };
 		53C4CAA30CF6FF0200E09BC3 /* MKCDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionary.h; path = Source/MKCDictionary.h; sourceTree = "<group>"; };
 		53C4CAA40CF6FF0200E09BC3 /* MKCDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionary.m; path = Source/MKCDictionary.m; sourceTree = "<group>"; };
 		53C4CAE20CF7141D00E09BC3 /* MKCObjectDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCObjectDictionary.m; path = Source/MKCObjectDictionary.m; sourceTree = "<group>"; };
@@ -163,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				53C4CAA30CF6FF0200E09BC3 /* MKCDictionary.h */,
+				5321F6DC0CF777B700E663CE /* MKCDictionaryPrivate.h */,
 				53C4CAA40CF6FF0200E09BC3 /* MKCDictionary.m */,
 				53C4CC440CF73ED000E09BC3 /* MKCAbstractIntegerDictionary.m */,
 				53C4CAE20CF7141D00E09BC3 /* MKCObjectDictionary.m */,
@@ -185,6 +189,7 @@
 				53C4CDD50CF755DE00E09BC3 /* MKCDictionary.h in Headers */,
 				53C4CDD60CF755DF00E09BC3 /* MKCCompatibility.h in Headers */,
 				53C4CDD80CF755E100E09BC3 /* MKCCollections.h in Headers */,
+				5321F6DD0CF777B700E663CE /* MKCDictionaryPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +202,7 @@
 				53C4CBA90CF7222400E09BC3 /* MKCDictionaryEnumerators.h in Headers */,
 				53C4CBCE0CF7309000E09BC3 /* MKCHashTable.h in Headers */,
 				53C4CD5A0CF7514100E09BC3 /* MKCCompatibility.h in Headers */,
+				5321F6DE0CF777B700E663CE /* MKCDictionaryPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,12 +376,14 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Source/MKCCollections_Prefix.pch;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
 				INSTALL_PATH = "";
 				PREBINDING = NO;
 				PRIVATE_HEADERS_FOLDER_PATH = MKCCollections/private;
 				PRODUCT_NAME = MKCCollections;
 				PUBLIC_HEADERS_FOLDER_PATH = MKCCollections;
+				WARNING_CFLAGS = "-Wall";
 				ZERO_LINK = YES;
 			};
 			name = Debug;

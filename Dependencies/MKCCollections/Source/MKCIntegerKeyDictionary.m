@@ -27,7 +27,7 @@
 //
 
 
-#import "MKCDictionary.h"
+#import "MKCDictionaryPrivate.h"
 #import "MKCDictionaryEnumerators.h"
 
 

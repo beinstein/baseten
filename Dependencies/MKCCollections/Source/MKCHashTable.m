@@ -66,6 +66,11 @@
 
 @implementation MKCHashTable
 
++ (id) hashTable
+{
+    return [self hashTableWithCapacity: 0];
+}
+
 + (id) hashTableWithCapacity: (NSUInteger) capacity
 {
 	return [[self copyHashTableWithCapacity: capacity] autorelease];

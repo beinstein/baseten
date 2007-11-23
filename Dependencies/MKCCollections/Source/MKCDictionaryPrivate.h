@@ -1,5 +1,5 @@
 //
-// MKCHashTable.h
+// MKCDictionaryPrivate.h
 // BaseTen
 //
 // Copyright (C) 2007 Marko Karppinen & Co. LLC.
@@ -26,38 +26,37 @@
 // $Id$
 //
 
-@protocol NSFastEnumeration;
 
 #import <Foundation/Foundation.h>
 #import <MKCCollections/MKCCompatibility.h>
+#import <MKCCollections/MKCDictionary.h>
 
 
-@interface MKCHashTableEnumerator : NSEnumerator 
+@interface MKCAbstractIntegerDictionary : MKCDictionary
 {
-    NSHashEnumerator mEnumerator;
 }
-- (id) initWithEnumerator: (NSHashEnumerator) enumerator;
-@end
-
-
-@interface MKCHashTable : NSObject <NSCopying, NSFastEnumeration>
-{
-    NSHashTable* mHash;
-}
-
-+ (id) hashTable;
-+ (id) hashTableWithCapacity: (NSUInteger) capacity;
-+ (id) copyHashTableWithCapacity: (NSUInteger) capacity;
+//Abstract
++ (id) copyDictionaryWithCapacity: (NSUInteger) capacity;
 - (id) initWithCapacity: (NSUInteger) capacity;
-- (id) initWithHash: (NSHashTable *) hash;
-- (NSUInteger) count;
-- (void) addObject: (id) anObject;
-- (void) removeObject: (id) anObject;
-- (BOOL) containsObject: (id) anObject;
-- (id) member: (id) anObject;
-- (id) objectEnumerator;
-- (void) removeAllObjects;
-- (NSArray *) allObjects;
-- (id) anyObject;
-
 @end
+
+
+@interface MKCIntegerDictionary : MKCAbstractIntegerDictionary
+{
+}
+@end
+
+
+@interface MKCIntegerKeyDictionary : MKCAbstractIntegerDictionary
+{
+}
+@end
+
+
+@interface MKCObjectDictionary : MKCDictionary
+{
+}
++ (id) copyDictionaryWithCapacity: (NSUInteger) capacity strongKeys: (BOOL) strongKeys strongValues: (BOOL) strongValues;
+- (id) initWithCapacity: (NSUInteger) capacity strongKeys: (BOOL) strongKeys strongValues: (BOOL) strongValues;
+@end
+

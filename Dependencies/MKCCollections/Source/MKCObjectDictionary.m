@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import "MKCDictionary.h"
+#import "MKCDictionaryPrivate.h"
 
 
 #ifndef MAC_OS_X_VERSION_10_5

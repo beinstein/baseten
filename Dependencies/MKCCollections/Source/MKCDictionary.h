@@ -44,9 +44,13 @@ enum MKCCollectionType
 {
 	NSMapTable* mMapTable;
 }
++ (id) dictionaryWithKeyType: (enum MKCCollectionType) keyType 
+                   valueType: (enum MKCCollectionType) valueType;
 + (id) dictionaryWithCapacity: (NSUInteger) capacity 
 					  keyType: (enum MKCCollectionType) keyType 
 					valueType: (enum MKCCollectionType) valueType;
++ (id) copyDictionaryWithKeyType: (enum MKCCollectionType) keyType 
+                       valueType: (enum MKCCollectionType) valueType;
 + (id) copyDictionaryWithCapacity: (NSUInteger) capacity 
 						  keyType: (enum MKCCollectionType) keyType 
 						valueType: (enum MKCCollectionType) valueType;
@@ -57,41 +61,10 @@ enum MKCCollectionType
 - (id) dictionaryRepresentation;
 - (void) removeAllObjects;
 
-//Abstract
-+ (id) copyDictionaryWithCapacity: (NSUInteger) capacity;
 - (id) objectForKey: (id) aKey;
-@end
-
-
-@interface MKCObjectDictionary : MKCDictionary
-{
-}
-+ (id) copyDictionaryWithCapacity: (NSUInteger) capacity strongKeys: (BOOL) strongKeys strongValues: (BOOL) strongValues;
-- (id) initWithCapacity: (NSUInteger) capacity strongKeys: (BOOL) strongKeys strongValues: (BOOL) strongValues;
 - (void) setObject: (id) anObject forKey: (id) aKey;
-@end
-
-
-@interface MKCAbstractIntegerDictionary : MKCDictionary
-{
-}
-//Abstract
-+ (id) copyDictionaryWithCapacity: (NSUInteger) capacity;
-- (id) initWithCapacity: (NSUInteger) capacity;
-@end
-
-
-@interface MKCIntegerDictionary : MKCAbstractIntegerDictionary
-{
-}
 - (NSUInteger) integerForKey: (id) aKey;
 - (void) setInteger: (NSUInteger) anInt forKey: (id) aKey;
-@end
-
-
-@interface MKCIntegerKeyDictionary : MKCAbstractIntegerDictionary
-{
-}
 - (id) objectAtIndex: (NSUInteger) anIndex;
 - (void) setObject: (id) anObject atIndex: (NSUInteger) aKey;
 @end
