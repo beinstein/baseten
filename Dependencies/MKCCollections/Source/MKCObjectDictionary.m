@@ -28,10 +28,18 @@
 
 #import "MKCDictionary.h"
 
+
 #ifndef MAC_OS_X_VERSION_10_5
+
 #define NSPointerFunctionsStrongMemory ((0 << 0))
 #define NSPointerFunctionsZeroingWeakMemory ((1 << 0))
+
 typedef NSUInteger NSPointerFunctionsOptions;
+
+@interface NSObject (MKCCollectionCompatibility)
+- (id) initWithKeyOptions: (unsigned int) keyOptions valueOptions: (unsigned int) valueOptions capacity: (unsigned int) capacity;
+@end
+
 #endif
 
 

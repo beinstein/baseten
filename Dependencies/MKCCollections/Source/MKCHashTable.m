@@ -28,8 +28,15 @@
 
 #import "MKCHashTable.h"
 
+
 #ifndef MAC_OS_X_VERSION_10_5
+
 #define NSHashTableZeroingWeakMemory ((1 << 0))
+
+@interface NSObject (MKCCollectionCompatibility)
+- (id) initWithOptions: (unsigned int) options capacity: (unsigned int) capacity;
+@end
+
 #endif
 
 

@@ -28,9 +28,14 @@
 
 #import <AvailabilityMacros.h>
 
+
 #ifndef MAC_OS_X_VERSION_10_5
+
 #define NSInteger int
 #define NSUInteger unsigned int
+
 typedef NSFastEnumerationState;
+
 @protocol NSFastEnumeration;
+
 #endif
