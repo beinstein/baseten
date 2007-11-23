@@ -184,21 +184,21 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3 /* libMKCCollections.a */;
+			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3;
 			remoteInfo = "Static library";
 		};
 		5321F5ED0CF7711F00E663CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = D2AAC0C705546C1D00DB518D /* MKCCollections.dylib */;
+			remoteGlobalIDString = D2AAC0C705546C1D00DB518D;
 			remoteInfo = "Dynamic library";
 		};
 		5321F5F40CF7714700E663CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 53C4CDC20CF7553E00E09BC3 /* Static library */;
+			remoteGlobalIDString = 53C4CDC20CF7553E00E09BC3;
 			remoteInfo = "Static library";
 		};
 		538971BB0B821A710092E1B8 /* PBXContainerItemProxy */ = {

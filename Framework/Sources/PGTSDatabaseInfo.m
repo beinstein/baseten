@@ -84,10 +84,10 @@
 {
     if ((self = [super initWithConnection: aConnection]))
     {
-        tables = [MKCDictionary dictionaryWithKeyType: kMKCCollectionTypeInteger 
-                                            valueType: kMKCCollectionTypeObject];
-        types  = [MKCDictionary dictionaryWithKeyType: kMKCCollectionTypeInteger 
-                                            valueType: kMKCCollectionTypeObject];
+        tables = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger 
+                                                valueType: kMKCCollectionTypeObject];
+        types  = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger 
+                                                valueType: kMKCCollectionTypeObject];
         schemas = [[NSMutableDictionary alloc] init];
         roles = [[NSMutableDictionary alloc] init];
     }
