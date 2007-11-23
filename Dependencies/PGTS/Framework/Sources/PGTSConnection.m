@@ -924,8 +924,8 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
 
             cancelRequest = NULL;
             //databaseInfo is set after the connection has been made
-            parameterCounts = [MKCDictionary dictionaryWithKeyType: kMKCCollectionTypeObject
-                                                         valueType: kMKCCollectionTypeInteger];
+            parameterCounts = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
+                                                             valueType: kMKCCollectionTypeInteger];
             deserializationDictionary = [decoder decodeObjectForKey: @"deserializationDictionary"];
             connectsAutomatically =  [decoder decodeBoolForKey: @"connectsAutomatically"];
             reconnectsAutomatically =  [decoder decodeBoolForKey: @"reconnectsAutomatically"];
