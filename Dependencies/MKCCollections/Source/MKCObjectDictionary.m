@@ -78,4 +78,14 @@ typedef NSUInteger NSPointerFunctionsOptions;
     return (id) NSMapGet (mMapTable, aKey);
 }
 
+- (id) allKeys
+{
+    return NSAllMapTableKeys (mMapTable);
+}
+
+- (id) allObjects
+{
+    return NSAllMapTableValues (mMapTable);
+}
+
 @end

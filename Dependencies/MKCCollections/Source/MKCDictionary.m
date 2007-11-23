@@ -60,7 +60,7 @@
 	if (kMKCCollectionTypeInteger == keyType && kMKCCollectionTypeObject == valueType)
 		retval = [MKCIntegerKeyDictionary copyDictionaryWithCapacity: capacity];
 	else if (kMKCCollectionTypeObject == keyType && kMKCCollectionTypeInteger == valueType)
-		retval = [MKCIntegerKeyDictionary copyDictionaryWithCapacity: capacity];
+		retval = [MKCIntegerDictionary copyDictionaryWithCapacity: capacity];
 	else if (kMKCCollectionTypeObject == keyType && kMKCCollectionTypeWeakObject == valueType)
 		retval = [MKCObjectDictionary copyDictionaryWithCapacity: capacity strongKeys: YES strongValues: NO];
 	else if (kMKCCollectionTypeWeakObject == keyType && kMKCCollectionTypeObject == valueType)
@@ -101,7 +101,7 @@
 
 - (id) keyEnumerator
 {
-	return [[[MKCDictionaryEnumerator allocWithZone: [self zone]] initWithEnumerator: NSEnumerateMapTable (mMapTable)] autorelease];
+	return [[[MKCDictionaryKeyEnumerator allocWithZone: [self zone]] initWithEnumerator: NSEnumerateMapTable (mMapTable)] autorelease];
 }
 
 - (id) objectEnumerator
@@ -165,6 +165,18 @@
 - (void) setObject: (id) anObject atIndex: (NSUInteger) aKey
 {
 	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+}
+
+- (id) allKeys
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+	return nil;
+}
+
+- (id) allObjects
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+	return nil;
 }
 
 @end

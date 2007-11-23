@@ -64,5 +64,10 @@
 {
 	return [self objectAtIndex: [aKey unsignedIntValue]];
 }
-			
+
+- (id) allObjects
+{
+    return NSAllMapTableValues (mMapTable);
+}
+
 @end

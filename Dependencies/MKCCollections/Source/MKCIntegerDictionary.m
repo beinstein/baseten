@@ -66,4 +66,9 @@
 	return [NSNumber numberWithUnsignedInt: [self integerForKey: aKey]];
 }
 
+- (id) allKeys
+{
+    return NSAllMapTableKeys (mMapTable);
+}
+
 @end

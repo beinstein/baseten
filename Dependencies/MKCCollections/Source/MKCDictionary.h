@@ -61,10 +61,13 @@ enum MKCCollectionType
 - (id) dictionaryRepresentation;
 - (void) removeAllObjects;
 
+//Abstract
 - (id) objectForKey: (id) aKey;
 - (void) setObject: (id) anObject forKey: (id) aKey;
 - (NSUInteger) integerForKey: (id) aKey;
 - (void) setInteger: (NSUInteger) anInt forKey: (id) aKey;
 - (id) objectAtIndex: (NSUInteger) anIndex;
 - (void) setObject: (id) anObject atIndex: (NSUInteger) aKey;
+- (id) allKeys;
+- (id) allObjects;
 @end
