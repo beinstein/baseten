@@ -30,10 +30,10 @@
 #import "MKCDictionary.h"
 #import "MKCDictionaryEnumerators.h"
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
-#define CALLBACKS NSIntMapValueCallBacks
-#else
+#ifdef MAC_OS_X_VERSION_10_5
 #define CALLBACKS NSIntegerMapValueCallBacks
+#else
+#define CALLBACKS NSIntMapValueCallBacks
 #endif
 
 

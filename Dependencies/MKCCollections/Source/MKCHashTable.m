@@ -28,7 +28,7 @@
 
 #import "MKCHashTable.h"
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+#ifndef MAC_OS_X_VERSION_10_5
 #define NSHashTableZeroingWeakMemory ((1 << 0))
 #endif
 

@@ -28,7 +28,7 @@
 
 #import "MKCDictionary.h"
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+#ifndef MAC_OS_X_VERSION_10_5
 #define NSPointerFunctionsStrongMemory ((0 << 0))
 #define NSPointerFunctionsZeroingWeakMemory ((1 << 0))
 typedef NSUInteger NSPointerFunctionsOptions;
