@@ -27,7 +27,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <BaseTen/BaseTen.h>
+#import <BaseTen/BXDatabaseContext.h>
 
 
 @interface BXDatabaseContext (IBAdditions)
