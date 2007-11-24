@@ -29,13 +29,15 @@
 #import <AvailabilityMacros.h>
 
 
-#ifndef MAC_OS_X_VERSION_10_5
+#if MAC_OS_X_VERSION_MIN_REQUIRED == MAC_OS_X_VERSION_10_4
 
 #define NSInteger int
 #define NSUInteger unsigned int
 
 typedef void* NSFastEnumerationState;
 
-@protocol NSFastEnumeration;
+@protocol NSFastEnumeration
+- (NSUInteger) countByEnumeratingWithState: (NSFastEnumerationState *) state objects: (id *) stackbuf count: (NSUInteger) len;
+@end
 
 #endif

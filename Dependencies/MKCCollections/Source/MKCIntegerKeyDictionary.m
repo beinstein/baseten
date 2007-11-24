@@ -31,10 +31,10 @@
 #import "MKCDictionaryEnumerators.h"
 
 
-#ifdef MAC_OS_X_VERSION_10_5
-#define CALLBACKS NSIntegerMapKeyCallBacks
-#else
+#if MAC_OS_X_VERSION_MIN_REQUIRED == MAC_OS_X_VERSION_10_4
 #define CALLBACKS NSIntMapKeyCallBacks
+#else
+#define CALLBACKS NSIntegerMapKeyCallBacks
 #endif
 
 

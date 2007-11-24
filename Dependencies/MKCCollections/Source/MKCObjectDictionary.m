@@ -29,7 +29,7 @@
 #import "MKCDictionaryPrivate.h"
 
 
-#ifndef MAC_OS_X_VERSION_10_5
+#if MAC_OS_X_VERSION_MIN_REQUIRED == MAC_OS_X_VERSION_10_4
 
 #define NSPointerFunctionsStrongMemory ((0 << 0))
 #define NSPointerFunctionsZeroingWeakMemory ((1 << 0))
