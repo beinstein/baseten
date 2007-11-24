@@ -40,7 +40,7 @@
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
-static TSNonRetainedObjectDictionary* gEntities;
+static id gEntities;
 
 
 /**
@@ -62,7 +62,8 @@ static TSNonRetainedObjectDictionary* gEntities;
     if (NO == tooLate)
     {
         tooLate = YES;
-        gEntities = [[TSNonRetainedObjectDictionary alloc] init];
+        gEntities = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
+												   valueType: kMKCCollectionTypeWeakObject];
     }
 }
 
@@ -439,8 +440,9 @@ bail:
         mDatabaseObjectClass = [BXDatabaseObject class];
         mDatabaseURI = [anURI copy];
         mSchemaName = [sName copy];
-		mRelationships = [[TSNonRetainedObjectDictionary alloc] init];
-		mObjectIDs = [[TSNonRetainedObjectSet alloc] init];
+		mRelationships = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
+														valueType: kMKCCollectionTypeWeakObject];
+		mObjectIDs = [[MKCHashTable alloc] init];
 		mValidationLock = [[NSLock alloc] init];
     }
     return self;

@@ -50,15 +50,13 @@
 @class BXDatabaseObject;
 @class BXEntityDescription;
 @class BXDatabaseObjectID;
-@class TSNonRetainedObjectDictionary;
-@class TSNonRetainedObjectSet;
 
 
 @interface BXDatabaseContext : NSObject
 {
     BXHiddenId <BXInterface>				mDatabaseInterface;
     NSURL*									mDatabaseURI;
-    TSNonRetainedObjectDictionary*			mObjects;
+    id										mObjects;
     CFMutableDictionaryRef                  mModifiedObjectIDs;
     NSUndoManager*							mUndoManager;
 	NSMutableSet*							mLazilyValidatedEntities;

@@ -740,7 +740,7 @@
 			productReference = 5368D60F0A3711C800D136DC /* BaseTen.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		8DC2EF4F0486A6940098B216 /* BaseTen subframeworks */ = {
+		8DC2EF4F0486A6940098B216 /* PGTSTiger */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "BaseTen subframeworks" */;
 			buildPhases = (
@@ -769,6 +769,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "BaseTen" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* BXDatabase */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -803,7 +804,7 @@
 			targets = (
 				53EFE9F20BA96464008666B7 /* BaseTen */,
 				5368D60E0A3711C800D136DC /* BaseTen Static */,
-				8DC2EF4F0486A6940098B216 /* BaseTen subframeworks */,
+				8DC2EF4F0486A6940098B216 /* PGTSTiger */,
 			);
 		};
 /* End PBXProject section */

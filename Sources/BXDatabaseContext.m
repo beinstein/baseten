@@ -2085,7 +2085,10 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
         mRelationships = [[NSMutableSet alloc] init];
 	
 	if (nil == mObjects)
-		mObjects = [[TSNonRetainedObjectDictionary alloc] init];
+	{
+		mObjects = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
+												  valueType: kMKCCollectionTypeWeakObject];
+	}
 	
 	if (nil == mModifiedObjectIDs)
         mModifiedObjectIDs = CFDictionaryCreateMutable (NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
