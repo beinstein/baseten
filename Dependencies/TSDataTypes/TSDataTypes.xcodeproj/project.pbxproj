@@ -302,6 +302,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53B3838408BF41830071D224 /* Build configuration list for PBXProject "TSDataTypes" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* TSDataTypes */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;

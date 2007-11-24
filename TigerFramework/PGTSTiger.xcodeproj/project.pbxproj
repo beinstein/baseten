@@ -319,6 +319,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "PGTSTiger" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* PGTSTiger */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -333,6 +334,7 @@
 					ProjectRef = 5381F4E00BC2816E008642BA /* Log4Cocoa.xcodeproj */;
 				},
 			);
+			projectRoot = "";
 			targets = (
 				53C9BE010A36FEBE00AAFE50 /* Static archive */,
 				8DC2EF4F0486A6940098B216 /* PGTSTiger */,
