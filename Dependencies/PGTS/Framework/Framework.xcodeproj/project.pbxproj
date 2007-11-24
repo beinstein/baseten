@@ -143,8 +143,6 @@
 		53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
 		53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
 		53D0D0590B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53D72FE70A51A4B6000E47A7 /* libTSDataTypes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 531B02680A51A1EA006AEF08 /* libTSDataTypes.a */; };
-		53D72FF30A51A5CB000E47A7 /* libTSDataTypes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 531B02680A51A1EA006AEF08 /* libTSDataTypes.a */; };
 		53D9B38A08B5256700ADB959 /* PGTSAbstractClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53D9B38B08B5256700ADB959 /* PGTSAbstractClassInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */; };
 		53D9B4C808B5492C00ADB959 /* PGTSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -166,20 +164,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		531B02650A51A1EA006AEF08 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53B383F408BF75740071D224;
-			remoteInfo = TSDataTypes;
-		};
-		531B02670A51A1EA006AEF08 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53BF4A350A36F6680065845D;
-			remoteInfo = "Static archive";
-		};
 		5321F5EB0CF7711F00E663CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
@@ -264,7 +248,6 @@
 		32DBCF5E0370ADEE00C91783 /* PGTS_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTS_Prefix.pch; path = Sources/PGTS_Prefix.pch; sourceTree = "<group>"; };
 		530323C3088062270024E7EF /* NDRunLoopMessenger.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = NDRunLoopMessenger.h; path = Contrib/NDRunLoopMessenger.h; sourceTree = "<group>"; };
 		530323C4088062270024E7EF /* NDRunLoopMessenger.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = NDRunLoopMessenger.m; path = Contrib/NDRunLoopMessenger.m; sourceTree = "<group>"; };
-		5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = ../Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = SOURCE_ROOT; };
 		531266130B68E28100637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCertificateVerificationDelegate.h; path = Sources/PGTSCertificateVerificationDelegate.h; sourceTree = "<group>"; };
 		5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSCertificateVerificationDelegate.m; path = Sources/PGTSCertificateVerificationDelegate.m; sourceTree = "<group>"; };
@@ -364,7 +347,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				539701080A370CCB00DFF6E8 /* Foundation.framework in Frameworks */,
-				53D72FF30A51A5CB000E47A7 /* libTSDataTypes.a in Frameworks */,
 				53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */,
 				53594D1C0B13711300378707 /* libpq.a in Frameworks */,
 				53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */,
@@ -383,7 +365,6 @@
 				531746A7095C07E00098D3D5 /* Foundation.framework in Frameworks */,
 				53E2C5DC0981C07B009D0AAA /* Kerberos.framework in Frameworks */,
 				53E2C5DE0981C0BD009D0AAA /* libcrypto.dylib in Frameworks */,
-				53D72FE70A51A4B6000E47A7 /* libTSDataTypes.a in Frameworks */,
 				53E11A110A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -442,7 +423,6 @@
 			isa = PBXGroup;
 			children = (
 				5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */,
-				5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */,
 				53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */,
 				53BA503E08804FBC00BFAFB5 /* psql */,
 				53594D1B0B13711300378707 /* libpq.a */,
@@ -478,15 +458,6 @@
 				534C024C096054EA00BF3440 /* PGTSConnectionPoolItem.m */,
 			);
 			name = ConnectionPool;
-			sourceTree = "<group>";
-		};
-		531B02600A51A1EA006AEF08 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				531B02660A51A1EA006AEF08 /* TSDataTypes.framework */,
-				531B02680A51A1EA006AEF08 /* libTSDataTypes.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		5321F5E70CF7711F00E663CE /* Products */ = {
@@ -765,6 +736,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53BA4FD208804E6B00BFAFB5 /* Build configuration list for PBXProject "Framework" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -778,10 +750,6 @@
 					ProductGroup = 5321F5E70CF7711F00E663CE /* Products */;
 					ProjectRef = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
 				},
-				{
-					ProductGroup = 531B02600A51A1EA006AEF08 /* Products */;
-					ProjectRef = 5304E3FC09575374004D0C0F /* TSDataTypes.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -793,20 +761,6 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		531B02660A51A1EA006AEF08 /* TSDataTypes.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = TSDataTypes.framework;
-			remoteRef = 531B02650A51A1EA006AEF08 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		531B02680A51A1EA006AEF08 /* libTSDataTypes.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libTSDataTypes.a;
-			remoteRef = 531B02670A51A1EA006AEF08 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		5321F5EC0CF7711F00E663CE /* libMKCCollections.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
