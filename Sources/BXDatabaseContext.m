@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <PGTS/PGTS.h>
 #import <PGTS/PGTSFunctions.h>
 #import <Log4Cocoa/Log4Cocoa.h>
@@ -53,15 +53,26 @@
 #import "BXDatabaseContextAdditions.h"
 #import "BXConnectionSetupManagerProtocol.h"
 #import "BXConstantsPrivate.h"
+#import "BXInvocationRecorder.h"
 #import "BXErrorHandlerDelegate.h"
-
-#undef BXHandleError
-#define BXHandleError( ERROR, LOCAL_ERROR ) \
-	if (nil != localError) [errorHandlerDelegate BXDatabaseContext: self hadError: LOCAL_ERROR willBePassedOn: ( NULL != ERROR )]
             
 
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
 static BOOL gHaveAppKitFramework = NO;
+
+#define BXHandleError( ERROR, LOCAL_ERROR ) BXHandleError2( self, errorHandlerDelegate, ERROR, LOCAL_ERROR )
+
+inline void
+BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
+{
+    if (nil != localError)
+    {
+        BOOL haveError = (NULL != error);
+        [errorHandler BXDatabaseContext: ctx hadError: localError willBePassedOn: haveError];
+        if (haveError)
+            *error = localError;
+    }
+}
 
 
 /** 
@@ -972,7 +983,7 @@ static BOOL gHaveAppKitFramework = NO;
 						[rval awakeFromInsertIfNeeded];
 						
 						//For redo
-						TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
+						BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
 						NSMutableDictionary* values = [NSMutableDictionary dictionary];
 						[values addEntriesFromDictionary: [rval cachedObjects]];
 						[[recorder recordWithPersistentTarget: self] createObjectForEntity: entity 
@@ -1920,7 +1931,7 @@ static BOOL gHaveAppKitFramework = NO;
                     [self updatedObjectsInDatabase: oldIDs faultObjects: NO];
                     
                     //For redo
-                    TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
+                    BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
                     [[recorder recordWithPersistentTarget: self] executeUpdateObject: anObject entity: anEntity 
                                                                            predicate: predicate withDictionary: aDict error: NULL];
 #if 0
@@ -1991,7 +2002,7 @@ static BOOL gHaveAppKitFramework = NO;
 					[self deletedObjectsFromDatabase: objectIDs];
 
 					//For redo
-					TSInvocationRecorder* recorder = [TSInvocationRecorder recorder];
+					BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
 					[[recorder recordWithPersistentTarget: self] executeDeleteObject: anObject entity: entity 
 																		   predicate: predicate error: NULL];
 					

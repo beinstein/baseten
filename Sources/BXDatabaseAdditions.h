@@ -36,9 +36,6 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 
 #define BXSafeObj( OBJECT )  ( (void *) OBJECT ?: [NSNull null] )
 
-#define BXHandleError( ERROR, LOCAL_ERROR ) \
-    if ( nil != LOCAL_ERROR && NULL != error ) { *(NSError **)ERROR = LOCAL_ERROR;  }
-
 #define BXSafeCFRelease( CF_VAL ) ( NULL != CF_VAL ? CFRelease( CF_VAL ) : NULL )
 
 @class BXDatabaseObjectID;

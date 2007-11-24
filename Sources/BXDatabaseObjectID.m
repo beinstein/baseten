@@ -39,7 +39,7 @@
 #import "BXAttributeDescriptionPrivate.h"
 
 #import <Log4Cocoa/Log4Cocoa.h>
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 
 
 /**
@@ -77,6 +77,8 @@
     TSEnumerate (currentKey, e, [keys objectEnumerator])
     {
         id currentValue = [pkeyDict objectForKey: currentKey];
+        log4AssertValueReturn ([NSNull null] != currentValue, nil, @"A pkey value was NSNull.");
+        
         NSString* valueForURL = @"";
         char argtype = 'd';
         //NSStrings and NSNumbers get a special treatment

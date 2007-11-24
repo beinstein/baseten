@@ -469,7 +469,7 @@ ParseSelector (SEL aSelector, NSString** key)
 			break;
 	}
 	
-	if (nil == error)
+	if (nil != error)
 		[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
 	else
 	{

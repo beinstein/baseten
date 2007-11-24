@@ -42,6 +42,10 @@
 		531E2B2F0A5A70D900A3BB37 /* BXArrayProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E2B2B0A5A70D900A3BB37 /* BXArrayProxy.m */; };
 		5321C0580AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */; };
 		5321C0590AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321C0570AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m */; };
+		5321F8350CF77FFB00E663CE /* BXInvocationRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */; };
+		5321F8360CF77FFB00E663CE /* BXInvocationRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */; };
+		5321F83D0CF7807800E663CE /* BXInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321F83B0CF7807700E663CE /* BXInvocation.h */; };
+		5321F83E0CF7807800E663CE /* BXInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321F83C0CF7807700E663CE /* BXInvocation.m */; };
 		532D61000B9454110028E90B /* BXConnectionSetupManagerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		533229E50A024C2600BDB151 /* BXEntityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 533229E30A024C2500BDB151 /* BXEntityDescription.m */; };
 		533229E60A024C2600BDB151 /* BXEntityDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 533229E40A024C2500BDB151 /* BXEntityDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -117,7 +121,6 @@
 		53B872830A0A4CEC007315BC /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
 		53B90C260BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53BDBC190C306DFD007F63A1 /* BXConstantsPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		53C4C8B50CF5DB0200E09BC3 /* BXErrorHandlerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C4C8B40CF5DB0200E09BC3 /* BXErrorHandlerDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53D0D17C0B6F8A6800D2D101 /* BXPolicyDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53D0D19D0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8010B666C3B00C3D20A /* libcrypto.dylib */; };
@@ -150,6 +153,27 @@
 			proxyType = 1;
 			remoteGlobalIDString = 53C9BE010A36FEBE00AAFE50;
 			remoteInfo = "Static archive";
+		};
+		5321F8790CF781ED00E663CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3;
+			remoteInfo = "Static library";
+		};
+		5321F87B0CF781ED00E663CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D2AAC0C705546C1D00DB518D;
+			remoteInfo = "Dynamic library";
+		};
+		5321F8870CF7823500E663CE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53C4CDC20CF7553E00E09BC3;
+			remoteInfo = "Static library";
 		};
 		536B8A9A0A519D4C00379C00 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -214,13 +238,6 @@
 			remoteGlobalIDString = 530EBD140B4BBFAE00DFC1CA;
 			remoteInfo = Log4Cocoa;
 		};
-		53DB86D10A6FBE3C00FC801D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 53BF4A340A36F6680065845D;
-			remoteInfo = "Static archive";
-		};
 		53DB86D30A6FBE4000FC801D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53012E6009D4368D0037C485 /* Framework.xcodeproj */;
@@ -255,20 +272,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = BaseTenAppKit;
-		};
-		53F523570A51A24D00E7DDC4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53B383F408BF75740071D224;
-			remoteInfo = TSDataTypes;
-		};
-		53F523590A51A24D00E7DDC4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53BF4A350A36F6680065845D;
-			remoteInfo = "Static archive";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -306,7 +309,11 @@
 		531E2B2B0A5A70D900A3BB37 /* BXArrayProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXArrayProxy.m; path = Sources/BXArrayProxy.m; sourceTree = "<group>"; };
 		5321C0560AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetHelperTableRelationProxy.h; path = Sources/BXSetHelperTableRelationProxy.h; sourceTree = "<group>"; };
 		5321C0570AD4FD780011D0C8 /* BXSetHelperTableRelationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSetHelperTableRelationProxy.m; path = Sources/BXSetHelperTableRelationProxy.m; sourceTree = "<group>"; };
-		5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = TSDataTypes.xcodeproj; path = Dependencies/PGTS/Dependencies/TSDataTypes/TSDataTypes.xcodeproj; sourceTree = "<group>"; };
+		5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = BXInvocationRecorder.h; path = Sources/BXInvocationRecorder.h; sourceTree = "<group>"; };
+		5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXInvocationRecorder.m; path = Sources/BXInvocationRecorder.m; sourceTree = "<group>"; };
+		5321F83B0CF7807700E663CE /* BXInvocation.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = BXInvocation.h; path = Sources/BXInvocation.h; sourceTree = "<group>"; };
+		5321F83C0CF7807700E663CE /* BXInvocation.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXInvocation.m; path = Sources/BXInvocation.m; sourceTree = "<group>"; };
+		5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MKCCollections.xcodeproj; path = Dependencies/MKCCollections/MKCCollections.xcodeproj; sourceTree = "<group>"; };
 		5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
 		5328FB6C0C457AC4006DE171 /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelationshipDescription.m; path = Sources/BXRelationshipDescription.m; sourceTree = "<group>"; };
 		5328FBD40C4580CD006DE171 /* BXForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKey.h; path = Sources/BXForeignKey.h; sourceTree = "<group>"; };
@@ -350,7 +357,6 @@
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
 		53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescriptionPrivate.h; path = Sources/BXPropertyDescriptionPrivate.h; sourceTree = "<group>"; };
 		53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConstantsPrivate.h; path = Sources/BXConstantsPrivate.h; sourceTree = "<group>"; };
-		53C4C8B40CF5DB0200E09BC3 /* BXErrorHandlerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXErrorHandlerDelegate.h; path = Sources/BXErrorHandlerDelegate.h; sourceTree = "<group>"; };
 		53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPolicyDelegate.h; path = Sources/BXPolicyDelegate.h; sourceTree = "<group>"; };
 		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
 		53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGCertificateVerificationDelegate.m; path = Sources/BXPGCertificateVerificationDelegate.m; sourceTree = "<group>"; };
@@ -426,16 +432,16 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
-				5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */,
-				53012E6009D4368D0037C485 /* Framework.xcodeproj */,
-				530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */,
-				53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */,
-				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
-				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
 				53DBE8120B666C7900C3D20A /* libssl.dylib */,
+				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
+				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				531266E40B68F9CA00637EDA /* Security.framework */,
+				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
+				5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */,
+				53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */,
+				53012E6009D4368D0037C485 /* Framework.xcodeproj */,
+				530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
 				53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */,
 			);
@@ -462,7 +468,6 @@
 				5301300C09D437030037C485 /* BXDatabaseContext.m */,
 				532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */,
 				53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */,
-				53C4C8B40CF5DB0200E09BC3 /* BXErrorHandlerDelegate.h */,
 				53933EF409EBD082001D00BB /* BXInterface.h */,
 				530132D709D45F9B0037C485 /* BXDatabaseObject.h */,
 				53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */,
@@ -491,9 +496,22 @@
 			children = (
 				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
 				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
+				5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */,
+				5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */,
+				5321F83B0CF7807700E663CE /* BXInvocation.h */,
+				5321F83C0CF7807700E663CE /* BXInvocation.m */,
 				32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		5321F8750CF781ED00E663CE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5321F87A0CF781ED00E663CE /* libMKCCollections.a */,
+				5321F87C0CF781ED00E663CE /* MKCCollections.dylib */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		5328FB7F0C457DB9006DE171 /* Relationships */ = {
@@ -605,15 +623,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		53F523520A51A24D00E7DDC4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				53F523580A51A24D00E7DDC4 /* TSDataTypes.framework */,
-				53F5235A0A51A24D00E7DDC4 /* libTSDataTypes.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		53F77DA10A3806580058F7D6 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
@@ -673,7 +682,8 @@
 				5359D1870C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h in Headers */,
 				5359D18D0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h in Headers */,
 				53E01F4D0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h in Headers */,
-				53C4C8B50CF5DB0200E09BC3 /* BXErrorHandlerDelegate.h in Headers */,
+				5321F8350CF77FFB00E663CE /* BXInvocationRecorder.h in Headers */,
+				5321F83D0CF7807800E663CE /* BXInvocation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -720,8 +730,8 @@
 				53DD5AB30A78D1B800CD5924 /* PBXBuildRule */,
 			);
 			dependencies = (
+				5321F8880CF7823500E663CE /* PBXTargetDependency */,
 				531B00D70A519FB0006AEF08 /* PBXTargetDependency */,
-				53DB86D20A6FBE3C00FC801D /* PBXTargetDependency */,
 				53DB86D40A6FBE4000FC801D /* PBXTargetDependency */,
 				5381F6B60BC281CE008642BA /* PBXTargetDependency */,
 			);
@@ -759,7 +769,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB91B108733DA50010E9CD /* Build configuration list for PBXProject "BaseTen" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* BXDatabase */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -782,12 +791,12 @@
 					ProjectRef = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
 				},
 				{
-					ProductGroup = 536B8AA60A519D5B00379C00 /* Products */;
-					ProjectRef = 530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */;
+					ProductGroup = 5321F8750CF781ED00E663CE /* Products */;
+					ProjectRef = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
 				},
 				{
-					ProductGroup = 53F523520A51A24D00E7DDC4 /* Products */;
-					ProjectRef = 5327D92809F6703200C07514 /* TSDataTypes.xcodeproj */;
+					ProductGroup = 536B8AA60A519D5B00379C00 /* Products */;
+					ProjectRef = 530ADC7609ED1BC1004A13C3 /* PGTSTiger.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -800,6 +809,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		5321F87A0CF781ED00E663CE /* libMKCCollections.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libMKCCollections.a;
+			remoteRef = 5321F8790CF781ED00E663CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5321F87C0CF781ED00E663CE /* MKCCollections.dylib */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.dylib";
+			path = MKCCollections.dylib;
+			remoteRef = 5321F87B0CF781ED00E663CE /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		536B8A9B0A519D4C00379C00 /* PGTS.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -868,20 +891,6 @@
 			fileType = wrapper.cfbundle;
 			path = BaseTenPalette.palette;
 			remoteRef = 53EFE9EF0BA96452008666B7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		53F523580A51A24D00E7DDC4 /* TSDataTypes.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = TSDataTypes.framework;
-			remoteRef = 53F523570A51A24D00E7DDC4 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		53F5235A0A51A24D00E7DDC4 /* libTSDataTypes.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libTSDataTypes.a;
-			remoteRef = 53F523590A51A24D00E7DDC4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -993,6 +1002,8 @@
 				5359D18E0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m in Sources */,
 				534BA1740C4E0F530094957C /* BXPGCertificateVerificationDelegate.m in Sources */,
 				53E01F4E0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m in Sources */,
+				5321F8360CF77FFB00E663CE /* BXInvocationRecorder.m in Sources */,
+				5321F83E0CF7807800E663CE /* BXInvocation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1027,15 +1038,15 @@
 			name = "Static archive";
 			targetProxy = 531B00D60A519FB0006AEF08 /* PBXContainerItemProxy */;
 		};
+		5321F8880CF7823500E663CE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static library";
+			targetProxy = 5321F8870CF7823500E663CE /* PBXContainerItemProxy */;
+		};
 		5381F6B60BC281CE008642BA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = libLog4Cocoa;
 			targetProxy = 5381F6B50BC281CE008642BA /* PBXContainerItemProxy */;
-		};
-		53DB86D20A6FBE3C00FC801D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Static archive";
-			targetProxy = 53DB86D10A6FBE3C00FC801D /* PBXContainerItemProxy */;
 		};
 		53DB86D40A6FBE4000FC801D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

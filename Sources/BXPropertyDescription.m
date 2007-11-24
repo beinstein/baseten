@@ -31,11 +31,11 @@
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
 
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
-static TSNonRetainedObjectSet* gProperties;
+static id gProperties;
 
 
 /**
@@ -157,7 +157,7 @@ static TSNonRetainedObjectSet* gProperties;
 	if (!tooLate)
 	{
 		tooLate = YES;
-		gProperties = [[TSNonRetainedObjectSet alloc] init];
+		gProperties = [[MKCHashTable alloc] init];
 	}
 }
 

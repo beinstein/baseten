@@ -36,7 +36,7 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
 
-#import <TSDataTypes/TSDataTypes.h>
+#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
