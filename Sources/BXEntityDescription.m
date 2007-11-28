@@ -371,7 +371,7 @@ bail:
  */
 - (NSDictionary *) relationshipsByName
 {
-	return [mRelationships dictionary];
+	return [mRelationships dictionaryRepresentation];
 }
 @end
 
