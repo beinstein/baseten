@@ -64,6 +64,7 @@ enum MKCCollectionType
 //Abstract
 - (id) objectForKey: (id) aKey;
 - (void) setObject: (id) anObject forKey: (id) aKey;
+- (void) removeObjectForKey: (id) aKey;
 - (NSUInteger) integerForKey: (id) aKey;
 - (void) setInteger: (NSUInteger) anInt forKey: (id) aKey;
 - (id) objectAtIndex: (NSUInteger) anIndex;

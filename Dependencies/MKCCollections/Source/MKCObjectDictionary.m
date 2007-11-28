@@ -88,4 +88,9 @@ typedef NSUInteger NSPointerFunctionsOptions;
     return NSAllMapTableValues (mMapTable);
 }
 
+- (void) removeObjectForKey: (id) aKey
+{
+	NSMapRemove (mMapTable, aKey);
+}
+
 @end

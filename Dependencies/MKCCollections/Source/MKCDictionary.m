@@ -179,5 +179,9 @@
 	return nil;
 }
 
+- (void) removeObjectForKey: (id) aKey
+{
+	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
+}}
 @end
 
