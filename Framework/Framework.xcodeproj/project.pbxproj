@@ -736,7 +736,6 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53BA4FD208804E6B00BFAFB5 /* Build configuration list for PBXProject "Framework" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;

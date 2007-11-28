@@ -676,7 +676,10 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 - (id) PGTSConstantExpressionValue: (NSDictionary *) context
 {
-    return self;
+	id retval = self;
+	if (0 == strcmp ("c", [self objCType]))
+		retval = ([self boolValue] ? @"true" : @"false");
+    return retval;
 }
 @end
 
