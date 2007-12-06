@@ -736,6 +736,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53BA4FD208804E6B00BFAFB5 /* Build configuration list for PBXProject "Framework" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -981,6 +982,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 536580C80A36FDBA00CDEC90 /* static-debug.xcconfig */;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
 			};
 			name = Debug;
 		};
@@ -988,6 +990,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 536580C90A36FDBA00CDEC90 /* static-release.xcconfig */;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
 			};
 			name = Release;
 		};
