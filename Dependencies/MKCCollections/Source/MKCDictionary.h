@@ -60,8 +60,6 @@ enum MKCCollectionType
 - (id) objectEnumerator;
 - (id) dictionaryRepresentation;
 - (void) removeAllObjects;
-- (void) makeObjectsPerformSelector: (SEL) selector withObject: (id) object;
-- (NSArray *) objectsForKeys: (NSArray *) keys notFoundMarker: (id) anObject;
 
 //Abstract
 - (id) objectForKey: (id) aKey;

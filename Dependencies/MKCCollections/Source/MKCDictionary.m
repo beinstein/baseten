@@ -134,29 +134,6 @@
 	return [(id) mMapTable countByEnumeratingWithState: state objects: stackbuf count: len];
 }
 
-- (void) makeObjectsPerformSelector: (SEL) selector withObject: (id) object
-{
-	NSEnumerator* e = [self objectEnumerator];
-	id currentObject = nil;
-	while ((currentObject = [e nextObject]))
-		[currentObject performSelector: selector withObject: object];
-}
-
-- (NSArray *) objectsForKeys: (NSArray *) keys notFoundMarker: (id) marker
-{
-	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [keys count]];
-	NSEnumerator* e = [keys objectEnumerator];
-	id currentKey = nil;
-	while ((currentKey = [e nextObject]))
-	{
-		id object = [self objectForKey: currentKey];
-		if (nil == object)
-			object = marker;
-		[retval addObject: object];
-	}
-	return retval;
-}
-
 - (id) objectForKey: (id) aKey
 {
 	@throw [NSException exceptionWithName: NSInternalInconsistencyException reason: @"This is an abstract class." userInfo: nil];
@@ -209,3 +186,32 @@
 
 @end
 
+
+//I'm not completely content with this solution, but NSMapTable class needs these
+//methods too, and we can't use its name here.
+@implementation NSObject (MKCCollectionAdditions)
+
+- (void) makeObjectsPerformSelector: (SEL) selector withObject: (id) object
+{
+	NSEnumerator* e = [(id) self objectEnumerator];
+	id currentObject = nil;
+	while ((currentObject = [e nextObject]))
+		[currentObject performSelector: selector withObject: object];
+}
+
+- (NSArray *) objectsForKeys: (NSArray *) keys notFoundMarker: (id) marker
+{
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [keys count]];
+	NSEnumerator* e = [keys objectEnumerator];
+	id currentKey = nil;
+	while ((currentKey = [e nextObject]))
+	{
+		id object = [(id) self objectForKey: currentKey];
+		if (nil == object)
+			object = marker;
+		[retval addObject: object];
+	}
+	return retval;
+}
+
+@end

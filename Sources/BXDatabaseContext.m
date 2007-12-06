@@ -62,7 +62,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 #define BXHandleError( ERROR, LOCAL_ERROR ) BXHandleError2( self, errorHandlerDelegate, ERROR, LOCAL_ERROR )
 
-inline void
+extern inline void
 BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
 {
     if (nil != localError)
@@ -202,6 +202,13 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
     [super dealloc];
 }
 
+- (void) finalize
+{
+	[self rollback];
+	[self disconnect];
+	[super finalize];
+}
+
 /**
  * Whether the receiver retains registered objects.
  */
@@ -258,7 +265,7 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
         {
 			[self setCanConnect: NO];
 			[self lazyInit];
-			[mDatabaseInterface connect: &localError];
+			[[self databaseInterface] connect: &localError];
 			
 			BOOL success = (nil == localError);
 			[self connectedToDatabase: success async: NO error: &localError];
@@ -307,9 +314,7 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
 }
 
 /**
- * Disconnect from the database during an asynchronous connection attempt.
- * Cancels a connection attempt. Presently this method should be invoked after #connect or #connect: if desired.
- * After the connection has been made, it has no effect.
+ * Disconnect from the database.
  */
 - (void) disconnect
 {
@@ -317,6 +322,8 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
 	{
 		mDidDisconnect = YES;
 		[mDatabaseInterface disconnect];
+		[mDatabaseInterface release];
+		mDatabaseInterface = nil;
 	}
 }
 
