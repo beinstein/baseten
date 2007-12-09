@@ -540,7 +540,6 @@ bail:
 
 - (void) setRelationships: (NSDictionary *) aDict
 {
-	//FIXME: this is a bit bad. NSMapTable-based collections should be replaced with CF collections.
     @synchronized (mRelationships)
     {
         TSEnumerate (currentKey, e, [mRelationships keyEnumerator])

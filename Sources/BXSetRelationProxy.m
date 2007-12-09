@@ -187,6 +187,11 @@
     }
 }
 
+- (BXRelationshipDescription *) relationship
+{
+    return mRelationship;
+}
+
 - (void) forwardInvocation: (NSInvocation *) anInvocation
 {
     //Unless we modify the helper's proxy object, changes won't be notified.

@@ -40,6 +40,7 @@
 
 	BXForeignKey* mForeignKey;
 	NSString* mInverseName;
+    NSPredicate* mPredicate;
 	NSDeleteRule mDeleteRule;
 	BOOL mIsInverse;
 }

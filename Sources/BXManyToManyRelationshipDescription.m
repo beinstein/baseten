@@ -102,7 +102,7 @@
 	NSPredicate* helperSrcPredicate = [[self srcForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: aDatabaseObject];
 	NSPredicate* helperDstPredicate = [[self dstForeignKey] predicateForSrcEntity: mHelperEntity dstEntity: [self destinationEntity]];
 	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: 
-		[NSArray arrayWithObjects: helperSrcPredicate, helperDstPredicate, nil]];
+		[NSArray arrayWithObjects: helperSrcPredicate, helperDstPredicate, mPredicate, nil]];
 	
 	id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
 														withPredicate: predicate 

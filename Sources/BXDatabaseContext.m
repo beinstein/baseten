@@ -62,7 +62,7 @@ static BOOL gHaveAppKitFramework = NO;
 
 #define BXHandleError( ERROR, LOCAL_ERROR ) BXHandleError2( self, errorHandlerDelegate, ERROR, LOCAL_ERROR )
 
-extern inline void
+static void
 BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
 {
     if (nil != localError)
@@ -1910,7 +1910,7 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
 		
-		if (nil == localError && NO == [mDatabaseInterface autocommits])
+		if (nil == localError)
         {
             NSArray* oldIDs = objectIDs;
             if (updatedPkey)

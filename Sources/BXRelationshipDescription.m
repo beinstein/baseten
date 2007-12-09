@@ -169,6 +169,12 @@
 		//We want to select from foreign key's src entity, which is our destination entity.
 		predicate = [mForeignKey predicateForSrcEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
 	}
+    
+    if (nil != mPredicate)
+    {
+        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:
+            [NSArray arrayWithObjects: predicate, mPredicate, nil]];
+    }
 	
 	//Expression order matters since foreign key is always in src table or view.
 	id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
@@ -311,6 +317,15 @@
 		*predicatePtr = predicate;
 	}
 	return retval;
+}
+
+- (void) setPredicate: (NSPredicate *) predicate
+{
+    if (mPredicate != predicate)
+    {
+        [mPredicate release];
+        mPredicate = [predicate retain];
+    }
 }
 
 @end
