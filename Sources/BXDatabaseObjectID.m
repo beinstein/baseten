@@ -302,6 +302,12 @@ bail:
 {
     return [self retain];
 }
+
+- (id) mutableCopyWithZone: (NSZone *) zone
+{
+    return [[[self class] allocWithZone: zone]
+        initWithEntity: mEntity objectURI: mURIRepresentation];
+}
 @end
 
 
@@ -395,6 +401,18 @@ bail:
 					primaryKeyFields: &retval];
 	log4AssertLog (ok, @"Expected URI to have been parsed correctly: %@", mURIRepresentation);
 	return retval;
+}
+
+- (void) setEntity: (BXEntityDescription *) entity
+{
+    log4AssertVoidReturn (NO == mRegistered, @"Expected object ID not to have been registered.");
+    NSString* path = [NSString stringWithFormat: @"/%@/%@/?%@", 
+        [entity schemaName], [entity name], [mURIRepresentation query]];
+    
+    mHash = 0;
+    NSURL* newURI = [NSURL URLWithString: path relativeToURL: mURIRepresentation];
+    [mURIRepresentation release];
+    mURIRepresentation = [[newURI absoluteURL] retain];
 }
 
 @end

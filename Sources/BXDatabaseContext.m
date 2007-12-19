@@ -74,6 +74,58 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
     }
 }
 
+static NSMutableDictionary*
+BXObjectIDsByEntity (NSArray *ids)
+{
+    NSMutableDictionary* dict = [NSMutableDictionary dictionary];
+    TSEnumerate (objectID, e, [ids objectEnumerator])
+    {
+        BXEntityDescription* entity = [objectID entity];
+        NSMutableArray* array = [dict objectForKey: entity];
+        if (nil == array)
+        {
+            array = [NSMutableArray array];
+            [dict setObject: array forKey: entity];
+        }
+        [array addObject: objectID];
+    }
+    return dict;
+}
+
+static void
+BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescription* entity)
+{
+    id inherited = [entity inheritedEntities];
+    if (0 < [inherited count])
+    {
+        BXEntityDescription* inheritedEntity = [inherited objectAtIndex: 0];
+        NSMutableArray* inheritedIds = [idsByEntity objectForKey: inheritedEntity];
+        if (nil == inheritedIds)
+        {
+            inheritedIds = [NSMutableArray array];
+            [idsByEntity setObject: inheritedIds forKey: inheritedEntity];
+        }
+        
+        //Create the corresponding ids.
+        TSEnumerate (objectID, e, [[idsByEntity objectForKey: entity] objectEnumerator])
+        {
+            BXDatabaseObjectID* newID = [objectID mutableCopy];
+            [newID setEntity: inheritedEntity];
+            [inheritedIds addObject: newID];
+            [newID release];
+        }
+        BXAddObjectIDsForInheritance2 (idsByEntity, inheritedEntity);
+        //Yay, tail recursion! Let's hope the compiler notices.
+    }    
+}
+
+static void
+BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
+{
+    TSEnumerate (entity, e, [[idsByEntity allKeys] objectEnumerator])
+        BXAddObjectIDsForInheritance2 (idsByEntity, entity);
+}
+
 
 /** 
  * The database context. 
@@ -1441,63 +1493,70 @@ BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
 {
     if (0 < [objectIDs count])
     {
-        //If we can find objects with matching partial keys, send update notifications instead
-        BXEntityDescription* entity = [[objectIDs objectAtIndex: 0] entity];
+        NSMutableDictionary* idsByEntity = BXObjectIDsByEntity (objectIDs);
+        BXAddObjectIDsForInheritance (idsByEntity);
         NSNotificationCenter* nc = [self notificationCenter];
-		
-        //Send the notifications
-        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-            objectIDs, kBXObjectIDsKey,
-            self, kBXDatabaseContextKey,
-            nil];
-        NSString* notificationNames [2] = {kBXInsertEarlyNotification, kBXInsertNotification};
-        for (int i = 0; i < 2; i++)
-            [nc postNotificationName: notificationNames [i] object: entity userInfo: userInfo];
-        
-#if 0
-        if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
+        		
+        //Post the notifications
+        TSEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
-            NSSet* dependentViews = [entity dependentViews];
-            NSMutableArray* insertedIDs = [NSMutableArray array];
-            NSMutableArray* updatedIDs = [NSMutableArray array];
-            TSEnumerate (currentView, e, [dependentViews objectEnumerator])
+            objectIDs = [idsByEntity objectForKey: entity];
+
+            //Send the notifications
+            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                objectIDs, kBXObjectIDsKey,
+                self, kBXDatabaseContextKey,
+                nil];
+            NSString* notificationNames [2] = {kBXInsertEarlyNotification, kBXInsertNotification};
+            for (int i = 0; i < 2; i++)
+                [nc postNotificationName: notificationNames [i] object: entity userInfo: userInfo];
+            
+#if 0
+            //If we can find objects with matching partial keys, send update notifications instead
+            if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
             {
-                [insertedIDs removeAllObjects];
-                [updatedIDs removeAllObjects];
-                
-                TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+                NSSet* dependentViews = [entity dependentViews];
+                NSMutableArray* insertedIDs = [NSMutableArray array];
+                NSMutableArray* updatedIDs = [NSMutableArray array];
+                TSEnumerate (currentView, e, [dependentViews objectEnumerator])
                 {
-                    BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
-                    if (nil == [self registeredObjectWithID: partialID])
-                        [insertedIDs addObject: partialID];
-                    else
-                        [updatedIDs addObject: partialID];
-                }
-                
-                id updatedIds = [self registeredObjectsWithIDs: updatedIDs];
-                NSString* notificationNames [4] = {
-                    kBXInsertEarlyNotification, 
-                    kBXUpdateEarlyNotification,
-                    kBXInsertNotification, 
-                    kBXUpdateNotification
-                };
-                NSArray* arrays [4] = {insertedIDs, updatedIDs, insertedIDs, updatedIDs};
-                id objectArrays [4] = {nil, updatedIds, nil, updatedIds};
-                for (int i = 0; i < 4; i++)
-                {
-                    if (0 < [arrays [i] count])
+                    [insertedIDs removeAllObjects];
+                    [updatedIDs removeAllObjects];
+                    
+                    TSEnumerate (currentID, e, [objectIDs objectEnumerator])
                     {
-                        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                            [[insertedIDs copy] autorelease], kBXObjectIDsKey,
-                            self, kBXDatabaseContextKey,
-                            objectArrays [i], kBXObjectsKey, //This needs to be the last item since objectArrays [i] might be nil
-                            nil];
-                        [nc postNotificationName: notificationNames [i] object: currentView userInfo: userInfo];
+                        BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
+                        if (nil == [self registeredObjectWithID: partialID])
+                            [insertedIDs addObject: partialID];
+                        else
+                            [updatedIDs addObject: partialID];
+                    }
+                    
+                    id updatedIds = [self registeredObjectsWithIDs: updatedIDs];
+                    NSString* notificationNames [4] = {
+                        kBXInsertEarlyNotification, 
+                        kBXUpdateEarlyNotification,
+                        kBXInsertNotification, 
+                        kBXUpdateNotification
+                    };
+                    NSArray* arrays [4] = {insertedIDs, updatedIDs, insertedIDs, updatedIDs};
+                    id objectArrays [4] = {nil, updatedIds, nil, updatedIds};
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (0 < [arrays [i] count])
+                        {
+                            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                [[insertedIDs copy] autorelease], kBXObjectIDsKey,
+                                self, kBXDatabaseContextKey,
+                                objectArrays [i], kBXObjectsKey, //This needs to be the last item since objectArrays [i] might be nil
+                                nil];
+                            [nc postNotificationName: notificationNames [i] object: currentView userInfo: userInfo];
+                        }
                     }
                 }
             }
+#endif            
         }
-#endif
     }
 }
 

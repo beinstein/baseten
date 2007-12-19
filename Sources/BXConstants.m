@@ -55,6 +55,7 @@ NSString* const kBXUpdateNotification = @"kBXUpdateNotification";
 NSString* const kBXUpdateEarlyNotification = @"kBXUpdateEarlyNotification";
 NSString* const kBXDeleteNotification = @"kBXDeleteNotification";
 NSString* const kBXDeleteEarlyNotification = @"kBXDeleteEarlyNotification";
+NSString* const kBXEntityDescriptionWillDeallocNotification = @"kBXEntityDescriptionWillDeallocNotification";
 
 NSString* const kBXErrorDomain = @"kBXErrorDomain";
 NSString* const kBXErrorMessageKey = @"kBXErrorMessageKey";

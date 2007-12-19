@@ -39,15 +39,9 @@
 + (NSURL *) entityKeyForDatabaseURI: (NSURL *) databaseURI schema: (NSString *) schemaName table: (NSString *) tableName;
 + (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
-//- (void) addDependentView: (BXEntityDescription *) viewEntity;
-//- (id <BXRelationshipDescription>) relationshipNamed: (NSString *) aName context: (BXDatabaseContext *) context error: (NSError **) error;
 - (void) registerObjectID: (BXDatabaseObjectID *) anID;
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID;
-//- (BXEntityDescription *) targetForRelationship: (NSString *) name;
 - (NSArray *) attributes: (NSArray *) strings;
-//- (NSArray *) correspondingAttributes: (NSArray *) attributes;
-//- (BOOL) hasAncestor: (BXEntityDescription *) entity;
-//- (void) setViewEntities: (NSSet *) aSet;
 - (void) setAttributes: (NSDictionary *) attributes;
 - (void) resetAttributeExclusion;
 - (void) setValidated: (BOOL) flag;
@@ -56,11 +50,6 @@
 - (NSLock *) validationLock;
 - (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
 
-/*
-- (id <BXRelationshipDescription>) findPathToEntity: (BXEntityDescription *) anEntity 
-							   usingPropertiesNamed: (NSArray *) srcNames
-							  targetPropertiesNamed: (NSArray *) dstNames
-											context: (BXDatabaseContext *) context
-											  error: (NSError **) error;
-*/
+- (void) inherits: (NSArray *) entities;
+- (id) inheritedEntities;
 @end

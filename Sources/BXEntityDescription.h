@@ -52,11 +52,11 @@ enum BXEntityFlag
 
     id                      mObjectIDs;    
     id						mRelationships;
+    id                      mInheritedEntities;
     enum BXEntityFlag       mFlags;
 }
 
 - (void) dealloc2;
-//+ (NSSet *) views;
 - (NSURL *) databaseURI;
 - (NSString *) schemaName;
 - (BOOL) isEqual: (id) anObject;
@@ -67,14 +67,8 @@ enum BXEntityFlag
 - (NSDictionary *) attributesByName;
 - (NSArray *) primaryKeyFields;
 - (NSArray *) fields;
-//- (BOOL) viewIsBasedOnTablesInItsSchema: (NSSet *) tableNames;
-//- (BOOL) viewIsBasedOnEntities: (NSSet *) entities;
 - (BOOL) isView;
-//- (NSSet *) entitiesBasedOn;
-//- (NSSet *) dependentViews;
 - (NSArray *) objectIDs;
-/*- (void) setTargetView: (BXEntityDescription *) viewEntity 
-  forRelationshipNamed: (NSString *) relationshipName; */
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
 - (BOOL) isValidated;
 - (NSDictionary *) relationshipsByName;

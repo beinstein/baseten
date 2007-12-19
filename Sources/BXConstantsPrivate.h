@@ -35,3 +35,5 @@ extern NSString* const kBXInsertEarlyNotification;
 extern NSString* const kBXDeleteEarlyNotification;
 extern NSString* const kBXUpdateEarlyNotification;
 //@}
+
+extern NSString* const kBXEntityDescriptionWillDeallocNotification;

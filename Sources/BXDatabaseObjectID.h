@@ -56,5 +56,5 @@
 @end
 
 
-@interface BXDatabaseObjectID (NSCopying) <NSCopying>
+@interface BXDatabaseObjectID (NSCopying) <NSCopying, NSMutableCopying>
 @end

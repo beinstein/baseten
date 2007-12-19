@@ -215,7 +215,6 @@
 		530A43530A5C0DC500A4722B /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 530A43540A5C0DC500A4722B /* Build configuration list for PBXProject "UnitTests" */;
-			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 530A43510A5C0DC500A4722B;
 			productRefGroup = 530A438D0A5C0FD000A4722B /* Products */;

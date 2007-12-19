@@ -39,6 +39,7 @@
 - (id) initWithEntity: (BXEntityDescription *) anEntity objectURI: (NSURL *) anURI;
 - (void) setStatus: (enum BXObjectDeletionStatus) status forObjectRegisteredInContext: (BXDatabaseContext *) context;
 - (NSDictionary *) allValues;
+- (void) setEntity: (BXEntityDescription *) entity;
 
 //- (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view;
 @end

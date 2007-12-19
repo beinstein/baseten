@@ -35,6 +35,7 @@
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
+#import "BXConstantsPrivate.h"
 
 #import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
@@ -97,6 +98,10 @@ static id gEntities;
             [[currentRel inverseRelationship] setDestinationEntity: nil];
         }
     }
+    
+    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+    [nc postNotificationName: kBXEntityDescriptionWillDeallocNotification
+                      object: self];
     
 	[self dealloc2];
 	
@@ -443,6 +448,7 @@ bail:
 		mRelationships = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
 														valueType: kMKCCollectionTypeWeakObject];
 		mObjectIDs = [[MKCHashTable alloc] init];
+        mInheritedEntities = [[MKCHashTable alloc] init];
 		mValidationLock = [[NSLock alloc] init];
     }
     return self;
@@ -566,6 +572,44 @@ bail:
         [self setValidated: NO];
         
         [mRelationships removeObjectForKey: [aRelationship name]];
+    }
+}
+
+- (void) inherits: (NSArray *) entities
+{
+    @synchronized (mInheritedEntities)
+    {
+        //FIXME: We only implement cascading notifications from "root tables" to 
+        //inheriting tables and not vice-versa.
+        //FIXME: only single entity supported for now.
+        log4AssertVoidReturn (0 == [mInheritedEntities count], @"Expected inheritance not to have been set.");
+        log4AssertVoidReturn (1 == [entities count], @"Expected inheritance not to have been set.");
+        TSEnumerate (currentEntity, e, [entities objectEnumerator])
+        {
+            [mInheritedEntities addObject: currentEntity];
+            [[NSNotificationCenter defaultCenter] addObserver: self
+                                                     selector: @selector (subEntityWillDealloc:)
+                                                         name: kBXEntityDescriptionWillDeallocNotification
+                                                       object: currentEntity];
+        }
+    }
+}
+
+- (id) inheritedEntities
+{
+    id retval = nil;
+    @synchronized (mInheritedEntities)
+    {
+        retval = [mInheritedEntities allObjects];
+    }
+    return retval;
+}
+
+- (void) subEntityWillDealloc: (NSNotification *) n
+{
+    @synchronized (mInheritedEntities)
+    {
+        [mInheritedEntities removeObject: [n object]];
     }
 }
 
