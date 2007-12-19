@@ -31,6 +31,7 @@
 
 @class PGTSTableInfo;
 @class PGTSConnection;
+@class PGTSResultSet;
 
 
 enum PGTSTableOperation 
@@ -53,5 +54,12 @@ enum PGTSTableOperation
 	 notificationName: (NSString *) notificationName;
 - (NSDictionary *) lastModificationForTable: (PGTSTableInfo *) table connection: (PGTSConnection *) connection;
 - (void) checkInModificationTableNamed: (NSString *) modificationTableName;
+- (PGTSResultSet *) checkModificationsInTable: (PGTSTableInfo *) table
+										query: (NSString *) query
+								   parameters: (NSArray *) parameters;
+- (PGTSResultSet *) checkModificationsInTableNamed: (NSString *) name
+											 query: (NSString *) query 
+										parameters: (NSArray *) parameters;
+- (NSString *) modificationTableName: (PGTSTableInfo *) table;
 
 @end

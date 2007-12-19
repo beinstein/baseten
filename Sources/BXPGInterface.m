@@ -576,7 +576,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     return rval;
 }
 
-- (NSArray *) executeUpdateWithDictionary: (NSDictionary *) aDict
+- (NSArray *) executeUpdateWithDictionary: (NSDictionary *) valueDict
                                  objectID: (BXDatabaseObjectID *) objectID
                                    entity: (BXEntityDescription *) entity
                                 predicate: (NSPredicate *) predicate
@@ -644,13 +644,13 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				pkeyFNames = [pkeyFields valueForKey: @"name"];
 				
 				//Check if pkey should be updated
-				if (nil != [pkeyFNames firstObjectCommonWithArray: [aDict allKeys]])
+				if (nil != [pkeyFNames firstObjectCommonWithArray: [valueDict allKeys]])
 					updatedPkey = YES;
 									
 				//Send the UPDATE query
 				queryString = [NSString stringWithFormat: @"UPDATE %@ SET %@ WHERE %@ RETURNING %@", 
 					name, 
-					[aDict PGTSSetClauseParameters: parameters connection: connection], 
+					[valueDict PGTSSetClauseParameters: parameters connection: connection], 
 					whereClause,
 					[[[entity primaryKeyFields] BXPGEscapedNames: connection] componentsJoinedByString: @", "]];
 				res = [connection executeQuery: queryString parameterArray: parameters];
@@ -666,27 +666,29 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				
 			//Handle the result and get new pkey values.
 			//Currently we assume that the user knows the updated objects' IDs.
-			NSMutableDictionary* updatingDict = [[aDict mutableCopy] autorelease];
-			NSArray* objectIDs = nil;
+			NSArray* objectIDs = [self objectIDsFromResult: res entity: entity];
+			NSMutableDictionary* updatingDict = [[valueDict mutableCopy] autorelease];
+			//Currently we assume that the user knows the updated objects' IDs.
+			if (YES == updatedPkey)
 			{
-				NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-				log4AssertValueReturn (nil != entity, nil, @"Expected entity not to be nil.");
-				while (([res advanceRow]))
-				{
-					BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: [res currentRowAsDictionary]];
-					[ids addObject: currentID];
-					
-					if (YES == updatedPkey)
-						[updatingDict addEntriesFromDictionary: [res currentRowAsDictionary]];
-				}
-				retval = ids;
-
-				//Currently we assume that the user knows the updated objects' IDs.
-				if (YES == updatedPkey)
-					objectIDs = [NSArray arrayWithObject: objectID];
-				else
-					objectIDs = ids;
+				[updatingDict addEntriesFromDictionary: [res currentRowAsDictionary]];
+				objectIDs = [NSArray arrayWithObject: objectID];
 			}
+			
+			if (0 < [[entity inheritedEntities] count])
+			{
+				//FIXME: check for modifications and add object id's.
+#if 0
+				PGTSResultSet* res = [modificationNotifier checkModificationsInTable: (PGTSTableInfo *) table
+																			   query: (NSString *) query
+																		  parameters: (NSArray *) parameters;
+				 
+				
+				//FIXME: currently we don't allow multiple inheritance.
+				BXEntityDescription* superEntity = [[entity inheritedEntities] objectAtIndex: 0];
+#endif
+			}
+
 			
 			//Update the objects.
 			//Also mark the objects locked. Setting cached values sends -didChangeValueForKey:.
@@ -699,8 +701,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				if (nil == classDict)
 					classDict = [NSDictionary PGTSDeserializationDictionary];
 				NSMutableArray* faultedKeys = nil;
-				//We're only interested in other than pkey values for now, so we can use aDict here.
-				TSEnumerate (currentKey, e, [aDict keyEnumerator])
+				//We're only interested in other than pkey values for now, so we can use valueDict here.
+				TSEnumerate (currentKey, e, [valueDict keyEnumerator])
 				{
 					if (! [pkeyFNames containsObject: currentKey])
 					{
@@ -709,7 +711,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 						if (Nil != expectedClass && ![currentKey isKindOfClass: expectedClass])
 						{
 							if (nil == faultedKeys)
-								faultedKeys = [NSMutableArray arrayWithCapacity: [aDict count]];
+								faultedKeys = [NSMutableArray arrayWithCapacity: [valueDict count]];
 							
 							[faultedKeys addObject: currentKey];
 						}
@@ -1246,6 +1248,20 @@ bail:
 
 
 @implementation BXPGInterface (Helpers)
+- (NSMutableArray *) objectIDsFromResult: (PGTSResultSet *) res 
+								  entity: (BXEntityDescription *) entity
+{
+	log4AssertValueReturn (nil != entity, nil, @"Expected entity not to be nil.");
+	NSMutableArray* ids = [NSMutableArray arrayWithCapacity: [res countOfRows]];
+	while (([res advanceRow]))
+	{
+		BXDatabaseObjectID* currentID = [BXDatabaseObjectID IDWithEntity: entity 
+														primaryKeyFields: [res currentRowAsDictionary]];
+		[ids addObject: currentID];		
+	}
+	return ids;
+}
+
 - (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error
 {
     log4AssertValueReturn (NULL != error, NO, @"Expected error to be set.");

@@ -141,7 +141,7 @@
 
 - (void) checkForModificationsInTable: (PGTSTableInfo *) table
 {
-    [self checkInModificationTableNamed: [notificationNames objectAtIndex: [table oid]]];
+    [self checkInModificationTableNamed: [self modificationTableName: table]];
 }
 
 - (void) checkInModificationTableNamed: (NSString *) modificationTableName
@@ -154,9 +154,11 @@
 	else
         backendPID = [NSNumber numberWithInt: [connection backendPID]];
     
-    NSString* query = [NSString stringWithFormat: 
-        @"SELECT * FROM %@ ($1::timestamp, $2)", modificationTableName];
-    PGTSResultSet* res = [connection executeQuery: query parameters: [self lastCheckForTable: modificationTableName], backendPID];
+    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1::timestamp, $2)", modificationTableName];
+	NSArray* parameters = [NSArray arrayWithObjects: [self lastCheckForTable: modificationTableName], backendPID];
+	PGTSResultSet* res = [self checkModificationsInTableNamed: modificationTableName
+														query: query 
+												   parameters: parameters];
     
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
     NSMutableDictionary* baseUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
@@ -190,10 +192,33 @@
             
             [rows addObject: row];
             lastType = modificationType;
-            [self setLastCheck: [res valueForKey: @"" PGTS_SCHEMA_NAME "_modification_timestamp"] forTable: modificationTableName];
             [res advanceRow];
         }        
     }
+}
+
+- (PGTSResultSet *) checkModificationsInTable: (PGTSTableInfo *) table
+										query: (NSString *) query
+								   parameters: (NSArray *) parameters
+{
+	return [self checkModificationsInTableNamed: [self modificationTableName: table]
+										  query: query parameters: parameters];
+}
+
+- (PGTSResultSet *) checkModificationsInTableNamed: (NSString *) name
+											 query: (NSString *) query 
+										parameters: (NSArray *) parameters
+{
+    PGTSResultSet* retval = [connection executeQuery: query parameterArray: parameters];
+	while ([retval advanceRow])
+		[self setLastCheck: [retval valueForKey: @"" PGTS_SCHEMA_NAME "_modification_timestamp"] forTable: name];
+	[retval goBeforeFirstRow];
+	return retval;
+}
+
+- (NSString *) modificationTableName: (PGTSTableInfo *) table
+{
+	return [notificationNames objectAtIndex: [table oid]];
 }
 
 - (NSArray *) sentNotifications

@@ -105,6 +105,8 @@ enum BXPGQueryState
 
 
 @interface BXPGInterface (Helpers)
+- (NSMutableArray *) objectIDsFromResult: (PGTSResultSet *) res 
+								  entity: (BXEntityDescription *) entity;
 - (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error;
 - (NSArray *) lockRowsWithObjectID: (BXDatabaseObjectID *) objectID 
                             entity: (BXEntityDescription *) entity
