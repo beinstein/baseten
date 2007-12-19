@@ -1442,50 +1442,57 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
     if (0 < [objectIDs count])
     {
-        BXEntityDescription* entity = [[objectIDs objectAtIndex: 0] entity];
-        NSArray* objects = [self registeredObjectsWithIDs: objectIDs nullObjects: NO];
-        
-        if (0 < [objects count])
-        {
-            //Fault the objects and send the notification
-            if (YES == shouldFault)
-                [objects makeObjectsPerformSelector: @selector (faultKey:) withObject: nil];
-            
-            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                objectIDs, kBXObjectIDsKey,
-                objects, kBXObjectsKey,
-                self, kBXDatabaseContextKey,
-                nil];
-            
-            id notificationNames [2] = {kBXUpdateEarlyNotification, kBXUpdateNotification};
-            for (int i = 0; i < 2; i++)
-            {
-                [[self notificationCenter] postNotificationName: notificationNames [i]
-                                                         object: entity
-                                                       userInfo: userInfo];
-            }
-        }
-        
-        //Handle the views.
-        //This method will be called recursively, when the changed rows have been determined.
+		NSMutableDictionary* idsByEntity = BXObjectIDsByEntity (objectIDs);
+		BXAddObjectIDsForInheritance (idsByEntity);
+		NSNotificationCenter* nc = [self notificationCenter];
+
+		TSEnumerate (entity, e, [idsByEntity keyEnumerator])
+		{
+			NSArray* objectIDs = [idsByEntity objectForKey: entity];
+			NSArray* objects = [self registeredObjectsWithIDs: objectIDs nullObjects: NO];
+			
+			if (0 < [objects count])
+			{
+				//Fault the objects and send the notification
+				if (YES == shouldFault)
+					[objects makeObjectsPerformSelector: @selector (faultKey:) withObject: nil];
+				
+				NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+										  objectIDs, kBXObjectIDsKey,
+										  objects, kBXObjectsKey,
+										  self, kBXDatabaseContextKey,
+										  nil];
+				
+				id notificationNames [2] = {kBXUpdateEarlyNotification, kBXUpdateNotification};
+				for (int i = 0; i < 2; i++)
+				{
+					[nc postNotificationName: notificationNames [i]
+									  object: entity
+									userInfo: userInfo];
+				}
+			}
+			
 #if 0
-        if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
-        {
-            NSSet* dependentViews = [entity dependentViews];
-            TSEnumerate (currentView, e, [dependentViews objectEnumerator])
-            {
-                NSMutableArray* viewIDs = [NSMutableArray array];
-                TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-                {
-                    BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
-                    if (nil != [self registeredObjectWithID: partialID])
-                        [viewIDs addObject: partialID];
-                }
-                
-                [self updatedObjectsInDatabase: viewIDs faultObjects: YES];
-            }
-        }        
-#endif
+			//Handle the views.
+			//This method will be called recursively, when the changed rows have been determined.
+			if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
+			{
+				NSSet* dependentViews = [entity dependentViews];
+				TSEnumerate (currentView, e, [dependentViews objectEnumerator])
+				{
+					NSMutableArray* viewIDs = [NSMutableArray array];
+					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+					{
+						BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
+						if (nil != [self registeredObjectWithID: partialID])
+							[viewIDs addObject: partialID];
+					}
+					
+					[self updatedObjectsInDatabase: viewIDs faultObjects: YES];
+				}
+			}        
+#endif			
+		}
     }
 }
 
@@ -1500,7 +1507,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
         //Post the notifications
         TSEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
-            objectIDs = [idsByEntity objectForKey: entity];
+            NSArray* objectIDs = [idsByEntity objectForKey: entity];
 
             //Send the notifications
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1562,51 +1569,57 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs
 {
-    if (0 < [objectIDs count])
+	if (0 < [objectIDs count])
     {
-        BXEntityDescription* entity = [[objectIDs objectAtIndex: 0] entity];
+        NSMutableDictionary* idsByEntity = BXObjectIDsByEntity (objectIDs);
+        BXAddObjectIDsForInheritance (idsByEntity);
+        NSNotificationCenter* nc = [self notificationCenter];
 		
-		TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-			[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeleted];
-        
-		id objects = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
-        
-        //Send the notifications
-        NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-            objectIDs, kBXObjectIDsKey,
-            objects, kBXObjectsKey,
-            self, kBXDatabaseContextKey,
-            nil];
-        const int count = 2;
-        NSString* notificationNames [2] = {kBXDeleteEarlyNotification, kBXDeleteNotification};
-        for (int i = 0; i < count; i++)
+        //Post the notifications
+        TSEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
-            [[self notificationCenter] postNotificationName: notificationNames [i]
-                                                     object: entity
-                                                   userInfo: userInfo];
-        }
+			TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+				[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeleted];
+        
+			id objects = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
+        
+			//Send the notifications
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  objectIDs, kBXObjectIDsKey,
+									  objects, kBXObjectsKey,
+									  self, kBXDatabaseContextKey,
+									  nil];
+			const int count = 2;
+			NSString* notificationNames [2] = {kBXDeleteEarlyNotification, kBXDeleteNotification};
+			for (int i = 0; i < count; i++)
+			{
+				[nc postNotificationName: notificationNames [i]
+								  object: entity
+								userInfo: userInfo];
+			}
         
 #if 0
-        //This method will be called recursively, when the changed rows have been determined
-        if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
-        {
-            NSSet* dependentViews = [entity dependentViews];
-            TSEnumerate (currentView, e, [dependentViews objectEnumerator])
-            {
-                NSMutableSet* knownIDs = [NSMutableSet set];
-                TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-                {
-                    BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
-                    if (nil != [self registeredObjectWithID: partialID])
-                        [knownIDs addObject: partialID];
-                }
-                [self deletedObjectsFromDatabase: [knownIDs allObjects]];
-            }
-        }
+			//This method will be called recursively, when the changed rows have been determined
+			if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
+			{
+				NSSet* dependentViews = [entity dependentViews];
+				TSEnumerate (currentView, e, [dependentViews objectEnumerator])
+				{
+					NSMutableSet* knownIDs = [NSMutableSet set];
+					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+					{
+						BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
+						if (nil != [self registeredObjectWithID: partialID])
+							[knownIDs addObject: partialID];
+					}
+					[self deletedObjectsFromDatabase: [knownIDs allObjects]];
+				}
+			}
 #endif
-    }
+		}
+	}
 }
-
+		
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectLockStatus) status
 {
     unsigned int count = [objectIDs count];

@@ -468,12 +468,14 @@
 		1DEB91B208733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
 			};
 			name = Debug;
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_ENABLE_OBJC_GC = YES;
 			};
 			name = Release;
 		};
@@ -481,7 +483,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5360BE370A370368007B3BDC /* static-debug.xcconfig */;
 			buildSettings = {
-				GCC_ENABLE_OBJC_GC = YES;
 			};
 			name = Debug;
 		};
@@ -489,7 +490,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5360BE380A370368007B3BDC /* static-release.xcconfig */;
 			buildSettings = {
-				GCC_ENABLE_OBJC_GC = YES;
 			};
 			name = Release;
 		};
