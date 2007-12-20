@@ -667,6 +667,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			//Handle the result and get new pkey values.
 			//Currently we assume that the user knows the updated objects' IDs.
 			NSArray* objectIDs = [self objectIDsFromResult: res entity: entity];
+			retval = objectIDs;
 			NSMutableDictionary* updatingDict = [[valueDict mutableCopy] autorelease];
 			//Currently we assume that the user knows the updated objects' IDs.
 			if (YES == updatedPkey)

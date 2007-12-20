@@ -155,7 +155,7 @@
         backendPID = [NSNumber numberWithInt: [connection backendPID]];
     
     NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1::timestamp, $2)", modificationTableName];
-	NSArray* parameters = [NSArray arrayWithObjects: [self lastCheckForTable: modificationTableName], backendPID];
+	NSArray* parameters = [NSArray arrayWithObjects: [self lastCheckForTable: modificationTableName], backendPID, nil];
 	PGTSResultSet* res = [self checkModificationsInTableNamed: modificationTableName
 														query: query 
 												   parameters: parameters];
