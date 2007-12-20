@@ -678,19 +678,13 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			
 			if (0 < [[entity inheritedEntities] count])
 			{
-				//FIXME: check for modifications and add object id's.
-#if 0
-				PGTSResultSet* res = [modificationNotifier checkModificationsInTable: (PGTSTableInfo *) table
-																			   query: (NSString *) query
-																		  parameters: (NSArray *) parameters;
-				 
-				
+				//FIXME: we could also check for all modifications that happened as side-effects. That would require integrating PGTSModificationObserver here.
 				//FIXME: currently we don't allow multiple inheritance.
 				BXEntityDescription* superEntity = [[entity inheritedEntities] objectAtIndex: 0];
-#endif
+				PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [superEntity name] inSchemaNamed: [superEntity schemaName]];
+				[modificationNotifier checkForModificationsInTable: table];
 			}
 
-			
 			//Update the objects.
 			//Also mark the objects locked. Setting cached values sends -didChangeValueForKey:.
 			{
