@@ -2606,10 +2606,10 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
  * will be thrown.
  */
 - (void) BXDatabaseContext: (BXDatabaseContext *) context 
-				  hadError: (NSError *) anError 
+				  hadError: (NSError *) error 
 			willBePassedOn: (BOOL) willBePassedOn;
 {
 	if (! willBePassedOn)
-		@throw [anError BXExceptionWithName: kBXExceptionUnhandledError];
+		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
 }
 @end

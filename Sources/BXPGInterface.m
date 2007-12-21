@@ -355,7 +355,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
                        error: (NSError **) error;
 {
     PGTSResultSet* res = nil;
-    id rval = nil;
+    id retval = nil;
     NSArray* fields = [valueDict allKeys];
     NSArray* fieldNames = [fields BXPGEscapedNames: connection];
     NSArray* fieldValues = [valueDict objectsForKeys: fields notFoundMarker: [NSNull null]];
@@ -396,10 +396,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
 			//Make the query
 			queryFormat = [NSString stringWithFormat: queryFormat, [remainingFields componentsJoinedByString: @", "]];
 			res = [connection executeQuery: queryFormat parameterArray: fieldValues];
-			
 			[res setRowClass: aClass];
 			[res advanceRow];
-			rval = [res currentRowAsObject];
+			retval = [res currentRowAsObject];
+			
+			[self checkSuperEntities: entity];
 		}
     }
     @catch (PGTSQueryException* exception)
@@ -407,7 +408,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         [self packPGError: error exception: exception];
     }
     
-    return rval;
+    return retval;
 }
 
 - (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity 
@@ -675,15 +676,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				[updatingDict addEntriesFromDictionary: [res currentRowAsDictionary]];
 				objectIDs = [NSArray arrayWithObject: objectID];
 			}
-			
-			if (0 < [[entity inheritedEntities] count])
-			{
-				//FIXME: we could also check for all modifications that happened as side-effects. That would require integrating PGTSModificationObserver here.
-				//FIXME: currently we don't allow multiple inheritance.
-				BXEntityDescription* superEntity = [[entity inheritedEntities] objectAtIndex: 0];
-				PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [superEntity name] inSchemaNamed: [superEntity schemaName]];
-				[modificationNotifier checkForModificationsInTable: table];
-			}
+			[self checkSuperEntities: entity];			
 
 			//Update the objects.
 			//Also mark the objects locked. Setting cached values sends -didChangeValueForKey:.
@@ -785,6 +778,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 															   primaryKeyFields: pkey];
 				[objectIDs addObject: objectID];
 			}
+			
+			[self checkSuperEntities: entity];
 			
 			log4AssertLog (nil == objectID || (1 == [objectIDs count] && [objectIDs containsObject: objectID]),
 						   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nObjectIDs: %@",
@@ -1243,6 +1238,20 @@ bail:
 
 
 @implementation BXPGInterface (Helpers)
+- (void) checkSuperEntities: (BXEntityDescription *) entity
+{
+	if (0 < [[entity inheritedEntities] count])
+	{
+		//FIXME: we could also check for all modifications that happened as side-effects. That would require integrating PGTSModificationObserver here.
+		//FIXME: currently we don't allow multiple inheritance.
+		BXEntityDescription* superEntity = [[entity inheritedEntities] objectAtIndex: 0];
+		PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [superEntity name] inSchemaNamed: [superEntity schemaName]];
+		[modificationNotifier setObservesSelfGenerated: YES];
+		[modificationNotifier checkForModificationsInTable: table];
+		[modificationNotifier setObservesSelfGenerated: NO];
+	}	
+}
+
 - (NSMutableArray *) objectIDsFromResult: (PGTSResultSet *) res 
 								  entity: (BXEntityDescription *) entity
 {

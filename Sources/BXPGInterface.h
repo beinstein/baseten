@@ -105,6 +105,7 @@ enum BXPGQueryState
 
 
 @interface BXPGInterface (Helpers)
+- (void) checkSuperEntities: (BXEntityDescription *) entity;
 - (NSMutableArray *) objectIDsFromResult: (PGTSResultSet *) res 
 								  entity: (BXEntityDescription *) entity;
 - (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error;
