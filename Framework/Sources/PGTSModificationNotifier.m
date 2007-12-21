@@ -159,15 +159,13 @@
 	PGTSResultSet* res = [self checkModificationsInTableNamed: modificationTableName
 														query: query 
 												   parameters: parameters];
-    
-    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-    NSMutableDictionary* baseUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-        connection, kPGTSConnectionKey,
-        backendPID, kPGTSBackendPIDKey,
-        nil];
-    
     if ([res advanceRow])
     {
+		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+		NSMutableDictionary* baseUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+			connection, kPGTSConnectionKey,
+			backendPID, kPGTSBackendPIDKey,
+			nil];		
         unichar lastType = '\0';
         NSMutableArray* rows = [NSMutableArray array];
         
