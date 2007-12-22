@@ -1303,13 +1303,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
 {
-	NSError* localError = nil;
-	id rval = nil;
-	[self connectIfNeeded: &localError];
-    if (nil == localError)
-		rval = [mDatabaseInterface executeQuery: queryString error: &localError];
-	BXHandleError (error, localError);
-	return rval;
+	return [self executeQuery: queryString parameters: nil error: error];
 }
 
 /**
@@ -1868,6 +1862,17 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 
 @implementation BXDatabaseContext (PrivateMethods)
+
+- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
+{
+	NSError* localError = nil;
+	id retval = nil;
+	[self connectIfNeeded: &localError];
+    if (nil == localError)
+		retval = [mDatabaseInterface executeQuery: queryString parameters: parameters error: &localError];
+	BXHandleError (error, localError);
+	return retval;
+}
 
 /** 
  * \internal

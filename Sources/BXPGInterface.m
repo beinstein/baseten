@@ -317,10 +317,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		[connection disconnect];
 }
 
-- (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
+- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
 {
 	NSArray* rval = nil;
-	PGTSResultSet* res = [connection executeQuery: queryString];
+	PGTSResultSet* res = [connection executeQuery: queryString parameterArray: parameters];
 	if (YES == [res querySucceeded])
 		rval = [res resultAsArray];
 	else
