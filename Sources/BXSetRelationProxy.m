@@ -100,6 +100,15 @@
     [super dealloc];
 }
 
+- (id) mutableCopyWithZone: (NSZone *) zone
+{
+	BXSetRelationProxy* retval = [super mutableCopyWithZone: zone];
+	retval->mHelper = [[BXSetRelationProxyHelper alloc] initWithProxy: retval container: retval->mContainer];
+	retval->mRelationship = [mRelationship copyWithZone: zone];
+	retval->mForwardToHelper = mForwardToHelper;
+	return retval;
+}
+
 - (void) observeValueForKeyPath: (NSString *) keyPath
                        ofObject: (id) object
                          change: (NSDictionary *) change

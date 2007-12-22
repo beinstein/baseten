@@ -32,7 +32,7 @@
 @class BXEntityDescription;
 @class BXDatabaseObject;
 
-@interface BXContainerProxy : NSProxy 
+@interface BXContainerProxy : NSProxy <NSCopying, NSMutableCopying>
 {
     BXDatabaseContext* mContext;
     id mContainer;

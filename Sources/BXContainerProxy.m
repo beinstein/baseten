@@ -94,6 +94,19 @@
 	return [self retain];
 }
 
+- (id) mutableCopyWithZone: (NSZone *) aZone
+{
+	BXContainerProxy* retval = [[self class] allocWithZone: aZone];
+	retval->mContext = [mContext retain];
+	retval->mContainer = [mContainer mutableCopyWithZone: aZone];
+	retval->mNonMutatingClass = mNonMutatingClass;
+	retval->mFilterPredicate = [mFilterPredicate retain];
+	retval->mEntity = [mEntity copyWithZone: aZone];
+	retval->mIsMutable = mIsMutable;
+	retval->mChanging = mChanging;
+	return retval;
+}
+
 @end
 
 
