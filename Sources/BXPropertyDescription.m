@@ -78,6 +78,13 @@ static id gProperties;
     return [self retain];
 }
 
+- (id) mutableCopyWithZone: (NSZone *) zone
+{
+	id retval = [[[self class] allocWithZone: zone] initWithName: mName entity: mEntity];
+	//Probably best not to set flags?
+	return retval;
+}
+
 //FIXME: should we have init2... as well?
 - (id) initWithCoder: (NSCoder *) decoder
 {

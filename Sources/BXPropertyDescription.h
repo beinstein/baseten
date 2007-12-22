@@ -41,7 +41,7 @@ enum BXPropertyFlag
 };
 
 
-@interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSCoding>
+@interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSMutableCopying, NSCoding>
 {
     BXEntityDescription*  mEntity;
 	enum BXPropertyFlag   mFlags;

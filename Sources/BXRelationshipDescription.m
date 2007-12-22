@@ -111,6 +111,19 @@
     return retval;	
 }
 
+- (id) mutableCopyWithZone: (NSZone *) zone
+{
+	BXRelationshipDescription* retval = [super mutableCopyWithZone: zone];
+	retval->mDestinationEntity = mDestinationEntity;
+	retval->mForeignKey = [mForeignKey copy];
+	retval->mInverseName = [mInverseName copy];
+	retval->mPredicate = [mPredicate copy];
+	retval->mDeleteRule = mDeleteRule;
+	retval->mIsInverse = mIsInverse;
+	
+	return retval;
+}
+
 @end
 
 
