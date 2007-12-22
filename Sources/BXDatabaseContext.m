@@ -95,26 +95,25 @@ BXObjectIDsByEntity (NSArray *ids)
 static void
 BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescription* entity)
 {
-    id inherited = [entity inheritedEntities];
-    if (0 < [inherited count])
+    id subEntities = [entity subEntities];
+    TSEnumerate (currentEntity, e, [subEntities objectEnumerator])
     {
-        BXEntityDescription* inheritedEntity = [inherited objectAtIndex: 0];
-        NSMutableArray* inheritedIds = [idsByEntity objectForKey: inheritedEntity];
-        if (nil == inheritedIds)
+        NSMutableArray* subIds = [idsByEntity objectForKey: currentEntity];
+        if (nil == subIds)
         {
-            inheritedIds = [NSMutableArray array];
-            [idsByEntity setObject: inheritedIds forKey: inheritedEntity];
+            subIds = [NSMutableArray array];
+            [idsByEntity setObject: subIds forKey: currentEntity];
         }
         
         //Create the corresponding ids.
         TSEnumerate (objectID, e, [[idsByEntity objectForKey: entity] objectEnumerator])
         {
             BXDatabaseObjectID* newID = [objectID mutableCopy];
-            [newID setEntity: inheritedEntity];
-            [inheritedIds addObject: newID];
+            [newID setEntity: currentEntity];
+            [subIds addObject: newID];
             [newID release];
         }
-        BXAddObjectIDsForInheritance2 (idsByEntity, inheritedEntity);
+        BXAddObjectIDsForInheritance2 (idsByEntity, currentEntity);
         //Yay, tail recursion! Let's hope the compiler notices.
     }    
 }

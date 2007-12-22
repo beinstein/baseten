@@ -406,7 +406,7 @@ bail:
 - (void) setEntity: (BXEntityDescription *) entity
 {
     log4AssertVoidReturn (NO == mRegistered, @"Expected object ID not to have been registered.");
-    NSString* path = [NSString stringWithFormat: @"/%@/%@/?%@", 
+    NSString* path = [NSString stringWithFormat: @"../%@/%@?%@", 
         [entity schemaName], [entity name], [mURIRepresentation query]];
     
     mHash = 0;

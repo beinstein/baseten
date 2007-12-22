@@ -51,5 +51,7 @@
 - (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
 
 - (void) inherits: (NSArray *) entities;
+- (void) addSubEntity: (BXEntityDescription *) entity;
 - (id) inheritedEntities;
+- (id) subEntities;
 @end

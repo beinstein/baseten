@@ -53,6 +53,7 @@ enum BXEntityFlag
     id                      mObjectIDs;    
     id						mRelationships;
     id                      mInheritedEntities;
+    id                      mSubEntities;
     enum BXEntityFlag       mFlags;
 }
 

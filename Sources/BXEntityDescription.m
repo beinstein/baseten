@@ -129,10 +129,18 @@ static id gEntities;
 	
 	[mSchemaName release];
 	mSchemaName = nil;
+    
+    [mInheritedEntities release];
+    mInheritedEntities = nil;
+    
+    [mSubEntities release];
+    mSubEntities = nil;
 	
 	[mValidationLock release];
 	mValidationLock = nil;
 	
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
+    
     [super dealloc];
 }
 
@@ -449,6 +457,7 @@ bail:
 														valueType: kMKCCollectionTypeWeakObject];
 		mObjectIDs = [[MKCHashTable alloc] init];
         mInheritedEntities = [[MKCHashTable alloc] init];
+        mSubEntities = [[MKCHashTable alloc] init];
 		mValidationLock = [[NSLock alloc] init];
     }
     return self;
@@ -587,11 +596,26 @@ bail:
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
             [mInheritedEntities addObject: currentEntity];
+            [currentEntity addSubEntity: self];
             [[NSNotificationCenter defaultCenter] addObserver: self
-                                                     selector: @selector (subEntityWillDealloc:)
+                                                     selector: @selector (superEntityWillDealloc:)
                                                          name: kBXEntityDescriptionWillDeallocNotification
                                                        object: currentEntity];
         }
+    }
+}
+
+- (void) addSubEntity: (BXEntityDescription *) entity
+{
+    @synchronized (mSubEntities)
+    {
+        //FIXME: We only implement cascading notifications from "root tables" to 
+        //inheriting tables and not vice-versa.
+        [mSubEntities addObject: entity];
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector (subEntityWillDealloc:)
+                                                     name: kBXEntityDescriptionWillDeallocNotification
+                                                   object: entity];        
     }
 }
 
@@ -605,11 +629,29 @@ bail:
     return retval;
 }
 
-- (void) subEntityWillDealloc: (NSNotification *) n
+- (id) subEntities
+{
+    id retval = nil;
+    @synchronized (mSubEntities)
+    {
+        retval = [mSubEntities allObjects];
+    }
+    return retval;
+}
+
+- (void) superEntityWillDealloc: (NSNotification *) n
 {
     @synchronized (mInheritedEntities)
     {
         [mInheritedEntities removeObject: [n object]];
+    }
+}
+
+- (void) subEntityWillDealloc: (NSNotification *) n
+{
+    @synchronized (mInheritedEntities)
+    {
+        [mSubEntities removeObject: [n object]];
     }
 }
 
