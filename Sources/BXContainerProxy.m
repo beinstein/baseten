@@ -107,6 +107,26 @@
 	return retval;
 }
 
+- (void) filterObjectsForUpdate: (NSArray *) objects 
+                          added: (NSMutableArray **) added 
+                        removed: (NSMutableArray **) removed
+{
+    log4AssertVoidReturn (NULL != added && NULL != removed, 
+                          @"Expected given pointers not to have been NULL.")
+    if (nil == mFilterPredicate)
+    {
+        //If filter predicate is not set, then every object in the entity should be added.
+        //FIXME: this might need a reality check.
+        *added = [[objects mutableCopy] autorelease];
+    }
+    else
+    {
+        //Otherwise, separate the objects using the filter predicate.
+        *removed = [NSMutableArray arrayWithCapacity: [objects count]];
+        *added   = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: *removed];
+    }    
+}
+
 @end
 
 
@@ -188,20 +208,8 @@
 - (void) updatedObjectsWithIDs: (NSArray *) ids
 {
     NSArray* objects = [mContext faultsWithIDs: ids];
-    NSMutableArray* addedObjects = nil;
-    NSMutableArray* removedObjects = nil;
-    if (nil == mFilterPredicate)
-    {
-        //If filter predicate is not set, then every object in the entity should be added.
-        //FIXME: this might need a reality check.
-        addedObjects = [[objects mutableCopy] autorelease];
-    }
-    else
-    {
-        //Otherwise, separate the objects using the filter predicate.
-        removedObjects = [NSMutableArray arrayWithCapacity: [objects count]];
-        addedObjects   = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: removedObjects];
-    }
+    NSMutableArray *addedObjects = nil, *removedObjects = nil;
+    [self filterObjectsForUpdate: objects added: &addedObjects removed: &removedObjects];        
 
 	//Remove redundant objects
 	TSEnumerate (currentObject, e, [[[addedObjects copy] autorelease] objectEnumerator])

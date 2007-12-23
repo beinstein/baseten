@@ -27,6 +27,9 @@
 //
 
 #import "BXSetProxy.h"
+#import "BXDatabaseContext.h"
+#import "BXDatabaseAdditions.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 /**
@@ -53,6 +56,99 @@
 - (id) countedSet
 {
     return mContainer;
+}
+
+- (void) addedObjectsWithIDs: (NSArray *) ids
+{
+    NSArray* objects = [mContext faultsWithIDs: ids];
+	log4Debug (@"Adding objects: %@", objects);
+    if (nil != mFilterPredicate)
+        objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
+    
+    NSSet* change = [NSSet setWithArray: objects];
+    [mOwner willChangeValueForKey: [self key] 
+                  withSetMutation: NSKeyValueUnionSetMutation 
+                     usingObjects: change];
+    [mContainer unionSet: change];
+    [mOwner didChangeValueForKey: [self key] 
+                 withSetMutation: NSKeyValueUnionSetMutation 
+                    usingObjects: change];
+    log4Debug (@"Contents after adding: %@", mContainer);
+}
+
+- (void) removedObjectsWithIDs: (NSArray *) ids
+{
+    NSSet* change = [NSSet setWithArray: [mContext registeredObjectsWithIDs: ids]];
+    [mOwner willChangeValueForKey: [self key] 
+                  withSetMutation: NSKeyValueMinusSetMutation 
+                     usingObjects: change];
+    [mContainer minusSet: change];
+    [mOwner didChangeValueForKey: [self key] 
+                 withSetMutation: NSKeyValueMinusSetMutation 
+                    usingObjects: change];
+    log4Debug (@"Contents after removal: %@", mContainer);
+}
+
+- (void) updatedObjectsWithIDs: (NSArray *) ids
+{
+    NSMutableSet *added = nil, *removed = nil;
+
+    {
+        NSArray* objects = [mContext faultsWithIDs: ids];
+        NSMutableArray *addedObjects = nil, *removedObjects = nil;
+        [self filterObjectsForUpdate: objects added: &addedObjects removed: &removedObjects];
+        added = [NSMutableSet setWithArray: addedObjects];
+        removed = [NSMutableSet setWithArray: removedObjects];
+    }
+    
+	//Remove redundant objects
+    [added minusSet: mContainer];
+    [removed intersectSet: mContainer];	    
+	log4Debug (@"Removing:\t%@", removed);
+	log4Debug (@"Adding:\t%@", added);
+    
+    //Determine the change
+    NSMutableSet* changed = nil;
+    NSKeyValueSetMutationKind mutation = 0;
+    if (0 < [added count] && 0 == [removed count])
+    {
+        mutation = NSKeyValueUnionSetMutation;
+        changed = added;
+    }
+    else if (0 == [added count] && 0 < [removed count])
+    {
+        mutation = NSKeyValueMinusSetMutation;
+        changed = removed;
+    }
+    else if (0 < [added count] && 0 < [removed count])
+    {
+        mutation = NSKeyValueSetSetMutation;
+        changed = added;
+        [changed unionSet: mContainer];
+        [changed minusSet: removed];
+    }        
+    
+    if (changed)
+    {
+        [mOwner willChangeValueForKey: [self key] withSetMutation: mutation usingObjects: changed];
+        switch (mutation)
+        {
+            case NSKeyValueUnionSetMutation:
+                [mContainer unionSet: changed];
+                break;
+            case NSKeyValueMinusSetMutation:
+                [mContainer minusSet: changed];
+                break;
+            case NSKeyValueSetSetMutation:
+                [mContainer setSet: changed];
+                break;
+            default:
+                break;
+        }
+        [mOwner didChangeValueForKey: [self key] withSetMutation: mutation usingObjects: changed];
+    }
+	
+	log4Debug (@"Count after operation:\t%d", [mContainer count]);
 }
 
 @end

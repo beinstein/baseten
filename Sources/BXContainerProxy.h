@@ -46,6 +46,9 @@
 }
 
 - (id) BXInitWithArray: (NSMutableArray *) anArray;
+- (void) filterObjectsForUpdate: (NSArray *) objects 
+                          added: (NSMutableArray **) added 
+                        removed: (NSMutableArray **) removed;
 @end
 
 

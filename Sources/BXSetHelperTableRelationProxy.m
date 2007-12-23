@@ -40,6 +40,7 @@
  * An NSCountedSet-style self-updating container proxy for many-to-many relationships.
  * \ingroup AutoContainers
  */
+//FIXME: this needs to be changed to use set mutation -style KVO notifications.
 @implementation BXSetHelperTableRelationProxy
 
 - (NSArray *) objectIDsFromHelperObjectIDs: (NSArray *) ids others: (NSMutableArray *) otherObjectIDs
