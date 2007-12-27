@@ -60,7 +60,8 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"<%@: %p>: %@", NSStringFromClass ([self class]), self, mContainer];
+    return [NSString stringWithFormat: @"<%@: %p \n (%@ (%p) -> %@)>: \n %@", 
+		NSStringFromClass ([self class]), self, NSStringFromClass ([mOwner class]), mOwner, mKey, mContainer];
 }
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector

@@ -63,4 +63,5 @@ enum BXDatabaseObjectKeyType
 - (enum BXDatabaseObjectKeyType) keyType: (NSString *) aKey;
 - (NSDictionary *) primaryKeyFieldValues;
 - (NSDictionary *) allValues;
+- (void) removeFromCache: (NSString *) aKey postingKVONotifications: (BOOL) posting;
 @end

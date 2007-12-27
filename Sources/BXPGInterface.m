@@ -368,7 +368,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		[self beginIfNeeded];
 		
         //This is needed if the entity is passed from one context to another.
-        if (nil != [self validateEntity: entity error: error])
+        if (nil != [self validateEntity: entity error: error] && [self observeIfNeeded: entity error: error])
 		{
 			//Inserted values
 			NSString* queryFormat = nil;
@@ -437,7 +437,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
     @try
     {
 		PGTSTableInfo* tableInfo = [self validateEntity: entity error: error];
-		if (nil != tableInfo)
+		if (nil != tableInfo && [self observeIfNeeded: entity error: error])
 		{        
 			//Get the primary key
 			NSArray* pkeyfields = [entity primaryKeyFields];
@@ -624,7 +624,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
 		[self beginIfNeeded];
 		
 		//This is needed if the entity is passed from one context to another.
-        if (nil != [self validateEntity: entity error: error])
+        if (nil != [self validateEntity: entity error: error] && [self observeIfNeeded: entity error: error])
 		{
 			NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 			BOOL updatedPkey = NO;
@@ -712,9 +712,10 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					BXDatabaseObject* object = [context registeredObjectWithID: currentID];
 					if (nil != object)
 					{
+						//FIXME: need we really post the notifications?
 						[object setCachedValuesForKeysWithDictionary: updatingDict];
 						TSEnumerate (currentKey, e, [faultedKeys objectEnumerator])
-							[object faultKey: currentKey];
+							[object removeFromCache: currentKey postingKVONotifications: YES];
 					}
 				}
 			}
@@ -751,7 +752,7 @@ static NSString* SSLMode (enum BXSSLMode mode)
         }
 		
         //This is needed if the entity is passed from one context to another.
-        if (nil != [self validateEntity: entity error: error])
+        if (nil != [self validateEntity: entity error: error] && [self observeIfNeeded: entity error: error])
 		{
 			NSString* name = [entity PGTSQualifiedName: connection];
 			NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
@@ -1188,9 +1189,6 @@ bail:
         if (nil != *error) tableInfo = nil;
     }
     
-    [self observeIfNeeded: entity error: error];
-    if (nil != *error) tableInfo = nil;
-
     return tableInfo;
 }
 
@@ -1244,7 +1242,11 @@ bail:
 	{
 		//FIXME: we could also check for all modifications that happened as side-effects. That would require integrating PGTSModificationObserver here.
 		//FIXME: currently we don't allow multiple inheritance.
+		//FIXME: error handling in caller.
+		NSError* localError = nil;
 		BXEntityDescription* superEntity = [[entity inheritedEntities] objectAtIndex: 0];
+		[self observeIfNeeded: superEntity error: &localError];
+		
 		PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [superEntity name] inSchemaNamed: [superEntity schemaName]];
 		[modificationNotifier setObservesSelfGenerated: YES];
 		[modificationNotifier checkForModificationsInTable: table];

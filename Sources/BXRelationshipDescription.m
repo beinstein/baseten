@@ -198,6 +198,7 @@
 																error: error];
 	[res setRelationship: self];
 	[res setOwner: aDatabaseObject];
+	[res setKey: [self name]];
 	
 	if ([self isToMany])
 		retval = res;

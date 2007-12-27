@@ -115,6 +115,7 @@
 	[res setFilterPredicate: helperSrcPredicate];
 	[res setRelationship: self];
 	[res setOwner: aDatabaseObject];
+	[res setKey: [self name]];
 	return res;
 }
 

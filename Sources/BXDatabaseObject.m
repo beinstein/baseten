@@ -571,33 +571,8 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) faultKey: (NSString *) aKey
 {
-	BOOL didBecomeFault = NO;
-    NSArray* pkeyFNames = [[[[self objectID] entity] primaryKeyFields] valueForKey: @"name"];
-    @synchronized (mValues)
-    {
-        if (nil == aKey)
-        {
-            TSEnumerate (currentKey, e, [[mValues allKeys] objectEnumerator])
-			{
-                if (! [pkeyFNames containsObject: currentKey])
-                {
-                    didBecomeFault = YES;
-					[self willChangeValueForKey: currentKey];
-                    [mValues removeObjectForKey: currentKey];
-					[self didChangeValueForKey: currentKey];
-                }
-			}
-        }
-        else if (! [pkeyFNames containsObject: aKey] && [mValues objectForKey: aKey])
-        {
-            didBecomeFault = YES;
-			[self willChangeValueForKey: aKey];
-            [mValues removeObjectForKey: aKey];
-			[self didChangeValueForKey: aKey];
-        }
-    }
-	if (didBecomeFault)
-		[self didTurnIntoFault];
+	//We probably shouldn't send the KVO change notifications here if we don't want the next fetch to happen immediately.
+	[self removeFromCache: aKey postingKVONotifications: NO];
 }
 
 /** 
@@ -909,14 +884,19 @@ ParseSelector (SEL aSelector, NSString** key)
 	NSString* key = [givenKey BXAttributeName];
 	
 	//Emptying the cache sends a KVO notification.
-	[self willChangeValueForKey: key];
+	BOOL changes = NO;
+	id oldValue = [mValues objectForKey: givenKey];
+	if (nil != oldValue && oldValue != aValue)
+		changes = YES;
+	
+	if (changes) [self willChangeValueForKey: key];
 	
 	if (nil == aValue)
 		[mValues removeObjectForKey: key];
 	else
-		[mValues setValue: aValue forKey: key];
+		[mValues setObject: aValue forKey: key];
 	
-	[self didChangeValueForKey: key];
+	if (changes) [self didChangeValueForKey: key];
 }
 
 - (void) setCreatedInCurrentTransaction: (BOOL) aBool
@@ -1080,5 +1060,36 @@ ParseSelector (SEL aSelector, NSString** key)
         [retval setObject: [self cachedValueForKey: [currentKey name]] forKey: currentKey];
     return retval;
 }
+
+- (void) removeFromCache: (NSString *) aKey postingKVONotifications: (BOOL) posting
+{
+	BOOL didBecomeFault = NO;
+	NSArray* pkeyFNames = [[[[self objectID] entity] primaryKeyFields] valueForKey: @"name"];
+	@synchronized (mValues)
+	{
+		if (nil == aKey)
+		{
+			TSEnumerate (currentKey, e, [[mValues allKeys] objectEnumerator])
+			{
+				if (! [pkeyFNames containsObject: currentKey])
+				{
+					didBecomeFault = YES;
+					if (posting) [self willChangeValueForKey: currentKey];
+					[mValues removeObjectForKey: currentKey];
+					if (posting) [self didChangeValueForKey: currentKey];
+				}
+			}
+		}
+		else if (! [pkeyFNames containsObject: aKey] && [mValues objectForKey: aKey])
+		{
+			didBecomeFault = YES;
+			if (posting) [self willChangeValueForKey: aKey];
+			[mValues removeObjectForKey: aKey];
+			if (posting) [self didChangeValueForKey: aKey];
+		}
+	}
+	if (didBecomeFault)
+		[self didTurnIntoFault];
+}	
 
 @end

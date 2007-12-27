@@ -1123,7 +1123,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
             switch ([(id) mModifiedObjectIDs BXModificationTypeForKey: currentID])
             {
                 case kBXUpdateModification:
-                    [registeredObject faultKey: nil];
+                    [registeredObject removeFromCache: nil postingKVONotifications: YES];
                     break;
                 case kBXInsertModification:
                     [added addObject: currentID];
@@ -1448,7 +1448,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 			{
 				//Fault the objects and send the notification
 				if (YES == shouldFault)
-					[objects makeObjectsPerformSelector: @selector (faultKey:) withObject: nil];
+				{
+					TSEnumerate (currentObject, e, [objects objectEnumerator])
+						[currentObject removeFromCache: nil postingKVONotifications: YES];
+				}
 				
 				NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 										  objectIDs, kBXObjectIDsKey,
