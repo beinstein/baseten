@@ -991,12 +991,21 @@ bail:
 			//since the lock would be immediately lost otherwise.
 			[self beginSubtransactionIfNeeded];
 			state = kBXPGQueryBegun;
-			[connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
-				   parameterArray: [ctx objectForKey: kPGTSParametersKey]];
-			state = kBXPGQueryLock;
+			int status = [connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
+								parameterArray: [ctx objectForKey: kPGTSParametersKey]];
+			if (1 == status)
+			{
+				state = kBXPGQueryLock;
 			
-			[self setLockedKey: aKey];
-			[self setLockedObjectID: objectID];
+				[self setLocker: sender];
+				[self setLockedKey: aKey];
+				[self setLockedObjectID: objectID];
+			}
+			else
+			{
+				state = kBXPGQueryIdle;
+				[sender BXLockAcquired: NO object: nil errorMessage: [connection errorMessage]];
+			}
 		}
 	}
 }
@@ -1368,64 +1377,6 @@ bail:
 										 code: kBXErrorObservingFailed
 									 userInfo: userInfo];
 		}			
-    }
-    return rval;
-}
-
-/**
- * \internal
- * Lock rows using SELECT...FOR UPDATE.
- * \note No safety checks in this method.
- */
-- (NSArray *) lockRowsWithObjectID: (BXDatabaseObjectID *) objectID 
-                            entity: (BXEntityDescription *) entity
-                       whereClause: (NSString *) whereClause
-                        parameters: (NSArray *) parameters
-{
-    NSArray* pkeyFields = [entity primaryKeyFields];
-    NSArray* pkeyFNames = [pkeyFields valueForKey: @"name"];
-    NSDictionary* translationDict = [NSDictionary dictionaryWithObjects: pkeyFields forKeys: pkeyFNames];
-    return [self lockRowsWithObjectID: objectID entity: entity pkeyTranslationDict: translationDict
-                          whereClause: whereClause parameters: parameters];
-}
-
-/**
- * \internal
- * Lock rows using SELECT...FOR UPDATE.
- * \note No safety checks in this method.
- */
-- (NSArray *) lockRowsWithObjectID: (BXDatabaseObjectID *) objectID 
-                            entity: (BXEntityDescription *) entity
-               pkeyTranslationDict: (NSDictionary *) translationDict
-                       whereClause: (NSString *) whereClause
-                        parameters: (NSArray *) parameters
-{
-    //objectID is optional
-    log4AssertValueReturn (entity && whereClause, nil, @"Expected to be called with parameters.");
-    NSArray* rval = nil;
-    NSString* name = [entity PGTSQualifiedName: connection];
-    if (nil != objectID)
-    {
-        //We only need to lock the row, since we already know the object ID.
-        [connection executeQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT", name, whereClause]
-                  parameterArray: parameters];
-        rval = [NSArray arrayWithObject: objectID];
-    }
-    else
-    {
-        //We don't yet know the updated objects' IDs.
-        NSString* query = [NSString stringWithFormat: @"SELECT %@ FROM %@ WHERE %@ FOR UPDATE NOWAIT", 
-            [[translationDict allKeys] componentsJoinedByString: @", "], name, whereClause];
-        PGTSResultSet* res = [connection executeQuery: query parameterArray: parameters];
-        NSMutableArray* objectIDs = [NSMutableArray arrayWithCapacity: [res countOfRows]];
-        while (([res advanceRow]))
-        {
-            NSDictionary* pkey = [res currentRowAsDictionary];
-            BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
-                                                           primaryKeyFields: pkey];
-            [objectIDs addObject: objectID];
-        }            
-        rval = objectIDs;
     }
     return rval;
 }
@@ -1824,9 +1775,11 @@ bail:
                               parameters: [ctx objectForKey: kPGTSParametersKey] willDelete: NO];
         }
         
-        [locker BXLockAcquired: success object: [context registeredObjectWithID: objectID]];
+        [locker BXLockAcquired: success object: [context registeredObjectWithID: objectID] 
+				  errorMessage: [result errorMessage]];
         state = kBXPGQueryIdle;
     }
+	[self setLocker: nil];
 }
 
 - (void) PGTSConnectionFailed: (PGTSConnection *) aConnection

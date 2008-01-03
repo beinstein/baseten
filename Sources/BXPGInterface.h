@@ -109,15 +109,6 @@ enum BXPGQueryState
 - (NSMutableArray *) objectIDsFromResult: (PGTSResultSet *) res 
 								  entity: (BXEntityDescription *) entity;
 - (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error;
-- (NSArray *) lockRowsWithObjectID: (BXDatabaseObjectID *) objectID 
-                            entity: (BXEntityDescription *) entity
-                       whereClause: (NSString *) whereClause
-                        parameters: (NSArray *) parameters;
-- (NSArray *) lockRowsWithObjectID: (BXDatabaseObjectID *) objectID 
-                            entity: (BXEntityDescription *) entity
-               pkeyTranslationDict: (NSDictionary *) translationDict
-                       whereClause: (NSString *) whereClause
-                        parameters: (NSArray *) parameters;
 - (void) lockAndNotifyForEntity: (BXEntityDescription *) entity 
                     whereClause: (NSString *) whereClause
                      parameters: (NSArray *) parameters
