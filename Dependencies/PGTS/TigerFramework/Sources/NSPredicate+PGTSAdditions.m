@@ -66,7 +66,7 @@
 {
     log4AssertValueReturn (nil != [context objectForKey: kPGTSConnectionKey], nil, 
 						   @"Did you remember to set connection to %@ in context?", kPGTSConnectionKey);
-    NSString* rval = nil;
+    NSString* retval = nil;
     NSArray* subpredicates = [self subpredicates];
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [subpredicates count]];
     TSEnumerate (currentPredicate, e, [subpredicates objectEnumerator])
@@ -74,25 +74,28 @@
     
     NSString* glue = nil;
     NSCompoundPredicateType type = [self compoundPredicateType];
-    if (NSNotPredicateType == type)
-        rval = [NSString stringWithFormat: @"(NOT %@)", [parts objectAtIndex: 0]];
-    else
-    {
-        switch (type)
-        {
-            case NSAndPredicateType:
-                glue = @" AND ";
-                break;
-            case NSOrPredicateType:
-                glue = @" OR ";
-                break;
-            default:
-                //FIXME: exception
-                break;
-        }
-        rval = [NSString stringWithFormat: @"(%@)", [parts componentsJoinedByString: glue]];
+	if (0 < [parts count])
+	{
+		if (NSNotPredicateType == type)
+			retval = [NSString stringWithFormat: @"(NOT %@)", [parts objectAtIndex: 0]];
+		else
+		{
+			switch (type)
+			{
+				case NSAndPredicateType:
+					glue = @" AND ";
+					break;
+				case NSOrPredicateType:
+					glue = @" OR ";
+					break;
+				default:
+					//FIXME: exception
+					break;
+			}
+			retval = [NSString stringWithFormat: @"(%@)", [parts componentsJoinedByString: glue]];
+		}
     }
-    return rval;
+    return retval;
 }
 @end
 
