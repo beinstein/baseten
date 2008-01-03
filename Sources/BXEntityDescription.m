@@ -130,8 +130,8 @@ static id gEntities;
 	[mSchemaName release];
 	mSchemaName = nil;
     
-    [mInheritedEntities release];
-    mInheritedEntities = nil;
+    [mSuperEntities release];
+    mSuperEntities = nil;
     
     [mSubEntities release];
     mSubEntities = nil;
@@ -456,7 +456,7 @@ bail:
 		mRelationships = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
 														valueType: kMKCCollectionTypeWeakObject];
 		mObjectIDs = [[MKCHashTable alloc] init];
-        mInheritedEntities = [[MKCHashTable alloc] init];
+        mSuperEntities = [[MKCHashTable alloc] init];
         mSubEntities = [[MKCHashTable alloc] init];
 		mValidationLock = [[NSLock alloc] init];
     }
@@ -584,18 +584,30 @@ bail:
     }
 }
 
+- (void) viewGetsUpdatedWith: (NSArray *) entities
+{
+	log4AssertVoidReturn ([self isView], @"Expected entity %@ to be a view.", self);
+	[self inherits: entities];
+}
+
+- (id) viewsUpdated
+{
+	log4AssertValueReturn ([self isView], nil, @"Expected entity %@ to be a view.", self);
+	return [self inheritedEntities];
+}
+
 - (void) inherits: (NSArray *) entities
 {
-    @synchronized (mInheritedEntities)
+    @synchronized (mSuperEntities)
     {
         //FIXME: We only implement cascading notifications from "root tables" to 
         //inheriting tables and not vice-versa.
         //FIXME: only single entity supported for now.
-        log4AssertVoidReturn (0 == [mInheritedEntities count], @"Expected inheritance not to have been set.");
-        log4AssertVoidReturn (1 == [entities count], @"Expected inheritance not to have been set.");
+        log4AssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
+        log4AssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
-            [mInheritedEntities addObject: currentEntity];
+            [mSuperEntities addObject: currentEntity];
             [currentEntity addSubEntity: self];
             [[NSNotificationCenter defaultCenter] addObserver: self
                                                      selector: @selector (superEntityWillDealloc:)
@@ -622,9 +634,9 @@ bail:
 - (id) inheritedEntities
 {
     id retval = nil;
-    @synchronized (mInheritedEntities)
+    @synchronized (mSuperEntities)
     {
-        retval = [mInheritedEntities allObjects];
+        retval = [mSuperEntities allObjects];
     }
     return retval;
 }
@@ -641,15 +653,15 @@ bail:
 
 - (void) superEntityWillDealloc: (NSNotification *) n
 {
-    @synchronized (mInheritedEntities)
+    @synchronized (mSuperEntities)
     {
-        [mInheritedEntities removeObject: [n object]];
+        [mSuperEntities removeObject: [n object]];
     }
 }
 
 - (void) subEntityWillDealloc: (NSNotification *) n
 {
-    @synchronized (mInheritedEntities)
+    @synchronized (mSubEntities)
     {
         [mSubEntities removeObject: [n object]];
     }

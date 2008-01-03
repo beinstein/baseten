@@ -325,6 +325,13 @@
 	return mBXContent;
 }
 
+- (id) createObject: (NSError **) outError
+{
+	log4AssertValueReturn (NULL != outError, nil, @"Expected outError not to be NULL.");
+	return [databaseContext createObjectForEntity: mEntityDescription
+								  withFieldValues: nil error: outError];
+}
+
 @end
 
 
@@ -380,8 +387,7 @@
 {
     mChanging = YES;
     NSError* error = nil;
-    id object = [databaseContext createObjectForEntity: mEntityDescription
-                                       withFieldValues: nil error: &error];
+	id object = [self createObject: &error];
     if (nil != error)
         [self BXHandleError: error];
     else

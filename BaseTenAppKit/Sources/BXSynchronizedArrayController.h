@@ -67,6 +67,7 @@
 - (void) setFetchesOnConnect: (BOOL) aBool;
 
 - (void) setBXContent: (id) anObject;
+- (id) createObject: (NSError **) outError;
 
 @end
 

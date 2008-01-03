@@ -54,4 +54,7 @@
 - (void) addSubEntity: (BXEntityDescription *) entity;
 - (id) inheritedEntities;
 - (id) subEntities;
+- (void) viewGetsUpdatedWith: (NSArray *) entities;
+- (id) viewsUpdated;
+
 @end
