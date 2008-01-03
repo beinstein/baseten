@@ -78,10 +78,23 @@
     return self;
 }
 
+- (void) finalize
+{
+	//FIXME: this requires some consideration.
+	NS_DURING
+		[connection stopListening: self];
+	NS_HANDLER
+	NS_ENDHANDLER
+}
+
 - (void) dealloc
 {
-    [connection stopListening: self];
-    
+	NS_DURING
+		[connection stopListening: self];
+	NS_HANDLER
+		log4Warn (@"Failed to execute UNLISTEN; caught exception: %@.", localException);
+	NS_ENDHANDLER
+				
     [notificationNames release];
     [observedTables release];
     [lastChecks release];

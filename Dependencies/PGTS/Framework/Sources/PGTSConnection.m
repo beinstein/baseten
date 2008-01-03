@@ -454,17 +454,16 @@ CheckExceptionTable (PGTSConnection* sender, int bitMask, BOOL doCheck)
     NSValue* objectIdentifier = [NSValue valueWithPointer: anObject];
     NSEnumerator* e = [[notificationAssociations objectForKey: objectIdentifier] objectEnumerator];
     NSString* notificationName;
+
+    [notificationAssociations removeObjectForKey: objectIdentifier];
+    [postgresNotificationCenter removeObserver: anObject];
+	
     while ((notificationName = [e nextObject]))
     {
         [notificationCounts removeObject: notificationName];
         if (![notificationCounts containsObject: notificationName])
-        {
-            [self executeQuery: [@"UNLISTEN " stringByAppendingString: notificationName]];
-        }
+			[self executeQuery: [@"UNLISTEN " stringByAppendingString: notificationName]];
     }
-    [notificationAssociations removeObjectForKey: objectIdentifier];
-
-    [postgresNotificationCenter removeObserver: anObject];
 }
 
 @end

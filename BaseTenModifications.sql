@@ -850,7 +850,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.914::NUMERIC;
+    SELECT 0.915::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".Version () IS 'Schema version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
@@ -979,11 +979,11 @@ GRANT EXECUTE ON FUNCTION "baseten".ModificationTableName (OID) TO basetenread;
 
 
 -- Expects that the given table name is the modification table name
-CREATE FUNCTION "baseten".ModResultTableName (TEXT) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".ModResultTableName (OID) RETURNS TEXT AS $$
     SELECT quote_ident ('baseten_' || "baseten".ModificationTableName1 ($1) || '_result');
 $$ IMMUTABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModResultTableName (TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".ModResultTableName (TEXT) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModResultTableName (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModResultTableName (OID) TO basetenread;
 
 
 -- Expects that the given table name is serialized
