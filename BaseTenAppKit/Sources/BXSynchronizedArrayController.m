@@ -401,6 +401,8 @@
 
 - (void) insertObject: (id) object atArrangedObjectIndex: (unsigned int) index
 {
+	if ([self selectsInsertedObjects])
+		[self setSelectedObjects: [NSArray arrayWithObject: object]];
     //Don't invoke super's implementation since it replaces BXContent.
     //-newObject creates the row already.
 }
