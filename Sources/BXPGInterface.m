@@ -991,7 +991,7 @@ bail:
 			//since the lock would be immediately lost otherwise.
 			[self beginSubtransactionIfNeeded];
 			state = kBXPGQueryBegun;
-			int status = [connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
+			int status = [connection sendQuery: [NSString stringWithFormat: @"SELECT NULL FROM ONLY %@ WHERE %@ FOR UPDATE NOWAIT;", name, whereClause]
 								parameterArray: [ctx objectForKey: kPGTSParametersKey]];
 			if (1 == status)
 			{
