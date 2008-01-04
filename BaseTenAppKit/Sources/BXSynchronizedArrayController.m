@@ -30,6 +30,9 @@
 #import <BaseTen/BXDatabaseAdditions.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXContainerProxy.h>
+#import <BaseTen/BXSetRelationProxy.h>
+#import <BaseTen/BXRelationshipDescriptionPrivate.h>
+#import <BaseTen/BXForeignKey.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 #import "BXSynchronizedArrayController.h"
 #import "NSController+BXAppKitAdditions.h"
@@ -81,6 +84,7 @@
         [self setEditable: YES];
         mFetchesOnConnect = NO;
         mChanging = NO;
+		mShouldAddToContent = YES;
     }
     return self;
 }
@@ -328,14 +332,51 @@
 - (id) createObject: (NSError **) outError
 {
 	log4AssertValueReturn (NULL != outError, nil, @"Expected outError not to be NULL.");
+	NSDictionary* fieldValues = [self valuesForBoundRelationship];
+	mShouldAddToContent = (nil == fieldValues);
 	return [databaseContext createObjectForEntity: mEntityDescription
-								  withFieldValues: nil error: outError];
+								  withFieldValues: fieldValues error: outError];
+}
+
+- (NSDictionary *) valuesForBoundRelationship
+{
+	NSDictionary* retval = nil;
+	if ([mContentBindingKey isEqualToString: @"contentSet"])
+	{
+		//We only check contentSet, because relationships cannot be bound to any other key.
+		NSDictionary* bindingInfo = [self infoForBinding: @"contentSet"];
+		id observedObject = [bindingInfo objectForKey: NSObservedObjectKey];
+		id boundObject = [observedObject valueForKeyPath: [bindingInfo objectForKey: NSObservedKeyPathKey]];
+		if ([boundObject BXIsRelationshipProxy] && ![[boundObject relationship] isOptional])
+		{
+			retval = [[[boundObject relationship] foreignKey] srcDictionaryFor: mEntityDescription 
+														   valuesFromDstObject: [boundObject owner]];
+		}
+	}
+	return retval;
+}
+
+- (void) setContentBindingKey: (NSString *) aKey
+{
+	if (aKey != mContentBindingKey)
+	{
+		[mContentBindingKey release];
+		mContentBindingKey = [aKey retain];
+	}
 }
 
 @end
 
 
 @implementation BXSynchronizedArrayController (OverridenMethods)
+
+- (void) bind: (NSString *) binding toObject: (id) observableObject
+  withKeyPath: (NSString *) keyPath options: (NSDictionary *) options
+{
+	if ([binding isEqualToString: @"contentSet"] || [binding isEqualToString: @"contentArray"])
+		[self setContentBindingKey: binding];
+	[super bind: binding toObject: observableObject withKeyPath: keyPath options: options];
+}
 
 - (BOOL) isEditable
 {
@@ -401,8 +442,28 @@
 
 - (void) insertObject: (id) object atArrangedObjectIndex: (unsigned int) index
 {
-	if ([self selectsInsertedObjects])
+	if (mShouldAddToContent && mContentBindingKey)
+		[super insertObject: object atArrangedObjectIndex: index];
+	else if ([self selectsInsertedObjects])
 		[self setSelectedObjects: [NSArray arrayWithObject: object]];
+
+#if 0	
+	if (mShouldAddToContent && mContentBindingKey)
+	{
+		NSDictionary* bindingInfo = [self infoForBinding: mContentBindingKey];
+		if (nil != bindingInfo)
+		{
+			id observedObject = [bindingInfo objectForKey: NSObservedObjectKey];
+			id boundObject = [observedObject valueForKeyPath: [bindingInfo objectForKey: NSObservedKeyPathKey]];
+			if ([boundObject respondsToSelector: @selector (insertObject:atIndex:)])
+				[boundObject insertObject: object atIndex: index];
+			else
+				[boundObject addObject: object];
+		}
+	}
+#endif
+	
+	mShouldAddToContent = YES;
     //Don't invoke super's implementation since it replaces BXContent.
     //-newObject creates the row already.
 }
@@ -433,6 +494,7 @@
     [encoder encodeObject: mTableName forKey: @"tableName"];
     [encoder encodeObject: mSchemaName forKey: @"schemaName"];
     [encoder encodeObject: mDBObjectClassName forKey: @"DBObjectClassName"];
+	[encoder encodeObject: mContentBindingKey forKey: @"contentBindingKey"];
 }
 
 - (id) initWithCoder: (NSCoder *) decoder
@@ -445,6 +507,7 @@
         
         [self setTableName:  [decoder decodeObjectForKey: @"tableName"]];
         [self setSchemaName: [decoder decodeObjectForKey: @"schemaName"]];
+		[self setContentBindingKey: [decoder decodeObjectForKey: @"contentBindingKey"]];
         [self setDatabaseObjectClassName: [decoder decodeObjectForKey: @"DBObjectClassName"]];
     }
     return self;

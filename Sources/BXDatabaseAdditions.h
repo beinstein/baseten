@@ -126,3 +126,13 @@ enum BXModificationType;
 - (void) BXSetModificationType: (enum BXModificationType) aType forKey: (BXDatabaseObjectID *) aKey;
 - (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey;
 @end
+
+
+@interface NSObject (BXDatabaeAdditions)
+- (BOOL) BXIsRelationshipProxy;
+@end
+
+
+@interface NSProxy (BXDatabaeAdditions)
+- (BOOL) BXIsRelationshipProxy;
+@end

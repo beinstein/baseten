@@ -312,6 +312,11 @@
     }
 }
 
+- (id) owner
+{
+	return mOwner;
+}
+
 - (void) setOwner: (id) anObject
 {
     mOwner = anObject;

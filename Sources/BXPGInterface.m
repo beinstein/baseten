@@ -942,6 +942,9 @@ static NSString* SSLMode (enum BXSSLMode mode)
 				
 				if (nil != rel)
 				{
+					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.
+					[rel setOptional: YES];
+					
 					[rel setInverseName: inverseName];
 					[(BXRelationshipDescription *) rel setDestinationEntity: dst];
 					

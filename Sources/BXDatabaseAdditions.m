@@ -532,3 +532,19 @@
     return retval;
 }
 @end
+
+
+@implementation NSObject (BXDatabaeAdditions)
+- (BOOL) BXIsRelationshipProxy
+{
+	return NO;
+}
+@end
+
+
+@implementation NSProxy (BXDatabaeAdditions)
+- (BOOL) BXIsRelationshipProxy
+{
+	return NO;
+}
+@end

@@ -216,4 +216,9 @@
     return [mRelationship name];
 }
 
+- (BOOL) BXIsRelationshipProxy
+{
+	return YES;
+}
+
 @end

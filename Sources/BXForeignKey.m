@@ -170,6 +170,11 @@
 	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];	
 }
 
+/**
+ * \internal
+ * \param ei Either 0 or 1
+ * \param oi Either 1 or 0
+ */
 - (NSMutableDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
 								entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi
 {

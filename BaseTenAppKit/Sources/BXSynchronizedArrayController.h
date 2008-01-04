@@ -42,14 +42,16 @@
         
     BXEntityDescription* mEntityDescription;
 	id mBXContent;
+	NSString* mContentBindingKey;
     
     //For the IB Palette
     NSString* mSchemaName;
     NSString* mTableName;
-    NSString* mDBObjectClassName;    
+    NSString* mDBObjectClassName;
 
     BOOL mFetchesOnConnect;
     BOOL mChanging;
+	BOOL mShouldAddToContent;
 }
 
 - (NSString *) schemaName;
@@ -68,6 +70,7 @@
 
 - (void) setBXContent: (id) anObject;
 - (id) createObject: (NSError **) outError;
+- (NSDictionary *) valuesForBoundRelationship;
 
 @end
 

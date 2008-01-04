@@ -41,5 +41,7 @@
     BXRelationshipDescription* mRelationship;
 }
 
+- (BXRelationshipDescription *) relationship;
 - (void) setRelationship: (BXRelationshipDescription *) relationship;
+- (BOOL) BXIsRelationshipProxy;
 @end
