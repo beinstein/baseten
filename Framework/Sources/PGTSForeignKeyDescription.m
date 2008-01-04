@@ -81,6 +81,7 @@ static id gForeignKeys;
 		deleteRule = kPGTSDeleteRuleUnknown;
     }
     
+    //FIXME: anti-pattern.
     id anObject = nil;
     if ((anObject = [gForeignKeys member: self]))
     {
