@@ -443,10 +443,18 @@
 - (void) insertObject: (id) object atArrangedObjectIndex: (unsigned int) index
 {
 	if (mShouldAddToContent && mContentBindingKey)
+	{
+		//Super's implementation selects inserted objects.
 		[super insertObject: object atArrangedObjectIndex: index];
+	}
 	else if ([self selectsInsertedObjects])
+	{
+		//Don't invoke super's implementation since it replaces BXContent.
+		//-newObject creates the row already.
 		[self setSelectedObjects: [NSArray arrayWithObject: object]];
-
+	}
+	mShouldAddToContent = YES;
+	
 #if 0	
 	if (mShouldAddToContent && mContentBindingKey)
 	{
@@ -461,17 +469,13 @@
 				[boundObject addObject: object];
 		}
 	}
-#endif
-	
-	mShouldAddToContent = YES;
-    //Don't invoke super's implementation since it replaces BXContent.
-    //-newObject creates the row already.
+#endif	
 }
 
 - (void) removeObjectsAtArrangedObjectIndexes: (NSIndexSet *) indexes
 {
     NSError* error = nil;
-    NSArray* objects = [[self BXContent] objectsAtIndexes: indexes];
+    NSArray* objects = [[self arrangedObjects] objectsAtIndexes: indexes];
     NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [objects count]];
     TSEnumerate (currentObject, e, [objects objectEnumerator])
         [predicates addObject: [[(BXDatabaseObject *) currentObject objectID] predicate]];
