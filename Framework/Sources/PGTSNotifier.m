@@ -85,6 +85,7 @@
 		[connection stopListening: self];
 	NS_HANDLER
 	NS_ENDHANDLER
+	[super finalize];
 }
 
 - (void) dealloc
