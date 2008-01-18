@@ -359,6 +359,15 @@ bail:
     
     if ((self = [super init]))
     {
+		{
+			NSString* entityName = nil;
+			NSString* schemaName = nil;
+			log4AssertValueReturn ([[self class] parseURI: anURI entity: &entityName schema: &schemaName primaryKeyFields: NULL],
+								   nil, @"Expected object URI to be parseable.");
+			log4AssertValueReturn ([[anEntity name] isEqualToString: entityName], nil, @"Expected entity names to match.");
+			log4AssertValueReturn ([[anEntity schemaName] isEqualToString: schemaName], nil, @"Expected schema names to match.");
+		}
+		
         mURIRepresentation = [anURI retain];
         mEntity = [anEntity retain];
         mRegistered = NO;

@@ -108,8 +108,16 @@ BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescrip
         //Create the corresponding ids.
         TSEnumerate (objectID, e, [[idsByEntity objectForKey: entity] objectEnumerator])
         {
-            BXDatabaseObjectID* newID = [objectID mutableCopy];
-            [newID setEntity: currentEntity];
+			NSDictionary* pkeyFields = nil;
+			BOOL parsed = [BXDatabaseObjectID parseURI: [objectID URIRepresentation]
+												entity: NULL
+												schema: NULL
+									  primaryKeyFields: &pkeyFields];
+			//FIXME: C function logging.
+			//log4AssertCLog (parsed, @"Expected object URI to be parseable.");
+			if (! parsed) break;
+			
+            BXDatabaseObjectID* newID = [BXDatabaseObjectID IDWithEntity: currentEntity primaryKeyFields: pkeyFields];
             [subIds addObject: newID];
             [newID release];
         }

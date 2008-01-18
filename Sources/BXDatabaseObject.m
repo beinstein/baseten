@@ -423,6 +423,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	id retval = nil;
 	
 	enum BXDatabaseObjectKeyType keyType = [self keyType: aKey];
+	log4AssertLog (kBXDatabaseObjectUnknownKey != keyType, @"Expected key type to be known.");
 	switch (keyType)
 	{
         case kBXDatabaseObjectPrimaryKey:

@@ -442,7 +442,7 @@
 
 - (void) insertObject: (id) object atArrangedObjectIndex: (unsigned int) index
 {
-	if (mShouldAddToContent && mContentBindingKey)
+	if (mShouldAddToContent && mContentBindingKey && ![self BXContent])
 	{
 		//Super's implementation selects inserted objects.
 		[super insertObject: object atArrangedObjectIndex: index];
