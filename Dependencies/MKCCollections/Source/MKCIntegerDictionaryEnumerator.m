@@ -33,7 +33,11 @@
 
 - (id) nextObject
 {
-	return [NSNumber numberWithUnsignedInt: [self nextValue]];
+	id retval = nil;
+	NSUInteger nextValue = [self nextValue];
+	if (NSNotFound != nextValue)
+		retval = [NSNumber numberWithUnsignedInt: nextValue];
+	return retval;
 }
 
 - (NSUInteger) nextValue

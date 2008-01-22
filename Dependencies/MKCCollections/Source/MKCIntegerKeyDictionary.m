@@ -47,7 +47,10 @@
 
 - (id) objectAtIndex: (NSUInteger) anIndex
 {
-	return NSMapGet (mMapTable, (void *) anIndex);
+	id retval = nil;
+	if (NSNotFound != anIndex)
+		retval = NSMapGet (mMapTable, (void *) anIndex);
+	return retval;
 }
 
 - (void) setObject: (id) anObject atIndex: (NSUInteger) anIndex

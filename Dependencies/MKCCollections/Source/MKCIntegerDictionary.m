@@ -63,7 +63,11 @@
 
 - (id) objectForKey: (id) aKey
 {
-	return [NSNumber numberWithUnsignedInt: [self integerForKey: aKey]];
+	id retval = nil;
+	NSUInteger i = [self integerForKey: aKey];
+	if (NSNotFound != i)
+		retval = [NSNumber numberWithUnsignedInt: i];
+	return retval;
 }
 
 - (id) allKeys
