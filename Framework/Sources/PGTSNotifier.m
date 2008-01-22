@@ -108,13 +108,16 @@
 - (void) removeObserverForTable: (PGTSTableInfo *) tableInfo
 			   notificationName: (NSString *) notificationName
 {
-    [[tableInfo retain] autorelease];
-	[postedNotifications removeObject: notificationName];
-	if (0 == [postedNotifications countForObject: notificationName])
-		[[NSNotificationCenter defaultCenter] removeObserver: delegate name: notificationName object: tableInfo];
-    [observedTables removeObject: tableInfo];
-	[lastChecks removeObjectForKey: [notificationNames objectAtIndex: [tableInfo oid]]];
-    [self removeNotificationIfNeeded: tableInfo];
+	if ([postedNotifications containsObject: notificationName])
+	{
+		[[tableInfo retain] autorelease];
+		[postedNotifications removeObject: notificationName];
+		if (0 == [postedNotifications countForObject: notificationName])
+			[[NSNotificationCenter defaultCenter] removeObserver: delegate name: notificationName object: tableInfo];
+		[observedTables removeObject: tableInfo];
+		[lastChecks removeObjectForKey: [notificationNames objectAtIndex: [tableInfo oid]]];
+		[self removeNotificationIfNeeded: tableInfo];
+	}
 }
 
 - (void) removeNotificationIfNeeded: (PGTSTableInfo *) tableInfo
