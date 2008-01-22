@@ -1276,7 +1276,7 @@ bail:
 		[self observeIfNeeded: superEntity error: &localError];
 		
 		PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [superEntity name] inSchemaNamed: [superEntity schemaName]];
-		id notifier = [self changeNotifierForEntity: entity];
+		id notifier = [self changeNotifierForEntity: superEntity];
 		BOOL observesSelfGenerated = [notifier observesSelfGenerated];
 		[notifier setObservesSelfGenerated: YES];
 		[notifier checkForModificationsInTable: table];
