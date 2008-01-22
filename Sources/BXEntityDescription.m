@@ -667,4 +667,22 @@ bail:
     }
 }
 
+/**
+ * \internal
+ * Whether this entity gets changed by triggers, rules etc.
+ * If the entity gets changed only directly, some queries may possibly be optimized.
+ */
+- (BOOL) getsChangedByTriggers
+{
+	return mFlags & kBXEntityGetsChangedByTriggers;
+}
+
+- (void) setGetsChangedByTriggers: (BOOL) flag
+{
+	if (flag)
+		mFlags |= kBXEntityGetsChangedByTriggers;
+	else
+		mFlags &= ~kBXEntityGetsChangedByTriggers;
+}
+
 @end

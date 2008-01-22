@@ -39,7 +39,8 @@ enum BXEntityFlag
 	kBXEntityNoFlag					= 0,
 	//kBXEntityHasAllRelationships	= 1 << 0, //Not needed
 	kBXEntityIsValidated			= 1 << 1,
-	kBXEntityIsView					= 1 << 2
+	kBXEntityIsView					= 1 << 2,
+	kBXEntityGetsChangedByTriggers	= 1 << 3  //Testing for now
 };
 
 @interface BXEntityDescription : BXAbstractDescription <NSCopying, NSCoding>

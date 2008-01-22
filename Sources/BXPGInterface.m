@@ -236,15 +236,19 @@ static NSString* SSLMode (enum BXSSLMode mode)
         PGTSTableInfo* tableInfo = [dbInfo tableInfoForTableNamed: [currentEntity name] inSchemaNamed: [currentEntity schemaName]];
 		if (nil != tableInfo)
 		{
-			[modificationNotifier removeObserverForTable: tableInfo notificationName: kPGTSInsertModification];
-			[modificationNotifier removeObserverForTable: tableInfo notificationName: kPGTSUpdateModification];
-			[modificationNotifier removeObserverForTable: tableInfo notificationName: kPGTSDeleteModification];
+			[mChangeNotifier removeObserverForTable: tableInfo notificationName: kPGTSInsertModification];
+			[mChangeNotifier removeObserverForTable: tableInfo notificationName: kPGTSUpdateModification];
+			[mChangeNotifier removeObserverForTable: tableInfo notificationName: kPGTSDeleteModification];
+			[mExternalChangeNotifier removeObserverForTable: tableInfo notificationName: kPGTSInsertModification];
+			[mExternalChangeNotifier removeObserverForTable: tableInfo notificationName: kPGTSUpdateModification];
+			[mExternalChangeNotifier removeObserverForTable: tableInfo notificationName: kPGTSDeleteModification];
 			[lockNotifier removeObserverForTable: tableInfo notificationName: kPGTSLockedForUpdate];
 			[lockNotifier removeObserverForTable: tableInfo notificationName: kPGTSLockedForDelete];
 			[lockNotifier removeObserverForTable: tableInfo notificationName: kPGTSUnlockedRowsNotification];
 		}
     }
-    [modificationNotifier release];
+    [mChangeNotifier release];
+    [mExternalChangeNotifier release];
     [lockNotifier release];
     [mObservedEntities release];
     
@@ -1248,6 +1252,18 @@ bail:
 
 
 @implementation BXPGInterface (Helpers)
+
+- (PGTSModificationNotifier *) changeNotifierForEntity: (BXEntityDescription *) entity
+{
+	id retval = nil;
+	if ([entity getsChangedByTriggers])
+		retval = mChangeNotifier;
+	else
+		retval = mExternalChangeNotifier;
+	log4AssertLog (nil != retval, @"Expected retval not to be nil.");
+	return retval;
+}
+
 - (void) checkSuperEntities: (BXEntityDescription *) entity
 {
 	if (0 < [[entity inheritedEntities] count])
@@ -1260,9 +1276,11 @@ bail:
 		[self observeIfNeeded: superEntity error: &localError];
 		
 		PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [superEntity name] inSchemaNamed: [superEntity schemaName]];
-		[modificationNotifier setObservesSelfGenerated: YES];
-		[modificationNotifier checkForModificationsInTable: table];
-		[modificationNotifier setObservesSelfGenerated: NO];
+		id notifier = [self changeNotifierForEntity: entity];
+		BOOL observesSelfGenerated = [notifier observesSelfGenerated];
+		[notifier setObservesSelfGenerated: YES];
+		[notifier checkForModificationsInTable: table];
+		[notifier setObservesSelfGenerated: observesSelfGenerated];
 	}	
 }
 
@@ -1290,21 +1308,29 @@ bail:
         rval = YES;
     else
     {
+		//PostgreSQL backends don't deliver notifications to interfaces during transactions
+		log4AssertValueReturn (connection == notifyConnection || PQTRANS_IDLE == [notifyConnection transactionStatus], NO,
+							   @"Connection %p was expected to be in PQTRANS_IDLE (status: %d connection: %p notifyconnection: %p).", 
+							   notifyConnection, [notifyConnection transactionStatus], connection, notifyConnection);
+		
         if (nil == mObservedEntities)
             mObservedEntities = [[NSMutableSet alloc] init];
         
-        if (nil == modificationNotifier)
-        {
-            //PostgreSQL backends don't deliver notifications to interfaces during transactions
-            log4AssertValueReturn (connection == notifyConnection || PQTRANS_IDLE == [notifyConnection transactionStatus], NO,
-                                   @"Connection %p was expected to be in PQTRANS_IDLE (status: %d connection: %p notifyconnection: %p).", 
-                                   notifyConnection, [notifyConnection transactionStatus], connection, notifyConnection);
-            
-            modificationNotifier = [[PGTSModificationNotifier alloc] init];
-            [modificationNotifier setConnection: notifyConnection];
-            [modificationNotifier setObservesSelfGenerated: NO];
-            [modificationNotifier setDelegate: self];
-        }
+        if (nil == mChangeNotifier)
+		{
+            mChangeNotifier = [[PGTSModificationNotifier alloc] init];
+            [mChangeNotifier setConnection: notifyConnection];
+            [mChangeNotifier setObservesSelfGenerated: YES];
+            [mChangeNotifier setDelegate: self];
+		}
+		
+		if (nil == mExternalChangeNotifier)
+		{
+            mExternalChangeNotifier = [[PGTSModificationNotifier alloc] init];
+            [mExternalChangeNotifier setConnection: notifyConnection];
+            [mExternalChangeNotifier setObservesSelfGenerated: NO];
+            [mExternalChangeNotifier setDelegate: self];
+		}			
         
         if (nil == lockNotifier)
         {
@@ -1331,11 +1357,12 @@ bail:
 				{
 					SEL selectors [] = {@selector (rowsInserted:), @selector (rowsUpdated:), @selector (rowsDeleted:)};
 					NSString* notificationNames [] = {kPGTSInsertModification, kPGTSUpdateModification, kPGTSDeleteModification};
+					PGTSModificationNotifier* notifier = [self changeNotifierForEntity: entity];
 					for (int i = 0; i < 3; i++)
 					{
-						[modificationNotifier observeTable: table
-												  selector: selectors [i] 
-										  notificationName: notificationNames [i]];
+						[notifier observeTable: table
+									  selector: selectors [i] 
+							  notificationName: notificationNames [i]];
 					}
 				}
 				
@@ -1458,7 +1485,7 @@ bail:
     {
         PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [entity name] inSchemaNamed: [entity schemaName]];
         //Now use the real connection since we need the last modification from its viewpoint
-        rval = [modificationNotifier lastModificationForTable: table connection: connection];
+        rval = [[self changeNotifierForEntity: entity] lastModificationForTable: table connection: connection];
     }
 	else
 	{

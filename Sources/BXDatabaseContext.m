@@ -1036,7 +1036,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 				
 				if (YES == [mDatabaseInterface autocommits])
 				{
-					[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
+					if (! [entity getsChangedByTriggers])
+						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
 					[rval awakeFromInsertIfNeeded];
 				}
 				else
@@ -1045,7 +1046,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 					BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 					if (nil == localError)
 					{
-						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
+						if (! [entity getsChangedByTriggers])
+							[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
 						[rval awakeFromInsertIfNeeded];
 						
 						//For redo
@@ -2008,7 +2010,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
             //Therefore, we need to notify about the change.
             if (YES == [mDatabaseInterface autocommits])
 			{
-                [self updatedObjectsInDatabase: oldIDs faultObjects: NO];
+				if (! [anEntity getsChangedByTriggers])
+					[self updatedObjectsInDatabase: oldIDs faultObjects: NO];
 				//FIXME: move this to the if block where oldIDs are set.
 				if (updatedPkey)
 				{
@@ -2022,7 +2025,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
                 if (nil == localError)
                 {
                     //This is needed for self-updating collections.
-                    [self updatedObjectsInDatabase: oldIDs faultObjects: NO];
+					if (! [anEntity getsChangedByTriggers])
+						[self updatedObjectsInDatabase: oldIDs faultObjects: NO];
                     
                     //For redo
                     BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
@@ -2085,7 +2089,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 			//See the private updating method
 			
 			if (YES == [mDatabaseInterface autocommits])
-				[self deletedObjectsFromDatabase: objectIDs];
+			{
+				if (! [entity getsChangedByTriggers])
+					[self deletedObjectsFromDatabase: objectIDs];
+			}
 			else
 			{
 				BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
@@ -2093,7 +2100,9 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 				{
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
                         [[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeletePending];
-					[self deletedObjectsFromDatabase: objectIDs];
+					
+					if (! [entity getsChangedByTriggers])
+						[self deletedObjectsFromDatabase: objectIDs];
 
 					//For redo
 					BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
@@ -2103,6 +2112,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 					//Undo manager does things in reverse order
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager beginUndoGrouping];
+
 					[[mUndoManager prepareWithInvocationTarget: self] addedObjectsToDatabase: objectIDs];
                     //Object status.
                     TSEnumerate (currentID, e, [objectIDs objectEnumerator])

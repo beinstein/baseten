@@ -56,5 +56,6 @@
 - (id) subEntities;
 - (void) viewGetsUpdatedWith: (NSArray *) entities;
 - (id) viewsUpdated;
-
+- (BOOL) getsChangedByTriggers;
+- (void) setGetsChangedByTriggers: (BOOL) flag;
 @end

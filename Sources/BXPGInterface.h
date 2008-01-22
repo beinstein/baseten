@@ -78,8 +78,9 @@ enum BXPGQueryState
     NSURL* databaseURI;
     PGTSConnection* connection;
     PGTSConnection* notifyConnection;
-    PGTSModificationNotifier* modificationNotifier;
-    PGTSLockNotifier*  lockNotifier;
+    PGTSModificationNotifier* mChangeNotifier;
+	PGTSModificationNotifier* mExternalChangeNotifier;
+    PGTSLockNotifier* lockNotifier;
  	BXPGCertificateVerificationDelegate* cvDelegate;
 	NSMutableDictionary* mForeignKeys;
     NSMutableSet* mObservedEntities;
@@ -105,6 +106,7 @@ enum BXPGQueryState
 
 
 @interface BXPGInterface (Helpers)
+- (PGTSModificationNotifier *) changeNotifierForEntity: (BXEntityDescription *) entity;
 - (void) checkSuperEntities: (BXEntityDescription *) entity;
 - (NSMutableArray *) objectIDsFromResult: (PGTSResultSet *) res 
 								  entity: (BXEntityDescription *) entity;
