@@ -65,28 +65,35 @@
     if (nil != mFilterPredicate)
         objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
     
-    NSSet* change = [NSSet setWithArray: objects];
-    [mOwner willChangeValueForKey: [self key] 
-                  withSetMutation: NSKeyValueUnionSetMutation 
-                     usingObjects: change];
-    [mContainer unionSet: change];
-    [mOwner didChangeValueForKey: [self key] 
-                 withSetMutation: NSKeyValueUnionSetMutation 
-                    usingObjects: change];
-    log4Debug (@"Contents after adding: %@", mContainer);
+	if (0 < [objects count])
+	{
+		NSSet* change = [NSSet setWithArray: objects];
+		[mOwner willChangeValueForKey: [self key] 
+					  withSetMutation: NSKeyValueUnionSetMutation 
+						 usingObjects: change];
+		[mContainer unionSet: change];
+		[mOwner didChangeValueForKey: [self key] 
+					 withSetMutation: NSKeyValueUnionSetMutation 
+						usingObjects: change];
+	}
+	log4Debug (@"Contents after adding: %@", mContainer);
 }
 
 - (void) removedObjectsWithIDs: (NSArray *) ids
 {
-    NSSet* change = [NSSet setWithArray: [mContext registeredObjectsWithIDs: ids]];
-    [mOwner willChangeValueForKey: [self key] 
-                  withSetMutation: NSKeyValueMinusSetMutation 
-                     usingObjects: change];
-    [mContainer minusSet: change];
-    [mOwner didChangeValueForKey: [self key] 
-                 withSetMutation: NSKeyValueMinusSetMutation 
-                    usingObjects: change];
-    log4Debug (@"Contents after removal: %@", mContainer);
+    NSMutableSet* change = [NSMutableSet setWithArray: [mContext registeredObjectsWithIDs: ids]];
+	[change intersectSet: mContainer];
+	if (0 < [change count])
+	{
+		[mOwner willChangeValueForKey: [self key] 
+					  withSetMutation: NSKeyValueMinusSetMutation 
+						 usingObjects: change];
+		[mContainer minusSet: change];
+		[mOwner didChangeValueForKey: [self key] 
+					 withSetMutation: NSKeyValueMinusSetMutation 
+						usingObjects: change];
+	}
+	log4Debug (@"Contents after removal: %@", mContainer);
 }
 
 - (void) updatedObjectsWithIDs: (NSArray *) ids
@@ -147,7 +154,6 @@
         }
         [mOwner didChangeValueForKey: [self key] withSetMutation: mutation usingObjects: changed];
     }
-	
 	log4Debug (@"Count after operation:\t%d", [mContainer count]);
 }
 

@@ -60,7 +60,7 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"<%@: %p \n (%@ (%p) -> %@)>: \n %@", 
+    return [NSString stringWithFormat: @"<%@: %p \n (%@ (%p) => %@)>: \n %@", 
 		NSStringFromClass ([self class]), self, NSStringFromClass ([mOwner class]), mOwner, mKey, mContainer];
 }
 
