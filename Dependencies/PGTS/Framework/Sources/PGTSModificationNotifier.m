@@ -111,11 +111,13 @@
     if (YES == rval && nil == [self lastCheckForTable: notificationName])
     {
 		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
-        id isIdle = [NSNumber numberWithBool: PQTRANS_IDLE == [connection transactionStatus]];
-        PGTSResultSet* res = [connection executeQuery: 
-            @"SELECT " PGTS_SCHEMA_NAME ".ModificationTableCleanup ($1);"
-             "SELECT COALESCE (MAX (" PGTS_SCHEMA_NAME "_modification_timestamp), CURRENT_TIMESTAMP)::TIMESTAMP (3) WITHOUT TIME ZONE AS date "
-             " FROM " PGTS_SCHEMA_NAME ".Modification;" parameters: isIdle];
+		//Postgres won't have multiple prepared statements with parameters in one query.
+		NSString* queryFormat = @"SELECT " PGTS_SCHEMA_NAME ".ModificationTableCleanup (%@);"
+			"SELECT COALESCE (MAX (" PGTS_SCHEMA_NAME "_modification_timestamp), CURRENT_TIMESTAMP)::TIMESTAMP (3) WITHOUT TIME ZONE AS date "
+			" FROM " PGTS_SCHEMA_NAME ".Modification;";
+		NSString* query = [NSString stringWithFormat: queryFormat, 
+			(PQTRANS_IDLE == [connection transactionStatus] ? @"true" : @"false")];
+        PGTSResultSet* res = [connection executeQuery: query];
         [res advanceRow];
         [self setLastCheck: [res valueForKey: @"date"] forTable: [notificationNames objectAtIndex: [tableInfo oid]]];
     }
@@ -155,8 +157,12 @@
 	else
         backendPID = [NSNumber numberWithInt: [connection backendPID]];
     
-    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1::timestamp, $2)", modificationTableName];
-	NSArray* parameters = [NSArray arrayWithObjects: [self lastCheckForTable: modificationTableName], backendPID, nil];
+    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, $2::timestamp, $3)", modificationTableName];
+	NSArray* parameters = [NSArray arrayWithObjects: 
+		[NSNumber numberWithBool: PQTRANS_IDLE == [connection transactionStatus]],
+		[self lastCheckForTable: modificationTableName], 
+		backendPID, 
+		nil];
 	PGTSResultSet* res = [self checkModificationsInTableNamed: modificationTableName
 														query: query 
 												   parameters: parameters];
