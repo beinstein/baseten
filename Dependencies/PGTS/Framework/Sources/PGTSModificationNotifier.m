@@ -111,10 +111,11 @@
     if (YES == rval && nil == [self lastCheckForTable: notificationName])
     {
 		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
+        id isIdle = [NSNumber numberWithBool: PQTRANS_IDLE == [connection transactionStatus]];
         PGTSResultSet* res = [connection executeQuery: 
-            @"SELECT " PGTS_SCHEMA_NAME ".ModificationTableCleanup ();"
+            @"SELECT " PGTS_SCHEMA_NAME ".ModificationTableCleanup ($1);"
              "SELECT COALESCE (MAX (" PGTS_SCHEMA_NAME "_modification_timestamp), CURRENT_TIMESTAMP)::TIMESTAMP (3) WITHOUT TIME ZONE AS date "
-             " FROM " PGTS_SCHEMA_NAME ".Modification;"];
+             " FROM " PGTS_SCHEMA_NAME ".Modification;" parameters: isIdle];
         [res advanceRow];
         [self setLastCheck: [res valueForKey: @"date"] forTable: [notificationNames objectAtIndex: [tableInfo oid]]];
     }

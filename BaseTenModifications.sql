@@ -850,7 +850,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.915::NUMERIC;
+    SELECT 0.916::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".Version () IS 'Schema version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
@@ -1033,14 +1033,16 @@ GRANT EXECUTE ON FUNCTION "baseten".ModificationRuleName (TEXT) TO basetenread;
 -- WHERE "baseten_modification_timestamp" IS NULL 
 --     AND ("baseten_modification_backend_pid" != pg_backend_pid () OR pg_xact_status = 'IDLE');
 -- Also, if the connection is not autocommitting, we might end up doing some unnecessary work.
-CREATE FUNCTION "baseten".ModificationTableCleanup () RETURNS VOID AS $$
+-- For now, we trust the user to set the function parameter if the performing connection isn't in the
+-- middle of a transaction.
+CREATE FUNCTION "baseten".ModificationTableCleanup (BOOLEAN) RETURNS VOID AS $$
     DELETE FROM "baseten".Modification 
         WHERE "baseten_modification_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes';
     UPDATE "baseten".Modification SET "baseten_modification_timestamp" = clock_timestamp ()
-        WHERE "baseten_modification_timestamp" IS NULL AND "baseten_modification_backend_pid" != pg_backend_pid ();
+        WHERE "baseten_modification_timestamp" IS NULL AND ($1 OR "baseten_modification_backend_pid" != pg_backend_pid ());
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableCleanup () FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".ModificationTableCleanup () TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationTableCleanup (BOOLEAN) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".ModificationTableCleanup (BOOLEAN) TO basetenread;
 
 
 -- Removes tracked locks for which a backend no longer exists
@@ -1340,11 +1342,14 @@ DECLARE
 BEGIN
     ntname      := "baseten".ModificationTableName (tableoid);
     restname    := "baseten".ModResultTableName (tableoid);
+	-- FIXME: this should be made work with externally changed entities in manual commit mode.
+	-- In particular, bx_modification_timestamp won't be set until the transaction has been committed.
+	-- This is a problem since it (probably) is the only criterion when fetching changes.
     fdecl       := 
         'CREATE OR REPLACE FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP, INTEGER)                   ' ||
         'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
         'DECLARE                                                                                     ' ||
-        '   should_clean ALIAS FOR $1;                                                               ' ||
+        '   idle_transaction ALIAS FOR $1;                                                           ' ||
         '   earliest_date ALIAS FOR $2;                                                              ' ||        
         '   ignored_be_pid ALIAS FOR $3;                                                             ' ||
         '   row ' || ntname || '%ROWTYPE;                                                            ' ||
@@ -1357,9 +1362,7 @@ BEGIN
         '    DELETE FROM ' || restname || ';                                                         ' ||
         
         -- Remove unneeded rows
-        '    IF true = should_clean THEN                                                             ' ||
-        '        PERFORM "baseten".ModificationTableCleanup ();                                      ' ||
-        '    END IF;                                                                                 ' ||
+        '    PERFORM "baseten".ModificationTableCleanup (idle_transaction);                          ' ||
         
         -- Only add rows that have been deleted
         '    INSERT INTO ' || restname || ' SELECT DISTINCT ON (' || pkeyfnames || ') * FROM         ' ||
@@ -1428,16 +1431,8 @@ BEGIN
         'END;                                                                                        ' ||
         '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;                                     ' ;
     EXECUTE fdecl;
-    fdecl :=
-        'CREATE OR REPLACE FUNCTION ' || ntname || ' (TIMESTAMP, INTEGER)                            ' ||
-        'RETURNS SETOF ' || ntname || ' AS $$                                                        ' ||
-        '    SELECT * FROM ' || ntname || '(true, $1, $2);                                           ' ||
-        '$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;                                         ';
-    EXECUTE fdecl;
     EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP, INTEGER) FROM PUBLIC';
-    EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || ntname || ' (TIMESTAMP, INTEGER) FROM PUBLIC';
     EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (BOOLEAN, TIMESTAMP, INTEGER) TO basetenread';
-    EXECUTE 'GRANT EXECUTE ON FUNCTION ' || ntname || ' (TIMESTAMP, INTEGER) TO basetenread';
         
     RETURN;
 END;
