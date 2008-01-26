@@ -49,9 +49,7 @@ static id gProperties;
 {
 	[[self class] unregisterProperty: self];
 	[self dealloc2];
-	
-	//Suppress a compiler warning.
-	if (0) [super dealloc];
+	[super dealloc];
 }
 
 /**
@@ -63,7 +61,6 @@ static id gProperties;
  */
 - (void) dealloc2
 {
-	[super dealloc];
 }
 
 /** Entity for this property. */

@@ -230,6 +230,9 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		mCanConnect = YES;
 		mConnectsOnAwake = NO;
 		errorHandlerDelegate = self;
+		
+		mEntities = [[NSMutableSet alloc] init];
+		mRelationships = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -2181,13 +2184,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
 	if (nil == mUndoManager)
 		mUndoManager = [[NSUndoManager alloc] init];
-	
-	if (nil == mEntities)
-		mEntities = [[NSMutableSet alloc] init];
-    
-    if (nil == mRelationships)
-        mRelationships = [[NSMutableSet alloc] init];
-	
+		
 	if (nil == mObjects)
 	{
 		mObjects = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
@@ -2305,6 +2302,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
         retval = [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
                                                        table: tableName
                                                     inSchema: schemaName];
+		[mEntities addObject: retval];
         
         if (! [retval isValidated])
         {
@@ -2372,7 +2370,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 	log4AssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
 	
 	//This should be safe even with multiple threads.
-	if (! [mEntities containsObject: entity])
+	if (! [entity isValidated])
 	{
 		NSLock* lock = [entity validationLock];
 		[lock lock];
@@ -2392,10 +2390,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 			}
 			
 			if ([entity isValidated])
-			{
 				[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
-				[mEntities addObject: entity];
-			}
 		}
 		
 		[lock unlock];

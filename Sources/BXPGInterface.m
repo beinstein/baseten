@@ -1133,7 +1133,7 @@ bail:
 					NSString* message = BXLocalizedString (@"noPrimaryKeyFmt", 
 														   @"There was no primary key for table %@ in schema %@.", 
 														   @"Error description format string");
-					message = [NSString stringWithFormat: message, [tableInfo schemaName], [tableInfo name]];
+					message = [NSString stringWithFormat: message, [tableInfo name], [tableInfo schemaName]];
 					NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 						self,                kBXDatabaseContextKey,
 						BXSafeObj (entity),  kBXEntityDescriptionKey,

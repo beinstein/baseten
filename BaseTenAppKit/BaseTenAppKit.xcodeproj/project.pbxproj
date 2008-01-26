@@ -17,7 +17,7 @@
 		532D60E20B944D8C0028E90B /* BXNetServiceConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */; };
 		5340251D0A2C49FD0016E8D2 /* BXAppKitFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */; };
 		5340251E0A2C49FD0016E8D2 /* BXAppKitFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */; };
-		53438E2B0A384EE600BEDCFF /* NSController+BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */; };
+		53438E2B0A384EE600BEDCFF /* NSController+BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53438E2C0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */; };
 		53438E560A384FE500BEDCFF /* BXController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E540A384FE500BEDCFF /* BXController.h */; };
 		53438E570A384FE500BEDCFF /* BXController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E550A384FE500BEDCFF /* BXController.m */; };

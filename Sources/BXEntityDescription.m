@@ -104,9 +104,7 @@ static id gEntities;
                       object: self];
     
 	[self dealloc2];
-	
-	//Suppress a compiler warning.
-	if (0) [super dealloc];
+	[super dealloc];
 }
 
 /** 
@@ -140,8 +138,6 @@ static id gEntities;
 	mValidationLock = nil;
 	
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-    
-    [super dealloc];
 }
 
 /** The schema name. */
