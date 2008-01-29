@@ -1267,14 +1267,9 @@ bail:
 - (void) checkSuperEntities: (BXEntityDescription *) entity
 {
 	if (0 < [[entity inheritedEntities] count])
-	{
-		//FIXME: we could also check for all modifications that happened as side-effects. That would require integrating PGTSModificationObserver here.
+	{		
 		//FIXME: currently we don't allow multiple inheritance.
-		//FIXME: error handling in caller.
-		NSError* localError = nil;
 		BXEntityDescription* superEntity = [[entity inheritedEntities] objectAtIndex: 0];
-		[self observeIfNeeded: superEntity error: &localError];
-		
 		PGTSTableInfo* table = [[notifyConnection databaseInfo] tableInfoForTableNamed: [superEntity name] inSchemaNamed: [superEntity schemaName]];
 		id notifier = [self changeNotifierForEntity: superEntity];
 		BOOL observesSelfGenerated = [notifier observesSelfGenerated];
@@ -1303,9 +1298,9 @@ bail:
     log4AssertValueReturn (NULL != error, NO, @"Expected error to be set.");
     log4AssertValueReturn (NO == [connection overlooksFailedQueries], NO, @"Connection should throw when a query fails");
 	
-    BOOL rval = NO;
+    BOOL retval = NO;
     if ([mObservedEntities containsObject: entity])
-        rval = YES;
+        retval = YES;
     else
     {
 		//PostgreSQL backends don't deliver notifications to interfaces during transactions
@@ -1382,7 +1377,16 @@ bail:
 														 selector: @selector (notifyConnectionWillClose:)
 															 name: kPGTSWillDisconnectNotification 
 														   object: notifyConnection];
-				rval = YES;			
+				
+				//Inheritance
+				if (0 == [[entity inheritedEntities] count])
+					retval = YES;
+				else
+				{
+					//FIXME: currently we don't allow multiple inheritance.
+					BXEntityDescription* superEntity = [[entity inheritedEntities] objectAtIndex: 0];
+					retval = [self observeIfNeeded: superEntity error: error];
+				}					
 			}
 		}
         @catch (PGTSQueryException* e)
@@ -1408,7 +1412,7 @@ bail:
 									 userInfo: userInfo];
 		}			
     }
-    return rval;
+    return retval;
 }
 
 /**
