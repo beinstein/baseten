@@ -2367,30 +2367,33 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 - (void) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
-	log4AssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
-	
 	//This should be safe even with multiple threads.
+
+	log4AssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
 	if (! [entity isValidated])
 	{
 		NSLock* lock = [entity validationLock];
 		[lock lock];
-		
-		//Even if an entity has already been validated, allow a database interface to do something with it.
-		[mDatabaseInterface validateEntity: entity error: error];
-		if (nil == *error)
+		//Check again in case someone else had the lock.
+		if (! [entity isValidated])
 		{
-			if (! [entity isValidated])
+			//Even if an entity has already been validated, allow a database interface to do something with it.
+			[mDatabaseInterface validateEntity: entity error: error];
+			if (nil == *error)
 			{
-				NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
-				if (nil == *error)
+				if (! [entity isValidated])
 				{
-					[entity setRelationships: relationships];
-					[entity setValidated: YES];
+					NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
+					if (nil == *error)
+					{
+						[entity setRelationships: relationships];
+						[entity setValidated: YES];
+					}
 				}
-			}
 			
-			if ([entity isValidated])
-				[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+				if ([entity isValidated])
+					[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+			}
 		}
 		
 		[lock unlock];
