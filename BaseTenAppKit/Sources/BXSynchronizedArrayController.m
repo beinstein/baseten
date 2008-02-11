@@ -124,7 +124,6 @@
 - (void) dealloc
 {
     [databaseContext release];
-    [mEntityDescription release];
 	[mSchemaName release];
 	[mTableName release];
 	[mDBObjectClassName release];

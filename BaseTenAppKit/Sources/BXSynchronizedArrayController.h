@@ -40,7 +40,7 @@
 	/** An NSWindow to which sheets are attached. */
     IBOutlet NSWindow* modalWindow;
         
-    BXEntityDescription* mEntityDescription;
+    BXEntityDescription* mEntityDescription; //Weak
 	id mBXContent;
 	NSString* mContentBindingKey;
     
