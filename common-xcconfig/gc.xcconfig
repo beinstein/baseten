@@ -1,0 +1,12 @@
+# Set the deployment target to 10.4 since the resulting library
+# might even work with non-gc applications on 10.4. Garbage collection
+# seems to require 10.5 SDK though.
+GCC_ENABLE_OBJC_GC = supported
+MACOSX_DEPLOYMENT_TARGET_ppc = 10.4
+MACOSX_DEPLOYMENT_TARGET_i386 = 10.4
+MACOSX_DEPLOYMENT_TARGET_ppc64 = 10.5
+MACOSX_DEPLOYMENT_TARGET_x86_64 = 10.5
+SDKROOT_ppc = /Developer/SDKs/MacOSX10.5.sdk
+SDKROOT_i386 = /Developer/SDKs/MacOSX10.5.sdk
+SDKROOT_ppc64 = /Developer/SDKs/MacOSX10.5.sdk
+SDKROOT_x86_64 = /Developer/SDKs/MacOSX10.5.sdk
