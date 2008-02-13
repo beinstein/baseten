@@ -29,7 +29,7 @@
 #import <AvailabilityMacros.h>
 
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED == MAC_OS_X_VERSION_10_4
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 
 #define NSInteger int
 #define NSUInteger unsigned int

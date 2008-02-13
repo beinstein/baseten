@@ -475,14 +475,14 @@
 		};
 		538176F30D63414100A4CA72 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 538176D80D63410000A4CA72 /* debug-non-gc.xcconfig */;
+			baseConfigurationReference = 538176DA0D63410000A4CA72 /* debug-gc.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		538176F40D63414100A4CA72 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 538176DB0D63410000A4CA72 /* release-non-gc.xcconfig */;
+			baseConfigurationReference = 538176D90D63410000A4CA72 /* release-gc.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
