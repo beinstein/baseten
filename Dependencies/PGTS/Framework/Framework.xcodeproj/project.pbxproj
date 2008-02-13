@@ -21,17 +21,9 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		53032382088061E70024E7EF /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53032389088061E80024E7EF /* PGTSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.m */; };
-		53032390088061E90024E7EF /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FD908804EA000BFAFB5 /* PGTSConnectionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		53032397088061E90024E7EF /* PGTSConnectionPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FF408804EA000BFAFB5 /* PGTSConnectionPrivate.m */; };
-		5303239E088061EA0024E7EF /* PGTSConnectionQueries.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDC08804EA000BFAFB5 /* PGTSConnectionQueries.m */; };
-		530323C5088062270024E7EF /* NDRunLoopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 530323C3088062270024E7EF /* NDRunLoopMessenger.h */; };
-		530323C6088062270024E7EF /* NDRunLoopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 530323C4088062270024E7EF /* NDRunLoopMessenger.m */; };
 		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
 		5312665D0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5312665E0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */; };
-		531746A7095C07E00098D3D5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		5321F5EF0CF7712300E663CE /* libMKCCollections.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5321F5EC0CF7711F00E663CE /* libMKCCollections.a */; };
 		53298DE00B3307A800DE7CC8 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53298DE10B3307A800DE7CC8 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
@@ -40,40 +32,86 @@
 		53298E0F0B330EFB00DE7CC8 /* PGTSACLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53298E100B330EFB00DE7CC8 /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */; };
 		532BF12E0A3717BA002E6BFE /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
-		532C9B4B09DDAEDD00E42701 /* PGTSModificationNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 532C9B4909DDAEDD00E42701 /* PGTSModificationNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		532C9B4C09DDAEDD00E42701 /* PGTSModificationNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 532C9B4A09DDAEDD00E42701 /* PGTSModificationNotifier.m */; };
-		532D74060A1B30D300BE37FD /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
-		53353A420896D05A003EE146 /* PGTSDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 53353A400896D05A003EE146 /* PGTSDataSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53353A430896D05A003EE146 /* PGTSDataSource.m in Sources */ = {isa = PBXBuildFile; fileRef = 53353A410896D05A003EE146 /* PGTSDataSource.m */; };
-		53353A560896D16C003EE146 /* PGTSDataSourceTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 53353A540896D16C003EE146 /* PGTSDataSourceTable.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53353A570896D16C003EE146 /* PGTSDataSourceTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 53353A550896D16C003EE146 /* PGTSDataSourceTable.m */; };
-		53353A830896D294003EE146 /* PGTSWriteDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53353A820896D294003EE146 /* PGTSWriteDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5335671D0ABA015A00F3EE1D /* PGTSWriteDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53353A820896D294003EE146 /* PGTSWriteDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		533A6AF309DEE51700D28AB0 /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A6AF209DEE51700D28AB0 /* PGTSConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		534C024D096054EA00BF3440 /* PGTSConnectionPoolItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 534C024B096054EA00BF3440 /* PGTSConnectionPoolItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		534C024E096054EA00BF3440 /* PGTSConnectionPoolItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 534C024C096054EA00BF3440 /* PGTSConnectionPoolItem.m */; };
 		53594D1C0B13711300378707 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
 		5359557E0A514DEE0008793A /* PGTSSchemaDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5359557F0A514DEE0008793A /* PGTSSchemaDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */; };
-		535955800A514DEE0008793A /* PGTSSchemaDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */; };
-		535955810A514DEE0008793A /* PGTSSchemaDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */; };
-		5359780008AD72DC000CAC2B /* PGTSTableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 535977FE08AD72DC000CAC2B /* PGTSTableInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5359780108AD72DC000CAC2B /* PGTSTableInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 535977FF08AD72DC000CAC2B /* PGTSTableInfo.m */; };
-		5359785008AF669B000CAC2B /* PGTSDatabaseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359784E08AF669B000CAC2B /* PGTSDatabaseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5359785108AF669B000CAC2B /* PGTSDatabaseInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359784F08AF669B000CAC2B /* PGTSDatabaseInfo.m */; };
-		5364C7AD0A21EA8300AD8AAF /* PGTSNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C7AB0A21EA8300AD8AAF /* PGTSNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5364C7AE0A21EA8400AD8AAF /* PGTSNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C7AC0A21EA8300AD8AAF /* PGTSNotifier.m */; };
-		5364C7D70A21EDAF00AD8AAF /* PGTSLockNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C7D50A21EDAF00AD8AAF /* PGTSLockNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5364C7D80A21EDAF00AD8AAF /* PGTSLockNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C7D60A21EDAF00AD8AAF /* PGTSLockNotifier.m */; };
 		536B892F0A518E4A00379C00 /* PGTSExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 536B892D0A518E4A00379C00 /* PGTSExceptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		536B89300A518E4A00379C00 /* PGTSExceptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 536B892E0A518E4A00379C00 /* PGTSExceptions.m */; };
-		536B89310A518E4A00379C00 /* PGTSExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 536B892D0A518E4A00379C00 /* PGTSExceptions.h */; };
-		536B89320A518E4A00379C00 /* PGTSExceptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 536B892E0A518E4A00379C00 /* PGTSExceptions.m */; };
-		53738D5E097E932A00460F29 /* PGTSResultRowProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53738D5D097E932A00460F29 /* PGTSResultRowProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		537FB1F80A76218E00441E2E /* TSRunloopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FB1F60A76218E00441E2E /* TSRunloopMessenger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537FB1F90A76218E00441E2E /* TSRunloopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 537FB1F70A76218E00441E2E /* TSRunloopMessenger.m */; };
-		537FB1FA0A76218E00441E2E /* TSRunloopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FB1F60A76218E00441E2E /* TSRunloopMessenger.h */; };
-		537FB1FB0A76218E00441E2E /* TSRunloopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 537FB1F70A76218E00441E2E /* TSRunloopMessenger.m */; };
+		538176360D633DC000A4CA72 /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176370D633DC000A4CA72 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176380D633DC000A4CA72 /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A6AF209DEE51700D28AB0 /* PGTSConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176390D633DC000A4CA72 /* PGTSFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381763A0D633DC000A4CA72 /* NDRunLoopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 530323C3088062270024E7EF /* NDRunLoopMessenger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381763B0D633DC000A4CA72 /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381763C0D633DC000A4CA72 /* PGTSNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C7AB0A21EA8300AD8AAF /* PGTSNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381763D0D633DC000A4CA72 /* PGTSModificationNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 532C9B4909DDAEDD00E42701 /* PGTSModificationNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381763E0D633DC000A4CA72 /* PGTSLockNotifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C7D50A21EDAF00AD8AAF /* PGTSLockNotifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381763F0D633DC000A4CA72 /* PGTSConnectionPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FED08804EA000BFAFB5 /* PGTSConnectionPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176400D633DC000A4CA72 /* PGTSConnectionPoolItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 534C024B096054EA00BF3440 /* PGTSConnectionPoolItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176410D633DC000A4CA72 /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176420D633DC000A4CA72 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FD908804EA000BFAFB5 /* PGTSConnectionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		538176430D633DC000A4CA72 /* PGTSConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9059D08924985003AEAA4 /* PGTSConnectionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176440D633DC000A4CA72 /* PGTSAbstractInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F923BC08B1372F00759909 /* PGTSAbstractInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176450D633DC000A4CA72 /* PGTSAbstractClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176460D633DC000A4CA72 /* PGTSDatabaseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359784E08AF669B000CAC2B /* PGTSDatabaseInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176470D633DC000A4CA72 /* PGTSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176480D633DC000A4CA72 /* PGTSTableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 535977FE08AD72DC000CAC2B /* PGTSTableInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176490D633DC000A4CA72 /* PGTSIndexInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9237708B0F47700759909 /* PGTSIndexInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381764A0D633DC000A4CA72 /* PGTSFieldInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9225008AFD9BD00759909 /* PGTSFieldInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381764B0D633DC000A4CA72 /* PGTSForeignKeyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381764C0D633DC000A4CA72 /* PGTSResultRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF208804EA000BFAFB5 /* PGTSResultRow.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381764D0D633DC000A4CA72 /* PGTSResultRowProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53738D5D097E932A00460F29 /* PGTSResultRowProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381764E0D633DC000A4CA72 /* PGTSResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FDE08804EA000BFAFB5 /* PGTSResultSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381764F0D633DC000A4CA72 /* PGTSResultSetPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE308804EA000BFAFB5 /* PGTSResultSetPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		538176500D633DC000A4CA72 /* PGTSSchemaDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176510D633DC000A4CA72 /* PGTSExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 536B892D0A518E4A00379C00 /* PGTSExceptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176520D633DC000A4CA72 /* TSRunloopMessenger.h in Headers */ = {isa = PBXBuildFile; fileRef = 537FB1F60A76218E00441E2E /* TSRunloopMessenger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		538176530D633DC000A4CA72 /* PGTSWriteDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53353A820896D294003EE146 /* PGTSWriteDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176540D633DC000A4CA72 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176550D633DC000A4CA72 /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176560D633DC000A4CA72 /* PGTSACLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176570D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176580D633DC000A4CA72 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381765A0D633DC000A4CA72 /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */; };
+		5381765B0D633DC000A4CA72 /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FF108804EA000BFAFB5 /* PGTSFunctions.m */; };
+		5381765C0D633DC000A4CA72 /* NDRunLoopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 530323C4088062270024E7EF /* NDRunLoopMessenger.m */; };
+		5381765D0D633DC000A4CA72 /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */; };
+		5381765E0D633DC000A4CA72 /* PGTSNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C7AC0A21EA8300AD8AAF /* PGTSNotifier.m */; };
+		5381765F0D633DC000A4CA72 /* PGTSModificationNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 532C9B4A09DDAEDD00E42701 /* PGTSModificationNotifier.m */; };
+		538176600D633DC000A4CA72 /* PGTSLockNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C7D60A21EDAF00AD8AAF /* PGTSLockNotifier.m */; };
+		538176610D633DC000A4CA72 /* PGTSConnectionPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FE508804EA000BFAFB5 /* PGTSConnectionPool.m */; };
+		538176620D633DC000A4CA72 /* PGTSConnectionPoolItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 534C024C096054EA00BF3440 /* PGTSConnectionPoolItem.m */; };
+		538176630D633DC000A4CA72 /* PGTSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.m */; };
+		538176640D633DC000A4CA72 /* PGTSConnectionPrivate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FF408804EA000BFAFB5 /* PGTSConnectionPrivate.m */; };
+		538176650D633DC000A4CA72 /* PGTSConnectionQueries.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDC08804EA000BFAFB5 /* PGTSConnectionQueries.m */; };
+		538176660D633DC000A4CA72 /* PGTSAbstractInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F923BD08B1372F00759909 /* PGTSAbstractInfo.m */; };
+		538176670D633DC000A4CA72 /* PGTSAbstractClassInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */; };
+		538176680D633DC000A4CA72 /* PGTSDatabaseInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359784F08AF669B000CAC2B /* PGTSDatabaseInfo.m */; };
+		538176690D633DC000A4CA72 /* PGTSTypeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B4C708B5492C00ADB959 /* PGTSTypeInfo.m */; };
+		5381766A0D633DC000A4CA72 /* PGTSTableInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 535977FF08AD72DC000CAC2B /* PGTSTableInfo.m */; };
+		5381766B0D633DC000A4CA72 /* PGTSIndexInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9237808B0F47700759909 /* PGTSIndexInfo.m */; };
+		5381766C0D633DC000A4CA72 /* PGTSFieldInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9225108AFD9BD00759909 /* PGTSFieldInfo.m */; };
+		5381766D0D633DC000A4CA72 /* PGTSForeignKeyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */; };
+		5381766E0D633DC000A4CA72 /* PGTSResultRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FE908804EA000BFAFB5 /* PGTSResultRow.m */; };
+		5381766F0D633DC000A4CA72 /* PGTSResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FE208804EA000BFAFB5 /* PGTSResultSet.m */; };
+		538176700D633DC000A4CA72 /* PGTSSchemaDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */; };
+		538176710D633DC000A4CA72 /* PGTSExceptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 536B892E0A518E4A00379C00 /* PGTSExceptions.m */; };
+		538176720D633DC000A4CA72 /* TSRunloopMessenger.m in Sources */ = {isa = PBXBuildFile; fileRef = 537FB1F70A76218E00441E2E /* TSRunloopMessenger.m */; };
+		538176730D633DC000A4CA72 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
+		538176740D633DC000A4CA72 /* PGTSAbstractObjectDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DF10B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m */; };
+		538176750D633DC000A4CA72 /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */; };
+		538176760D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */; };
+		538176780D633DC000A4CA72 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
+		538176790D633DC000A4CA72 /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
+		5381767A0D633DC000A4CA72 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
+		5381767C0D633DC000A4CA72 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
+		5381767D0D633DC000A4CA72 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
+		5381767E0D633DC000A4CA72 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
+		53817AE60D63438C00A4CA72 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 538178FD0D6342FA00A4CA72 /* libLog4Cocoa.a */; };
+		53817AE70D63439100A4CA72 /* libMKCCollections.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 537B170E0D63378A00216BA5 /* libMKCCollections.a */; };
 		539701080A370CCB00DFF6E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		539C08BE0A3706BE00CC45E0 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539C08BF0A3706BE00CC45E0 /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A6AF209DEE51700D28AB0 /* PGTSConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -122,45 +160,11 @@
 		539C08EE0A3706E500CC45E0 /* PGTSResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FDE08804EA000BFAFB5 /* PGTSResultSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539C08EF0A3706E500CC45E0 /* PGTSResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FE208804EA000BFAFB5 /* PGTSResultSet.m */; };
 		539C08F00A3706E600CC45E0 /* PGTSResultSetPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE308804EA000BFAFB5 /* PGTSResultSetPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		53B870920A0A218F007315BC /* PGTSForeignKeyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53B870930A0A218F007315BC /* PGTSForeignKeyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */; };
-		53BA503F08804FBC00BFAFB5 /* psql in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BA503E08804FBC00BFAFB5 /* psql */; };
-		53BA504608804FFA00BFAFB5 /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */; };
-		53BA504F08804FFE00BFAFB5 /* PGTSResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FDE08804EA000BFAFB5 /* PGTSResultSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53BA505C0880500200BFAFB5 /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FF108804EA000BFAFB5 /* PGTSFunctions.m */; };
-		53BA505F0880500200BFAFB5 /* PGTSResultRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF208804EA000BFAFB5 /* PGTSResultRow.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53BA50620880500300BFAFB5 /* PGTSResultRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FE908804EA000BFAFB5 /* PGTSResultRow.m */; };
-		53BA50680880500400BFAFB5 /* PGTSFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53BA50810880501700BFAFB5 /* PGTSResultSetPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE308804EA000BFAFB5 /* PGTSResultSetPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		53BA50840880501700BFAFB5 /* PGTSResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FE208804EA000BFAFB5 /* PGTSResultSet.m */; };
-		53BA50870880501A00BFAFB5 /* PGTSConnectionPool.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FE508804EA000BFAFB5 /* PGTSConnectionPool.m */; };
-		53BA508D0880501B00BFAFB5 /* PGTSConnectionPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FED08804EA000BFAFB5 /* PGTSConnectionPool.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53BA50900880501C00BFAFB5 /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */; };
-		53BA50960880501D00BFAFB5 /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53BA50990880501E00BFAFB5 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53BEBC5B08805EDE00EF494D /* PGTS_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 32DBCF5E0370ADEE00C91783 /* PGTS_Prefix.pch */; };
 		53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */; };
 		53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
 		53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
 		53D0D0590B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53D9B38A08B5256700ADB959 /* PGTSAbstractClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53D9B38B08B5256700ADB959 /* PGTSAbstractClassInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */; };
-		53D9B4C808B5492C00ADB959 /* PGTSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53D9B4C908B5492C00ADB959 /* PGTSTypeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B4C708B5492C00ADB959 /* PGTSTypeInfo.m */; };
-		53D9B52D08B553A900ADB959 /* datatypeassociations.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53D9B52C08B553A900ADB959 /* datatypeassociations.plist */; };
-		53E0D1C908979FF300501E8E /* PGTSMutableResultRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E0D1C708979FF300501E8E /* PGTSMutableResultRow.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53E0D1CA08979FF300501E8E /* PGTSMutableResultRow.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E0D1C808979FF300501E8E /* PGTSMutableResultRow.m */; };
 		53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
-		53E11A110A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
-		53E2C5DC0981C07B009D0AAA /* Kerberos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 534CFECB095DCCDC00BF3440 /* Kerberos.framework */; };
-		53E2C5DE0981C0BD009D0AAA /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
-		53F9059E08924985003AEAA4 /* PGTSConnectionDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9059D08924985003AEAA4 /* PGTSConnectionDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53F9225208AFD9BD00759909 /* PGTSFieldInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9225008AFD9BD00759909 /* PGTSFieldInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53F9225308AFD9BD00759909 /* PGTSFieldInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9225108AFD9BD00759909 /* PGTSFieldInfo.m */; };
-		53F9237908B0F47700759909 /* PGTSIndexInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9237708B0F47700759909 /* PGTSIndexInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53F9237A08B0F47700759909 /* PGTSIndexInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9237808B0F47700759909 /* PGTSIndexInfo.m */; };
-		53F923BE08B1372F00759909 /* PGTSAbstractInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F923BC08B1372F00759909 /* PGTSAbstractInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53F923BF08B1372F00759909 /* PGTSAbstractInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F923BD08B1372F00759909 /* PGTSAbstractInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -171,19 +175,47 @@
 			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3;
 			remoteInfo = "Static library";
 		};
-		5321F5ED0CF7711F00E663CE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2AAC0C705546C1D00DB518D;
-			remoteInfo = "Dynamic library";
-		};
 		5321F5F40CF7714700E663CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
 			proxyType = 1;
 			remoteGlobalIDString = 53C4CDC20CF7553E00E09BC3;
 			remoteInfo = "Static library";
+		};
+		537B170D0D63378A00216BA5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53F42F390D6332EA00C714CD;
+			remoteInfo = "Static library + GC";
+		};
+		538176340D633DC000A4CA72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 538971AF0B821A570092E1B8;
+			remoteInfo = "PostgreSQL-8.2.3";
+		};
+		538176850D633DE000A4CA72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 53F42F210D6332EA00C714CD;
+			remoteInfo = "Static library + GC";
+		};
+		538178FC0D6342FA00A4CA72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 538177460D6342CB00A4CA72;
+			remoteInfo = "libLog4Cocoa + GC";
+		};
+		538179000D63431600A4CA72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5381770D0D6342CB00A4CA72;
+			remoteInfo = "libLog4Cocoa + GC";
 		};
 		538971BB0B821A710092E1B8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -229,19 +261,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		534CF883095C945D00BF3440 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 12;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -281,21 +300,19 @@
 		5364C7AC0A21EA8300AD8AAF /* PGTSNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSNotifier.m; path = Sources/PGTSNotifier.m; sourceTree = "<group>"; };
 		5364C7D50A21EDAF00AD8AAF /* PGTSLockNotifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSLockNotifier.h; path = Sources/PGTSLockNotifier.h; sourceTree = "<group>"; };
 		5364C7D60A21EDAF00AD8AAF /* PGTSLockNotifier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSLockNotifier.m; path = Sources/PGTSLockNotifier.m; sourceTree = "<group>"; };
-		536580C20A36FDBA00CDEC90 /* basic.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = basic.xcconfig; path = xcconfig/basic.xcconfig; sourceTree = SOURCE_ROOT; };
-		536580C30A36FDBA00CDEC90 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = xcconfig/debug.xcconfig; sourceTree = SOURCE_ROOT; };
-		536580C40A36FDBA00CDEC90 /* fmwk-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "fmwk-debug.xcconfig"; path = "xcconfig/fmwk-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
-		536580C50A36FDBA00CDEC90 /* fmwk-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "fmwk-release.xcconfig"; path = "xcconfig/fmwk-release.xcconfig"; sourceTree = SOURCE_ROOT; };
-		536580C60A36FDBA00CDEC90 /* fmwk.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = fmwk.xcconfig; path = xcconfig/fmwk.xcconfig; sourceTree = SOURCE_ROOT; };
-		536580C70A36FDBA00CDEC90 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = xcconfig/release.xcconfig; sourceTree = SOURCE_ROOT; };
-		536580C80A36FDBA00CDEC90 /* static-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "static-debug.xcconfig"; path = "xcconfig/static-debug.xcconfig"; sourceTree = SOURCE_ROOT; };
-		536580C90A36FDBA00CDEC90 /* static-release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = "static-release.xcconfig"; path = "xcconfig/static-release.xcconfig"; sourceTree = SOURCE_ROOT; };
-		536580CA0A36FDBA00CDEC90 /* static.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = static.xcconfig; path = xcconfig/static.xcconfig; sourceTree = SOURCE_ROOT; };
 		536580D20A36FDFB00CDEC90 /* libPGTS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPGTS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		536B892D0A518E4A00379C00 /* PGTSExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSExceptions.h; path = Sources/PGTSExceptions.h; sourceTree = "<group>"; };
 		536B892E0A518E4A00379C00 /* PGTSExceptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSExceptions.m; path = Sources/PGTSExceptions.m; sourceTree = "<group>"; };
 		53738D5D097E932A00460F29 /* PGTSResultRowProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSResultRowProtocol.h; path = Sources/PGTSResultRowProtocol.h; sourceTree = "<group>"; };
 		537FB1F60A76218E00441E2E /* TSRunloopMessenger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TSRunloopMessenger.h; path = Sources/TSRunloopMessenger.h; sourceTree = "<group>"; };
 		537FB1F70A76218E00441E2E /* TSRunloopMessenger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TSRunloopMessenger.m; path = Sources/TSRunloopMessenger.m; sourceTree = "<group>"; };
+		538175DD0D63387200A4CA72 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
+		538175EA0D63399600A4CA72 /* release-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-non-gc.xcconfig"; sourceTree = "<group>"; };
+		538175EB0D63399600A4CA72 /* release-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-gc.xcconfig"; sourceTree = "<group>"; };
+		538175EC0D63399600A4CA72 /* debug-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "debug-non-gc.xcconfig"; sourceTree = "<group>"; };
+		538175ED0D63399600A4CA72 /* debug-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "debug-gc.xcconfig"; sourceTree = "<group>"; };
+		538176830D633DC000A4CA72 /* libPGTS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPGTS.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		538176840D633DC000A4CA72 /* Info copy.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info copy.plist"; sourceTree = "<group>"; };
 		53A422880981B84C003C3A24 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSForeignKeyDescription.h; path = Sources/PGTSForeignKeyDescription.h; sourceTree = "<group>"; };
 		53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSForeignKeyDescription.m; path = Sources/PGTSForeignKeyDescription.m; sourceTree = "<group>"; };
@@ -317,7 +334,6 @@
 		53BA4FF208804EA000BFAFB5 /* PGTSResultRow.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSResultRow.h; path = Sources/PGTSResultRow.h; sourceTree = "<group>"; };
 		53BA4FF408804EA000BFAFB5 /* PGTSConnectionPrivate.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = PGTSConnectionPrivate.m; path = Sources/PGTSConnectionPrivate.m; sourceTree = "<group>"; };
 		53BA4FF508804EA000BFAFB5 /* PGTS.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTS.h; path = Sources/PGTS.h; sourceTree = "<group>"; };
-		53BA503708804F9A00BFAFB5 /* PGTS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PGTS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		53BA503E08804FBC00BFAFB5 /* psql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; name = psql; path = "PGTS-PostgreSQL/universal/bin/psql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Log4Cocoa.xcodeproj; path = Contrib/Log4Cocoa/Log4Cocoa.xcodeproj; sourceTree = "<group>"; };
 		53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; name = PGTSCertificateVerificationDelegateProtocol.h; path = Sources/PGTSCertificateVerificationDelegateProtocol.h; sourceTree = "<group>"; };
@@ -357,15 +373,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		53BA503508804F9A00BFAFB5 /* Frameworks */ = {
+		538176770D633DC000A4CA72 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53BA503F08804FBC00BFAFB5 /* psql in Frameworks */,
-				531746A7095C07E00098D3D5 /* Foundation.framework in Frameworks */,
-				53E2C5DC0981C07B009D0AAA /* Kerberos.framework in Frameworks */,
-				53E2C5DE0981C0BD009D0AAA /* libcrypto.dylib in Frameworks */,
-				53E11A110A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */,
+				538176780D633DC000A4CA72 /* Foundation.framework in Frameworks */,
+				538176790D633DC000A4CA72 /* ExceptionHandling.framework in Frameworks */,
+				5381767A0D633DC000A4CA72 /* libpq.a in Frameworks */,
+				5381767C0D633DC000A4CA72 /* Security.framework in Frameworks */,
+				5381767D0D633DC000A4CA72 /* libssl.dylib in Frameworks */,
+				5381767E0D633DC000A4CA72 /* libcrypto.dylib in Frameworks */,
+				53817AE60D63438C00A4CA72 /* libLog4Cocoa.a in Frameworks */,
+				53817AE70D63439100A4CA72 /* libMKCCollections.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,8 +394,8 @@
 		034768DFFF38A50411DB9C8B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				53BA503708804F9A00BFAFB5 /* PGTS.framework */,
 				536580D20A36FDFB00CDEC90 /* libPGTS.a */,
+				538176830D633DC000A4CA72 /* libPGTS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -401,6 +420,7 @@
 				53D9B52C08B553A900ADB959 /* datatypeassociations.plist */,
 				8DC2EF5A0486A6940098B216 /* Info.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
+				538176840D633DC000A4CA72 /* Info copy.plist */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -464,7 +484,7 @@
 			isa = PBXGroup;
 			children = (
 				5321F5EC0CF7711F00E663CE /* libMKCCollections.a */,
-				5321F5EE0CF7711F00E663CE /* MKCCollections.dylib */,
+				537B170E0D63378A00216BA5 /* libMKCCollections.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -530,15 +550,11 @@
 		536580C10A36FDBA00CDEC90 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
-				536580C20A36FDBA00CDEC90 /* basic.xcconfig */,
-				536580C30A36FDBA00CDEC90 /* debug.xcconfig */,
-				536580C40A36FDBA00CDEC90 /* fmwk-debug.xcconfig */,
-				536580C50A36FDBA00CDEC90 /* fmwk-release.xcconfig */,
-				536580C60A36FDBA00CDEC90 /* fmwk.xcconfig */,
-				536580C70A36FDBA00CDEC90 /* release.xcconfig */,
-				536580C80A36FDBA00CDEC90 /* static-debug.xcconfig */,
-				536580C90A36FDBA00CDEC90 /* static-release.xcconfig */,
-				536580CA0A36FDBA00CDEC90 /* static.xcconfig */,
+				538175DD0D63387200A4CA72 /* common.xcconfig */,
+				538175ED0D63399600A4CA72 /* debug-gc.xcconfig */,
+				538175EC0D63399600A4CA72 /* debug-non-gc.xcconfig */,
+				538175EB0D63399600A4CA72 /* release-gc.xcconfig */,
+				538175EA0D63399600A4CA72 /* release-non-gc.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = SOURCE_ROOT;
@@ -561,6 +577,7 @@
 			isa = PBXGroup;
 			children = (
 				53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */,
+				538178FD0D6342FA00A4CA72 /* libLog4Cocoa.a */,
 				53D044180B4C1DFD00DB9308 /* AllTests */,
 				53D0441A0B4C1DFD00DB9308 /* Documentation */,
 				53D0441C0B4C1DFD00DB9308 /* Log4Cocoa.framework */,
@@ -644,44 +661,45 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		53BA503208804F9A00BFAFB5 /* Headers */ = {
+		538176350D633DC000A4CA72 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				532D74060A1B30D300BE37FD /* postgresql in Headers */,
-				53BA504F08804FFE00BFAFB5 /* PGTSResultSet.h in Headers */,
-				53BA505F0880500200BFAFB5 /* PGTSResultRow.h in Headers */,
-				53BA50680880500400BFAFB5 /* PGTSFunctions.h in Headers */,
-				53BA50810880501700BFAFB5 /* PGTSResultSetPrivate.h in Headers */,
-				53BA508D0880501B00BFAFB5 /* PGTSConnectionPool.h in Headers */,
-				53BA50960880501D00BFAFB5 /* PGTSAdditions.h in Headers */,
-				53BA50990880501E00BFAFB5 /* PGTS.h in Headers */,
-				53BEBC5B08805EDE00EF494D /* PGTS_Prefix.pch in Headers */,
-				53032382088061E70024E7EF /* PGTSConnection.h in Headers */,
-				53032390088061E90024E7EF /* PGTSConnectionPrivate.h in Headers */,
-				530323C5088062270024E7EF /* NDRunLoopMessenger.h in Headers */,
-				53F9059E08924985003AEAA4 /* PGTSConnectionDelegate.h in Headers */,
-				53353A420896D05A003EE146 /* PGTSDataSource.h in Headers */,
-				53353A560896D16C003EE146 /* PGTSDataSourceTable.h in Headers */,
-				53353A830896D294003EE146 /* PGTSWriteDelegateProtocol.h in Headers */,
-				53E0D1C908979FF300501E8E /* PGTSMutableResultRow.h in Headers */,
-				5359780008AD72DC000CAC2B /* PGTSTableInfo.h in Headers */,
-				5359785008AF669B000CAC2B /* PGTSDatabaseInfo.h in Headers */,
-				53F9225208AFD9BD00759909 /* PGTSFieldInfo.h in Headers */,
-				53F9237908B0F47700759909 /* PGTSIndexInfo.h in Headers */,
-				53F923BE08B1372F00759909 /* PGTSAbstractInfo.h in Headers */,
-				53D9B38A08B5256700ADB959 /* PGTSAbstractClassInfo.h in Headers */,
-				53D9B4C808B5492C00ADB959 /* PGTSTypeInfo.h in Headers */,
-				534C024D096054EA00BF3440 /* PGTSConnectionPoolItem.h in Headers */,
-				53738D5E097E932A00460F29 /* PGTSResultRowProtocol.h in Headers */,
-				532C9B4B09DDAEDD00E42701 /* PGTSModificationNotifier.h in Headers */,
-				533A6AF309DEE51700D28AB0 /* PGTSConstants.h in Headers */,
-				53B870920A0A218F007315BC /* PGTSForeignKeyDescription.h in Headers */,
-				5364C7AD0A21EA8300AD8AAF /* PGTSNotifier.h in Headers */,
-				5364C7D70A21EDAF00AD8AAF /* PGTSLockNotifier.h in Headers */,
-				535955800A514DEE0008793A /* PGTSSchemaDescriptor.h in Headers */,
-				536B89310A518E4A00379C00 /* PGTSExceptions.h in Headers */,
-				537FB1FA0A76218E00441E2E /* TSRunloopMessenger.h in Headers */,
+				538176360D633DC000A4CA72 /* postgresql in Headers */,
+				538176370D633DC000A4CA72 /* PGTS.h in Headers */,
+				538176380D633DC000A4CA72 /* PGTSConstants.h in Headers */,
+				538176390D633DC000A4CA72 /* PGTSFunctions.h in Headers */,
+				5381763A0D633DC000A4CA72 /* NDRunLoopMessenger.h in Headers */,
+				5381763B0D633DC000A4CA72 /* PGTSAdditions.h in Headers */,
+				5381763C0D633DC000A4CA72 /* PGTSNotifier.h in Headers */,
+				5381763D0D633DC000A4CA72 /* PGTSModificationNotifier.h in Headers */,
+				5381763E0D633DC000A4CA72 /* PGTSLockNotifier.h in Headers */,
+				5381763F0D633DC000A4CA72 /* PGTSConnectionPool.h in Headers */,
+				538176400D633DC000A4CA72 /* PGTSConnectionPoolItem.h in Headers */,
+				538176410D633DC000A4CA72 /* PGTSConnection.h in Headers */,
+				538176420D633DC000A4CA72 /* PGTSConnectionPrivate.h in Headers */,
+				538176430D633DC000A4CA72 /* PGTSConnectionDelegate.h in Headers */,
+				538176440D633DC000A4CA72 /* PGTSAbstractInfo.h in Headers */,
+				538176450D633DC000A4CA72 /* PGTSAbstractClassInfo.h in Headers */,
+				538176460D633DC000A4CA72 /* PGTSDatabaseInfo.h in Headers */,
+				538176470D633DC000A4CA72 /* PGTSTypeInfo.h in Headers */,
+				538176480D633DC000A4CA72 /* PGTSTableInfo.h in Headers */,
+				538176490D633DC000A4CA72 /* PGTSIndexInfo.h in Headers */,
+				5381764A0D633DC000A4CA72 /* PGTSFieldInfo.h in Headers */,
+				5381764B0D633DC000A4CA72 /* PGTSForeignKeyDescription.h in Headers */,
+				5381764C0D633DC000A4CA72 /* PGTSResultRow.h in Headers */,
+				5381764D0D633DC000A4CA72 /* PGTSResultRowProtocol.h in Headers */,
+				5381764E0D633DC000A4CA72 /* PGTSResultSet.h in Headers */,
+				5381764F0D633DC000A4CA72 /* PGTSResultSetPrivate.h in Headers */,
+				538176500D633DC000A4CA72 /* PGTSSchemaDescriptor.h in Headers */,
+				538176510D633DC000A4CA72 /* PGTSExceptions.h in Headers */,
+				538176520D633DC000A4CA72 /* TSRunloopMessenger.h in Headers */,
+				538176530D633DC000A4CA72 /* PGTSWriteDelegateProtocol.h in Headers */,
+				538176540D633DC000A4CA72 /* PGTSRoleDescription.h in Headers */,
+				538176550D633DC000A4CA72 /* PGTSAbstractObjectDescription.h in Headers */,
+				538176560D633DC000A4CA72 /* PGTSACLItem.h in Headers */,
+				538176570D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.h in Headers */,
+				538176580D633DC000A4CA72 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -708,27 +726,25 @@
 			productReference = 536580D20A36FDFB00CDEC90 /* libPGTS.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		53BA503608804F9A00BFAFB5 /* Framework */ = {
+		5381762E0D633DC000A4CA72 /* Static archive + GC */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 53BA503908804F9B00BFAFB5 /* Build configuration list for PBXNativeTarget "Framework" */;
+			buildConfigurationList = 538176800D633DC000A4CA72 /* Build configuration list for PBXNativeTarget "Static archive + GC" */;
 			buildPhases = (
-				533D43AB0A35BF41005B2A27 /* Ranlib */,
-				53BA503208804F9A00BFAFB5 /* Headers */,
-				53BA503308804F9A00BFAFB5 /* Resources */,
-				534CF883095C945D00BF3440 /* Copy Frameworks */,
-				53BA503408804F9A00BFAFB5 /* Sources */,
-				53BA503508804F9A00BFAFB5 /* Frameworks */,
-				53E70DBE09824820001785B2 /* Framework Symlink */,
-				535FF6AE09641621008A9741 /* Doxygen */,
+				538176350D633DC000A4CA72 /* Headers */,
+				538176590D633DC000A4CA72 /* Sources */,
+				538176770D633DC000A4CA72 /* Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				538176860D633DE000A4CA72 /* PBXTargetDependency */,
+				538179010D63431600A4CA72 /* PBXTargetDependency */,
+				538176330D633DC000A4CA72 /* PBXTargetDependency */,
 			);
-			name = Framework;
-			productName = PGTS;
-			productReference = 53BA503708804F9A00BFAFB5 /* PGTS.framework */;
-			productType = "com.apple.product-type.framework";
+			name = "Static archive + GC";
+			productName = "Static archive";
+			productReference = 538176830D633DC000A4CA72 /* libPGTS.a */;
+			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
 
@@ -736,6 +752,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53BA4FD208804E6B00BFAFB5 /* Build configuration list for PBXProject "Framework" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -753,7 +770,7 @@
 			projectRoot = "";
 			targets = (
 				536580D10A36FDFB00CDEC90 /* Static archive */,
-				53BA503608804F9A00BFAFB5 /* Framework */,
+				5381762E0D633DC000A4CA72 /* Static archive + GC */,
 				538971AF0B821A570092E1B8 /* PostgreSQL-8.2.5 */,
 			);
 		};
@@ -767,11 +784,18 @@
 			remoteRef = 5321F5EB0CF7711F00E663CE /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		5321F5EE0CF7711F00E663CE /* MKCCollections.dylib */ = {
+		537B170E0D63378A00216BA5 /* libMKCCollections.a */ = {
 			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.dylib";
-			path = MKCCollections.dylib;
-			remoteRef = 5321F5ED0CF7711F00E663CE /* PBXContainerItemProxy */;
+			fileType = archive.ar;
+			path = libMKCCollections.a;
+			remoteRef = 537B170D0D63378A00216BA5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		538178FD0D6342FA00A4CA72 /* libLog4Cocoa.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libLog4Cocoa.a;
+			remoteRef = 538178FC0D6342FA00A4CA72 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */ = {
@@ -804,46 +828,7 @@
 		};
 /* End PBXReferenceProxy section */
 
-/* Begin PBXResourcesBuildPhase section */
-		53BA503308804F9A00BFAFB5 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				53D9B52D08B553A900ADB959 /* datatypeassociations.plist in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
 /* Begin PBXShellScriptBuildPhase section */
-		533D43AB0A35BF41005B2A27 /* Ranlib */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = Ranlib;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#ranlib ResourcesAndLibraries/libpq.a";
-		};
-		535FF6AE09641621008A9741 /* Doxygen */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = Doxygen;
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "export DOXYGEN_DOCUMENTATION_DIR=\"/$BUILT_PRODUCTS_DIR/$DOCUMENTATION_FOLDER_PATH\"\nmkdir -p \"$DOXYGEN_DOCUMENTATION_DIR\"\ncd \"$PROJECT_DIR\"\n#/sw/bin/doxygen";
-		};
 		538971B00B821A570092E1B8 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -856,20 +841,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "my_build_dir=\"$BUILT_PRODUCTS_DIR\"/PGTS-PostgreSQL\nversion=\"8.2.5\"\npostgresql_source_file=\"postgresql-base-${version}.tar.bz2\"\npostgresql_root=\"${my_build_dir}/postgresql-${version}\"\n\nfunction extract\n{\n    # Extract the sources\n    if [ ! -d \"$postgresql_root\" ]\n    then\n        if [ -e \"$postgresql_root\" ]\n        then\n            echo \"A file named ${postgresql_root} exists and is not a folder. Exiting.\"\n            exit 1\n        fi\n        gnutar -jxf \"$postgresql_source_file\" -C \"$my_build_dir\"\n        patch -p1 -d \"$postgresql_root\" < \"$SRCROOT\"/libpq.patch\n    fi\n}\n\nfunction build\n{\n    ptype=`uname -p`\n    my_host=\n    my_target=\"$1\"\n    if [ -z \"$my_target\" ]\n    then\n        my_target=\"$ptype\"\n    fi\n\n\tunset CC\n\tunset CPP\n\tunset CFLAGS\n\tunset CPPFLAGS\n\tunset CXXFLAGS\n\tunset LDFLAGS\n\n    if [ \"powerpc\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch ppc\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n\n        if [ \"i386\" = \"$ptype\" ]\n        then\n            my_host=\"--host=powerpc-apple-darwin8.9.0\"\n        fi\n    elif [ \"i386\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch i386\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n\n        if [ \"powerpc\" = \"$ptype\" ]\n        then\n            my_host=\"--host=i386-apple-darwin8.9.0\"\n        fi\n    else\n        echo \"Unsupported architecture $my_target\"\n        exit 1\n    fi\n\n    pushd \"$postgresql_root\"\n    make distclean 2> /dev/null\n\n    if [ \"Debug\" = \"$BUILD_STYLE\" ]\n    then\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl --enable-debug \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared --enable-debug \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    else\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    fi\n\n    make clean 2> /dev/null\n\n    mkdir -p ../\"$my_target\"\n\n\t## PG 8.2 doesn't like to be built piece by piece.\n\tmake -j 4 2> /dev/null\n\n    for x in src/include src/interfaces/libpq src/bin/psql\n    do\n        pushd \"$x\"\n        make install\n        popd\n    done\n    \n    popd\n}\n\nif [ ! -e \"$my_build_dir\"/universal/lib/libpq.a ] || \\\n   [ ! -e \"$my_build_dir\"/universal/bin/psql ] ||\n   [ ! -e \"$my_build_dir\"/postgresql ]\nthen\n\tmkdir -p \"$my_build_dir\"\n\tpushd \"$SRCROOT\"/Contrib/PostgreSQL\n\textract\n\n\tif [ ! -e \"$my_build_dir\"/powerpc/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/powerpc/bin/psql ]\n\tthen\n\t    build powerpc\n\tfi\n\n\tif [ ! -e \"$my_build_dir\"/i386/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/i386/bin/psql ]\n\tthen\n\t    build i386\n\tfi\n\n\tmkdir -p \"$my_build_dir\"/universal/bin\n\tmkdir -p \"$my_build_dir\"/universal/lib\n\tfor file in lib/libpq.a bin/psql\n\tdo\n\t    lipo -create -output \"$my_build_dir\"/universal/\"$file\" \\\n\t\t\t\"$my_build_dir\"/i386/\"$file\" \\\n\t\t\t\"$my_build_dir\"/powerpc/\"$file\"\n\tdone\n\tcp -R \"$my_build_dir\"/powerpc/include \"$my_build_dir\"/postgresql\n\t\"$postgresql_root\"/configure --version | head -n 1 > \"$my_build_dir\"/VERSION\n\n\tpopd\nfi\nexit 0\n";
-		};
-		53E70DBE09824820001785B2 /* Framework Symlink */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Framework Symlink";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "cd \"$CONFIGURATION_BUILD_DIR/$FULL_PRODUCT_NAME/\"\nln -sf ./Versions/Current/Frameworks ./Frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -910,38 +881,39 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		53BA503408804F9A00BFAFB5 /* Sources */ = {
+		538176590D633DC000A4CA72 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53BA504608804FFA00BFAFB5 /* PGTSConstants.m in Sources */,
-				53BA505C0880500200BFAFB5 /* PGTSFunctions.m in Sources */,
-				53BA50620880500300BFAFB5 /* PGTSResultRow.m in Sources */,
-				53BA50840880501700BFAFB5 /* PGTSResultSet.m in Sources */,
-				53BA50870880501A00BFAFB5 /* PGTSConnectionPool.m in Sources */,
-				53BA50900880501C00BFAFB5 /* PGTSAdditions.m in Sources */,
-				53032389088061E80024E7EF /* PGTSConnection.m in Sources */,
-				53032397088061E90024E7EF /* PGTSConnectionPrivate.m in Sources */,
-				5303239E088061EA0024E7EF /* PGTSConnectionQueries.m in Sources */,
-				530323C6088062270024E7EF /* NDRunLoopMessenger.m in Sources */,
-				53353A430896D05A003EE146 /* PGTSDataSource.m in Sources */,
-				53353A570896D16C003EE146 /* PGTSDataSourceTable.m in Sources */,
-				53E0D1CA08979FF300501E8E /* PGTSMutableResultRow.m in Sources */,
-				5359780108AD72DC000CAC2B /* PGTSTableInfo.m in Sources */,
-				5359785108AF669B000CAC2B /* PGTSDatabaseInfo.m in Sources */,
-				53F9225308AFD9BD00759909 /* PGTSFieldInfo.m in Sources */,
-				53F9237A08B0F47700759909 /* PGTSIndexInfo.m in Sources */,
-				53F923BF08B1372F00759909 /* PGTSAbstractInfo.m in Sources */,
-				53D9B38B08B5256700ADB959 /* PGTSAbstractClassInfo.m in Sources */,
-				53D9B4C908B5492C00ADB959 /* PGTSTypeInfo.m in Sources */,
-				534C024E096054EA00BF3440 /* PGTSConnectionPoolItem.m in Sources */,
-				532C9B4C09DDAEDD00E42701 /* PGTSModificationNotifier.m in Sources */,
-				53B870930A0A218F007315BC /* PGTSForeignKeyDescription.m in Sources */,
-				5364C7AE0A21EA8400AD8AAF /* PGTSNotifier.m in Sources */,
-				5364C7D80A21EDAF00AD8AAF /* PGTSLockNotifier.m in Sources */,
-				535955810A514DEE0008793A /* PGTSSchemaDescriptor.m in Sources */,
-				536B89320A518E4A00379C00 /* PGTSExceptions.m in Sources */,
-				537FB1FB0A76218E00441E2E /* TSRunloopMessenger.m in Sources */,
+				5381765A0D633DC000A4CA72 /* PGTSConstants.m in Sources */,
+				5381765B0D633DC000A4CA72 /* PGTSFunctions.m in Sources */,
+				5381765C0D633DC000A4CA72 /* NDRunLoopMessenger.m in Sources */,
+				5381765D0D633DC000A4CA72 /* PGTSAdditions.m in Sources */,
+				5381765E0D633DC000A4CA72 /* PGTSNotifier.m in Sources */,
+				5381765F0D633DC000A4CA72 /* PGTSModificationNotifier.m in Sources */,
+				538176600D633DC000A4CA72 /* PGTSLockNotifier.m in Sources */,
+				538176610D633DC000A4CA72 /* PGTSConnectionPool.m in Sources */,
+				538176620D633DC000A4CA72 /* PGTSConnectionPoolItem.m in Sources */,
+				538176630D633DC000A4CA72 /* PGTSConnection.m in Sources */,
+				538176640D633DC000A4CA72 /* PGTSConnectionPrivate.m in Sources */,
+				538176650D633DC000A4CA72 /* PGTSConnectionQueries.m in Sources */,
+				538176660D633DC000A4CA72 /* PGTSAbstractInfo.m in Sources */,
+				538176670D633DC000A4CA72 /* PGTSAbstractClassInfo.m in Sources */,
+				538176680D633DC000A4CA72 /* PGTSDatabaseInfo.m in Sources */,
+				538176690D633DC000A4CA72 /* PGTSTypeInfo.m in Sources */,
+				5381766A0D633DC000A4CA72 /* PGTSTableInfo.m in Sources */,
+				5381766B0D633DC000A4CA72 /* PGTSIndexInfo.m in Sources */,
+				5381766C0D633DC000A4CA72 /* PGTSFieldInfo.m in Sources */,
+				5381766D0D633DC000A4CA72 /* PGTSForeignKeyDescription.m in Sources */,
+				5381766E0D633DC000A4CA72 /* PGTSResultRow.m in Sources */,
+				5381766F0D633DC000A4CA72 /* PGTSResultSet.m in Sources */,
+				538176700D633DC000A4CA72 /* PGTSSchemaDescriptor.m in Sources */,
+				538176710D633DC000A4CA72 /* PGTSExceptions.m in Sources */,
+				538176720D633DC000A4CA72 /* TSRunloopMessenger.m in Sources */,
+				538176730D633DC000A4CA72 /* PGTSRoleDescription.m in Sources */,
+				538176740D633DC000A4CA72 /* PGTSAbstractObjectDescription.m in Sources */,
+				538176750D633DC000A4CA72 /* PGTSACLItem.m in Sources */,
+				538176760D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -952,6 +924,21 @@
 			isa = PBXTargetDependency;
 			name = "Static library";
 			targetProxy = 5321F5F40CF7714700E663CE /* PBXContainerItemProxy */;
+		};
+		538176330D633DC000A4CA72 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 538971AF0B821A570092E1B8 /* PostgreSQL-8.2.5 */;
+			targetProxy = 538176340D633DC000A4CA72 /* PBXContainerItemProxy */;
+		};
+		538176860D633DE000A4CA72 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "Static library + GC";
+			targetProxy = 538176850D633DE000A4CA72 /* PBXContainerItemProxy */;
+		};
+		538179010D63431600A4CA72 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libLog4Cocoa + GC";
+			targetProxy = 538179000D63431600A4CA72 /* PBXContainerItemProxy */;
 		};
 		538971BC0B821A710092E1B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -979,17 +966,29 @@
 /* Begin XCBuildConfiguration section */
 		536580D70A36FE2600CDEC90 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 536580C80A36FDBA00CDEC90 /* static-debug.xcconfig */;
+			baseConfigurationReference = 538175EC0D63399600A4CA72 /* debug-non-gc.xcconfig */;
 			buildSettings = {
-				GCC_ENABLE_OBJC_GC = YES;
 			};
 			name = Debug;
 		};
 		536580D80A36FE2600CDEC90 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 536580C90A36FDBA00CDEC90 /* static-release.xcconfig */;
+			baseConfigurationReference = 538175EA0D63399600A4CA72 /* release-non-gc.xcconfig */;
 			buildSettings = {
-				GCC_ENABLE_OBJC_GC = YES;
+			};
+			name = Release;
+		};
+		538176810D633DC000A4CA72 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 538175ED0D63399600A4CA72 /* debug-gc.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		538176820D633DC000A4CA72 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 538175EB0D63399600A4CA72 /* release-gc.xcconfig */;
+			buildSettings = {
 			};
 			name = Release;
 		};
@@ -1015,30 +1014,14 @@
 			};
 			name = Release;
 		};
-		539F293E0981A0D600FD3758 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 536580C50A36FDBA00CDEC90 /* fmwk-release.xcconfig */;
-			buildSettings = {
-			};
-			name = Release;
-		};
 		539F29400981A0D600FD3758 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
 		53BA4FD308804E6B00BFAFB5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-			};
-			name = Debug;
-		};
-		53BA503A08804F9B00BFAFB5 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 536580C40A36FDBA00CDEC90 /* fmwk-debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
@@ -1051,6 +1034,15 @@
 			buildConfigurations = (
 				536580D70A36FE2600CDEC90 /* Debug */,
 				536580D80A36FE2600CDEC90 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		538176800D633DC000A4CA72 /* Build configuration list for PBXNativeTarget "Static archive + GC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				538176810D633DC000A4CA72 /* Debug */,
+				538176820D633DC000A4CA72 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -1069,15 +1061,6 @@
 			buildConfigurations = (
 				53BA4FD308804E6B00BFAFB5 /* Debug */,
 				539F29400981A0D600FD3758 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		53BA503908804F9B00BFAFB5 /* Build configuration list for PBXNativeTarget "Framework" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				53BA503A08804F9B00BFAFB5 /* Debug */,
-				539F293E0981A0D600FD3758 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

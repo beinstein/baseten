@@ -26,19 +26,19 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		530A43820A5C0E0100A4722B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = "BaseTen subframeworks";
-		};
 		530A43840A5C0E0100A4722B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
+		};
+		538B40F40D634EA40009005B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 535444130D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
 		};
 		53D059730CDB8F5800430536 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -123,7 +123,7 @@
 			isa = PBXGroup;
 			children = (
 				530A43850A5C0E0100A4722B /* BaseTen.framework */,
-				530A43830A5C0E0100A4722B /* BaseTen.framework */,
+				538B40F50D634EA40009005B /* BaseTen.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -215,6 +215,7 @@
 		530A43530A5C0DC500A4722B /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 530A43540A5C0DC500A4722B /* Build configuration list for PBXProject "UnitTests" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 0;
 			mainGroup = 530A43510A5C0DC500A4722B;
 			productRefGroup = 530A438D0A5C0FD000A4722B /* Products */;
@@ -233,18 +234,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		530A43830A5C0E0100A4722B /* BaseTen.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BaseTen.framework;
-			remoteRef = 530A43820A5C0E0100A4722B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		530A43850A5C0E0100A4722B /* BaseTen.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = BaseTen.framework;
 			remoteRef = 530A43840A5C0E0100A4722B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		538B40F50D634EA40009005B /* BaseTen.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTen.framework;
+			remoteRef = 538B40F40D634EA40009005B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -310,7 +311,6 @@
 		530A43550A5C0DC500A4722B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Debug;
@@ -318,7 +318,6 @@
 		530A43560A5C0DC500A4722B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;

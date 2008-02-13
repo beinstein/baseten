@@ -1,3 +1,0 @@
-#include "basic.xcconfig"
-#include "static.xcconfig"
-#include "debug.xcconfig"

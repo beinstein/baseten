@@ -30,7 +30,7 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import <openssl/x509.h>
-#import <PGTS/PGTSConnectionPrivate.h>
+#import <PGTS/private/PGTSConnectionPrivate.h>
 
 
 @implementation BXPGCertificateVerificationDelegate

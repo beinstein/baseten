@@ -1,0 +1,3 @@
+PRODUCT_NAME = MKCCollections
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
+GCC_PREFIX_HEADER = Source/MKCCollections_Prefix.pch

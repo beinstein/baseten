@@ -21,7 +21,42 @@
 		53438E2C0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */; };
 		53438E560A384FE500BEDCFF /* BXController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E540A384FE500BEDCFF /* BXController.h */; };
 		53438E570A384FE500BEDCFF /* BXController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E550A384FE500BEDCFF /* BXController.m */; };
-		534690590A779BFB0067E3A9 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53967AE00A3725FD002DB5AE /* BaseTen.framework */; };
+		5354445D0D634D9C002A6C47 /* BXSynchronizedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E484A0A14B7BA00A22080 /* BXSynchronizedArrayController.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5354445E0D634D9C002A6C47 /* BaseTenAppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5354445F0D634D9C002A6C47 /* BXObjectStatusToColorTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C8C90A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		535444600D634D9C002A6C47 /* BXAppKitFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */; };
+		535444610D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53726D830A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h */; };
+		535444620D634D9C002A6C47 /* NSController+BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		535444630D634D9C002A6C47 /* BXController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E540A384FE500BEDCFF /* BXController.h */; };
+		535444640D634D9C002A6C47 /* BXControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		535444650D634D9C002A6C47 /* BXDatabaseContextAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		535444660D634D9C002A6C47 /* BXConnectionViewManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E906A60B84686E008CEA4B /* BXConnectionViewManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		535444670D634D9C002A6C47 /* BXConnectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E906590B845A30008CEA4B /* BXConnectionPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		535444680D634D9C002A6C47 /* BXAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9BABC0B90949200DDB9BE /* BXAuthenticationPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		535444690D634D9C002A6C47 /* BXPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9BB080B909EA000DDB9BE /* BXPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5354446A0D634D9C002A6C47 /* BXNetServiceConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */; };
+		5354446B0D634D9C002A6C47 /* BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5354446D0D634D9C002A6C47 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
+		5354446E0D634D9C002A6C47 /* BaseTen.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */; };
+		5354446F0D634D9C002A6C47 /* ConnectionView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53E906610B845BBB008CEA4B /* ConnectionView.nib */; };
+		535444700D634D9C002A6C47 /* AuthenticationView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53E907730B849F07008CEA4B /* AuthenticationView.nib */; };
+		535444720D634D9C002A6C47 /* BXSynchronizedArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */; };
+		535444730D634D9C002A6C47 /* BXObjectStatusToColorTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C8CA0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m */; };
+		535444740D634D9C002A6C47 /* BXAppKitFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */; };
+		535444750D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 53726D840A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m */; };
+		535444760D634D9C002A6C47 /* NSController+BXAppKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */; };
+		535444770D634D9C002A6C47 /* BXController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E550A384FE500BEDCFF /* BXController.m */; };
+		535444780D634D9C002A6C47 /* BXDatabaseContextAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */; };
+		535444790D634D9C002A6C47 /* BXConnectionViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E906A70B84686E008CEA4B /* BXConnectionViewManager.m */; };
+		5354447A0D634D9C002A6C47 /* BXConnectionPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9065A0B845A30008CEA4B /* BXConnectionPanel.m */; };
+		5354447B0D634D9C002A6C47 /* BXAuthenticationPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */; };
+		5354447C0D634D9C002A6C47 /* BXPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9BB090B909EA000DDB9BE /* BXPanel.m */; };
+		5354447D0D634D9C002A6C47 /* BXNetServiceConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */; };
+		5354447E0D634D9C002A6C47 /* BXAppKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */; };
+		535444800D634D9C002A6C47 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
+		535444810D634D9C002A6C47 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53967AE00A3725FD002DB5AE /* BaseTen.framework */; };
+		535444820D634D9C002A6C47 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531650C30B72040700785454 /* SecurityInterface.framework */; };
+		5354449B0D634DEE002A6C47 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5354443E0D634CA4002A6C47 /* BaseTen.framework */; };
 		5364C8CB0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C8C90A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5364C8CC0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C8CA0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m */; };
 		53726D850A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53726D830A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h */; };
@@ -45,12 +80,33 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		537E48D50A14BFE800A22080 /* PBXContainerItemProxy */ = {
+		5354443D0D634CA4002A6C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = BaseTen;
+			remoteGlobalIDString = 535444130D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
+		};
+		535444430D634CA4002A6C47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53B38EBC0BC2807400EAA5C3 /* Log4Cocoa.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 538177460D6342CB00A4CA72;
+			remoteInfo = "libLog4Cocoa + GC";
+		};
+		535444970D634DDC002A6C47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
+		};
+		535444990D634DDC002A6C47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53B38EBC0BC2807400EAA5C3 /* Log4Cocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5381770D0D6342CB00A4CA72;
+			remoteInfo = "libLog4Cocoa + GC";
 		};
 		53967ADF0A3725FD002DB5AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -106,8 +162,6 @@
 /* Begin PBXFileReference section */
 		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		2B8B5E410B20189600EF04F3 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../xcconfig/debug.xcconfig; sourceTree = SOURCE_ROOT; };
-		2B8B5E420B20189600EF04F3 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = ../xcconfig/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit_Prefix.pch; path = Sources/BaseTenAppKit_Prefix.pch; sourceTree = "<group>"; };
 		5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXControllerProtocol.h; path = Sources/BXControllerProtocol.h; sourceTree = "<group>"; };
 		531650C30B72040700785454 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = /System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<absolute>"; };
@@ -119,6 +173,12 @@
 		53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSController+BXAppKitAdditions.m"; path = "Sources/NSController+BXAppKitAdditions.m"; sourceTree = "<group>"; };
 		53438E540A384FE500BEDCFF /* BXController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXController.h; path = Sources/BXController.h; sourceTree = "<group>"; };
 		53438E550A384FE500BEDCFF /* BXController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXController.m; path = Sources/BXController.m; sourceTree = "<group>"; };
+		535444490D634D63002A6C47 /* debug-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "debug-gc.xcconfig"; path = "xcconfig/debug-gc.xcconfig"; sourceTree = "<group>"; };
+		5354444A0D634D63002A6C47 /* debug-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "debug-non-gc.xcconfig"; path = "xcconfig/debug-non-gc.xcconfig"; sourceTree = "<group>"; };
+		5354444B0D634D63002A6C47 /* release-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "release-gc.xcconfig"; path = "xcconfig/release-gc.xcconfig"; sourceTree = "<group>"; };
+		5354444C0D634D63002A6C47 /* release-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = "release-non-gc.xcconfig"; path = "xcconfig/release-non-gc.xcconfig"; sourceTree = "<group>"; };
+		5354444D0D634D63002A6C47 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = common.xcconfig; path = xcconfig/common.xcconfig; sourceTree = "<group>"; };
+		535444870D634D9C002A6C47 /* BaseTenAppKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTenAppKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5364C8C90A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectStatusToColorTransformer.h; path = Sources/BXObjectStatusToColorTransformer.h; sourceTree = "<group>"; };
 		5364C8CA0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectStatusToColorTransformer.m; path = Sources/BXObjectStatusToColorTransformer.m; sourceTree = "<group>"; };
 		53726D830A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectStatusToEditableTransformer.h; path = Sources/BXObjectStatusToEditableTransformer.h; sourceTree = "<group>"; };
@@ -148,13 +208,23 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5354447F0D634D9C002A6C47 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				535444800D634D9C002A6C47 /* Cocoa.framework in Frameworks */,
+				535444810D634D9C002A6C47 /* BaseTen.framework in Frameworks */,
+				535444820D634D9C002A6C47 /* SecurityInterface.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF560486A6940098B216 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				8DC2EF570486A6940098B216 /* Cocoa.framework in Frameworks */,
-				534690590A779BFB0067E3A9 /* BaseTen.framework in Frameworks */,
 				531650C40B72040700785454 /* SecurityInterface.framework in Frameworks */,
+				5354449B0D634DEE002A6C47 /* BaseTen.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,6 +235,7 @@
 			isa = PBXGroup;
 			children = (
 				537E4A860A14C91800A22080 /* BaseTenAppKit.framework */,
+				535444870D634D9C002A6C47 /* BaseTenAppKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -222,8 +293,11 @@
 		2B8B5E3B0B20185100EF04F3 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
-				2B8B5E410B20189600EF04F3 /* debug.xcconfig */,
-				2B8B5E420B20189600EF04F3 /* release.xcconfig */,
+				5354444D0D634D63002A6C47 /* common.xcconfig */,
+				535444490D634D63002A6C47 /* debug-gc.xcconfig */,
+				5354444A0D634D63002A6C47 /* debug-non-gc.xcconfig */,
+				5354444B0D634D63002A6C47 /* release-gc.xcconfig */,
+				5354444C0D634D63002A6C47 /* release-non-gc.xcconfig */,
 			);
 			name = xcconfig;
 			sourceTree = "<group>";
@@ -285,7 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				53967AE00A3725FD002DB5AE /* BaseTen.framework */,
-				537E48D60A14BFE800A22080 /* BaseTen.framework */,
+				5354443E0D634CA4002A6C47 /* BaseTen.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -294,6 +368,7 @@
 			isa = PBXGroup;
 			children = (
 				53B38EC40BC2807400EAA5C3 /* libLog4Cocoa.a */,
+				535444440D634CA4002A6C47 /* libLog4Cocoa.a */,
 				53B38EC60BC2807400EAA5C3 /* AllTests */,
 				53B38EC80BC2807400EAA5C3 /* Documentation */,
 				53B38ECA0BC2807400EAA5C3 /* Log4Cocoa.framework */,
@@ -304,6 +379,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		5354445C0D634D9C002A6C47 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5354445D0D634D9C002A6C47 /* BXSynchronizedArrayController.h in Headers */,
+				5354445E0D634D9C002A6C47 /* BaseTenAppKit.h in Headers */,
+				5354445F0D634D9C002A6C47 /* BXObjectStatusToColorTransformer.h in Headers */,
+				535444600D634D9C002A6C47 /* BXAppKitFunctions.h in Headers */,
+				535444610D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.h in Headers */,
+				535444620D634D9C002A6C47 /* NSController+BXAppKitAdditions.h in Headers */,
+				535444630D634D9C002A6C47 /* BXController.h in Headers */,
+				535444640D634D9C002A6C47 /* BXControllerProtocol.h in Headers */,
+				535444650D634D9C002A6C47 /* BXDatabaseContextAdditions.h in Headers */,
+				535444660D634D9C002A6C47 /* BXConnectionViewManager.h in Headers */,
+				535444670D634D9C002A6C47 /* BXConnectionPanel.h in Headers */,
+				535444680D634D9C002A6C47 /* BXAuthenticationPanel.h in Headers */,
+				535444690D634D9C002A6C47 /* BXPanel.h in Headers */,
+				5354446A0D634D9C002A6C47 /* BXNetServiceConnector.h in Headers */,
+				5354446B0D634D9C002A6C47 /* BXAppKitAdditions.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF500486A6940098B216 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -329,6 +426,28 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		535444570D634D9C002A6C47 /* BaseTenAppKit + GC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 535444840D634D9C002A6C47 /* Build configuration list for PBXNativeTarget "BaseTenAppKit + GC" */;
+			buildPhases = (
+				5354445C0D634D9C002A6C47 /* Headers */,
+				5354446C0D634D9C002A6C47 /* Resources */,
+				535444710D634D9C002A6C47 /* Sources */,
+				5354447F0D634D9C002A6C47 /* Frameworks */,
+				535444830D634D9C002A6C47 /* Set icon */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				535444980D634DDC002A6C47 /* PBXTargetDependency */,
+				5354449A0D634DDC002A6C47 /* PBXTargetDependency */,
+			);
+			name = "BaseTenAppKit + GC";
+			productInstallPath = "$(HOME)/Library/Frameworks";
+			productName = CocoaFramework;
+			productReference = 535444870D634D9C002A6C47 /* BaseTenAppKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		8DC2EF4F0486A6940098B216 /* BaseTenAppKit */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1DEB91AD08733DA50010E9CD /* Build configuration list for PBXNativeTarget "BaseTenAppKit" */;
@@ -375,16 +494,24 @@
 			projectRoot = "";
 			targets = (
 				8DC2EF4F0486A6940098B216 /* BaseTenAppKit */,
+				535444570D634D9C002A6C47 /* BaseTenAppKit + GC */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		537E48D60A14BFE800A22080 /* BaseTen.framework */ = {
+		5354443E0D634CA4002A6C47 /* BaseTen.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = BaseTen.framework;
-			remoteRef = 537E48D50A14BFE800A22080 /* PBXContainerItemProxy */;
+			remoteRef = 5354443D0D634CA4002A6C47 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		535444440D634CA4002A6C47 /* libLog4Cocoa.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libLog4Cocoa.a;
+			remoteRef = 535444430D634CA4002A6C47 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		53967AE00A3725FD002DB5AE /* BaseTen.framework */ = {
@@ -425,6 +552,17 @@
 /* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5354446C0D634D9C002A6C47 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5354446D0D634D9C002A6C47 /* InfoPlist.strings in Resources */,
+				5354446E0D634D9C002A6C47 /* BaseTen.icns in Resources */,
+				5354446F0D634D9C002A6C47 /* ConnectionView.nib in Resources */,
+				535444700D634D9C002A6C47 /* AuthenticationView.nib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF520486A6940098B216 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -453,9 +591,43 @@
 			shellPath = /bin/sh;
 			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/../BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/../unzip.sh\" \"$PROJECT_DIR/../BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/../set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
 		};
+		535444830D634D9C002A6C47 /* Set icon */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set icon";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/../BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/../unzip.sh\" \"$PROJECT_DIR/../BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/../set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		535444710D634D9C002A6C47 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				535444720D634D9C002A6C47 /* BXSynchronizedArrayController.m in Sources */,
+				535444730D634D9C002A6C47 /* BXObjectStatusToColorTransformer.m in Sources */,
+				535444740D634D9C002A6C47 /* BXAppKitFunctions.m in Sources */,
+				535444750D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.m in Sources */,
+				535444760D634D9C002A6C47 /* NSController+BXAppKitAdditions.m in Sources */,
+				535444770D634D9C002A6C47 /* BXController.m in Sources */,
+				535444780D634D9C002A6C47 /* BXDatabaseContextAdditions.m in Sources */,
+				535444790D634D9C002A6C47 /* BXConnectionViewManager.m in Sources */,
+				5354447A0D634D9C002A6C47 /* BXConnectionPanel.m in Sources */,
+				5354447B0D634D9C002A6C47 /* BXAuthenticationPanel.m in Sources */,
+				5354447C0D634D9C002A6C47 /* BXPanel.m in Sources */,
+				5354447D0D634D9C002A6C47 /* BXNetServiceConnector.m in Sources */,
+				5354447E0D634D9C002A6C47 /* BXAppKitAdditions.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC2EF540486A6940098B216 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -479,6 +651,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		535444980D634DDC002A6C47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTen Framework + GC";
+			targetProxy = 535444970D634DDC002A6C47 /* PBXContainerItemProxy */;
+		};
+		5354449A0D634DDC002A6C47 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libLog4Cocoa + GC";
+			targetProxy = 535444990D634DDC002A6C47 /* PBXContainerItemProxy */;
+		};
 		53967B450A372810002DB5AE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "BaseTen Static";
@@ -521,93 +703,15 @@
 /* Begin XCBuildConfiguration section */
 		1DEB91AE08733DA50010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B8B5E410B20189600EF04F3 /* debug.xcconfig */;
+			baseConfigurationReference = 5354444A0D634D63002A6C47 /* debug-non-gc.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_BUILD = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEPLOYMENT_LOCATION = NO;
-				DSTROOT = /;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"../build/$(BUILD_STYLE)",
-				);
-				FRAMEWORK_VERSION = A;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
-				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/BaseTenAppKit_Prefix.pch;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/build/$(BUILD_STYLE)",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
-				INSTALL_PATH = "";
-				LD_DYLIB_INSTALL_NAME = "";
-				LIBRARY_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = "-headerpad_max_install_names";
-				PREBINDING = NO;
-				PRODUCT_NAME = BaseTenAppKit;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SKIP_INSTALL = YES;
-				STRIP_INSTALLED_PRODUCT = NO;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = framework;
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
 		1DEB91AF08733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2B8B5E420B20189600EF04F3 /* release.xcconfig */;
+			baseConfigurationReference = 5354444C0D634D63002A6C47 /* release-non-gc.xcconfig */;
 			buildSettings = {
-				DEBUG_BUILD = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEPLOYMENT_LOCATION = NO;
-				DSTROOT = /;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"../build/$(BUILD_STYLE)",
-				);
-				FRAMEWORK_VERSION = A;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
-				GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES;
-				GCC_MODEL_TUNING = G4;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/BaseTenAppKit_Prefix.pch;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/build/$(BUILD_STYLE)",
-					"$(BUILT_PRODUCTS_DIR)",
-				);
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_MODE_FLAG = "a-w,a+rX,u+w";
-				LIBRARY_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
-				OTHER_LDFLAGS = "-headerpad_max_install_names";
-				PREBINDING = NO;
-				PRODUCT_NAME = BaseTenAppKit;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
-				SKIP_INSTALL = YES;
-				USER_HEADER_SEARCH_PATHS = "$(PROJECT_DIR)";
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = framework;
 			};
 			name = Release;
 		};
@@ -619,6 +723,20 @@
 		};
 		1DEB91B308733DA50010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		535444850D634D9C002A6C47 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 535444490D634D63002A6C47 /* debug-gc.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		535444860D634D9C002A6C47 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5354444B0D634D63002A6C47 /* release-gc.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -640,6 +758,15 @@
 			buildConfigurations = (
 				1DEB91B208733DA50010E9CD /* Debug */,
 				1DEB91B308733DA50010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		535444840D634D9C002A6C47 /* Build configuration list for PBXNativeTarget "BaseTenAppKit + GC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				535444850D634D9C002A6C47 /* Debug */,
+				535444860D634D9C002A6C47 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

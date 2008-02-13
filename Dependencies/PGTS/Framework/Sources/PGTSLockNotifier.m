@@ -140,7 +140,7 @@
 				 notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveLocks ($1) AS nname"];
     if (YES == rval && YES == zeroCount)
     {
-		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
+		log4AssertValueReturn (nil != connection, NO, @"Expected to have a connection.");
         //Clock synchronization
         if (nil == [self lastCheckForTable: notificationName])
         {

@@ -1,3 +1,0 @@
-#include "basic.xcconfig"
-#include "fmwk.xcconfig"
-#include "release.xcconfig"

@@ -110,7 +110,7 @@
 				 notificationQuery: @"SELECT " PGTS_SCHEMA_NAME ".ObserveModifications ($1) AS nname" ];
     if (YES == rval && nil == [self lastCheckForTable: notificationName])
     {
-		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
+		log4AssertValueReturn (nil != connection, NO, @"Expected to have a connection.");
 		//Postgres won't have multiple prepared statements with parameters in one query.
 		NSString* queryFormat = @"SELECT " PGTS_SCHEMA_NAME ".ModificationTableCleanup (%@);"
 			"SELECT COALESCE (MAX (" PGTS_SCHEMA_NAME "_modification_timestamp), CURRENT_TIMESTAMP)::TIMESTAMP (3) WITHOUT TIME ZONE AS date "
