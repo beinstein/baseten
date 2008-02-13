@@ -731,14 +731,26 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @implementation PGTSPoint (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
-    NSPoint returnPoint;
+    NSPoint retval = NSZeroPoint;
     NSString* pointString = [NSString stringWithUTF8String: value];
     NSScanner* pointScanner = [NSScanner scannerWithString: pointString];
     [pointScanner setScanLocation: 1];
-    [pointScanner scanFloat: &(returnPoint.x)];
+	
+#if CGFLOAT_IS_DOUBLE
+    [pointScanner scanDouble: &(retval.x)];
+#else
+    [pointScanner scanFloat: &(retval.x)];
+#endif
+	
     [pointScanner setScanLocation: [pointScanner scanLocation] + 1];
-    [pointScanner scanFloat: &(returnPoint.y)];
-    return [NSValue valueWithPoint: returnPoint];
+	
+#if CGFLOAT_IS_DOUBLE
+    [pointScanner scanDouble: &(retval.y)];
+#else
+    [pointScanner scanFloat: &(retval.y)];
+#endif
+	
+    return [NSValue valueWithPoint: retval];
 }
 @end
 

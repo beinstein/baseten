@@ -149,7 +149,7 @@
     else if (1 == count)
     {
         Oid oid = [tableInfo oid];
-		log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
+		log4AssertValueReturn (nil != connection, NO, @"Expected to have a connection.");
                 
         PGTSResultSet* res = [connection executeQuery: query
                                            parameters: PGTSOidAsObject (oid)];
@@ -195,7 +195,7 @@
 
 - (BOOL) observe: (NSNotification *) notification
 {
-    log4AssertValueReturn (nil != connection, nil, @"Expected to have a connection.");
+    log4AssertValueReturn (nil != connection, NO, @"Expected to have a connection.");
     NSDictionary* userInfo = [notification userInfo];
     NSNumber* backendPID = [NSNumber numberWithInt: [connection backendPID]];
     return (observesSelfGenerated || NO == [[userInfo objectForKey: kPGTSBackendPIDKey] isEqualToNumber: backendPID]);
