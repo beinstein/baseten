@@ -12,6 +12,8 @@
 		5373A2190CEC9895006B581B /* BXSynchronizedArrayController.classdescription in Resources */ = {isa = PBXBuildFile; fileRef = 53978F5C0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription */; };
 		5373A24D0CECA493006B581B /* BXDatabaseContextInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A24C0CECA493006B581B /* BXDatabaseContextInspector.m */; };
 		5373A2500CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A24F0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m */; };
+		5373CD8D0D65C31D0084BD9D /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373CC8D0D65B9710084BD9D /* BaseTen.framework */; };
+		5373CD8E0D65C31E0084BD9D /* BaseTenAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5373CC900D65B9710084BD9D /* BaseTenAppKit.framework */; };
 		53978F590CEC63DD00B93B3C /* BXIBPlugin.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F520CEC63DD00B93B3C /* BXIBPlugin.m */; };
 		53978F5A0CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F570CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.m */; };
 		53978F5B0CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53978F580CEC63DD00B93B3C /* BXSynchronizedArrayController+IBAdditions.m */; };
@@ -21,8 +23,6 @@
 		53978F8D0CEC709200B93B3C /* BXArrayController.png in Resources */ = {isa = PBXBuildFile; fileRef = 53978F8A0CEC709200B93B3C /* BXArrayController.png */; };
 		53978F8E0CEC709200B93B3C /* BXDatabaseObject.png in Resources */ = {isa = PBXBuildFile; fileRef = 53978F8B0CEC709200B93B3C /* BXDatabaseObject.png */; };
 		53978F8F0CEC709200B93B3C /* Palette5.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53978F8C0CEC709200B93B3C /* Palette5.icns */; };
-		53978FD60CEC765800B93B3C /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FD30CEC764300B93B3C /* BaseTen.framework */; };
-		53978FD70CEC765C00B93B3C /* BaseTenAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FCB0CEC763A00B93B3C /* BaseTenAppKit.framework */; };
 		53C8C3140CEDDB8C00676C98 /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FD30CEC764300B93B3C /* BaseTen.framework */; };
 		53C8C3150CEDDB8C00676C98 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53978FCB0CEC763A00B93B3C /* BaseTenAppKit.framework */; };
 		8D1AC9700486D14A00FE50C9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD92D38A0106425D02CA0E72 /* Cocoa.framework */; };
@@ -31,6 +31,34 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5373CC8C0D65B9710084BD9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 535444130D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
+		};
+		5373CC8F0D65B9710084BD9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 535444870D634D9C002A6C47;
+			remoteInfo = "BaseTenAppKit + GC";
+		};
+		5373CD900D65C32C0084BD9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535444570D634D9C002A6C47 /* BaseTenAppKit + GC */;
+			remoteInfo = "BaseTenAppKit + GC";
+		};
+		5373CD920D65C32C0084BD9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535443BB0D634A47002A6C47 /* BaseTen Framework + GC */;
+			remoteInfo = "BaseTen Framework + GC";
+		};
 		53978FCA0CEC763A00B93B3C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */;
@@ -43,27 +71,6 @@
 			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
-			remoteInfo = "BaseTen Static";
-		};
-		53978FD40CEC764300B93B3C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = "BaseTen subframeworks";
-		};
-		53978FD80CEC766900B93B3C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = BaseTenAppKit;
-		};
-		53978FDA0CEC766900B93B3C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
 		};
 /* End PBXContainerItemProxy section */
@@ -120,9 +127,9 @@
 			files = (
 				8D1AC9700486D14A00FE50C9 /* Cocoa.framework in Frameworks */,
 				C0D069560A49DF9100C95564 /* InterfaceBuilderKit.framework in Frameworks */,
-				53978FD60CEC765800B93B3C /* BaseTen.framework in Frameworks */,
-				53978FD70CEC765C00B93B3C /* BaseTenAppKit.framework in Frameworks */,
 				5373A1580CEC8F5C006B581B /* ExceptionHandling.framework in Frameworks */,
+				5373CD8D0D65C31D0084BD9D /* BaseTen.framework in Frameworks */,
+				5373CD8E0D65C31E0084BD9D /* BaseTenAppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +196,7 @@
 			isa = PBXGroup;
 			children = (
 				53978FCB0CEC763A00B93B3C /* BaseTenAppKit.framework */,
+				5373CC900D65B9710084BD9D /* BaseTenAppKit.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -197,7 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				53978FD30CEC764300B93B3C /* BaseTen.framework */,
-				53978FD50CEC764300B93B3C /* BaseTen.framework */,
+				5373CC8D0D65B9710084BD9D /* BaseTen.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -246,8 +254,8 @@
 			buildRules = (
 			);
 			dependencies = (
-				53978FDB0CEC766900B93B3C /* PBXTargetDependency */,
-				53978FD90CEC766900B93B3C /* PBXTargetDependency */,
+				5373CD910D65C32C0084BD9D /* PBXTargetDependency */,
+				5373CD930D65C32C0084BD9D /* PBXTargetDependency */,
 			);
 			name = InterfaceBuilderPlugin;
 			productInstallPath = "$(HOME)/Developer/Palettes";
@@ -283,6 +291,20 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		5373CC8D0D65B9710084BD9D /* BaseTen.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTen.framework;
+			remoteRef = 5373CC8C0D65B9710084BD9D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5373CC900D65B9710084BD9D /* BaseTenAppKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTenAppKit.framework;
+			remoteRef = 5373CC8F0D65B9710084BD9D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		53978FCB0CEC763A00B93B3C /* BaseTenAppKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -295,13 +317,6 @@
 			fileType = wrapper.framework;
 			path = BaseTen.framework;
 			remoteRef = 53978FD20CEC764300B93B3C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		53978FD50CEC764300B93B3C /* BaseTen.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BaseTen.framework;
-			remoteRef = 53978FD40CEC764300B93B3C /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -386,15 +401,15 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		53978FD90CEC766900B93B3C /* PBXTargetDependency */ = {
+		5373CD910D65C32C0084BD9D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = BaseTenAppKit;
-			targetProxy = 53978FD80CEC766900B93B3C /* PBXContainerItemProxy */;
+			name = "BaseTenAppKit + GC";
+			targetProxy = 5373CD900D65C32C0084BD9D /* PBXContainerItemProxy */;
 		};
-		53978FDB0CEC766900B93B3C /* PBXTargetDependency */ = {
+		5373CD930D65C32C0084BD9D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "BaseTen Static";
-			targetProxy = 53978FDA0CEC766900B93B3C /* PBXContainerItemProxy */;
+			name = "BaseTen Framework + GC";
+			targetProxy = 5373CD920D65C32C0084BD9D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -449,6 +464,7 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(BUILD_DIR)/$(CONFIGURATION)\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_GC = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -475,6 +491,7 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(HOME)/Library/Frameworks/\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_2 = "\"$(DEVELOPER_DIR)/Library/Frameworks\"";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(BUILD_DIR)/$(CONFIGURATION)\"";
+				GCC_ENABLE_OBJC_GC = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = Sources/InterfaceBuilderPlugin_Prefix.pch;
