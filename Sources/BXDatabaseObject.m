@@ -475,7 +475,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	else
 	{
 		if (nil == retval)
-			retval = [super valueForUndefinedKey: aKey];
+			retval = [self valueForUndefinedKey2: aKey];
 		if ([NSNull null] == retval)
 			retval = nil;
 	}		
@@ -952,6 +952,11 @@ ParseSelector (SEL aSelector, NSString** key)
 - (id) valueForUndefinedKey: (NSString *) aKey
 {
     return [self primitiveValueForKey: aKey];
+}
+
+- (id) valueForUndefinedKey2: (NSString *) aKey
+{
+    return [super valueForUndefinedKey: aKey];
 }
 
 - (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey
