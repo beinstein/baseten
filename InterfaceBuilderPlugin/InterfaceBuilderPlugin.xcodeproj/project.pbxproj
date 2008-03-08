@@ -49,14 +49,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FA50CEC763800B93B3C /* BaseTenAppKit.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 535444570D634D9C002A6C47 /* BaseTenAppKit + GC */;
+			remoteGlobalIDString = 535444570D634D9C002A6C47;
 			remoteInfo = "BaseTenAppKit + GC";
 		};
 		5373CD920D65C32C0084BD9D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 535443BB0D634A47002A6C47 /* BaseTen Framework + GC */;
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
 		53978FCA0CEC763A00B93B3C /* PBXContainerItemProxy */ = {
@@ -354,6 +354,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "BASETEN_FRAMEWORK_PATH=\"../Frameworks/BaseTen.framework/Versions/A/BaseTen\"\nBASETENAPPKIT_FRAMEWORK_PATH=\"../Frameworks/BaseTenAppKit.framework/Versions/A/BaseTenAppKit\"\n\ninstall_name_tool \\\n\t-change \"@executable_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/../../../$BASETEN_FRAMEWORK_PATH\" \\\n\t\"$TARGET_BUILD_DIR/$FRAMEWORKS_FOLDER_PATH/$BASETENAPPKIT_FRAMEWORK_PATH\"\n\ninstall_name_tool \\\n\t-change \"@executable_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/$BASETEN_FRAMEWORK_PATH\" \\\n\t-change \"@executable_path/$BASETENAPPKIT_FRAMEWORK_PATH\" \\\n\t\t\"@loader_path/$BASETENAPPKIT_FRAMEWORK_PATH\" \\\n\t\"$TARGET_BUILD_DIR/$EXECUTABLE_PATH\"\n";
+			showEnvVarsInLog = 0;
 		};
 		53C8C30C0CEDD34500676C98 /* Set plug-in icon */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -368,6 +369,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "BASETEN_PROJECT_DIR=\"$PROJECT_DIR\"/../\n\nICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenPaletteIcon\"\n\n\"$BASETEN_PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenPaletteIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$BASETEN_PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+			showEnvVarsInLog = 0;
 		};
 		53C8C31A0CEDDBE800676C98 /* Copy Per Project Build Dir Items */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -382,6 +384,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nBASE_TEN_FRAMEWORK=\"$PROJECT_DIR/../build/$BUILD_STYLE/BaseTen.framework\"\n\nif [ -e \"$BASE_TEN_FRAMEWORK\" ] && [ \"$BASE_TEN_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTen.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTen.framework\"\n\tcp -pfR \"$BASE_TEN_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\nBASE_TEN_APPKIT_FRAMEWORK=\"$PROJECT_DIR/../BaseTenAppKit/build/$BUILD_STYLE/BaseTenAppKit.framework\"\n\nif [ -e \"$BASE_TEN_APPKIT_FRAMEWORK\" ] && [ \"$BASE_TEN_APPKIT_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\"\n\tcp -pfR \"$BASE_TEN_APPKIT_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
