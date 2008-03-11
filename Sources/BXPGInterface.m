@@ -317,8 +317,8 @@ static NSString* SSLMode (enum BXSSLMode mode)
 
 - (void) disconnect
 {
-	if (CONNECTION_OK != [connection connectionStatus])
-		[connection disconnect];
+	[connection disconnect];
+	[notifyConnection disconnect];
 }
 
 - (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error

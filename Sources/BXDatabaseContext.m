@@ -329,9 +329,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 			[self lazyInit];
 			[[self databaseInterface] connect: &localError];
 			
-			BOOL success = (nil == localError);
-			[self connectedToDatabase: success async: NO error: &localError];
-			if (!success)
+			if (nil == localError)
+				[self connectedToDatabase: (nil == localError) async: NO error: &localError];
+			
+			if (nil != localError)
 			{
 				[mDatabaseInterface release];
 				mDatabaseInterface = nil;
@@ -1435,7 +1436,9 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		}
 		else
 		{
-			//FIXME: what is the state in this case? Connected? Perhaps we should disconnect if entity validation fails?
+			if (NULL != error)
+				*error = localError;
+			[mDatabaseInterface disconnect];
 			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 														 object: self
 													   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
