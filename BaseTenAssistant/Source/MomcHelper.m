@@ -99,6 +99,7 @@ int main (int argc, char** argv)
                 {
                     char* paths [] = {
                         (getenv ("MOMC") ?: ""),
+						"/Developer/usr/bin/momc", // Patch from Gustavo Moya Ortiz on 20080311, case #127.
                         "/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc",
                         "/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc",
                         NULL
