@@ -29,7 +29,6 @@ extern NSString		* kConnectionDoesNotExistsException;
  */
 @interface NDRunLoopMessenger : NSObject
 {
-@private
 	NSPort		* port;
 }
 
