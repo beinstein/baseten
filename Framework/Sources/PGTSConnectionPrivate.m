@@ -450,9 +450,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 			
 			if (0 == selectStatus)
 			{
-#if 0 //FIXME: debugging
 				[self setErrorMessage: NSLocalizedString (@"Connection timed out.", @"Error message for connection failure")];
-#endif
 				break;
 			}
             else if (0 >= selectStatus || YES == stop)
