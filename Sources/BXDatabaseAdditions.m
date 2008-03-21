@@ -26,11 +26,11 @@
 // $Id$
 //
 
+#import "BXConstants.h"
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
-#import "BXConstants.h"
 #import "BXDatabaseContext.h"
 #import "BXException.h"
 #import "BXDatabaseObject.h"
@@ -58,7 +58,7 @@
 - (NSURL *) BXURIForHost: (NSString *) host database: (NSString *) dbName username: (NSString *) username password: (id) password
 {
 	NSString* scheme = [self scheme];
-	NSURL* rval = nil;
+	NSURL* retval = nil;
 	
 	if (nil != scheme)
 	{
@@ -71,94 +71,123 @@
 		else if ([NSNull null] == password) password = nil;
 		
 		if (nil != password && 0 < [password length])
-			[URLString appendFormat: @"%@:%@@", username ?: @"", password];
+			[URLString appendFormat: @"%@:%@@", [username BXURLEncodedString] ?: @"", [password BXURLEncodedString]];
 		else if (nil != username && 0 < [username length])
-			[URLString appendFormat: @"%@@", username];
+			[URLString appendFormat: @"%@@", [username BXURLEncodedString]];
 	
 		if (nil == host) host = [self host];
 		if (nil == host) host = @"";
 		[URLString appendString: host];
 	
-		if (nil != dbName) 
-			[URLString appendFormat: @"/%@", dbName];
-		else
-			[URLString appendFormat: [self path] ?: @""];
-		
-		rval = [NSURL URLWithString: URLString];
+		if (nil != dbName)
+            dbName = [dbName BXURLEncodedString];
+        else
+            dbName = [[dbName substringFromIndex: 1] BXURLEncodedString];
+        
+        if (nil != dbName) [URLString appendFormat: @"/%@", dbName];
+		retval = [NSURL URLWithString: URLString];
 	}
-	return rval;
+	return retval;
 }
 
 @end
+
+
+static NSData*
+URLEncode (const char* bytes, size_t length)
+{
+    NSMutableData* retval = [NSMutableData data];
+    char hex [4] = "\0\0\0\0";
+    for (unsigned int i = 0; i < length; i++)
+    {
+        char c = bytes [i];
+        if (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || 
+            '-' == c || '_' == c || '.' == c || '~' == c)
+            [retval appendBytes: &c length: sizeof (char)];
+        else
+        {
+            snprintf (hex, 4, "%%%02hhx", c);
+            [retval appendBytes: hex length: 3 * sizeof (char)];
+        }
+    }
+    return retval;
+}
+
+static NSData* 
+URLDecode (const char* bytes, size_t length, id sender)
+{
+    NSMutableData* retval = [NSMutableData data];
+    char hex [3] = "\0\0\0";
+    for (unsigned int i = 0; i < length; i++)
+    {
+        char c = bytes [i];
+        if ('%' != c)
+            [retval appendBytes: &c length: sizeof (char)];
+        else
+        {
+            if (length < i + 3)
+            {
+                @throw [NSException exceptionWithName: NSRangeException reason: nil 
+                                             userInfo: [NSDictionary dictionaryWithObject: sender forKey: kBXObjectKey]];
+            }
+            i++;
+            strlcpy ((char *) &hex, &bytes [i], 3);
+            char c = (char) strtol ((char *) &hex, NULL, 16);
+            [retval appendBytes: &c length: sizeof (char)];
+            i++;
+        }
+    }
+    return retval;
+}
 
 
 @implementation NSData (BXDatabaseAdditions)
 - (NSData *) BXURLDecodedData;
 {
-    NSMutableData* rval = [NSMutableData data];
-    unsigned int length = [self length];
-    const char* bytes = [self bytes];
-    size_t size = 3 * sizeof (char);
-    char* hex = malloc (size);
-    for (int i = 0; i < length; i++)
-    {
-        unsigned char c = bytes [i];
-        if ('%' != c)
-            [rval appendBytes: &c length: sizeof (char)];
-        else
-        {
-            if (length < i + 3)
-            {
-                free (hex);
-                @throw [NSException exceptionWithName: NSRangeException reason: nil 
-                                             userInfo: [NSDictionary dictionaryWithObject: self forKey: kBXObjectKey]];
-            }
-            i++;
-            strlcpy (hex, &bytes [i], size);
-            long l = strtol (hex, NULL, 16);
-            [rval appendBytes: &l length: sizeof (char)];
-            i++;
-        }
-    }
-    free (hex);
-    return [NSData dataWithData: rval];
+    return URLDecode ((char *) [self bytes], [self length], self);
 }
 
 - (NSData *) BXURLEncodedData
 {
-    NSMutableData* rval = [NSMutableData data];
-    unsigned int length = [self length];
-    const char* bytes = [self bytes];
-	const size_t hexlength = 3;
-    char* hex = malloc (hexlength * sizeof (char));
-    for (int i = 0; i < length; i++)
-    {
-        unsigned char c = bytes [i];
-        if (('0' <= c && c <= '9') || ('A' <= c && c <= 'Z') || ('a' <= c && c <= 'z') || 
-            '-' == c || '_' == c || '.' == c || '~' == c)
-            [rval appendBytes: &c length: sizeof (char)];
-        else
-        {
-            snprintf (hex, hexlength, "%%%02x", c);
-            [rval appendBytes: hex length: hexlength * sizeof (char)];
-        }
-    }
-    free (hex);
-    return [NSData dataWithData: rval];
+    return URLEncode ((char *) [self bytes], [self length]);
 }
 @end
 
 
 @implementation NSString (BXDatabaseAdditions)
+
++ (NSString *) BXURLEncodedData: (id) data
+{
+    return [[[self alloc] initWithData: [data BXURLEncodedData] 
+                              encoding: NSASCIIStringEncoding] autorelease];
+}
+
++ (NSString *) BXURLDecodedData: (id) data
+{
+    return [[[self alloc] initWithData: [data BXURLDecodedData]
+                              encoding: NSUTF8StringEncoding] autorelease];
+}
+
 - (NSData *) BXURLDecodedData
 {
     return [[self dataUsingEncoding: NSASCIIStringEncoding] BXURLDecodedData];
 }
 
-+ (NSString *) BXURLEncodedData: (NSData *) data
+- (NSData *) BXURLEncodedData
 {
-    return [[[NSString alloc] initWithData: [data BXURLEncodedData] 
-                                  encoding: NSASCIIStringEncoding] autorelease];
+    const char* UTF8String = [self UTF8String];
+    size_t length = strlen (UTF8String);
+    return URLEncode (UTF8String, length);
+}
+
+- (NSString *) BXURLEncodedString
+{
+    return [NSString BXURLEncodedData: self];
+}
+
+- (NSString *) BXURLDecodedString
+{
+    return [NSString BXURLDecodedData: self];
 }
 
 - (NSArray *) BXKeyPathComponentsWithQuote: (NSString *) quoteString
@@ -243,7 +272,7 @@
     unsigned int count = [properties count];
 	log4AssertValueReturn (count == [otherProperties count], nil, @"Expected given arrays' counts to match.");
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: count];
-    for (int i = 0; i < count; i++)
+    for (unsigned int i = 0; i < count; i++)
     {
         //The expression type should not be changed since it affects expression handling in NSExpression+PGTSAdditions.
         NSExpression* lhs = [NSExpression expressionForConstantValue: [properties objectAtIndex: i]];
@@ -492,7 +521,7 @@
 
 + (NSArray *) BXNullArray: (unsigned int) count
 {
-	id* buffer = alloca (count * sizeof (id));
+	id* buffer = (id *) alloca (count * sizeof (id));
 	for (unsigned int i = 0; i < count; i++)
 		buffer [i] = [NSNull null];
 	
@@ -522,13 +551,14 @@
 @implementation NSMutableDictionary (BXDatabaseAdditions)
 - (void) BXSetModificationType: (enum BXModificationType) aType forKey: (BXDatabaseObjectID *) aKey
 {
-    CFDictionarySetValue ((CFMutableDictionaryRef) self, aKey, &aType);
+    [self setObject: [NSValue valueWithBytes: &aType objCType: @encode (enum BXModificationType)] forKey: aKey];
 }
 
 - (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey
 {
-    enum BXModificationType retval = (enum BXModificationType)
-        CFDictionaryGetValue ((CFDictionaryRef) self, aKey);
+    
+    enum BXModificationType retval = kBXNoModification;
+    [[self objectForKey: aKey] getValue: &retval];
     return retval;
 }
 @end

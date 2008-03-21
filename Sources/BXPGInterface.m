@@ -103,6 +103,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
 @end
 
 
+@interface NSURL (BXPGInterfaceAdditions)
+- (NSMutableDictionary *) BXPGConnectionDictionary;
+@end
+
+
 @implementation NSString (BXPGAdditions)
 - (NSArray *) BXPGKeyPathComponents
 {
@@ -197,6 +202,29 @@ static NSString* SSLMode (enum BXSSLMode mode)
                                                 dstProperties: dstProperties];
 #endif
 	return nil;
+}
+@end
+
+
+@implementation NSURL (BXPGInterfaceAdditions)
+#define SetIf( VALUE, KEY ) if ((VALUE)) [connectionDict setObject: VALUE forKey: KEY];
+- (NSMutableDictionary *) BXPGConnectionDictionary
+{
+	NSMutableDictionary* connectionDict = nil;
+	if (0 == [@"pgsql" caseInsensitiveCompare: [self scheme]])
+	{
+		connectionDict = [NSMutableDictionary dictionary];    
+		
+		NSString* relativePath = [self relativePath];
+		if (1 <= [relativePath length])
+			SetIf ([relativePath substringFromIndex: 1], kPGTSDatabaseNameKey);
+		
+		SetIf ([self host], kPGTSHostKey);
+		SetIf ([[self user] BXURLDecodedString], kPGTSUserNameKey);
+		SetIf ([[self password] BXURLDecodedString], kPGTSPasswordKey);
+		SetIf ([self port], kPGTSPortKey);
+	}
+	return connectionDict;
 }
 @end
 
@@ -1562,7 +1590,7 @@ bail:
 		[connection setDelegate: self];
 	}
 	
-	NSMutableDictionary* connectionDict = [databaseURI PGTSConnectionDictionary];
+	NSMutableDictionary* connectionDict = [databaseURI BXPGConnectionDictionary];
 	[connectionDict setValue: SSLMode (mode) forKey: kPGTSSSLModeKey];
 	[connection setConnectionDictionary: connectionDict];
 	[connection setLogsQueries: logsQueries];

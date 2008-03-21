@@ -54,8 +54,12 @@ enum BXModificationType;
 
 
 @interface NSString (BXDatabaseAdditions)
-+ (NSString *) BXURLEncodedData: (NSData *) data;
++ (NSString *) BXURLEncodedData: (id) data;
++ (NSString *) BXURLDecodedData: (id) data;
 - (NSData *) BXURLDecodedData;
+- (NSData *) BXURLEncodedData;
+- (NSString *) BXURLEncodedString;
+- (NSString *) BXURLDecodedString;
 - (NSArray *) BXKeyPathComponentsWithQuote: (NSString *) quoteString;
 - (NSString *) BXAttributeName;
 @end
