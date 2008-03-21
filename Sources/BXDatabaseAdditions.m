@@ -82,7 +82,7 @@
 		if (nil != dbName)
             dbName = [dbName BXURLEncodedString];
         else
-            dbName = [[dbName substringFromIndex: 1] BXURLEncodedString];
+            dbName = [[self path] substringFromIndex: 1];
         
         if (nil != dbName) [URLString appendFormat: @"/%@", dbName];
 		retval = [NSURL URLWithString: URLString];
