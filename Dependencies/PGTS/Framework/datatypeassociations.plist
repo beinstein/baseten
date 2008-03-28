@@ -48,6 +48,8 @@
     <string>NSArray</string>
     <key>aclitem</key>
     <string>PGTSACLItem</string>
+    <key>uuid</key>
+    <string>NSString</string>
     
     <!-- Array types -->
     <key>_abstime</key>
