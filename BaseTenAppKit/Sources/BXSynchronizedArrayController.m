@@ -71,6 +71,9 @@
         [NSValueTransformer setValueTransformer: transformer
                                         forName: @"BXObjectStatusToEditableTransformer"];
         [transformer release];
+		
+		[self exposeBinding: @"databaseContext"];
+		[self exposeBinding: @"modalWindow"];
         
 		[BXDatabaseContext loadedAppKitFramework];
 	}
@@ -368,6 +371,13 @@
 
 
 @implementation BXSynchronizedArrayController (OverridenMethods)
+
+- (NSArray *) exposedBindings
+{
+	NSMutableArray* retval = [[[super exposedBindings] mutableCopy] autorelease];
+	[retval removeObject: @"managedObjectContext"];
+	return retval;
+}
 
 - (void) bind: (NSString *) binding toObject: (id) observableObject
   withKeyPath: (NSString *) keyPath options: (NSDictionary *) options
