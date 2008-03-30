@@ -363,14 +363,13 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation NSArray (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) current typeInfo: (PGTSTypeInfo *) typeInfo
 {
-    id rval = [NSMutableArray array];
+    id retval = [NSMutableArray array];
     //Used with typeInfo: argument later
     PGTSTypeInfo* elementType = [[typeInfo database] typeInfoForTypeWithOid: [typeInfo elementOid]];
     if (nil != elementType)
     {
-        char delimiter = [elementType delimiter];
         NSDictionary* deserializationDictionary = [[elementType connection] deserializationDictionary];
         if (nil == deserializationDictionary)
             deserializationDictionary = [NSDictionary PGTSDeserializationDictionary];
@@ -378,62 +377,85 @@ strtof (const char * restrict nptr, char ** restrict endptr);
         if (Nil == elementClass)
             elementClass = [NSData class];
         
-        size_t length = strlen (value);
-        unsigned int objectBaseIndex = 0;
-        unsigned int i = 0;
-
-        //First check if the array starts with a length (or whatever) specifier. If this is the case, skip it.
-        if ('[' == value [i])
+        //First check if the array starts with a range decoration. 
+        //We don't do anything with them, at least yet, so we skip it.
+        if ('[' == *current)
         {
-            for (int j = i + 1; j < length; j++)
+            while ('\0' != current)
             {
-                if (']' == value [j] && '=' == value [j + 1])
+                current++;
+                if (']' == *current && '=' == *(current + 1))
                 {
-                    i = j + 2;
-                    objectBaseIndex = i;
+                    current += 2;
                     break;
                 }
             }
         }
         
-        //Then check if the array starts and ends with { and }. If this is the case, remove them.
-        //The database does not seem to tell about this beforehand.
-        if ('{' == value [i] && '}' == value [length - 1])
+        //Check if the array is enclosed in curly braces. If this is the case, remove them.
+        //Arrays should always have this decoration but possibly (?) sometimes don't.
+        char* endings = NULL;
+        asprintf (&endings, "%c\0\0", [elementType delimiter]);
+        if ('{' == *current)
         {
-            i++;
-            objectBaseIndex = i;
-            length -= 1;
+            current++;
+            endings [1] = '}';
         }
         
-        if (0 < (length - i))
+        const char* element = NULL;
+        const char* escaped = NULL;
+        while (1)
         {
-            while (i <= length)
+            //Mark the element beginning.
+            if (NULL == element)
+                element = current;
+            
+            //Remember the last escape character.
+            if ('\\' == *current && current - 1 != escaped)
+                escaped = current;
+                        
+            if (strchr (endings, *current) && current != escaped)
             {
-                if (delimiter == value [i] || i == length)
+                const char* end = current;
+                //Check for "value" -style element.
+                if ('"' == *element)
                 {
-                    if (i == objectBaseIndex)
-                        [rval addObject: [NSNull null]];
-                    else
-                    {
-                        unsigned int length = i - objectBaseIndex;
-                        size_t size = (length + 1) * sizeof (char);
-                        
-                        char* objectData = malloc (size);
-                        memcpy (objectData, &value [objectBaseIndex], size);
-                        objectData [length] = '\0';
-                        
-                        id object = [elementClass newForPGTSResultSet: set withCharacters: objectData typeInfo: elementType];
-                        [rval addObject: object];
-                        
-                        free (objectData);
-                    }
-                    objectBaseIndex = i + 1;
+                    end--;
+                    //Check for escaped quote before delimiter: "value1\","
+                    //Also check for ending-in-element: "}"
+                    if (element == end || end - 1 == escaped || '"' != *end)
+                        goto continue_iteration;
+                    
+                    element++;
                 }
-                i++;
+                
+                id object = nil;
+                if (element >= end)
+                    object = [NSNull null];
+                else
+                {
+                    //Nul-terminate so we get a C-string.
+                    size_t last = end - element;
+                    char* elementData = malloc (1 + last);
+                    memcpy (elementData, element, last);
+                    elementData [last] = '\0';
+                    object = [elementClass newForPGTSResultSet: set withCharacters: elementData typeInfo: elementType];
+                    free (elementData);
+                }
+                [retval addObject: object];
+                
+                element = NULL;
+                //Are we at the end?
+                if (*current != endings [0])
+                    break;
             }
+            
+continue_iteration:
+            current++;
         }
+        free (endings);
     }
-    return rval;
+    return retval;
 }
 
 - (NSString *) PGTSFieldnames: (PGTSConnection *) connection
