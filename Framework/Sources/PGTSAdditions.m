@@ -363,6 +363,31 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation NSArray (PGTSAdditions)
+inline size_t
+UnescapePGArray (char* dst, const char* const src_, size_t length)
+{
+    const char* const end = src_ + length;
+    const char* src = src_;
+    char c = '\0';
+    while (src < end)
+    {
+        c = *src;
+        switch (c)
+        {
+            case '\\':
+                src++;
+                c = *src;
+                length--;
+                //Fall through.
+            default:
+                *dst = c;
+                src++;
+                dst++;
+        }
+    }
+    return length;
+}
+
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) current typeInfo: (PGTSTypeInfo *) typeInfo
 {
     id retval = [NSMutableArray array];
@@ -429,22 +454,29 @@ strtof (const char * restrict nptr, char ** restrict endptr);
                     element++;
                 }
                 
+                //Since we really are at the end of an element, create an object.
                 id object = nil;
                 if (element >= end)
                     object = [NSNull null];
                 else
                 {
-                    //Nul-terminate so we get a C-string.
+                    //Make a copy and remove double-escapes.
+                    //FIXME: hopefully malloc copes with requests for more than 0xffff bytes.
                     size_t last = end - element;
                     char* elementData = malloc (1 + last);
-                    memcpy (elementData, element, last);
+                    last = UnescapePGArray (elementData, element, last);
+
+                    //Add a terminating NUL so we get a C-string.
                     elementData [last] = '\0';
+
+                    //Create the object.
                     object = [elementClass newForPGTSResultSet: set withCharacters: elementData typeInfo: elementType];
                     free (elementData);
                 }
                 [retval addObject: object];
                 
                 element = NULL;
+                escaped = NULL;
                 //Are we at the end?
                 if (*current != endings [0])
                     break;
