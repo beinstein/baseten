@@ -561,8 +561,11 @@ static NSString* SSLMode (enum BXSSLMode mode)
 					NSDictionary* pkey = currentLock;
 					BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
 																   primaryKeyFields: pkey];
-					BXDatabaseObject* object = [context registeredObjectWithID: objectID];
-					[object setLockedForKey: nil]; //TODO: set the key accordingly
+					if (nil != objectID)
+					{
+						BXDatabaseObject* object = [context registeredObjectWithID: objectID];
+						[object setLockedForKey: nil]; //TODO: set the key accordingly
+					}
 				}
 			}
 		}

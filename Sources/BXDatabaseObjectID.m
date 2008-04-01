@@ -77,7 +77,7 @@
     TSEnumerate (currentKey, e, [keys objectEnumerator])
     {
         id currentValue = [pkeyDict objectForKey: currentKey];
-        log4AssertValueReturn ([NSNull null] != currentValue, nil, @"A pkey value was NSNull.");
+        log4AssertValueReturn ([NSNull null] != currentValue, nil, @"A pkey value was NSNull. Entity: %@", anEntity);
         
         NSString* valueForURL = @"";
         char argtype = 'd';
