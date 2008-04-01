@@ -84,7 +84,7 @@
         //NSStrings and NSNumbers get a special treatment
         if ([currentValue isKindOfClass: [NSString class]])
         {
-            valueForURL = currentValue;
+            valueForURL = [currentValue stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
             argtype = 's';
         }
         else if ([currentValue isKindOfClass: [NSNumber class]])
@@ -149,6 +149,7 @@
 		{
 			case 's':
 				[queryScanner scanUpToString: @"&" intoString: &value];
+				value = [value stringByReplacingPercentEscapesUsingEncoding: NSUTF8StringEncoding];
 				break;
 			case 'n':
 			{
