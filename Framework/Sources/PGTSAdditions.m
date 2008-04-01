@@ -363,7 +363,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation NSArray (PGTSAdditions)
-inline size_t
+static inline size_t
 UnescapePGArray (char* dst, const char* const src_, size_t length)
 {
     const char* const end = src_ + length;
