@@ -139,6 +139,24 @@ REVOKE ALL PRIVILEGES
 	ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
 
 
+-- Appends each element of an array with the first parameter
+CREATE FUNCTION "baseten".array_append_each (TEXT, TEXT []) 
+    RETURNS TEXT [] AS $$
+DECLARE
+    suffix ALIAS FOR $1;
+    source ALIAS FOR $2;
+    destination TEXT [];
+BEGIN
+    FOR i IN array_lower (source, 1)..array_upper (source, 1) LOOP
+        destination [i] = source [i] || suffix;
+    END LOOP;
+    RETURN destination;
+END;
+$$ IMMUTABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES 
+	ON FUNCTION "baseten".array_append_each (TEXT, TEXT [])  FROM PUBLIC;
+
+
 CREATE FUNCTION "baseten".running_backend_pids () 
 RETURNS SETOF INTEGER AS $$
     SELECT 
@@ -850,7 +868,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.916::NUMERIC;
+    SELECT 0.917::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".Version () IS 'Schema version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
@@ -1470,9 +1488,10 @@ BEGIN
     lfname      := "baseten".LockNotifyFunctionName (toid);
     SELECT INTO isview 'v' = relkind FROM pg_class WHERE oid = toid;
     
-    SELECT INTO pkeyfields "baseten".array_accum (
-        quote_ident (attname)) AS fname, 
-        "baseten".array_accum (quote_ident (type)) AS type,
+    SELECT INTO pkeyfields 
+        "baseten".array_accum (quote_ident (attname)) AS fname, 
+        "baseten".array_accum (quote_ident (type)) AS type, --FIXME: should this be not quoted?
+        "baseten".array_accum (quote_ident (attname) || ' ' || type || ' NOT NULL') AS pkey_decls,
         relkind
         FROM "baseten".PrimaryKey WHERE oid = toid GROUP BY oid, relkind;
     IF NOT FOUND THEN
@@ -1481,8 +1500,7 @@ BEGIN
 
     tkind = pkeyfields.relkind;
     pkeyfnames = array_to_string (pkeyfields.fname, ', ');
-    pkey_decl = array_to_string (
-        "baseten".array_cat_each (pkeyfields.fname, pkeyfields.type, ' '), ', ');
+    pkey_decl = array_to_string (pkeyfields.pkey_decls, ', ');
 
     -- Locking
     EXECUTE 'CREATE TABLE '
