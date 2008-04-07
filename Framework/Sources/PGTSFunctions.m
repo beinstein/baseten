@@ -61,47 +61,6 @@ PGTSOidAsObject (Oid o)
     return [NSNumber numberWithUnsignedInt: o];
 }
 
-
-NSString* 
-PGTSModificationName (unichar type)
-{
-    NSString* modificationName = nil;
-    switch (type)
-    {
-        case 'I':
-            modificationName = kPGTSInsertModification;
-            break;
-        case 'U':
-            modificationName = kPGTSUpdateModification;
-            break;
-        case 'D':
-            modificationName = kPGTSDeleteModification;
-            break;
-        default:
-            break;
-    }
-    return modificationName;
-}
-
-
-NSString*
-PGTSLockOperation (unichar type)
-{
-    NSString* lockOperation = nil;
-    switch (type)
-    {
-        case 'U':
-            lockOperation = kPGTSLockedForUpdate;
-            break;
-        case 'D':
-            lockOperation = kPGTSLockedForDelete;
-            break;
-        default:
-            break;
-    }
-    return lockOperation;
-}
-
 /**
  * \internal
  * Verify an X.509 certificate.
