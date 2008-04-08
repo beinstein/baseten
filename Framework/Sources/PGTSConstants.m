@@ -88,6 +88,11 @@ NSString* const kPGTSLockedForUpdate              = @"kPGTSLockedForUpdate";
 NSString* const kPGTSLockedForDelete              = @"kPGTSLockedForDelete";
 NSString* const kPGTSUnlockedRowsNotification     = @"kPGTSUnlockedRowsNotification";
 
+NSString* const kPGTSUnsupportedPredicateOperatorTypeException = @"kPGTSUnsupportedPredicateOperatorTypeException";
+NSString* const kPGTSParametersKey = @"kPGTSParametersKey";
+NSString* const kPGTSParameterIndexKey = @"kPGTSParameterIndexKey";
+NSString* const kPGTSExpressionParametersVerbatimKey = @"kPGTSExpressionParametersVerbatimKey";
+
 NSString* const kPGTSErrorDomain                  = @"kPGTSErrorDomain";
 
 /** Declared in PGTSConnectionDelegate.h */

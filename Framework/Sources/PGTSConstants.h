@@ -95,6 +95,11 @@ PGTS_EXPORT NSString* const kPGTSLockedForDelete;
 PGTS_EXPORT NSString* const kPGTSUnlockedRowsNotification;
 PGTS_EXPORT NSString* const kPGTSRowShareLock;
 
+PGTS_EXPORT NSString* const kPGTSUnsupportedPredicateOperatorTypeException;
+PGTS_EXPORT NSString* const kPGTSParametersKey;
+PGTS_EXPORT NSString* const kPGTSParameterIndexKey;
+PGTS_EXPORT NSString* const kPGTSExpressionParametersVerbatimKey;
+
 PGTS_EXPORT NSString* const kPGTSErrorDomain;
 enum PGTSErrors
 {
