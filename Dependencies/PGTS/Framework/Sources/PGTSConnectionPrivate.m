@@ -280,6 +280,12 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 		errorMessage = [aMessage retain];
 	}
 }
+
+- (void) postNotification: (NSNotification *) notification
+{
+	[postgresNotificationCenter postNotification: notification];
+}
+
 @end
 
 
@@ -466,7 +472,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 			PQexec (connection, "SET standard_conforming_strings TO true");
 			PQexec (connection, "SET datestyle TO 'ISO, YMD'");
             //FIXME: set other things as well?
-            PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
+            PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) mainProxy);
 			
 			CFSocketContext context = {0, self, NULL, NULL, NULL};
 			socket = CFSocketCreateWithNative (NULL, bsdSocket, kCFSocketReadCallBack, &DataAvailable, &context);
@@ -569,9 +575,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
         NSNotification* notification = PGTSExtractPgNotification (self, pgNotification);
         [self logNotification: [notification name]];
         log4Debug (@"Posting notification: %@", notification);
-        [postgresNotificationCenter performSelectorOnMainThread: @selector (postNotification:)
-                                                     withObject: notification
-                                                  waitUntilDone: NO];
+		[mainProxy postNotification: notification];
         PQfreeNotify (pgNotification);
     }
 }

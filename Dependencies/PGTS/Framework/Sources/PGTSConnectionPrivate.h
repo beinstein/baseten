@@ -53,6 +53,7 @@
 - (int) sendResultsToDelegate: (int) status;
 - (void) handleFailedQuery;
 - (void) setErrorMessage: (NSString *) aMessage;
+- (void) postNotification: (NSNotification *) notification;
 @end
 
 

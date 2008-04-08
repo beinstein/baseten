@@ -68,9 +68,7 @@ static volatile BOOL sendStartedReconnectingMessage = YES;
         if (YES == sendStartedReconnectingMessage) \
         { \
             NS_DURING \
-                [self performSelectorOnMainThread: @selector (PGTSConnectionStartedReconnecting) \
-                                       withObject: self \
-                                    waitUntilDone: NO]; \
+                [mainProxy PGTSConnectionStartedReconnecting: self]; \
             NS_HANDLER \
                 sendStartedReconnectingMessage = NO; \
             NS_ENDHANDLER \

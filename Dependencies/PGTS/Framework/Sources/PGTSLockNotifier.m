@@ -159,9 +159,11 @@
 {
     log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
 
+	PGTSResultSet* xactRes = nil;
     PGTSResultSet* releasedRows = nil;
         
-    if (NO == [connection beginTransaction]) goto error;
+	xactRes = [connection executeQuery: @"BEGIN"];
+	if (! [xactRes querySucceeded]) goto error;
     
     //Which tables have pending locks?
     NSString* query = @"SELECT " PGTS_SCHEMA_NAME "_lock_relid, max (" PGTS_SCHEMA_NAME "_lock_timestamp) AS last_date "
@@ -209,7 +211,8 @@
     if (0 < [res countOfRows])
         [self setLastClearCheck: [res valueForKey: @"last_date"]];
         
-    if (NO == [connection commitTransaction]) goto error;
+	xactRes = [connection executeQuery: @"COMMIT"];
+	if (! [xactRes querySucceeded]) goto error;
     
     return;
 error:

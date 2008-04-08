@@ -40,14 +40,10 @@
 
 
 void 
-PGTSNoticeProcessor (void* connection, const char* message)
+PGTSNoticeProcessor (void* connectionProxy, const char* message)
 {
     if (NULL != message)
-    {
-        [(PGTSConnection *) connection performSelectorOnMainThread: @selector (handleNotice:) 
-                                                        withObject: [NSString stringWithUTF8String: message] 
-                                                     waitUntilDone: NO];
-    }
+        [(PGTSConnection *) connectionProxy handleNotice: [NSString stringWithUTF8String: message]];
 }
 
 /**
