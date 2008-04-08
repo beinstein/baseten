@@ -472,7 +472,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
 			PQexec (connection, "SET standard_conforming_strings TO true");
 			PQexec (connection, "SET datestyle TO 'ISO, YMD'");
             //FIXME: set other things as well?
-            PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) mainProxy);
+            PQsetNoticeProcessor (connection, &PGTSNoticeProcessor, (void *) self);
 			
 			CFSocketContext context = {0, self, NULL, NULL, NULL};
 			socket = CFSocketCreateWithNative (NULL, bsdSocket, kCFSocketReadCallBack, &DataAvailable, &context);
