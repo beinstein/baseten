@@ -1,5 +1,5 @@
 //
-// PGTSConnector.h
+// PGTSQueryDescription.h
 // BaseTen
 //
 // Copyright (C) 2008 Marko Karppinen & Co. LLC.
@@ -26,27 +26,30 @@
 // $Id$
 //
 
-@protocol PGTSConnectorDelegate
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGConn *) connection succeeded: (BOOL) succeeded;
+@interface PGTSQueryDescription : NSObject
+{
+}
+- (PGTSQuery *) query;
+- (void) setQuery: (PGTSQuery *) aQuery;
+- (unsigned long) identifier;
+- (void) setIdentifier: (unsigned long) anIdentifier;
+- (BOOL) sent;
+- (BOOL) finished;
+
+- (void) connectionSentQuery: (PGTSConnection *) connection;
+- (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) result;
+- (void) connectionFinishedQuery: (PGTSConnection *) connection;
 @end
 
 
-@interface PGTSConnector : NSObject
+@interface PGTSConcreteQueryDescription : PGTSQueryDescription
 {
-	id <PGTSConnectorDelegate> mDelegate;
-	PGconn* mConnection;
-	CFRunLoopRef mRunLoop;
-	CFSocketRef mSocket;
-	CFRunLoopSourceRef mSocketSource;
-	PostgresPollingStatusType (* mPollFunction)(PGconn *);
-	BOOL mSSLSetUp;
+	SEL mCallback
+	id mTarget
+	unsigned long mIdentifier
+	PGTSQuery* mQuery
+	PGTSResultSet* mLastResultSet	
+	BOOL mSent
+	BOOL mFinished
 }
-
-- (BOOL) connect: (const char *) connectionString;
-- (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
-
-- (void) freeMemory;
-- (void) socketReady;
-- (void) finishedConnecting: (BOOL) succeeded;
-
 @end

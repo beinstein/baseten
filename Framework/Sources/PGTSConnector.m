@@ -35,13 +35,63 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	[(id) self socketReady];
 }
 
+- (void) setDelegate: (id <PGTSConnectorDelegate>) anObject
+{
+	mDelegate = anObject;
+}
+
+- (void) setCFRunLoop: (CFRunLoopRef) aRef
+{
+	if (mRunLoop != aRef)
+	{
+		if (mRunLoop) CFRelease (mRunLoop);
+		if (aRef)
+		{
+			mRunLoop = aRef;
+			CFRetain (mRunLoop);
+		}
+	}
+}
+
 - (void) dealloc
 {
+	[self freeCFTypes];
+	[super dealloc];
+}
+
+- (void) finalize
+{
+	[self freeCFTypes];
+	[super finalize];
+}
+
+- (void) freeCFTypes
+{
+	//Don't release the connection. Delegate will handle it.
+	if (mSocketSource)
+	{
+		CFRunLoopSourceInvalidate (mSocketSource);
+		CFRelease (mSocketSource);
+		mSocketSource = NULL;
+	}
+	
+	if (mSocket)
+	{
+		CFSocketInvalidate (mSocket);
+		CFRelease (mSocket);
+		mSocket = NULL;
+	}
+	
+	if (mRunLoop)
+	{
+		CFRelease (mRunLoop);
+		mRunLoop = NULL;
+	}
 }
 
 - (void) socketReady
 {
-	PostgresPollingStatusType status = PQconnectPoll (mConnection);
+	PostgresPollingStatusType status = mPollFunction (mConnection);
 	
 #ifdef USE_SSL
 	if (! mSSLSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
@@ -81,20 +131,21 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) finishedConnecting: (BOOL) succeeded
 {
-	//FIXME: call the delegate
+	[mDelegate connector: self gotConnection: mConnection succeeded: succeeded];
+	[self freeCFTypes];
 }
 
-- (BOOL) connectAsync: (NSString *) connectionString
+- (BOOL) connect: (const char *) conninfo
 {
 	BOOL retval = NO;	
-	const char* conninfo = [connectionString UTF8String];
 	if ((mConnection = PQconnectStart (conninfo)) && CONNECTION_BAD != PQstatus (mConnection))
 	{
 		int bsdSocket = PQsocket (mConnection);
 		if (0 <= bsdSocket)
 		{			
 			CFSocketContext context = {0, self, NULL, NULL, NULL};
-			mSocket = CFSocketCreateWithNative (NULL, bsdSocket, kCFSocketReadCallBack | kCFSocketWriteCallBack, &SocketReady, &context);
+			CFSocketCallBackTypes callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
+			mSocket = CFSocketCreateWithNative (NULL, bsdSocket, callbacks, &SocketReady, &context);
 			CFOptionFlags flags = ~kCFSocketAutomaticallyReenableReadCallBack &
 								  ~kCFSocketAutomaticallyReenableWriteCallBack &
 								  ~kCFSocketCloseOnInvalidate &
@@ -107,9 +158,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 			log4AssertLog (mSocketSource, @"Expected socketSource to have been created.");
 			log4AssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
 			
-			CFRunLoopRef runloop = CFRunLoopGetCurrent ();
+			CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
 			CFStringRef mode = kCFRunLoopCommonModes;
 			CFRunLoopAddSource (runloop, mSocketSource, mode);
+			CFSocketDisableCallbackTypes (kCFSocketReadCallBack);
 			CFSocketEnableCallbackTypes (kCFSocketWriteCallBack);
 		}
 	}
