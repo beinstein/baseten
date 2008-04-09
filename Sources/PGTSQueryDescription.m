@@ -26,7 +26,41 @@
 // $Id$
 //
 
+#import "PGTSQueryDescription.h"
+
+
+static int gIdentifier = 0;
+static int
+NextIdentifier ()
+{
+	gIdentifier++;
+	return gIdentifier;
+}
+
 @implementation PGTSQueryDescription
+
+- (SEL) callback
+{
+	return NULL;
+}
+
+- (void) setCallback: (SEL) aSel
+{
+}
+
+- (id) delegate
+{
+	return nil;
+}
+
+- (void) setDelegate: (id) anObject
+{
+}
+
+- (int) identifier
+{
+	return 0;
+}
 
 - (PGTSQuery *) query
 {
@@ -34,15 +68,6 @@
 }
 
 - (void) setQuery: (PGTSQuery *) aQuery
-{
-}
-
-- (unsigned long) identifier
-{
-	return 0;
-}
-
-- (void) setIdentifier: (unsigned long) anIdentifier
 {
 }
 
@@ -73,6 +98,43 @@
 
 @implementation PGTSConcreteQueryDescription
 
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		@synchronized ([PGTSQueryIdentifier class])
+		{
+			mIdentifier = NextIdentifier ();
+		}
+	}
+	return self;
+}
+
+- (SEL) callback
+{
+	return mCallback;
+}
+
+- (void) setCallback: (SEL) aSel
+{
+	mCallback = aSel;
+}
+
+- (id) delegate
+{
+	return mDelegate;
+}
+
+- (void) setDelegate: (id) anObject
+{
+	mDelegate = anObject;
+}
+
+- (int) identifier
+{
+	return mIdentifier;
+}
+
 - (PGTSQuery *) query
 {
 	return mQuery;
@@ -85,16 +147,6 @@
 		[mQuery release];
 		mQuery = [aQuery retain];
 	}
-}
-
-- (unsigned long) identifier
-{
-	return mIdentifier;
-}
-
-- (void) setIdentifier: (unsigned long) anIdentifier
-{
-	mIdentifier = anIdentifier;
 }
 
 - (BOOL) sent

@@ -26,13 +26,22 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
+@class PGTSQuery;
+@class PGTSConnection;
+@class PGTSResultSet;
+
+
 @interface PGTSQueryDescription : NSObject
 {
 }
+- (SEL) callback;
+- (void) setCallback: (SEL) aSel;
+- (id) delegate;
+- (void) setDelegate: (id) anObject;
+- (int) identifier;
 - (PGTSQuery *) query;
 - (void) setQuery: (PGTSQuery *) aQuery;
-- (unsigned long) identifier;
-- (void) setIdentifier: (unsigned long) anIdentifier;
 - (BOOL) sent;
 - (BOOL) finished;
 
@@ -46,7 +55,7 @@
 {
 	SEL mCallback
 	id mTarget
-	unsigned long mIdentifier
+	int mIdentifier
 	PGTSQuery* mQuery
 	PGTSResultSet* mLastResultSet	
 	BOOL mSent

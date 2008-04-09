@@ -26,6 +26,8 @@
 // $Id$
 //
 
+#import "PGTSConnector.h"
+
 
 @implementation PGTSConnector
 

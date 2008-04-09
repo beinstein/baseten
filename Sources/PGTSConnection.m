@@ -26,6 +26,9 @@
 // $Id$
 //
 
+#import "PGTSConnection.h"
+
+
 @implementation PGTSConnection
 
 static void
@@ -54,13 +57,33 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) dealloc
 {
+	[self setConnector: nil];
 	[mQueue release];
 	[super dealloc];
+}
+
+- (BOOL) connectAsync: (NSString *) connectionString
+{
+	PGTSConnector* connector = [[PGTSConnector alloc] init];
+	[self setConnector: connector];
+	[connector release];
+	
+	[connector setDelegate: self];
+	[connector connect: [connectionString UTF8String]];
 }
 
 - (void) disconnect
 {
 	PQfinish (mConnection);
+}
+
+- (void) setConnector: (PGTSConnector *) anObject
+{
+	if (mConnector != anObject)
+	{
+		[mConnector autorelease];
+		mConnector = [anObject retain];
+	}
 }
 
 - (void) readFromSocket
@@ -83,7 +106,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		PQfreeNotify (pgNotification);
 	}
 	
-	//FIXME: set the description.
 	PGTSQueryDescription* queryDescription = [mQueue firstObject];
 	while (! PQisBusy (mConnection))
 	{
@@ -109,13 +131,27 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	}
 }
 
-- (void) sendNextQuery
+- (int) sendNextQuery
 {
-	PGTSQueryDescription* query = [mQueue firstObject];
-	log4AssertLog (! [query sent], @"Expected query not to have been sent. (%@)", query);
+	int retval = -1;
+	PGTSQueryDescription* desc = [mQueue firstObject];
+	if (nil != desc)
+	{
+		log4AssertVoidReturn (! [desc sent], @"Expected %@ not to have been sent.", desc);
 	
-	//FIXME: send the query.
-	[query connectionSentQuery: self];
+		retval = [[desc query] sendQuery: mConnection];
+		[desc connectionSentQuery: self];
+		return retval;
+	}
+}
+
+- (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query
+{
+	int retval = -1;
+	[mQueue addObject: query];
+	if (1 == [query count])
+		retval = [self sendNextQuery];
+	return retval;
 }
 
 @end
@@ -125,6 +161,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) connector: (PGTSConnector*) connector gotConnection: (PGConn *) connection succeeded: (BOOL) succeeded
 {
+	[self setConnector: nil];
 	if (succeeded)
 	{
 		mConnection = connection;
@@ -161,6 +198,79 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	{
 		//FIXME: handle the error.
 	}
+}
+
+@end
+
+
+@implementation PGTSConnection (Queries)
+
+#define StdargToNSArray( ARRAY_VAR, COUNT, LAST ) \
+    { va_list ap; va_start (ap, LAST); ARRAY_VAR = StdargToNSArray2 (ap, COUNT, LAST); va_end (ap); }
+
+
+static NSArray*
+StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
+{
+    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: argCount + 1];
+	[retval addObject: lastArg ?: [NSNull null]];
+	argCount--;
+
+    for (int i = 0; i < argCount; i++)
+    {
+        id argument = va_arg (arguments, id);
+        [retval addObject: argument ?: [NSNull null]];
+    }
+    return retval;
+}
+
+- (PGTSResultSet *) executeQuery: (NSString *) queryString
+{
+	return [self executeQuery: queryString parameterArray: nil];
+}
+
+- (PGTSResultSet *) executeQuery: (NSString *) queryString parameters: (id) p1, ...
+{
+	NSArray* parameters = nil;
+	StdargToNSArray (parameters, [queryString PGTSParameterCount], p1);
+	return [self executeQuery: queryString parameterArray: parameters];
+}
+
+- (PGTSResultSet *) executeQuery: (NSString *) queryString parameterArray: (NSArray *) parameters
+{
+	//FIXME: make this work.
+	return nil;
+}
+
+- (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback
+{
+	return [self sendQuery: queryString delegate: delegate callback: callback parameterArray: nil];
+}
+
+- (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback
+	   parameters: (id) p1, ...
+{
+	NSArray* parameters = nil;
+	StdargToNSArray (parameters, [queryString PGTSParameterCount], p1);
+	return [self sendQuery: queryString delegate: delegate callback: callback parameterArray: parameters];
+}
+
+- (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
+   parameterArray: (NSArray *) parameters
+{
+	PGTSQueryDescription* desc = [[PGTSQueryDescription alloc] init];
+	PGTSQuery* query = [[PGTSParameterQuery alloc] init];
+	[query setQuery: queryString];
+	[query setParameters: parameters];
+	[desc setQuery: query];
+	[desc setDelegate: delegate];
+	[desc setCallback: callback];
+	
+	int retval = [desc identifier];
+	[self sendOrEnqueueQuery: desc];
+	[desc release];
+	[query release];
+	return retval;
 }
 
 @end

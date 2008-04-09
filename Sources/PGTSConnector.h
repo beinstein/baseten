@@ -26,6 +26,9 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
+#import <PGTS/postgresql/libpq-fe.h>
+
 @protocol PGTSConnectorDelegate
 - (void) connector: (PGTSConnector*) connector gotConnection: (PGConn *) connection succeeded: (BOOL) succeeded;
 @end
