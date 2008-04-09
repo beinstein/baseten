@@ -575,7 +575,7 @@ DataAvailable (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef addre
         NSNotification* notification = PGTSExtractPgNotification (self, pgNotification);
         [self logNotification: [notification name]];
         log4Debug (@"Posting notification: %@", notification);
-		[mainProxy postNotification: notification];
+		[self performSelectorOnMainThread: @selector (postNotification:) withObject: notification waitUntilDone: NO];
         PQfreeNotify (pgNotification);
     }
 }
