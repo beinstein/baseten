@@ -26,7 +26,25 @@
 // $Id$
 //
 
+#import <CoreFoundation/CoreFoundation.h>
 #import "PGTSConnection.h"
+#import "PGTSConnector.h"
+#import "PGTSConstants.h"
+#import "PGTSQuery.h"
+#import "PGTSQueryDescription.h"
+#import "PGTSAdditions.h"
+
+//FIXME: enable logging.
+#define log4AssertLog(...) 
+#define log4AssertVoidReturn(...)
+
+
+@interface PGTSConnection (PGTSConnectionPrivate)
+- (void) setConnector: (PGTSConnector *) anObject;
+- (void) readFromSocket;
+- (int) sendNextQuery;
+- (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query;
+@end
 
 
 @implementation PGTSConnection
@@ -42,7 +60,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	if (kCFSocketReadCallBack & callbackType)
 	{
-		[self readFromSocket];
+		[(id) self readFromSocket];
 	}
 }
 
@@ -69,12 +87,17 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	[connector release];
 	
 	[connector setDelegate: self];
-	[connector connect: [connectionString UTF8String]];
+	return [connector connect: [connectionString UTF8String]];
 }
 
 - (void) disconnect
 {
 	PQfinish (mConnection);
+}
+
+- (PGconn *) pgConnection
+{
+    return mConnection;
 }
 
 - (void) setConnector: (PGTSConnector *) anObject
@@ -106,7 +129,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		PQfreeNotify (pgNotification);
 	}
 	
-	PGTSQueryDescription* queryDescription = [mQueue firstObject];
+	PGTSQueryDescription* queryDescription = [mQueue objectAtIndex: 0];
 	while (! PQisBusy (mConnection))
 	{
 		PGresult* result = PQgetResult (mConnection);
@@ -126,7 +149,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	
 	if ([queryDescription finished])
 	{
-		[mQueue removeFirstObject];
+		[mQueue removeObjectAtIndex: 0];
 		[self sendNextQuery];
 	}
 }
@@ -134,22 +157,22 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (int) sendNextQuery
 {
 	int retval = -1;
-	PGTSQueryDescription* desc = [mQueue firstObject];
+	PGTSQueryDescription* desc = [mQueue objectAtIndex: 0];
 	if (nil != desc)
 	{
 		log4AssertVoidReturn (! [desc sent], @"Expected %@ not to have been sent.", desc);
 	
-		retval = [[desc query] sendQuery: mConnection];
+		retval = [[desc query] sendQuery: self];
 		[desc connectionSentQuery: self];
-		return retval;
 	}
+    return retval;
 }
 
 - (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query
 {
 	int retval = -1;
 	[mQueue addObject: query];
-	if (1 == [query count])
+	if (1 == [mQueue count])
 		retval = [self sendNextQuery];
 	return retval;
 }
@@ -159,7 +182,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 @implementation PGTSConnection (PGTSConnectorDelegate)
 
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGConn *) connection succeeded: (BOOL) succeeded
+- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded
 {
 	[self setConnector: nil];
 	if (succeeded)
@@ -177,7 +200,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		
 		//Create a runloop source to receive data asynchronously.
 		CFSocketContext context = {0, self, NULL, NULL, NULL};
-		CFSocketCallBackTypes callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
+		CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
 		mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
 		CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
 		CFSocketSetSocketFlags (mSocket, flags);
@@ -191,8 +214,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
 		CFStringRef mode = kCFRunLoopCommonModes;
 		CFRunLoopAddSource (runloop, mSocketSource, mode);
-		CFSocketDisableCallbackTypes (kCFSocketWriteCallBack);
-		CFSocketEnableCallbackTypes (kCFSocketReadCallBack);
+		CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
+		CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
 	}
 	else
 	{
@@ -259,7 +282,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
    parameterArray: (NSArray *) parameters
 {
 	PGTSQueryDescription* desc = [[PGTSQueryDescription alloc] init];
-	PGTSQuery* query = [[PGTSParameterQuery alloc] init];
+	PGTSParameterQuery* query = [[PGTSParameterQuery alloc] init];
 	[query setQuery: queryString];
 	[query setParameters: parameters];
 	[desc setQuery: query];

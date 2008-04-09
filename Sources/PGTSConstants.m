@@ -27,8 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSConstants.H>
-#import <PGTS/PGTSConnectionDelegate.h>
+#import <PGTS/PGTSConstants.h>
 
 
 NSDictionary* kPGTSDefaultConnectionDictionary    = nil;

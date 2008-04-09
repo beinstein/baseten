@@ -26,35 +26,36 @@
 // $Id$
 //
 
+#import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h>
 @class PGTSResultSet;
 @class PGTSConnector;
 @class PGTSQueryDescription;
+@protocol PGTSConnectorDelegate;
+
 
 @interface PGTSConnection : NSObject
 {
-	PGConn* mConnection;
+	PGconn* mConnection;
 	NSMutableArray* mQueue;
 	id mConnector;
+    NSNotificationCenter* mNotificationCenter;
+    
+    CFRunLoopRef mRunLoop;
+    CFSocketRef mSocket;
+    CFRunLoopSourceRef mSocketSource;
 }
 - (id) init;
 - (void) dealloc;
 - (BOOL) connectAsync: (NSString *) connectionString;
 - (void) disconnect;
+- (PGconn *) pgConnection;
 @end
 
 
-@interface PGTSConnection ()
-- (void) setConnector: (PGTSConnector *) anObject;
-- (void) readFromSocket;
-- (int) sendNextQuery;
-- (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query;
-@end
-
-
-@interface PGTSConnection (PGTSConnectorDelegate)
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGConn *) connection succeeded: (BOOL) succeeded;
+@interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
+- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
 @end
 
 

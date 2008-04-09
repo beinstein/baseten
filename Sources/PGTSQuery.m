@@ -27,11 +27,13 @@
 //
 
 #import "PGTSQuery.h"
+#import "PGTSFoundationObjects.h"
+#import "PGTSConnection.h"
 
 
 @implementation PGTSQuery
 
-- (int) sendQuery: (PGConn *) connection
+- (int) sendQuery: (PGTSConnection *) connection
 {
 	return 0;
 }
@@ -70,14 +72,14 @@
 
 - (void) setQuery: (NSString *) aString
 {
-	if (query != aString)
+	if (mQuery != aString)
 	{
-		[query release];
-		query = [aString copy];
+		[mQuery release];
+		mQuery = [aString copy];
 	}
 }
 
-- (int) sendQuery: (PGConn *) connection
+- (int) sendQuery: (PGTSConnection *) connection
 {
     int retval = 0;
 	int nParams = [self parameterCount];
@@ -90,16 +92,16 @@
     {
         id parameter = [mParameters objectAtIndex: i];
         int length = 0;
-        const char* value = [parameter PGTSParameterLength: &length connection: self];
+        const char* value = [parameter PGTSParameterLength: &length connection: connection];
 
-        paramTypes   [i] = [parameter PGTSParameterType];
+        paramTypes   [i] = InvalidOid;
         paramValues  [i] = value;
         paramLengths [i] = length;
         paramFormats [i] = [parameter PGTSIsBinaryParameter];
     }
 
-    retval = PQsendQueryParams (connection, [mQuery UTF8String], nParams, paramTypes,
-                            	paramValues, paramLengths, paramFormats, 0));
+    retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
+                            	paramValues, paramLengths, paramFormats, 0);
 
     free (paramTypes);
     free (paramValues);

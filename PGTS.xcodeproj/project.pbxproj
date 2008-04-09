@@ -26,7 +26,6 @@
 		53091C4B0DAACF70005B5619 /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53091C430DAACF70005B5619 /* NSPredicate+PGTSAdditions.h */; };
 		53091C4C0DAACF70005B5619 /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C440DAACF70005B5619 /* NSPredicate+PGTSAdditions.m */; };
 		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
-		5321F5EF0CF7712300E663CE /* libMKCCollections.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5321F5EC0CF7711F00E663CE /* libMKCCollections.a */; };
 		532BF12E0A3717BA002E6BFE /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
 		53594D1C0B13711300378707 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
 		538176360D633DC000A4CA72 /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -92,11 +91,14 @@
 		5392A85F0DAD7E190012C7CD /* PGTSConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5392A85D0DAD7E190012C7CD /* PGTSConnector.m */; };
 		5392A8600DAD7E190012C7CD /* PGTSConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5392A85C0DAD7E190012C7CD /* PGTSConnector.h */; };
 		5392A8610DAD7E190012C7CD /* PGTSConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 5392A85D0DAD7E190012C7CD /* PGTSConnector.m */; };
+		5396ACE30DAD86F100BCDD39 /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A6AF209DEE51700D28AB0 /* PGTSConstants.h */; };
+		5396ACE40DAD86F100BCDD39 /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */; };
+		5396AD500DAD89DD00BCDD39 /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */; };
+		5396AD510DAD89DD00BCDD39 /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */; };
 		539701080A370CCB00DFF6E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		539C08BE0A3706BE00CC45E0 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539C08D10A3706CA00CC45E0 /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539C08D50A3706CD00CC45E0 /* PGTSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.m */; };
-		53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */; };
 		53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
 		53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
 		53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
@@ -265,11 +267,9 @@
 				539701080A370CCB00DFF6E8 /* Foundation.framework in Frameworks */,
 				53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */,
 				53594D1C0B13711300378707 /* libpq.a in Frameworks */,
-				53D0441D0B4C1E0300DB9308 /* libLog4Cocoa.a in Frameworks */,
 				531266140B68E28100637EDA /* Security.framework in Frameworks */,
 				53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */,
 				53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */,
-				5321F5EF0CF7712300E663CE /* libMKCCollections.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +493,8 @@
 				5392A7E10DAD7DFA0012C7CD /* PGTSQuery.h in Headers */,
 				5392A7E30DAD7DFA0012C7CD /* PGTSQueryDescription.h in Headers */,
 				5392A85E0DAD7E190012C7CD /* PGTSConnector.h in Headers */,
+				5396ACE30DAD86F100BCDD39 /* PGTSConstants.h in Headers */,
+				5396AD500DAD89DD00BCDD39 /* PGTSAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -678,6 +680,8 @@
 				5392A7E20DAD7DFA0012C7CD /* PGTSQuery.m in Sources */,
 				5392A7E40DAD7DFA0012C7CD /* PGTSQueryDescription.m in Sources */,
 				5392A85F0DAD7E190012C7CD /* PGTSConnector.m in Sources */,
+				5396ACE40DAD86F100BCDD39 /* PGTSConstants.m in Sources */,
+				5396AD510DAD89DD00BCDD39 /* PGTSAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

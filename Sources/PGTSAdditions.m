@@ -32,6 +32,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSConnection.h"
 #import "PGTSConstants.h"
+#if 0
 #import "PGTSFunctions.h"
 #import "PGTSTypeInfo.h"
 #import "PGTSFieldInfo.h"
@@ -230,9 +231,11 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     return sharedInstance;
 }
 @end
+#endif
 
 
 @implementation NSString (PGTSAdditions)
+#if 0
 + (NSString *) PGTSFieldAliases: (unsigned int) count
 {
     return [self PGTSFieldAliases: count start: 1];
@@ -266,6 +269,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     free (to);
     return rval;
 }
+#endif
 
 /**
  * The number of parameters in a string.
@@ -287,15 +291,18 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     return paramCount;
 }
 
+#if 0
 //FIXME: do we really need to escape field names?
 - (NSString *) PGTSQuotedString
 {
     return [NSString stringWithFormat: @"\"%@\"", self];
 }
+#endif
 
 @end
 
 
+#if 0
 @implementation NSArray (PGTSAdditions)
 - (NSString *) PGTSFieldnames: (PGTSConnection *) connection
 {
@@ -436,3 +443,4 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 	return connectionDict;
 }
 @end
+#endif

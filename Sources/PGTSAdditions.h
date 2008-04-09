@@ -27,24 +27,32 @@
 //
 
 #import <Foundation/Foundation.h>
+
+#if 0
 #import <PGTS/PGTSResultSet.h>
 #import <PGTS/PGTSResultRowProtocol.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 
-
 @class PGTSTypeInfo;
+
 
 @interface NSNumber (PGTSAdditions)
 - (Oid) PGTSOidValue;
 @end
+#endif
+
 
 @interface NSString (PGTSAdditions)
-- (NSString *) PGTSEscapedString: (PGTSConnection *) connection;
 - (int) PGTSParameterCount;
+#if 0
+- (NSString *) PGTSEscapedString: (PGTSConnection *) connection;
 + (NSString *) PGTSFieldAliases: (unsigned int) count;
 + (NSString *) PGTSFieldAliases: (unsigned int) count start: (unsigned int) start;
+#endif
 @end
 
+
+#if 0
 @interface NSObject (PGTSAdditions)
 - (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection;
 - (NSString *) PGTSEscapedName: (PGTSConnection *) connection;
@@ -109,3 +117,4 @@
 {
 }
 @end
+#endif

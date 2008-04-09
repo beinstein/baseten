@@ -26,7 +26,12 @@
 // $Id$
 //
 
-@interface NSObject (PGTSAdditions)
+#import <Foundation/Foundation.h>
+@class PGTSResultSet;
+@class PGTSConnection;
+@class PGTSTypeInfo;
+
+@interface NSObject (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo;
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
 - (BOOL) PGTSIsBinaryParameter;

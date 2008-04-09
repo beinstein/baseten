@@ -29,11 +29,13 @@
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h>
 
+@class PGTSConnection;
+
 
 @interface PGTSQuery : NSObject
 {
 }
-- (int) sendQuery: (PGConn *) connection;
+- (int) sendQuery: (PGTSConnection *) connection;
 @end
 
 

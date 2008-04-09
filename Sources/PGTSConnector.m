@@ -27,6 +27,14 @@
 //
 
 #import "PGTSConnector.h"
+#ifdef USE_SSL
+#import <openssl/ssl.h>
+#endif
+
+//FIXME: enable these.
+#undef USE_SSL
+#define log4AssertValueReturn(...) 
+#define log4AssertLog(...)
 
 
 @implementation PGTSConnector
@@ -55,18 +63,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	}
 }
 
-- (void) dealloc
-{
-	[self freeCFTypes];
-	[super dealloc];
-}
-
-- (void) finalize
-{
-	[self freeCFTypes];
-	[super finalize];
-}
-
 - (void) freeCFTypes
 {
 	//Don't release the connection. Delegate will handle it.
@@ -89,6 +85,18 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		CFRelease (mRunLoop);
 		mRunLoop = NULL;
 	}
+}
+
+- (void) dealloc
+{
+	[self freeCFTypes];
+	[super dealloc];
+}
+
+- (void) finalize
+{
+	[self freeCFTypes];
+	[super finalize];
 }
 
 - (void) socketReady
@@ -121,12 +129,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 			break;
             
         case PGRES_POLLING_READING:
-			CFSocketEnableCallbackTypes (kCFSocketReadCallBack);
+			CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
             break;
             
         case PGRES_POLLING_WRITING:
         default:
-			CFSocketEnableCallbackTypes (kCFSocketWriteCallBack);
+			CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
             break;
 	}
 }
@@ -146,7 +154,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		if (0 <= bsdSocket)
 		{			
 			CFSocketContext context = {0, self, NULL, NULL, NULL};
-			CFSocketCallBackTypes callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
+			CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
 			mSocket = CFSocketCreateWithNative (NULL, bsdSocket, callbacks, &SocketReady, &context);
 			CFOptionFlags flags = ~kCFSocketAutomaticallyReenableReadCallBack &
 								  ~kCFSocketAutomaticallyReenableWriteCallBack &
@@ -163,8 +171,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 			CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
 			CFStringRef mode = kCFRunLoopCommonModes;
 			CFRunLoopAddSource (runloop, mSocketSource, mode);
-			CFSocketDisableCallbackTypes (kCFSocketReadCallBack);
-			CFSocketEnableCallbackTypes (kCFSocketWriteCallBack);
+			CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
+			CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
 		}
 	}
 	return retval;

@@ -53,12 +53,12 @@
 
 @interface PGTSConcreteQueryDescription : PGTSQueryDescription
 {
-	SEL mCallback
-	id mTarget
-	int mIdentifier
-	PGTSQuery* mQuery
-	PGTSResultSet* mLastResultSet	
-	BOOL mSent
-	BOOL mFinished
+	SEL mCallback;
+	id mDelegate;
+	int mIdentifier;
+	PGTSQuery* mQuery;
+	PGTSResultSet* mLastResultSet;
+	BOOL mSent;
+	BOOL mFinished;
 }
 @end

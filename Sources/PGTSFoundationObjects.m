@@ -27,9 +27,14 @@
 //
 
 #import "PGTSFoundationObjects.h"
+#import "PGTSConnection.h"
+#import <PGTS/postgresql/libpq-fe.h>
+
+//FIXME: enable logging.
+#define log4Warn(...) 
 
 
-@implementation NSObject (PGTSAdditions)
+@implementation NSObject (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     return nil;
@@ -49,7 +54,7 @@
 @end
 
 
-@implementation NSString (PGTSAdditions)
+@implementation NSString (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     return [NSString stringWithUTF8String: value];
@@ -72,7 +77,8 @@
 @end
 
 
-@implementation NSData (PGTSAdditions)
+#if 0
+@implementation NSData (PGTSFoundationObjects)
 //FIXME: Should we use htonl?
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
@@ -110,7 +116,7 @@
 @end
 
 
-@implementation NSArray (PGTSAdditions)
+@implementation NSArray (PGTSFoundationObjects)
 static inline size_t
 UnescapePGArray (char* dst, const char* const src_, size_t length)
 {
@@ -270,7 +276,7 @@ continue_iteration:
 @end
 
 
-@implementation NSDate (PGTSAdditions)
+@implementation NSDate (PGTSFoundationObjects)
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
     NSMutableString* rval = [NSMutableString stringWithString: 
@@ -326,7 +332,7 @@ continue_iteration:
 @end
 
 
-@implementation NSCalendarDate (PGTSAdditions)
+@implementation NSCalendarDate (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     id rval = nil;
@@ -434,7 +440,7 @@ continue_iteration:
 @end
 
 
-@implementation NSDecimalNumber (PGTSAdditions)
+@implementation NSDecimalNumber (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
 {
     NSDecimal decimal;
@@ -446,7 +452,7 @@ continue_iteration:
 @end
 
 
-@implementation NSNumber (PGTSAdditions)
+@implementation NSNumber (PGTSFoundationObjects)
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
     return [[self description] PGTSParameterLength: length connection: connection];
@@ -457,3 +463,4 @@ continue_iteration:
     return [NSNumber numberWithLongLong: strtoll (value, NULL, 10)];
 }
 @end
+#endif

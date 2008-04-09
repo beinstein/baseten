@@ -29,8 +29,11 @@
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h>
 
+@class PGTSConnector;
+
+
 @protocol PGTSConnectorDelegate
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGConn *) connection succeeded: (BOOL) succeeded;
+- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
 @end
 
 
@@ -48,7 +51,6 @@
 - (BOOL) connect: (const char *) connectionString;
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
 
-- (void) freeMemory;
 - (void) socketReady;
 - (void) finishedConnecting: (BOOL) succeeded;
 

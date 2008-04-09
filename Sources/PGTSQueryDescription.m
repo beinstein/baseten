@@ -102,7 +102,7 @@ NextIdentifier ()
 {
 	if ((self = [super init]))
 	{
-		@synchronized ([PGTSQueryIdentifier class])
+		@synchronized ([PGTSQueryDescription class])
 		{
 			mIdentifier = NextIdentifier ();
 		}
@@ -166,8 +166,9 @@ NextIdentifier ()
 
 - (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) result
 {
-	[result setIdentifier: mIdentifier];
-	[mTarget performSelector: mCallback withObject: result];
+    //FIXME: enable this.
+	//[result setIdentifier: mIdentifier];
+	[mDelegate performSelector: mCallback withObject: result];
 }
 
 - (void) connectionFinishedQuery: (PGTSConnection *) connection
