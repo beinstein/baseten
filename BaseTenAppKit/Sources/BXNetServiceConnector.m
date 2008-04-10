@@ -192,7 +192,9 @@
             [self setAuthenticationPanel: nil];
             
             NSAlert* alert = [NSAlert alertWithError: error];
-            [alert beginSheetModalForWindow: nil modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
+            [alert beginSheetModalForWindow: nil modalDelegate: self 
+							 didEndSelector: @selector (connectionSetupAlertDidEnd:returnCode:contextInfo:) 
+								contextInfo: NULL];
 			[databaseContext BXConnectionSetupManagerFinishedAttempt];
         }
     }
@@ -203,6 +205,12 @@
         [mPanel end];
         [self setPanel: nil];
     }
+}
+
+- (void) connectionSetupAlertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+	//FIXME: userinfo?
+	[[databaseContext notificationCenter] postNotificationName: kBXConnectionSetupAlertDidEndNotification object: databaseContext];
 }
 
 - (void) setDatabaseContext: (BXDatabaseContext *) aContext

@@ -51,6 +51,7 @@ extern NSString* const kBXEntityDescriptionKey;
 extern NSString* const kBXPrimaryKeyFieldsKey;
 extern NSString* const kBXConnectionSuccessfulNotification;
 extern NSString* const kBXConnectionFailedNotification;
+extern NSString* const kBXConnectionSetupAlertDidEndNotification;
 extern NSString* const kBXAttributeKey;
 
 extern NSString* const kBXErrorDomain;
