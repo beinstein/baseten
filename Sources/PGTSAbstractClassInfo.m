@@ -35,7 +35,6 @@
 #import "PGTSRoleDescription.h"
 #import "PGTSACLItem.h"
 #import "PGTSDatabaseInfo.h"
-#import <MKCCollections/MKCCollections.h>
 
 /** 
  * Abstract base class for database class objects
@@ -47,8 +46,7 @@
     if ((self = [super initWithConnection: aConn]))
     {
         schemaOid = InvalidOid;
-        aclItems = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger
-                                                  valueType: kMKCCollectionTypeObject];
+        aclItems = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
@@ -81,7 +79,7 @@
 
 - (void) addACLItem: (PGTSACLItem *) item
 {
-    [aclItems setObject: item atIndex: [[item role] oid]];
+    [aclItems setObject: item forKey: PGTSOidAsObject ([[item role] oid])];
 }
 
 - (PGTSRoleDescription *) owner
@@ -124,14 +122,14 @@
 
 - (NSString *) name
 {
-    if (nil == name)
+    if (! name)
     {
         NSString* query = 
         @"SELECT c.relname, c.relacl, c.relowner, c.relkind, n.oid, n.nspname, r.rolname "
         " FROM pg_class c, pg_namespace n, pg_roles r "
         " WHERE c.relnamespace = n.oid AND r.oid = c.relowner AND c.oid = $1";
         PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
-        if (0 < [res numberOfRowsAffected])
+        if (0 < [res count])
         {
             [res advanceRow];
             relkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
@@ -139,8 +137,8 @@
             [self setSchemaName: [res valueForKey: @"nspname"]];
             [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];
             
-            PGTSRoleDescription* role = [[connection database] roleNamed: [res valueForKey: @"rolname"]
-                                                                     oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
+            PGTSRoleDescription* role = [[connection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
+                                                                                oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
             [self setOwner: role];
             
             TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])

@@ -79,9 +79,9 @@
         PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([table oid]), [NSNumber numberWithUnsignedInt: index]];
         if ([res advanceRow])
         {
-            [self setName: [res valueForFieldNamed: @"attname"]];
-            typeOid = [[res valueForFieldNamed: @"atttypid"] PGTSOidValue];
-			isNotNull = [[res valueForFieldNamed: @"attnotnull"] boolValue];
+            [self setName: [res valueForKey: @"attname"]];
+            typeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
+			isNotNull = [[res valueForKey: @"attnotnull"] boolValue];
         }
     }
     return name;
@@ -104,9 +104,9 @@
     {
 		NSString* query = @"SELECT attnumber, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1 AND attname = $2";
         PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([table oid]), name];
-        [self setIndex: [[res valueForFieldNamed: @"attnumber"] unsignedIntValue]];
-        typeOid = [[res valueForFieldNamed: @"atttypid"] PGTSOidValue];
-		isNotNull = [[res valueForFieldNamed: @"attnotnull"] boolValue];
+        [self setIndex: [[res valueForKey: @"attnumber"] unsignedIntValue]];
+        typeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
+		isNotNull = [[res valueForKey: @"attnotnull"] boolValue];
     }
     return index;
 }

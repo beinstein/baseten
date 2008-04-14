@@ -30,22 +30,48 @@
 #import "PGTSTableInfo.h"
 #import "PGTSFieldInfo.h"
 #import "PGTSFunctions.h"
-#import <MKCCollections/MKCCollections.h>
 
 
-static id gForeignKeys;
+static enum PGTSDeleteRule
+PGTSDeleteRule (const unichar rule)
+{
+	enum PGTSDeleteRule deleteRule = kPGTSDeleteRuleUnknown;
+	switch (rule)
+	{
+		case ' ':
+			deleteRule = kPGTSDeleteRuleNone;
+			break;
+			
+		case 'c':
+			deleteRule = kPGTSDeleteRuleCascade;
+			break;
+			
+		case 'n':
+			deleteRule = kPGTSDeleteRuleSetNull;
+			break;
+			
+		case 'd':
+			deleteRule = kPGTSDeleteRuleSetDefault;
+			break;
+			
+		case 'r':
+			deleteRule = kPGTSDeleteRuleRestrict;
+			break;
+			
+		case 'a':
+			deleteRule = kPGTSDeleteRuleNone;
+			break;
+			
+		default:
+			deleteRule = kPGTSDeleteRuleUnknown;
+			break;
+	}	
+	
+	return deleteRule;
+}
+
 
 @implementation PGTSForeignKeyDescription
-
-+ (void) initialize
-{
-    static BOOL tooLate = NO;
-    if (NO == tooLate)
-    {
-        tooLate = YES;
-        gForeignKeys = [[MKCHashTable alloc] init];
-    }
-}
 
 - (NSArray *) sourceFields
 {
@@ -57,12 +83,12 @@ static id gForeignKeys;
     return referenceFields;
 }
 
-- (PGTSTableInfo *) sourceTable
+- (PGTSTableDescription *) sourceTable
 {
     return [[sourceFields objectAtIndex: 0] table];
 }
 
-- (PGTSTableInfo *) referenceTable
+- (PGTSTableDescription *) referenceTable
 {
     return [[referenceFields objectAtIndex: 0] table];
 }
@@ -80,16 +106,6 @@ static id gForeignKeys;
         referenceFields = [rFields copy];
 		deleteRule = kPGTSDeleteRuleUnknown;
     }
-    
-    //FIXME: anti-pattern.
-    id anObject = nil;
-    if ((anObject = [gForeignKeys member: self]))
-    {
-        [self release]; //This might remove anObject
-        self = [anObject retain];
-    }
-    [gForeignKeys addObject: self];
-    
     return self;
 }
 

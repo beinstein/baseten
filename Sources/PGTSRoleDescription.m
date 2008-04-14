@@ -26,7 +26,6 @@
 // $Id$
 //
 
-#import <MKCCollections/MKCCollections.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 #import "PGTSRoleDescription.h"
 #import "PGTSFunctions.h"
@@ -55,14 +54,15 @@
     
     if (nil == roles)
     {
-        roles = [MKCDictionary dictionaryWithKeyType: kMKCCollectionTypeInteger valueType: kMKCCollectionTypeObject];
+        roles = [[NSMutableDictionary alloc] init];
         NSString* query = @"SELECT r.oid, r.rolname FROM pg_roles r INNER JOIN pg_authid a WHERE r.oid = a.member AND a.roleid = $1";
         PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
         while ([res advanceRow])
         {
-            Oid memberOid = [[res valueForKey: @"oid"] PGTSOidValue];
-            PGTSRoleDescription* role = [[connection databaseInfo] roleNamed: [res valueForKey: @"rolname"] oid: memberOid];
-            [roles setObject: role atIndex: memberOid];
+            id memberOid = [res valueForKey: @"oid"];
+            PGTSRoleDescription* role = [[connection databaseDescription] roleNamed: [res valueForKey: @"rolname"] 
+                                                                                oid: [memberOid PGTSOidValue]];
+            [roles setObject: role forKey: memberOid];
         }
     }
     

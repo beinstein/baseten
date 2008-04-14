@@ -26,11 +26,11 @@
 // $Id$
 //
 
-#import <PGTS/PGTSTypeInfo.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSAdditions.h>
+#import "PGTSTypeInfo.h"
+#import "PGTSResultSet.h"
+#import "PGTSFunctions.h"
+#import "PGTSConnection.h"
+#import "PGTSAdditions.h"
 
 
 /** 
@@ -68,16 +68,20 @@
                                                         "FROM pg_type t, pg_namespace n "
                                                         "WHERE t.oid = $1 AND t.typnamespace = n.oid" parameters: PGTSOidAsObject (oid)];
         [res setDeterminesFieldClassesAutomatically: NO];
-        [res setFieldClassesFromArray: [NSArray arrayWithObjects: [NSString class], [NSNumber class], [NSString class], [NSNumber class], [NSString class], nil]];
+        [res setClass: [NSString class] forKey: @"typname"];
+        [res setClass: [NSNumber class] forKey: @"oid"];
+        [res setClass: [NSString class] forKey: @"nspname"];
+        [res setClass: [NSNumber class] forKey: @"typelem"];
+        [res setClass: [NSString class] forKey: @"typdelim"];
 
-        if (0 < [res numberOfRowsAffected])
+        if (0 < [res count])
         {
             [res advanceRow];
-            [self setName:       [res valueForFieldNamed: @"typname"]];
-            [self setSchemaOid:  [[res valueForFieldNamed: @"oid"] PGTSOidValue]];
-            [self setSchemaName: [res valueForFieldNamed: @"nspname"]];
-            [self setElementOid: [[res valueForFieldNamed: @"typelem"] unsignedIntValue]];
-            [self setDelimiter:  [[res valueForFieldNamed: @"typdelim"] characterAtIndex: 0]];
+            [self setName:       [res valueForKey: @"typname"]];
+            [self setSchemaOid:  [[res valueForKey: @"oid"] PGTSOidValue]];
+            [self setSchemaName: [res valueForKey: @"nspname"]];
+            [self setElementOid: [[res valueForKey: @"typelem"] unsignedIntValue]];
+            [self setDelimiter:  [[res valueForKey: @"typdelim"] characterAtIndex: 0]];
         }
     }
     return name;

@@ -28,7 +28,6 @@
 
 #import <PGTS/PGTSResultSet.h>
 #import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSConnectionDelegate.h>
 
 
 #define kPGTSRaiseForAsync              (1 << 0)

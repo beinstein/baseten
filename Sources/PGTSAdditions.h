@@ -28,11 +28,6 @@
 
 #import <Foundation/Foundation.h>
 
-#undef TSEnumerate
-#define TSEnumerate( LOOP_VAR, ENUMERATOR_VAR, ENUMERATION )  \
-for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
-     nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
-
 
 #if 0
 #import <PGTS/PGTSResultSet.h>
@@ -40,12 +35,12 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 #import <PGTS/postgresql/libpq-fe.h> 
 
 @class PGTSTypeInfo;
+#endif
 
 
 @interface NSNumber (PGTSAdditions)
 - (Oid) PGTSOidValue;
 @end
-#endif
 
 
 @interface NSString (PGTSAdditions)

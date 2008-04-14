@@ -130,6 +130,8 @@
 		53E189B40DB2DB740094066F /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */; };
 		53E18B190DB370A00094066F /* PGTSDatabaseInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359784F08AF669B000CAC2B /* PGTSDatabaseInfo.m */; };
 		53E18B220DB370C50094066F /* PGTSAbstractClassInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */; };
+		53E18B490DB3E9840094066F /* PGTSFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */; };
+		53E18B4A0DB3E9850094066F /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FF108804EA000BFAFB5 /* PGTSFunctions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -540,6 +542,7 @@
 				53E189AE0DB2DB6F0094066F /* PGTSSchemaDescriptor.h in Headers */,
 				53E189B10DB2DB720094066F /* PGTSRoleDescription.h in Headers */,
 				53E189B30DB2DB730094066F /* PGTSACLItem.h in Headers */,
+				53E18B490DB3E9840094066F /* PGTSFunctions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -741,6 +744,7 @@
 				53E189B40DB2DB740094066F /* PGTSACLItem.m in Sources */,
 				53E18B190DB370A00094066F /* PGTSDatabaseInfo.m in Sources */,
 				53E18B220DB370C50094066F /* PGTSAbstractClassInfo.m in Sources */,
+				53E18B4A0DB3E9850094066F /* PGTSFunctions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

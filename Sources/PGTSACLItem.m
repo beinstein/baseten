@@ -28,6 +28,13 @@
 
 #import "PGTSACLItem.h"
 #import "PGTSRoleDescription.h"
+#import "PGTSResultSet.h"
+#import "PGTSTypeInfo.h"
+#import "PGTSConnection.h"
+#import "PGTSDatabaseInfo.h"
+
+//FIXME: enable logging.
+#define log4AssertValueReturn(...)
 
 
 @implementation PGTSACLItem
@@ -84,7 +91,7 @@
     mPrivileges = anEnum;
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (const char *) value typeInfo: (PGTSTypeDescription *) typeInfo
 {        
     //Role and privileges are separated by an equals sign
     id retval = nil;
@@ -101,7 +108,7 @@
     retval = [[[PGTSACLItem alloc] init] autorelease];
     if (0 != strlen (role))
     {
-        PGTSDatabaseInfo* database = [[res connection] databaseInfo];
+        PGTSDatabaseDescription* database = [[res connection] databaseDescription];
         
         //Remove "group " from beginning
         if (role == strstr (role, "group "))

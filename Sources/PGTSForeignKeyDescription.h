@@ -30,7 +30,7 @@
 #import <PGTS/PGTSConstants.h>
 
 @class PGTSConnection;
-@class PGTSTableInfo;
+@class PGTSTableDescription;
 
 @interface PGTSForeignKeyDescription : PGTSAbstractInfo 
 {
@@ -42,8 +42,8 @@
 - (id) initWithConnection: (PGTSConnection *) connection name: (NSString *) aName sourceFields: (NSArray *) sFields referenceFields: (NSArray *) rFields;
 - (NSArray *) sourceFields;
 - (NSArray *) referenceFields;
-- (PGTSTableInfo *) sourceTable;
-- (PGTSTableInfo *) referenceTable;
+- (PGTSTableDescription *) sourceTable;
+- (PGTSTableDescription *) referenceTable;
 - (enum PGTSDeleteRule) deleteRule;
 - (void) setDeleteRule: (const unichar) rule;
 

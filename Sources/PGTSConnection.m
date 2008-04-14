@@ -35,6 +35,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSResultSet.h"
 #import "PGTSDatabaseInfo.h"
+#import "PGTSFunctions.h"
 
 //FIXME: enable logging.
 #define log4AssertLog(...) 

@@ -38,8 +38,10 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 
 
 extern /*inline*/ id PGTSOidAsObject (Oid o);
+
+#if 0
 extern void PGTSNoticeProcessor (void* sender, const char* message);
 extern NSString* PGTSModificationName (unichar type);
 extern NSString* PGTSLockOperation (unichar type);
 extern int PGTSSSLConnectionExIndex ();
-extern enum PGTSDeleteRule PGTSDeleteRule (const unichar rule);
+#endif

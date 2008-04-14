@@ -57,9 +57,11 @@
 - (NSDictionary *) currentRowAsDictionary;
 - (void) goBeforeFirstRow;
 - (BOOL) goToRow: (int) aRow;
-- (int) numberOfRowsAffected;
+- (int) count;
 - (unsigned long long) numberOfRowsAffectedByCommand;
 - (BOOL) advanceRow;
+
+- (void) setDeterminesFieldClassesAutomatically: (BOOL) aBool;
 @end
 
 

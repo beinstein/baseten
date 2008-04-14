@@ -289,7 +289,7 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
 	return retval;
 }
 
-- (int) numberOfRowsAffected
+- (int) count
 {
 	return mTuples;
 }

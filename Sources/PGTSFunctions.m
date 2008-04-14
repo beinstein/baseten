@@ -35,20 +35,8 @@
 #import "PGTSFunctions.h"
 #import "PGTSConstants.h"
 #import "PGTSConnectionDelegate.h"
-#import "PGTSConnectionPrivate.h"
 #import "PGTSCertificateVerificationDelegate.h"
 
-
-void 
-PGTSNoticeProcessor (void* connection, const char* message)
-{
-    if (NULL != message)
-    {
-        [(PGTSConnection *) connection performSelectorOnMainThread: @selector (handleNotice:) 
-                                                        withObject: [NSString stringWithUTF8String: message] 
-                                                     waitUntilDone: NO];
-    }
-}
 
 /**
  * Return the value as an object
@@ -61,6 +49,7 @@ PGTSOidAsObject (Oid o)
     return [NSNumber numberWithUnsignedInt: o];
 }
 
+#if 0
 /**
  * \internal
  * Verify an X.509 certificate.
@@ -73,42 +62,4 @@ PGTSVerifySSLCertificate (int preverify_ok, void* x509_ctx)
 	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
 	return rval;
 }
-
-
-enum PGTSDeleteRule
-PGTSDeleteRule (const unichar rule)
-{
-	enum PGTSDeleteRule deleteRule = kPGTSDeleteRuleUnknown;
-	switch (rule)
-	{
-		case ' ':
-			deleteRule = kPGTSDeleteRuleNone;
-			break;
-			
-		case 'c':
-			deleteRule = kPGTSDeleteRuleCascade;
-			break;
-			
-		case 'n':
-			deleteRule = kPGTSDeleteRuleSetNull;
-			break;
-			
-		case 'd':
-			deleteRule = kPGTSDeleteRuleSetDefault;
-			break;
-			
-		case 'r':
-			deleteRule = kPGTSDeleteRuleRestrict;
-			break;
-			
-		case 'a':
-			deleteRule = kPGTSDeleteRuleNone;
-			break;
-			
-		default:
-			deleteRule = kPGTSDeleteRuleUnknown;
-			break;
-	}	
-	
-	return deleteRule;
-}
+#endif
