@@ -35,7 +35,7 @@
 
 
 @implementation NSObject (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     return nil;
 }
@@ -55,7 +55,7 @@
 
 
 @implementation NSString (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     return [NSString stringWithUTF8String: value];
 }
@@ -80,7 +80,7 @@
 #if 0
 @implementation NSData (PGTSFoundationObjects)
 //FIXME: Should we use htonl?
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	size_t resultLength = 0;
 	unsigned char *unescaped = PQunescapeBytea ((unsigned char*) value, &resultLength);
@@ -167,11 +167,11 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
     return rval;
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) current typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) current type: (PGTSTypeDescription *) typeInfo
 {
     id retval = [NSMutableArray array];
-    //Used with typeInfo: argument later
-    PGTSTypeInfo* elementType = [[typeInfo database] typeInfoForTypeWithOid: [typeInfo elementOid]];
+    //Used with type: argument later
+    PGTSTypeDescription* elementType = [[typeInfo database] typeInfoForTypeWithOid: [typeInfo elementOid]];
     if (nil != elementType)
     {
         NSDictionary* deserializationDictionary = [[elementType connection] deserializationDictionary];
@@ -249,7 +249,7 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
                     elementData [last] = '\0';
                     
                     //Create the object.
-                    object = [elementClass newForPGTSResultSet: set withCharacters: elementData typeInfo: elementType];
+                    object = [elementClass newForPGTSResultSet: set withCharacters: elementData type: elementType];
                     free (elementData);
                 }
                 [retval addObject: object];
@@ -294,7 +294,7 @@ continue_iteration:
     return [rval PGTSParameterLength: length connection: connection];
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	log4Debug (@"Given value: %s", value);
 	
@@ -333,7 +333,7 @@ continue_iteration:
 
 
 @implementation NSCalendarDate (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     id rval = nil;
 	size_t length = strlen (value);
@@ -441,7 +441,7 @@ continue_iteration:
 
 
 @implementation NSDecimalNumber (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     NSDecimal decimal;
     NSString* stringValue = [NSString stringWithUTF8String: value];
@@ -458,7 +458,7 @@ continue_iteration:
     return [[self description] PGTSParameterLength: length connection: connection];
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     return [NSNumber numberWithLongLong: strtoll (value, NULL, 10)];
 }

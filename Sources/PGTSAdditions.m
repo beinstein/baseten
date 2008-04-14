@@ -350,7 +350,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSFloat (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     return [NSNumber numberWithFloat: strtof (value, NULL)];
 }
@@ -360,7 +360,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSDouble (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     return [NSNumber numberWithDouble: strtod (value, NULL)];
 }
@@ -370,7 +370,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSBool (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     BOOL boolValue = (value [0] == 't' ? YES : NO);
     return [NSNumber numberWithBool: boolValue];
@@ -381,7 +381,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSPoint (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     NSPoint retval = NSZeroPoint;
     NSString* pointString = [NSString stringWithUTF8String: value];
@@ -410,10 +410,10 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 @implementation PGTSSize (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     NSPoint p = NSZeroPoint;
-    [[PGTSPoint newForPGTSResultSet: set withCharacters: value typeInfo: typeInfo] getValue: &p];
+    [[PGTSPoint newForPGTSResultSet: set withCharacters: value type: typeInfo] getValue: &p];
     NSSize s;
     s.width = p.x;
     s.height = p.y;

@@ -37,6 +37,7 @@
 #import "PGTSTableInfo.h"
 #import "PGTSFieldInfo.h"
 #import "PGTSTypeInfo.h"
+#import "PGTSFoundationObjects.h"
 
 //FIXME: enable (some of) these.
 #if 0
@@ -356,10 +357,8 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
         if (! objectClass)
             objectClass = [NSData class];
         char* value = PQgetvalue (mResult, rowIndex, columnIndex);
-        //FIXME: enable this.
-        value = NULL;
-        //PGTSTypeDescription* type = [[connection databaseDescription] typeWithOid: PQftype (result, columnIndex)];
-        //retval = [objectClass newForPGTSResultSet: self withCharacters: value type: type];
+        PGTSTypeDescription* type = [[mConnection databaseDescription] typeWithOid: PQftype (mResult, columnIndex)];
+        retval = [objectClass newForPGTSResultSet: self withCharacters: value type: type];
     }
     return retval;
 }

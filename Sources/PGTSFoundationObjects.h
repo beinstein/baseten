@@ -29,10 +29,10 @@
 #import <Foundation/Foundation.h>
 @class PGTSResultSet;
 @class PGTSConnection;
-@class PGTSTypeInfo;
+@class PGTSTypeDescription;
 
 @interface NSObject (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value typeInfo: (PGTSTypeInfo *) typeInfo;
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type;
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
 - (BOOL) PGTSIsBinaryParameter;
 @end

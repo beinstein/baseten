@@ -91,7 +91,7 @@
     mPrivileges = anEnum;
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (const char *) value typeInfo: (PGTSTypeDescription *) typeInfo
++ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {        
     //Role and privileges are separated by an equals sign
     id retval = nil;
