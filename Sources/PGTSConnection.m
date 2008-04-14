@@ -36,11 +36,22 @@
 #import "PGTSResultSet.h"
 #import "PGTSDatabaseInfo.h"
 #import "PGTSFunctions.h"
+#import <tr1/unordered_set>
+#import <stdlib.h>
 
 //FIXME: enable logging.
 #define log4AssertLog(...) 
 #define log4AssertVoidReturn(...)
 #define log4AssertValueReturn(...)
+
+
+typedef std::tr1::unordered_set <PGTSConnection *, ObjectHash, ObjectCompare <id> > ConnectionHash;
+static ConnectionHash* gConnections = NULL;
+
+
+@interface NSObject (PGTSAppKitCompatibility)
+- (id) sharedApplication;
+@end
 
 
 @implementation PGTSConnection
@@ -60,13 +71,60 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	}
 }
 
+static void
+ProcessWillExit ()
+{
+    //FIXME: locking.
+    ConnectionHash::iterator iterator = gConnections->begin ();
+    while (gConnections->end () != iterator)
+    {
+        [*iterator disconnect];
+        iterator++;
+    }
+    delete gConnections;
+}
+
++ (void) initialize
+{
+    static BOOL tooLate = NO;
+    if (! tooLate)
+    {
+        tooLate = YES;
+        gConnections = new ConnectionHash ();
+        //FIXME: create a lock, too.
+        
+        if (! NSClassFromString (@"NSApplication"))
+        {
+            atexit (&ProcessWillExit);
+        }
+    }
+}
+
 - (id) init
 {
 	if ((self = [super init]))
 	{
 		mQueue = [[NSMutableArray alloc] init];
+        
+        Class applicationClass = NSClassFromString (@"NSApplication");
+        if (applicationClass)
+        {
+            id application = [applicationClass sharedApplication];
+            [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector (applicationWillTerminate:)
+                                                         name: @"NSApplicationWillTerminateNotification" object: application];
+        }
+        else
+        {
+            //FIXME: locking.
+            gConnections->insert (self);
+        }
 	}
 	return self;
+}
+
+- (void) applicationWillTerminate: (NSNotification *) n
+{
+    [self disconnect];
 }
 
 - (void) dealloc
@@ -94,6 +152,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) disconnect
 {
+    NSLog (@"Disconnecting.");
     if (! mConnection)
     {
         PQfinish (mConnection);
@@ -223,11 +282,11 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
         NSArray* keys = [mPGTypes allKeys];
         TSEnumerate (key, e, [keys objectEnumerator])
         {
-            Class class = NSClassFromString ([mPGTypes objectForKey: key]);
-            if (Nil == class)
+            Class typeClass = NSClassFromString ([mPGTypes objectForKey: key]);
+            if (Nil == typeClass)
                 [mPGTypes removeObjectForKey: key];
             else
-                [mPGTypes setObject: class forKey: key];
+                [mPGTypes setObject: typeClass forKey: key];
         }
     }
     return mPGTypes;
@@ -255,7 +314,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		
 		//Create a runloop source to receive data asynchronously.
 		CFSocketContext context = {0, self, NULL, NULL, NULL};
-		CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
+		CFSocketCallBackType callbacks = (CFSocketCallBackType)(kCFSocketReadCallBack | kCFSocketWriteCallBack);
 		mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
         
 		CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);

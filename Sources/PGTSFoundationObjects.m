@@ -28,15 +28,23 @@
 
 #import "PGTSFoundationObjects.h"
 #import "PGTSConnection.h"
+#import "PGTSFunctions.h"
+#import "PGTSTypeInfo.h"
+#import "PGTSDatabaseInfo.h"
 #import <PGTS/postgresql/libpq-fe.h>
 
 //FIXME: enable logging.
 #define log4Warn(...) 
+#define log4Error(...)
+#define log4Debug(...)
+#define log4AssertLog(...)
+#define L4_BLOCK_ASSERTIONS
 
 
 @implementation NSObject (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
+    NSLog (@"Warning: returning a nil from NSObject's implementation.");
     return nil;
 }
 
@@ -77,7 +85,6 @@
 @end
 
 
-#if 0
 @implementation NSData (PGTSFoundationObjects)
 //FIXME: Should we use htonl?
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -171,12 +178,10 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
 {
     id retval = [NSMutableArray array];
     //Used with type: argument later
-    PGTSTypeDescription* elementType = [[typeInfo database] typeInfoForTypeWithOid: [typeInfo elementOid]];
+    PGTSTypeDescription* elementType = [[typeInfo database] typeWithOid: [typeInfo elementOid]];
     if (nil != elementType)
     {
         NSDictionary* deserializationDictionary = [[elementType connection] deserializationDictionary];
-        if (nil == deserializationDictionary)
-            deserializationDictionary = [NSDictionary PGTSDeserializationDictionary];
         Class elementClass = [deserializationDictionary objectForKey: [elementType name]];
         if (Nil == elementClass)
             elementClass = [NSData class];
@@ -463,4 +468,3 @@ continue_iteration:
     return [NSNumber numberWithLongLong: strtoll (value, NULL, 10)];
 }
 @end
-#endif

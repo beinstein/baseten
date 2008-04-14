@@ -37,11 +37,10 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 #define SafeCFRelease( CF_VAL )  if (NULL != CF_VAL) { CFRelease (CF_VAL); CF_VAL = NULL; }
 
 
-extern /*inline*/ id PGTSOidAsObject (Oid o);
-
+PGTS_EXPORT id PGTSOidAsObject (Oid o);
 #if 0
-extern void PGTSNoticeProcessor (void* sender, const char* message);
-extern NSString* PGTSModificationName (unichar type);
-extern NSString* PGTSLockOperation (unichar type);
-extern int PGTSSSLConnectionExIndex ();
+PGTS_EXPORT void PGTSNoticeProcessor (void* sender, const char* message);
+PGTS_EXPORT NSString* PGTSModificationName (unichar type);
+PGTS_EXPORT NSString* PGTSLockOperation (unichar type);
+PGTS_EXPORT int PGTSSSLConnectionExIndex ();
 #endif

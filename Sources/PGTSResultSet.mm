@@ -38,29 +38,18 @@
 #import "PGTSFieldInfo.h"
 #import "PGTSTypeInfo.h"
 #import "PGTSFoundationObjects.h"
+#import "PGTSAdditions.h"
 
 //FIXME: enable (some of) these.
 #if 0
 #import <Log4Cocoa/Log4Cocoa.h>
 #import "PGTSResultSetPrivate.h"
-#import "PGTSAdditions.h"
 #import "PGTSResultRow.h"
 #import "PGTSFunctions.h"
 #endif
 
-struct ObjectHash
-{
-    size_t operator() (const id anObject) const { return [anObject hash]; }
-};
 
-struct StringCompare
-{
-    bool operator() (const NSString* x, const NSString* y) const { return (bool) [x isEqualToString: y]; }
-};
-
-
-//FIXME: make this gc-compatible.
-typedef std::tr1::unordered_map <NSString*, int, ObjectHash, StringCompare> FieldIndexMap;
+typedef std::tr1::unordered_map <NSString*, int, ObjectHash, ObjectCompare <NSString *> > FieldIndexMap;
 typedef std::tr1::unordered_map <int, Class> FieldClassMap;
 
 
@@ -104,12 +93,14 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
         [iterator->first autorelease];
         iterator++;
     }
+    delete mFieldIndices;
 }
 
 - (void) dealloc
 {
 	PQclear (mResult);
     [self freeSTLTypes];
+    [mConnection release];
     [super dealloc];
 }
 
@@ -146,6 +137,8 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
 {
 	if ((self = [super init]))
     {
+        mConnection = [aConnection retain];
+        
         mResult = result;
         mCurrentRow = -1;
         mTuples = PQntuples (result);
@@ -164,6 +157,7 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
             NSString* stringName = [[NSString alloc] initWithCString: fname encoding: NSUTF8StringEncoding];
             (* mFieldIndices) [stringName] = i;
         }
+        mDeterminesFieldClassesFromDB = YES;
     }        
 	return self;
 }

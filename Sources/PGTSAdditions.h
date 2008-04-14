@@ -38,6 +38,30 @@
 #endif
 
 
+#if defined(__cplusplus)
+
+//FIXME: make some gc-compatible additions.
+
+struct ObjectHash
+{
+    size_t operator() (const id anObject) const { return [anObject hash]; }
+};
+
+template <typename T>
+struct ObjectCompare
+{
+    bool operator() (const T x, const T y) const { return (bool) [x isEqual: y]; }
+};
+
+template <>
+struct ObjectCompare <NSString *>
+{
+    bool operator() (const NSString* x, const NSString* y) const { return (bool) [x isEqualToString: y]; }
+};
+
+#endif
+
+
 @interface NSNumber (PGTSAdditions)
 - (Oid) PGTSOidValue;
 @end
