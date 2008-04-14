@@ -30,18 +30,18 @@
 #import <PGTS/PGTSAbstractClassInfo.h>
 
 
-@class PGTSFieldInfo;
-@class PGTSDatabaseInfo;
-@class PGTSIndexInfo;
+@class PGTSFieldDescription;
+@class PGTSDatabaseDescription;
+@class PGTSIndexDescription;
 @class PGTSResultSet;
 
 
-@interface PGTSTableInfo : PGTSAbstractClassInfo 
+@interface PGTSTableDescription : PGTSAbstractClassInfo 
 {
     unsigned int fieldCount;
     id fields;
     NSArray* uniqueIndexes;
-    PGTSDatabaseInfo* database;
+    PGTSDatabaseDescription* database;
 
     BOOL hasForeignKeys;
     NSMutableSet* foreignKeys;
@@ -51,8 +51,8 @@
     NSArray* relationOidsBasedOn;
 }
 
-- (void) setDatabase: (PGTSDatabaseInfo *) aDatabase;
-- (PGTSDatabaseInfo *) database;
+- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase;
+- (PGTSDatabaseDescription *) database;
 - (void) setUniqueIndexes: (NSArray *) anArray;
 - (void) setFieldCount: (unsigned int) anInt;
 - (void) setRelationOidsBasedOn: (NSArray *) anArray;
@@ -60,11 +60,11 @@
 - (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource;
 @end
 
-@interface PGTSTableInfo (Queries)
+@interface PGTSTableDescription (Queries)
 - (NSArray *) uniqueIndexes;
-- (PGTSIndexInfo *) primaryKey;
-- (PGTSFieldInfo *) fieldInfoForFieldAtIndex: (unsigned int) anIndex;
-- (PGTSFieldInfo *) fieldInfoForFieldNamed: (NSString *) aName;
+- (PGTSIndexDescription *) primaryKey;
+- (PGTSFieldDescription *) fieldAtIndex: (unsigned int) anIndex;
+- (PGTSFieldDescription *) fieldNamed: (NSString *) aName;
 - (NSArray *) allFields;
 - (NSSet *) foreignKeys;
 - (NSSet *) referencingForeignKeys;

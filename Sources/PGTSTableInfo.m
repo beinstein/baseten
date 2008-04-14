@@ -26,14 +26,14 @@
 // $Id$
 //
 
-#import "PGTSTableInfo.h"
-#import "PGTSFieldInfo.h"
+#import "PGTSTableDescription.h"
+#import "PGTSFieldDescription.h"
 #import "PGTSFunctions.h"
-#import "PGTSIndexInfo.h"
+#import "PGTSIndexDescription.h"
 #import "PGTSResultSet.h"
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
-#import "PGTSDatabaseInfo.h"
+#import "PGTSDatabaseDescription.h"
 #import "PGTSForeignKeyDescription.h"
 #import <MKCCollections/MKCCollections.h>
 
@@ -41,7 +41,7 @@
 /** 
  * Database table
  */
-@implementation PGTSTableInfo
+@implementation PGTSTableDescription
 
 - (id) initWithConnection: (PGTSConnection *) aConnection
 {
@@ -72,12 +72,12 @@
     [super dealloc];
 }
 
-- (void) setDatabase: (PGTSDatabaseInfo *) aDatabase
+- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase
 {
     database = aDatabase;
 }
 
-- (PGTSDatabaseInfo *) database
+- (PGTSDatabaseDescription *) database
 {
     return database;
 }
@@ -112,10 +112,10 @@
 
 - (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource
 {
-    PGTSTableInfo* src = nil;
-    PGTSTableInfo* dst = nil;
+    PGTSTableDescription* src = nil;
+    PGTSTableDescription* dst = nil;
     
-    PGTSTableInfo** target = NULL;
+    PGTSTableDescription** target = NULL;
     if (selfAsSource)
     {
         src = self;
@@ -129,17 +129,17 @@
     
     while (([res advanceRow]))
     {        
-        *target = [[self database] tableInfoForTableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+        *target = [[self database] tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
         
         NSArray* sources = [res valueForKey: @"sources"];
         NSMutableArray* sourceFields = [NSMutableArray arrayWithCapacity: [sources count]];
         TSEnumerate (currentIndex, e, [sources objectEnumerator])
-            [sourceFields addObject: [src fieldInfoForFieldAtIndex: [currentIndex unsignedIntValue]]];
+            [sourceFields addObject: [src fieldAtIndex: [currentIndex unsignedIntValue]]];
         
         NSArray* references = [res valueForKey: @"references"];
         NSMutableArray* refFields = [NSMutableArray arrayWithCapacity: [references count]];
         TSEnumerate (currentIndex, e, [references objectEnumerator])
-            [refFields addObject: [dst fieldInfoForFieldAtIndex: [currentIndex unsignedIntValue]]];
+            [refFields addObject: [dst fieldAtIndex: [currentIndex unsignedIntValue]]];
         
         NSString* aName = [res valueForKey: @"name"];
         
@@ -158,7 +158,7 @@
 @end
 
 
-@implementation PGTSTableInfo (Queries)
+@implementation PGTSTableDescription (Queries)
 
 - (NSArray *) allFields
 {
@@ -171,17 +171,17 @@
     }
     
     for (unsigned int i = 1; i <= fieldCount; i++)
-        [self fieldInfoForFieldAtIndex: i];
+        [self fieldAtIndex: i];
     
     return [fields allObjects];
 }
 
-- (PGTSFieldInfo *) fieldInfoForFieldAtIndex: (unsigned int) anIndex
+- (PGTSFieldDescription *) fieldAtIndex: (unsigned int) anIndex
 {
-    PGTSFieldInfo* rval = [fields objectAtIndex: anIndex];    
+    PGTSFieldDescription* rval = [fields objectAtIndex: anIndex];    
     if (nil == rval)
     {
-        rval = [[[PGTSFieldInfo alloc] initWithConnection: connection] autorelease];
+        rval = [[[PGTSFieldDescription alloc] initWithConnection: connection] autorelease];
         [rval setTable: self];
         [rval setIndex: anIndex];
         if (nil == [rval name])
@@ -192,9 +192,9 @@
     return rval;
 }
 
-- (PGTSFieldInfo *) fieldInfoForFieldNamed: (NSString *) aName
+- (PGTSFieldDescription *) fieldNamed: (NSString *) aName
 {
-	PGTSFieldInfo* retval = nil;
+	PGTSFieldDescription* retval = nil;
 	NSArray* allFields = [self allFields];
 	TSEnumerate (currentField, e, [allFields objectEnumerator])
 	{
@@ -228,7 +228,7 @@
                     NSMutableArray* indexes = [NSMutableArray arrayWithCapacity: count];
                     while (([res advanceRow]))
                     {
-                        PGTSIndexInfo* currentIndex = [[PGTSIndexInfo alloc] initWithConnection: connection];
+                        PGTSIndexDescription* currentIndex = [[PGTSIndexDescription alloc] initWithConnection: connection];
                         [indexes addObject: currentIndex];
                         [currentIndex release];
                         
@@ -244,7 +244,7 @@
                         {
                             int index = [currentFieldIndex intValue];
                             if (index > 0)
-                                [indexFields addObject: [self fieldInfoForFieldAtIndex: index]];
+                                [indexFields addObject: [self fieldAtIndex: index]];
                         }
                         [currentIndex setTable: self];
                         [currentIndex setFields: indexFields];
@@ -264,10 +264,10 @@
                     [self setUniqueIndexes: [NSArray array]];
                 else
                 {
-                    PGTSIndexInfo* index = [[PGTSIndexInfo alloc] initWithConnection: connection];
+                    PGTSIndexDescription* index = [[PGTSIndexDescription alloc] initWithConnection: connection];
                     NSMutableSet* indexFields = [NSMutableSet set];
                     TSEnumerate (currentFieldIndex, e, [[res valueForFieldNamed: @"attnum"] objectEnumerator])
-                        [indexFields addObject: [self fieldInfoForFieldAtIndex: [currentFieldIndex intValue]]];
+                        [indexFields addObject: [self fieldAtIndex: [currentFieldIndex intValue]]];
                     [index setPrimaryKey: YES];
                     [index setFields: indexFields];
                     [index setTable: self];
@@ -281,13 +281,13 @@
     return uniqueIndexes;
 }
 
-- (PGTSIndexInfo *) primaryKey
+- (PGTSIndexDescription *) primaryKey
 {
-    PGTSIndexInfo* rval = nil;
+    PGTSIndexDescription* rval = nil;
     NSArray* uIndexes = [self uniqueIndexes];
     if (0 < [uIndexes count])
     {
-        PGTSIndexInfo* first = [uIndexes objectAtIndex: 0];
+        PGTSIndexDescription* first = [uIndexes objectAtIndex: 0];
         if ([first isPrimaryKey])
             rval = first;
     }

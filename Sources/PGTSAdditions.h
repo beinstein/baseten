@@ -28,6 +28,12 @@
 
 #import <Foundation/Foundation.h>
 
+#undef TSEnumerate
+#define TSEnumerate( LOOP_VAR, ENUMERATOR_VAR, ENUMERATION )  \
+for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
+     nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
+
+
 #if 0
 #import <PGTS/PGTSResultSet.h>
 #import <PGTS/PGTSResultRowProtocol.h>

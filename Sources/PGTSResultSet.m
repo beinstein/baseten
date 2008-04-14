@@ -26,20 +26,9 @@
 // $Id$
 //
 
-#if (1020 == MAC_OS_X_VERSION_MIN_REQUIRED)
-    #ifdef JAGUAR_COMPATIBILITY
-        #import <JaguarCompatibility/JaguarCompatibility.h>
-    #else
-        @interface NSObject (PGTSPrivateAdditions)
-        - (void) setValue: (id) aValue forKey: (id) aKey;
-        @end
-    #endif
-#endif
-
 #import <stdlib.h>
 #import <limits.h>
 #import <PGTS/postgresql/libpq-fe.h> 
-#import <MKCCollections/MKCCollections.h>
 #import <Log4Cocoa/Log4Cocoa.h>
 #import "PGTSResultSet.h"
 #import "PGTSResultSetPrivate.h"
@@ -54,50 +43,39 @@
 #import "PGTSTypeInfo.h"
 
 
-//This is somehow ifdef'd out from stdlib.h in Mac OS X 10.2.8 when using std=c99 but not in 10.4
-unsigned long long
-strtoull (const char * restrict nptr, char ** restrict endptr, int base);
-
-
-static unsigned int _serial;
-
 /** 
  * Result set for a query.
  * A result set contains rows that may be iterated by the user.
  */
 @implementation PGTSResultSet
 
-+ (void) initialize
-{
-    static BOOL tooLate = NO;
-    if (!tooLate)
-    {
-        _serial = 0;
-        tooLate = YES;
-    }
-}
-
+#if 0
 - (PGTSConnection *) connection
 {
     return connection;
 }
+#endif
 
 //FIXME: check that all retained objects are released
 - (void) dealloc
 {
 	PQclear (result);
+    
+#if 0
     [fieldnames release];
 	if (deserializedFields)
 	{
 		free (valueClassArray);
 	}
     [rowAwakenInvocation release];
+#endif
+    
 	[super dealloc];
 }
 
 - (ExecStatusType) status
 {
-	return PQresultStatus (result);
+	return PQresultStatus (mResult);
 }
 
 - (BOOL) querySucceeded
@@ -106,42 +84,19 @@ static unsigned int _serial;
     return (PGRES_FATAL_ERROR != s && PGRES_BAD_RESPONSE != s);
 }
 
-/** Error message returned by the database */
-- (NSString *) errorMessage
-{
-    NSString* rval = nil;
-    char* error = PQresultErrorMessage (result);
-    if (NULL != error)
-        rval = [NSString stringWithUTF8String: error];
-	return rval;
-}
-
-/**
- * A specific field in the error message.
- * \param fieldcode Similar to PQresultErrorField
- */
-- (NSString *) errorMessageField: (int) fieldcode
-{
-    NSString* rval = nil;
-    char* error = PQresultErrorField (result, fieldcode);
-    if (NULL != error)
-        rval = [NSString stringWithUTF8String: error];
-	return rval;
-}
-
 - (int) numberOfFields
 {
-	return fields;
+	return mFields;
 }
 
 - (BOOL) isAtEnd
 {
-    return (currentRow == tuples - 1);
+    return (currentRow == mTuples - 1);
 }
 
 - (BOOL) advanceRow
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     if (NO == deserializedFields && YES == determinesFieldClassesAutomatically)
         [self beginDeserialization];
     
@@ -150,22 +105,17 @@ static unsigned int _serial;
 	if (currentRow < tuples - 1)
 	{
         currentRow++;
-		rval = YES;
+		retval = YES;
 	}
-	return rval;
+	return retval;
 }
 
 - (id) valueForFieldAtIndex: (int) columnIndex row: (int) rowIndex
 {
-    id rval = nil;
-    if (! ((columnIndex < fields) && (rowIndex < tuples)))
+    id retval = nil;
+    if (! ((columnIndex < mFields) && (rowIndex < mTuples)))
     {
-        [[NSException exceptionWithName: kPGTSFieldNotFoundException reason: nil
-                               userInfo: [NSDictionary dictionaryWithObjectsAndKeys:
-                                   self, kPGTSResultSetKey,
-                                   //FIXME: add some more information
-                                   nil]]
-            raise];
+        @throw [NSException exceptionWithName: NSRangeException reason: nil userInfo: nil];
     }
     
     if (!PQgetisnull (result, rowIndex, columnIndex))
@@ -177,7 +127,7 @@ static unsigned int _serial;
         PGTSTypeInfo* type = [[connection databaseInfo] typeInfoForTypeWithOid: PQftype (result, columnIndex)];
         rval = [objectClass newForPGTSResultSet: self withCharacters: value typeInfo: type];
     }
-    return rval;
+    return retval;
 }
 
 - (id) valueForFieldNamed: (NSString *) aName row: (int) rowIndex
@@ -465,15 +415,10 @@ static unsigned int _serial;
 - (id) initWithResult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
 {
 	if (! (self = [super init])) return nil;
-	result = aResult;
-    connection = aConnection;
-	currentRow = -1;
-	tuples = PQntuples (result);
-	fields = PQnfields (result);
-    
-    _serial++;
-    serial = _serial;
-    
+	mResult = aResult;
+	mCurrentRow = -1;
+	mTuples = PQntuples (result);
+	mFields = PQnfields (result);
     
     fieldnames = [MKCDictionary copyDictionaryWithCapacity: fields 
                                                    keyType: kMKCCollectionTypeObject 
@@ -524,92 +469,4 @@ static unsigned int _serial;
     }
 }
 
-- (void) logError
-{
-    log4Info (@"Result error: %s", PQresultErrorMessage (result));
-}
-
 @end
-
-
-@implementation PGTSResultSet (NSKeyValueCoding)
-
-- (unsigned int) countOfRows
-{
-    return [self numberOfRowsAffected];
-}
-
-- (id <PGTSResultRowProtocol>) objectInRowsAtIndex: (unsigned int) index 
-{
-    id rval = [[[rowClass alloc] init] autorelease];
-
-    if (rval)
-    {
-        //Use the custom awaken method
-        [rowAwakenInvocation invokeWithTarget: rval];
-
-        [rval PGTSSetRow: index resultSet: self];
-    }
-    
-    //We are too simple to cache and reuse these
-    return rval;
-}
-
-@end
-
-/** Information about the database contents */
-@implementation PGTSResultSet (ResultInfo)
-
-- (PGTSTableInfo *) tableInfoForFieldNamed: (NSString *) aName
-{
-    return [self tableInfoForFieldAtIndex: [fieldnames integerForKey: aName]];
-}
-
-- (PGTSTableInfo *) tableInfoForFieldAtIndex: (unsigned int) fieldIndex
-{
-    return [[connection databaseInfo] tableInfoForTableWithOid: PQftable (result, fieldIndex)];
-}
-
-- (Oid) tableOidForFieldNamed: (NSString *) aName
-{
-    return [self tableOidForFieldAtIndex: [fieldnames integerForKey: aName]];
-}
-
-- (Oid) tableOidForFieldAtIndex: (unsigned int) index
-{
-    return PQftable (result, index);
-}
-
-- (Oid) typeOidForFieldAtIndex: (unsigned int) index
-{
-    return PQftype (result, index);
-}
-
-- (Oid) typeOidForFieldNamed: (NSString *) aName
-{
-    return [self typeOidForFieldAtIndex: [fieldnames integerForKey: aName]];
-}
-
-- (PGTSFieldInfo *) fieldInfoForFieldNamed: (NSString *) aName
-{
-    return [self fieldInfoForFieldAtIndex: [fieldnames integerForKey: aName]];
-}
-
-- (PGTSFieldInfo *) fieldInfoForFieldAtIndex: (unsigned int) anIndex
-{
-    PGTSTableInfo* tableInfo = [self tableInfoForFieldAtIndex: anIndex];
-    PGTSFieldInfo* rval = [tableInfo fieldInfoForFieldAtIndex: PQftablecol (result, anIndex)];
-    [rval setIndexInResultSet: anIndex];
-    return rval;
-}
-
-- (NSSet *) fieldInfoForSelectedFields
-{
-    NSMutableSet* rval = [NSMutableSet setWithCapacity: fields];
-    for (unsigned int i = 0; i < fields; i++)
-        [rval addObject: [self fieldInfoForFieldAtIndex: i]];
-    return rval;
-}
-
-@end
-/** @} */

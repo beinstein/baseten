@@ -33,18 +33,13 @@
 #import "PGTSQuery.h"
 #import "PGTSQueryDescription.h"
 #import "PGTSAdditions.h"
+#import "PGTSResultSet.h"
+#import "PGTSDatabaseInfo.h"
 
 //FIXME: enable logging.
 #define log4AssertLog(...) 
 #define log4AssertVoidReturn(...)
-
-
-@interface PGTSConnection (PGTSConnectionPrivate)
-- (void) setConnector: (PGTSConnector *) anObject;
-- (void) readFromSocket;
-- (int) sendNextQuery;
-- (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query;
-@end
+#define log4AssertValueReturn(...)
 
 
 @implementation PGTSConnection
@@ -75,8 +70,14 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) dealloc
 {
-	[self setConnector: nil];
+    [self disconnect];
 	[mQueue release];
+	[self setConnector: nil];
+    [mNotificationCenter release];
+    [mDatabase release];
+    
+    //FIXME: free CF objects.
+    
 	[super dealloc];
 }
 
@@ -92,7 +93,11 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) disconnect
 {
-	PQfinish (mConnection);
+    if (! mConnection)
+    {
+        PQfinish (mConnection);
+        mConnection = NULL;
+    }
 }
 
 - (PGconn *) pgConnection
@@ -141,8 +146,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		
 		if ([queryDescription sent])
 		{
-			//FIXME: process the result.
-			PGTSResultSet* resultSet = nil;
+			PGTSResultSet* resultSet = [PGTSResultSet resultWithPGresult: result connection: self];
+            //FIXME: enable this.
+            //[queryDescription setLastResultSet: resultSet];
 			[queryDescription connection: self receivedResultSet: resultSet];
 		}
 	}
@@ -150,7 +156,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	if ([queryDescription finished])
 	{
 		[mQueue removeObjectAtIndex: 0];
-		[self sendNextQuery];
+        if (0 < [mQueue count])
+            [self sendNextQuery];
 	}
 }
 
@@ -177,11 +184,58 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	return retval;
 }
 
+- (void) setDelegate: (id <PGTSConnectionDelegate>) anObject
+{
+    mDelegate = anObject;
+}
+
+- (PGTSDatabaseDescription *) databaseDescription
+{
+    if (! mDatabase)
+    {
+        mDatabase = [[PGTSDatabaseDescription alloc] initWithConnection: self];
+    }
+    return mDatabase;
+}
+
+- (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc
+{
+    if (mDatabase != aDesc)
+    {
+        [mDatabase release];
+        mDatabase = [aDesc retain];
+    }
+}
+
+- (id) deserializationDictionary
+{
+    if (! mPGTypes)
+    {
+        NSString* path = [[[NSBundle bundleForClass: [PGTSConnection class]] resourcePath]
+            stringByAppendingString: @"/datatypeassociations.plist"];
+        NSData* plist = [NSData dataWithContentsOfFile: path];
+        log4AssertValueReturn (nil != plist, nil, @"datatypeassociations.plist was not found (looked from %@).", path);
+        NSString* error = nil;
+        mPGTypes = [[NSPropertyListSerialization propertyListFromData: plist mutabilityOption: NSPropertyListMutableContainers
+                                                               format: NULL errorDescription: &error] retain];
+        log4AssertValueReturn (nil != dict, nil, @"Error creating PGTSDeserializationDictionary: %@ (file: %@)", error, path);
+        NSArray* keys = [mPGTypes allKeys];
+        TSEnumerate (key, e, [keys objectEnumerator])
+        {
+            Class class = NSClassFromString ([mPGTypes objectForKey: key]);
+            if (Nil == class)
+                [mPGTypes removeObjectForKey: key];
+            else
+                [mPGTypes setObject: class forKey: key];
+        }
+    }
+    return mPGTypes;
+}
+
 @end
 
 
 @implementation PGTSConnection (PGTSConnectorDelegate)
-
 - (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded
 {
 	[self setConnector: nil];
@@ -202,6 +256,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		CFSocketContext context = {0, self, NULL, NULL, NULL};
 		CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
 		mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
+        
 		CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
 		CFSocketSetSocketFlags (mSocket, flags);
 		mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
@@ -211,18 +266,20 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		log4AssertLog (mSocketSource, @"Expected socketSource to have been created.");
 		log4AssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
 		
-		CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
-		CFStringRef mode = kCFRunLoopCommonModes;
-		CFRunLoopAddSource (runloop, mSocketSource, mode);
-		CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
-		CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
+        CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
+        CFStringRef mode = kCFRunLoopCommonModes;
+        CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
+        CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
+        CFRunLoopAddSource (runloop, mSocketSource, mode);
+        
+        [mDelegate PGTSConnectionEstablished: self];
 	}
 	else
 	{
 		//FIXME: handle the error.
+        [mDelegate PGTSConnectionFailed: self];
 	}
 }
-
 @end
 
 
@@ -281,7 +338,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
    parameterArray: (NSArray *) parameters
 {
-	PGTSQueryDescription* desc = [[PGTSQueryDescription alloc] init];
+	PGTSQueryDescription* desc = [[PGTSConcreteQueryDescription alloc] init];
 	PGTSParameterQuery* query = [[PGTSParameterQuery alloc] init];
 	[query setQuery: queryString];
 	[query setParameters: parameters];

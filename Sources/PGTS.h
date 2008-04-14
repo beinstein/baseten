@@ -27,11 +27,10 @@
 //
 
 #import <PGTS/PGTSConnection.h>
+#import <PGTS/PGTSResultSet.h>
 
 #if 0
 #import <PGTS/PGTSConstants.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSResultRow.h>
 #import <PGTS/PGTSResultRowProtocol.h>
 #import <PGTS/PGTSConnectionDelegate.h>
 #import <PGTS/PGTSConnectionPool.h>

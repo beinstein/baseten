@@ -59,7 +59,7 @@
 /** 
  * Database
  */
-@implementation PGTSDatabaseInfo
+@implementation PGTSDatabaseDescription
 
 - (BOOL) schemaExists: (NSString *) schemaName
 {
@@ -102,22 +102,21 @@
     [tables release];
     [types release];
     [schemas release];
-    [connectionPoolKey release];
     [roles release];
     [super dealloc];
 }
 
-- (PGTSTableInfo *) tableInfoForTableWithOid: (Oid) anOid
+- (PGTSTableInfo *) tableWithOid: (Oid) anOid
 {
     AddClass (PGTSTableInfo, tables);
 }
 
-- (PGTSTypeInfo *) typeInfoForTypeWithOid: (Oid) anOid
+- (PGTSTypeInfo *) typeWithOid: (Oid) anOid
 {
     AddClass (PGTSTypeInfo, types);
 }
 
-- (PGTSTableInfo *) tableInfoForTableNamed: (NSString *) tableName inSchemaNamed: (NSString *) schemaName
+- (PGTSTableInfo *) table: (NSString *) tableName inSchema: (NSString *) schemaName
 {
     if (nil == schemaName || 0 == [schemaName length])
         schemaName = @"public";
@@ -162,20 +161,6 @@
             [schemas setObject: schema forKey: schemaName];
         }
         [schema setObject: table forKey: [table name]];
-    }
-}
-
-- (NSString *) connectionPoolKey;
-{
-    return connectionPoolKey;
-}
-
-- (void) setConnectionPoolKey: (NSString *) aKey
-{
-    if (connectionPoolKey != aKey)
-    {
-        [connectionPoolKey release];
-        aKey = [connectionPoolKey retain];
     }
 }
 

@@ -31,13 +31,13 @@
 #import <PGTS/postgresql/libpq-fe.h> 
 
 
-@class PGTSTableInfo;
-@class PGTSTypeInfo;
+@class PGTSTableDescription;
+@class PGTSTypeDescription;
 
 
-@interface PGTSFieldInfo : PGTSAbstractInfo 
+@interface PGTSFieldDescription : PGTSAbstractInfo 
 {
-    PGTSTableInfo* table;
+    PGTSTableDescription* table;
     unsigned int index;
     unsigned int indexInResultSet;
     Oid typeOid;
@@ -48,12 +48,12 @@
 - (void) setIndex: (unsigned int) anIndex;
 - (unsigned int) indexInResultSet;
 - (void) setIndexInResultSet: (unsigned int) anIndex;
-- (PGTSTableInfo *) table;
-- (void) setTable: (PGTSTableInfo *) anObject;
-- (PGTSTypeInfo *) typeInfo;
+- (PGTSTableDescription *) table;
+- (void) setTable: (PGTSTableDescription *) anObject;
+- (PGTSTypeDescription *) type;
 - (Oid) typeOid;
 - (NSString *) qualifiedName;
-- (NSComparisonResult) indexCompare: (PGTSFieldInfo *) aField;
+- (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField;
 - (BOOL) isNotNull;
 
 @end

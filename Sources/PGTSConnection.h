@@ -29,10 +29,18 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h>
+@class PGTSConnection;
 @class PGTSResultSet;
 @class PGTSConnector;
 @class PGTSQueryDescription;
+@class PGTSDatabaseDescription;
 @protocol PGTSConnectorDelegate;
+
+
+@protocol PGTSConnectionDelegate <NSObject>
+- (void) PGTSConnectionFailed: (PGTSConnection *) connection;
+- (void) PGTSConnectionEstablished: (PGTSConnection *) connection;
+@end
 
 
 @interface PGTSConnection : NSObject
@@ -41,16 +49,23 @@
 	NSMutableArray* mQueue;
 	id mConnector;
     NSNotificationCenter* mNotificationCenter;
+    PGTSDatabaseDescription* mDatabase;
+    NSMutableDictionary* mPGTypes;
     
     CFRunLoopRef mRunLoop;
     CFSocketRef mSocket;
     CFRunLoopSourceRef mSocketSource;
+    
+    id mDelegate;
 }
 - (id) init;
 - (void) dealloc;
 - (BOOL) connectAsync: (NSString *) connectionString;
 - (void) disconnect;
-- (PGconn *) pgConnection;
+- (void) setDelegate: (id <PGTSConnectionDelegate>) anObject;
+- (PGTSDatabaseDescription *) databaseDescription;
+- (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc;
+- (id) deserializationDictionary;
 @end
 
 
@@ -66,4 +81,13 @@
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback;
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback parameters: (id) p1, ...;
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback parameterArray: (NSArray *) parameters;
+@end
+
+
+@interface PGTSConnection (PGTSConnectionPrivate)
+- (void) setConnector: (PGTSConnector *) anObject;
+- (void) readFromSocket;
+- (int) sendNextQuery;
+- (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query;
+- (PGconn *) pgConnection;
 @end

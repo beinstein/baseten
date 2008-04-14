@@ -36,7 +36,7 @@
 /** 
  * Data type in a database
  */
-@implementation PGTSTypeInfo
+@implementation PGTSTypeDescription
 
 - (id) initWithConnection: (PGTSConnection *) aConnection
 {
@@ -58,7 +58,7 @@
 @end
 
 
-@implementation PGTSTypeInfo (Queries)
+@implementation PGTSTypeDescription (Queries)
 
 - (NSString *) name
 {
@@ -83,12 +83,12 @@
     return name;
 }
 
-- (void) setDatabase: (PGTSDatabaseInfo *) aDatabase
+- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase
 {
     database = aDatabase;
 }
 
-- (PGTSDatabaseInfo *) database
+- (PGTSDatabaseDescription *) database
 {
     return database;
 }

@@ -29,12 +29,12 @@
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTSAbstractClassInfo.h>
 
-@class PGTSTableInfo;
+@class PGTSTableDescription;
 
 
-@interface PGTSIndexInfo : PGTSAbstractClassInfo 
+@interface PGTSIndexDescription : PGTSAbstractClassInfo 
 {
-    PGTSTableInfo* table;
+    PGTSTableDescription* table;
     NSSet* fields;
     BOOL isPrimaryKey;
     BOOL isUnique;
@@ -46,7 +46,7 @@
 - (BOOL) isUnique;
 - (void) setPrimaryKey: (BOOL) aBool;
 - (BOOL) isPrimaryKey;
-- (PGTSTableInfo *) table;
-- (void) setTable: (PGTSTableInfo *) aTable;
+- (PGTSTableDescription *) table;
+- (void) setTable: (PGTSTableDescription *) aTable;
 
 @end

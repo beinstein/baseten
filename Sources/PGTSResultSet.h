@@ -28,94 +28,42 @@
 
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h> 
-#import <PGTS/PGTSResultRowProtocol.h>
-
-@class PGTSConnection;
-@class PGTSWriteDelegate;
-@class PGTSResultRow;
-@class PGTSTableInfo;
-@class PGTSFieldInfo;
 
 
-@interface PGTSResultSet : NSObject {
-    
-    @private
-	PGresult* result;
-    PGTSConnection* connection;
-	int currentRow, fields, tuples;
-    unsigned int serial;
-	
-    id fieldnames;
-    
-    BOOL determinesFieldClassesAutomatically;
-    Class rowClass;
-    NSInvocation* rowAwakenInvocation;
-	BOOL deserializedFields;
-	id** valueArray;
-	Class* valueClassArray;
+@interface PGTSResultSet : NSObject
+{
 }
++ (id) resultWithPGresult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
+@end
 
+
+@interface PGTSResultSet (Implementation)
+- (id) initWithPGResult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
 - (PGTSConnection *) connection;
 - (BOOL) querySucceeded;
 - (ExecStatusType) status;
-- (NSString *) errorMessage;
-- (NSString *) errorMessageField: (int) fieldcode;
-- (int) numberOfFields;
-- (BOOL) isAtEnd;
 - (BOOL) advanceRow;
-- (unsigned int) indexOfFieldNamed: (NSString *) aName;
-- (id) valueForFieldAtIndex: (int) columnIndex;
 - (id) valueForFieldAtIndex: (int) columnIndex row: (int) rowIndex;
-- (id) valueForFieldNamed: (NSString *) aName;
-- (id) valueForFieldNamed: (NSString *) aName row: (int) rowIndex;
-- (id) valueForKey: (NSString *) aKey;
+- (id) valueForFieldAtIndex: (int) columnIndex;
+- (id) valueForKey: (NSString *) aName row: (int) rowIndex;
+- (BOOL) setClass: (Class) aClass forKey: (NSString *) aName;
+- (BOOL) setClass: (Class) aClass forFieldAtIndex: (int) fieldIndex;
+
+- (BOOL) isAtEnd;
+- (int) currentRow;
+- (id) currentRowAsObject;
+- (void) setRowClass: (Class) aClass;
+- (void) setValuesFromRow: (int) rowIndex target: (id) targetObject nullPlaceholder: (id) nullPlaceholder;
+- (NSDictionary *) currentRowAsDictionary;
 - (void) goBeforeFirstRow;
 - (BOOL) goToRow: (int) aRow;
 - (int) numberOfRowsAffected;
 - (unsigned long long) numberOfRowsAffectedByCommand;
-- (int) currentRow;
-- (NSArray *) currentRowAsArray;
-- (NSDictionary *) currentRowAsDictionary;
-- (PGTSConnection *) connection;
+- (BOOL) advanceRow;
 @end
 
 
-@interface PGTSResultSet (Serialization)
-- (void) setDeterminesFieldClassesAutomatically: (BOOL) aBool;
-- (BOOL) determinesFieldClassesAutomatically;
-- (Class) classForFieldNamed: (NSString *) aName;
-- (Class) classForFieldAtIndex: (int) fieldIndex;
-- (BOOL) setClass: (Class) aClass forFieldNamed: (NSString *) aName;
-- (BOOL) setClass: (Class) aClass forFieldAtIndex: (int) fieldIndex;
-- (BOOL) setFieldClassesFromArray: (NSArray *) classes;
-
-- (Class) rowClass;
-- (void) setRowClass: (Class) aClass;
-- (NSInvocation *) rowAwakenInvocation;
-- (void) setRowAwakenInvocation: (NSInvocation *) invocation;
-
-- (id) currentRowAsObject;
-- (void) setValuesToTarget: (id) targetObject;
-- (void) setValuesFromRow: (int) rowIndex target: (id) targetObject;
-- (void) setValuesFromRow: (int) rowIndex target: (id) targetObject nullPlaceholder: (id) anObject;
-- (NSArray *) resultAsArray;
-@end
-
-
-@interface PGTSResultSet (NSKeyValueCoding)
-- (unsigned int) countOfRows;
-- (id <PGTSResultRowProtocol>) objectInRowsAtIndex: (unsigned int) index;
-@end
-
-
-@interface PGTSResultSet (ResultInfo)
-- (PGTSTableInfo *) tableInfoForFieldNamed: (NSString *) aName;
-- (PGTSTableInfo *) tableInfoForFieldAtIndex: (unsigned int) fieldIndex;
-- (Oid) tableOidForFieldNamed: (NSString *) aString;
-- (Oid) tableOidForFieldAtIndex: (unsigned int) index;
-- (Oid) typeOidForFieldAtIndex: (unsigned int) index;
-- (Oid) typeOidForFieldNamed: (NSString *) aName;
-- (PGTSFieldInfo *) fieldInfoForFieldNamed: (NSString *) aName;
-- (PGTSFieldInfo *) fieldInfoForFieldAtIndex: (unsigned int) anIndex;
-- (NSSet *) fieldInfoForSelectedFields;
+@protocol PGTSResultRowProtocol <NSObject>
+/** Called when a new result set and row index are associated with the target */
+- (void) PGTSSetRow: (int) row resultSet: (PGTSResultSet *) res;
 @end

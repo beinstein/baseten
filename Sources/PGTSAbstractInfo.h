@@ -34,7 +34,7 @@
 
 @interface PGTSAbstractInfo : NSObject <NSCopying>
 {
-    PGTSConnection* connection;
+    PGTSConnection* connection; //Weak
     NSString* name;
     unsigned int hash;
 }

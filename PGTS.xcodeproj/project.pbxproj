@@ -95,6 +95,10 @@
 		5396ACE40DAD86F100BCDD39 /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */; };
 		5396AD500DAD89DD00BCDD39 /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */; };
 		5396AD510DAD89DD00BCDD39 /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */; };
+		5396AFA70DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 5396AFA50DAEA6EB00BCDD39 /* PGTSResultSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5396AFA90DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 5396AFA50DAEA6EB00BCDD39 /* PGTSResultSet.h */; };
+		5396AFB40DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5396AFB30DAEA95A00BCDD39 /* PGTSResultSet.mm */; };
+		5396AFB50DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5396AFB30DAEA95A00BCDD39 /* PGTSResultSet.mm */; };
 		539701080A370CCB00DFF6E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		539C08BE0A3706BE00CC45E0 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539C08D10A3706CA00CC45E0 /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -102,6 +106,30 @@
 		53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
 		53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
 		53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
+		53E1899D0DB2DB600094066F /* PGTSAbstractInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F923BC08B1372F00759909 /* PGTSAbstractInfo.h */; };
+		53E1899E0DB2DB620094066F /* PGTSAbstractInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F923BD08B1372F00759909 /* PGTSAbstractInfo.m */; };
+		53E1899F0DB2DB630094066F /* PGTSAbstractObjectDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DF10B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m */; };
+		53E189A00DB2DB640094066F /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */; };
+		53E189A10DB2DB650094066F /* PGTSAbstractClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B38808B5256700ADB959 /* PGTSAbstractClassInfo.h */; };
+		53E189A30DB2DB660094066F /* PGTSDatabaseInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359784E08AF669B000CAC2B /* PGTSDatabaseInfo.h */; };
+		53E189A50DB2DB680094066F /* PGTSTypeInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B4C608B5492C00ADB959 /* PGTSTypeInfo.h */; };
+		53E189A60DB2DB690094066F /* PGTSTypeInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B4C708B5492C00ADB959 /* PGTSTypeInfo.m */; };
+		53E189A70DB2DB6A0094066F /* PGTSTableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 535977FE08AD72DC000CAC2B /* PGTSTableInfo.h */; };
+		53E189A80DB2DB6A0094066F /* PGTSTableInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 535977FF08AD72DC000CAC2B /* PGTSTableInfo.m */; };
+		53E189A90DB2DB6C0094066F /* PGTSIndexInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9237708B0F47700759909 /* PGTSIndexInfo.h */; };
+		53E189AA0DB2DB6C0094066F /* PGTSIndexInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9237808B0F47700759909 /* PGTSIndexInfo.m */; };
+		53E189AB0DB2DB6D0094066F /* PGTSFieldInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9225008AFD9BD00759909 /* PGTSFieldInfo.h */; };
+		53E189AC0DB2DB6E0094066F /* PGTSFieldInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9225108AFD9BD00759909 /* PGTSFieldInfo.m */; };
+		53E189AD0DB2DB6E0094066F /* PGTSForeignKeyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */; };
+		53E189AE0DB2DB6F0094066F /* PGTSSchemaDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */; };
+		53E189AF0DB2DB700094066F /* PGTSForeignKeyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */; };
+		53E189B00DB2DB710094066F /* PGTSSchemaDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */; };
+		53E189B10DB2DB720094066F /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; };
+		53E189B20DB2DB720094066F /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
+		53E189B30DB2DB730094066F /* PGTSACLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */; };
+		53E189B40DB2DB740094066F /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */; };
+		53E18B190DB370A00094066F /* PGTSDatabaseInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359784F08AF669B000CAC2B /* PGTSDatabaseInfo.m */; };
+		53E18B220DB370C50094066F /* PGTSAbstractClassInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -229,6 +257,8 @@
 		5392A7E00DAD7DFA0012C7CD /* PGTSQueryDescription.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = PGTSQueryDescription.m; path = Sources/PGTSQueryDescription.m; sourceTree = "<group>"; };
 		5392A85C0DAD7E190012C7CD /* PGTSConnector.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSConnector.h; path = Sources/PGTSConnector.h; sourceTree = "<group>"; };
 		5392A85D0DAD7E190012C7CD /* PGTSConnector.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = PGTSConnector.m; path = Sources/PGTSConnector.m; sourceTree = "<group>"; };
+		5396AFA50DAEA6EB00BCDD39 /* PGTSResultSet.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSResultSet.h; path = Sources/PGTSResultSet.h; sourceTree = "<group>"; };
+		5396AFB30DAEA95A00BCDD39 /* PGTSResultSet.mm */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.cpp.objcpp; name = PGTSResultSet.mm; path = Sources/PGTSResultSet.mm; sourceTree = "<group>"; };
 		53A422880981B84C003C3A24 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSForeignKeyDescription.h; path = Sources/PGTSForeignKeyDescription.h; sourceTree = "<group>"; };
 		53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSForeignKeyDescription.m; path = Sources/PGTSForeignKeyDescription.m; sourceTree = "<group>"; };
@@ -436,6 +466,8 @@
 				5392A7DE0DAD7DFA0012C7CD /* PGTSQuery.m */,
 				5392A7DF0DAD7DFA0012C7CD /* PGTSQueryDescription.h */,
 				5392A7E00DAD7DFA0012C7CD /* PGTSQueryDescription.m */,
+				5396AFA50DAEA6EB00BCDD39 /* PGTSResultSet.h */,
+				5396AFB30DAEA95A00BCDD39 /* PGTSResultSet.mm */,
 			);
 			name = Queries;
 			sourceTree = "<group>";
@@ -495,6 +527,19 @@
 				5392A85E0DAD7E190012C7CD /* PGTSConnector.h in Headers */,
 				5396ACE30DAD86F100BCDD39 /* PGTSConstants.h in Headers */,
 				5396AD500DAD89DD00BCDD39 /* PGTSAdditions.h in Headers */,
+				5396AFA70DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */,
+				53E1899D0DB2DB600094066F /* PGTSAbstractInfo.h in Headers */,
+				53E189A00DB2DB640094066F /* PGTSAbstractObjectDescription.h in Headers */,
+				53E189A10DB2DB650094066F /* PGTSAbstractClassInfo.h in Headers */,
+				53E189A30DB2DB660094066F /* PGTSDatabaseInfo.h in Headers */,
+				53E189A50DB2DB680094066F /* PGTSTypeInfo.h in Headers */,
+				53E189A70DB2DB6A0094066F /* PGTSTableInfo.h in Headers */,
+				53E189A90DB2DB6C0094066F /* PGTSIndexInfo.h in Headers */,
+				53E189AB0DB2DB6D0094066F /* PGTSFieldInfo.h in Headers */,
+				53E189AD0DB2DB6E0094066F /* PGTSForeignKeyDescription.h in Headers */,
+				53E189AE0DB2DB6F0094066F /* PGTSSchemaDescriptor.h in Headers */,
+				53E189B10DB2DB720094066F /* PGTSRoleDescription.h in Headers */,
+				53E189B30DB2DB730094066F /* PGTSACLItem.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -529,6 +574,7 @@
 				5392A7E50DAD7DFA0012C7CD /* PGTSQuery.h in Headers */,
 				5392A7E70DAD7DFA0012C7CD /* PGTSQueryDescription.h in Headers */,
 				5392A8600DAD7E190012C7CD /* PGTSConnector.h in Headers */,
+				5396AFA90DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -682,6 +728,19 @@
 				5392A85F0DAD7E190012C7CD /* PGTSConnector.m in Sources */,
 				5396ACE40DAD86F100BCDD39 /* PGTSConstants.m in Sources */,
 				5396AD510DAD89DD00BCDD39 /* PGTSAdditions.m in Sources */,
+				5396AFB40DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */,
+				53E1899E0DB2DB620094066F /* PGTSAbstractInfo.m in Sources */,
+				53E1899F0DB2DB630094066F /* PGTSAbstractObjectDescription.m in Sources */,
+				53E189A60DB2DB690094066F /* PGTSTypeInfo.m in Sources */,
+				53E189A80DB2DB6A0094066F /* PGTSTableInfo.m in Sources */,
+				53E189AA0DB2DB6C0094066F /* PGTSIndexInfo.m in Sources */,
+				53E189AC0DB2DB6E0094066F /* PGTSFieldInfo.m in Sources */,
+				53E189AF0DB2DB700094066F /* PGTSForeignKeyDescription.m in Sources */,
+				53E189B00DB2DB710094066F /* PGTSSchemaDescriptor.m in Sources */,
+				53E189B20DB2DB720094066F /* PGTSRoleDescription.m in Sources */,
+				53E189B40DB2DB740094066F /* PGTSACLItem.m in Sources */,
+				53E18B190DB370A00094066F /* PGTSDatabaseInfo.m in Sources */,
+				53E18B220DB370C50094066F /* PGTSAbstractClassInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -713,6 +772,7 @@
 				5392A7E60DAD7DFA0012C7CD /* PGTSQuery.m in Sources */,
 				5392A7E80DAD7DFA0012C7CD /* PGTSQueryDescription.m in Sources */,
 				5392A8610DAD7E190012C7CD /* PGTSConnector.m in Sources */,
+				5396AFB50DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

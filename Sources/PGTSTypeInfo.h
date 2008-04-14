@@ -30,12 +30,12 @@
 #import <PGTS/PGTSAbstractClassInfo.h>
 
 
-@class PGTSDatabaseInfo;
+@class PGTSDatabaseDescription;
 
 
-@interface PGTSTypeInfo : PGTSAbstractClassInfo 
+@interface PGTSTypeDescription : PGTSAbstractClassInfo 
 {
-    PGTSDatabaseInfo* database;
+    PGTSDatabaseDescription* database;
     Oid elementOid;
     unsigned int elementCount;
     char delimiter;
@@ -44,9 +44,9 @@
 @end
 
 
-@interface PGTSTypeInfo (Queries)
-- (void) setDatabase: (PGTSDatabaseInfo *) aDatabase;
-- (PGTSDatabaseInfo *) database;
+@interface PGTSTypeDescription (Queries)
+- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase;
+- (PGTSDatabaseDescription *) database;
 - (Oid) elementOid;
 - (char) delimiter;
 - (void) setElementOid: (Oid) anOid;

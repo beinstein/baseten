@@ -45,6 +45,15 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	[(id) self socketReady];
 }
 
+- (id) init
+{
+    if ((self = [super init]))
+    {
+        mPollFunction = &PQconnectPoll;
+    }
+    return self;
+}
+
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject
 {
 	mDelegate = anObject;
@@ -141,8 +150,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) finishedConnecting: (BOOL) succeeded
 {
-	[mDelegate connector: self gotConnection: mConnection succeeded: succeeded];
 	[self freeCFTypes];
+	[mDelegate connector: self gotConnection: mConnection succeeded: succeeded];
 }
 
 - (BOOL) connect: (const char *) conninfo
@@ -170,9 +179,11 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 			
 			CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
 			CFStringRef mode = kCFRunLoopCommonModes;
-			CFRunLoopAddSource (runloop, mSocketSource, mode);
 			CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
 			CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
+			CFRunLoopAddSource (runloop, mSocketSource, mode);
+            
+            retval = YES;
 		}
 	}
 	return retval;

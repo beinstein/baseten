@@ -27,8 +27,6 @@
 //
 
 #import <PGTS/PGTSAbstractInfo.h>
-#import <PGTS/PGTSConnectionPool.h>
-#import <PGTS/PGTSConnectionPoolItem.h>
 #import <PGTS/PGTSConstants.h>
 
 
@@ -78,35 +76,6 @@
 - (void) setConnection: (PGTSConnection *) aConnection
 {
     connection = aConnection;
-    PGTSConnectionPoolItem* item = [[PGTSConnectionPool sharedInstance] itemForConnection: aConnection];
-    
-    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-    [nc removeObserver: self name: kPGTSConnectionPoolItemDidAddConnectionNotification object: item];
-    [nc addObserver: self selector: @selector (substituteConnection:)
-               name: kPGTSConnectionPoolItemDidRemoveConnectionNotification
-             object: item];
-}
-
-- (void) substituteConnection: (NSNotification *) n
-{
-    if ([[n userInfo] objectForKey: kPGTSConnectionKey] == connection)
-    {
-        PGTSConnectionPoolItem* item = [n object];
-        PGTSConnection* aConnection = [item someConnection];
-        if (nil != aConnection)
-            [self setConnection: aConnection];
-        else
-        {
-            [self setConnection: nil];
-            [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector (addConnection:)
-                                                         name: kPGTSConnectionPoolItemDidAddConnectionNotification object: item];
-        }
-    }
-}
-
-- (void) addConnection: (NSNotification *) n
-{
-    [self setConnection: [[n userInfo] objectForKey: kPGTSConnectionKey]];
 }
 
 - (NSString *) name

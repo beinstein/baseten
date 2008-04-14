@@ -32,7 +32,7 @@
 @class PGTSConnector;
 
 
-@protocol PGTSConnectorDelegate
+@protocol PGTSConnectorDelegate <NSObject>
 - (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
 @end
 

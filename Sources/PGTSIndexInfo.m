@@ -32,7 +32,7 @@
 /** 
  * Table index
  */
-@implementation PGTSIndexInfo
+@implementation PGTSIndexDescription
 
 - (id) initWithConnection: (PGTSConnection *) aConnection
 {
@@ -84,12 +84,12 @@
     return isPrimaryKey;
 }
 
-- (void) setTable: (PGTSTableInfo *) anObject
+- (void) setTable: (PGTSTableDescription *) anObject
 {
     table = anObject;
 }
 
-- (PGTSTableInfo *) table
+- (PGTSTableDescription *) table
 {
     return table;
 }

@@ -38,7 +38,7 @@
 /** 
  * Table field
  */
-@implementation PGTSFieldInfo
+@implementation PGTSFieldDescription
 
 - (id) initWithConnection: (PGTSConnection *) aConnection
 {
@@ -111,12 +111,12 @@
     return index;
 }
 
-- (void) setTable: (PGTSTableInfo *) anObject
+- (void) setTable: (PGTSTableDescription *) anObject
 {
     table = anObject;
 }
 
-- (PGTSTableInfo *) table
+- (PGTSTableDescription *) table
 {
     return table;
 }
@@ -126,12 +126,12 @@
     return typeOid;
 }
 
-- (PGTSTypeInfo *) typeInfo
+- (PGTSTypeDescription *) type
 {
-    return [[table database] typeInfoForTypeWithOid: typeOid];
+    return [[table database] typeWithOid: typeOid];
 }
 
-- (NSComparisonResult) indexCompare: (PGTSFieldInfo *) aField
+- (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField
 {
     NSComparisonResult result = NSOrderedAscending;
     unsigned int anIndex = [aField index];

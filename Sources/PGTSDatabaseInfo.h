@@ -31,29 +31,24 @@
 #import <PGTS/postgresql/libpq-fe.h> 
 
 
-@class PGTSTableInfo;
-@class PGTSTypeInfo;
-@class PGTSConnectionPoolItem;
+@class PGTSTableDescription;
+@class PGTSTypeDescription;
 @class PGTSRoleDescription;
 
 
-@interface PGTSDatabaseInfo : PGTSAbstractInfo 
+@interface PGTSDatabaseDescription : PGTSAbstractInfo 
 {
     id tables;
     id types;
     NSMutableDictionary* schemas;
-    PGTSConnectionPoolItem* poolItem;
-    NSString* connectionPoolKey;
     NSMutableDictionary* roles;
 }
 
-- (PGTSTableInfo *) tableInfoForTableWithOid: (Oid) anOid;
-- (PGTSTableInfo *) tableInfoForTableNamed: (NSString *) tableName inSchemaNamed: (NSString *) schemaName;
-- (PGTSTypeInfo *) typeInfoForTypeWithOid: (Oid) anOid;
+- (PGTSTableDescription *) tableWithOid: (Oid) anOid;
+- (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
+- (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
 - (BOOL) schemaExists: (NSString *) schemaName;
-- (NSString *) connectionPoolKey;
-- (void) setConnectionPoolKey: (NSString *) aKey;
-- (void) updateTableCache: (PGTSTableInfo *) table;
+- (void) updateTableCache: (PGTSTableDescription *) table;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 

@@ -139,8 +139,8 @@
             [self setSchemaName: [res valueForKey: @"nspname"]];
             [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];
             
-            PGTSRoleDescription* role = [[connection databaseInfo] roleNamed: [res valueForKey: @"rolname"]
-                                                                         oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
+            PGTSRoleDescription* role = [[connection database] roleNamed: [res valueForKey: @"rolname"]
+                                                                     oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
             [self setOwner: role];
             
             TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
