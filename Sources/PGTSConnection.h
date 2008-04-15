@@ -29,6 +29,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h>
+#import <PGTS/PGTSConnector.h>
 @class PGTSConnection;
 @class PGTSResultSet;
 @class PGTSConnector;

@@ -52,7 +52,7 @@
 		5381765A0D633DC000A4CA72 /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */; };
 		5381765B0D633DC000A4CA72 /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FF108804EA000BFAFB5 /* PGTSFunctions.m */; };
 		5381765D0D633DC000A4CA72 /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */; };
-		538176630D633DC000A4CA72 /* PGTSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.m */; };
+		538176630D633DC000A4CA72 /* PGTSConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.mm */; };
 		538176660D633DC000A4CA72 /* PGTSAbstractInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F923BD08B1372F00759909 /* PGTSAbstractInfo.m */; };
 		538176670D633DC000A4CA72 /* PGTSAbstractClassInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9B38908B5256700ADB959 /* PGTSAbstractClassInfo.m */; };
 		538176680D633DC000A4CA72 /* PGTSDatabaseInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359784F08AF669B000CAC2B /* PGTSDatabaseInfo.m */; };
@@ -102,7 +102,7 @@
 		539701080A370CCB00DFF6E8 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		539C08BE0A3706BE00CC45E0 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539C08D10A3706CA00CC45E0 /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		539C08D50A3706CD00CC45E0 /* PGTSConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.m */; };
+		539C08D50A3706CD00CC45E0 /* PGTSConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.mm */; };
 		53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
 		53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
 		53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
@@ -264,7 +264,7 @@
 		53A422880981B84C003C3A24 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSForeignKeyDescription.h; path = Sources/PGTSForeignKeyDescription.h; sourceTree = "<group>"; };
 		53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSForeignKeyDescription.m; path = Sources/PGTSForeignKeyDescription.m; sourceTree = "<group>"; };
-		53BA4FD808804E9F00BFAFB5 /* PGTSConnection.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 5; name = PGTSConnection.m; path = Sources/PGTSConnection.m; sourceTree = "<group>"; };
+		53BA4FD808804E9F00BFAFB5 /* PGTSConnection.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 5; name = PGTSConnection.mm; path = Sources/PGTSConnection.mm; sourceTree = "<group>"; };
 		53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 5; name = PGTSAdditions.m; path = Sources/PGTSAdditions.m; sourceTree = "<group>"; };
 		53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSFunctions.h; path = Sources/PGTSFunctions.h; sourceTree = "<group>"; };
 		53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSConnection.h; path = Sources/PGTSConnection.h; sourceTree = "<group>"; };
@@ -478,7 +478,7 @@
 			isa = PBXGroup;
 			children = (
 				53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */,
-				53BA4FD808804E9F00BFAFB5 /* PGTSConnection.m */,
+				53BA4FD808804E9F00BFAFB5 /* PGTSConnection.mm */,
 				5392A85C0DAD7E190012C7CD /* PGTSConnector.h */,
 				5392A85D0DAD7E190012C7CD /* PGTSConnector.m */,
 			);
@@ -628,6 +628,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53BA4FD208804E6B00BFAFB5 /* Build configuration list for PBXProject "PGTS" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
@@ -724,7 +725,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				539C08D50A3706CD00CC45E0 /* PGTSConnection.m in Sources */,
+				539C08D50A3706CD00CC45E0 /* PGTSConnection.mm in Sources */,
 				5392A7A60DAD7B0E0012C7CD /* PGTSFoundationObjects.m in Sources */,
 				5392A7E20DAD7DFA0012C7CD /* PGTSQuery.m in Sources */,
 				5392A7E40DAD7DFA0012C7CD /* PGTSQueryDescription.m in Sources */,
@@ -755,7 +756,7 @@
 				5381765A0D633DC000A4CA72 /* PGTSConstants.m in Sources */,
 				5381765B0D633DC000A4CA72 /* PGTSFunctions.m in Sources */,
 				5381765D0D633DC000A4CA72 /* PGTSAdditions.m in Sources */,
-				538176630D633DC000A4CA72 /* PGTSConnection.m in Sources */,
+				538176630D633DC000A4CA72 /* PGTSConnection.mm in Sources */,
 				538176660D633DC000A4CA72 /* PGTSAbstractInfo.m in Sources */,
 				538176670D633DC000A4CA72 /* PGTSAbstractClassInfo.m in Sources */,
 				538176680D633DC000A4CA72 /* PGTSDatabaseInfo.m in Sources */,

@@ -1,5 +1,5 @@
 //
-// PGTSConnection.m
+// PGTSConnection.mm
 // BaseTen
 //
 // Copyright (C) 2008 Marko Karppinen & Co. LLC.
