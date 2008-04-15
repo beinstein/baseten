@@ -27,13 +27,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractClassInfo.h>
+#import <PGTS/PGTSAbstractClassDescription.h>
 
 
 @class PGTSDatabaseDescription;
 
 
-@interface PGTSTypeDescription : PGTSAbstractClassInfo 
+@interface PGTSTypeDescription : PGTSAbstractClassDescription 
 {
     PGTSDatabaseDescription* database;
     Oid elementOid;

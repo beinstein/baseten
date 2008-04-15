@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/PGTSAbstractDescription.h>
 #import <PGTS/PGTSAbstractObjectDescription.h>
 
 

@@ -27,11 +27,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/PGTSAbstractDescription.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 
 
-@interface PGTSAbstractObjectDescription : PGTSAbstractInfo 
+@interface PGTSAbstractObjectDescription : PGTSAbstractDescription 
 {
     Oid oid;
 }

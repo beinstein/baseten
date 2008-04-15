@@ -27,12 +27,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractClassInfo.h>
+#import <PGTS/PGTSAbstractClassDescription.h>
 
 @class PGTSTableDescription;
 
 
-@interface PGTSIndexDescription : PGTSAbstractClassInfo 
+@interface PGTSIndexDescription : PGTSAbstractClassDescription 
 {
     PGTSTableDescription* table;
     NSSet* fields;

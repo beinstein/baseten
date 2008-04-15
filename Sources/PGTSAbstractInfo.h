@@ -1,5 +1,5 @@
 //
-// PGTSAbstractInfo.h
+// PGTSAbstractDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -32,7 +32,7 @@
 @class PGTSConnection;
 
 
-@interface PGTSAbstractInfo : NSObject <NSCopying>
+@interface PGTSAbstractDescription : NSObject <NSCopying>
 {
     PGTSConnection* connection; //Weak
     NSString* name;

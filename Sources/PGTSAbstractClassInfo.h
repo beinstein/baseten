@@ -1,5 +1,5 @@
 //
-// PGTSAbstractClassInfo.h
+// PGTSAbstractClassDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -34,7 +34,7 @@
 @class PGTSACLItem;
 
 
-@interface PGTSAbstractClassInfo : PGTSAbstractObjectDescription
+@interface PGTSAbstractClassDescription : PGTSAbstractObjectDescription
 {
     Oid schemaOid;
     NSString* schemaName;
@@ -51,7 +51,7 @@
 @end
 
 
-@interface PGTSAbstractClassInfo (Queries)
+@interface PGTSAbstractClassDescription (Queries)
 - (NSString *) name;
 - (Oid) schemaOid;
 - (NSString *) schemaName;

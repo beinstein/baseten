@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractClassInfo.h>
+#import <PGTS/PGTSAbstractClassDescription.h>
 
 
 @class PGTSFieldDescription;
@@ -36,7 +36,7 @@
 @class PGTSResultSet;
 
 
-@interface PGTSTableDescription : PGTSAbstractClassInfo 
+@interface PGTSTableDescription : PGTSAbstractClassDescription 
 {
     unsigned int fieldCount;
     id fields;

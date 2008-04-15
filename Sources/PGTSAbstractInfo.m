@@ -1,5 +1,5 @@
 //
-// PGTSAbstractInfo.m
+// PGTSAbstractDescription.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,14 +26,14 @@
 // $Id$
 //
 
-#import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/PGTSAbstractDescription.h>
 #import <PGTS/PGTSConstants.h>
 
 
 /** 
  * Abstract base class
  */
-@implementation PGTSAbstractInfo
+@implementation PGTSAbstractDescription
 
 + (BOOL) accessInstanceVariablesDirectly
 {
@@ -100,7 +100,7 @@
         rval = [super isEqual: anObject];
     else
     {
-        PGTSAbstractInfo* anInfo = (PGTSAbstractInfo *) anObject;
+        PGTSAbstractDescription* anInfo = (PGTSAbstractDescription *) anObject;
         rval = ([connection isEqual: anInfo->connection] &&
                 [name isEqualToString: anInfo->name]);
     }

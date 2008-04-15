@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/PGTSAbstractDescription.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 
 
@@ -35,7 +35,7 @@
 @class PGTSTypeDescription;
 
 
-@interface PGTSFieldDescription : PGTSAbstractInfo 
+@interface PGTSFieldDescription : PGTSAbstractDescription 
 {
     PGTSTableDescription* table;
     unsigned int index;

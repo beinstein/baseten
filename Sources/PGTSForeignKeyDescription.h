@@ -26,13 +26,13 @@
 // $Id$
 //
 
-#import <PGTS/PGTSAbstractInfo.h>
+#import <PGTS/PGTSAbstractDescription.h>
 #import <PGTS/PGTSConstants.h>
 
 @class PGTSConnection;
 @class PGTSTableDescription;
 
-@interface PGTSForeignKeyDescription : PGTSAbstractInfo 
+@interface PGTSForeignKeyDescription : PGTSAbstractDescription 
 {
     NSArray* sourceFields;
     NSArray* referenceFields;

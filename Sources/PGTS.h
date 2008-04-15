@@ -41,8 +41,8 @@
 #import <PGTS/PGTSExceptions.h>
 #import <PGTS/PGTSCertificateVerificationDelegate.h>
 
-#import <PGTS/PGTSAbstractInfo.h>
-#import <PGTS/PGTSAbstractClassInfo.h>
+#import <PGTS/PGTSAbstractDescription.h>
+#import <PGTS/PGTSAbstractClassDescription.h>
 #import <PGTS/PGTSDatabaseInfo.h>
 #import <PGTS/PGTSIndexInfo.h>
 #import <PGTS/PGTSTableInfo.h>

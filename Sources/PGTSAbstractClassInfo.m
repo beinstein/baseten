@@ -1,5 +1,5 @@
 //
-// PGTSAbstractClassInfo.m
+// PGTSAbstractClassDescription.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import "PGTSAbstractClassInfo.h"
+#import "PGTSAbstractClassDescription.h"
 #import "PGTSResultSet.h"
 #import "PGTSFunctions.h"
 #import "PGTSConnection.h"
@@ -39,7 +39,7 @@
 /** 
  * Abstract base class for database class objects
  */
-@implementation PGTSAbstractClassInfo
+@implementation PGTSAbstractClassDescription
 
 - (id) initWithConnection: (PGTSConnection *) aConn
 {
@@ -103,7 +103,7 @@
 @end
 
 
-@implementation PGTSAbstractClassInfo (Queries)
+@implementation PGTSAbstractClassDescription (Queries)
 
 - (Oid) schemaOid
 {
