@@ -60,6 +60,7 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
 	int mCurrentRow;
     int mFields;
     int mTuples;
+    int mIdentifier;
     FieldIndexMap* mFieldIndices;
     FieldClassMap* mFieldClasses;
     Class mRowClass;
@@ -114,7 +115,7 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
 - (NSString *) description
 {
     return [NSString stringWithFormat: @"<%@ (%p) cr: %d t: %d f: %d kc: %d ok: %d>",
-        [self class], self, mResult, mCurrentRow, mTuples, mFields, mKnowsFieldClasses, [self querySucceeded]];
+        [self class], self, mCurrentRow, mTuples, mFields, mKnowsFieldClasses, [self querySucceeded]];
 }
 
 - (ExecStatusType) status
@@ -199,6 +200,16 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
     return rval;
 #endif
     return nil;
+}
+
+- (int) identifier
+{
+    return mIdentifier;
+}
+
+- (void) setIdentifier: (int) anIdentifier
+{
+    mIdentifier = anIdentifier;
 }
 
 @end

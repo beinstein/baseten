@@ -89,12 +89,11 @@ ProcessWillExit ()
     static BOOL tooLate = NO;
     if (! tooLate)
     {
-        tooLate = YES;
-        gConnections = new ConnectionHash ();
-        //FIXME: create a lock, too.
-        
+        tooLate = YES;        
         if (! NSClassFromString (@"NSApplication"))
         {
+            gConnections = new ConnectionHash ();
+            //FIXME: create a lock, too.
             atexit (&ProcessWillExit);
         }
     }
@@ -179,8 +178,37 @@ ProcessWillExit ()
 	//When the socket is ready for read, send any available notifications and read results until 
 	//the socket blocks. If all results for the current query have been read, send the next query.
 	PQconsumeInput (mConnection);
+    
+    [self processNotifications];
+	
+	PGTSQueryDescription* queryDescription = [[[mQueue objectAtIndex: 0] retain] autorelease];
+	while (! PQisBusy (mConnection))
+	{
+        [queryDescription receiveForConnection: self];
+        if ([queryDescription finished])
+            break;
+	}
+	
+	if ([queryDescription finished])
+	{
+        unsigned int count = [mQueue count];
+        if (count)
+        {
+            if ([mQueue objectAtIndex: 0] == queryDescription)
+            {
+                [mQueue removeObjectAtIndex: 0];
+                count--;
+            }
+            
+            if (count)
+                [self sendNextQuery];
+        }            
+	}
+}
 
-	PGnotify* pgNotification = NULL;
+- (void) processNotifications
+{
+    PGnotify* pgNotification = NULL;
 	while ((pgNotification = PQnotifies (mConnection)))
 	{
 		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -192,33 +220,7 @@ ProcessWillExit ()
 	    
 		[mNotificationCenter postNotification: notification];
 		PQfreeNotify (pgNotification);
-	}
-	
-	PGTSQueryDescription* queryDescription = [mQueue objectAtIndex: 0];
-	while (! PQisBusy (mConnection))
-	{
-		PGresult* result = PQgetResult (mConnection);
-		if (! result)
-		{
-			[queryDescription connectionFinishedQuery: self];
-			break;
-		}
-		
-		if ([queryDescription sent])
-		{
-			PGTSResultSet* resultSet = [PGTSResultSet resultWithPGresult: result connection: self];
-            //FIXME: enable this.
-            //[queryDescription setLastResultSet: resultSet];
-			[queryDescription connection: self receivedResultSet: resultSet];
-		}
-	}
-	
-	if ([queryDescription finished])
-	{
-		[mQueue removeObjectAtIndex: 0];
-        if (0 < [mQueue count])
-            [self sendNextQuery];
-	}
+	}    
 }
 
 - (int) sendNextQuery
@@ -227,10 +229,8 @@ ProcessWillExit ()
 	PGTSQueryDescription* desc = [mQueue objectAtIndex: 0];
 	if (nil != desc)
 	{
-		log4AssertVoidReturn (! [desc sent], @"Expected %@ not to have been sent.", desc);
-	
-		retval = [[desc query] sendQuery: self];
-		[desc connectionSentQuery: self];
+		log4AssertVoidReturn (! [desc sent], @"Expected %@ not to have been sent.", desc);	
+		retval = [desc sendForConnection: self];
 	}
     return retval;
 }
@@ -378,8 +378,15 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 
 - (PGTSResultSet *) executeQuery: (NSString *) queryString parameterArray: (NSArray *) parameters
 {
-	//FIXME: make this work.
-	return nil;
+    PGTSResultSet* retval = nil;
+    [self sendQuery: queryString delegate: nil callback: NULL parameterArray: parameters];
+    while (0 < [mQueue count])
+    {
+        PGTSQueryDescription* desc = [mQueue objectAtIndex: 0];
+        retval = [desc finishForConnection: self];
+        [mQueue removeObjectAtIndex: 0];
+    }
+    return retval;
 }
 
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback
@@ -398,8 +405,8 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
    parameterArray: (NSArray *) parameters
 {
-	PGTSQueryDescription* desc = [[PGTSConcreteQueryDescription alloc] init];
-	PGTSParameterQuery* query = [[PGTSParameterQuery alloc] init];
+	PGTSQueryDescription* desc = [[[PGTSConcreteQueryDescription alloc] init] autorelease];
+	PGTSParameterQuery* query = [[[PGTSParameterQuery alloc] init] autorelease];
 	[query setQuery: queryString];
 	[query setParameters: parameters];
 	[desc setQuery: query];
@@ -408,8 +415,6 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 	
 	int retval = [desc identifier];
 	[self sendOrEnqueueQuery: desc];
-	[desc release];
-	[query release];
 	return retval;
 }
 

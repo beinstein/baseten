@@ -314,6 +314,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     return [names componentsJoinedByString: @","];
 }
 @end
+#endif
 
 
 @implementation NSNumber (PGTSAdditions)
@@ -335,6 +336,8 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 }
 @end
 
+
+#if 0
 @implementation PGTSAbstractClass
 - (id) init
 {

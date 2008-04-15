@@ -91,4 +91,5 @@
 - (int) sendNextQuery;
 - (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query;
 - (PGconn *) pgConnection;
+- (void) processNotifications;
 @end

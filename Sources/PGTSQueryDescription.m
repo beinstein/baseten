@@ -27,6 +27,10 @@
 //
 
 #import "PGTSQueryDescription.h"
+#import "PGTSConnection.h"
+#import "PGTSResultSet.h"
+#import "PGTSQuery.h"
+#import <PGTS/postgresql/libpq-fe.h>
 
 
 static int gIdentifier = 0;
@@ -81,16 +85,19 @@ NextIdentifier ()
 	return YES;
 }
 
-- (void) connectionSentQuery: (PGTSConnection *) connection
+- (int) sendForConnection: (PGTSConnection *) connection
 {
+    return -1;
 }
 
-- (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) result
+- (PGTSResultSet *) receiveForConnection: (PGTSConnection *) connection
 {
+    return nil;
 }
 
-- (void) connectionFinishedQuery: (PGTSConnection *) connection
+- (PGTSResultSet *) finishForConnection: (PGTSConnection *) connection
 {
+    return nil;
 }
 
 @end
@@ -159,21 +166,44 @@ NextIdentifier ()
 	return mFinished;
 }
 
-- (void) connectionSentQuery: (PGTSConnection *) connection
+- (int) sendForConnection: (PGTSConnection *) connection
 {
+    int retval = [mQuery sendQuery: connection];
 	mSent = YES;
+    return retval;
 }
 
-- (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) result
+- (PGTSResultSet *) receiveForConnection: (PGTSConnection *) connection
 {
-    //FIXME: enable this.
-	//[result setIdentifier: mIdentifier];
-	[mDelegate performSelector: mCallback withObject: result];
+    NSAssert1 ([self sent], @"Expected %@ to have been sent.", self);
+    PGTSResultSet* retval = nil;
+    PGconn* pgConn = [connection pgConnection];
+    PGresult* result = PQgetResult (pgConn);
+    if (result)
+    {
+        retval = [PGTSResultSet resultWithPGresult: result connection: connection];
+        [retval setIdentifier: mIdentifier];
+        [mDelegate performSelector: mCallback withObject: retval];
+    }
+    else
+    {
+        mFinished = YES;
+    }
+    return retval;
 }
 
-- (void) connectionFinishedQuery: (PGTSConnection *) connection
+- (PGTSResultSet *) finishForConnection: (PGTSConnection *) connection
 {
-	mFinished = YES;
+    id retval = nil;
+    if (! mSent)
+        [self sendForConnection: connection];
+    
+    while (! mFinished)
+    {
+        retval = [self receiveForConnection: connection] ?: retval;
+        [connection processNotifications];
+    }
+    return retval;
 }
 
 @end

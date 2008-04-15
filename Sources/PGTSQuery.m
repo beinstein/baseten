@@ -81,6 +81,8 @@
 
 - (int) sendQuery: (PGTSConnection *) connection
 {
+    NSLog (@"sendquery: %@ %@", mQuery, mParameters);
+    
     int retval = 0;
 	int nParams = [self parameterCount];
     const char** paramValues  = calloc (nParams, sizeof (char *));

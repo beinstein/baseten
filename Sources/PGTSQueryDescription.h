@@ -45,9 +45,10 @@
 - (BOOL) sent;
 - (BOOL) finished;
 
-- (void) connectionSentQuery: (PGTSConnection *) connection;
-- (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) result;
-- (void) connectionFinishedQuery: (PGTSConnection *) connection;
+- (int) sendForConnection: (PGTSConnection *) connection;
+- (PGTSResultSet *) receiveForConnection: (PGTSConnection *) connection;
+- (PGTSResultSet *) finishForConnection: (PGTSConnection *) connection;
+
 @end
 
 
@@ -57,7 +58,6 @@
 	id mDelegate;
 	int mIdentifier;
 	PGTSQuery* mQuery;
-	PGTSResultSet* mLastResultSet;
 	BOOL mSent;
 	BOOL mFinished;
 }

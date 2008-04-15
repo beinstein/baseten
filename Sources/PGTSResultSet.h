@@ -60,6 +60,8 @@
 - (int) count;
 - (unsigned long long) numberOfRowsAffectedByCommand;
 - (BOOL) advanceRow;
+- (int) identifier;
+- (void) setIdentifier: (int) anIdentifier;
 
 - (void) setDeterminesFieldClassesAutomatically: (BOOL) aBool;
 @end
