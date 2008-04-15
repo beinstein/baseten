@@ -47,6 +47,7 @@
 
 typedef std::tr1::unordered_set <PGTSConnection *, ObjectHash, ObjectCompare <id> > ConnectionHash;
 static ConnectionHash* gConnections = NULL;
+static NSLock* gConnectionSetLock = nil;
 
 
 @interface NSObject (PGTSAppKitCompatibility)
@@ -74,14 +75,17 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 static void
 ProcessWillExit ()
 {
-    //FIXME: locking.
+    [gConnectionSetLock lock];
     ConnectionHash::iterator iterator = gConnections->begin ();
     while (gConnections->end () != iterator)
     {
         [*iterator disconnect];
         iterator++;
     }
+    [gConnectionSetLock unlock];
+    
     delete gConnections;
+    [gConnectionSetLock release];
 }
 
 + (void) initialize
@@ -93,7 +97,7 @@ ProcessWillExit ()
         if (! NSClassFromString (@"NSApplication"))
         {
             gConnections = new ConnectionHash ();
-            //FIXME: create a lock, too.
+            gConnectionSetLock = [[NSLock alloc] init];
             atexit (&ProcessWillExit);
         }
     }
@@ -114,8 +118,9 @@ ProcessWillExit ()
         }
         else
         {
-            //FIXME: locking.
+            [gConnectionSetLock lock];
             gConnections->insert (self);
+            [gConnectionSetLock unlock];
         }
 	}
 	return self;
@@ -410,6 +415,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 
 - (PGTSResultSet *) executeQuery: (NSString *) queryString parameterArray: (NSArray *) parameters
 {
+    //FIXME: when executing, perhaps we should insert the new query into the queue's beginning? The results would be handled in a more intuitive order.
     PGTSResultSet* retval = nil;
     [self sendQuery: queryString delegate: nil callback: NULL parameterArray: parameters];
     while (0 < [mQueue count])
