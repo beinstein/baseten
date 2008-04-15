@@ -1,5 +1,5 @@
 //
-// PGTSFieldInfo.h
+// PGTSIndexDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -27,33 +27,26 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractDescription.h>
-#import <PGTS/postgresql/libpq-fe.h> 
-
+#import <PGTS/PGTSAbstractClassDescription.h>
 
 @class PGTSTableDescription;
-@class PGTSTypeDescription;
 
 
-@interface PGTSFieldDescription : PGTSAbstractDescription 
+@interface PGTSIndexDescription : PGTSAbstractClassDescription 
 {
     PGTSTableDescription* table;
-    unsigned int index;
-    unsigned int indexInResultSet;
-    Oid typeOid;
-	BOOL isNotNull;
+    NSSet* fields;
+    BOOL isPrimaryKey;
+    BOOL isUnique;
 }
 
-- (unsigned int) index;
-- (void) setIndex: (unsigned int) anIndex;
-- (unsigned int) indexInResultSet;
-- (void) setIndexInResultSet: (unsigned int) anIndex;
+- (void) setFields: (NSSet *) aSet;
+- (NSSet *) fields;
+- (void) setUnique: (BOOL) aBool;
+- (BOOL) isUnique;
+- (void) setPrimaryKey: (BOOL) aBool;
+- (BOOL) isPrimaryKey;
 - (PGTSTableDescription *) table;
-- (void) setTable: (PGTSTableDescription *) anObject;
-- (PGTSTypeDescription *) type;
-- (Oid) typeOid;
-- (NSString *) qualifiedName;
-- (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField;
-- (BOOL) isNotNull;
+- (void) setTable: (PGTSTableDescription *) aTable;
 
 @end

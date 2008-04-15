@@ -1,5 +1,5 @@
 //
-// PGTSDatabaseInfo.h
+// PGTSTypeDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -27,29 +27,28 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractDescription.h>
-#import <PGTS/postgresql/libpq-fe.h> 
+#import <PGTS/PGTSAbstractClassDescription.h>
 
 
-@class PGTSTableDescription;
-@class PGTSTypeDescription;
-@class PGTSRoleDescription;
+@class PGTSDatabaseDescription;
 
 
-@interface PGTSDatabaseDescription : PGTSAbstractDescription 
+@interface PGTSTypeDescription : PGTSAbstractClassDescription 
 {
-    id tables;
-    id types;
-    NSMutableDictionary* schemas;
-    NSMutableDictionary* roles;
+    PGTSDatabaseDescription* database;
+    Oid elementOid;
+    unsigned int elementCount;
+    char delimiter;
 }
 
-- (PGTSTableDescription *) tableWithOid: (Oid) anOid;
-- (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
-- (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
-- (BOOL) schemaExists: (NSString *) schemaName;
-- (void) updateTableCache: (PGTSTableDescription *) table;
-- (PGTSRoleDescription *) roleNamed: (NSString *) name;
-- (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
+@end
 
+
+@interface PGTSTypeDescription (Queries)
+- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase;
+- (PGTSDatabaseDescription *) database;
+- (Oid) elementOid;
+- (char) delimiter;
+- (void) setElementOid: (Oid) anOid;
+- (void) setDelimiter: (char) aChar;
 @end

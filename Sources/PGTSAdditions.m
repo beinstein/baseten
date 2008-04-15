@@ -34,9 +34,9 @@
 #import "PGTSConstants.h"
 #if 0
 #import "PGTSFunctions.h"
-#import "PGTSTypeInfo.h"
-#import "PGTSFieldInfo.h"
-#import "PGTSDatabaseInfo.h"
+#import "PGTSTypeDescription.h"
+#import "PGTSFieldDescription.h"
+#import "PGTSDatabaseDescription.h"
 #import "PGTSACLItem.h"
 #import <Log4Cocoa/Log4Cocoa.h>
 
@@ -151,7 +151,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
     NSMutableDictionary* tables = [NSMutableDictionary dictionary];
     TSEnumerate (field, e, [self keyEnumerator])
     {
-        PGTSTableInfo* table = [field table];
+        PGTSTableDescription* table = [field table];
         NSMutableDictionary* fields = [tables objectForKey: table];
         if (nil == fields)
         {

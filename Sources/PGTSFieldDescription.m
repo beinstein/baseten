@@ -1,5 +1,5 @@
 //
-// PGTSFieldInfo.m
+// PGTSFieldDescription.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,12 +26,12 @@
 // $Id$
 //
 
-#import <PGTS/PGTSFieldInfo.h>
+#import <PGTS/PGTSFieldDescription.h>
 #import <PGTS/PGTSResultSet.h>
 #import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSTableInfo.h>
+#import <PGTS/PGTSTableDescription.h>
 #import <PGTS/PGTSFunctions.h>
-#import <PGTS/PGTSDatabaseInfo.h>
+#import <PGTS/PGTSDatabaseDescription.h>
 #import <PGTS/PGTSAdditions.h>
 
 

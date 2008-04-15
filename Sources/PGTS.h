@@ -43,11 +43,11 @@
 
 #import <PGTS/PGTSAbstractDescription.h>
 #import <PGTS/PGTSAbstractClassDescription.h>
-#import <PGTS/PGTSDatabaseInfo.h>
-#import <PGTS/PGTSIndexInfo.h>
-#import <PGTS/PGTSTableInfo.h>
-#import <PGTS/PGTSTypeInfo.h>
-#import <PGTS/PGTSFieldInfo.h>
+#import <PGTS/PGTSDatabaseDescription.h>
+#import <PGTS/PGTSIndexDescription.h>
+#import <PGTS/PGTSTableDescription.h>
+#import <PGTS/PGTSTypeDescription.h>
+#import <PGTS/PGTSFieldDescription.h>
 #import <PGTS/PGTSForeignKeyDescription.h>
 #endif
 

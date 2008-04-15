@@ -1,5 +1,5 @@
 //
-// PGTSSchemaDescriptor.m
+// PGTSSchemaDescription.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -29,6 +29,6 @@
 #import "PGTSSchemaDescriptor.h"
 
 
-@implementation PGTSSchemaDescriptor
+@implementation PGTSSchemaDescription
 
 @end

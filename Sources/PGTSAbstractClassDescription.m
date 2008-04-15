@@ -34,7 +34,7 @@
 #import "PGTSConstants.h"
 #import "PGTSRoleDescription.h"
 #import "PGTSACLItem.h"
-#import "PGTSDatabaseInfo.h"
+#import "PGTSDatabaseDescription.h"
 
 /** 
  * Abstract base class for database class objects

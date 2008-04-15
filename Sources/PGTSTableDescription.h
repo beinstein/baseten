@@ -1,5 +1,5 @@
 //
-// PGTSTableInfo.h
+// PGTSTableDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.

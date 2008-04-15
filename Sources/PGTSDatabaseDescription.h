@@ -1,5 +1,5 @@
 //
-// PGTSIndexInfo.m
+// PGTSDatabaseDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,72 +26,30 @@
 // $Id$
 //
 
-#import "PGTSIndexInfo.h"
+#import <Foundation/Foundation.h>
+#import <PGTS/PGTSAbstractDescription.h>
+#import <PGTS/postgresql/libpq-fe.h> 
 
 
-/** 
- * Table index
- */
-@implementation PGTSIndexDescription
+@class PGTSTableDescription;
+@class PGTSTypeDescription;
+@class PGTSRoleDescription;
 
-- (id) initWithConnection: (PGTSConnection *) aConnection
+
+@interface PGTSDatabaseDescription : PGTSAbstractDescription 
 {
-    if ((self = [super initWithConnection: aConnection]))
-    {
-        isUnique = NO;
-        isPrimaryKey = NO;
-    }
-    return self;
+    id tables;
+    id types;
+    NSMutableDictionary* schemas;
+    NSMutableDictionary* roles;
 }
 
-- (void) dealloc
-{
-    [fields release];
-    [super dealloc];
-}
-
-- (void) setFields: (NSSet *) aSet
-{
-    if (fields != aSet)
-    {
-        [fields release];
-        fields = [aSet copy];
-    }
-}
-
-- (NSSet *) fields
-{
-    return fields;
-}
-
-- (void) setUnique: (BOOL) aBool
-{
-    isUnique = aBool;
-}
-
-- (BOOL) isUnique
-{
-    return isUnique;
-}
-
-- (void) setPrimaryKey: (BOOL) aBool
-{
-    isPrimaryKey = aBool;
-}
-
-- (BOOL) isPrimaryKey
-{
-    return isPrimaryKey;
-}
-
-- (void) setTable: (PGTSTableDescription *) anObject
-{
-    table = anObject;
-}
-
-- (PGTSTableDescription *) table
-{
-    return table;
-}
+- (PGTSTableDescription *) tableWithOid: (Oid) anOid;
+- (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
+- (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
+- (BOOL) schemaExists: (NSString *) schemaName;
+- (void) updateTableCache: (PGTSTableDescription *) table;
+- (PGTSRoleDescription *) roleNamed: (NSString *) name;
+- (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 
 @end

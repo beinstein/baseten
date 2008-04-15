@@ -34,7 +34,7 @@
 #import <PGTS/PGTSResultRowProtocol.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 
-@class PGTSTypeInfo;
+@class PGTSTypeDescription;
 #endif
 
 

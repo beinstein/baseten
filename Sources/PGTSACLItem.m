@@ -29,9 +29,9 @@
 #import "PGTSACLItem.h"
 #import "PGTSRoleDescription.h"
 #import "PGTSResultSet.h"
-#import "PGTSTypeInfo.h"
+#import "PGTSTypeDescription.h"
 #import "PGTSConnection.h"
-#import "PGTSDatabaseInfo.h"
+#import "PGTSDatabaseDescription.h"
 
 //FIXME: enable logging.
 #define log4AssertValueReturn(...)

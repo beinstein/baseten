@@ -1,5 +1,5 @@
 //
-// PGTSSchemaDescriptor.h
+// PGTSSchemaDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -31,12 +31,12 @@
 #import <PGTS/postgresql/libpq-fe.h> 
 
 
-@class PGTSTableInfo;
-@class PGTSTypeInfo;
+@class PGTSTableDescription;
+@class PGTSTypeDescription;
 @class PGTSConnectionPoolItem;
 
 
-@interface PGTSSchemaDescriptor : PGTSAbstractDescription 
+@interface PGTSSchemaDescription : PGTSAbstractDescription 
 {
 }
 

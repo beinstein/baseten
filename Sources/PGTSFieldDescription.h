@@ -1,5 +1,5 @@
 //
-// PGTSTypeInfo.h
+// PGTSFieldDescription.h
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -27,28 +27,33 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractClassDescription.h>
+#import <PGTS/PGTSAbstractDescription.h>
+#import <PGTS/postgresql/libpq-fe.h> 
 
 
-@class PGTSDatabaseDescription;
+@class PGTSTableDescription;
+@class PGTSTypeDescription;
 
 
-@interface PGTSTypeDescription : PGTSAbstractClassDescription 
+@interface PGTSFieldDescription : PGTSAbstractDescription 
 {
-    PGTSDatabaseDescription* database;
-    Oid elementOid;
-    unsigned int elementCount;
-    char delimiter;
+    PGTSTableDescription* table;
+    unsigned int index;
+    unsigned int indexInResultSet;
+    Oid typeOid;
+	BOOL isNotNull;
 }
 
-@end
+- (unsigned int) index;
+- (void) setIndex: (unsigned int) anIndex;
+- (unsigned int) indexInResultSet;
+- (void) setIndexInResultSet: (unsigned int) anIndex;
+- (PGTSTableDescription *) table;
+- (void) setTable: (PGTSTableDescription *) anObject;
+- (PGTSTypeDescription *) type;
+- (Oid) typeOid;
+- (NSString *) qualifiedName;
+- (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField;
+- (BOOL) isNotNull;
 
-
-@interface PGTSTypeDescription (Queries)
-- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase;
-- (PGTSDatabaseDescription *) database;
-- (Oid) elementOid;
-- (char) delimiter;
-- (void) setElementOid: (Oid) anOid;
-- (void) setDelimiter: (char) aChar;
 @end

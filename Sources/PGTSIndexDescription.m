@@ -1,5 +1,5 @@
 //
-// PGTSIndexInfo.h
+// PGTSIndexDescription.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,27 +26,72 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <PGTS/PGTSAbstractClassDescription.h>
-
-@class PGTSTableDescription;
+#import "PGTSIndexDescription.h"
 
 
-@interface PGTSIndexDescription : PGTSAbstractClassDescription 
+/** 
+ * Table index
+ */
+@implementation PGTSIndexDescription
+
+- (id) initWithConnection: (PGTSConnection *) aConnection
 {
-    PGTSTableDescription* table;
-    NSSet* fields;
-    BOOL isPrimaryKey;
-    BOOL isUnique;
+    if ((self = [super initWithConnection: aConnection]))
+    {
+        isUnique = NO;
+        isPrimaryKey = NO;
+    }
+    return self;
 }
 
-- (void) setFields: (NSSet *) aSet;
-- (NSSet *) fields;
-- (void) setUnique: (BOOL) aBool;
-- (BOOL) isUnique;
-- (void) setPrimaryKey: (BOOL) aBool;
-- (BOOL) isPrimaryKey;
-- (PGTSTableDescription *) table;
-- (void) setTable: (PGTSTableDescription *) aTable;
+- (void) dealloc
+{
+    [fields release];
+    [super dealloc];
+}
+
+- (void) setFields: (NSSet *) aSet
+{
+    if (fields != aSet)
+    {
+        [fields release];
+        fields = [aSet copy];
+    }
+}
+
+- (NSSet *) fields
+{
+    return fields;
+}
+
+- (void) setUnique: (BOOL) aBool
+{
+    isUnique = aBool;
+}
+
+- (BOOL) isUnique
+{
+    return isUnique;
+}
+
+- (void) setPrimaryKey: (BOOL) aBool
+{
+    isPrimaryKey = aBool;
+}
+
+- (BOOL) isPrimaryKey
+{
+    return isPrimaryKey;
+}
+
+- (void) setTable: (PGTSTableDescription *) anObject
+{
+    table = anObject;
+}
+
+- (PGTSTableDescription *) table
+{
+    return table;
+}
 
 @end

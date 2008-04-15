@@ -29,8 +29,8 @@
 #import "PGTSFoundationObjects.h"
 #import "PGTSConnection.h"
 #import "PGTSFunctions.h"
-#import "PGTSTypeInfo.h"
-#import "PGTSDatabaseInfo.h"
+#import "PGTSTypeDescription.h"
+#import "PGTSDatabaseDescription.h"
 #import <PGTS/postgresql/libpq-fe.h>
 
 //FIXME: enable logging.

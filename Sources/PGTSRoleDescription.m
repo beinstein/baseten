@@ -32,7 +32,7 @@
 #import "PGTSResultSet.h"
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
-#import "PGTSDatabaseInfo.h"
+#import "PGTSDatabaseDescription.h"
 
 
 @implementation PGTSRoleDescription

@@ -27,8 +27,8 @@
 //
 
 #import "PGTSForeignKeyDescription.h"
-#import "PGTSTableInfo.h"
-#import "PGTSFieldInfo.h"
+#import "PGTSTableDescription.h"
+#import "PGTSFieldDescription.h"
 #import "PGTSFunctions.h"
 
 

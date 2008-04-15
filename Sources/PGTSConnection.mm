@@ -34,7 +34,7 @@
 #import "PGTSQueryDescription.h"
 #import "PGTSAdditions.h"
 #import "PGTSResultSet.h"
-#import "PGTSDatabaseInfo.h"
+#import "PGTSDatabaseDescription.h"
 #import "PGTSFunctions.h"
 #import <tr1/unordered_set>
 #import <stdlib.h>

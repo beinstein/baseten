@@ -1,5 +1,5 @@
 //
-// PGTSTypeInfo.m
+// PGTSTypeDescription.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import "PGTSTypeInfo.h"
+#import "PGTSTypeDescription.h"
 #import "PGTSResultSet.h"
 #import "PGTSFunctions.h"
 #import "PGTSConnection.h"
