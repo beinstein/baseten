@@ -42,7 +42,7 @@
 		538176490D633DC000A4CA72 /* PGTSIndexDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9237708B0F47700759909 /* PGTSIndexDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5381764A0D633DC000A4CA72 /* PGTSFieldDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9225008AFD9BD00759909 /* PGTSFieldDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5381764B0D633DC000A4CA72 /* PGTSForeignKeyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176500D633DC000A4CA72 /* PGTSSchemaDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		538176500D633DC000A4CA72 /* PGTSSchemaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176510D633DC000A4CA72 /* PGTSExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 536B892D0A518E4A00379C00 /* PGTSExceptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176540D633DC000A4CA72 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176550D633DC000A4CA72 /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -61,7 +61,7 @@
 		5381766B0D633DC000A4CA72 /* PGTSIndexDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9237808B0F47700759909 /* PGTSIndexDescription.m */; };
 		5381766C0D633DC000A4CA72 /* PGTSFieldDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9225108AFD9BD00759909 /* PGTSFieldDescription.m */; };
 		5381766D0D633DC000A4CA72 /* PGTSForeignKeyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */; };
-		538176700D633DC000A4CA72 /* PGTSSchemaDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */; };
+		538176700D633DC000A4CA72 /* PGTSSchemaDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescription.m */; };
 		538176710D633DC000A4CA72 /* PGTSExceptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 536B892E0A518E4A00379C00 /* PGTSExceptions.m */; };
 		538176730D633DC000A4CA72 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
 		538176740D633DC000A4CA72 /* PGTSAbstractObjectDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DF10B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m */; };
@@ -121,9 +121,9 @@
 		53E189AB0DB2DB6D0094066F /* PGTSFieldDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9225008AFD9BD00759909 /* PGTSFieldDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53E189AC0DB2DB6E0094066F /* PGTSFieldDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9225108AFD9BD00759909 /* PGTSFieldDescription.m */; };
 		53E189AD0DB2DB6E0094066F /* PGTSForeignKeyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		53E189AE0DB2DB6F0094066F /* PGTSSchemaDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		53E189AE0DB2DB6F0094066F /* PGTSSchemaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53E189AF0DB2DB700094066F /* PGTSForeignKeyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */; };
-		53E189B00DB2DB710094066F /* PGTSSchemaDescriptor.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */; };
+		53E189B00DB2DB710094066F /* PGTSSchemaDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescription.m */; };
 		53E189B10DB2DB720094066F /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53E189B20DB2DB720094066F /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
 		53E189B30DB2DB730094066F /* PGTSACLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -236,8 +236,8 @@
 		533A6AF209DEE51700D28AB0 /* PGTSConstants.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSConstants.h; path = Sources/PGTSConstants.h; sourceTree = "<group>"; };
 		534CFECB095DCCDC00BF3440 /* Kerberos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kerberos.framework; path = /System/Library/Frameworks/Kerberos.framework; sourceTree = "<absolute>"; };
 		53594D1B0B13711300378707 /* libpq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpq.a; path = "PGTS-PostgreSQL/universal/lib/libpq.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSchemaDescriptor.h; path = Sources/PGTSSchemaDescriptor.h; sourceTree = "<group>"; };
-		5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSSchemaDescriptor.m; path = Sources/PGTSSchemaDescriptor.m; sourceTree = "<group>"; };
+		5359557C0A514DEE0008793A /* PGTSSchemaDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSchemaDescription.h; path = Sources/PGTSSchemaDescription.h; sourceTree = "<group>"; };
+		5359557D0A514DEE0008793A /* PGTSSchemaDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSSchemaDescription.m; path = Sources/PGTSSchemaDescription.m; sourceTree = "<group>"; };
 		535977FE08AD72DC000CAC2B /* PGTSTableDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTableDescription.h; path = Sources/PGTSTableDescription.h; sourceTree = "<group>"; };
 		535977FF08AD72DC000CAC2B /* PGTSTableDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSTableDescription.m; path = Sources/PGTSTableDescription.m; sourceTree = "<group>"; };
 		5359784E08AF669B000CAC2B /* PGTSDatabaseDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSDatabaseDescription.h; path = Sources/PGTSDatabaseDescription.h; sourceTree = "<group>"; };
@@ -439,8 +439,8 @@
 				53F9225108AFD9BD00759909 /* PGTSFieldDescription.m */,
 				53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */,
 				53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */,
-				5359557C0A514DEE0008793A /* PGTSSchemaDescriptor.h */,
-				5359557D0A514DEE0008793A /* PGTSSchemaDescriptor.m */,
+				5359557C0A514DEE0008793A /* PGTSSchemaDescription.h */,
+				5359557D0A514DEE0008793A /* PGTSSchemaDescription.m */,
 				53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */,
 				53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */,
 				53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */,
@@ -539,7 +539,7 @@
 				53E189A90DB2DB6C0094066F /* PGTSIndexDescription.h in Headers */,
 				53E189AB0DB2DB6D0094066F /* PGTSFieldDescription.h in Headers */,
 				53E189AD0DB2DB6E0094066F /* PGTSForeignKeyDescription.h in Headers */,
-				53E189AE0DB2DB6F0094066F /* PGTSSchemaDescriptor.h in Headers */,
+				53E189AE0DB2DB6F0094066F /* PGTSSchemaDescription.h in Headers */,
 				53E189B10DB2DB720094066F /* PGTSRoleDescription.h in Headers */,
 				53E189B30DB2DB730094066F /* PGTSACLItem.h in Headers */,
 				53E18B490DB3E9840094066F /* PGTSFunctions.h in Headers */,
@@ -564,7 +564,7 @@
 				538176490D633DC000A4CA72 /* PGTSIndexDescription.h in Headers */,
 				5381764A0D633DC000A4CA72 /* PGTSFieldDescription.h in Headers */,
 				5381764B0D633DC000A4CA72 /* PGTSForeignKeyDescription.h in Headers */,
-				538176500D633DC000A4CA72 /* PGTSSchemaDescriptor.h in Headers */,
+				538176500D633DC000A4CA72 /* PGTSSchemaDescription.h in Headers */,
 				538176510D633DC000A4CA72 /* PGTSExceptions.h in Headers */,
 				538176540D633DC000A4CA72 /* PGTSRoleDescription.h in Headers */,
 				538176550D633DC000A4CA72 /* PGTSAbstractObjectDescription.h in Headers */,
@@ -739,7 +739,7 @@
 				53E189AA0DB2DB6C0094066F /* PGTSIndexDescription.m in Sources */,
 				53E189AC0DB2DB6E0094066F /* PGTSFieldDescription.m in Sources */,
 				53E189AF0DB2DB700094066F /* PGTSForeignKeyDescription.m in Sources */,
-				53E189B00DB2DB710094066F /* PGTSSchemaDescriptor.m in Sources */,
+				53E189B00DB2DB710094066F /* PGTSSchemaDescription.m in Sources */,
 				53E189B20DB2DB720094066F /* PGTSRoleDescription.m in Sources */,
 				53E189B40DB2DB740094066F /* PGTSACLItem.m in Sources */,
 				53E18B190DB370A00094066F /* PGTSDatabaseDescription.m in Sources */,
@@ -764,7 +764,7 @@
 				5381766B0D633DC000A4CA72 /* PGTSIndexDescription.m in Sources */,
 				5381766C0D633DC000A4CA72 /* PGTSFieldDescription.m in Sources */,
 				5381766D0D633DC000A4CA72 /* PGTSForeignKeyDescription.m in Sources */,
-				538176700D633DC000A4CA72 /* PGTSSchemaDescriptor.m in Sources */,
+				538176700D633DC000A4CA72 /* PGTSSchemaDescription.m in Sources */,
 				538176710D633DC000A4CA72 /* PGTSExceptions.m in Sources */,
 				538176730D633DC000A4CA72 /* PGTSRoleDescription.m in Sources */,
 				538176740D633DC000A4CA72 /* PGTSAbstractObjectDescription.m in Sources */,

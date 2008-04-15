@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import "PGTSSchemaDescriptor.h"
+#import "PGTSSchemaDescription.h"
 
 
 @implementation PGTSSchemaDescription
