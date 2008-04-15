@@ -269,7 +269,7 @@ ProcessWillExit ()
 {
 	int retval = -1;
 	[mQueue addObject: query];
-	if (1 == [mQueue count])
+	if (1 == [mQueue count] && mConnection)
 		retval = [self sendNextQuery];
 	return retval;
 }
@@ -362,6 +362,8 @@ ProcessWillExit ()
         CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
         CFRunLoopAddSource (runloop, mSocketSource, mode);
         
+        if (0 < [mQueue count])
+            [self sendNextQuery];
         [mDelegate PGTSConnectionEstablished: self];
 	}
 	else

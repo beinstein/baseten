@@ -100,6 +100,20 @@ PGTS_EXPORT NSString* const kPGTSParametersKey;
 PGTS_EXPORT NSString* const kPGTSParameterIndexKey;
 PGTS_EXPORT NSString* const kPGTSExpressionParametersVerbatimKey;
 
+PGTS_EXPORT NSString* const kPGTSErrorSeverity;
+PGTS_EXPORT NSString* const kPGTSErrorSQLState;
+PGTS_EXPORT NSString* const kPGTSErrorPrimaryMessage;
+PGTS_EXPORT NSString* const kPGTSErrorDetailMessage;
+PGTS_EXPORT NSString* const kPGTSErrorHint;
+PGTS_EXPORT NSString* const kPGTSErrorInternalQuery;
+PGTS_EXPORT NSString* const kPGTSErrorContext;
+PGTS_EXPORT NSString* const kPGTSErrorSourceFile;
+PGTS_EXPORT NSString* const kPGTSErrorSourceFunction;
+PGTS_EXPORT NSString* const kPGTSErrorStatementPosition;
+PGTS_EXPORT NSString* const kPGTSErrorInternalPosition;
+PGTS_EXPORT NSString* const kPGTSErrorSourceLine;
+    
+
 PGTS_EXPORT NSString* const kPGTSErrorDomain;
 enum PGTSErrors
 {

@@ -94,6 +94,20 @@ NSString* const kPGTSExpressionParametersVerbatimKey = @"kPGTSExpressionParamete
 
 NSString* const kPGTSErrorDomain                  = @"kPGTSErrorDomain";
 
+NSString* const kPGTSErrorSeverity                = @"kPGTSErrorSeverity";
+NSString* const kPGTSErrorSQLState                = @"kPGTSErrorSQLState";
+NSString* const kPGTSErrorPrimaryMessage          = @"kPGTSErrorPrimaryMessage";
+NSString* const kPGTSErrorDetailMessage           = @"kPGTSErrorDetailMessage";
+NSString* const kPGTSErrorHint                    = @"kPGTSErrorHint";
+NSString* const kPGTSErrorInternalQuery           = @"kPGTSErrorInternalQuery";
+NSString* const kPGTSErrorContext                 = @"kPGTSErrorContext";
+NSString* const kPGTSErrorSourceFile              = @"kPGTSErrorSourceFile";
+NSString* const kPGTSErrorSourceFunction          = @"kPGTSErrorSourceFunction";
+NSString* const kPGTSErrorStatementPosition       = @"kPGTSErrorStatementPosition";
+NSString* const kPGTSErrorInternalPosition        = @"kPGTSErrorInternalPosition";
+NSString* const kPGTSErrorSourceLine              = @"kPGTSErrorSourceLine";
+
+
 /** Declared in PGTSConnectionDelegate.h */
 SEL kPGTSSentQuerySelector                  = NULL;
 SEL kPGTSFailedToSendQuerySelector          = NULL;

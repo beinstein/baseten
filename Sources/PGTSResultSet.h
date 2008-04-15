@@ -62,6 +62,7 @@
 - (BOOL) advanceRow;
 - (int) identifier;
 - (void) setIdentifier: (int) anIdentifier;
+- (NSError *) error;
 
 - (void) setDeterminesFieldClassesAutomatically: (BOOL) aBool;
 @end

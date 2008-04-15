@@ -53,6 +53,67 @@ typedef std::tr1::unordered_map <NSString*, int, ObjectHash, ObjectCompare <NSSt
 typedef std::tr1::unordered_map <int, Class> FieldClassMap;
 
 
+static NSString*
+ErrorUserInfoKey (char fieldCode)
+{
+    NSString* retval = nil;
+    switch (fieldCode)
+    {
+        case PG_DIAG_SEVERITY:
+            retval = kPGTSErrorSeverity;
+            break;
+            
+        case PG_DIAG_SQLSTATE:
+            retval = kPGTSErrorSQLState;
+            break;
+            
+        case PG_DIAG_MESSAGE_PRIMARY:
+            retval = kPGTSErrorPrimaryMessage;
+            break;
+            
+        case PG_DIAG_MESSAGE_DETAIL:
+            retval = kPGTSErrorDetailMessage;
+            break;
+            
+        case PG_DIAG_MESSAGE_HINT:
+            retval = kPGTSErrorHint;
+            break;
+            
+        case PG_DIAG_INTERNAL_QUERY:
+            retval = kPGTSErrorInternalQuery;
+            break;
+            
+        case PG_DIAG_CONTEXT:
+            retval = kPGTSErrorContext;
+            break;
+            
+        case PG_DIAG_SOURCE_FILE:
+            retval = kPGTSErrorSourceFile;
+            break;
+            
+        case PG_DIAG_SOURCE_FUNCTION:
+            retval = kPGTSErrorSourceFunction;
+            break;
+            
+        case PG_DIAG_STATEMENT_POSITION:
+            retval = kPGTSErrorStatementPosition;
+            break;
+            
+        case PG_DIAG_INTERNAL_POSITION:
+            retval = kPGTSErrorInternalPosition;
+            break;
+            
+        case PG_DIAG_SOURCE_LINE:
+            retval = kPGTSErrorSourceLine;
+            break;
+            
+        default:
+            break;
+    }
+    return retval;
+}
+
+
 @interface PGTSConcreteResultSet : PGTSResultSet
 {
     PGTSConnection* mConnection; //Weak
@@ -210,6 +271,66 @@ typedef std::tr1::unordered_map <int, Class> FieldClassMap;
 - (void) setIdentifier: (int) anIdentifier
 {
     mIdentifier = anIdentifier;
+}
+
+- (NSError *) error
+{
+    char fields [] = {
+        PG_DIAG_SEVERITY,
+        PG_DIAG_SQLSTATE,
+        PG_DIAG_MESSAGE_PRIMARY,
+        PG_DIAG_MESSAGE_DETAIL,
+        PG_DIAG_MESSAGE_HINT,
+        PG_DIAG_STATEMENT_POSITION,
+        PG_DIAG_INTERNAL_POSITION,
+        PG_DIAG_INTERNAL_QUERY,
+        PG_DIAG_CONTEXT,
+        PG_DIAG_SOURCE_FILE,
+        PG_DIAG_SOURCE_LINE,
+        PG_DIAG_SOURCE_FUNCTION,
+        '\0'
+    };
+    
+    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity: (sizeof (fields) - 1) / sizeof (char)];
+    
+    for (int i = 0; '\0' != fields [i]; i++)
+    {
+        char* value = PQresultErrorField (mResult, fields [i]);
+        if (! value) continue;
+        
+        id objectValue = nil;
+        switch (fields [i])
+        {
+            case PG_DIAG_SEVERITY: //FIXME: perhaps add the severity as a constant number?
+            case PG_DIAG_SQLSTATE:
+            case PG_DIAG_MESSAGE_PRIMARY:
+            case PG_DIAG_MESSAGE_DETAIL:
+            case PG_DIAG_MESSAGE_HINT:
+            case PG_DIAG_INTERNAL_QUERY:
+            case PG_DIAG_CONTEXT:
+            case PG_DIAG_SOURCE_FILE:
+            case PG_DIAG_SOURCE_FUNCTION:
+            {
+                objectValue = [NSString stringWithUTF8String: value];
+                break;
+            }
+                
+            case PG_DIAG_STATEMENT_POSITION:
+            case PG_DIAG_INTERNAL_POSITION:
+            case PG_DIAG_SOURCE_LINE:
+            {
+                long longValue = strtol (value, NULL, 10);
+                objectValue = [NSNumber numberWithLong: longValue];
+                break;
+            }
+                
+            default:
+                continue;
+        }
+        NSString* key = ErrorUserInfoKey (fields [i]);
+        if (objectValue && key) [userInfo setObject: objectValue forKey: key];
+    }
+    return [NSError errorWithDomain: kPGTSErrorDomain code: kPGTSUnsuccessfulQueryError userInfo: userInfo];
 }
 
 @end
