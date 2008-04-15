@@ -126,6 +126,30 @@ ProcessWillExit ()
     [self disconnect];
 }
 
+- (void) freeCFTypes
+{
+	//Don't release the connection. Delegate will handle it.
+	if (mSocketSource)
+	{
+		CFRunLoopSourceInvalidate (mSocketSource);
+		CFRelease (mSocketSource);
+		mSocketSource = NULL;
+	}
+	
+	if (mSocket)
+	{
+		CFSocketInvalidate (mSocket);
+		CFRelease (mSocket);
+		mSocket = NULL;
+	}
+	
+	if (mRunLoop)
+	{
+		CFRelease (mRunLoop);
+		mRunLoop = NULL;
+	}
+}
+
 - (void) dealloc
 {
     [self disconnect];
@@ -133,10 +157,15 @@ ProcessWillExit ()
 	[self setConnector: nil];
     [mNotificationCenter release];
     [mDatabase release];
-    
-    //FIXME: free CF objects.
-    
+    [self freeCFTypes];
 	[super dealloc];
+}
+
+- (void) finalize
+{
+    [self disconnect];
+    [self freeCFTypes];
+    [super finalize];
 }
 
 - (BOOL) connectAsync: (NSString *) connectionString
@@ -152,7 +181,8 @@ ProcessWillExit ()
 - (void) disconnect
 {
     NSLog (@"Disconnecting.");
-    if (! mConnection)
+    [mConnector cancel];
+    if (mConnection)
     {
         PQfinish (mConnection);
         mConnection = NULL;

@@ -31,6 +31,7 @@
 #import "PGTSFunctions.h"
 #import "PGTSTypeDescription.h"
 #import "PGTSDatabaseDescription.h"
+#import "PGTSAdditions.h"
 #import <PGTS/postgresql/libpq-fe.h>
 
 //FIXME: enable logging.
@@ -149,31 +150,6 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
     return length;
 }
 
-- (NSString *) PGTSParameter2: (PGTSConnection *) connection
-{
-    //PostgreSQL array (hopefully) cannot contain other kinds of elements,
-    //which is good, since the input syntax is not easy to produce using recursion
-    NSString* rval = nil;
-    if (0 == [self count])
-        rval = @"{}";
-    else if ([[self objectAtIndex: 0] isKindOfClass: [NSArray class]])
-        rval = [[self valueForKey: @"PGTSParameter2"] componentsJoinedByString: @", "];
-    else
-    {
-        NSMutableArray* components = [NSMutableArray arrayWithCapacity: [self count]];
-        TSEnumerate (currentObject, e, [self objectEnumerator])
-        {
-            int length = 0;
-            char* parameter = [currentObject PGTSParameterLength: &length connection: connection];
-            char* escapedParameter = calloc (2 * length + 1, sizeof (char));
-            PQescapeStringConn ([connection pgConnection], escapedParameter, parameter, length, NULL);
-            [components addObject: [NSString stringWithUTF8String: escapedParameter]];
-        }
-        rval = [NSString stringWithFormat: @"{\"%@\"}", [components componentsJoinedByString: @"\", \""]];
-    }
-    return rval;
-}
-
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) current type: (PGTSTypeDescription *) typeInfo
 {
     id retval = [NSMutableArray array];
@@ -274,10 +250,91 @@ continue_iteration:
     return retval;
 }
 
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+inline void
+AppendBytes (IMP impl, NSMutableData* target, const void* bytes, unsigned int length)
 {
-    return [[self PGTSParameter2: connection] PGTSParameterLength: length connection: connection];
+    (void (*)(id, SEL, const void*, unsigned int)) impl (target, @selector (appendBytes:length:), bytes, length);
 }
+
+inline void
+EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
+{
+    switch (*src)
+    {
+        case '\\':
+        case '"':
+            AppendBytes (appendImpl, target, "\\", 1);
+            //Fall through.
+        default:
+            AppendBytes (appendImpl, target, src, 1);
+    }
+}
+
+- (char *) PGTSParameterLength: (int *) outLength connection: (PGTSConnection *) connection
+{
+    //We make use of UTF-8's ASCII-compatibility feature.
+    char* retval = NULL;
+    if (0 == [self count])
+    {
+        retval = "{}";
+        if (outLength)
+            *outLength = 2;
+    }
+    else
+    {
+        //Optimize a bit because we append each byte individually.
+        NSMutableData* contents = [NSMutableData data];
+        IMP impl = [contents methodForSelector: @selector (appendBytes:length:)];
+        AppendBytes (impl, contents, "{", 1);
+        TSEnumerate (currentObject, e, [self objectEnumerator])
+        {
+            if ([NSNull null] == currentObject)
+                [contents PGTSAppendCString: "null,"];
+            else
+            {
+                int length = -1;
+                char* value = [currentObject PGTSParameterLength: &length connection: connection];
+                
+                //Arrays can't have quotes around them.
+                if ([currentObject isKindOfClass: [NSArray class]])
+                {
+                    AppendBytes (impl, contents, value, length);
+                    AppendBytes (impl, contents, ",", 1);
+                }
+                else
+                {
+                    //If the length isn't known, wait for a NUL byte.
+                    AppendBytes (impl, contents, "\"", 1);
+                    if (-1 == length)
+                    {
+                        while ('\0' != *value)
+                        {
+                            EscapeAndAppendByte (impl, contents, value);
+                            value++;
+                        }
+                    }
+                    else
+                    {
+                        char* end = value + length;
+                        while (value < end)
+                        {
+                            EscapeAndAppendByte (impl, contents, value);
+                            value++;
+                        }
+                    }
+                    AppendBytes (impl, contents, "\"", 1);
+                }
+                AppendBytes (impl, contents, ",", 1);
+            }
+            [contents replaceBytesInRange: NSMakeRange ([contents length] - 1, 1) withBytes: "}\0" length: 2]; 
+            retval = (char *) [contents bytes];
+            if (outLength)
+                *outLength = [contents length];
+        }
+    }
+    return retval;
+}
+
 @end
 
 

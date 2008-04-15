@@ -96,6 +96,15 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	}
 }
 
+- (void) cancel
+{
+    if (mConnection)
+    {
+        PQfinish (mConnection);
+        mConnection = NULL;
+    }
+}
+
 - (void) dealloc
 {
 	[self freeCFTypes];

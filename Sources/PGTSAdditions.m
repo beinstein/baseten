@@ -447,3 +447,11 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 }
 @end
 #endif
+
+
+@implementation NSMutableData (PGTSPrivateAdditions)
+- (void) PGTSAppendCString: (const char *) string
+{
+    [self appendBytes: string length: strlen (string)];
+}
+@end

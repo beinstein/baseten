@@ -50,6 +50,7 @@
 
 - (BOOL) connect: (const char *) connectionString;
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
+- (void) cancel;
 
 - (void) socketReady;
 - (void) finishedConnecting: (BOOL) succeeded;
