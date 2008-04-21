@@ -53,7 +53,7 @@
         retval = [aDict objectForKey: oidObject];
         if (! retval)
         {
-            retval = [[c alloc] initWithConnection: connection];
+            retval = [[c alloc] init];
             [retval setOid: oidValue];
             [retval setDatabase: self];
             [aDict setObject: retval forKey: oidObject];
@@ -66,68 +66,68 @@
 - (BOOL) schemaExists: (NSString *) schemaName
 {
     BOOL rval = YES;
-    if (nil == [schemas objectForKey: schemaName])
+    if (nil == [mSchemas objectForKey: schemaName])
     {
         NSString* query = @"SELECT oid FROM pg_namespace WHERE nspname = $1";
-        PGTSResultSet* res = [connection executeQuery: query parameters: schemaName];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: schemaName];
         log4AssertValueReturn ([res querySucceeded], NO, @"Query failed (%@).", [res errorMessage]);
         if (0 == [res count])
             rval = NO;
         else
         {
             NSMutableDictionary* schema = [NSMutableDictionary dictionary];
-            [schemas setObject: schema forKey: schemaName];
+            [mSchemas setObject: schema forKey: schemaName];
         }
     }
     return rval;
 }
 
-- (id) initWithConnection: (PGTSConnection *) aConnection
+- (id) init
 {
-    if ((self = [super initWithConnection: aConnection]))
+    if ((self = [super init]))
     {
-        tables = [[NSMutableDictionary alloc] init];
-        types  = [[NSMutableDictionary alloc] init];
-        schemas = [[NSMutableDictionary alloc] init];
-        roles = [[NSMutableDictionary alloc] init];
+        mTables = [[NSMutableDictionary alloc] init];
+        mTypes  = [[NSMutableDictionary alloc] init];
+        mSchemas = [[NSMutableDictionary alloc] init];
+        mRoles = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [tables makeObjectsPerformSelector: @selector (setDatabase:) withObject: nil];
-    [types  makeObjectsPerformSelector: @selector (setDatabase:) withObject: nil];
+    [mTables makeObjectsPerformSelector: @selector (setDatabase:) withObject: nil];
+    [mTypes  makeObjectsPerformSelector: @selector (setDatabase:) withObject: nil];
     
-    [tables release];
-    [types release];
-    [schemas release];
-    [roles release];
+    [mTables release];
+    [mTypes release];
+    [mSchemas release];
+    [mRoles release];
     [super dealloc];
 }
 
 - (PGTSTableDescription *) tableWithOid: (Oid) anOid
 {
-    return [self addDescriptionFor: anOid class: [PGTSTableDescription class] toContainer: tables];
+    return [self addDescriptionFor: anOid class: [PGTSTableDescription class] toContainer: mTables];
 }
 
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid
 {
-    return [self addDescriptionFor: anOid class: [PGTSTypeDescription class] toContainer: types];
+    return [self addDescriptionFor: anOid class: [PGTSTypeDescription class] toContainer: mTypes];
 }
 
 - (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName
 {
     if (nil == schemaName || 0 == [schemaName length])
         schemaName = @"public";
-    PGTSTableDescription* rval = [[schemas objectForKey: schemaName] objectForKey: tableName];
+    PGTSTableDescription* rval = [[mSchemas objectForKey: schemaName] objectForKey: tableName];
     if (nil == rval)
     {
         NSString* queryString = 
         @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname "
         " FROM pg_class c, pg_namespace n, pg_roles r "
         " WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";
-        PGTSResultSet* res = [connection executeQuery: queryString parameters: tableName, schemaName];
+        PGTSResultSet* res = [mConnection executeQuery: queryString parameters: tableName, schemaName];
         if (0 < [res count])
         {
             [res advanceRow];
@@ -136,7 +136,7 @@
             [rval setKind: [[res valueForKey: @"relkind"] characterAtIndex: 0]];
             [rval setSchemaOid: [[res valueForKey: @"schemaoid"] PGTSOidValue]];
 
-            PGTSRoleDescription* role = [[connection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
+            PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
                                                                                 oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
             [rval setOwner: role];
             
@@ -154,11 +154,11 @@
     if (nil != table)
     {
         NSString* schemaName = [table schemaName];
-        NSMutableDictionary* schema = [schemas objectForKey: schemaName];
+        NSMutableDictionary* schema = [mSchemas objectForKey: schemaName];
         if (! schema)
         {
             schema = [NSMutableDictionary dictionary];
-            [schemas setObject: schema forKey: schemaName];
+            [mSchemas setObject: schema forKey: schemaName];
         }
         [schema setObject: table forKey: [table name]];
     }
@@ -175,13 +175,13 @@
     if (nil == aName)
         aName = [NSNull null];
     
-    id rval = [roles objectForKey: aName];
+    id rval = [mRoles objectForKey: aName];
     if (nil == rval)
     {
         if (nil != originalName && InvalidOid == oid)
         {
             NSString* query = @"SELECT oid FROM pg_roles WHERE rolname = $1";
-            PGTSResultSet* res = [connection executeQuery: query parameters: aName];
+            PGTSResultSet* res = [mConnection executeQuery: query parameters: aName];
             if (0 < [res count])
             {
                 [res advanceRow];
@@ -192,7 +192,7 @@
         rval = [[[PGTSRoleDescription alloc] init] autorelease];
         [rval setOid: oid];
         [rval setName: aName];
-        [roles setObject: rval forKey: aName];        
+        [mRoles setObject: rval forKey: aName];        
     }
     return rval;
 }

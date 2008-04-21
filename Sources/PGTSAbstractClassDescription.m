@@ -41,63 +41,64 @@
  */
 @implementation PGTSAbstractClassDescription
 
-- (id) initWithConnection: (PGTSConnection *) aConn
+- (id) init
 {
-    if ((self = [super initWithConnection: aConn]))
+    if ((self = [super init]))
     {
-        schemaOid = InvalidOid;
-        aclItems = [[NSMutableDictionary alloc] init];
+        mSchemaOid = InvalidOid;
+        mACLItems = [[NSMutableDictionary alloc] init];
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [aclItems release];
-    [schemaName release];
+    [mACLItems release];
+    [mSchemaName release];
     [super dealloc];
 }
 
 - (Oid) schemaOid
 {
-    return schemaOid;
+    return mSchemaOid;
 }
 
 - (void) setSchemaOid: (Oid) anOid
 {
-    schemaOid = anOid;
+    mSchemaOid = anOid;
 }
 
 - (void) setSchemaName: (NSString *) aString
 {
-    if (schemaName != aString)
+    if (mSchemaName != aString)
     {
-        [schemaName release];
-        schemaName = [aString retain];
+        [mSchemaName release];
+        mSchemaName = [aString retain];
     }
 }
 
 - (void) addACLItem: (PGTSACLItem *) item
 {
-    [aclItems setObject: item forKey: PGTSOidAsObject ([[item role] oid])];
+    [mACLItems setObject: item forKey: PGTSOidAsObject ([[item role] oid])];
 }
 
 - (PGTSRoleDescription *) owner
 {
-    return owner; 
+    return mOwner; 
 }
 
 - (void) setOwner: (PGTSRoleDescription *) anOwner
 {
-    if (owner != anOwner) {
-        [owner release];
-        owner = [anOwner retain];
+    if (mOwner != anOwner) 
+	{
+        [mOwner release];
+        mOwner = [anOwner retain];
     }
 }
 
 - (void) setKind: (char) kind
 {
-    relkind = kind;
+    mRelkind = kind;
 }
 
 @end
@@ -108,36 +109,36 @@
 - (Oid) schemaOid
 {
     //Perform the query and check again
-    if (InvalidOid == schemaOid)
+    if (InvalidOid == mSchemaOid)
         [self name];
-    return schemaOid;
+    return mSchemaOid;
 }
 
 - (NSString *) schemaName
 {
-    if (nil == schemaName)
+    if (nil == mSchemaName)
         [self name];
-    return schemaName;
+    return mSchemaName;
 }
 
 - (NSString *) name
 {
-    if (! name)
+    if (! mName)
     {
         NSString* query = 
         @"SELECT c.relname, c.relacl, c.relowner, c.relkind, n.oid, n.nspname, r.rolname "
         " FROM pg_class c, pg_namespace n, pg_roles r "
         " WHERE c.relnamespace = n.oid AND r.oid = c.relowner AND c.oid = $1";
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
         if (0 < [res count])
         {
             [res advanceRow];
-            relkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
+            mRelkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
             [self setName:  [res valueForKey: @"relname"]];
             [self setSchemaName: [res valueForKey: @"nspname"]];
             [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];
             
-            PGTSRoleDescription* role = [[connection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
+            PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
                                                                                 oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
             [self setOwner: role];
             
@@ -145,55 +146,55 @@
                 [self addACLItem: currentACLItem];
         }
     }
-    return name;
+    return mName;
 }
 
 - (NSString *) qualifiedName
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    return [NSString stringWithFormat: @"\"%@\".\"%@\"", schemaName, name];
+    return [NSString stringWithFormat: @"\"%@\".\"%@\"", mSchemaName, mName];
 }
 
 - (BOOL) role: (PGTSRoleDescription *) aRole 
  hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
     
     //First try the user's privileges, then PUBLIC's and last different groups'.
     //The owner has all the privileges.
-    BOOL rval = (owner == aRole || [owner isEqual: aRole]);
-    if (NO == rval)
-        (0 != (aPrivilege & [[aclItems objectAtIndex: [aRole oid]] privileges]));
-    if (NO == rval)
-        rval = (0 != (aPrivilege & [[aclItems objectAtIndex: kPGTSPUBLICOid] privileges]));
-    if (NO == rval)
+    BOOL retval = (mOwner == aRole || [mOwner isEqual: aRole]);
+    if (NO == retval)
+        (0 != (aPrivilege & [[mACLItems objectAtIndex: [aRole oid]] privileges]));
+    if (NO == retval)
+        retval = (0 != (aPrivilege & [[mACLItems objectAtIndex: kPGTSPUBLICOid] privileges]));
+    if (NO == retval)
     {
-        TSEnumerate (currentItem, e, [aclItems objectEnumerator])
+        TSEnumerate (currentItem, e, [mACLItems objectEnumerator])
         {
             if (aPrivilege & [currentItem privileges] && [[currentItem role] hasMember: aRole])
             {
-                rval = YES;
+                retval = YES;
                 break;
             }
         }
     }
-    return rval;
+    return retval;
 }
 
 - (NSArray *) ACLItems
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    return [aclItems allObjects];
+    return [mACLItems allObjects];
 }
 
 - (char) kind
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    return relkind;
+    return mRelkind;
 }
 
 @end

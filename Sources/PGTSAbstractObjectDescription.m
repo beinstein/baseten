@@ -35,24 +35,24 @@
 {
     if ((self = [super init]))
     {
-        oid = InvalidOid;
+        mOid = InvalidOid;
     }
     return self;
 }
 
 - (Oid) oid
 {
-    return oid;
+    return mOid;
 }
 
 - (void) setOid: (Oid) anOid
 {
-    oid = anOid;
+    mOid = anOid;
 }
 
 - (BOOL) isEqual: (id) anObject
 {
-    return ([anObject oid] == oid && [super isEqual: anObject]); 
+    return ([anObject oid] == mOid && [super isEqual: anObject]); 
 }
 
 @end

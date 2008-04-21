@@ -38,10 +38,10 @@
 
 @interface PGTSDatabaseDescription : PGTSAbstractDescription 
 {
-    id tables;
-    id types;
-    NSMutableDictionary* schemas;
-    NSMutableDictionary* roles;
+    id mTables;
+    id mTypes;
+    NSMutableDictionary* mSchemas;
+    NSMutableDictionary* mRoles;
 }
 
 - (PGTSTableDescription *) tableWithOid: (Oid) anOid;

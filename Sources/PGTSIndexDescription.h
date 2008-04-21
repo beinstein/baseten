@@ -34,10 +34,10 @@
 
 @interface PGTSIndexDescription : PGTSAbstractClassDescription 
 {
-    PGTSTableDescription* table;
-    NSSet* fields;
-    BOOL isPrimaryKey;
-    BOOL isUnique;
+    PGTSTableDescription* mTable;
+    NSSet* mFields;
+    BOOL mIsPrimaryKey;
+    BOOL mIsUnique;
 }
 
 - (void) setFields: (NSSet *) aSet;

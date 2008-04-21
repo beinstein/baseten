@@ -40,12 +40,12 @@
  */
 @implementation PGTSFieldDescription
 
-- (id) initWithConnection: (PGTSConnection *) aConnection
+- (id) init
 {
-    if ((self = [super initWithConnection: aConnection]))
+    if ((self = [super init]))
     {
-        index = 0;
-        indexInResultSet = NSNotFound;
+        mIndex = 0;
+        mIndexInResultSet = NSNotFound;
     }
     return self;
 }
@@ -53,98 +53,98 @@
 - (NSString *) description
 {
     return [NSString stringWithFormat: @"%@ (%p) s: %@ t: %@ f: %@", 
-           [self class], self, [table schemaName], [table name], name];
+           [self class], self, [mTable schemaName], [mTable name], mName];
 }
 
 - (void) setIndex: (unsigned int) anIndex
 {
-    index = anIndex;
+    mIndex = anIndex;
 }
 
 - (unsigned int) indexInResultSet
 {
-    return indexInResultSet;
+    return mIndexInResultSet;
 }
 
 - (void) setIndexInResultSet: (unsigned int) anIndex
 {
-    indexInResultSet = anIndex;
+    mIndexInResultSet = anIndex;
 }
 
 - (NSString *) name
 {
-    if (nil == name && index != 0)
+    if (nil == mName && mIndex != 0)
     {
 		NSString* query = @"SELECT attname, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1 AND attnum = $2";
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([table oid]), [NSNumber numberWithUnsignedInt: index]];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject ([mTable oid]), [NSNumber numberWithUnsignedInt: mIndex]];
         if ([res advanceRow])
         {
             [self setName: [res valueForKey: @"attname"]];
-            typeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
-			isNotNull = [[res valueForKey: @"attnotnull"] boolValue];
+            mTypeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
+			mIsNotNull = [[res valueForKey: @"attnotnull"] boolValue];
         }
     }
-    return name;
+    return mName;
 }
 
 - (NSString *) qualifiedName
 {
     NSString* rval = nil;
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    if (nil != name)
-        rval = [NSString stringWithFormat: @"\"%@\"", name];
+    if (nil != mName)
+        rval = [NSString stringWithFormat: @"\"%@\"", mName];
     
     return rval;
 }
 
 - (unsigned int) index
 {
-    if (index == 0 && nil != name)
+    if (mIndex == 0 && nil != mName)
     {
 		NSString* query = @"SELECT attnumber, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1 AND attname = $2";
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([table oid]), name];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject ([mTable oid]), mName];
         [self setIndex: [[res valueForKey: @"attnumber"] unsignedIntValue]];
-        typeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
-		isNotNull = [[res valueForKey: @"attnotnull"] boolValue];
+        mTypeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
+		mIsNotNull = [[res valueForKey: @"attnotnull"] boolValue];
     }
-    return index;
+    return mIndex;
 }
 
 - (void) setTable: (PGTSTableDescription *) anObject
 {
-    table = anObject;
+    mTable = anObject;
 }
 
 - (PGTSTableDescription *) table
 {
-    return table;
+    return mTable;
 }
 
 - (Oid) typeOid
 {
-    return typeOid;
+    return mTypeOid;
 }
 
 - (PGTSTypeDescription *) type
 {
-    return [[table database] typeWithOid: typeOid];
+    return [[mTable database] typeWithOid: mTypeOid];
 }
 
 - (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField
 {
     NSComparisonResult result = NSOrderedAscending;
     unsigned int anIndex = [aField index];
-    if (index > anIndex)
+    if (mIndex > anIndex)
         result = NSOrderedDescending;
-    else if (index == anIndex)
+    else if (mIndex == anIndex)
         result = NSOrderedSame;
     return result;
 }
 
 - (BOOL) isNotNull
 {
-	return isNotNull;
+	return mIsNotNull;
 }
 
 @end

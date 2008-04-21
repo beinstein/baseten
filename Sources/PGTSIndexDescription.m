@@ -34,64 +34,64 @@
  */
 @implementation PGTSIndexDescription
 
-- (id) initWithConnection: (PGTSConnection *) aConnection
+- (id) init
 {
-    if ((self = [super initWithConnection: aConnection]))
+    if ((self = [super init]))
     {
-        isUnique = NO;
-        isPrimaryKey = NO;
+        mIsUnique = NO;
+        mIsPrimaryKey = NO;
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [fields release];
+    [mFields release];
     [super dealloc];
 }
 
 - (void) setFields: (NSSet *) aSet
 {
-    if (fields != aSet)
+    if (mFields != aSet)
     {
-        [fields release];
-        fields = [aSet copy];
+        [mFields release];
+        mFields = [aSet copy];
     }
 }
 
 - (NSSet *) fields
 {
-    return fields;
+    return mFields;
 }
 
 - (void) setUnique: (BOOL) aBool
 {
-    isUnique = aBool;
+    mIsUnique = aBool;
 }
 
 - (BOOL) isUnique
 {
-    return isUnique;
+    return mIsUnique;
 }
 
 - (void) setPrimaryKey: (BOOL) aBool
 {
-    isPrimaryKey = aBool;
+    mIsPrimaryKey = aBool;
 }
 
 - (BOOL) isPrimaryKey
 {
-    return isPrimaryKey;
+    return mIsPrimaryKey;
 }
 
 - (void) setTable: (PGTSTableDescription *) anObject
 {
-    table = anObject;
+    mTable = anObject;
 }
 
 - (PGTSTableDescription *) table
 {
-    return table;
+    return mTable;
 }
 
 @end

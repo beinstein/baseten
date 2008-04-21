@@ -34,12 +34,12 @@
 
 @interface PGTSForeignKeyDescription : PGTSAbstractDescription 
 {
-    NSArray* sourceFields;
-    NSArray* referenceFields;
-	enum PGTSDeleteRule deleteRule;
+    NSArray* mSourceFields;
+    NSArray* mReferenceFields;
+	enum PGTSDeleteRule mDeleteRule;
 }
 
-- (id) initWithConnection: (PGTSConnection *) connection name: (NSString *) aName sourceFields: (NSArray *) sFields referenceFields: (NSArray *) rFields;
+- (id) initWithName: (NSString *) aName sourceFields: (NSArray *) sFields referenceFields: (NSArray *) rFields;
 - (NSArray *) sourceFields;
 - (NSArray *) referenceFields;
 - (PGTSTableDescription *) sourceTable;

@@ -42,69 +42,69 @@
  */
 @implementation PGTSTableDescription
 
-- (id) initWithConnection: (PGTSConnection *) aConnection
+- (id) init
 {
-    if ((self = [super initWithConnection: aConnection]))
+    if ((self = [super init]))
     {
-        fieldCount = NSNotFound;
-        fields = [[NSMutableDictionary alloc] init];
-        hasForeignKeys = NO;
-        foreignKeys = [[NSMutableSet alloc] init];
-        hasReferencingForeignKeys = NO;
-        referencingForeignKeys = [[NSMutableSet alloc] init];
+        mFieldCount = NSNotFound;
+        mFields = [[NSMutableDictionary alloc] init];
+        mHasForeignKeys = NO;
+        mForeignKeys = [[NSMutableSet alloc] init];
+        mHasReferencingForeignKeys = NO;
+        mReferencingForeignKeys = [[NSMutableSet alloc] init];
     }
     return self;
 }
 
 - (void) dealloc
 {
-    [fields        makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
-    [uniqueIndexes makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
+    [mFields        makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
+    [mUniqueIndexes makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
 
-    [fields release];
-    [uniqueIndexes release];
-    [schemaName release];
-    [foreignKeys release];
-    [referencingForeignKeys release];
-    [relationOidsBasedOn release];
+    [mFields release];
+    [mUniqueIndexes release];
+    [mSchemaName release];
+    [mForeignKeys release];
+    [mReferencingForeignKeys release];
+    [mRelationOidsBasedOn release];
     [super dealloc];
 }
 
 - (void) setDatabase: (PGTSDatabaseDescription *) aDatabase
 {
-    database = aDatabase;
+    mDatabase = aDatabase;
 }
 
 - (PGTSDatabaseDescription *) database
 {
-    return database;
+    return mDatabase;
 }
 
 - (void) setUniqueIndexes: (NSArray *) anArray
 {
-    if (anArray != uniqueIndexes)
+    if (anArray != mUniqueIndexes)
     {
-        [uniqueIndexes release];
-        uniqueIndexes = [anArray retain];
+        [mUniqueIndexes release];
+        mUniqueIndexes = [anArray retain];
     }
 }
 
 - (void) setFieldCount: (unsigned int) anInt
 {
-    fieldCount = anInt;
+    mFieldCount = anInt;
 }
 
 - (NSArray *) relationOidsBasedOn
 {
-    return relationOidsBasedOn; 
+    return mRelationOidsBasedOn; 
 }
 
 - (void) setRelationOidsBasedOn: (NSArray *) aRelationOidsBasedOn
 {
-    if (relationOidsBasedOn != aRelationOidsBasedOn) 
+    if (mRelationOidsBasedOn != aRelationOidsBasedOn) 
     {
-        [relationOidsBasedOn release];
-        relationOidsBasedOn = [aRelationOidsBasedOn retain];
+        [mRelationOidsBasedOn release];
+        mRelationOidsBasedOn = [aRelationOidsBasedOn retain];
     }
 }
 
@@ -141,16 +141,13 @@
         
         NSString* aName = [res valueForKey: @"name"];
         
-        PGTSForeignKeyDescription* desc = [[PGTSForeignKeyDescription alloc] initWithConnection: connection
-                                                                                           name: aName 
-                                                                                   sourceFields: sourceFields 
-                                                                                referenceFields: refFields];
+        PGTSForeignKeyDescription* desc = [[PGTSForeignKeyDescription alloc] initWithName: aName sourceFields: sourceFields referenceFields: refFields];
 		[desc setDeleteRule: [[res valueForKey: @"deltype"] characterAtIndex: 0]];
-        [foreignKeys addObject: desc];
+        [mForeignKeys addObject: desc];
         [desc release];
         
     }
-    return foreignKeys;
+    return mForeignKeys;
 }
 
 @end
@@ -161,32 +158,32 @@
 
 - (NSArray *) allFields
 {
-    if (NSNotFound == fieldCount)
+    if (NSNotFound == mFieldCount)
     {
         NSString* query = @"SELECT max (attnum) AS count FROM pg_attribute WHERE attisdropped = false AND attrelid = $1";
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
         [res advanceRow];
         [self setFieldCount: [[res valueForKey: @"count"] unsignedIntValue]];
     }
     
-    for (unsigned int i = 1; i <= fieldCount; i++)
+    for (unsigned int i = 1; i <= mFieldCount; i++)
         [self fieldAtIndex: i];
     
-    return [fields allObjects];
+    return [mFields allObjects];
 }
 
 - (PGTSFieldDescription *) fieldAtIndex: (unsigned int) anIndex
 {
-    PGTSFieldDescription* rval = [fields objectAtIndex: anIndex];    
+    PGTSFieldDescription* rval = [mFields objectAtIndex: anIndex];    
     if (nil == rval)
     {
-        rval = [[[PGTSFieldDescription alloc] initWithConnection: connection] autorelease];
+        rval = [[[PGTSFieldDescription alloc] init] autorelease];
         [rval setTable: self];
         [rval setIndex: anIndex];
         if (nil == [rval name])
             rval = nil;
         else
-            [fields setObject: rval forKey: [NSNumber numberWithUnsignedInt: anIndex]];
+            [mFields setObject: rval forKey: [NSNumber numberWithUnsignedInt: anIndex]];
     }
     return rval;
 }
@@ -208,7 +205,7 @@
 
 - (NSArray *) uniqueIndexes;
 {
-    if (nil == uniqueIndexes)
+    if (nil == mUniqueIndexes)
     {
         switch ([self kind])
         {
@@ -219,15 +216,15 @@
                 "indisprimary, indnatts, indkey::INTEGER[] FROM pg_index, pg_class c "
                 "WHERE indisunique = true AND indrelid = $1 AND indexrelid = c.oid "
                 "ORDER BY indisprimary DESC";
-                PGTSResultSet* res =  [connection executeQuery: query
-                                                    parameters: PGTSOidAsObject (oid)];
+                PGTSResultSet* res =  [mConnection executeQuery: query
+                                                    parameters: PGTSOidAsObject (mOid)];
                 unsigned int count = [res count];
                 if (0 < count)
                 {
                     NSMutableArray* indexes = [NSMutableArray arrayWithCapacity: count];
                     while (([res advanceRow]))
                     {
-                        PGTSIndexDescription* currentIndex = [[PGTSIndexDescription alloc] initWithConnection: connection];
+                        PGTSIndexDescription* currentIndex = [[PGTSIndexDescription alloc] init];
                         [indexes addObject: currentIndex];
                         [currentIndex release];
                         
@@ -248,7 +245,7 @@
                         [currentIndex setTable: self];
                         [currentIndex setFields: indexFields];
                         
-                        [currentIndex setSchemaOid: schemaOid];
+                        [currentIndex setSchemaOid: mSchemaOid];
                     }
                     [self setUniqueIndexes: indexes];
                 }
@@ -258,12 +255,12 @@
                 //This requires the primarykey view
                 NSString* query = @"SELECT baseten.array_accum (attnum) AS attnum "
                 " FROM baseten.primarykey WHERE oid = $1 GROUP BY oid";
-                PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
+                PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
                 if (NO == [res advanceRow])
                     [self setUniqueIndexes: [NSArray array]];
                 else
                 {
-                    PGTSIndexDescription* index = [[PGTSIndexDescription alloc] initWithConnection: connection];
+                    PGTSIndexDescription* index = [[PGTSIndexDescription alloc] init];
                     NSMutableSet* indexFields = [NSMutableSet set];
                     TSEnumerate (currentFieldIndex, e, [[res valueForKey: @"attnum"] objectEnumerator])
                         [indexFields addObject: [self fieldAtIndex: [currentFieldIndex intValue]]];
@@ -277,7 +274,7 @@
                 break;
         }
     }
-    return uniqueIndexes;
+    return mUniqueIndexes;
 }
 
 - (PGTSIndexDescription *) primaryKey
@@ -295,7 +292,7 @@
 
 - (NSSet *) foreignKeys
 {
-    if (NO == hasForeignKeys)
+    if (NO == mHasForeignKeys)
     {
         NSString* query = 
         @"SELECT "
@@ -308,17 +305,17 @@
         "WHERE c.contype = 'f' AND "    //Foreign keys
         "c.conrelid = $1 ";             //Source's OID
         
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
-        hasForeignKeys = YES;
-        if ([foreignKeys count] < [res count])
-            [foreignKeys unionSet: [self foreignKeySetWithResult: res selfAsSource: YES]];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
+        mHasForeignKeys = YES;
+        if ([mForeignKeys count] < [res count])
+            [mForeignKeys unionSet: [self foreignKeySetWithResult: res selfAsSource: YES]];
     }
-    return foreignKeys;
+    return mForeignKeys;
 }
 
 - (NSSet *) referencingForeignKeys
 {
-    if (NO == hasReferencingForeignKeys)
+    if (NO == mHasReferencingForeignKeys)
     {
         NSString* query = 
         @"SELECT "
@@ -331,27 +328,27 @@
         "WHERE c.contype = 'f' AND "    //Foreign keys
         "c.confrelid = $1 ";            //Reference's OID
         
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject (oid)];
-        hasReferencingForeignKeys = YES;
-        if ([referencingForeignKeys count] < [res count])
-            [referencingForeignKeys unionSet: [self foreignKeySetWithResult: res selfAsSource: NO]];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
+        mHasReferencingForeignKeys = YES;
+        if ([mReferencingForeignKeys count] < [res count])
+            [mReferencingForeignKeys unionSet: [self foreignKeySetWithResult: res selfAsSource: NO]];
     }
-    return referencingForeignKeys;
+    return mReferencingForeignKeys;
 }
 
 - (NSArray *) relationOidsBasedOn
 {
-    if ('v' == [self kind] && nil == relationOidsBasedOn)
+    if ('v' == [self kind] && nil == mRelationOidsBasedOn)
     {
         NSString* query = @"SELECT reloid FROM baseten.viewdependency WHERE viewoid = $1";
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
         NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [res count]];
         while (([res advanceRow]))
             [oids addObject: [res valueForKey: @"reloid"]];
         
         [self setRelationOidsBasedOn: oids];
     }
-    return relationOidsBasedOn;
+    return mRelationOidsBasedOn;
 }
 
 @end

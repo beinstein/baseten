@@ -40,53 +40,44 @@
     return NO;
 }
 
-- (id) init
-{
-    return [self initWithConnection: nil];
-}
-
-- (id) initWithConnection: (PGTSConnection *) aConnection
-{
-    if ((self = [super init]))
-        [self setConnection: aConnection];
-    return self;
-}
-
 - (void) dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver: self];
-    [name release];
+    [mName release];
     [super dealloc];
 }
 
 - (void) setName: (NSString *) aString
 {
-    if (aString != name)
+    if (aString != mName)
     {
-        [name release];
-        name = [aString copy];
+        [mName release];
+        mName = [aString copy];
     }
 }
 
 - (PGTSConnection *) connection
 {
-    return connection;
+    return mConnection;
 }
 
 - (void) setConnection: (PGTSConnection *) aConnection
 {
-    connection = aConnection;
+    mConnection = aConnection;
+}
+
+- (void) setDescriptionProxy: (PGTSAbstractDescriptionProxy *) aProxy
+{
+	mProxy = aProxy;
 }
 
 - (NSString *) name
 {
-    return name;
+    return mName;
 }
 
 /**
- * Copy the object
- * In reality, we only retain the object, since there should be no need to have different versions 
- * of the database object info.
+ * Retain on copy.
  */
 - (id) copyWithZone: (NSZone *) zone
 {
@@ -101,16 +92,16 @@
     else
     {
         PGTSAbstractDescription* anInfo = (PGTSAbstractDescription *) anObject;
-        rval = ([connection isEqual: anInfo->connection] &&
-                [name isEqualToString: anInfo->name]);
+        rval = ([mConnection isEqual: anInfo->mConnection] &&
+                [mName isEqualToString: anInfo->mName]);
     }
     return rval;
 }
 
 - (unsigned int) hash
 {
-    if (0 == hash)
-        hash = ([connection hash] ^ [name hash]);
-    return hash;
+    if (0 == mHash)
+        mHash = ([mConnection hash] ^ [mName hash]);
+    return mHash;
 }
 @end

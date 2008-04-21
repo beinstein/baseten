@@ -38,17 +38,17 @@
 
 @interface PGTSTableDescription : PGTSAbstractClassDescription 
 {
-    unsigned int fieldCount;
-    id fields;
-    NSArray* uniqueIndexes;
-    PGTSDatabaseDescription* database;
+    unsigned int mFieldCount;
+    id mFields;
+    NSArray* mUniqueIndexes;
+    PGTSDatabaseDescription* mDatabase;
 
-    BOOL hasForeignKeys;
-    NSMutableSet* foreignKeys;
-    BOOL hasReferencingForeignKeys;
-    NSMutableSet* referencingForeignKeys;
+    BOOL mHasForeignKeys;
+    NSMutableSet* mForeignKeys;
+    BOOL mHasReferencingForeignKeys;
+    NSMutableSet* mReferencingForeignKeys;
 
-    NSArray* relationOidsBasedOn;
+    NSArray* mRelationOidsBasedOn;
 }
 
 - (void) setDatabase: (PGTSDatabaseDescription *) aDatabase;

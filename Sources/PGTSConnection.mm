@@ -28,6 +28,7 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import "PGTSConnection.h"
+#import "PGTSConnectionPrivate.h"
 #import "PGTSConnector.h"
 #import "PGTSConstants.h"
 #import "PGTSQuery.h"
@@ -288,7 +289,7 @@ ProcessWillExit ()
 {
     if (! mDatabase)
     {
-        mDatabase = [[PGTSDatabaseDescription alloc] initWithConnection: self];
+        mDatabase = [[PGTSDatabaseDescription alloc] init];
     }
     return mDatabase;
 }
@@ -325,6 +326,11 @@ ProcessWillExit ()
         }
     }
     return mPGTypes;
+}
+
+- (NSString *) errorString
+{
+	return [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
 }
 
 @end

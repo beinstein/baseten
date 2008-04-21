@@ -27,6 +27,8 @@
 		53091C4C0DAACF70005B5619 /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C440DAACF70005B5619 /* NSPredicate+PGTSAdditions.m */; };
 		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
 		532BF12E0A3717BA002E6BFE /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
+		5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
+		5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
 		53594D1C0B13711300378707 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
 		538176360D633DC000A4CA72 /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176370D633DC000A4CA72 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -235,6 +237,7 @@
 		53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSACLItem.m; path = Sources/PGTSACLItem.m; sourceTree = "<group>"; };
 		533A6AF209DEE51700D28AB0 /* PGTSConstants.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSConstants.h; path = Sources/PGTSConstants.h; sourceTree = "<group>"; };
 		534CFECB095DCCDC00BF3440 /* Kerberos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kerberos.framework; path = /System/Library/Frameworks/Kerberos.framework; sourceTree = "<absolute>"; };
+		5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnectionPrivate.h; path = Sources/PGTSConnectionPrivate.h; sourceTree = "<group>"; };
 		53594D1B0B13711300378707 /* libpq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpq.a; path = "PGTS-PostgreSQL/universal/lib/libpq.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5359557C0A514DEE0008793A /* PGTSSchemaDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSchemaDescription.h; path = Sources/PGTSSchemaDescription.h; sourceTree = "<group>"; };
 		5359557D0A514DEE0008793A /* PGTSSchemaDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSSchemaDescription.m; path = Sources/PGTSSchemaDescription.m; sourceTree = "<group>"; };
@@ -478,6 +481,7 @@
 			isa = PBXGroup;
 			children = (
 				53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */,
+				5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */,
 				53BA4FD808804E9F00BFAFB5 /* PGTSConnection.mm */,
 				5392A85C0DAD7E190012C7CD /* PGTSConnector.h */,
 				5392A85D0DAD7E190012C7CD /* PGTSConnector.m */,
@@ -543,6 +547,7 @@
 				53E189B10DB2DB720094066F /* PGTSRoleDescription.h in Headers */,
 				53E189B30DB2DB730094066F /* PGTSACLItem.h in Headers */,
 				53E18B490DB3E9840094066F /* PGTSFunctions.h in Headers */,
+				5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -578,6 +583,7 @@
 				5392A7E70DAD7DFA0012C7CD /* PGTSQueryDescription.h in Headers */,
 				5392A8600DAD7E190012C7CD /* PGTSConnector.h in Headers */,
 				5396AFA90DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */,
+				5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -628,6 +634,7 @@
 		0867D690FE84028FC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 53BA4FD208804E6B00BFAFB5 /* Build configuration list for PBXProject "PGTS" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 0867D691FE84028FC02AAC07 /* Framework */;
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;

@@ -38,13 +38,13 @@
  */
 @implementation PGTSTypeDescription
 
-- (id) initWithConnection: (PGTSConnection *) aConnection
+- (id) init
 {
-    if ((self = [super initWithConnection: aConnection]))
+    if ((self = [super init]))
     {
-        elementOid = InvalidOid;
-        elementCount = 0;
-        delimiter = '\0';
+        mElementOid = InvalidOid;
+        mElementCount = 0;
+        mDelimiter = '\0';
     }
     return self;
 }
@@ -52,7 +52,7 @@
 - (NSString *) description
 {
     return [NSString stringWithFormat: @"%@ (%p) oid: %u sOid: %u sName: %@ t: %@ eOid: %u d: %c", 
-        [self class], self, oid, schemaOid, elementOid, name, schemaName, delimiter];
+        [self class], self, mOid, mSchemaOid, mElementOid, mName, mSchemaName, mDelimiter];
 }
 
 @end
@@ -62,11 +62,11 @@
 
 - (NSString *) name
 {
-    if (nil == name)
+    if (nil == mName)
     {
-        PGTSResultSet* res = [connection executeQuery: @"SELECT typname, n.oid, nspname, typelem, typdelim "
+        PGTSResultSet* res = [mConnection executeQuery: @"SELECT typname, n.oid, nspname, typelem, typdelim "
                                                         "FROM pg_type t, pg_namespace n "
-                                                        "WHERE t.oid = $1 AND t.typnamespace = n.oid" parameters: PGTSOidAsObject (oid)];
+                                                        "WHERE t.oid = $1 AND t.typnamespace = n.oid" parameters: PGTSOidAsObject (mOid)];
         [res setDeterminesFieldClassesAutomatically: NO];
         [res setClass: [NSString class] forKey: @"typname"];
         [res setClass: [NSNumber class] forKey: @"oid"];
@@ -84,45 +84,45 @@
             [self setDelimiter:  [[res valueForKey: @"typdelim"] characterAtIndex: 0]];
         }
     }
-    return name;
+    return mName;
 }
 
 - (void) setDatabase: (PGTSDatabaseDescription *) aDatabase
 {
-    database = aDatabase;
+    mDatabase = aDatabase;
 }
 
 - (PGTSDatabaseDescription *) database
 {
-    return database;
+    return mDatabase;
 }
 
 - (Oid) elementOid
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    return elementOid;
+    return mElementOid;
 }
 
 - (char) delimiter
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    return delimiter;
+    return mDelimiter;
 }
 
 - (void) setElementOid: (Oid) anOid
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    elementOid = anOid;
+    mElementOid = anOid;
 }
 
 - (void) setDelimiter: (char) aChar
 {
-    if (nil == name)
+    if (nil == mName)
         [self name];
-    delimiter = aChar;
+    mDelimiter = aChar;
 }
 
 @end

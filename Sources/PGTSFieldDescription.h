@@ -37,11 +37,11 @@
 
 @interface PGTSFieldDescription : PGTSAbstractDescription 
 {
-    PGTSTableDescription* table;
-    unsigned int index;
-    unsigned int indexInResultSet;
-    Oid typeOid;
-	BOOL isNotNull;
+    PGTSTableDescription* mTable;
+    unsigned int mIndex;
+    unsigned int mIndexInResultSet;
+    Oid mTypeOid;
+	BOOL mIsNotNull;
 }
 
 - (unsigned int) index;

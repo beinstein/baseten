@@ -28,6 +28,7 @@
 
 #import "PGTSFoundationObjects.h"
 #import "PGTSConnection.h"
+#import "PGTSConnectionPrivate.h"
 #import "PGTSFunctions.h"
 #import "PGTSTypeDescription.h"
 #import "PGTSDatabaseDescription.h"

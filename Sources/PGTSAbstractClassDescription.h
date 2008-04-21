@@ -36,11 +36,11 @@
 
 @interface PGTSAbstractClassDescription : PGTSAbstractObjectDescription
 {
-    Oid schemaOid;
-    NSString* schemaName;
-    id aclItems;
-    PGTSRoleDescription* owner;
-    char relkind;
+    Oid mSchemaOid;
+    NSString* mSchemaName;
+    id mACLItems;
+    PGTSRoleDescription* mOwner;
+    char mRelkind;
 }
 - (void) setSchemaOid: (Oid) anOid;
 - (void) setSchemaName: (NSString *) anString;

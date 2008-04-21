@@ -30,6 +30,7 @@
 #import "PGTSConnection.h"
 #import "PGTSResultSet.h"
 #import "PGTSQuery.h"
+#import "PGTSConnectionPrivate.h"
 #import <PGTS/postgresql/libpq-fe.h>
 
 

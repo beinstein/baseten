@@ -29,6 +29,7 @@
 #import "PGTSQuery.h"
 #import "PGTSFoundationObjects.h"
 #import "PGTSConnection.h"
+#import "PGTSConnectionPrivate.h"
 
 
 @implementation PGTSQuery

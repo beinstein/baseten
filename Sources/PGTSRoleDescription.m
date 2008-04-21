@@ -39,7 +39,7 @@
 
 - (void) dealloc
 {
-    [roles release];
+    [mRoles release];
     [super dealloc];
 }
 
@@ -52,25 +52,25 @@
 {
     BOOL rval = NO;
     
-    if (nil == roles)
+    if (nil == mRoles)
     {
-        roles = [[NSMutableDictionary alloc] init];
+        mRoles = [[NSMutableDictionary alloc] init];
         NSString* query = @"SELECT r.oid, r.rolname FROM pg_roles r INNER JOIN pg_authid a WHERE r.oid = a.member AND a.roleid = $1";
-        PGTSResultSet* res = [connection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
         while ([res advanceRow])
         {
             id memberOid = [res valueForKey: @"oid"];
-            PGTSRoleDescription* role = [[connection databaseDescription] roleNamed: [res valueForKey: @"rolname"] 
+            PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"] 
                                                                                 oid: [memberOid PGTSOidValue]];
-            [roles setObject: role forKey: memberOid];
+            [mRoles setObject: role forKey: memberOid];
         }
     }
     
-    if (nil != [roles objectAtIndex: [aRole oid]])
+    if (nil != [mRoles objectAtIndex: [aRole oid]])
         rval = YES;
     else
     {
-        TSEnumerate (currentRole, e, [roles objectEnumerator])
+        TSEnumerate (currentRole, e, [mRoles objectEnumerator])
         {
             rval = [currentRole hasMember: aRole];
             if (YES == rval)

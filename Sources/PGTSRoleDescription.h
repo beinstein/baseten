@@ -33,7 +33,7 @@
 
 @interface PGTSRoleDescription : PGTSAbstractObjectDescription
 {
-    id roles;
+    id mRoles;
 }
 @end
 

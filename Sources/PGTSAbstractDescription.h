@@ -30,21 +30,31 @@
 
 
 @class PGTSConnection;
+@class PGTSAbstractDescription;
+
+
+@interface PGTSAbstractDescriptionProxy : NSProxy
+{
+	PGTSAbstractDescription* mConcreteDescription;
+}
+@end
 
 
 @interface PGTSAbstractDescription : NSObject <NSCopying>
 {
-    PGTSConnection* connection; //Weak
-    NSString* name;
-    unsigned int hash;
+    PGTSConnection* mConnection; //Weak
+	PGTSAbstractDescriptionProxy* mProxy; //Weak;
+	
+    NSString* mName;
+    unsigned int mHash;
 }
 
 + (BOOL) accessInstanceVariablesDirectly;
 - (NSString *) name;
 - (void) setName: (NSString *) aString;
 - (PGTSConnection *) connection;
-- (void) setConnection: (PGTSConnection *) aConnection;
-- (id) initWithConnection: (PGTSConnection *) aConnection;
 - (BOOL) isEqual: (id) anObject;
 
+- (void) setConnection: (PGTSConnection *) aConnection;
+- (void) setDescriptionProxy: (PGTSAbstractDescriptionProxy *) aProxy;
 @end

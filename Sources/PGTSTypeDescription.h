@@ -35,10 +35,10 @@
 
 @interface PGTSTypeDescription : PGTSAbstractClassDescription 
 {
-    PGTSDatabaseDescription* database;
-    Oid elementOid;
-    unsigned int elementCount;
-    char delimiter;
+    PGTSDatabaseDescription* mDatabase;
+    Oid mElementOid;
+    unsigned int mElementCount;
+    char mDelimiter;
 }
 
 @end

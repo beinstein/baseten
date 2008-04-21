@@ -33,7 +33,7 @@
 
 @interface PGTSAbstractObjectDescription : PGTSAbstractDescription 
 {
-    Oid oid;
+    Oid mOid;
 }
 
 - (Oid)  oid;

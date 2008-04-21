@@ -67,6 +67,7 @@
 - (PGTSDatabaseDescription *) databaseDescription;
 - (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc;
 - (id) deserializationDictionary;
+- (NSString *) errorString;
 @end
 
 
@@ -82,14 +83,4 @@
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback;
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback parameters: (id) p1, ...;
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback parameterArray: (NSArray *) parameters;
-@end
-
-
-@interface PGTSConnection (PGTSConnectionPrivate)
-- (void) setConnector: (PGTSConnector *) anObject;
-- (void) readFromSocket;
-- (int) sendNextQuery;
-- (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query;
-- (PGconn *) pgConnection;
-- (void) processNotifications;
 @end
