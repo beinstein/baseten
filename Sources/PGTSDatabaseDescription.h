@@ -36,19 +36,34 @@
 @class PGTSRoleDescription;
 
 
-@interface PGTSDatabaseDescription : PGTSAbstractDescription 
+@protocol PGTSDatabaseDescription <NSObject>
+- (PGTSTableDescription *) tableWithOid: (Oid) anOid;
+- (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
+- (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
+- (void) updateTableCache: (id) table;
+@end
+
+
+@interface PGTSDatabaseDescriptionProxy : PGTSAbstractDescriptionProxy <PGTSDatabaseDescription>
 {
-    id mTables;
-    id mTypes;
+	NSMutableDictionary* mTables;
+	NSMutableDictionary* mTypes;
+	NSMutableDictionary* mSchemas;
+	//FIXME: roles?
+}
+@end
+
+
+@interface PGTSDatabaseDescription : PGTSAbstractDescription <PGTSDatabaseDescription>
+{
+    NSMutableDictionary* mTables;
+    NSMutableDictionary* mTypes;
     NSMutableDictionary* mSchemas;
     NSMutableDictionary* mRoles;
 }
 
-- (PGTSTableDescription *) tableWithOid: (Oid) anOid;
-- (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
-- (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
++ (id) databaseForConnection: (PGTSConnection *) connection;
 - (BOOL) schemaExists: (NSString *) schemaName;
-- (void) updateTableCache: (PGTSTableDescription *) table;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 

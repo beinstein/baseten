@@ -55,4 +55,9 @@
     return ([anObject oid] == mOid && [super isEqual: anObject]); 
 }
 
+- (Class) proxyClass
+{
+	return [PGTSAbstractObjectDescriptionProxy class];
+}
+
 @end

@@ -39,10 +39,93 @@
 #define log4AssertValueReturn(...)
     
 
+@implementation PGTSDatabaseDescriptionProxy
+- (void) dealloc
+{
+	[mTypes release];
+	[mTables release];
+	[mSchemas release];
+	[super dealloc];
+}
+
+- (PGTSTableDescription *) tableWithOid: (Oid) anOid
+{
+	//Get the cached proxy or create one.
+	id retval = [mTables objectForKey: PGTSOidAsObject (anOid)];
+	if (! retval)
+	{
+		[[[self invocationRecorder] record] tableWithOid: anOid];
+		retval = [[self performSynchronizedAndReturnObject] proxy];
+		[self updateTableCache: retval];
+	}
+	return PGTSNilReturn (retval);
+}
+
+- (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName
+{
+	//Get the cached proxy or create one.
+	id retval = [[mSchemas objectForKey: schemaName] objectForKey: tableName];
+	if (! retval)
+	{
+		[[[self invocationRecorder] record] table: tableName inSchema: schemaName];
+		retval = [[self performSynchronizedAndReturnObject] proxy];
+		[self updateTableCache: retval];
+	}
+	return PGTSNilReturn (retval);
+}
+
+- (PGTSTypeDescription *) typeWithOid: (Oid) anOid
+{
+	if (! mTypes)
+		mTypes = [[NSMutableDictionary alloc] init];
+	
+	//Get the cached proxy or create one.
+	id key = PGTSOidAsObject (anOid);
+	id retval = [mTypes objectForKey: key];
+	if (! retval)
+	{
+		[[[self invocationRecorder] record] typeWithOid: anOid];
+		retval = [[self performSynchronizedAndReturnObject] proxy] ?: [NSNull null];
+		[mTypes setObject: retval forKey: key];
+	}
+	return PGTSNilReturn (retval);
+}
+
+- (void) updateTableCache: (id) table
+{
+    if (nil != table)
+    {
+		if (! mTables)
+			mTables = [[NSMutableDictionary alloc] init];
+		
+		if (! mSchemas)
+			mSchemas = [[NSMutableDictionary alloc] init];
+		
+        NSString* schemaName = [table schemaName];
+        NSMutableDictionary* schema = [mSchemas objectForKey: schemaName];
+        if (! schema)
+        {
+            schema = [NSMutableDictionary dictionary];
+            [mSchemas setObject: schema forKey: schemaName];
+        }
+		
+        [schema setObject: table forKey: [table name]];
+    }
+}
+@end
+
+
 /** 
- * Database
+ * Database.
  */
 @implementation PGTSDatabaseDescription
+
++ (id) databaseForConnection: (PGTSConnection *) connection
+{
+	id description = [[[PGTSDatabaseDescription alloc] init] autorelease];
+	id retval = [[[PGTSDatabaseDescriptionProxy alloc] initWithConnection: connection description: description] autorelease];
+	return retval;
+}
 
 - (id) addDescriptionFor: (Oid) oidValue class: (Class) c toContainer: (NSMutableDictionary *) aDict
 {
@@ -65,21 +148,19 @@
 
 - (BOOL) schemaExists: (NSString *) schemaName
 {
-    BOOL rval = YES;
-    if (nil == [mSchemas objectForKey: schemaName])
+	id schema = [mSchemas objectForKey: schemaName];
+    if (! schema)
     {
         NSString* query = @"SELECT oid FROM pg_namespace WHERE nspname = $1";
         PGTSResultSet* res = [mConnection executeQuery: query parameters: schemaName];
         log4AssertValueReturn ([res querySucceeded], NO, @"Query failed (%@).", [res errorMessage]);
         if (0 == [res count])
-            rval = NO;
+			schema = [NSNull null];
         else
-        {
-            NSMutableDictionary* schema = [NSMutableDictionary dictionary];
-            [mSchemas setObject: schema forKey: schemaName];
-        }
+            schema = [NSMutableDictionary dictionary];
+		[mSchemas setObject: schema forKey: schemaName];
     }
-    return rval;
+    return ([NSNull null] != schema);
 }
 
 - (id) init
@@ -96,9 +177,6 @@
 
 - (void) dealloc
 {
-    [mTables makeObjectsPerformSelector: @selector (setDatabase:) withObject: nil];
-    [mTypes  makeObjectsPerformSelector: @selector (setDatabase:) withObject: nil];
-    
     [mTables release];
     [mTypes release];
     [mSchemas release];
@@ -149,7 +227,7 @@
     return rval;
 }
 
-- (void) updateTableCache: (PGTSTableDescription *) table
+- (void) updateTableCache: (id) table
 {
     if (nil != table)
     {
@@ -197,4 +275,8 @@
     return rval;
 }
 
+- (Class) proxyClass
+{
+	return [PGTSDatabaseDescriptionProxy class];
+}
 @end

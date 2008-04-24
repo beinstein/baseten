@@ -32,6 +32,13 @@
 @class PGTSConnection;
 @class PGTSTableDescription;
 
+
+@interface PGTSForeignKeyDescriptionProxy : PGTSAbstractDescriptionProxy
+{
+}
+@end
+
+
 @interface PGTSForeignKeyDescription : PGTSAbstractDescription 
 {
     NSArray* mSourceFields;

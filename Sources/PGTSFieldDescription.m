@@ -147,4 +147,8 @@
 	return mIsNotNull;
 }
 
+- (Class) proxyClass
+{
+	return [PGTSFieldDescriptionProxy class];
+}
 @end

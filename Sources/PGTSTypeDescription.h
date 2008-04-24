@@ -33,9 +33,14 @@
 @class PGTSDatabaseDescription;
 
 
+@interface PGTSTypeDescriptionProxy : PGTSAbstractClassDescriptionProxy
+{
+}
+@end
+
+
 @interface PGTSTypeDescription : PGTSAbstractClassDescription 
 {
-    PGTSDatabaseDescription* mDatabase;
     Oid mElementOid;
     unsigned int mElementCount;
     char mDelimiter;
@@ -45,8 +50,6 @@
 
 
 @interface PGTSTypeDescription (Queries)
-- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase;
-- (PGTSDatabaseDescription *) database;
 - (Oid) elementOid;
 - (char) delimiter;
 - (void) setElementOid: (Oid) anOid;

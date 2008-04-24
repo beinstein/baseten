@@ -48,9 +48,13 @@
 
 @implementation PGTSRoleDescription (Queries)
 
+/** 
+ * Check if given role is member of self.
+ * \param aRole The role to be tested. May be a proxy.
+ */
 - (BOOL) hasMember: (PGTSRoleDescription *) aRole
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     
     if (nil == mRoles)
     {
@@ -61,23 +65,27 @@
         {
             id memberOid = [res valueForKey: @"oid"];
             PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"] 
-                                                                                oid: [memberOid PGTSOidValue]];
+																				 oid: [memberOid PGTSOidValue]];
             [mRoles setObject: role forKey: memberOid];
         }
     }
     
     if (nil != [mRoles objectAtIndex: [aRole oid]])
-        rval = YES;
+        retval = YES;
     else
     {
         TSEnumerate (currentRole, e, [mRoles objectEnumerator])
         {
-            rval = [currentRole hasMember: aRole];
-            if (YES == rval)
+            retval = [currentRole hasMember: aRole];
+            if (YES == retval)
                 break;
         }
     }
-    return rval;
+    return retval;
 }
 
+- (Class) proxyClass
+{
+	return [PGTSRoleDescriptionProxy class];
+}
 @end

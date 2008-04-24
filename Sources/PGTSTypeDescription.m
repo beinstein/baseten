@@ -55,6 +55,10 @@
         [self class], self, mOid, mSchemaOid, mElementOid, mName, mSchemaName, mDelimiter];
 }
 
+- (Class) proxyClass
+{
+	return [PGTSTypeDescriptionProxy class];
+}
 @end
 
 
@@ -85,16 +89,6 @@
         }
     }
     return mName;
-}
-
-- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase
-{
-    mDatabase = aDatabase;
-}
-
-- (PGTSDatabaseDescription *) database
-{
-    return mDatabase;
 }
 
 - (Oid) elementOid

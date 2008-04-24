@@ -31,6 +31,12 @@
 #import <PGTS/PGTSAbstractObjectDescription.h>
 
 
+@interface PGTSRoleDescriptionProxy : PGTSAbstractObjectDescriptionProxy
+{
+}
+@end
+
+
 @interface PGTSRoleDescription : PGTSAbstractObjectDescription
 {
     id mRoles;

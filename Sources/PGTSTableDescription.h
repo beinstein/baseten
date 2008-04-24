@@ -36,6 +36,12 @@
 @class PGTSResultSet;
 
 
+@interface PGTSTableDescriptionProxy : PGTSAbstractClassDescriptionProxy
+{
+}
+@end
+
+
 @interface PGTSTableDescription : PGTSAbstractClassDescription 
 {
     unsigned int mFieldCount;

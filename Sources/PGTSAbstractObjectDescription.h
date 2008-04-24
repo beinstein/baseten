@@ -31,6 +31,12 @@
 #import <PGTS/postgresql/libpq-fe.h> 
 
 
+@interface PGTSAbstractObjectDescriptionProxy : PGTSAbstractDescriptionProxy
+{
+}
+@end
+
+
 @interface PGTSAbstractObjectDescription : PGTSAbstractDescription 
 {
     Oid mOid;

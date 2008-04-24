@@ -55,6 +55,7 @@
 {
     [mACLItems release];
     [mSchemaName release];
+	[mOwner release];
     [super dealloc];
 }
 
@@ -101,6 +102,11 @@
     mRelkind = kind;
 }
 
+- (Class) proxyClass
+{
+	return [PGTSAbstractClassDescriptionProxy class];
+}
+
 @end
 
 
@@ -108,59 +114,32 @@
 
 - (Oid) schemaOid
 {
-    //Perform the query and check again
-    if (InvalidOid == mSchemaOid)
-        [self name];
+	[self fetchFromDatabase];
     return mSchemaOid;
 }
 
 - (NSString *) schemaName
 {
-    if (nil == mSchemaName)
-        [self name];
+	[self fetchFromDatabase];
     return mSchemaName;
 }
 
 - (NSString *) name
 {
-    if (! mName)
-    {
-        NSString* query = 
-        @"SELECT c.relname, c.relacl, c.relowner, c.relkind, n.oid, n.nspname, r.rolname "
-        " FROM pg_class c, pg_namespace n, pg_roles r "
-        " WHERE c.relnamespace = n.oid AND r.oid = c.relowner AND c.oid = $1";
-        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
-        if (0 < [res count])
-        {
-            [res advanceRow];
-            mRelkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
-            [self setName:  [res valueForKey: @"relname"]];
-            [self setSchemaName: [res valueForKey: @"nspname"]];
-            [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];
-            
-            PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
-                                                                                oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
-            [self setOwner: role];
-            
-            TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
-                [self addACLItem: currentACLItem];
-        }
-    }
+	[self fetchFromDatabase];
     return mName;
 }
 
 - (NSString *) qualifiedName
 {
-    if (nil == mName)
-        [self name];
+	[self fetchFromDatabase];
     return [NSString stringWithFormat: @"\"%@\".\"%@\"", mSchemaName, mName];
 }
 
 - (BOOL) role: (PGTSRoleDescription *) aRole 
  hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege
 {
-    if (nil == mName)
-        [self name];
+	[self fetchFromDatabase];
     
     //First try the user's privileges, then PUBLIC's and last different groups'.
     //The owner has all the privileges.
@@ -185,16 +164,41 @@
 
 - (NSArray *) ACLItems
 {
-    if (nil == mName)
-        [self name];
+	[self fetchFromDatabase];
     return [mACLItems allObjects];
 }
 
 - (char) kind
 {
-    if (nil == mName)
-        [self name];
+	[self fetchFromDatabase];
     return mRelkind;
 }
+
+- (void) fetchFromDatabase
+{
+	if (! mName)
+    {
+        NSString* query = 
+        @"SELECT c.relname, c.relacl, c.relowner, c.relkind, n.oid, n.nspname, r.rolname "
+        " FROM pg_class c, pg_namespace n, pg_roles r "
+        " WHERE c.relnamespace = n.oid AND r.oid = c.relowner AND c.oid = $1";
+        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
+        if (0 < [res count])
+        {
+            [res advanceRow];
+            mRelkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
+            [self setName:  [res valueForKey: @"relname"]];
+            [self setSchemaName: [res valueForKey: @"nspname"]];
+            [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+            
+            PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
+																				 oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
+            [self setOwner: role];
+            
+            TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
+				[self addACLItem: currentACLItem];
+        }
+    }
+}	
 
 @end

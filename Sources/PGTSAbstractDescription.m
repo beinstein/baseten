@@ -26,8 +26,184 @@
 // $Id$
 //
 
-#import <PGTS/PGTSAbstractDescription.h>
-#import <PGTS/PGTSConstants.h>
+#import "PGTSAbstractDescription.h"
+#import "PGTSConstants.h"
+#import "PGTSConnection.h"
+
+
+@class PGTSInvocationRecorder;
+
+
+@interface PGTSInvocationRecorderHelper
+{
+	@private
+	Class isa;
+	
+	@public
+	id mTarget;
+	NSInvocation* mInvocation;
+	PGTSInvocationRecorder* mRecorder; //Weak
+}
++ (id) alloc;
+@end
+
+
+@implementation PGTSInvocationRecorderHelper
++ (id) alloc
+{
+	return NSAllocateObject (self, 0, NULL);
+}
+
+- (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
+{
+	return [mTarget methodSignatureForSelector: selector];
+}
+
+- (void) forwardInvocation: (NSInvocation *) anInvocation
+{
+	[mInvocation release];
+	mInvocation = [anInvocation retain];
+	if (mRecorder->mOutInvocation)
+		*(mRecorder->mOutInvocation) = anInvocation;
+}
+@end
+
+
+@implementation PGTSInvocationRecorder
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		mHelper = [PGTSInvocationRecorderHelper alloc];
+		mHelper->mRecorder = self;
+	}
+	return self;
+}
+
+- (void) dealloc
+{
+	[mHelper->mInvocation release];
+	[mHelper->mTarget release];
+	NSDeallocateObject ((id) mHelper);
+	[super dealloc];
+}
+
+- (NSInvocation *) invocation
+{
+	return mHelper->mInvocation;
+}
+
+- (void) setTarget: (id) target
+{
+	[mHelper->mTarget release];
+	mHelper->mTarget = [target retain];
+}
+
+- (id) record
+{
+	mOutInvocation = NULL;
+	return mHelper;
+}
+
+- (id) recordWithTarget: (id) target
+{
+	[self setTarget: target];
+	return [self record];
+}
+
+- (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation
+{
+	mOutInvocation = outInvocation;
+	[self setTarget: target];
+	return mHelper;
+}
+
++ (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation
+{
+	PGTSInvocationRecorder* recorder = [[[self alloc] init] autorelease];
+	return [recorder recordWithTarget: target outInvocation: outInvocation];
+}
+@end
+
+
+@implementation PGTSAbstractDescriptionProxy
+
+- (void) dealloc
+{
+	[mDescription release];
+	[mInvocationRecorder release];
+	[super dealloc];
+}
+
+- (id) initWithConnection: (PGTSConnection *) connection
+			  description: (PGTSAbstractDescription *) anObject
+{
+	mConnection = connection;
+	mDescription = [anObject retain];
+	return self;
+}
+
+- (PGTSInvocationRecorder *) invocationRecorder
+{
+	if (! mInvocationRecorder)
+	{
+		mInvocationRecorder = [[PGTSInvocationRecorder alloc] init];
+		[mInvocationRecorder setTarget: mDescription];
+	}
+	return mInvocationRecorder;
+}
+
+- (PGTSDatabaseDescription *) database
+{
+	return [mConnection databaseDescription];
+}
+
+- (PGTSConnection *) connection;
+{
+	return mConnection;
+}
+
+- (id) performSynchronizedAndReturnObject
+{
+	id retval = nil;
+	[self performSynchronizedOnDescription: [mInvocationRecorder invocation]];
+	[[mInvocationRecorder invocation] getReturnValue: &retval];
+	return retval;
+}
+
+- (void) performSynchronizedOnDescription: (NSInvocation *) invocation
+{
+	BOOL responded = NO;
+	@synchronized (mDescription)
+	{
+		[mDescription setConnection: mConnection];
+		[mDescription setDescriptionProxy: self];
+		
+	    SEL selector = [invocation selector];
+	    if ([mDescription respondsToSelector: selector])
+		{
+			responded = YES;
+	        [invocation invokeWithTarget: mDescription];
+		}
+		
+		[mDescription setConnection: nil];
+		[mDescription setDescriptionProxy: nil];
+	}	
+}
+
+- (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
+{
+	NSMethodSignature* retval = [super methodSignatureForSelector: selector];
+	if (! retval)
+		retval = [mDescription methodSignatureForSelector: selector];
+	return retval;
+}
+
+- (void) forwardInvocation: (NSInvocation *) invocation
+{
+	[self performSynchronizedOnDescription: invocation];
+}
+@end
 
 
 /** 
@@ -47,6 +223,22 @@
     [super dealloc];
 }
 
+- (Class) proxyClass
+{
+	NSLog (@"-proxyClass not implemented in %@", [self class]);
+	return Nil;
+}
+
+- (id) proxy
+{
+	return [[[[self proxyClass] alloc] initWithConnection: mConnection description: self] autorelease];
+}
+
+- (NSString *) name
+{
+    return mName;
+}
+
 - (void) setName: (NSString *) aString
 {
     if (aString != mName)
@@ -54,11 +246,6 @@
         [mName release];
         mName = [aString copy];
     }
-}
-
-- (PGTSConnection *) connection
-{
-    return mConnection;
 }
 
 - (void) setConnection: (PGTSConnection *) aConnection
@@ -71,11 +258,6 @@
 	mProxy = aProxy;
 }
 
-- (NSString *) name
-{
-    return mName;
-}
-
 /**
  * Retain on copy.
  */
@@ -86,22 +268,33 @@
 
 - (BOOL) isEqual: (id) anObject
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     if (NO == [anObject isKindOfClass: [self class]])
-        rval = [super isEqual: anObject];
+        retval = [super isEqual: anObject];
     else
     {
         PGTSAbstractDescription* anInfo = (PGTSAbstractDescription *) anObject;
-        rval = ([mConnection isEqual: anInfo->mConnection] &&
-                [mName isEqualToString: anInfo->mName]);
+        retval = [mName isEqualToString: anInfo->mName];
     }
-    return rval;
+    return retval;
 }
 
 - (unsigned int) hash
 {
     if (0 == mHash)
-        mHash = ([mConnection hash] ^ [mName hash]);
+        mHash = ([mName hash]);
     return mHash;
+}
+
+- (PGTSDatabaseDescription *) database
+{
+	[NSException raise: NSInternalInconsistencyException format: nil];
+	return nil;
+}
+
+- (PGTSConnection *) connection;
+{
+	[NSException raise: NSInternalInconsistencyException format: nil];
+	return nil;
 }
 @end

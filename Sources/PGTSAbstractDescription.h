@@ -31,16 +31,51 @@
 
 @class PGTSConnection;
 @class PGTSAbstractDescription;
+@class PGTSInvocationRecorderHelper;
+@class PGTSDatabaseDescription;
 
 
-@interface PGTSAbstractDescriptionProxy : NSProxy
+inline
+id PGTSNilReturn (id anObject)
 {
-	PGTSAbstractDescription* mConcreteDescription;
+	return [NSNull null] == anObject ? nil : anObject;
 }
+
+
+@interface PGTSInvocationRecorder : NSObject
+{
+	PGTSInvocationRecorderHelper* mHelper;
+	@public
+	NSInvocation** mOutInvocation;
+}
+- (id) record;
+- (id) recordWithTarget: (id) target;
+- (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
++ (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
 @end
 
 
-@interface PGTSAbstractDescription : NSObject <NSCopying>
+@protocol PGTSDescription
+- (PGTSDatabaseDescription *) database;
+- (PGTSConnection *) connection;
+@end
+
+
+@interface PGTSAbstractDescriptionProxy : NSProxy <PGTSDescription>
+{
+	PGTSConnection* mConnection; //Weak; connection owns self.
+	PGTSAbstractDescription* mDescription;
+	PGTSInvocationRecorder* mInvocationRecorder;
+}
+- (id) initWithConnection: (PGTSConnection *) connection
+			  description: (PGTSAbstractDescription *) anObject;
+- (id) performSynchronizedAndReturnObject;
+- (void) performSynchronizedOnDescription: (NSInvocation *) invocation;
+- (PGTSInvocationRecorder *) invocationRecorder;
+@end
+
+
+@interface PGTSAbstractDescription : NSObject <NSCopying, PGTSDescription>
 {
     PGTSConnection* mConnection; //Weak
 	PGTSAbstractDescriptionProxy* mProxy; //Weak;
@@ -52,9 +87,11 @@
 + (BOOL) accessInstanceVariablesDirectly;
 - (NSString *) name;
 - (void) setName: (NSString *) aString;
-- (PGTSConnection *) connection;
 - (BOOL) isEqual: (id) anObject;
+- (id) proxy;
+- (Class) proxyClass;
 
+//FIXME: these are private.
 - (void) setConnection: (PGTSConnection *) aConnection;
 - (void) setDescriptionProxy: (PGTSAbstractDescriptionProxy *) aProxy;
 @end

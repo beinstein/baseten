@@ -150,6 +150,10 @@
     return mForeignKeys;
 }
 
+- (Class) proxyClass
+{
+	return [PGTSTableDescriptionProxy class];
+}
 @end
 
 

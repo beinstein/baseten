@@ -34,6 +34,12 @@
 @class PGTSACLItem;
 
 
+@interface PGTSAbstractClassDescriptionProxy : PGTSAbstractObjectDescriptionProxy
+{
+}
+@end
+
+
 @interface PGTSAbstractClassDescription : PGTSAbstractObjectDescription
 {
     Oid mSchemaOid;
@@ -60,4 +66,6 @@
  hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege;
 - (NSArray *) ACLItems;
 - (char) kind;
+
+- (void) fetchFromDatabase;
 @end

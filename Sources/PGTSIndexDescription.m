@@ -94,4 +94,8 @@
     return mTable;
 }
 
+- (Class) proxyClass
+{
+	return [PGTSIndexDescriptionProxy class];
+}
 @end

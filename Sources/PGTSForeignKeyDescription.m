@@ -127,4 +127,8 @@ PGTSDeleteRule (const unichar rule)
 	mDeleteRule = PGTSDeleteRule (rule);
 }
 
+- (Class) proxyClass
+{
+	return [PGTSForeignKeyDescriptionProxy class];
+}
 @end

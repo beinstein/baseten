@@ -32,6 +32,12 @@
 @class PGTSTableDescription;
 
 
+@interface PGTSIndexDescriptionProxy : PGTSAbstractClassDescriptionProxy
+{
+}
+@end
+
+
 @interface PGTSIndexDescription : PGTSAbstractClassDescription 
 {
     PGTSTableDescription* mTable;
