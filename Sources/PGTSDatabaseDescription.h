@@ -40,7 +40,8 @@
 - (PGTSTableDescription *) tableWithOid: (Oid) anOid;
 - (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
-- (void) updateTableCache: (id) table;
+- (PGTSRoleDescription *) roleNamed: (NSString *) name;
+- (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 @end
 
 
@@ -51,6 +52,9 @@
 	NSMutableDictionary* mSchemas;
 	//FIXME: roles?
 }
+
+//FIXME: private.
+- (void) updateTableCache: (id) table;
 @end
 
 
@@ -64,7 +68,7 @@
 
 + (id) databaseForConnection: (PGTSConnection *) connection;
 - (BOOL) schemaExists: (NSString *) schemaName;
-- (PGTSRoleDescription *) roleNamed: (NSString *) name;
-- (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 
+//FIXME: private.
+- (void) updateTableCache: (id) table;
 @end

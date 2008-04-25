@@ -59,11 +59,6 @@
     [super dealloc];
 }
 
-- (Oid) schemaOid
-{
-    return mSchemaOid;
-}
-
 - (void) setSchemaOid: (Oid) anOid
 {
     mSchemaOid = anOid;
@@ -85,7 +80,9 @@
 
 - (PGTSRoleDescription *) owner
 {
-    return mOwner; 
+    //return mOwner; 
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSAbstractDescription owner] called." userInfo: nil] raise];
+	return nil;
 }
 
 - (void) setOwner: (PGTSRoleDescription *) anOwner
@@ -106,11 +103,6 @@
 {
 	return [PGTSAbstractClassDescriptionProxy class];
 }
-
-@end
-
-
-@implementation PGTSAbstractClassDescription (Queries)
 
 - (Oid) schemaOid
 {
@@ -164,8 +156,12 @@
 
 - (NSArray *) ACLItems
 {
+#if 0
 	[self fetchFromDatabase];
     return [mACLItems allObjects];
+#endif
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSAbstractDescription ACLItems] called." userInfo: nil] raise];
+	return nil;
 }
 
 - (char) kind

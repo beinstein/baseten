@@ -36,43 +36,42 @@
 @class PGTSResultSet;
 
 
-@interface PGTSTableDescriptionProxy : PGTSAbstractClassDescriptionProxy
-{
-}
-@end
-
-
-@interface PGTSTableDescription : PGTSAbstractClassDescription 
-{
-    unsigned int mFieldCount;
-    id mFields;
-    NSArray* mUniqueIndexes;
-    PGTSDatabaseDescription* mDatabase;
-
-    BOOL mHasForeignKeys;
-    NSMutableSet* mForeignKeys;
-    BOOL mHasReferencingForeignKeys;
-    NSMutableSet* mReferencingForeignKeys;
-
-    NSArray* mRelationOidsBasedOn;
-}
-
-- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase;
-- (PGTSDatabaseDescription *) database;
-- (void) setUniqueIndexes: (NSArray *) anArray;
-- (void) setFieldCount: (unsigned int) anInt;
-- (void) setRelationOidsBasedOn: (NSArray *) anArray;
-
-- (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource;
-@end
-
-@interface PGTSTableDescription (Queries)
+@protocol PGTSTableDescription
 - (NSArray *) uniqueIndexes;
 - (PGTSIndexDescription *) primaryKey;
-- (PGTSFieldDescription *) fieldAtIndex: (unsigned int) anIndex;
-- (PGTSFieldDescription *) fieldNamed: (NSString *) aName;
-- (NSArray *) allFields;
+- (PGTSFieldDescription *) fieldAtIndex: (int) anIndex;
+- (NSDictionary *) fields;
 - (NSSet *) foreignKeys;
 - (NSSet *) referencingForeignKeys;
+@end
+
+
+@interface PGTSTableDescriptionProxy : PGTSAbstractClassDescriptionProxy <PGTSTableDescription>
+{
+	NSMutableDictionary* mFields;
+    NSMutableArray* mUniqueIndexes;
+    NSMutableSet* mForeignKeys;
+    NSMutableSet* mReferencingForeignKeys;
+    NSArray* mRelationOidsBasedOn;
+}
+@end
+
+
+@interface PGTSTableDescription : PGTSAbstractClassDescription <PGTSTableDescription>
+{
+    NSMutableDictionary* mFields;
+	NSMutableDictionary* mFieldIndexes;
+    NSArray* mUniqueIndexes;
+    NSMutableSet* mForeignKeys;
+    NSMutableSet* mReferencingForeignKeys;
+    NSArray* mRelationOidsBasedOn;
+
+    BOOL mHasForeignKeys;
+    BOOL mHasReferencingForeignKeys;
+}
+
+- (void) setUniqueIndexes: (NSArray *) anArray;
+
+- (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource;
 - (NSArray *) relationOidsBasedOn;
 @end

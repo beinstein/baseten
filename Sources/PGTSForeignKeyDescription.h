@@ -33,13 +33,21 @@
 @class PGTSTableDescription;
 
 
-@interface PGTSForeignKeyDescriptionProxy : PGTSAbstractDescriptionProxy
+@protocol PGTSForeignKeyDescription
+- (NSArray *) sourceFields;
+- (NSArray *) referenceFields;
+- (PGTSTableDescription *) sourceTable;
+- (PGTSTableDescription *) referenceTable;
+@end
+
+
+@interface PGTSForeignKeyDescriptionProxy : PGTSAbstractDescriptionProxy <PGTSForeignKeyDescription>
 {
 }
 @end
 
 
-@interface PGTSForeignKeyDescription : PGTSAbstractDescription 
+@interface PGTSForeignKeyDescription : PGTSAbstractDescription <PGTSForeignKeyDescription>
 {
     NSArray* mSourceFields;
     NSArray* mReferenceFields;
@@ -47,11 +55,7 @@
 }
 
 - (id) initWithName: (NSString *) aName sourceFields: (NSArray *) sFields referenceFields: (NSArray *) rFields;
-- (NSArray *) sourceFields;
-- (NSArray *) referenceFields;
-- (PGTSTableDescription *) sourceTable;
-- (PGTSTableDescription *) referenceTable;
 - (enum PGTSDeleteRule) deleteRule;
-- (void) setDeleteRule: (const unichar) rule;
 
+- (void) setDeleteRule: (const unichar) rule;
 @end

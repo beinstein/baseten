@@ -40,6 +40,7 @@
 @end
 
 
+//FIXME: owner and ACL items need thread safety.
 @interface PGTSAbstractClassDescription : PGTSAbstractObjectDescription
 {
     Oid mSchemaOid;
@@ -54,10 +55,6 @@
 - (PGTSRoleDescription *) owner;
 - (void) setOwner: (PGTSRoleDescription *) anOwner;
 - (void) setKind: (char) kind;
-@end
-
-
-@interface PGTSAbstractClassDescription (Queries)
 - (NSString *) name;
 - (Oid) schemaOid;
 - (NSString *) schemaName;

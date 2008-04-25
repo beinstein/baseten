@@ -35,31 +35,37 @@
 @class PGTSTypeDescription;
 
 
-@interface PGTSFieldDescriptionProxy : PGTSAbstractDescriptionProxy
+@protocol PGTSFieldDescription
+- (PGTSTableDescription *) table;
+- (PGTSTypeDescription *) type;
+@end
+
+
+@interface PGTSFieldDescriptionProxy : PGTSAbstractDescriptionProxy <PGTSFieldDescription>
 {
 }
 @end
 
 
-@interface PGTSFieldDescription : PGTSAbstractDescription 
+@interface PGTSFieldDescription : PGTSAbstractDescription <PGTSFieldDescription>
 {
     PGTSTableDescription* mTable;
-    unsigned int mIndex;
-    unsigned int mIndexInResultSet;
+    int mIndex;
+    int mIndexInResultSet;
     Oid mTypeOid;
 	BOOL mIsNotNull;
 }
 
-- (unsigned int) index;
-- (void) setIndex: (unsigned int) anIndex;
-- (unsigned int) indexInResultSet;
-- (void) setIndexInResultSet: (unsigned int) anIndex;
-- (PGTSTableDescription *) table;
-- (void) setTable: (PGTSTableDescription *) anObject;
-- (PGTSTypeDescription *) type;
+- (int) index;
+- (int) indexInResultSet;
 - (Oid) typeOid;
 - (NSString *) qualifiedName;
 - (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField;
 - (BOOL) isNotNull;
 
+- (void) setIndex: (int) anIndex;
+- (void) setIndexInResultSet: (int) anIndex;
+- (void) setTable: (PGTSTableDescription *) anObject;
+- (void) setTypeOid: (Oid) anOid;
+- (void) setNotNull: (BOOL) aBool;
 @end

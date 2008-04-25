@@ -91,6 +91,20 @@
 	return PGTSNilReturn (retval);
 }
 
+- (PGTSRoleDescription *) roleNamed: (NSString *) name
+{
+	//FIXME: implement this.
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSDatabaseDescriptionProxy roleNamed:] called." userInfo: nil] raise];
+	return nil;
+}
+
+- (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid
+{
+	//FIXME: implement this.
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSDatabaseDescriptionProxy roleNamed:oid:] called." userInfo: nil] raise];
+	return nil;
+}
+
 - (void) updateTableCache: (id) table
 {
     if (nil != table)
@@ -138,7 +152,6 @@
         {
             retval = [[c alloc] init];
             [retval setOid: oidValue];
-            [retval setDatabase: self];
             [aDict setObject: retval forKey: oidObject];
             [retval release];
         }

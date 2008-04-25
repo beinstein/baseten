@@ -39,10 +39,10 @@
 }
 
 - (enum PGTSACLItemPrivilege) privileges;
-- (void) setPrivileges: (enum PGTSACLItemPrivilege) privileges;
 - (PGTSRoleDescription *) role;
-- (void) setRole: (PGTSRoleDescription *) aRole;
 - (PGTSRoleDescription *) grantingRole;
-- (void) setGrantingRole: (PGTSRoleDescription *) aGrantingRole;
 
+- (void) setPrivileges: (enum PGTSACLItemPrivilege) privileges;
+- (void) setRole: (PGTSRoleDescription *) aRole;
+- (void) setGrantingRole: (PGTSRoleDescription *) aGrantingRole;
 @end

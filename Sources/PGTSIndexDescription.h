@@ -32,27 +32,30 @@
 @class PGTSTableDescription;
 
 
-@interface PGTSIndexDescriptionProxy : PGTSAbstractClassDescriptionProxy
+@protocol PGTSIndexDescription
+- (NSSet *) fields;
+- (PGTSTableDescription *) table;
+@end
+
+
+@interface PGTSIndexDescriptionProxy : PGTSAbstractClassDescriptionProxy <PGTSIndexDescription>
 {
 }
 @end
 
 
-@interface PGTSIndexDescription : PGTSAbstractClassDescription 
+@interface PGTSIndexDescription : PGTSAbstractClassDescription <PGTSIndexDescription>
 {
     PGTSTableDescription* mTable;
     NSSet* mFields;
     BOOL mIsPrimaryKey;
     BOOL mIsUnique;
 }
+- (BOOL) isUnique;
+- (BOOL) isPrimaryKey;
 
 - (void) setFields: (NSSet *) aSet;
-- (NSSet *) fields;
 - (void) setUnique: (BOOL) aBool;
-- (BOOL) isUnique;
 - (void) setPrimaryKey: (BOOL) aBool;
-- (BOOL) isPrimaryKey;
-- (PGTSTableDescription *) table;
 - (void) setTable: (PGTSTableDescription *) aTable;
-
 @end

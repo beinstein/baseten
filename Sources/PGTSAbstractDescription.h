@@ -45,7 +45,6 @@ id PGTSNilReturn (id anObject)
 @interface PGTSInvocationRecorder : NSObject
 {
 	PGTSInvocationRecorderHelper* mHelper;
-	@public
 	NSInvocation** mOutInvocation;
 }
 - (id) record;

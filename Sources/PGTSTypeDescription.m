@@ -64,7 +64,7 @@
 
 @implementation PGTSTypeDescription (Queries)
 
-- (NSString *) name
+- (void) fetchFromDatabase
 {
     if (nil == mName)
     {
@@ -84,39 +84,27 @@
             [self setName:       [res valueForKey: @"typname"]];
             [self setSchemaOid:  [[res valueForKey: @"oid"] PGTSOidValue]];
             [self setSchemaName: [res valueForKey: @"nspname"]];
-            [self setElementOid: [[res valueForKey: @"typelem"] unsignedIntValue]];
-            [self setDelimiter:  [[res valueForKey: @"typdelim"] characterAtIndex: 0]];
+            mElementOid = [[res valueForKey: @"typelem"] PGTSOidValue];
+            mDelimiter = [[res valueForKey: @"typdelim"] characterAtIndex: 0];
         }
     }
+}
+
+- (NSString *) name
+{
+	[self fetchFromDatabase];
     return mName;
 }
 
 - (Oid) elementOid
 {
-    if (nil == mName)
-        [self name];
+	[self fetchFromDatabase];
     return mElementOid;
 }
 
 - (char) delimiter
 {
-    if (nil == mName)
-        [self name];
+	[self fetchFromDatabase];
     return mDelimiter;
 }
-
-- (void) setElementOid: (Oid) anOid
-{
-    if (nil == mName)
-        [self name];
-    mElementOid = anOid;
-}
-
-- (void) setDelimiter: (char) aChar
-{
-    if (nil == mName)
-        [self name];
-    mDelimiter = aChar;
-}
-
 @end

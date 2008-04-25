@@ -37,31 +37,103 @@
 #import "PGTSForeignKeyDescription.h"
 
 
+static PGTSIndexDescription*
+PrimaryKey (NSArray* uIndexes)
+{
+	PGTSIndexDescription* retval = nil;
+    if (0 < [uIndexes count])
+    {
+        PGTSIndexDescription* first = [uIndexes objectAtIndex: 0];
+        if ([first isPrimaryKey])
+            retval = first;
+    }
+    return retval;
+}
+
+
+@implementation PGTSTableDescriptionProxy
+- (void) dealloc
+{
+	[mFields release];
+	[mUniqueIndexes release];
+	[super dealloc];
+}
+
+- (NSDictionary *) fields
+{
+	if (! mFields)
+	{
+		mFields = [[(PGTSTableDescription *) mDescription fields] mutableCopy];
+		TSEnumerate (currentName, e, [[mFields allKeys] objectEnumerator])
+		{
+			id proxy = [[mFields objectForKey: currentName] proxy];
+			[mFields setObject: proxy forKey: currentName];
+		}
+	}
+	return mFields;
+}
+
+- (PGTSFieldDescription *) fieldAtIndex: (int) anIndex
+{
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSTableDescriptionProxy fieldAtIndex:] called." userInfo: nil] raise];
+	return nil;
+}
+
+- (PGTSIndexDescription *) primaryKey
+{
+	return PrimaryKey ([self uniqueIndexes]);
+}
+
+- (NSSet *) foreignKeys
+{
+	if (! mForeignKeys)
+	{
+		NSSet* foreignKeys = [(PGTSTableDescription *) mDescription foreignKeys];
+		mForeignKeys = [[NSMutableSet alloc] initWithCapacity: [foreignKeys count]];
+		TSEnumerate (currentFKey, e, [foreignKeys objectEnumerator])
+			[mForeignKeys addObject: [currentFKey proxy]];
+	}
+	return mForeignKeys;
+}
+
+- (NSSet *) referencingForeignKeys
+{
+	if (! mForeignKeys)
+	{
+		NSSet* foreignKeys = [(PGTSTableDescription *) mDescription referencingForeignKeys];
+		mForeignKeys = [[NSMutableSet alloc] initWithCapacity: [foreignKeys count]];
+		TSEnumerate (currentFKey, e, [foreignKeys objectEnumerator])
+		[mForeignKeys addObject: [currentFKey proxy]];
+	}
+	return mForeignKeys;	
+}
+
+- (NSArray *) uniqueIndexes
+{
+	if (! mUniqueIndexes)
+	{
+		NSArray* indexes = [(PGTSTableDescription *) mDescription uniqueIndexes];
+		mUniqueIndexes = [[NSMutableArray alloc] initWithCapacity: [indexes count]];
+		TSEnumerate (currentIndex, e, [indexes objectEnumerator])
+			[mUniqueIndexes addObject: [currentIndex proxy]];
+	}
+	return mUniqueIndexes;
+}
+@end
+
+
 /** 
  * Database table
  */
 @implementation PGTSTableDescription
 
-- (id) init
-{
-    if ((self = [super init]))
-    {
-        mFieldCount = NSNotFound;
-        mFields = [[NSMutableDictionary alloc] init];
-        mHasForeignKeys = NO;
-        mForeignKeys = [[NSMutableSet alloc] init];
-        mHasReferencingForeignKeys = NO;
-        mReferencingForeignKeys = [[NSMutableSet alloc] init];
-    }
-    return self;
-}
-
 - (void) dealloc
 {
-    [mFields        makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
+    [[mFields allValues] makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
     [mUniqueIndexes makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
 
     [mFields release];
+	[mFieldIndexes release];
     [mUniqueIndexes release];
     [mSchemaName release];
     [mForeignKeys release];
@@ -70,41 +142,12 @@
     [super dealloc];
 }
 
-- (void) setDatabase: (PGTSDatabaseDescription *) aDatabase
-{
-    mDatabase = aDatabase;
-}
-
-- (PGTSDatabaseDescription *) database
-{
-    return mDatabase;
-}
-
 - (void) setUniqueIndexes: (NSArray *) anArray
 {
     if (anArray != mUniqueIndexes)
     {
         [mUniqueIndexes release];
         mUniqueIndexes = [anArray retain];
-    }
-}
-
-- (void) setFieldCount: (unsigned int) anInt
-{
-    mFieldCount = anInt;
-}
-
-- (NSArray *) relationOidsBasedOn
-{
-    return mRelationOidsBasedOn; 
-}
-
-- (void) setRelationOidsBasedOn: (NSArray *) aRelationOidsBasedOn
-{
-    if (mRelationOidsBasedOn != aRelationOidsBasedOn) 
-    {
-        [mRelationOidsBasedOn release];
-        mRelationOidsBasedOn = [aRelationOidsBasedOn retain];
     }
 }
 
@@ -125,9 +168,11 @@
         dst = self;
     }
     
+	NSMutableSet* retval = [NSMutableSet setWithCapacity: [res count]];
+	PGTSDatabaseDescription* database = [[res connection] databaseDescription];
     while (([res advanceRow]))
     {        
-        *target = [[self database] tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+        *target = [database tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
         
         NSArray* sources = [res valueForKey: @"sources"];
         NSMutableArray* sourceFields = [NSMutableArray arrayWithCapacity: [sources count]];
@@ -143,68 +188,55 @@
         
         PGTSForeignKeyDescription* desc = [[PGTSForeignKeyDescription alloc] initWithName: aName sourceFields: sourceFields referenceFields: refFields];
 		[desc setDeleteRule: [[res valueForKey: @"deltype"] characterAtIndex: 0]];
-        [mForeignKeys addObject: desc];
+        [retval addObject: desc];
         [desc release];
         
     }
-    return mForeignKeys;
+    return retval;
 }
 
 - (Class) proxyClass
 {
 	return [PGTSTableDescriptionProxy class];
 }
-@end
 
-
-//FIXME: Field indices can be negative.
-@implementation PGTSTableDescription (Queries)
-
-- (NSArray *) allFields
+- (NSDictionary *) fields
 {
-    if (NSNotFound == mFieldCount)
-    {
-        NSString* query = @"SELECT max (attnum) AS count FROM pg_attribute WHERE attisdropped = false AND attrelid = $1";
-        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
-        [res advanceRow];
-        [self setFieldCount: [[res valueForKey: @"count"] unsignedIntValue]];
-    }
-    
-    for (unsigned int i = 1; i <= mFieldCount; i++)
-        [self fieldAtIndex: i];
-    
-    return [mFields allObjects];
+	if (! mFields)
+	{
+		NSString* query = @"SELECT attname, attnum, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1";
+		PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
+		
+		mFields = [NSMutableDictionary dictionaryWithCapacity: [res count]];
+		mFieldIndexes = [NSMutableDictionary dictionaryWithCapacity: [res count]];
+		while ([res advanceRow])
+		{
+			NSString* name = [res valueForKey: @"attname"];
+			NSNumber* index = [res valueForKey: @"attnum"];
+			
+			PGTSFieldDescription* field = [[PGTSFieldDescription alloc] init];
+			[field setName: name];
+			[field setIndex: [index intValue]];
+			[field setTypeOid: [[res valueForKey: @"atttypid"] PGTSOidValue]];
+			[field setNotNull: [[res valueForKey: @"attnotnull"] boolValue]];
+			
+			[mFields setObject: field forKey: [field name]];
+			[mFieldIndexes setObject: name forKey: index];
+			[field release];
+		}
+	}
+	return mFields;
 }
 
-- (PGTSFieldDescription *) fieldAtIndex: (unsigned int) anIndex
+- (PGTSFieldDescription *) fieldAtIndex: (int) anIndex
 {
-    PGTSFieldDescription* rval = [mFields objectAtIndex: anIndex];    
-    if (nil == rval)
-    {
-        rval = [[[PGTSFieldDescription alloc] init] autorelease];
-        [rval setTable: self];
-        [rval setIndex: anIndex];
-        if (nil == [rval name])
-            rval = nil;
-        else
-            [mFields setObject: rval forKey: [NSNumber numberWithUnsignedInt: anIndex]];
-    }
-    return rval;
+	NSDictionary* fields = [self fields];
+	return [fields objectForKey: [mFieldIndexes objectForKey: [NSNumber numberWithInt: anIndex]]];
 }
 
 - (PGTSFieldDescription *) fieldNamed: (NSString *) aName
 {
-	PGTSFieldDescription* retval = nil;
-	NSArray* allFields = [self allFields];
-	TSEnumerate (currentField, e, [allFields objectEnumerator])
-	{
-		if ([[currentField name] isEqualToString: aName])
-		{
-			retval = currentField;
-			break;
-		}
-	}
-	return retval;
+	return [[self fields] objectForKey: aName];
 }
 
 - (NSArray *) uniqueIndexes;
@@ -283,20 +315,12 @@
 
 - (PGTSIndexDescription *) primaryKey
 {
-    PGTSIndexDescription* rval = nil;
-    NSArray* uIndexes = [self uniqueIndexes];
-    if (0 < [uIndexes count])
-    {
-        PGTSIndexDescription* first = [uIndexes objectAtIndex: 0];
-        if ([first isPrimaryKey])
-            rval = first;
-    }
-    return rval;
+	return PrimaryKey ([self uniqueIndexes]);
 }
 
 - (NSSet *) foreignKeys
 {
-    if (NO == mHasForeignKeys)
+    if (! mForeignKeys)
     {
         NSString* query = 
         @"SELECT "
@@ -310,17 +334,17 @@
         "c.conrelid = $1 ";             //Source's OID
         
         PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
-        mHasForeignKeys = YES;
-        if ([mForeignKeys count] < [res count])
-            [mForeignKeys unionSet: [self foreignKeySetWithResult: res selfAsSource: YES]];
+		mForeignKeys = [[self foreignKeySetWithResult: res selfAsSource: YES] retain];
     }
     return mForeignKeys;
 }
 
 - (NSSet *) referencingForeignKeys
 {
-    if (NO == mHasReferencingForeignKeys)
+    if (! mReferencingForeignKeys)
     {
+		mReferencingForeignKeys = [[NSMutableSet alloc] init];
+		
         NSString* query = 
         @"SELECT "
         "c.conname AS name, "
@@ -333,16 +357,14 @@
         "c.confrelid = $1 ";            //Reference's OID
         
         PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
-        mHasReferencingForeignKeys = YES;
-        if ([mReferencingForeignKeys count] < [res count])
-            [mReferencingForeignKeys unionSet: [self foreignKeySetWithResult: res selfAsSource: NO]];
+		mReferencingForeignKeys = [[self foreignKeySetWithResult: res selfAsSource: NO] retain];
     }
     return mReferencingForeignKeys;
 }
 
 - (NSArray *) relationOidsBasedOn
 {
-    if ('v' == [self kind] && nil == mRelationOidsBasedOn)
+    if ('v' == [self kind] && ! mRelationOidsBasedOn)
     {
         NSString* query = @"SELECT reloid FROM baseten.viewdependency WHERE viewoid = $1";
         PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject ([self oid])];
@@ -350,7 +372,8 @@
         while (([res advanceRow]))
             [oids addObject: [res valueForKey: @"reloid"]];
         
-        [self setRelationOidsBasedOn: oids];
+		[mRelationOidsBasedOn release];
+		mRelationOidsBasedOn = [oids retain];
     }
     return mRelationOidsBasedOn;
 }

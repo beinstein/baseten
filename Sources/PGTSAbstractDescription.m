@@ -48,27 +48,6 @@
 @end
 
 
-@implementation PGTSInvocationRecorderHelper
-+ (id) alloc
-{
-	return NSAllocateObject (self, 0, NULL);
-}
-
-- (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
-{
-	return [mTarget methodSignatureForSelector: selector];
-}
-
-- (void) forwardInvocation: (NSInvocation *) anInvocation
-{
-	[mInvocation release];
-	mInvocation = [anInvocation retain];
-	if (mRecorder->mOutInvocation)
-		*(mRecorder->mOutInvocation) = anInvocation;
-}
-@end
-
-
 @implementation PGTSInvocationRecorder
 - (id) init
 {
@@ -97,6 +76,12 @@
 {
 	[mHelper->mTarget release];
 	mHelper->mTarget = [target retain];
+}
+
+- (void) gotInvocation
+{
+	if (mOutInvocation)
+		*mOutInvocation = mHelper->mInvocation;
 }
 
 - (id) record
@@ -288,13 +273,47 @@
 
 - (PGTSDatabaseDescription *) database
 {
-	[NSException raise: NSInternalInconsistencyException format: nil];
+	[NSException raise: NSInternalInconsistencyException format: @"-[PGTSAbstractDescription database] called."];
 	return nil;
 }
 
 - (PGTSConnection *) connection;
 {
-	[NSException raise: NSInternalInconsistencyException format: nil];
+	[NSException raise: NSInternalInconsistencyException format: @"-[PGTSAbstractDescription connection] called."];
 	return nil;
+}
+@end
+
+
+@implementation PGTSInvocationRecorderHelper
++ (id) alloc
+{
+	return NSAllocateObject (self, 0, NULL);
+}
+
+- (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
+{
+	return [mTarget methodSignatureForSelector: selector];
+}
+
+- (void) forwardInvocation: (NSInvocation *) anInvocation
+{
+	[mInvocation release];
+	mInvocation = [anInvocation retain];
+	[mRecorder gotInvocation];
+}
+@end
+
+
+@interface PGTSHOMInvocationRecorder : PGTSInvocationRecorder
+{
+}
+@end
+
+
+@implementation PGTSHOMInvocationRecorder
+- (void) gotInvocation
+{
+	//FIXME: what now?
 }
 @end

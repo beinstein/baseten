@@ -56,17 +56,17 @@
            [self class], self, [mTable schemaName], [mTable name], mName];
 }
 
-- (void) setIndex: (unsigned int) anIndex
+- (void) setIndex: (int) anIndex
 {
     mIndex = anIndex;
 }
 
-- (unsigned int) indexInResultSet
+- (int) indexInResultSet
 {
     return mIndexInResultSet;
 }
 
-- (void) setIndexInResultSet: (unsigned int) anIndex
+- (void) setIndexInResultSet: (int) anIndex
 {
     mIndexInResultSet = anIndex;
 }
@@ -98,7 +98,7 @@
     return rval;
 }
 
-- (unsigned int) index
+- (int) index
 {
     if (mIndex == 0 && nil != mName)
     {
@@ -150,5 +150,15 @@
 - (Class) proxyClass
 {
 	return [PGTSFieldDescriptionProxy class];
+}
+
+- (void) setTypeOid: (Oid) anOid
+{
+	mTypeOid = anOid;
+}
+
+- (void) setNotNull: (BOOL) aBool
+{
+	mIsNotNull = aBool;
 }
 @end

@@ -52,6 +52,4 @@
 @interface PGTSTypeDescription (Queries)
 - (Oid) elementOid;
 - (char) delimiter;
-- (void) setElementOid: (Oid) anOid;
-- (void) setDelimiter: (char) aChar;
 @end
