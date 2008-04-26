@@ -34,6 +34,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSFunctions.h"
 #import "PGTSRoleDescription.h"
+#import "PGTSHOM.h"
 //FIXME: enable logging.
 //#import <Log4Cocoa/Log4Cocoa.h>
 #define log4AssertValueReturn(...)

@@ -31,7 +31,6 @@
 
 @class PGTSConnection;
 @class PGTSAbstractDescription;
-@class PGTSInvocationRecorderHelper;
 @class PGTSDatabaseDescription;
 
 
@@ -40,18 +39,6 @@ id PGTSNilReturn (id anObject)
 {
 	return [NSNull null] == anObject ? nil : anObject;
 }
-
-
-@interface PGTSInvocationRecorder : NSObject
-{
-	PGTSInvocationRecorderHelper* mHelper;
-	NSInvocation** mOutInvocation;
-}
-- (id) record;
-- (id) recordWithTarget: (id) target;
-- (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
-+ (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
-@end
 
 
 @protocol PGTSDescription
@@ -64,13 +51,13 @@ id PGTSNilReturn (id anObject)
 {
 	PGTSConnection* mConnection; //Weak; connection owns self.
 	PGTSAbstractDescription* mDescription;
-	PGTSInvocationRecorder* mInvocationRecorder;
+	id mInvocationRecorder;
 }
 - (id) initWithConnection: (PGTSConnection *) connection
 			  description: (PGTSAbstractDescription *) anObject;
 - (id) performSynchronizedAndReturnObject;
 - (void) performSynchronizedOnDescription: (NSInvocation *) invocation;
-- (PGTSInvocationRecorder *) invocationRecorder;
+- (id) invocationRecorder;
 @end
 
 

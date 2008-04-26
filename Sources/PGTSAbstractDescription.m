@@ -29,86 +29,10 @@
 #import "PGTSAbstractDescription.h"
 #import "PGTSConstants.h"
 #import "PGTSConnection.h"
+#import "PGTSHOM.h"
 
 
 @class PGTSInvocationRecorder;
-
-
-@interface PGTSInvocationRecorderHelper
-{
-	@private
-	Class isa;
-	
-	@public
-	id mTarget;
-	NSInvocation* mInvocation;
-	PGTSInvocationRecorder* mRecorder; //Weak
-}
-+ (id) alloc;
-@end
-
-
-@implementation PGTSInvocationRecorder
-- (id) init
-{
-	if ((self = [super init]))
-	{
-		mHelper = [PGTSInvocationRecorderHelper alloc];
-		mHelper->mRecorder = self;
-	}
-	return self;
-}
-
-- (void) dealloc
-{
-	[mHelper->mInvocation release];
-	[mHelper->mTarget release];
-	NSDeallocateObject ((id) mHelper);
-	[super dealloc];
-}
-
-- (NSInvocation *) invocation
-{
-	return mHelper->mInvocation;
-}
-
-- (void) setTarget: (id) target
-{
-	[mHelper->mTarget release];
-	mHelper->mTarget = [target retain];
-}
-
-- (void) gotInvocation
-{
-	if (mOutInvocation)
-		*mOutInvocation = mHelper->mInvocation;
-}
-
-- (id) record
-{
-	mOutInvocation = NULL;
-	return mHelper;
-}
-
-- (id) recordWithTarget: (id) target
-{
-	[self setTarget: target];
-	return [self record];
-}
-
-- (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation
-{
-	mOutInvocation = outInvocation;
-	[self setTarget: target];
-	return mHelper;
-}
-
-+ (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation
-{
-	PGTSInvocationRecorder* recorder = [[[self alloc] init] autorelease];
-	return [recorder recordWithTarget: target outInvocation: outInvocation];
-}
-@end
 
 
 @implementation PGTSAbstractDescriptionProxy
@@ -128,7 +52,7 @@
 	return self;
 }
 
-- (PGTSInvocationRecorder *) invocationRecorder
+- (id) invocationRecorder
 {
 	if (! mInvocationRecorder)
 	{
@@ -281,39 +205,5 @@
 {
 	[NSException raise: NSInternalInconsistencyException format: @"-[PGTSAbstractDescription connection] called."];
 	return nil;
-}
-@end
-
-
-@implementation PGTSInvocationRecorderHelper
-+ (id) alloc
-{
-	return NSAllocateObject (self, 0, NULL);
-}
-
-- (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
-{
-	return [mTarget methodSignatureForSelector: selector];
-}
-
-- (void) forwardInvocation: (NSInvocation *) anInvocation
-{
-	[mInvocation release];
-	mInvocation = [anInvocation retain];
-	[mRecorder gotInvocation];
-}
-@end
-
-
-@interface PGTSHOMInvocationRecorder : PGTSInvocationRecorder
-{
-}
-@end
-
-
-@implementation PGTSHOMInvocationRecorder
-- (void) gotInvocation
-{
-	//FIXME: what now?
 }
 @end
