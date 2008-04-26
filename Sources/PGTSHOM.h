@@ -26,6 +26,8 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
+
 
 @class PGTSInvocationRecorderHelper;
 
@@ -41,4 +43,14 @@
 - (id) recordWithTarget: (id) target;
 - (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
 + (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
+@end
+
+
+@interface NSSet (PGTSHOM)
+- (id) PGTSCollect;
+@end
+
+
+@interface NSArray (PGTSHOM)
+- (id) PGTSCollect;
 @end

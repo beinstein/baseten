@@ -30,6 +30,10 @@
 		5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
 		5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
 		53594D1C0B13711300378707 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
+		5374B1710DC3470C0019A863 /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 5374B16F0DC3470C0019A863 /* PGTSHOM.h */; };
+		5374B1720DC3470C0019A863 /* PGTSHOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374B1700DC3470C0019A863 /* PGTSHOM.m */; };
+		5374B1730DC3470C0019A863 /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 5374B16F0DC3470C0019A863 /* PGTSHOM.h */; };
+		5374B1740DC3470C0019A863 /* PGTSHOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374B1700DC3470C0019A863 /* PGTSHOM.m */; };
 		538176360D633DC000A4CA72 /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176370D633DC000A4CA72 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176380D633DC000A4CA72 /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A6AF209DEE51700D28AB0 /* PGTSConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -248,6 +252,8 @@
 		536580D20A36FDFB00CDEC90 /* libPGTS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPGTS.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		536B892D0A518E4A00379C00 /* PGTSExceptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSExceptions.h; path = Sources/PGTSExceptions.h; sourceTree = "<group>"; };
 		536B892E0A518E4A00379C00 /* PGTSExceptions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSExceptions.m; path = Sources/PGTSExceptions.m; sourceTree = "<group>"; };
+		5374B16F0DC3470C0019A863 /* PGTSHOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSHOM.h; path = Sources/PGTSHOM.h; sourceTree = "<group>"; };
+		5374B1700DC3470C0019A863 /* PGTSHOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSHOM.m; path = Sources/PGTSHOM.m; sourceTree = "<group>"; };
 		538175DD0D63387200A4CA72 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
 		538175EA0D63399600A4CA72 /* release-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-non-gc.xcconfig"; sourceTree = "<group>"; };
 		538175EB0D63399600A4CA72 /* release-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-gc.xcconfig"; sourceTree = "<group>"; };
@@ -513,6 +519,8 @@
 				53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */,
 				5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */,
 				5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */,
+				5374B16F0DC3470C0019A863 /* PGTSHOM.h */,
+				5374B1700DC3470C0019A863 /* PGTSHOM.m */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -548,6 +556,7 @@
 				53E189B30DB2DB730094066F /* PGTSACLItem.h in Headers */,
 				53E18B490DB3E9840094066F /* PGTSFunctions.h in Headers */,
 				5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
+				5374B1710DC3470C0019A863 /* PGTSHOM.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -584,6 +593,7 @@
 				5392A8600DAD7E190012C7CD /* PGTSConnector.h in Headers */,
 				5396AFA90DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */,
 				5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
+				5374B1730DC3470C0019A863 /* PGTSHOM.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -752,6 +762,7 @@
 				53E18B190DB370A00094066F /* PGTSDatabaseDescription.m in Sources */,
 				53E18B220DB370C50094066F /* PGTSAbstractClassDescription.m in Sources */,
 				53E18B4A0DB3E9850094066F /* PGTSFunctions.m in Sources */,
+				5374B1720DC3470C0019A863 /* PGTSHOM.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -784,6 +795,7 @@
 				5392A7E80DAD7DFA0012C7CD /* PGTSQueryDescription.m in Sources */,
 				5392A8610DAD7E190012C7CD /* PGTSConnector.m in Sources */,
 				5396AFB50DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */,
+				5374B1740DC3470C0019A863 /* PGTSHOM.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

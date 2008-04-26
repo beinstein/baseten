@@ -27,6 +27,7 @@
 //
 
 #import "PGTSHOM.h"
+#import "PGTSFunctions.h"
 
 @interface PGTSInvocationRecorderHelper
 {
@@ -39,12 +40,6 @@
 	PGTSInvocationRecorder* mRecorder; //Weak
 }
 + (id) alloc;
-@end
-
-
-@interface PGTSHOMInvocationRecorder : PGTSInvocationRecorder
-{
-}
 @end
 
 
@@ -131,9 +126,76 @@
 @end
 
 
+@interface PGTSHOMInvocationRecorder : PGTSInvocationRecorder
+{
+	id mCollection;
+	SEL mCallback;
+}
+@end
+
+
 @implementation PGTSHOMInvocationRecorder
 - (void) gotInvocation
 {
-	//FIXME: what now?
+	[mCollection performSelector: mCallback withObject: mHelper->mInvocation];
+}
+
+- (void) setCollection: (id) collection callback: (SEL) callback
+{
+	mCallback = callback;
+	[mCollection release];
+	mCollection = [collection retain];
+}
+@end
+
+
+static id
+CollectSetArray (id self)
+{
+	PGTSHOMInvocationRecorder* recorder = [[[PGTSHOMInvocationRecorder alloc] init] autorelease];
+	[recorder setCollection: self callback: @selector (PGTSCollect:)];
+	return [recorder recordWithTarget: self];
+}
+
+
+static void
+CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
+{
+	TSEnumerate (currentObject, e, [self objectEnumerator])
+	{
+		[invocation invokeWithTarget: currentObject];
+		id collected = nil;
+		[invocation getReturnValue: &collected];
+		if (! collected) collected = [NSNull null];
+		[retval addObject: collected];
+	}
+	[invocation setReturnValue: &retval];
+}
+
+
+@implementation NSSet (PGTSHOM)
+- (id) PGTSCollect
+{
+	return CollectSetArray (self);
+}
+
+- (void) PGTSCollect: (NSInvocation *) invocation
+{
+	id retval = [NSMutableSet setWithCapacity: [self count]];
+	CollectAndPerformSetArray (self, retval, invocation);
+}
+@end
+
+
+@implementation NSArray (PGTSHOM)
+- (id) PGTSCollect
+{
+	return CollectSetArray (self);
+}
+
+- (void) PGTSCollect: (NSInvocation *) invocation
+{
+	id retval = [NSMutableSet setWithCapacity: [self count]];
+	CollectAndPerformSetArray (self, retval, invocation);
 }
 @end
