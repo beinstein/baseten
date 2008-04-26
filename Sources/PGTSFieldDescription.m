@@ -35,8 +35,16 @@
 #import <PGTS/PGTSAdditions.h>
 
 
+@implementation PGTSFieldDescriptionProxy
+- (PGTSTypeDescription *) type
+{
+	return [[self database] typeWithOid: [(PGTSFieldDescription *) mDescription typeOid]];
+}
+@end
+
+
 /** 
- * Table field
+ * Table field.
  */
 @implementation PGTSFieldDescription
 
@@ -45,22 +53,25 @@
     if ((self = [super init]))
     {
         mIndex = 0;
-        mIndexInResultSet = NSNotFound;
+        //mIndexInResultSet = NSNotFound;
     }
     return self;
 }
 
+#if 0
 - (NSString *) description
 {
     return [NSString stringWithFormat: @"%@ (%p) s: %@ t: %@ f: %@", 
            [self class], self, [mTable schemaName], [mTable name], mName];
 }
+#endif
 
 - (void) setIndex: (int) anIndex
 {
     mIndex = anIndex;
 }
 
+#if 0
 - (int) indexInResultSet
 {
     return mIndexInResultSet;
@@ -70,20 +81,10 @@
 {
     mIndexInResultSet = anIndex;
 }
+#endif
 
 - (NSString *) name
 {
-    if (nil == mName && mIndex != 0)
-    {
-		NSString* query = @"SELECT attname, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1 AND attnum = $2";
-        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject ([mTable oid]), [NSNumber numberWithUnsignedInt: mIndex]];
-        if ([res advanceRow])
-        {
-            [self setName: [res valueForKey: @"attname"]];
-            mTypeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
-			mIsNotNull = [[res valueForKey: @"attnotnull"] boolValue];
-        }
-    }
     return mName;
 }
 
@@ -100,17 +101,10 @@
 
 - (int) index
 {
-    if (mIndex == 0 && nil != mName)
-    {
-		NSString* query = @"SELECT attnumber, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1 AND attname = $2";
-        PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject ([mTable oid]), mName];
-        [self setIndex: [[res valueForKey: @"attnumber"] unsignedIntValue]];
-        mTypeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
-		mIsNotNull = [[res valueForKey: @"attnotnull"] boolValue];
-    }
     return mIndex;
 }
 
+#if 0
 - (void) setTable: (PGTSTableDescription *) anObject
 {
     mTable = anObject;
@@ -120,6 +114,7 @@
 {
     return mTable;
 }
+#endif
 
 - (Oid) typeOid
 {
@@ -128,7 +123,9 @@
 
 - (PGTSTypeDescription *) type
 {
-    return [[mTable database] typeWithOid: mTypeOid];
+	//This is only supposed to be called via the proxy.
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSFieldDescription type] called." userInfo: nil] raise];
+	return nil;
 }
 
 - (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField
