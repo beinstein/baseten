@@ -71,18 +71,6 @@
     mIndex = anIndex;
 }
 
-#if 0
-- (int) indexInResultSet
-{
-    return mIndexInResultSet;
-}
-
-- (void) setIndexInResultSet: (int) anIndex
-{
-    mIndexInResultSet = anIndex;
-}
-#endif
-
 - (NSString *) name
 {
     return mName;
@@ -103,18 +91,6 @@
 {
     return mIndex;
 }
-
-#if 0
-- (void) setTable: (PGTSTableDescription *) anObject
-{
-    mTable = anObject;
-}
-
-- (PGTSTableDescription *) table
-{
-    return mTable;
-}
-#endif
 
 - (Oid) typeOid
 {

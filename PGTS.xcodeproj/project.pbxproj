@@ -47,14 +47,7 @@
 		538176480D633DC000A4CA72 /* PGTSTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 535977FE08AD72DC000CAC2B /* PGTSTableDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176490D633DC000A4CA72 /* PGTSIndexDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9237708B0F47700759909 /* PGTSIndexDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5381764A0D633DC000A4CA72 /* PGTSFieldDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F9225008AFD9BD00759909 /* PGTSFieldDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5381764B0D633DC000A4CA72 /* PGTSForeignKeyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B870900A0A218F007315BC /* PGTSForeignKeyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176500D633DC000A4CA72 /* PGTSSchemaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359557C0A514DEE0008793A /* PGTSSchemaDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176510D633DC000A4CA72 /* PGTSExceptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 536B892D0A518E4A00379C00 /* PGTSExceptions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176540D633DC000A4CA72 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176550D633DC000A4CA72 /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DF00B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176560D633DC000A4CA72 /* PGTSACLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298E0D0B330EFB00DE7CC8 /* PGTSACLItem.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176570D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176580D633DC000A4CA72 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5381765A0D633DC000A4CA72 /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */; };
 		5381765B0D633DC000A4CA72 /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FF108804EA000BFAFB5 /* PGTSFunctions.m */; };
 		5381765D0D633DC000A4CA72 /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FDB08804EA000BFAFB5 /* PGTSAdditions.m */; };
@@ -66,13 +59,7 @@
 		5381766A0D633DC000A4CA72 /* PGTSTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 535977FF08AD72DC000CAC2B /* PGTSTableDescription.m */; };
 		5381766B0D633DC000A4CA72 /* PGTSIndexDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9237808B0F47700759909 /* PGTSIndexDescription.m */; };
 		5381766C0D633DC000A4CA72 /* PGTSFieldDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F9225108AFD9BD00759909 /* PGTSFieldDescription.m */; };
-		5381766D0D633DC000A4CA72 /* PGTSForeignKeyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B870910A0A218F007315BC /* PGTSForeignKeyDescription.m */; };
-		538176700D633DC000A4CA72 /* PGTSSchemaDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359557D0A514DEE0008793A /* PGTSSchemaDescription.m */; };
-		538176710D633DC000A4CA72 /* PGTSExceptions.m in Sources */ = {isa = PBXBuildFile; fileRef = 536B892E0A518E4A00379C00 /* PGTSExceptions.m */; };
-		538176730D633DC000A4CA72 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
 		538176740D633DC000A4CA72 /* PGTSAbstractObjectDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DF10B330B6F00DE7CC8 /* PGTSAbstractObjectDescription.m */; };
-		538176750D633DC000A4CA72 /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */; };
-		538176760D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */; };
 		538176780D633DC000A4CA72 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D69BFE84028FC02AAC07 /* Foundation.framework */; };
 		538176790D633DC000A4CA72 /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
 		5381767A0D633DC000A4CA72 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
@@ -565,14 +552,7 @@
 				538176480D633DC000A4CA72 /* PGTSTableDescription.h in Headers */,
 				538176490D633DC000A4CA72 /* PGTSIndexDescription.h in Headers */,
 				5381764A0D633DC000A4CA72 /* PGTSFieldDescription.h in Headers */,
-				5381764B0D633DC000A4CA72 /* PGTSForeignKeyDescription.h in Headers */,
-				538176500D633DC000A4CA72 /* PGTSSchemaDescription.h in Headers */,
-				538176510D633DC000A4CA72 /* PGTSExceptions.h in Headers */,
-				538176540D633DC000A4CA72 /* PGTSRoleDescription.h in Headers */,
 				538176550D633DC000A4CA72 /* PGTSAbstractObjectDescription.h in Headers */,
-				538176560D633DC000A4CA72 /* PGTSACLItem.h in Headers */,
-				538176570D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.h in Headers */,
-				538176580D633DC000A4CA72 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */,
 				53091C490DAACF70005B5619 /* NSExpression+PGTSAdditions.h in Headers */,
 				53091C4B0DAACF70005B5619 /* NSPredicate+PGTSAdditions.h in Headers */,
 				5392A7A70DAD7B0E0012C7CD /* PGTSFoundationObjects.h in Headers */,
@@ -765,13 +745,7 @@
 				5381766A0D633DC000A4CA72 /* PGTSTableDescription.m in Sources */,
 				5381766B0D633DC000A4CA72 /* PGTSIndexDescription.m in Sources */,
 				5381766C0D633DC000A4CA72 /* PGTSFieldDescription.m in Sources */,
-				5381766D0D633DC000A4CA72 /* PGTSForeignKeyDescription.m in Sources */,
-				538176700D633DC000A4CA72 /* PGTSSchemaDescription.m in Sources */,
-				538176710D633DC000A4CA72 /* PGTSExceptions.m in Sources */,
-				538176730D633DC000A4CA72 /* PGTSRoleDescription.m in Sources */,
 				538176740D633DC000A4CA72 /* PGTSAbstractObjectDescription.m in Sources */,
-				538176750D633DC000A4CA72 /* PGTSACLItem.m in Sources */,
-				538176760D633DC000A4CA72 /* PGTSCertificateVerificationDelegate.m in Sources */,
 				53091C4A0DAACF70005B5619 /* NSExpression+PGTSAdditions.m in Sources */,
 				53091C4C0DAACF70005B5619 /* NSPredicate+PGTSAdditions.m in Sources */,
 				5392A7A80DAD7B0E0012C7CD /* PGTSFoundationObjects.m in Sources */,

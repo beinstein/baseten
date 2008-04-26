@@ -64,7 +64,11 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mFields)
 	{
-		NSDictionary* fields = [(PGTSTableDescription *) mDescription fields];
+		NSDictionary* fields = nil;
+		@synchronized (mDescription)
+		{
+			fields = [(PGTSTableDescription *) mDescription fields];
+		}
 		mFields = [[[fields PGTSCollect] proxy] retain];
 	}
 	return mFields;
@@ -85,7 +89,11 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mForeignKeys)
 	{
-		NSSet* foreignKeys = [(PGTSTableDescription *) mDescription foreignKeys];
+		NSSet* foreignKeys = nil;
+		@synchronized (mDescription)
+		{
+			foreignKeys = [(PGTSTableDescription *) mDescription foreignKeys];
+		}
 		mForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
 	}
 	return mForeignKeys;
@@ -95,7 +103,11 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mReferencingForeignKeys)
 	{
-		NSSet* foreignKeys = [(PGTSTableDescription *) mDescription referencingForeignKeys];
+		NSSet* foreignKeys = nil;
+		@synchronized (mDescription)
+		{
+			foreignKeys = [(PGTSTableDescription *) mDescription referencingForeignKeys];
+		}
 		mReferencingForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
 	}
 	return mForeignKeys;	
@@ -105,7 +117,11 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mUniqueIndexes)
 	{
-		NSArray* indexes = [(PGTSTableDescription *) mDescription uniqueIndexes];
+		NSArray* indexes = nil;
+		@synchronized (mDescription)
+		{
+			indexes = [(PGTSTableDescription *) mDescription uniqueIndexes];
+		}
 		mUniqueIndexes = [[[indexes PGTSCollect] proxy] retain];
 	}
 	return mUniqueIndexes;

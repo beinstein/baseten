@@ -48,23 +48,18 @@
 
 @interface PGTSFieldDescription : PGTSAbstractDescription <PGTSFieldDescription>
 {
-    //PGTSTableDescription* mTable;
     int mIndex;
-    //int mIndexInResultSet;
     Oid mTypeOid;
 	BOOL mIsNotNull;
 }
 
 - (int) index;
-//- (int) indexInResultSet;
 - (Oid) typeOid;
 - (NSString *) qualifiedName;
 - (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField;
 - (BOOL) isNotNull;
 
 - (void) setIndex: (int) anIndex;
-//- (void) setIndexInResultSet: (int) anIndex;
-//- (void) setTable: (PGTSTableDescription *) anObject;
 - (void) setTypeOid: (Oid) anOid;
 - (void) setNotNull: (BOOL) aBool;
 @end
