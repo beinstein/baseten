@@ -35,6 +35,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSForeignKeyDescription.h"
+#import "PGTSHOM.h"
 
 
 static PGTSIndexDescription*
@@ -63,12 +64,8 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mFields)
 	{
-		mFields = [[(PGTSTableDescription *) mDescription fields] mutableCopy];
-		TSEnumerate (currentName, e, [[mFields allKeys] objectEnumerator])
-		{
-			id proxy = [[mFields objectForKey: currentName] proxy];
-			[mFields setObject: proxy forKey: currentName];
-		}
+		NSDictionary* fields = [(PGTSTableDescription *) mDescription fields];
+		mFields = [[[fields PGTSCollect] proxy] retain];
 	}
 	return mFields;
 }
@@ -89,21 +86,17 @@ PrimaryKey (NSArray* uIndexes)
 	if (! mForeignKeys)
 	{
 		NSSet* foreignKeys = [(PGTSTableDescription *) mDescription foreignKeys];
-		mForeignKeys = [[NSMutableSet alloc] initWithCapacity: [foreignKeys count]];
-		TSEnumerate (currentFKey, e, [foreignKeys objectEnumerator])
-			[mForeignKeys addObject: [currentFKey proxy]];
+		mForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
 	}
 	return mForeignKeys;
 }
 
 - (NSSet *) referencingForeignKeys
 {
-	if (! mForeignKeys)
+	if (! mReferencingForeignKeys)
 	{
 		NSSet* foreignKeys = [(PGTSTableDescription *) mDescription referencingForeignKeys];
-		mForeignKeys = [[NSMutableSet alloc] initWithCapacity: [foreignKeys count]];
-		TSEnumerate (currentFKey, e, [foreignKeys objectEnumerator])
-		[mForeignKeys addObject: [currentFKey proxy]];
+		mReferencingForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
 	}
 	return mForeignKeys;	
 }
@@ -113,9 +106,7 @@ PrimaryKey (NSArray* uIndexes)
 	if (! mUniqueIndexes)
 	{
 		NSArray* indexes = [(PGTSTableDescription *) mDescription uniqueIndexes];
-		mUniqueIndexes = [[NSMutableArray alloc] initWithCapacity: [indexes count]];
-		TSEnumerate (currentIndex, e, [indexes objectEnumerator])
-			[mUniqueIndexes addObject: [currentIndex proxy]];
+		mUniqueIndexes = [[[indexes PGTSCollect] proxy] retain];
 	}
 	return mUniqueIndexes;
 }

@@ -54,3 +54,8 @@
 @interface NSArray (PGTSHOM)
 - (id) PGTSCollect;
 @end
+
+
+@interface NSDictionary (PGTSHOM)
+- (id) PGTSCollect;
+@end
