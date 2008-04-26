@@ -64,11 +64,8 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mFields)
 	{
-		NSDictionary* fields = nil;
-		@synchronized (mDescription)
-		{
-			fields = [(PGTSTableDescription *) mDescription fields];
-		}
+		[[[self invocationRecorder] record] fields];
+		NSDictionary* fields = [self performSynchronizedAndReturnObject];
 		mFields = [[[fields PGTSCollect] proxy] retain];
 	}
 	return mFields;
@@ -89,11 +86,8 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mForeignKeys)
 	{
-		NSSet* foreignKeys = nil;
-		@synchronized (mDescription)
-		{
-			foreignKeys = [(PGTSTableDescription *) mDescription foreignKeys];
-		}
+		[[[self invocationRecorder] record] foreignKeys];
+		NSSet* foreignKeys = [self performSynchronizedAndReturnObject];
 		mForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
 	}
 	return mForeignKeys;
@@ -103,11 +97,8 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mReferencingForeignKeys)
 	{
-		NSSet* foreignKeys = nil;
-		@synchronized (mDescription)
-		{
-			foreignKeys = [(PGTSTableDescription *) mDescription referencingForeignKeys];
-		}
+		[[[self invocationRecorder] record] referencingForeignKeys];
+		NSSet* foreignKeys = [self performSynchronizedAndReturnObject];
 		mReferencingForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
 	}
 	return mForeignKeys;	
@@ -117,11 +108,8 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mUniqueIndexes)
 	{
-		NSArray* indexes = nil;
-		@synchronized (mDescription)
-		{
-			indexes = [(PGTSTableDescription *) mDescription uniqueIndexes];
-		}
+		[[[self invocationRecorder] record] uniqueIndexes];
+		NSArray* indexes = [self performSynchronizedAndReturnObject];
 		mUniqueIndexes = [[[indexes PGTSCollect] proxy] retain];
 	}
 	return mUniqueIndexes;
