@@ -28,6 +28,11 @@
 
 #import <PGTS/PGTSConnection.h>
 #import <PGTS/PGTSResultSet.h>
+#import <PGTS/PGTSDatabaseDescription.h>
+#import <PGTS/PGTSIndexDescription.h>
+#import <PGTS/PGTSTableDescription.h>
+#import <PGTS/PGTSTypeDescription.h>
+#import <PGTS/PGTSFieldDescription.h>
 
 #if 0
 #import <PGTS/PGTSConstants.h>
@@ -43,11 +48,6 @@
 
 #import <PGTS/PGTSAbstractDescription.h>
 #import <PGTS/PGTSAbstractClassDescription.h>
-#import <PGTS/PGTSDatabaseDescription.h>
-#import <PGTS/PGTSIndexDescription.h>
-#import <PGTS/PGTSTableDescription.h>
-#import <PGTS/PGTSTypeDescription.h>
-#import <PGTS/PGTSFieldDescription.h>
 #import <PGTS/PGTSForeignKeyDescription.h>
 #endif
 

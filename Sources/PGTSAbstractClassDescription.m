@@ -36,8 +36,13 @@
 #import "PGTSACLItem.h"
 #import "PGTSDatabaseDescription.h"
 
+
+@implementation PGTSAbstractClassDescriptionProxy
+@end
+
+
 /** 
- * Abstract base class for database class objects
+ * Abstract base class for database class objects.
  */
 @implementation PGTSAbstractClassDescription
 

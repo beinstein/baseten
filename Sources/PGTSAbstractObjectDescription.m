@@ -29,6 +29,10 @@
 #import "PGTSAbstractObjectDescription.h"
 
 
+@implementation PGTSAbstractObjectDescriptionProxy
+@end
+
+
 @implementation PGTSAbstractObjectDescription
 
 - (id) init

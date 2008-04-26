@@ -289,11 +289,14 @@ ProcessWillExit ()
 {
     if (! mDatabase)
     {
-        mDatabase = [[PGTSDatabaseDescription alloc] init];
+		id realDescription = [[PGTSDatabaseDescription alloc] init];
+		mDatabase = [realDescription proxy];
+		[realDescription release];
     }
     return mDatabase;
 }
 
+//FIXME: this needs some attention.
 - (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc
 {
     if (mDatabase != aDesc)

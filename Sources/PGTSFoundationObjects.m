@@ -251,13 +251,13 @@ continue_iteration:
     return retval;
 }
 
-inline void
+static inline void
 AppendBytes (IMP impl, NSMutableData* target, const void* bytes, unsigned int length)
 {
     (void (*)(id, SEL, const void*, unsigned int)) impl (target, @selector (appendBytes:length:), bytes, length);
 }
 
-inline void
+static inline void
 EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 {
     switch (*src)
