@@ -45,11 +45,6 @@
     unsigned int mElementCount;
     char mDelimiter;
 }
-
-@end
-
-
-@interface PGTSTypeDescription (Queries)
 - (Oid) elementOid;
 - (char) delimiter;
 @end

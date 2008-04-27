@@ -47,15 +47,21 @@
 
 
 @interface NSSet (PGTSHOM)
+- (id) PGTSAny;
 - (id) PGTSCollect;
+- (id) PGTSDo;
 @end
 
 
 @interface NSArray (PGTSHOM)
+- (id) PGTSAny;
 - (id) PGTSCollect;
+- (id) PGTSDo;
 @end
 
 
 @interface NSDictionary (PGTSHOM)
+- (id) PGTSAny;
 - (id) PGTSCollect;
+- (id) PGTSDo;
 @end

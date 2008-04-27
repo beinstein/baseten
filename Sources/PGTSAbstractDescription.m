@@ -45,11 +45,18 @@
 }
 
 - (id) initWithConnection: (PGTSConnection *) connection
-			  description: (PGTSAbstractDescription *) anObject
+			  description: (PGTSAbstractDescription *) description
 {
+	NSAssert (connection, @"Expected connection not to be nil.");
+	NSAssert (description, @"Expected description not to be nil.");
 	mConnection = connection;
-	mDescription = [anObject retain];
+	mDescription = [description retain];
 	return self;
+}
+
+- (BOOL) respondsToSelector: (SEL) aSel
+{
+	return [mDescription respondsToSelector: aSel];
 }
 
 - (id) invocationRecorder
@@ -75,13 +82,15 @@
 - (id) performSynchronizedAndReturnObject
 {
 	id retval = nil;
-	[self performSynchronizedOnDescription: [mInvocationRecorder invocation]];
-	[[mInvocationRecorder invocation] getReturnValue: &retval];
+	NSInvocation* invocation = [mInvocationRecorder invocation];
+	[self performSynchronizedOnDescription: invocation];
+	[invocation getReturnValue: &retval];
 	return retval;
 }
 
 - (void) performSynchronizedOnDescription: (NSInvocation *) invocation
 {
+	NSAssert (mConnection, @"Expected mConnection not to be nil."); 
 	BOOL responded = NO;
 	@synchronized (mDescription)
 	{
@@ -102,9 +111,9 @@
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
 {
-	NSMethodSignature* retval = [super methodSignatureForSelector: selector];
+	NSMethodSignature* retval = [mDescription methodSignatureForSelector: selector];
 	if (! retval)
-		retval = [mDescription methodSignatureForSelector: selector];
+		retval = [super methodSignatureForSelector: selector];
 	return retval;
 }
 

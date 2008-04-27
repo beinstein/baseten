@@ -27,6 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <PGTS/PGTSFoundationObjects.h>
 
 
 #if 0
@@ -112,6 +113,7 @@ struct ObjectCompare <NSString *>
 @interface NSURL (PGTSAdditions)
 - (NSMutableDictionary *) PGTSConnectionDictionary;
 @end
+#endif
 
 @interface PGTSAbstractClass : NSObject
 {
@@ -142,7 +144,6 @@ struct ObjectCompare <NSString *>
 {
 }
 @end
-#endif
 
 
 @interface NSMutableData (PGTSPrivateAdditions)

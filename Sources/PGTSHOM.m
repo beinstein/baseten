@@ -107,6 +107,17 @@
 
 
 @implementation PGTSInvocationRecorderHelper
+//FIXME: testing only.
+- (void) doesNotRecognizeSelector: (SEL) aSel
+{
+	NSLog (@"selector: %s", aSel);
+}
+
++ (void) initialize
+{
+	//This is required by the runtime.
+}
+
 + (id) alloc
 {
 	return NSAllocateObject (self, 0, NULL);
@@ -146,16 +157,23 @@
 	mCallback = callback;
 	[mCollection release];
 	mCollection = [collection retain];
+	
+	[self setTarget: [mCollection PGTSAny]];
 }
 @end
 
 
 static id
-Collect (id self)
+HOMTrampoline (id self, SEL callback)
 {
-	PGTSHOMInvocationRecorder* recorder = [[[PGTSHOMInvocationRecorder alloc] init] autorelease];
-	[recorder setCollection: self callback: @selector (PGTSCollect:)];
-	return [recorder recordWithTarget: self];
+	id retval = nil;
+	if (0 < [self count])
+	{
+		PGTSHOMInvocationRecorder* recorder = [[[PGTSHOMInvocationRecorder alloc] init] autorelease];
+		[recorder setCollection: self callback: callback];
+		retval = [recorder record];
+	}
+	return retval;
 }
 
 
@@ -174,24 +192,57 @@ CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
 }
 
 
+static void
+Do (NSInvocation* invocation, NSEnumerator* enumerator)
+{
+	TSEnumerate (currentObject, e, enumerator)
+		[invocation invokeWithTarget: currentObject];
+}
+
+
 @implementation NSSet (PGTSHOM)
+- (id) PGTSAny
+{
+	return [self anyObject];
+}
+
 - (id) PGTSCollect
 {
-	return Collect (self);
+	return HOMTrampoline (self, @selector (PGTSCollect:));
+}
+
+- (id) PGTSDo
+{
+	return HOMTrampoline (self, @selector (PGTSDo:));
 }
 
 - (void) PGTSCollect: (NSInvocation *) invocation
 {
 	id retval = [NSMutableSet setWithCapacity: [self count]];
 	CollectAndPerformSetArray (self, retval, invocation);
+}
+
+- (void) PGTSDo: (NSInvocation *) invocation
+{
+	Do (invocation, [self objectEnumerator]);
 }
 @end
 
 
 @implementation NSArray (PGTSHOM)
+- (id) PGTSAny
+{
+	return [self lastObject];
+}
+
 - (id) PGTSCollect
 {
-	return Collect (self);
+	return HOMTrampoline (self, @selector (PGTSCollect:));
+}
+
+- (id) PGTSDo
+{
+	return HOMTrampoline (self, @selector (PGTSDo:));
 }
 
 - (void) PGTSCollect: (NSInvocation *) invocation
@@ -199,13 +250,28 @@ CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
 	id retval = [NSMutableSet setWithCapacity: [self count]];
 	CollectAndPerformSetArray (self, retval, invocation);
 }
+
+- (void) PGTSDo: (NSInvocation *) invocation
+{
+	Do (invocation, [self objectEnumerator]);
+}
 @end
 
 
 @implementation NSDictionary (PGTSHOM)
+- (id) PGTSAny
+{
+	return [[self objectEnumerator] nextObject];
+}
+
 - (id) PGTSCollect
 {
-	return Collect (self);
+	return HOMTrampoline (self, @selector (PGTSCollect:));
+}
+
+- (id) PGTSDo
+{
+	return HOMTrampoline (self, @selector (PGTSDo:));
 }
 
 - (void) PGTSCollect: (NSInvocation *) invocation
@@ -220,5 +286,10 @@ CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
 		[retval setObject: collected forKey: currentKey];
 	}
 	[invocation setReturnValue: &retval];	
+}
+
+- (void) PGTSDo: (NSInvocation *) invocation
+{
+	Do (invocation, [self objectEnumerator]);
 }
 @end

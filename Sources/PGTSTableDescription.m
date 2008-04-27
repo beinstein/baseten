@@ -60,13 +60,21 @@ PrimaryKey (NSArray* uIndexes)
 	[super dealloc];
 }
 
+- (id) performSynchronizedAndReturnProxies
+{
+	id concreteObjects = [self performSynchronizedAndReturnObject];
+	[[concreteObjects PGTSDo] setConnection: mConnection];
+	id retval = [[concreteObjects PGTSCollect] proxy];
+	[[concreteObjects PGTSDo] setConnection: nil];
+	return retval;
+}
+
 - (NSDictionary *) fields
 {
 	if (! mFields)
 	{
 		[[[self invocationRecorder] record] fields];
-		NSDictionary* fields = [self performSynchronizedAndReturnObject];
-		mFields = [[[fields PGTSCollect] proxy] retain];
+		mFields = [[self performSynchronizedAndReturnProxies] retain];
 	}
 	return mFields;
 }
@@ -87,8 +95,7 @@ PrimaryKey (NSArray* uIndexes)
 	if (! mForeignKeys)
 	{
 		[[[self invocationRecorder] record] foreignKeys];
-		NSSet* foreignKeys = [self performSynchronizedAndReturnObject];
-		mForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
+		mForeignKeys = [[self performSynchronizedAndReturnProxies] retain];
 	}
 	return mForeignKeys;
 }
@@ -98,8 +105,7 @@ PrimaryKey (NSArray* uIndexes)
 	if (! mReferencingForeignKeys)
 	{
 		[[[self invocationRecorder] record] referencingForeignKeys];
-		NSSet* foreignKeys = [self performSynchronizedAndReturnObject];
-		mReferencingForeignKeys = [[[foreignKeys PGTSCollect] proxy] retain];
+		mReferencingForeignKeys = [[self performSynchronizedAndReturnProxies] retain];
 	}
 	return mForeignKeys;	
 }
@@ -109,8 +115,7 @@ PrimaryKey (NSArray* uIndexes)
 	if (! mUniqueIndexes)
 	{
 		[[[self invocationRecorder] record] uniqueIndexes];
-		NSArray* indexes = [self performSynchronizedAndReturnObject];
-		mUniqueIndexes = [[[indexes PGTSCollect] proxy] retain];
+		mUniqueIndexes = [[self performSynchronizedAndReturnProxies] retain];
 	}
 	return mUniqueIndexes;
 }

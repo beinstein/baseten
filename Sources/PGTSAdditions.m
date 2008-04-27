@@ -32,9 +32,9 @@
 #import "PGTSAdditions.h"
 #import "PGTSConnection.h"
 #import "PGTSConstants.h"
+#import "PGTSTypeDescription.h"
 #if 0
 #import "PGTSFunctions.h"
-#import "PGTSTypeDescription.h"
 #import "PGTSFieldDescription.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSACLItem.h"
@@ -337,7 +337,6 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 
-#if 0
 @implementation PGTSAbstractClass
 - (id) init
 {
@@ -425,6 +424,7 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 @end
 
 
+#if 0
 @implementation NSURL (PGTSAdditions)
 #define SetIf( VALUE, KEY ) if ((VALUE)) [connectionDict setObject: VALUE forKey: KEY];
 - (NSMutableDictionary *) PGTSConnectionDictionary

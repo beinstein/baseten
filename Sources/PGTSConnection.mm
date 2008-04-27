@@ -217,28 +217,31 @@ ProcessWillExit ()
     
     [self processNotifications];
 	
-	PGTSQueryDescription* queryDescription = [[[mQueue objectAtIndex: 0] retain] autorelease];
-	while (! PQisBusy (mConnection))
+	if (0 < [mQueue count])
 	{
-        [queryDescription receiveForConnection: self];
-        if ([queryDescription finished])
-            break;
-	}
-	
-	if ([queryDescription finished])
-	{
-        unsigned int count = [mQueue count];
-        if (count)
-        {
-            if ([mQueue objectAtIndex: 0] == queryDescription)
-            {
-                [mQueue removeObjectAtIndex: 0];
-                count--;
-            }
-            
-            if (count)
-                [self sendNextQuery];
-        }            
+		PGTSQueryDescription* queryDescription = [[[mQueue objectAtIndex: 0] retain] autorelease];
+		while (! PQisBusy (mConnection))
+		{
+			[queryDescription receiveForConnection: self];
+			if ([queryDescription finished])
+				break;
+		}
+		
+		if ([queryDescription finished])
+		{
+			unsigned int count = [mQueue count];
+			if (count)
+			{
+				if ([mQueue objectAtIndex: 0] == queryDescription)
+				{
+					[mQueue removeObjectAtIndex: 0];
+					count--;
+				}
+				
+				if (count)
+					[self sendNextQuery];
+			}            
+		}
 	}
 }
 
@@ -289,9 +292,7 @@ ProcessWillExit ()
 {
     if (! mDatabase)
     {
-		id realDescription = [[PGTSDatabaseDescription alloc] init];
-		mDatabase = [realDescription proxy];
-		[realDescription release];
+		mDatabase = [[PGTSDatabaseDescription databaseForConnection: self] retain];
     }
     return mDatabase;
 }

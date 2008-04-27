@@ -49,6 +49,15 @@
 	[super dealloc];
 }
 
+- (id) performSynchronizedAndGetProxy
+{
+	PGTSAbstractDescription* desc = [self performSynchronizedAndReturnObject];
+	[desc setConnection: mConnection];
+	id retval = [desc proxy];
+	[desc setConnection: nil];
+	return retval;
+}
+
 - (PGTSTableDescription *) tableWithOid: (Oid) anOid
 {
 	//Get the cached proxy or create one.
@@ -56,7 +65,7 @@
 	if (! retval)
 	{
 		[[[self invocationRecorder] record] tableWithOid: anOid];
-		retval = [[self performSynchronizedAndReturnObject] proxy];
+		retval = [self performSynchronizedAndGetProxy];
 		[self updateTableCache: retval];
 	}
 	return PGTSNilReturn (retval);
@@ -69,7 +78,7 @@
 	if (! retval)
 	{
 		[[[self invocationRecorder] record] table: tableName inSchema: schemaName];
-		retval = [[self performSynchronizedAndReturnObject] proxy];
+		retval = [self performSynchronizedAndGetProxy];
 		[self updateTableCache: retval];
 	}
 	return PGTSNilReturn (retval);
@@ -86,7 +95,7 @@
 	if (! retval)
 	{
 		[[[self invocationRecorder] record] typeWithOid: anOid];
-		retval = [[self performSynchronizedAndReturnObject] proxy] ?: [NSNull null];
+		retval = [self performSynchronizedAndGetProxy] ?: [NSNull null];
 		[mTypes setObject: retval forKey: key];
 	}
 	return PGTSNilReturn (retval);

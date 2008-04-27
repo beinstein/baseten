@@ -33,8 +33,12 @@
 #import "PGTSAdditions.h"
 
 
+@implementation PGTSTypeDescriptionProxy
+@end
+
+
 /** 
- * Data type in a database
+ * Data type in a database.
  */
 @implementation PGTSTypeDescription
 
@@ -59,10 +63,6 @@
 {
 	return [PGTSTypeDescriptionProxy class];
 }
-@end
-
-
-@implementation PGTSTypeDescription (Queries)
 
 - (void) fetchFromDatabase
 {
