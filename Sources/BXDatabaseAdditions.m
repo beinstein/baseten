@@ -43,15 +43,12 @@
 
 - (unsigned int) BXHash
 {
-    static unsigned int u = 0;
-    if (0 == u)
-    {
-        u = [[self scheme] hash];
-        u ^= [[self host] hash];
-        u ^= [[self port] hash];
-        u ^= [[self path] hash];
-        u ^= [[self query] hash];
-    }
+    unsigned int u = 0;
+	u = [[self scheme] hash];
+	u ^= [[self host] hash];
+	u ^= [[self port] hash];
+	u ^= [[self path] hash];
+	u ^= [[self query] hash];
     return u;
 }
 

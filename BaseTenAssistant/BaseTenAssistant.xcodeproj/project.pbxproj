@@ -71,49 +71,49 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 536392130A3DAA8800618545 /* Framework.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 536580D20A36FDFB00CDEC90 /* libPGTS.a */;
+			remoteGlobalIDString = 536580D20A36FDFB00CDEC90;
 			remoteInfo = "Static archive";
 		};
 		536560670D7D90EF00A93A17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 536392130A3DAA8800618545 /* Framework.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 538176830D633DC000A4CA72 /* libPGTS.a */;
+			remoteGlobalIDString = 538176830D633DC000A4CA72;
 			remoteInfo = "Static archive + GC";
 		};
 		536560720D7D90F800A93A17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53C9BE020A36FEBE00AAFE50 /* libPGTSTiger.a */;
+			remoteGlobalIDString = 53C9BE020A36FEBE00AAFE50;
 			remoteInfo = "Static archive";
 		};
 		536560740D7D90F800A93A17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 538176F50D63414100A4CA72 /* libPGTSTiger.a */;
+			remoteGlobalIDString = 538176F50D63414100A4CA72;
 			remoteInfo = "Static archive + GC";
 		};
 		5365607A0D7D910100A93A17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 534343BA0D2D89800047974F /* MKCCollections.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3 /* libMKCCollections.a */;
+			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3;
 			remoteInfo = "Static library";
 		};
 		5365607C0D7D910100A93A17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 534343BA0D2D89800047974F /* MKCCollections.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53F42F390D6332EA00C714CD /* libMKCCollections.a */;
+			remoteGlobalIDString = 53F42F390D6332EA00C714CD;
 			remoteInfo = "Static library + GC";
 		};
 		536560860D7D912300A93A17 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 538176E00D63414100A4CA72 /* Static archive + GC */;
+			remoteGlobalIDString = 538176E00D63414100A4CA72;
 			remoteInfo = "Static archive + GC";
 		};
 		53ABE53F0A421E31001C456D /* PBXContainerItemProxy */ = {
