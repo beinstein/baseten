@@ -26,15 +26,29 @@
 // $Id$
 //
 
-#import "PGTSConnector.h"
-#ifdef USE_SSL
-#import <openssl/ssl.h>
-#endif
-
 //FIXME: enable these.
 #undef USE_SSL
 #define log4AssertValueReturn(...) 
 #define log4AssertLog(...)
+
+
+#import "PGTSConnector.h"
+#ifdef USE_SSL
+#import <openssl/ssl.h>
+
+/**
+ * \internal
+ * Verify an X.509 certificate.
+ */
+static int
+VerifySSLCertificate (int preverify_ok, void* x509_ctx)
+{
+	SSL* ssl = X509_STORE_CTX_get_ex_data ((X509_STORE_CTX *) x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
+	PGTSConnection* connection = SSL_get_ex_data (ssl, PGTSSSLConnectionExIndex ());
+	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
+	return rval;
+}
+#endif
 
 
 @implementation PGTSConnector
@@ -127,8 +141,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		mSSLSetUp = YES;
 		SSL* ssl = PQgetssl (connection);
 		log4AssertValueReturn (ssl, NO, @"Expected ssl struct not to be NULL.");
-		SSL_set_verify (ssl, SSL_VERIFY_PEER, &PGTSVerifySSLCertificate);
-		SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex (), self);
+		SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
+		SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex (), mConnection);
 	}
 #endif
 	

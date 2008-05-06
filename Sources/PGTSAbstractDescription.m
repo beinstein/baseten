@@ -154,16 +154,24 @@
 
 - (NSString *) name
 {
-    return mName;
+	id retval = nil;
+	@synchronized (self)
+	{
+	    retval = [[mName copy] autorelease];
+	}
+	return retval;
 }
 
 - (void) setName: (NSString *) aString
 {
-    if (aString != mName)
-    {
-        [mName release];
-        mName = [aString copy];
-    }
+	@synchronized (self)
+	{
+	    if (aString != mName)
+	    {
+	        [mName release];
+	        mName = [aString copy];
+	    }
+	}
 }
 
 - (void) setConnection: (PGTSConnection *) aConnection

@@ -33,10 +33,6 @@
 #import "PGTSAdditions.h"
 
 
-@implementation PGTSTypeDescriptionProxy
-@end
-
-
 /** 
  * Data type in a database.
  */
@@ -55,56 +51,53 @@
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"%@ (%p) oid: %u sOid: %u sName: %@ t: %@ eOid: %u d: %c", 
-        [self class], self, mOid, mSchemaOid, mElementOid, mName, mSchemaName, mDelimiter];
+	id retval = nil;
+	@synchronized (self)
+	{
+    	retval = [NSString stringWithFormat: @"%@ (%p) oid: %u sOid: %u sName: %@ t: %@ eOid: %u d: %c", 
+				  [self class], self, mOid, mSchemaOid, mElementOid, mName, mSchemaName, mDelimiter];
+	}
+	return retval;
 }
 
 - (Class) proxyClass
 {
-	return [PGTSTypeDescriptionProxy class];
+	return Nil;
 }
 
-- (void) fetchFromDatabase
+- (id) proxy
 {
-    if (nil == mName)
-    {
-        PGTSResultSet* res = [mConnection executeQuery: @"SELECT typname, n.oid, nspname, typelem, typdelim "
-                                                        "FROM pg_type t, pg_namespace n "
-                                                        "WHERE t.oid = $1 AND t.typnamespace = n.oid" parameters: PGTSOidAsObject (mOid)];
-        [res setDeterminesFieldClassesAutomatically: NO];
-        [res setClass: [NSString class] forKey: @"typname"];
-        [res setClass: [NSNumber class] forKey: @"oid"];
-        [res setClass: [NSString class] forKey: @"nspname"];
-        [res setClass: [NSNumber class] forKey: @"typelem"];
-        [res setClass: [NSString class] forKey: @"typdelim"];
-
-        if (0 < [res count])
-        {
-            [res advanceRow];
-            [self setName:       [res valueForKey: @"typname"]];
-            [self setSchemaOid:  [[res valueForKey: @"oid"] PGTSOidValue]];
-            [self setSchemaName: [res valueForKey: @"nspname"]];
-            mElementOid = [[res valueForKey: @"typelem"] PGTSOidValue];
-            mDelimiter = [[res valueForKey: @"typdelim"] characterAtIndex: 0];
-        }
-    }
+	return self;
 }
 
 - (NSString *) name
 {
-	[self fetchFromDatabase];
-    return mName;
+	id retval = nil;
+	@synchronized (self)
+	{
+	    retval = [[mName copy] autorelease];
+	}
+	return retval;
 }
 
+//These are set once and never changed.
 - (Oid) elementOid
 {
-	[self fetchFromDatabase];
-    return mElementOid;
+	return mElementOid;
 }
 
 - (char) delimiter
 {
-	[self fetchFromDatabase];
     return mDelimiter;
+}
+
+- (void) setElementOid: (Oid) elementOid
+{
+	mElementOid = elementOid;
+}
+
+- (void) setDelimiter: (char) delimiter
+{
+	mDelimiter = delimiter;
 }
 @end

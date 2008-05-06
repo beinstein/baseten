@@ -33,12 +33,6 @@
 @class PGTSDatabaseDescription;
 
 
-@interface PGTSTypeDescriptionProxy : PGTSAbstractClassDescriptionProxy
-{
-}
-@end
-
-
 @interface PGTSTypeDescription : PGTSAbstractClassDescription 
 {
     Oid mElementOid;
@@ -47,4 +41,6 @@
 }
 - (Oid) elementOid;
 - (char) delimiter;
+- (void) setElementOid: (Oid) elementOid;
+- (void) setDelimiter: (char) delimiter;
 @end

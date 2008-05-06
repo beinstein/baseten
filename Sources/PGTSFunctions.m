@@ -35,7 +35,6 @@
 #import "PGTSFunctions.h"
 #import "PGTSConstants.h"
 #import "PGTSConnectionDelegate.h"
-#import "PGTSCertificateVerificationDelegate.h"
 
 
 /**
@@ -48,18 +47,3 @@ PGTSOidAsObject (Oid o)
     //Methods inherited from NSValue seem to return an NSValue instead of an NSNumber
     return [NSNumber numberWithUnsignedInt: o];
 }
-
-#if 0
-/**
- * \internal
- * Verify an X.509 certificate.
- */
-int
-PGTSVerifySSLCertificate (int preverify_ok, void* x509_ctx)
-{
-	SSL* ssl = X509_STORE_CTX_get_ex_data ((X509_STORE_CTX *) x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
-	PGTSConnection* connection = SSL_get_ex_data (ssl, PGTSSSLConnectionExIndex ());
-	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
-	return rval;
-}
-#endif

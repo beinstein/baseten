@@ -40,6 +40,7 @@
 - (PGTSTableDescription *) tableWithOid: (Oid) anOid;
 - (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
+- (NSSet *) typesWithOids: (const Oid *) oidArray;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 @end
@@ -48,7 +49,6 @@
 @interface PGTSDatabaseDescriptionProxy : PGTSAbstractDescriptionProxy <PGTSDatabaseDescription>
 {
 	NSMutableDictionary* mTables;
-	NSMutableDictionary* mTypes;
 	NSMutableDictionary* mSchemas;
 	//FIXME: roles?
 }

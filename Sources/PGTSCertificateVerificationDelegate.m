@@ -49,6 +49,7 @@
 }
 
 /**
+ * Verify an OpenSSL X.509 certificate.
  * Get the X.509 certificate from OpenSSL, encode it in DER format and let Security framework parse it again.
  * This way, we can use the Keychain to verify the certificate, since a CA trusted by the OS or the user
  * might have signed it or the user could have stored the certificate earlier. The preverification result
@@ -86,6 +87,7 @@
 }
 
 /**
+ * Create a trust.
  * To verify a certificate, we need to
  * create a trust. To create a trust, we need to find search policies.
  */
@@ -134,6 +136,7 @@
 }
 	
 /**
+ * Get search policies.
  * To find search policies, we need to create
  * a search criteria. To create a search criteria, we need to give the criteria creation function some constants.
  */

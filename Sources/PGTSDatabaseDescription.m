@@ -43,7 +43,6 @@
 @implementation PGTSDatabaseDescriptionProxy
 - (void) dealloc
 {
-	[mTypes release];
 	[mTables release];
 	[mSchemas release];
 	[super dealloc];
@@ -84,21 +83,17 @@
 	return PGTSNilReturn (retval);
 }
 
+- (NSSet *) typesWithOids: (const Oid *) oidVector
+{
+	[[[self invocationRecorder] record] typesWithOids: oidVector];
+	id retval = [self performSynchronizedAndGetProxy];
+	return retval;
+}
+
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid
 {
-	if (! mTypes)
-		mTypes = [[NSMutableDictionary alloc] init];
-	
-	//Get the cached proxy or create one.
-	id key = PGTSOidAsObject (anOid);
-	id retval = [mTypes objectForKey: key];
-	if (! retval)
-	{
-		[[[self invocationRecorder] record] typeWithOid: anOid];
-		retval = [self performSynchronizedAndGetProxy] ?: [NSNull null];
-		[mTypes setObject: retval forKey: key];
-	}
-	return PGTSNilReturn (retval);
+	Oid oidVector[] = {anOid, InvalidOid};
+	return [[self typesWithOids: oidVector] anyObject];
 }
 
 - (PGTSRoleDescription *) roleNamed: (NSString *) name
@@ -151,24 +146,6 @@
 	return retval;
 }
 
-- (id) addDescriptionFor: (Oid) oidValue class: (Class) c toContainer: (NSMutableDictionary *) aDict
-{
-    id retval = nil;
-    if (InvalidOid != oidValue)
-    {
-        id oidObject = PGTSOidAsObject (oidValue);
-        retval = [aDict objectForKey: oidObject];
-        if (! retval)
-        {
-            retval = [[c alloc] init];
-            [retval setOid: oidValue];
-            [aDict setObject: retval forKey: oidObject];
-            [retval release];
-        }
-    }
-    return retval;
-}
-
 - (BOOL) schemaExists: (NSString *) schemaName
 {
 	id schema = [mSchemas objectForKey: schemaName];
@@ -207,14 +184,78 @@
     [super dealloc];
 }
 
-- (PGTSTableDescription *) tableWithOid: (Oid) anOid
+- (PGTSTableDescription *) tableWithOid: (Oid) oidValue
 {
-    return [self addDescriptionFor: anOid class: [PGTSTableDescription class] toContainer: mTables];
+	id retval = nil;
+    if (InvalidOid != oidValue)
+    {
+        id oidObject = PGTSOidAsObject (oidValue);
+        retval = [mTables objectForKey: oidObject];
+        if (! retval)
+        {
+            retval = [[PGTSTableDescription alloc] init];
+            [retval setOid: oidValue];
+            [mTables setObject: retval forKey: oidObject];
+            [retval release];
+        }
+    }
+    return retval;	
 }
 
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid
 {
-    return [self addDescriptionFor: anOid class: [PGTSTypeDescription class] toContainer: mTypes];
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSDatabaseDescription typeWithOid:] called." userInfo: nil] raise];
+	return nil;
+}
+
+- (NSSet *) typesWithOids: (const Oid *) oidVector
+{
+	NSMutableSet* retval = [NSMutableSet set];
+	NSMutableArray* fetched = nil;
+	while (InvalidOid != *oidVector) 
+	{
+		id oid = PGTSOidAsObject (*oidVector);
+		id type = [mTypes objectForKey: oid];
+		if (type)
+			[retval addObject: type];
+		else
+		{
+			if (! fetched)
+				fetched = [NSMutableArray array];
+			[fetched addObject: oid];
+		}
+		oidVector++;
+	}
+	
+	if (0 < [fetched count])
+	{
+		NSString* query = @"SELECT oid, typname, typnamespace, nspname, typelem, typdelim "
+		@"FROM pg_type t, pg_namespace n WHERE t.oid IN $1 AND t.typnamespace = n.oid";
+		PGTSResultSet* res = [mConnection executeQuery: query parameters: fetched];
+		[res setDeterminesFieldClassesAutomatically: NO];
+		[res setClass: [NSNumber class] forKey: @"oid"];
+		[res setClass: [NSString class] forKey: @"typname"];
+		[res setClass: [NSString class] forKey: @"typnamespace"];
+		[res setClass: [NSString class] forKey: @"nspname"];
+		[res setClass: [NSNumber class] forKey: @"typelem"];
+		[res setClass: [NSString class] forKey: @"typdelim"];
+		
+		while ([res advanceRow])
+		{
+			PGTSTypeDescription* type = [[PGTSTypeDescription alloc] init];
+			[mTypes setObject: type forKey: [res valueForKey: @"oid"]];
+			[retval addObject: type];
+			[type release];
+			
+			[type setOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+			[type setName: [res valueForKey: @"typname"]];
+			[type setSchemaOid: [[res valueForKey: @"typnamespace"] PGTSOidValue]];
+			[type setSchemaName: [res valueForKey: @"nspname"]];
+			[type setElementOid: [[res valueForKey: @"typelem"] PGTSOidValue]];
+			[type setDelimiter: [[res valueForKey: @"typdelim"] characterAtIndex: 0]];
+		}
+	}
+	return retval;
 }
 
 - (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName

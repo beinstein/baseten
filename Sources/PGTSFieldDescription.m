@@ -78,13 +78,10 @@
 
 - (NSString *) qualifiedName
 {
-    NSString* rval = nil;
-    if (nil == mName)
-        [self name];
+	NSString* retval = nil;
     if (nil != mName)
-        rval = [NSString stringWithFormat: @"\"%@\"", mName];
-    
-    return rval;
+        retval = [NSString stringWithFormat: @"\"%@\"", mName];
+    return retval;
 }
 
 - (int) index
