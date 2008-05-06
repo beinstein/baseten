@@ -340,7 +340,7 @@ bail:
     TSEnumerate (currentKey, e, [keys objectEnumerator])
     {
         log4AssertValueReturn ([currentKey isKindOfClass: [NSString class]],
-                               nil, @"Expected to receive only NSStrings as keys.");
+                               nil, @"Expected to receive only NSStrings as keys. Keys: %@", keys);
     }
     [self verifyPkey: pkeyFValues entity: aDesc];
 

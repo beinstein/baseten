@@ -34,6 +34,8 @@
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseObject.h"
 #import "BXObjectKeyPathExpression.h"
+#import "BXDatabaseObjectIDPrivate.h"
+#import "BXDatabaseObjectPrivate.h"
 
 
 @implementation BXForeignKey
@@ -100,6 +102,13 @@
 - (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject
 {
 	return [self predicateForEntity: dstEntity valuesInObject: anObject entityIndex: 1 objectIndex: 0];
+}
+
+- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) anObject
+{
+	NSDictionary* values = [self dstDictionaryFor: dstEntity valuesFromSrcObject: anObject];
+	BXDatabaseObjectID* retval = [BXDatabaseObjectID IDWithEntity: dstEntity primaryKeyFields: values];
+	return retval;
 }
 
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
@@ -181,13 +190,11 @@
 	log4AssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
 	
 	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
-	NSDictionary* attributes = [entity attributesByName];
 	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
 	{
 		NSString* attributeKey = [currentFieldArray objectAtIndex: ei];
 		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
-		[retval setObject: (object ? [object primitiveValueForKey: objectKey] : [NSNull null])
-				   forKey: [attributes objectForKey: attributeKey]];
+		[retval setObject: (object ? [object primitiveValueForKey: objectKey] : [NSNull null]) forKey: attributeKey];
 	}	
 	return retval;
 }

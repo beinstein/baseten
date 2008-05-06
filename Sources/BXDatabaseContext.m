@@ -2000,7 +2000,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 		NSDictionary* oldPkey = nil;
 		if (updatedPkey)
-			oldPkey = [anObject primaryKeyFieldValues];
+			oldPkey = [anObject primaryKeyFieldObjects];
 
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];

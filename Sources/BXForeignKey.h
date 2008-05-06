@@ -32,6 +32,7 @@
 
 @class BXEntityDescription;
 @class BXDatabaseObject;
+@class BXDatabaseObjectID;
 
 @interface BXForeignKey : BXAbstractDescription 
 {
@@ -49,6 +50,7 @@
 - (NSDeleteRule) deleteRule;
 - (void) setDeleteRule: (NSDeleteRule) aRule;
 
+- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) anObject;
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject;
 - (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity

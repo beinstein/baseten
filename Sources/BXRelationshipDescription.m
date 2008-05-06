@@ -170,44 +170,54 @@
 						   @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
 
 	id retval = nil;
-	NSPredicate* predicate = nil;
-	
-	if (mIsInverse)
+	//Many-to-many relationships don't call super's implementation, so we can determine from this, if we are one-to-one.
+	if (! [self isToMany] || [self isInverse])
 	{
-		//We want to select from foreign key's dst entity, which is our destination entity as well.
-		predicate = [mForeignKey predicateForDstEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
+		BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: [self destinationEntity] fromObject: aDatabaseObject];
+		retval = [[aDatabaseObject databaseContext] registeredObjectWithID: objectID];
 	}
-	else
-	{
-		//We want to select from foreign key's src entity, which is our destination entity.
-		predicate = [mForeignKey predicateForSrcEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
-	}
-    
-    if (nil != mPredicate)
-    {
-        predicate = [NSCompoundPredicate andPredicateWithSubpredicates:
-            [NSArray arrayWithObjects: predicate, mPredicate, nil]];
-    }
 	
-	//Expression order matters since foreign key is always in src table or view.
-	id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
-														withPredicate: predicate 
-													  returningFaults: YES
-													  excludingFields: nil
-														returnedClass: [BXSetRelationProxy class]
-																error: error];
-	[res setRelationship: self];
-	[res setOwner: aDatabaseObject];
-	[res setKey: [self name]];
-	
-	if ([self isToMany])
-		retval = res;
-	else
+	if (! retval)
 	{
-		if (0 < [res count])
-			retval = [res anyObject];
+		NSPredicate* predicate = nil;
+		if (mIsInverse)
+		{
+			//FIXME: this might not be necessary since we already try using the object ID above.
+			//We want to select from foreign key's dst entity, which is our destination entity as well.
+			predicate = [mForeignKey predicateForDstEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
+		}
 		else
-			retval = [NSNull null];
+		{
+			//We want to select from foreign key's src entity, which is our destination entity.
+			predicate = [mForeignKey predicateForSrcEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
+		}
+		
+		if (nil != mPredicate)
+		{
+			predicate = [NSCompoundPredicate andPredicateWithSubpredicates:
+						 [NSArray arrayWithObjects: predicate, mPredicate, nil]];
+		}
+		
+		//Expression order matters since foreign key is always in src table or view.
+		id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
+															withPredicate: predicate 
+														  returningFaults: YES
+														  excludingFields: nil
+															returnedClass: [BXSetRelationProxy class]
+																	error: error];
+		[res setRelationship: self];
+		[res setOwner: aDatabaseObject];
+		[res setKey: [self name]];
+		
+		if ([self isToMany])
+			retval = res;
+		else
+		{
+			if (0 < [res count])
+				retval = [res anyObject];
+			else
+				retval = [NSNull null];
+		}		
 	}
 	return retval;
 }

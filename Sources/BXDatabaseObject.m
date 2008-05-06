@@ -1058,13 +1058,25 @@ ParseSelector (SEL aSelector, NSString** key)
     return retval;
 }
 
-- (NSDictionary *) primaryKeyFieldValues
+- (NSDictionary *) primaryKeyFieldObjects
 {
-    NSArray* pkeyFields = [[[self objectID] entity] primaryKeyFields];
+    NSArray* pkeyFields = [[self entity] primaryKeyFields];
     NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [pkeyFields count]];
     TSEnumerate (currentKey, e, [pkeyFields objectEnumerator])
         [retval setObject: [self cachedValueForKey: [currentKey name]] forKey: currentKey];
     return retval;
+}
+
+- (NSDictionary *) primaryKeyFieldValues
+{
+	NSDictionary* attrs = [[self entity] attributesByName];
+    NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [attrs count]];
+	TSEnumerate (currentKey, e, [attrs keyEnumerator])
+	{
+		if ([[attrs objectForKey: currentKey] isPrimaryKey])
+			[retval setObject: [self cachedValueForKey: currentKey] forKey: currentKey];
+	}
+	return retval;
 }
 
 - (void) removeFromCache: (NSString *) aKey postingKVONotifications: (BOOL) posting
