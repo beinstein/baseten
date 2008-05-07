@@ -41,8 +41,8 @@
 - (PGTSIndexDescription *) primaryKey;
 - (PGTSFieldDescription *) fieldAtIndex: (int) anIndex;
 - (NSDictionary *) fields;
-- (NSSet *) foreignKeys;
-- (NSSet *) referencingForeignKeys;
+//- (NSSet *) foreignKeys;
+//- (NSSet *) referencingForeignKeys;
 @end
 
 
@@ -72,6 +72,6 @@
 
 - (void) setUniqueIndexes: (NSArray *) anArray;
 
-- (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource;
+//- (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource;
 - (NSArray *) relationOidsBasedOn;
 @end

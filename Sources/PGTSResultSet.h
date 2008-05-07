@@ -48,6 +48,7 @@
 - (id) valueForKey: (NSString *) aName row: (int) rowIndex;
 - (BOOL) setClass: (Class) aClass forKey: (NSString *) aName;
 - (BOOL) setClass: (Class) aClass forFieldAtIndex: (int) fieldIndex;
+- (PGresult *) PGresult;
 
 - (BOOL) isAtEnd;
 - (int) currentRow;
@@ -63,6 +64,7 @@
 - (int) identifier;
 - (void) setIdentifier: (int) anIdentifier;
 - (NSError *) error;
+- (NSString *) errorMessage;
 
 - (void) setDeterminesFieldClassesAutomatically: (BOOL) aBool;
 @end

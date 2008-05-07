@@ -34,7 +34,7 @@
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
 #import "PGTSDatabaseDescription.h"
-#import "PGTSForeignKeyDescription.h"
+//#import "PGTSForeignKeyDescription.h"
 #import "PGTSHOM.h"
 
 
@@ -151,6 +151,7 @@ PrimaryKey (NSArray* uIndexes)
     }
 }
 
+#if 0
 - (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource
 {
     PGTSTableDescription* src = nil;
@@ -194,6 +195,7 @@ PrimaryKey (NSArray* uIndexes)
     }
     return retval;
 }
+#endif
 
 - (Class) proxyClass
 {
@@ -318,6 +320,7 @@ PrimaryKey (NSArray* uIndexes)
 	return PrimaryKey ([self uniqueIndexes]);
 }
 
+#if 0
 - (NSSet *) foreignKeys
 {
     if (! mForeignKeys)
@@ -361,6 +364,7 @@ PrimaryKey (NSArray* uIndexes)
     }
     return mReferencingForeignKeys;
 }
+#endif
 
 - (NSArray *) relationOidsBasedOn
 {

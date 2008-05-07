@@ -233,14 +233,24 @@ ErrorUserInfoKey (char fieldCode)
 {
 	mKnowsFieldClasses = YES;
     
-    PGTSDatabaseDescription* db = [mConnection databaseDescription];
+	Oid* oidVector = (Oid *) calloc (mFields + 1, sizeof (Oid));
+	for (int i = 0; i < mFields; i++)
+		oidVector [i] = PQftype (mResult, i);
+	oidVector [mFields] = InvalidOid;
+
+	PGTSDatabaseDescription* db = [mConnection databaseDescription];
+	//Warm-up the cache.
+	[db typesWithOids: oidVector];
+	free (oidVector);
+	oidVector = NULL;
+	
     NSDictionary* deserializationDictionary = [mConnection deserializationDictionary];
     for (int i = 0; i < mFields; i++)
     {
         PGTSTypeDescription* type = [db typeWithOid: PQftype (mResult, i)];
         NSString* name = [type name];
         [self setClass: [deserializationDictionary objectForKey: name] forFieldAtIndex: i];
-    }
+    }	
 }
 
 - (int) numberOfFields
@@ -271,6 +281,11 @@ ErrorUserInfoKey (char fieldCode)
 - (void) setIdentifier: (int) anIdentifier
 {
     mIdentifier = anIdentifier;
+}
+
+- (NSString *) errorMessage
+{
+	return [NSString stringWithUTF8String: PQresultErrorMessage (mResult)];
 }
 
 - (NSError *) error
@@ -331,6 +346,11 @@ ErrorUserInfoKey (char fieldCode)
         if (objectValue && key) [userInfo setObject: objectValue forKey: key];
     }
     return [NSError errorWithDomain: kPGTSErrorDomain code: kPGTSUnsuccessfulQueryError userInfo: userInfo];
+}
+
+- (PGresult *) PGresult
+{
+	return mResult;
 }
 
 @end

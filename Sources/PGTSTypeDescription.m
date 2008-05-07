@@ -55,7 +55,7 @@
 	@synchronized (self)
 	{
     	retval = [NSString stringWithFormat: @"%@ (%p) oid: %u sOid: %u sName: %@ t: %@ eOid: %u d: %c", 
-				  [self class], self, mOid, mSchemaOid, mElementOid, mName, mSchemaName, mDelimiter];
+				  [self class], self, mOid, mSchemaOid, mSchemaName, mName, mElementOid, mDelimiter];
 	}
 	return retval;
 }

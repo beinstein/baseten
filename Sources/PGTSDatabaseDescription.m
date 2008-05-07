@@ -86,14 +86,15 @@
 - (NSSet *) typesWithOids: (const Oid *) oidVector
 {
 	[[[self invocationRecorder] record] typesWithOids: oidVector];
-	id retval = [self performSynchronizedAndGetProxy];
+	id retval = [self performSynchronizedAndReturnObject];
 	return retval;
 }
 
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid
 {
 	Oid oidVector[] = {anOid, InvalidOid};
-	return [[self typesWithOids: oidVector] anyObject];
+	id retval = [[self typesWithOids: oidVector] anyObject];
+	return PGTSNilReturn (retval);
 }
 
 - (PGTSRoleDescription *) roleNamed: (NSString *) name
@@ -229,25 +230,28 @@
 	
 	if (0 < [fetched count])
 	{
-		NSString* query = @"SELECT oid, typname, typnamespace, nspname, typelem, typdelim "
-		@"FROM pg_type t, pg_namespace n WHERE t.oid IN $1 AND t.typnamespace = n.oid";
+		NSString* query = @"SELECT t.oid, typname, typnamespace, nspname, typelem, typdelim "
+		@"FROM pg_type t, pg_namespace n WHERE t.oid = ANY ($1) AND t.typnamespace = n.oid";
 		PGTSResultSet* res = [mConnection executeQuery: query parameters: fetched];
 		[res setDeterminesFieldClassesAutomatically: NO];
 		[res setClass: [NSNumber class] forKey: @"oid"];
 		[res setClass: [NSString class] forKey: @"typname"];
-		[res setClass: [NSString class] forKey: @"typnamespace"];
+		[res setClass: [NSNumber class] forKey: @"typnamespace"];
 		[res setClass: [NSString class] forKey: @"nspname"];
 		[res setClass: [NSNumber class] forKey: @"typelem"];
 		[res setClass: [NSString class] forKey: @"typdelim"];
-		
+				
 		while ([res advanceRow])
 		{
-			PGTSTypeDescription* type = [[PGTSTypeDescription alloc] init];
-			[mTypes setObject: type forKey: [res valueForKey: @"oid"]];
+			//Oid needs to be fetched manually because we the system doesn't know its type yet.
+			PGTSTypeDescription* type = [[PGTSTypeDescription alloc] init];			
+			char* oidString = PQgetvalue ([res PGresult], [res currentRow], 0);
+			long long oid = strtoll (oidString, NULL, 10);
+			[type setOid: oid];
+			[mTypes setObject: type forKey: PGTSOidAsObject (oid)];
 			[retval addObject: type];
-			[type release];
+			[type release];			
 			
-			[type setOid: [[res valueForKey: @"oid"] PGTSOidValue]];
 			[type setName: [res valueForKey: @"typname"]];
 			[type setSchemaOid: [[res valueForKey: @"typnamespace"] PGTSOidValue]];
 			[type setSchemaName: [res valueForKey: @"nspname"]];

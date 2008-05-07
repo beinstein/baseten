@@ -35,6 +35,11 @@
 #import "PGTSDatabaseDescription.h"
 
 
+//FIXME: implement this.
+@implementation PGTSRoleDescriptionProxy
+@end
+
+
 @implementation PGTSRoleDescription
 
 - (void) dealloc
@@ -42,11 +47,6 @@
     [mRoles release];
     [super dealloc];
 }
-
-@end
-
-
-@implementation PGTSRoleDescription (Queries)
 
 /** 
  * Check if given role is member of self.

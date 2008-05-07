@@ -29,6 +29,23 @@
 #import "PGTSIndexDescription.h"
 
 
+//FIXME: implement this.
+@implementation PGTSIndexDescriptionProxy
+- (PGTSTableDescription *) table
+{
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSIndexDescriptionProxy table:] called." userInfo: nil] raise];
+	return nil;
+}
+
+- (NSSet *) fields
+{
+	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSIndexDescriptionProxy fields:] called." userInfo: nil] raise];
+	return nil;
+}
+
+@end
+
+
 /** 
  * Table index
  */

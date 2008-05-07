@@ -327,11 +327,12 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
                 }
                 AppendBytes (impl, contents, ",", 1);
             }
-            [contents replaceBytesInRange: NSMakeRange ([contents length] - 1, 1) withBytes: "}\0" length: 2]; 
-            retval = (char *) [contents bytes];
-            if (outLength)
-                *outLength = [contents length];
         }
+		[contents replaceBytesInRange: NSMakeRange ([contents length] - 1, 1) withBytes: "}\0" length: 2]; 
+		retval = (char *) [contents bytes];
+		if (outLength)
+			*outLength = [contents length];
+		
     }
     return retval;
 }

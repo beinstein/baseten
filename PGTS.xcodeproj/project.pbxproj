@@ -30,6 +30,8 @@
 		5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
 		5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
 		53594D1C0B13711300378707 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
+		5368B0F80DD110A50012D425 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; };
+		5368B0F90DD110A50012D425 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
 		5374B1710DC3470C0019A863 /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 5374B16F0DC3470C0019A863 /* PGTSHOM.h */; };
 		5374B1720DC3470C0019A863 /* PGTSHOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374B1700DC3470C0019A863 /* PGTSHOM.m */; };
 		5374B1730DC3470C0019A863 /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 5374B16F0DC3470C0019A863 /* PGTSHOM.h */; };
@@ -532,6 +534,7 @@
 				53E18B490DB3E9840094066F /* PGTSFunctions.h in Headers */,
 				5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
 				5374B1710DC3470C0019A863 /* PGTSHOM.h in Headers */,
+				5368B0F80DD110A50012D425 /* PGTSRoleDescription.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -727,6 +730,7 @@
 				53E18B220DB370C50094066F /* PGTSAbstractClassDescription.m in Sources */,
 				53E18B4A0DB3E9850094066F /* PGTSFunctions.m in Sources */,
 				5374B1720DC3470C0019A863 /* PGTSHOM.m in Sources */,
+				5368B0F90DD110A50012D425 /* PGTSRoleDescription.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
