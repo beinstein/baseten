@@ -2,10 +2,10 @@
 // BXConstants.h
 // BaseTen
 //
-// Copyright (C) 2007 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+// by visiting http://basetenframework.org/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
