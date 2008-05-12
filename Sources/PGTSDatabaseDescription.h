@@ -67,6 +67,7 @@
 }
 
 + (id) databaseForConnection: (PGTSConnection *) connection;
+- (id) proxyForConnection: (PGTSConnection *) connection;
 - (BOOL) schemaExists: (NSString *) schemaName;
 
 //FIXME: private.

@@ -37,8 +37,8 @@
 #import "PGTSResultSet.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSFunctions.h"
-#import <tr1/unordered_set>
-#import <stdlib.h>
+#import "PGTSConnectionMonitor.h"
+#import <AppKit/AppKit.h>
 
 //FIXME: enable logging.
 #define log4AssertLog(...) 
@@ -46,14 +46,36 @@
 #define log4AssertValueReturn(...)
 
 
-typedef std::tr1::unordered_set <PGTSConnection *, ObjectHash, ObjectCompare <id> > ConnectionHash;
-static ConnectionHash* gConnections = NULL;
-static NSLock* gConnectionSetLock = nil;
-
-
-@interface NSObject (PGTSAppKitCompatibility)
-- (id) sharedApplication;
+@interface PGTSConnectionLostRecoveryAttempter : NSObject
+{
+	@public
+	PGTSConnection* mConnection;
+}
+- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex;
+- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex
+						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo;
 @end
+
+
+@implementation PGTSConnectionLostRecoveryAttempter
+- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex
+{
+	//FIXME: come up with a way to get the connection string.
+	//FIXME: use reconnect if needed.
+	return [mConnection connectSync: nil];
+}
+
+- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex
+						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
+{
+	//FIXME: come up with a way to get the connection string.
+	//FIXME: use reconnect if needed.
+	[mConnection connectAsync: nil];
+	
+	//FIXME: come up with a way to get the connection notification back to the delegate etc.
+}
+@end
+
 
 
 @implementation PGTSConnection
@@ -73,63 +95,16 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	}
 }
 
-static void
-ProcessWillExit ()
-{
-    [gConnectionSetLock lock];
-    ConnectionHash::iterator iterator = gConnections->begin ();
-    while (gConnections->end () != iterator)
-    {
-        [*iterator disconnect];
-        iterator++;
-    }
-    [gConnectionSetLock unlock];
-    
-    delete gConnections;
-    [gConnectionSetLock release];
-}
-
-+ (void) initialize
-{
-    static BOOL tooLate = NO;
-    if (! tooLate)
-    {
-        tooLate = YES;        
-        if (! NSClassFromString (@"NSApplication"))
-        {
-            gConnections = new ConnectionHash ();
-            gConnectionSetLock = [[NSLock alloc] init];
-            atexit (&ProcessWillExit);
-        }
-    }
-}
 
 - (id) init
 {
 	if ((self = [super init]))
 	{
 		mQueue = [[NSMutableArray alloc] init];
-        
-        Class applicationClass = NSClassFromString (@"NSApplication");
-        if (applicationClass)
-        {
-            id application = [applicationClass sharedApplication];
-            [[NSNotificationCenter defaultCenter] addObserver: self selector: @selector (applicationWillTerminate:)
-                                                         name: @"NSApplicationWillTerminateNotification" object: application];
-        }
-        else
-        {
-            [gConnectionSetLock lock];
-            gConnections->insert (self);
-            [gConnectionSetLock unlock];
-        }
+		mCertificateVerificationDelegate = [PGTSCertificateVerificationDelegate defaultCertificateVerificationDelegate];
+		[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
 	}
 	return self;
-}
-
-- (void) applicationWillTerminate: (NSNotification *) n
-{
-    [self disconnect];
 }
 
 - (void) freeCFTypes
@@ -163,6 +138,7 @@ ProcessWillExit ()
 	[self setConnector: nil];
     [mNotificationCenter release];
     [mDatabase release];
+	[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
     [self freeCFTypes];
 	[super dealloc];
 }
@@ -174,14 +150,25 @@ ProcessWillExit ()
     [super finalize];
 }
 
-- (BOOL) connectAsync: (NSString *) connectionString
+- (BOOL) connectUsingClass: (Class) connectorClass connectionString: (NSString *) connectionString
 {
-	PGTSConnector* connector = [[PGTSConnector alloc] init];
+	PGTSConnector* connector = [[connectorClass alloc] init];
 	[self setConnector: connector];
 	[connector release];
 	
 	[connector setDelegate: self];
+	[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
 	return [connector connect: [connectionString UTF8String]];
+}
+
+- (BOOL) connectAsync: (NSString *) connectionString
+{
+	return [self connectUsingClass: [PGTSAsynchronousConnector class] connectionString: connectionString];
+}
+
+- (BOOL) connectSync: (NSString *) connectionString
+{
+	return [self connectUsingClass: [PGTSSynchronousConnector class] connectionString: connectionString];
 }
 
 - (void) disconnect
@@ -270,6 +257,8 @@ ProcessWillExit ()
 	{
 		log4AssertVoidReturn (! [desc sent], @"Expected %@ not to have been sent.", desc);	
 		retval = [desc sendForConnection: self];
+		
+		[self checkConnectionStatus];
 	}
     return retval;
 }
@@ -297,13 +286,12 @@ ProcessWillExit ()
     return mDatabase;
 }
 
-//FIXME: this needs some attention.
 - (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc
 {
     if (mDatabase != aDesc)
     {
         [mDatabase release];
-        mDatabase = [aDesc retain];
+		mDatabase = [[aDesc proxyForConnection: self] retain];
     }
 }
 
@@ -337,6 +325,40 @@ ProcessWillExit ()
 	return [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
 }
 
+- (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate
+{
+	return mCertificateVerificationDelegate;
+}
+
+- (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject
+{
+	mCertificateVerificationDelegate = anObject;
+	if (! mCertificateVerificationDelegate)
+		mCertificateVerificationDelegate = [PGTSCertificateVerificationDelegate defaultCertificateVerificationDelegate];
+}
+
+- (void) applicationWillTerminate: (NSNotification *) n
+{
+    [self disconnect];
+}
+
+- (void) workspaceWillSleep: (NSNotification *) n
+{
+	[self disconnect];
+	mDidDisconnectOnSleep = YES;
+}
+
+- (void) workspaceDidWake: (NSNotification *) n
+{
+	if (mDidDisconnectOnSleep)
+	{
+		mDidDisconnectOnSleep = NO;
+		if ([mDelegate respondsToSelector: @selector (PGTSConnectionLost:error:)])
+			[mDelegate PGTSConnectionLost: self error: nil]; //FIXME: set the error.
+		else
+			[NSApp presentError: nil]; //FIXME: set the error.
+	}
+}
 @end
 
 
@@ -383,9 +405,14 @@ ProcessWillExit ()
 	}
 	else
 	{
-		//FIXME: handle the error.
+		[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
         [mDelegate PGTSConnectionFailed: self];
 	}
+}
+
+- (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate
+{
+	return mCertificateVerificationDelegate;
 }
 @end
 
@@ -425,7 +452,6 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 
 - (PGTSResultSet *) executeQuery: (NSString *) queryString parameterArray: (NSArray *) parameters
 {
-    //FIXME: when executing, perhaps we should insert the new query into the queue's beginning? The results would be handled in a more intuitive order.
     PGTSResultSet* retval = nil;
     [self sendQuery: queryString delegate: nil callback: NULL parameterArray: parameters];
     while (0 < [mQueue count])

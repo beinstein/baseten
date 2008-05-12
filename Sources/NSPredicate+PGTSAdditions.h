@@ -28,10 +28,6 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSComparisonPredicate (PGTSAdditions)
-- (NSString *) PGTSOperator;
-@end
-
 
 @interface NSPredicate (PGTSAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context;

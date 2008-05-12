@@ -26,11 +26,9 @@
 // $Id$
 //
 
-#import <PGTS/PGTS.h>
-#import <PGTS/PGTSFunctions.h>
-
+#import "PGTSFunctions.h"
+#import "PGTSAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
-#import "PGTSTigerConstants.h"
 
 
 @interface NSObject (PGTSTigerAdditions)
@@ -42,14 +40,14 @@ static NSString*
 AddParameter (id parameter, NSMutableDictionary* context)
 {
     NSCAssert (nil != context, @"Expected context not to be nil");
-    NSString* rval = nil;
+    NSString* retval = nil;
 	if (nil == parameter)
 		parameter = [NSNull null];
 	
 	if (YES == [[context objectForKey: kPGTSExpressionParametersVerbatimKey] boolValue])
 	{
 		PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-		rval = [NSString stringWithFormat: @"'%@'", [parameter PGTSEscapedObjectParameter: connection]];
+		retval = [NSString stringWithFormat: @"'%@'", [parameter PGTSEscapedObjectParameter: connection]];
 	}
 	else
 	{
@@ -72,13 +70,13 @@ AddParameter (id parameter, NSMutableDictionary* context)
 		}
 		[parameters insertObject: parameter atIndex: index];
 		
-		//Return the index used in the query
+		//Return the index used in the query.
 		int count = index + 1;
 		NSCAssert4 ([parameters count] == count, @"Expected count to be %d, was %d.\n\tparameter:\t%@ \n\tcontext:\t%@", 
 					[parameters count], count, parameter, context);
-		rval = [NSString stringWithFormat: @"$%d", count];
+		retval = [NSString stringWithFormat: @"$%d", count];
 	}
-	return rval;
+	return retval;
 }
 
 
@@ -103,23 +101,7 @@ EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
 
 @implementation NSExpression (PGTSAdditions)
 
-+ (NSDictionary *) PGTSAggregateNameConversionDictionary
-{
-    static BOOL tooLate = NO;
-    static NSMutableDictionary* conversionDictionary = nil;
-    if (NO == tooLate)
-    {
-        conversionDictionary = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-            @"sum", @"sum",
-            @"avg", @"avg",
-            @"count", @"count",
-            @"min", @"min",
-            @"max", @"max",
-            nil];
-    }
-    return conversionDictionary;
-}
-
+#if 0
 + (NSDictionary *) PGTSFunctionNameConversionDictionary
 {
     static BOOL tooLate = NO;
@@ -134,38 +116,40 @@ EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
     }
     return conversionDictionary;    
 }
+#endif
 
 - (id) PGTSValueWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
-    id rval = nil;
-    switch ([self expressionType])
+    id retval = nil;
+	NSExpressionType type = [self expressionType];
+    switch (type)
     {
         case NSConstantValueExpressionType:
         {
             id constantValue = [self constantValue];
             if (YES == [constantValue respondsToSelector: @selector (PGTSConstantExpressionValue:)])
             {
-                rval = [constantValue PGTSConstantExpressionValue: context];
+                retval = [constantValue PGTSConstantExpressionValue: context];
                 break;
             }
-            //Otherwise continue
+            //Otherwise continue.
         }
             
         case NSEvaluatedObjectExpressionType:
         case NSVariableExpressionType:
 		{
-            //default behaviour unless the expression evaluates into a key path expression
+            //default behaviour unless the expression evaluates into a key path expression.
 			id evaluated = [self expressionValueWithObject: anObject context: context];
 			if ([evaluated isKindOfClass: [NSExpression class]] && [evaluated expressionType] == NSKeyPathExpressionType)
 			{
-                //Simple dividing into components for now
+                //Simple dividing into components for now.
 				PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-				rval = EscapedKeyPath ([evaluated keyPath], connection);
+				retval = EscapedKeyPath ([evaluated keyPath], connection);
                 break;
 			}
 			else
 			{
-				rval = AddParameter (evaluated, context);
+				retval = AddParameter (evaluated, context);
 				break;
 			}
 		}
@@ -173,7 +157,7 @@ EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
         case NSKeyPathExpressionType:
         {
 			PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-			rval = EscapedKeyPath ([self keyPath], connection);
+			retval = EscapedKeyPath ([self keyPath], connection);
             break;
             
             //FIXME: this is for functions, which we don't support.
@@ -194,24 +178,23 @@ EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
                 parameter = [NSString stringWithFormat: format, currentFunction, parameter];
             }
             
-            rval = parameter;
+            retval = parameter;
             break;
 #endif
         }
-            
+         
         case NSFunctionExpressionType:
-            //Convert to an aggregate function usable with PostgreSQL
-            //Throw an exception if unknown
-            rval = [NSString stringWithFormat: @"%@ (%@)",
-                [[[self class] PGTSAggregateNameConversionDictionary] valueForKey: [self function]],
-                AddParameter ([[self operand] PGTSValueWithObject: anObject context: context], context)];
-            break;
+			//FIXME: make this work.
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+		case NSAggregateExpressionType:
+			//FIXME: make this work.
+#endif
             
         default:
-            //FIXME: throw an exception
+			[NSException raise: NSInvalidArgumentException format: @"Unsupported expression type: %d.", type];
             break;
     }
-    return rval;
+    return retval;
 }
 
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection

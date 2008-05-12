@@ -147,6 +147,11 @@
 	return retval;
 }
 
+- (id) proxyForConnection: (PGTSConnection *) connection
+{
+	return [[[[self proxyClass] alloc] initWithConnection: connection description: self] autorelease];
+}
+
 - (BOOL) schemaExists: (NSString *) schemaName
 {
 	id schema = [mSchemas objectForKey: schemaName];

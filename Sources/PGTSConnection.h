@@ -30,6 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h>
 #import <PGTS/PGTSConnector.h>
+#import <PGTS/PGTSCertificateVerificationDelegate.h>
 @class PGTSConnection;
 @class PGTSResultSet;
 @class PGTSConnector;
@@ -41,6 +42,7 @@
 @protocol PGTSConnectionDelegate <NSObject>
 - (void) PGTSConnectionFailed: (PGTSConnection *) connection;
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection;
+- (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error;
 @end
 
 
@@ -52,22 +54,29 @@
     NSNotificationCenter* mNotificationCenter;
     PGTSDatabaseDescription* mDatabase;
     NSMutableDictionary* mPGTypes;
+	id <PGTSCertificateVerificationDelegate> mCertificateVerificationDelegate;
     
     CFRunLoopRef mRunLoop;
     CFSocketRef mSocket;
     CFRunLoopSourceRef mSocketSource;
     
     id mDelegate;
+	
+	BOOL mDidDisconnectOnSleep;
 }
 - (id) init;
 - (void) dealloc;
 - (BOOL) connectAsync: (NSString *) connectionString;
+- (BOOL) connectSync: (NSString *) connectionString;
 - (void) disconnect;
 - (void) setDelegate: (id <PGTSConnectionDelegate>) anObject;
 - (PGTSDatabaseDescription *) databaseDescription;
 - (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc;
 - (id) deserializationDictionary;
 - (NSString *) errorString;
+
+- (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
+- (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;
 @end
 
 

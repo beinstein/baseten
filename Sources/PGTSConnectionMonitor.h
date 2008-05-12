@@ -1,5 +1,5 @@
 //
-// PGTSConnector.h
+// PGTSConnectionMonitor.h
 // BaseTen
 //
 // Copyright (C) 2008 Marko Karppinen & Co. LLC.
@@ -27,53 +27,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/postgresql/libpq-fe.h>
-
-@class PGTSConnector;
+@class PGTSConnection;
 
 
-@protocol PGTSConnectorDelegate <NSObject>
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
-@end
-
-
-@interface PGTSConnector : NSObject
-{
-	id <PGTSConnectorDelegate> mDelegate;
-	PostgresPollingStatusType (* mPollFunction)(PGconn *);
-}
-- (BOOL) connect: (const char *) connectionString;
-- (void) cancel;
-- (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
-@end
-
-
-@interface PGTSAsynchronousConnector : PGTSConnector
-{
-	CFRunLoopRef mRunLoop;
-	CFSocketRef mSocket;
-	CFRunLoopSourceRef mSocketSource;
-	PGconn* mConnection;
-	BOOL mSSLSetUp;
-}
-- (void) socketReady;
-- (void) finishedConnecting: (BOOL) succeeded;
-@end
-
-
-@interface PGTSSynchronousConnector : PGTSConnector
+@interface PGTSConnectionMonitor : NSObject 
 {
 }
-@end
-
-
-@interface PGTSAsynchronousReconnector : PGTSAsynchronousConnector
-{
-}
-@end
-
-
-@interface PGTSSynchronousReconnector : PGTSSynchronousConnector
-{
-}
++ (id) sharedInstance;
+- (void) monitorConnection: (PGTSConnection *) connection;
+- (void) unmonitorConnection: (PGTSConnection *) connection;
 @end

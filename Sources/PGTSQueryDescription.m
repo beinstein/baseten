@@ -169,17 +169,17 @@ NextIdentifier ()
 
 - (int) sendForConnection: (PGTSConnection *) connection
 {
-    int retval = [mQuery sendQuery: connection];
-	mSent = YES;
-    return retval;
+    return [mQuery sendQuery: connection];
 }
 
 - (PGTSResultSet *) receiveForConnection: (PGTSConnection *) connection
 {
-    NSAssert1 ([self sent], @"Expected %@ to have been sent.", self);
     PGTSResultSet* retval = nil;
     PGconn* pgConn = [connection pgConnection];
     PGresult* result = PQgetResult (pgConn);
+	if (CONNECTION_BAD != PQstatus (pgConn))
+		mSent = YES;
+	
     if (result)
     {
         retval = [PGTSResultSet resultWithPGresult: result connection: connection];

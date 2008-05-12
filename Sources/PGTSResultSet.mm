@@ -283,7 +283,7 @@ ErrorUserInfoKey (char fieldCode)
     mIdentifier = anIdentifier;
 }
 
-- (NSString *) errorMessage
+- (NSString *) errorString
 {
 	return [NSString stringWithUTF8String: PQresultErrorMessage (mResult)];
 }

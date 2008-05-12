@@ -28,12 +28,12 @@
 
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTSFoundationObjects.h>
+#import <PGTS/postgresql/libpq-fe.h> 
 
 
 #if 0
 #import <PGTS/PGTSResultSet.h>
 #import <PGTS/PGTSResultRowProtocol.h>
-#import <PGTS/postgresql/libpq-fe.h> 
 
 @class PGTSTypeDescription;
 #endif
@@ -78,13 +78,13 @@ struct ObjectCompare <NSString *>
 @end
 
 
-#if 0
 @interface NSObject (PGTSAdditions)
 - (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection;
 - (NSString *) PGTSEscapedName: (PGTSConnection *) connection;
 - (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end
 
+#if 0
 @interface NSArray (PGTSAdditions)
 - (NSString *) PGTSFieldnames: (PGTSConnection *) connection;
 @end

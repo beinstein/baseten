@@ -32,7 +32,26 @@
 #import <openssl/ssl.h>
 
 
+__strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = nil;
+
+/**
+ * Default implementation for verifying OpenSSL X.509 certificates.
+ * This class is thread-safe.
+ */
 @implementation PGTSCertificateVerificationDelegate
+
++ (id) defaultCertificateVerificationDelegate
+{
+	if (! gDefaultCertDelegate)
+	{
+		@synchronized (self)
+		{
+			if (! gDefaultCertDelegate)
+				gDefaultCertDelegate = [[self alloc] init];
+		}
+	}
+	return gDefaultCertDelegate;
+}
 
 - (id) init
 {
@@ -145,7 +164,7 @@
 	if (nil == mPolicies)
 	{
 		OSStatus status = noErr;
-	
+		
 		mPolicies = [[NSMutableArray alloc] init];
 		int i = 0;
 		const CSSM_OID* currentOidPtr = NULL;
@@ -164,7 +183,7 @@
 			i++;
 		}
 	}
-	return mPolicies;
+	return [[mPolicies copy] autorelease];
 }
 
 @end

@@ -25,8 +25,16 @@
 		53091C4A0DAACF70005B5619 /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C420DAACF70005B5619 /* NSExpression+PGTSAdditions.m */; };
 		53091C4B0DAACF70005B5619 /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53091C430DAACF70005B5619 /* NSPredicate+PGTSAdditions.h */; };
 		53091C4C0DAACF70005B5619 /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C440DAACF70005B5619 /* NSPredicate+PGTSAdditions.m */; };
+		530F623F0DD4A32B00EA42DD /* NSExpression+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53091C410DAACF70005B5619 /* NSExpression+PGTSAdditions.h */; };
+		530F62400DD4A32C00EA42DD /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C420DAACF70005B5619 /* NSExpression+PGTSAdditions.m */; };
+		530F62470DD4A6FD00EA42DD /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53091C430DAACF70005B5619 /* NSPredicate+PGTSAdditions.h */; };
+		530F62480DD4A6FD00EA42DD /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C440DAACF70005B5619 /* NSPredicate+PGTSAdditions.m */; };
 		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
 		532BF12E0A3717BA002E6BFE /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
+		535519E90DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */; };
+		535519EA0DD7ADB40074FF01 /* PGTSConnectionMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 535519E80DD7ADB40074FF01 /* PGTSConnectionMonitor.m */; };
+		535519EB0DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */; };
+		535519EC0DD7ADB40074FF01 /* PGTSConnectionMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 535519E80DD7ADB40074FF01 /* PGTSConnectionMonitor.m */; };
 		5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
 		5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */; };
 		53594D1C0B13711300378707 /* libpq.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53594D1B0B13711300378707 /* libpq.a */; };
@@ -100,6 +108,9 @@
 		539C08D50A3706CD00CC45E0 /* PGTSConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53BA4FD808804E9F00BFAFB5 /* PGTSConnection.mm */; };
 		53D0D01F0B6F4ED000D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
 		53D0D0200B6F4ED000D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
+		53D3E2980DD47AB100F41B25 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */; };
+		53D3E2990DD47AB100F41B25 /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */; };
+		53D3E29A0DD47AB200F41B25 /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */; };
 		53E11A100A7919CE00D0107C /* ExceptionHandling.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E11A0C0A7919CE00D0107C /* ExceptionHandling.framework */; };
 		53E1899D0DB2DB600094066F /* PGTSAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F923BC08B1372F00759909 /* PGTSAbstractDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		53E1899E0DB2DB620094066F /* PGTSAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F923BD08B1372F00759909 /* PGTSAbstractDescription.m */; };
@@ -222,6 +233,8 @@
 		53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSACLItem.m; path = Sources/PGTSACLItem.m; sourceTree = "<group>"; };
 		533A6AF209DEE51700D28AB0 /* PGTSConstants.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSConstants.h; path = Sources/PGTSConstants.h; sourceTree = "<group>"; };
 		534CFECB095DCCDC00BF3440 /* Kerberos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kerberos.framework; path = /System/Library/Frameworks/Kerberos.framework; sourceTree = "<absolute>"; };
+		535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTSConnectionMonitor.h; sourceTree = "<group>"; };
+		535519E80DD7ADB40074FF01 /* PGTSConnectionMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTSConnectionMonitor.m; sourceTree = "<group>"; };
 		5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnectionPrivate.h; path = Sources/PGTSConnectionPrivate.h; sourceTree = "<group>"; };
 		53594D1B0B13711300378707 /* libpq.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpq.a; path = "PGTS-PostgreSQL/universal/lib/libpq.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		5359557C0A514DEE0008793A /* PGTSSchemaDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSchemaDescription.h; path = Sources/PGTSSchemaDescription.h; sourceTree = "<group>"; };
@@ -472,6 +485,8 @@
 				53BA4FD808804E9F00BFAFB5 /* PGTSConnection.mm */,
 				5392A85C0DAD7E190012C7CD /* PGTSConnector.h */,
 				5392A85D0DAD7E190012C7CD /* PGTSConnector.m */,
+				535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */,
+				535519E80DD7ADB40074FF01 /* PGTSConnectionMonitor.m */,
 			);
 			name = Connection;
 			sourceTree = "<group>";
@@ -535,6 +550,11 @@
 				5356066D0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
 				5374B1710DC3470C0019A863 /* PGTSHOM.h in Headers */,
 				5368B0F80DD110A50012D425 /* PGTSRoleDescription.h in Headers */,
+				53D3E2980DD47AB100F41B25 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */,
+				53D3E2990DD47AB100F41B25 /* PGTSCertificateVerificationDelegate.h in Headers */,
+				530F623F0DD4A32B00EA42DD /* NSExpression+PGTSAdditions.h in Headers */,
+				530F62470DD4A6FD00EA42DD /* NSPredicate+PGTSAdditions.h in Headers */,
+				535519EB0DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -565,6 +585,7 @@
 				5396AFA90DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */,
 				5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
 				5374B1730DC3470C0019A863 /* PGTSHOM.h in Headers */,
+				535519E90DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -731,6 +752,10 @@
 				53E18B4A0DB3E9850094066F /* PGTSFunctions.m in Sources */,
 				5374B1720DC3470C0019A863 /* PGTSHOM.m in Sources */,
 				5368B0F90DD110A50012D425 /* PGTSRoleDescription.m in Sources */,
+				53D3E29A0DD47AB200F41B25 /* PGTSCertificateVerificationDelegate.m in Sources */,
+				530F62400DD4A32C00EA42DD /* NSExpression+PGTSAdditions.m in Sources */,
+				530F62480DD4A6FD00EA42DD /* NSPredicate+PGTSAdditions.m in Sources */,
+				535519EC0DD7ADB40074FF01 /* PGTSConnectionMonitor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -758,6 +783,7 @@
 				5392A8610DAD7E190012C7CD /* PGTSConnector.m in Sources */,
 				5396AFB50DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */,
 				5374B1740DC3470C0019A863 /* PGTSHOM.m in Sources */,
+				535519EA0DD7ADB40074FF01 /* PGTSConnectionMonitor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

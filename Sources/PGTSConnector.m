@@ -27,38 +27,44 @@
 //
 
 //FIXME: enable these.
-#undef USE_SSL
 #define log4AssertValueReturn(...) 
 #define log4AssertLog(...)
-
+#define log4Debug(...)
+#define log4Info(...)
 
 #import "PGTSConnector.h"
+#import "PGTSConnection.h"
+#import "PGTSCertificateVerificationDelegateProtocol.h"
+#import <sys/select.h>
+
 #ifdef USE_SSL
 #import <openssl/ssl.h>
+
+static int
+SSLConnectionExIndex ()
+{
+	static int sslConnectionExIndex = -1;
+	if (-1 == sslConnectionExIndex)
+		sslConnectionExIndex = SSL_get_ex_new_index (0, NULL, NULL, NULL, NULL);
+	return sslConnectionExIndex;
+}
 
 /**
  * \internal
  * Verify an X.509 certificate.
  */
 static int
-VerifySSLCertificate (int preverify_ok, void* x509_ctx)
+VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 {
-	SSL* ssl = X509_STORE_CTX_get_ex_data ((X509_STORE_CTX *) x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
-	PGTSConnection* connection = SSL_get_ex_data (ssl, PGTSSSLConnectionExIndex ());
-	int rval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
-	return rval;
+	SSL* ssl = X509_STORE_CTX_get_ex_data (x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
+	PGTSConnection* connection = SSL_get_ex_data (ssl, SSLConnectionExIndex ());
+	int retval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
+	return retval;
 }
 #endif
 
 
 @implementation PGTSConnector
-
-static void 
-SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address, const void* data, void* self)
-{
-	[(id) self socketReady];
-}
-
 - (id) init
 {
     if ((self = [super init]))
@@ -71,6 +77,25 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject
 {
 	mDelegate = anObject;
+}
+
+- (BOOL) connect: (const char *) conninfo
+{
+	return NO;
+}
+
+- (void) cancel
+{
+}
+@end
+
+
+@implementation PGTSAsynchronousConnector
+
+static void 
+SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address, const void* data, void* self)
+{
+	[(id) self socketReady];
 }
 
 - (void) setCFRunLoop: (CFRunLoopRef) aRef
@@ -139,10 +164,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	if (! mSSLSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
 	{
 		mSSLSetUp = YES;
-		SSL* ssl = PQgetssl (connection);
+		SSL* ssl = PQgetssl (mConnection);
 		log4AssertValueReturn (ssl, NO, @"Expected ssl struct not to be NULL.");
 		SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
-		SSL_set_ex_data (ssl, PGTSSSLConnectionExIndex (), mConnection);
+		SSL_set_ex_data (ssl, SSLConnectionExIndex (), mConnection);
 	}
 #endif
 	
@@ -212,4 +237,111 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	return retval;
 }
 
+@end
+
+
+@implementation PGTSSynchronousConnector
+- (BOOL) connect: (const char *) conninfo
+{
+    BOOL retval = NO;
+	PGconn* connection = NULL;
+	if ((connection = PQconnectStart (conninfo)) && CONNECTION_BAD != PQstatus (connection))
+	{
+		fd_set mask = {};
+		struct timeval timeout = {.tv_sec = 15, .tv_usec = 0};
+		PostgresPollingStatusType pollingStatus = PGRES_POLLING_WRITING; //Start with this
+		int selectStatus = 0;
+		int bsdSocket = PQsocket (connection);
+		BOOL stop = NO;
+		
+		if (bsdSocket < 0)
+			log4Info (@"Unable to get connection socket from libpq");
+		else
+		{
+			BOOL sslSetUp = NO;
+			
+			//Polling loop
+			while (1)
+			{
+				struct timeval ltimeout = timeout;
+				FD_ZERO (&mask);
+				FD_SET (bsdSocket, &mask);
+				selectStatus = 0;
+				pollingStatus = mPollFunction (connection);
+				
+				log4Debug (@"Polling status: %d connection status: %d", pollingStatus, PQstatus (connection));
+#ifdef USE_SSL
+				if (NO == sslSetUp && CONNECTION_SSL_CONTINUE == PQstatus (connection))
+				{
+					sslSetUp = YES;
+					SSL* ssl = PQgetssl (connection);
+					log4AssertValueReturn (NULL != ssl, NO, @"Expected ssl struct not to be NULL.");
+					SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
+					SSL_set_ex_data (ssl, SSLConnectionExIndex (), self);
+				}
+#endif
+				
+				switch (pollingStatus)
+				{
+					case PGRES_POLLING_OK:
+						retval = YES;
+						//Fall through.
+					case PGRES_POLLING_FAILED:
+						stop = YES;
+						break;
+						
+					case PGRES_POLLING_ACTIVE:
+						//Select returns 0 on timeout
+						selectStatus = 1;
+						break;
+						
+					case PGRES_POLLING_READING:
+						selectStatus = select (bsdSocket + 1, &mask, NULL, NULL, &ltimeout);
+						break;
+						
+					case PGRES_POLLING_WRITING:
+					default:
+						selectStatus = select (bsdSocket + 1, NULL, &mask, NULL, &ltimeout);
+						break;
+				} //switch
+				
+				if (0 == selectStatus)
+				{
+					//Timeout.
+					break;
+				}
+				else if (selectStatus < 0 || YES == stop)
+				{
+					break;
+				}
+			}			
+		}		
+	}	
+	[mDelegate connector: self gotConnection: connection succeeded: (retval && CONNECTION_OK == PQstatus (connection))];
+	return retval;
+}
+@end
+
+
+@implementation PGTSSynchronousReconnector
+- (id) init
+{
+    if ((self = [super init]))
+    {
+        mPollFunction = &PQresetPoll;
+    }
+    return self;
+}
+@end
+
+
+@implementation PGTSAsynchronousReconnector
+- (id) init
+{
+    if ((self = [super init]))
+    {
+        mPollFunction = &PQresetPoll;
+    }
+    return self;
+}
 @end

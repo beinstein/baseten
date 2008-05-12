@@ -34,4 +34,5 @@
 - (int) sendOrEnqueueQuery: (PGTSQueryDescription *) query;
 - (PGconn *) pgConnection;
 - (void) processNotifications;
+- (void) checkConnectionStatus;
 @end
