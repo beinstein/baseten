@@ -46,38 +46,6 @@
 #define log4AssertValueReturn(...)
 
 
-@interface PGTSConnectionLostRecoveryAttempter : NSObject
-{
-	@public
-	PGTSConnection* mConnection;
-}
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex;
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo;
-@end
-
-
-@implementation PGTSConnectionLostRecoveryAttempter
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex
-{
-	//FIXME: come up with a way to get the connection string.
-	//FIXME: use reconnect if needed.
-	return [mConnection connectSync: nil];
-}
-
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (unsigned int) recoveryOptionIndex
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
-{
-	//FIXME: come up with a way to get the connection string.
-	//FIXME: use reconnect if needed.
-	[mConnection connectAsync: nil];
-	
-	//FIXME: come up with a way to get the connection notification back to the delegate etc.
-}
-@end
-
-
-
 @implementation PGTSConnection
 
 static void
@@ -353,11 +321,14 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	if (mDidDisconnectOnSleep)
 	{
 		mDidDisconnectOnSleep = NO;
-		if ([mDelegate respondsToSelector: @selector (PGTSConnectionLost:error:)])
-			[mDelegate PGTSConnectionLost: self error: nil]; //FIXME: set the error.
-		else
-			[NSApp presentError: nil]; //FIXME: set the error.
+		[mDelegate PGTSConnectionLost: self error: nil]; //FIXME: set the error.
 	}
+}
+
+- (void) checkConnectionStatus
+{
+	if (CONNECTION_BAD == PQstatus (mConnection))
+		[mDelegate PGTSConnectionLost: self error: nil]; //FIXME: set the error.
 }
 @end
 
