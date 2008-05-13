@@ -31,7 +31,9 @@
 
 #import <PGTS/PGTSFunctions.h>
 #import <PGTS/PGTSConstants.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+//FIXME: enable logging.
+//#import <Log4Cocoa/Log4Cocoa.h>
+#define log4AssertValueReturn(...) 
 
 static void
 RequireClass (id object, Class aClass)

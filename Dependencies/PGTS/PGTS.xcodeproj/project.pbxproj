@@ -29,6 +29,11 @@
 		530F62400DD4A32C00EA42DD /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C420DAACF70005B5619 /* NSExpression+PGTSAdditions.m */; };
 		530F62470DD4A6FD00EA42DD /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53091C430DAACF70005B5619 /* NSPredicate+PGTSAdditions.h */; };
 		530F62480DD4A6FD00EA42DD /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53091C440DAACF70005B5619 /* NSPredicate+PGTSAdditions.m */; };
+		5310876E0DD9F90E0061A468 /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53298DDE0B3307A800DE7CC8 /* PGTSRoleDescription.h */; };
+		5310876F0DD9F90F0061A468 /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53298DDF0B3307A800DE7CC8 /* PGTSRoleDescription.m */; };
+		531087700DD9F9190061A468 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D0580B6F515100D2D101 /* PGTSCertificateVerificationDelegateProtocol.h */; };
+		531087710DD9F9190061A468 /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5312665B0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.h */; };
+		531087720DD9F91A0061A468 /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5312665C0B68F23C00637EDA /* PGTSCertificateVerificationDelegate.m */; };
 		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
 		532BF12E0A3717BA002E6BFE /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
 		535519E90DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */; };
@@ -77,7 +82,6 @@
 		5381767D0D633DC000A4CA72 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F4F5100A370F16004913AF /* libssl.dylib */; };
 		5381767E0D633DC000A4CA72 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A422880981B84C003C3A24 /* libcrypto.dylib */; };
 		53817AE60D63438C00A4CA72 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 538178FD0D6342FA00A4CA72 /* libLog4Cocoa.a */; };
-		53817AE70D63439100A4CA72 /* libMKCCollections.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 537B170E0D63378A00216BA5 /* libMKCCollections.a */; };
 		5392A7A50DAD7B0E0012C7CD /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 5392A7A30DAD7B0E0012C7CD /* PGTSFoundationObjects.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5392A7A60DAD7B0E0012C7CD /* PGTSFoundationObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 5392A7A40DAD7B0E0012C7CD /* PGTSFoundationObjects.m */; };
 		5392A7A70DAD7B0E0012C7CD /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 5392A7A30DAD7B0E0012C7CD /* PGTSFoundationObjects.h */; };
@@ -133,6 +137,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5310877E0DD9FA050061A468 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 538971AF0B821A570092E1B8 /* PostgreSQL-8.2.5 */;
+			remoteInfo = "PostgreSQL-8.2.5";
+		};
 		5321F5EB0CF7711F00E663CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
@@ -147,32 +158,11 @@
 			remoteGlobalIDString = 53F42F390D6332EA00C714CD;
 			remoteInfo = "Static library + GC";
 		};
-		538176340D633DC000A4CA72 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 538971AF0B821A570092E1B8;
-			remoteInfo = "PostgreSQL-8.2.3";
-		};
-		538176850D633DE000A4CA72 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5321F5E60CF7711F00E663CE /* MKCCollections.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 53F42F210D6332EA00C714CD;
-			remoteInfo = "Static library + GC";
-		};
 		538178FC0D6342FA00A4CA72 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 538177460D6342CB00A4CA72;
-			remoteInfo = "libLog4Cocoa + GC";
-		};
-		538179000D63431600A4CA72 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5381770D0D6342CB00A4CA72;
 			remoteInfo = "libLog4Cocoa + GC";
 		};
 		538971BB0B821A710092E1B8 /* PBXContainerItemProxy */ = {
@@ -319,7 +309,6 @@
 				5381767D0D633DC000A4CA72 /* libssl.dylib in Frameworks */,
 				5381767E0D633DC000A4CA72 /* libcrypto.dylib in Frameworks */,
 				53817AE60D63438C00A4CA72 /* libLog4Cocoa.a in Frameworks */,
-				53817AE70D63439100A4CA72 /* libMKCCollections.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -586,6 +575,9 @@
 				5356066E0DB948F0009EE317 /* PGTSConnectionPrivate.h in Headers */,
 				5374B1730DC3470C0019A863 /* PGTSHOM.h in Headers */,
 				535519E90DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */,
+				5310876E0DD9F90E0061A468 /* PGTSRoleDescription.h in Headers */,
+				531087700DD9F9190061A468 /* PGTSCertificateVerificationDelegateProtocol.h in Headers */,
+				531087710DD9F9190061A468 /* PGTSCertificateVerificationDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -621,9 +613,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				538176860D633DE000A4CA72 /* PBXTargetDependency */,
-				538179010D63431600A4CA72 /* PBXTargetDependency */,
-				538176330D633DC000A4CA72 /* PBXTargetDependency */,
+				5310877F0DD9FA050061A468 /* PBXTargetDependency */,
 			);
 			name = "Static archive + GC";
 			productName = "Static archive";
@@ -784,26 +774,18 @@
 				5396AFB50DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */,
 				5374B1740DC3470C0019A863 /* PGTSHOM.m in Sources */,
 				535519EA0DD7ADB40074FF01 /* PGTSConnectionMonitor.m in Sources */,
+				5310876F0DD9F90F0061A468 /* PGTSRoleDescription.m in Sources */,
+				531087720DD9F91A0061A468 /* PGTSCertificateVerificationDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		538176330D633DC000A4CA72 /* PBXTargetDependency */ = {
+		5310877F0DD9FA050061A468 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 538971AF0B821A570092E1B8 /* PostgreSQL-8.2.5 */;
-			targetProxy = 538176340D633DC000A4CA72 /* PBXContainerItemProxy */;
-		};
-		538176860D633DE000A4CA72 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Static library + GC";
-			targetProxy = 538176850D633DE000A4CA72 /* PBXContainerItemProxy */;
-		};
-		538179010D63431600A4CA72 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "libLog4Cocoa + GC";
-			targetProxy = 538179000D63431600A4CA72 /* PBXContainerItemProxy */;
+			targetProxy = 5310877E0DD9FA050061A468 /* PBXContainerItemProxy */;
 		};
 		538971BC0B821A710092E1B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
