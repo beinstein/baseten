@@ -1,0 +1,26 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {authenticate = id; cancelAuthentication = id; }; 
+            CLASS = BXAuthenticationPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                mCredentialFieldMatrix = NSMatrix; 
+                mMessageTextField = NSTextField; 
+                mPasswordAuthenticationView = NSView; 
+                mPasswordField = NSSecureTextFieldCell; 
+                mRememberInKeychainButton = NSButton; 
+                mUsernameField = NSTextFieldCell; 
+            }; 
+            SUPERCLASS = BXPanel; 
+        }, 
+        {
+            CLASS = BXPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {mPanelDelegate = id; }; 
+            SUPERCLASS = NSPanel; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

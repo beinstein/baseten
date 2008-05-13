@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+    <head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>BaseTen Reference Manual</title>
+    <link href="documentation.css" rel="stylesheet" type="text/css">
+    <link href="tabs.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="http://www.karppinen.fi/baseten_htdocs/css/trac.css" type="text/css">
+</head>
+
+<body>
+    <div id="logo-container">
+        <a id="logo" href="index.html">
+            <img src="http://www.karppinen.fi/baseten_htdocs/trac_banner.png" width="236" height="73" alt="">
+        </a>
+    </div>
+

@@ -1,0 +1,29 @@
+/*
+h1, h2, h3, h4 
+{
+    font-family: arial,verdana,'Bitstream Vera Sans',helvetica,sans-serif;
+    font-weight: bold;
+    letter-spacing: -0.018em;
+}
+
+h1 
+{ 
+    font-size: 19px; 
+    margin: .15em 1em 0 0 
+}
+
+body, th, td 
+{
+    font: normal 13px verdana, arial, 'Bitstream Vera Sans', helvetica, sans-serif;
+}
+    */
+
+a#logo
+{
+    border: none;
+}
+
+div#logo-container
+{
+    margin-bottom: 1em;
+}

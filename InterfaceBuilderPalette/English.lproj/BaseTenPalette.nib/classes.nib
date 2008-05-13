@@ -1,0 +1,32 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {connect = id; revertDocumentToSaved = id; saveDocument = id; }; 
+            CLASS = BXDatabaseContext; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {modalWindow = NSWindow; policyDelegate = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {connect = id; }; 
+            CLASS = BXNetServiceConnector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {databaseContext = BXDatabaseContext; modalWindow = NSWindow; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = BXSynchronizedArrayController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {databaseContext = BXDatabaseContext; window = NSWindow; }; 
+            SUPERCLASS = NSArrayController; 
+        }, 
+        {
+            CLASS = BaseTenPalette; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {arrayControllerButton = NSButton; contextButton = NSButton; }; 
+            SUPERCLASS = IBPalette; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
+    ); 
+    IBVersion = 1; 
+}

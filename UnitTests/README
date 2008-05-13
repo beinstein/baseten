@@ -1,0 +1,5 @@
+How To Run the Unit Tests
+=====================
+1. Create the test database. A command like this should work:
+   psql -f BaseTenTest.sql
+2. Build the tests. A shell script phase at the end of the target will run them.

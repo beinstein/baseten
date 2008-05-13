@@ -1,0 +1,8 @@
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILT_PRODUCTS_DIR)/PGTS-PostgreSQL $(SRCROOT)/../../MKCCollections/build/$(BUILD_STYLE) $(SRCROOT)/Contrib/Log4Cocoa/build/$(BUILD_STYLE) .
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/PGTS-PostgreSQL/universal/lib $(BUILT_PRODUCTS_DIR) $(SRCROOT)/../../MKCCollections/build/$(BUILD_STYLE) $(SRCROOT)/Contrib/Log4Cocoa/build/$(BUILD_STYLE) $(SDKROOT_$(arch))/usr/lib
+FRAMEWORK_SEARCH_PATHS = $(SDKROOT_$(arch))/System/Library/Frameworks $(BUILT_PRODUCTS_DIR)
+PRODUCT_NAME = PGTS
+INFOPLIST_FILE = Info.plist
+GCC_PREFIX_HEADER = Sources/PGTS_Prefix.pch
+OTHER_CFLAGS = $(OTHER_CFLAGS) -DUSE_SSL
+OTHER_LDFLAGS = -weak_framework AppKit

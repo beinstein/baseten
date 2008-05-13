@@ -1,0 +1,19 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = IBPaletteInspector; LANGUAGE = ObjC; SUPERCLASS = IBInspector; }, 
+        {
+            ACTIONS = {setAutocommits = id; setLogsQueries = id; setURLFromTextField = id; }; 
+            CLASS = MKCDatabaseContextInspector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                autocommitsButton = NSButtonCell; 
+                databaseURIField = NSTextField; 
+                logsQueriesButton = NSButtonCell; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = IBInspector; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,8 +1,12 @@
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILT_PRODUCTS_DIR)/PGTS-PostgreSQL $(SRCROOT)/../../MKCCollections/build/$(BUILD_STYLE) $(SRCROOT)/Contrib/Log4Cocoa/build/$(BUILD_STYLE) .
-LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/PGTS-PostgreSQL/universal/lib $(BUILT_PRODUCTS_DIR) $(SRCROOT)/../../MKCCollections/build/$(BUILD_STYLE) $(SRCROOT)/Contrib/Log4Cocoa/build/$(BUILD_STYLE) $(SDKROOT_$(arch))/usr/lib
+DYLIB_COMPATIBILITY_VERSION = 1
+DYLIB_CURRENT_VERSION = 1
 FRAMEWORK_SEARCH_PATHS = $(SDKROOT_$(arch))/System/Library/Frameworks $(BUILT_PRODUCTS_DIR)
-PRODUCT_NAME = PGTS
+FRAMEWORK_VERSION = A
+GCC_PREFIX_HEADER = Sources/BaseTen_Prefix.pch
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(SRCROOT)/Dependencies/PGTS/Framework/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/PGTS/TigerFramework/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/MKCCollections/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/PGTS/Framework/Contrib/Log4Cocoa/build/$(BUILD_STYLE) .
 INFOPLIST_FILE = Info.plist
-GCC_PREFIX_HEADER = Sources/PGTS_Prefix.pch
-OTHER_CFLAGS = $(OTHER_CFLAGS) -DUSE_SSL
-OTHER_LDFLAGS = -weak_framework AppKit
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(SRCROOT)/Dependencies/PGTS/Framework/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/PGTS/TigerFramework/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/MKCCollections/build/$(BUILD_STYLE) $(SDKROOT_$(arch))/usr/lib .
+OTHER_LDFLAGS = $(OTHER_LDFLAGS) -ObjC -headerpad_max_install_names
+PRODUCT_NAME = BaseTen
+WRAPPER_EXTENSION = framework
+
