@@ -136,6 +136,6 @@
 - (BOOL) establishSavepoint: (NSError **) error;
 //@}
 
-- (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
+- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 - (void) rejectedTrust;
 @end
