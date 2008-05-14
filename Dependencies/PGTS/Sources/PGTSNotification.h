@@ -1,5 +1,5 @@
 //
-// PGTSHOM.h
+// PGTSNotification.h
 // BaseTen
 //
 // Copyright (C) 2008 Marko Karppinen & Co. LLC.
@@ -26,46 +26,17 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 
-@class PGTSInvocationRecorderHelper;
-
-
-@interface PGTSInvocationRecorder : NSObject
+@interface PGTSNotification : NSObject 
 {
-	PGTSInvocationRecorderHelper* mHelper;
-	NSInvocation** mOutInvocation;
+	NSString* mNotificationName;
+	int mBackendPID;
 }
-- (void) setTarget: (id) target;
-- (NSInvocation *) invocation;
-- (id) record;
-- (id) recordWithTarget: (id) target;
-- (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
-+ (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
-@end
 
-
-@interface NSSet (PGTSHOM)
-- (id) PGTSAny;
-- (id) PGTSDo;
-- (id) PGTSCollect;
-- (id) PGTSCollectReturning: (Class) aClass;
-- (id) PGTSSelectFunction: (int (*)(id)) fptr;
-@end
-
-
-@interface NSArray (PGTSHOM)
-- (id) PGTSAny;
-- (id) PGTSDo;
-- (id) PGTSCollect;
-- (id) PGTSCollectReturning: (Class) aClass;
-- (id) PGTSSelectFunction: (int (*)(id)) fptr;
-@end
-
-
-@interface NSDictionary (PGTSHOM)
-- (id) PGTSAny;
-- (id) PGTSCollect;
-- (id) PGTSDo;
+- (void) setNotificationName: (NSString *) aName;
+- (void) setBackendPID: (int) aPid;
+- (NSString *) notificationName;
+- (int) backendPID;
 @end

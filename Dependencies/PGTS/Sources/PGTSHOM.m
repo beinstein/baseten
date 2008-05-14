@@ -140,16 +140,19 @@
 @interface PGTSHOMInvocationRecorder : PGTSInvocationRecorder
 {
 	id mCollection;
+	id mUserInfo;
 	SEL mCallback;
 }
 - (void) setCollection: (id) collection callback: (SEL) callback;
+- (void) setUserInfo: (id) anObject;
+- (id) userInfo;
 @end
 
 
 @implementation PGTSHOMInvocationRecorder
 - (void) gotInvocation
 {
-	[mCollection performSelector: mCallback withObject: mHelper->mInvocation];
+	[mCollection performSelector: mCallback withObject: mHelper->mInvocation withObject: mUserInfo];
 }
 
 - (void) setCollection: (id) collection callback: (SEL) callback
@@ -160,17 +163,32 @@
 	
 	[self setTarget: [mCollection PGTSAny]];
 }
+
+- (void) setUserInfo: (id) anObject
+{
+	if (mUserInfo != anObject)
+	{
+		[mUserInfo release];
+		mUserInfo = [anObject retain];
+	}
+}
+
+- (id) userInfo
+{
+	return mUserInfo;
+}
 @end
 
 
 static id
-HOMTrampoline (id self, SEL callback)
+HOMTrampoline (id self, SEL callback, id userInfo)
 {
 	id retval = nil;
 	if (0 < [self count])
 	{
 		PGTSHOMInvocationRecorder* recorder = [[[PGTSHOMInvocationRecorder alloc] init] autorelease];
 		[recorder setCollection: self callback: callback];
+		[recorder setUserInfo: userInfo];
 		retval = [recorder record];
 	}
 	return retval;
@@ -200,6 +218,19 @@ Do (NSInvocation* invocation, NSEnumerator* enumerator)
 }
 
 
+static id
+SelectFunction (id sender, id retval, int (* fptr)(id))
+{
+	TSEnumerate (currentObject, e, [sender objectEnumerator])
+	{
+		if (fptr (currentObject))
+			[retval addObject: currentObject];
+	}
+	return retval;
+}
+
+
+
 @implementation NSSet (PGTSHOM)
 - (id) PGTSAny
 {
@@ -208,21 +239,32 @@ Do (NSInvocation* invocation, NSEnumerator* enumerator)
 
 - (id) PGTSCollect
 {
-	return HOMTrampoline (self, @selector (PGTSCollect:));
+	return [self PGTSCollectReturning: [NSMutableSet class]];
+}
+
+- (id) PGTSCollectReturning: (Class) aClass
+{
+	return HOMTrampoline (self, @selector (PGTSCollect:), aClass);
 }
 
 - (id) PGTSDo
 {
-	return HOMTrampoline (self, @selector (PGTSDo:));
+	return HOMTrampoline (self, @selector (PGTSDo:), nil);
 }
 
-- (void) PGTSCollect: (NSInvocation *) invocation
+- (id) PGTSSelectFunction: (int (*)(id)) fptr
 {
 	id retval = [NSMutableSet setWithCapacity: [self count]];
+	return SelectFunction (self, retval, fptr);
+}
+
+- (void) PGTSCollect: (NSInvocation *) invocation userInfo: (Class) retclass
+{
+	id retval = [[[retclass alloc] initWithCapacity: [self count]] autorelease];
 	CollectAndPerformSetArray (self, retval, invocation);
 }
 
-- (void) PGTSDo: (NSInvocation *) invocation
+- (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) anObject
 {
 	Do (invocation, [self objectEnumerator]);
 }
@@ -237,17 +279,28 @@ Do (NSInvocation* invocation, NSEnumerator* enumerator)
 
 - (id) PGTSCollect
 {
-	return HOMTrampoline (self, @selector (PGTSCollect:));
+	return [self PGTSCollectReturning: [NSMutableArray class]];
+}
+
+- (id) PGTSCollectReturning: (Class) aClass
+{
+	return HOMTrampoline (self, @selector (PGTSCollect:), aClass);
 }
 
 - (id) PGTSDo
 {
-	return HOMTrampoline (self, @selector (PGTSDo:));
+	return HOMTrampoline (self, @selector (PGTSDo:), nil);
 }
 
-- (void) PGTSCollect: (NSInvocation *) invocation
+- (id) PGTSSelectFunction: (int (*)(id)) fptr
 {
-	id retval = [NSMutableSet setWithCapacity: [self count]];
+	id retval = [NSMutableArray arrayWithCapacity: [self count]];
+	return SelectFunction (self, retval, fptr);
+}
+
+- (void) PGTSCollect: (NSInvocation *) invocation userInfo: (Class) retclass
+{
+	id retval = [[[retclass alloc] initWithCapacity: [self count]] autorelease];
 	CollectAndPerformSetArray (self, retval, invocation);
 }
 
@@ -266,15 +319,15 @@ Do (NSInvocation* invocation, NSEnumerator* enumerator)
 
 - (id) PGTSCollect
 {
-	return HOMTrampoline (self, @selector (PGTSCollect:));
+	return HOMTrampoline (self, @selector (PGTSCollect:), nil);
 }
 
 - (id) PGTSDo
 {
-	return HOMTrampoline (self, @selector (PGTSDo:));
+	return HOMTrampoline (self, @selector (PGTSDo:), nil);
 }
 
-- (void) PGTSCollect: (NSInvocation *) invocation
+- (void) PGTSCollect: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	id retval = [[self mutableCopy] autorelease];
 	TSEnumerate (currentKey, e, [self keyEnumerator])
@@ -288,7 +341,7 @@ Do (NSInvocation* invocation, NSEnumerator* enumerator)
 	[invocation setReturnValue: &retval];	
 }
 
-- (void) PGTSDo: (NSInvocation *) invocation
+- (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	Do (invocation, [self objectEnumerator]);
 }

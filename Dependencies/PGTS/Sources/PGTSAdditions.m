@@ -28,11 +28,12 @@
 
 #import <stdlib.h>
 #import <limits.h>
-#import <PGTS/postgresql/libpq-fe.h> 
+#import "postgresql/libpq-fe.h"
 #import "PGTSAdditions.h"
 #import "PGTSConnection.h"
 #import "PGTSConstants.h"
 #import "PGTSTypeDescription.h"
+#import "PGTSConnectionPrivate.h"
 #if 0
 #import "PGTSFunctions.h"
 #import "PGTSFieldDescription.h"
@@ -44,15 +45,6 @@
 //A workaround for libpq versions earlier than 8.0.8 and 8.1.4
 //#define PQescapeStringConn( conn, to, from, length, error ) PQescapeString( to, from, length )
 
-
-
-//Same as with strtoull
-long long
-strtoll (const char * restrict nptr, char ** restrict endptr, int base);
-
-//This really might not exist in 10.2.8
-float
-strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @interface NSDictionary (PGTSAdditionsPrivate)
@@ -235,7 +227,6 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 
 
 @implementation NSString (PGTSAdditions)
-#if 0
 + (NSString *) PGTSFieldAliases: (unsigned int) count
 {
     return [self PGTSFieldAliases: count start: 1];
@@ -263,13 +254,12 @@ strtof (const char * restrict nptr, char ** restrict endptr);
 {
     const char* from = [self UTF8String];
     size_t length = strlen (from);
-    char* to = calloc (1 + 2 * length, sizeof (char));
+    char* to = (char *) calloc (1 + 2 * length, sizeof (char));
     PQescapeStringConn ([connection pgConnection], to, from, length, NULL);
     NSString* rval = [NSString stringWithUTF8String: to];
     free (to);
     return rval;
 }
-#endif
 
 /**
  * The number of parameters in a string.

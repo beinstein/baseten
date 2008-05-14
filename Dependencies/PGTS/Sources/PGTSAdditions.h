@@ -70,11 +70,9 @@ struct ObjectCompare <NSString *>
 
 @interface NSString (PGTSAdditions)
 - (int) PGTSParameterCount;
-#if 0
 - (NSString *) PGTSEscapedString: (PGTSConnection *) connection;
 + (NSString *) PGTSFieldAliases: (unsigned int) count;
 + (NSString *) PGTSFieldAliases: (unsigned int) count start: (unsigned int) start;
-#endif
 @end
 
 

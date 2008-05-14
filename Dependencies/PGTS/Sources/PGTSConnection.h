@@ -36,6 +36,7 @@
 @class PGTSConnector;
 @class PGTSQueryDescription;
 @class PGTSDatabaseDescription;
+@class PGTSNotification;
 @protocol PGTSConnectorDelegate;
 
 
@@ -43,6 +44,7 @@
 - (void) PGTSConnectionFailed: (PGTSConnection *) connection;
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection;
 - (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error;
+- (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
 @end
 
 
@@ -51,7 +53,6 @@
 	PGconn* mConnection;
 	NSMutableArray* mQueue;
 	id mConnector;
-    NSNotificationCenter* mNotificationCenter;
     PGTSDatabaseDescription* mDatabase;
     NSMutableDictionary* mPGTypes;
 	id <PGTSCertificateVerificationDelegate> mCertificateVerificationDelegate;

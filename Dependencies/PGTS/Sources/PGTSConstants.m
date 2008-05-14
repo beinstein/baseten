@@ -45,6 +45,7 @@ NSString* const kPGTSSSLModeKey                   = @"sslmode";
 NSString* const kPGTSServiceNameKey               = @"service"; 
 
 NSString* const kPGTSRetrievedResultNotification  = @"kPGTSRetrievedResultNotification";
+NSString* const kPGTSNotificationNameKey		  = @"kPGTSNotificationNameKey";
 NSString* const kPGTSBackendPIDKey    = @"Backend PID";
 NSString* const kPGTSNotificationExtraKey         = @"Extra parameters";
 NSString* const kPGTSWillDisconnectNotification   = @"kPGTSWillDisconnectNotification";

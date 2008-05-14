@@ -38,6 +38,7 @@
 #import "PGTSDatabaseDescription.h"
 #import "PGTSFunctions.h"
 #import "PGTSConnectionMonitor.h"
+#import "PGTSNotification.h"
 #import <AppKit/AppKit.h>
 
 //FIXME: enable logging.
@@ -104,7 +105,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
     [self disconnect];
 	[mQueue release];
 	[self setConnector: nil];
-    [mNotificationCenter release];
     [mDatabase release];
 	[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
     [self freeCFTypes];
@@ -205,15 +205,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
     PGnotify* pgNotification = NULL;
 	while ((pgNotification = PQnotifies (mConnection)))
 	{
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-			[NSNumber numberWithInt: pgNotification->be_pid],	kPGTSBackendPIDKey,
-			[NSNull null],										kPGTSNotificationExtraKey,
-			nil];
 		NSString* name = [NSString stringWithUTF8String: pgNotification->relname];
-		NSNotification* notification = [NSNotification notificationWithName: name object: self userInfo: userInfo];
-	    
-		[mNotificationCenter postNotification: notification];
+		PGTSNotification* notification = [[[PGTSNotification alloc] init] autorelease];
+		[notification setBackendPID: pgNotification->be_pid];
+		[notification setNotificationName: name];
 		PQfreeNotify (pgNotification);
+		[mDelegate PGTSConnection: self gotNotification: notification];
 	}    
 }
 

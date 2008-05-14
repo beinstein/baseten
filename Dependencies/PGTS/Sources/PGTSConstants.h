@@ -57,6 +57,7 @@ PGTS_EXPORT NSArray* kPGTSConnectionDictionaryKeys;
 
 PGTS_EXPORT NSString* const kPGTSRetrievedResultNotification;
 PGTS_EXPORT NSString* const kPGTSBackendPIDKey;
+PGTS_EXPORT NSString* const kPGTSNotificationNameKey;
 PGTS_EXPORT NSString* const kPGTSNotificationExtraKey;
 PGTS_EXPORT NSString* const kPGTSWillDisconnectNotification;
 PGTS_EXPORT NSString* const kPGTSDidDisconnectNotification;
