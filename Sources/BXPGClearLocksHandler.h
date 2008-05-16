@@ -1,5 +1,5 @@
 //
-// BXPGInterface.h
+// BXPGClearLocksHandler.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,39 +27,12 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BaseTen.h>
-#import <PGTS/PGTS.h>
+#import "BXPGAdditions.h"
+#import "BXPGNotificationHandler.h";
 
 
-@class BXPGNotificationHandler;
-
-
-@interface BXPGInterface : NSObject <BXInterface, PGTSConnectionDelegate> 
+@interface BXPGClearLocksHandler : BXPGNotificationHandler
 {
-    BXDatabaseContext* mContext; //Weak
-    PGTSConnection* mConnection;
-    PGTSConnection* mNotifyConnection;
-	
-	NSMutableSet* mObservedEntities;
-	NSMutableDictionary* mObservers;
-	
-	BXPGTransactionHandler* mTransactionHandler;
 }
-- (BOOL) fetchForeignKeys: (NSError **) outError;
-- (BOOL) addClearLocksHandler: (NSError **) outError;
-- (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
-				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
-@end
-
-
-@interface BXPGInterface (PGTSConnectionDelegate) <PGTSConnectionDelegate>
-@end
-
-
-@interface BXPGInterface (Transactions)
-- (NSString *) savepointQuery;
-- (NSString *) rollbackToSavepointQuery;
-- (void) resetSavepointIndex;
-- (unsigned int) savepointIndex;
-- (void) internalRollback: (NSError **) outError;
++ (NSString *) notificationName;
 @end

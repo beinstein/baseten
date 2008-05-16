@@ -1,5 +1,5 @@
 //
-// BXPGInterface.h
+// BXPGNotificationHandler.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,39 +27,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BaseTen.h>
-#import <PGTS/PGTS.h>
 
 
-@class BXPGNotificationHandler;
-
-
-@interface BXPGInterface : NSObject <BXInterface, PGTSConnectionDelegate> 
+@interface BXPGNotificationHandler : NSObject 
 {
-    BXDatabaseContext* mContext; //Weak
-    PGTSConnection* mConnection;
-    PGTSConnection* mNotifyConnection;
-	
-	NSMutableSet* mObservedEntities;
-	NSMutableDictionary* mObservers;
-	
-	BXPGTransactionHandler* mTransactionHandler;
+	PGTSConnection* mConnection;
+	BXPGInterface* mInterface; //Weak.
 }
-- (BOOL) fetchForeignKeys: (NSError **) outError;
-- (BOOL) addClearLocksHandler: (NSError **) outError;
-- (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
-				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
+- (void) handleNotification: (PGTSNotification *) notification;
+- (void) setInterface: (BXPGInterface *) anInterface;
+- (void) prepare;
 @end
 
 
-@interface BXPGInterface (PGTSConnectionDelegate) <PGTSConnectionDelegate>
-@end
-
-
-@interface BXPGInterface (Transactions)
-- (NSString *) savepointQuery;
-- (NSString *) rollbackToSavepointQuery;
-- (void) resetSavepointIndex;
-- (unsigned int) savepointIndex;
-- (void) internalRollback: (NSError **) outError;
+@interface BXPGTableNotificationHandler : BXPGNotificationHandler
+{
+	NSDate* mLastCheck;
+}
+- (void) setLastCheck: (NSDate *) date;
 @end

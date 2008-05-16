@@ -1,5 +1,5 @@
 //
-// BXPGInterface.h
+// BXPGAdditions.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -29,37 +29,23 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BaseTen.h>
 #import <PGTS/PGTS.h>
+#import <Log4Cocoa/Log4Cocoa.h>
+#define Expect( X )	log4AssertValueReturn( X, nil, @"Expected " #X " to have been set.");
+#define ExpectR( X, RETVAL )	log4AssertValueReturn( X, RETVAL, @"Expected " #X " to have been set.");
+#define ExpectV( X ) log4AssertVoidReturn( X, @"Expected " #X " to have been set.");
 
 
-@class BXPGNotificationHandler;
-
-
-@interface BXPGInterface : NSObject <BXInterface, PGTSConnectionDelegate> 
-{
-    BXDatabaseContext* mContext; //Weak
-    PGTSConnection* mConnection;
-    PGTSConnection* mNotifyConnection;
-	
-	NSMutableSet* mObservedEntities;
-	NSMutableDictionary* mObservers;
-	
-	BXPGTransactionHandler* mTransactionHandler;
-}
-- (BOOL) fetchForeignKeys: (NSError **) outError;
-- (BOOL) addClearLocksHandler: (NSError **) outError;
-- (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
-				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
+@interface PGTSFieldDescriptionProxy (BXPGInterfaceAdditions)
+- (void) addAttributeFor: (BXEntityDescription *) entity attributes: (NSMutableDictionary *) attrs;
+- (NSString *) qualifiedAttributeName: (NSDictionary *) attributes connection: (PGTSConnection *) connection;
 @end
 
 
-@interface BXPGInterface (PGTSConnectionDelegate) <PGTSConnectionDelegate>
+@interface BXEntityDescription (BXPGInterfaceAdditions)
+- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end
 
 
-@interface BXPGInterface (Transactions)
-- (NSString *) savepointQuery;
-- (NSString *) rollbackToSavepointQuery;
-- (void) resetSavepointIndex;
-- (unsigned int) savepointIndex;
-- (void) internalRollback: (NSError **) outError;
+@implementation BXAttributeDescription (BXPGInterfaceAdditions)
+- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end

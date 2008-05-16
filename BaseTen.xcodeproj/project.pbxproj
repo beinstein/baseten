@@ -151,6 +151,30 @@
 		537E986A0AAF57E100542F9C /* BXSetProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E98660AAF57E100542F9C /* BXSetProxy.m */; };
 		537E98810AAF71D000542F9C /* BXSetRelationProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E987D0AAF71D000542F9C /* BXSetRelationProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537E98820AAF71D000542F9C /* BXSetRelationProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E987E0AAF71D000542F9C /* BXSetRelationProxy.m */; };
+		537F01620DDC580500498B93 /* BXPGLockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01600DDC580500498B93 /* BXPGLockHandler.h */; };
+		537F01630DDC580500498B93 /* BXPGLockHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F01610DDC580500498B93 /* BXPGLockHandler.m */; };
+		537F01640DDC580500498B93 /* BXPGLockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01600DDC580500498B93 /* BXPGLockHandler.h */; };
+		537F01650DDC580500498B93 /* BXPGLockHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F01610DDC580500498B93 /* BXPGLockHandler.m */; };
+		537F01680DDC580E00498B93 /* BXPGModificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01660DDC580E00498B93 /* BXPGModificationHandler.h */; };
+		537F01690DDC580E00498B93 /* BXPGModificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F01670DDC580E00498B93 /* BXPGModificationHandler.m */; };
+		537F016A0DDC580E00498B93 /* BXPGModificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01660DDC580E00498B93 /* BXPGModificationHandler.h */; };
+		537F016B0DDC580E00498B93 /* BXPGModificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F01670DDC580E00498B93 /* BXPGModificationHandler.m */; };
+		537F01720DDC58F100498B93 /* BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01700DDC58F100498B93 /* BXPGAdditions.h */; };
+		537F01730DDC58F100498B93 /* BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F01710DDC58F100498B93 /* BXPGAdditions.m */; };
+		537F01740DDC58F100498B93 /* BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01700DDC58F100498B93 /* BXPGAdditions.h */; };
+		537F01750DDC58F100498B93 /* BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F01710DDC58F100498B93 /* BXPGAdditions.m */; };
+		537F04E20DDC855C00498B93 /* BXPGNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F04E00DDC855C00498B93 /* BXPGNotificationHandler.h */; };
+		537F04E30DDC855C00498B93 /* BXPGNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F04E10DDC855C00498B93 /* BXPGNotificationHandler.m */; };
+		537F04E40DDC855C00498B93 /* BXPGNotificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F04E00DDC855C00498B93 /* BXPGNotificationHandler.h */; };
+		537F04E50DDC855C00498B93 /* BXPGNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F04E10DDC855C00498B93 /* BXPGNotificationHandler.m */; };
+		537F04E80DDC954900498B93 /* BXPGClearLocksHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F04E60DDC954900498B93 /* BXPGClearLocksHandler.h */; };
+		537F04E90DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */; };
+		537F04EA0DDC954900498B93 /* BXPGClearLocksHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F04E60DDC954900498B93 /* BXPGClearLocksHandler.h */; };
+		537F04EB0DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */; };
+		537F05130DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */; };
+		537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
+		537F05150DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */; };
+		537F05160DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
 		5389E1A30C464107002714B8 /* BXRelationshipDescriptionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5389E1A20C464107002714B8 /* BXRelationshipDescriptionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5389E1FA0C465449002714B8 /* BXForeignKeyPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5389E1F90C465449002714B8 /* BXForeignKeyPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		539EDD650C46203C00B6E5EC /* BXRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -399,6 +423,18 @@
 		537E98660AAF57E100542F9C /* BXSetProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSetProxy.m; path = Sources/BXSetProxy.m; sourceTree = "<group>"; };
 		537E987D0AAF71D000542F9C /* BXSetRelationProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetRelationProxy.h; path = Sources/BXSetRelationProxy.h; sourceTree = "<group>"; };
 		537E987E0AAF71D000542F9C /* BXSetRelationProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSetRelationProxy.m; path = Sources/BXSetRelationProxy.m; sourceTree = "<group>"; };
+		537F01600DDC580500498B93 /* BXPGLockHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGLockHandler.h; path = Sources/BXPGLockHandler.h; sourceTree = "<group>"; };
+		537F01610DDC580500498B93 /* BXPGLockHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGLockHandler.m; path = Sources/BXPGLockHandler.m; sourceTree = "<group>"; };
+		537F01660DDC580E00498B93 /* BXPGModificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGModificationHandler.h; path = Sources/BXPGModificationHandler.h; sourceTree = "<group>"; };
+		537F01670DDC580E00498B93 /* BXPGModificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGModificationHandler.m; path = Sources/BXPGModificationHandler.m; sourceTree = "<group>"; };
+		537F01700DDC58F100498B93 /* BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGAdditions.h; path = Sources/BXPGAdditions.h; sourceTree = "<group>"; };
+		537F01710DDC58F100498B93 /* BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGAdditions.m; path = Sources/BXPGAdditions.m; sourceTree = "<group>"; };
+		537F04E00DDC855C00498B93 /* BXPGNotificationHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGNotificationHandler.h; path = Sources/BXPGNotificationHandler.h; sourceTree = "<group>"; };
+		537F04E10DDC855C00498B93 /* BXPGNotificationHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGNotificationHandler.m; path = Sources/BXPGNotificationHandler.m; sourceTree = "<group>"; };
+		537F04E60DDC954900498B93 /* BXPGClearLocksHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGClearLocksHandler.h; path = Sources/BXPGClearLocksHandler.h; sourceTree = "<group>"; };
+		537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGClearLocksHandler.m; path = Sources/BXPGClearLocksHandler.m; sourceTree = "<group>"; };
+		537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGTransactionHandler.h; path = Sources/BXPGTransactionHandler.h; sourceTree = "<group>"; };
+		537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGTransactionHandler.m; path = Sources/BXPGTransactionHandler.m; sourceTree = "<group>"; };
 		5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectID.h; path = Sources/BXDatabaseObjectID.h; sourceTree = "<group>"; };
 		5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectID.m; path = Sources/BXDatabaseObjectID.m; sourceTree = "<group>"; };
 		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
@@ -654,8 +690,20 @@
 			children = (
 				530132E109D460230037C485 /* BXPGInterface.h */,
 				530132E209D460230037C485 /* BXPGInterface.m */,
+				537F01700DDC58F100498B93 /* BXPGAdditions.h */,
+				537F01710DDC58F100498B93 /* BXPGAdditions.m */,
 				53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */,
 				53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */,
+				537F04E00DDC855C00498B93 /* BXPGNotificationHandler.h */,
+				537F04E10DDC855C00498B93 /* BXPGNotificationHandler.m */,
+				537F01660DDC580E00498B93 /* BXPGModificationHandler.h */,
+				537F01670DDC580E00498B93 /* BXPGModificationHandler.m */,
+				537F01600DDC580500498B93 /* BXPGLockHandler.h */,
+				537F01610DDC580500498B93 /* BXPGLockHandler.m */,
+				537F04E60DDC954900498B93 /* BXPGClearLocksHandler.h */,
+				537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */,
+				537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */,
+				537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */,
 			);
 			name = "PostgreSQL Interface";
 			sourceTree = "<group>";
@@ -726,6 +774,12 @@
 				535443E80D634A47002A6C47 /* BXObjectKeyPathExpression.h in Headers */,
 				535443E90D634A47002A6C47 /* BXInvocationRecorder.h in Headers */,
 				535443EA0D634A47002A6C47 /* BXInvocation.h in Headers */,
+				537F01620DDC580500498B93 /* BXPGLockHandler.h in Headers */,
+				537F016A0DDC580E00498B93 /* BXPGModificationHandler.h in Headers */,
+				537F01720DDC58F100498B93 /* BXPGAdditions.h in Headers */,
+				537F04E40DDC855C00498B93 /* BXPGNotificationHandler.h in Headers */,
+				537F04E80DDC954900498B93 /* BXPGClearLocksHandler.h in Headers */,
+				537F05130DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -771,6 +825,12 @@
 				53E01F4D0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h in Headers */,
 				5321F8350CF77FFB00E663CE /* BXInvocationRecorder.h in Headers */,
 				5321F83D0CF7807800E663CE /* BXInvocation.h in Headers */,
+				537F01640DDC580500498B93 /* BXPGLockHandler.h in Headers */,
+				537F01680DDC580E00498B93 /* BXPGModificationHandler.h in Headers */,
+				537F01740DDC58F100498B93 /* BXPGAdditions.h in Headers */,
+				537F04E20DDC855C00498B93 /* BXPGNotificationHandler.h in Headers */,
+				537F04EA0DDC954900498B93 /* BXPGClearLocksHandler.h in Headers */,
+				537F05150DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1035,6 +1095,12 @@
 				535444050D634A47002A6C47 /* BXObjectKeyPathExpression.m in Sources */,
 				535444060D634A47002A6C47 /* BXInvocationRecorder.m in Sources */,
 				535444070D634A47002A6C47 /* BXInvocation.m in Sources */,
+				537F01630DDC580500498B93 /* BXPGLockHandler.m in Sources */,
+				537F016B0DDC580E00498B93 /* BXPGModificationHandler.m in Sources */,
+				537F01730DDC58F100498B93 /* BXPGAdditions.m in Sources */,
+				537F04E50DDC855C00498B93 /* BXPGNotificationHandler.m in Sources */,
+				537F04E90DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */,
+				537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1067,6 +1133,12 @@
 				53E01F4E0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m in Sources */,
 				5321F8360CF77FFB00E663CE /* BXInvocationRecorder.m in Sources */,
 				5321F83E0CF7807800E663CE /* BXInvocation.m in Sources */,
+				537F01650DDC580500498B93 /* BXPGLockHandler.m in Sources */,
+				537F01690DDC580E00498B93 /* BXPGModificationHandler.m in Sources */,
+				537F01750DDC58F100498B93 /* BXPGAdditions.m in Sources */,
+				537F04E30DDC855C00498B93 /* BXPGNotificationHandler.m in Sources */,
+				537F04EB0DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */,
+				537F05160DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

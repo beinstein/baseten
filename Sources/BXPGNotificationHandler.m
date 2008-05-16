@@ -1,5 +1,5 @@
 //
-// BXPGInterface.h
+// BXPGNotificationHandler.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,40 +26,49 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <BaseTen/BaseTen.h>
-#import <PGTS/PGTS.h>
+#import "BXPGNotificationHandler.h"
 
 
-@class BXPGNotificationHandler;
-
-
-@interface BXPGInterface : NSObject <BXInterface, PGTSConnectionDelegate> 
+@implementation BXPGTableNotificationHandler
+- (void) handleNotification: (PGTSNotification *) notification
 {
-    BXDatabaseContext* mContext; //Weak
-    PGTSConnection* mConnection;
-    PGTSConnection* mNotifyConnection;
-	
-	NSMutableSet* mObservedEntities;
-	NSMutableDictionary* mObservers;
-	
-	BXPGTransactionHandler* mTransactionHandler;
+	[NSException raise: NSInvalidArgumentException format: @"-[BXPGNotificationHandler handleNotification:] called!"];
 }
-- (BOOL) fetchForeignKeys: (NSError **) outError;
-- (BOOL) addClearLocksHandler: (NSError **) outError;
-- (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
-				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
+
+- (void) setConnection: (PGTSConnection *) connection
+{
+	if (mConnection != connection)
+	{
+		[mConnection release];
+		mConnection = [connection retain];
+	}
+}
+
+- (void) setInterface: (BXPGInterface *) anInterface
+{
+	mInterface = anInterface;
+}
+
+- (void) prepare
+{
+	ExpectV (mConnection);
+}
 @end
 
 
-@interface BXPGInterface (PGTSConnectionDelegate) <PGTSConnectionDelegate>
-@end
+@implementation BXPGNotificationHandler
+- (void) setLastCheck: (NSDate *) aDate
+{
+	if (!mLastCheck || NSOrderedAscending == [mLastCheck compare: aDate])
+	{
+		[mLastCheck release];
+		mLastCheck = [aDate retain];
+	}
+}
 
-
-@interface BXPGInterface (Transactions)
-- (NSString *) savepointQuery;
-- (NSString *) rollbackToSavepointQuery;
-- (void) resetSavepointIndex;
-- (unsigned int) savepointIndex;
-- (void) internalRollback: (NSError **) outError;
+- (void) prepare
+{
+	[super prepare];
+	ExpectV (mLastCheck);
+}
 @end
