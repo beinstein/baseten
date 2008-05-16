@@ -143,6 +143,14 @@
 		5359D1880C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */; };
 		5359D18D0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5359D18E0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 5359D18C0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m */; };
+		5364BB780DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB760DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h */; };
+		5364BB790DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */; };
+		5364BB7A0DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB760DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h */; };
+		5364BB7B0DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */; };
+		5364BB7E0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */; };
+		5364BB7F0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */; };
+		5364BB800DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */; };
+		5364BB810DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */; };
 		5373856E0DD9FB8D006F965A /* libPGTS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 537385690DD9FB0A006F965A /* libPGTS.a */; };
 		5373856F0DD9FB98006F965A /* libPGTS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 537385670DD9FB0A006F965A /* libPGTS.a */; };
 		537E983B0AAF538C00542F9C /* BXContainerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E98370AAF538B00542F9C /* BXContainerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -416,6 +424,10 @@
 		5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOneToOneRelationshipDescription.m; path = Sources/BXOneToOneRelationshipDescription.m; sourceTree = "<group>"; };
 		5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXManyToManyRelationshipDescription.h; path = Sources/BXManyToManyRelationshipDescription.h; sourceTree = "<group>"; };
 		5359D18C0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXManyToManyRelationshipDescription.m; path = Sources/BXManyToManyRelationshipDescription.m; sourceTree = "<group>"; };
+		5364BB760DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGAutocommitTransactionHandler.h; path = Sources/BXPGAutocommitTransactionHandler.h; sourceTree = "<group>"; };
+		5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGAutocommitTransactionHandler.m; path = Sources/BXPGAutocommitTransactionHandler.m; sourceTree = "<group>"; };
+		5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGManualCommitTransactionHandler.h; path = Sources/BXPGManualCommitTransactionHandler.h; sourceTree = "<group>"; };
+		5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGManualCommitTransactionHandler.m; path = Sources/BXPGManualCommitTransactionHandler.m; sourceTree = "<group>"; };
 		5368D60F0A3711C800D136DC /* BaseTen.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = BaseTen.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		537E98370AAF538B00542F9C /* BXContainerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXContainerProxy.h; path = Sources/BXContainerProxy.h; sourceTree = "<group>"; };
 		537E98380AAF538B00542F9C /* BXContainerProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXContainerProxy.m; path = Sources/BXContainerProxy.m; sourceTree = "<group>"; };
@@ -704,6 +716,10 @@
 				537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */,
 				537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */,
 				537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */,
+				5364BB760DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h */,
+				5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */,
+				5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */,
+				5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */,
 			);
 			name = "PostgreSQL Interface";
 			sourceTree = "<group>";
@@ -780,6 +796,8 @@
 				537F04E40DDC855C00498B93 /* BXPGNotificationHandler.h in Headers */,
 				537F04E80DDC954900498B93 /* BXPGClearLocksHandler.h in Headers */,
 				537F05130DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */,
+				5364BB780DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h in Headers */,
+				5364BB7E0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -831,6 +849,8 @@
 				537F04E20DDC855C00498B93 /* BXPGNotificationHandler.h in Headers */,
 				537F04EA0DDC954900498B93 /* BXPGClearLocksHandler.h in Headers */,
 				537F05150DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */,
+				5364BB7A0DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h in Headers */,
+				5364BB800DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1101,6 +1121,8 @@
 				537F04E50DDC855C00498B93 /* BXPGNotificationHandler.m in Sources */,
 				537F04E90DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */,
 				537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */,
+				5364BB790DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m in Sources */,
+				5364BB7F0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1139,6 +1161,8 @@
 				537F04E30DDC855C00498B93 /* BXPGNotificationHandler.m in Sources */,
 				537F04EB0DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */,
 				537F05160DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */,
+				5364BB7B0DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m in Sources */,
+				5364BB810DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

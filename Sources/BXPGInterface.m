@@ -59,6 +59,11 @@ FieldAliases (NSUInteger count)
 }
 
 
+/**
+ * \internal
+ * A helper for determining returned attributes.
+ * Primary key attributes are always returned.
+ */
 static int
 ShouldReturn (BXAttributeDescription* attr)
 {
@@ -66,6 +71,11 @@ ShouldReturn (BXAttributeDescription* attr)
 }
 
 
+/**
+ * \internal
+ * Create a list of returned fields.
+ * This may be passed to SELECT or to a RETURNING clause.
+ */
 static NSString*
 ReturnedFields (PGTSConnection* connection, BXEntityDescription* entity)
 {
@@ -76,6 +86,10 @@ ReturnedFields (PGTSConnection* connection, BXEntityDescription* entity)
 }
 
 
+/**
+ * \internal
+ * Create an insert query.
+ */
 static NSString*
 InsertQuery (PGTSConnection* connection, BXEntityDescription* entity, NSArray* insertedAttrs)
 {
@@ -97,6 +111,12 @@ InsertQuery (PGTSConnection* connection, BXEntityDescription* entity, NSArray* i
 }
 
 
+/**
+ * \internal
+ * Create a WHERE clause.
+ * The context dictionary will contain an array of paramters,
+ * which may be passed to a -sendQuery:...paramters: method.
+ */
 static NSString*
 WhereClause (PGTSConnection* connection, NSPredicate* predicate, NSMutableDictionary* ctx)
 {
@@ -108,6 +128,10 @@ WhereClause (PGTSConnection* connection, NSPredicate* predicate, NSMutableDictio
 }	
 
 
+/**
+ * \internal
+ * Create a SELECT query.
+ */
 static NSString*
 SelectQueryFormat (PGTSConnection* connection, BOOL forUpdate)
 {
@@ -118,6 +142,13 @@ SelectQueryFormat (PGTSConnection* connection, BOOL forUpdate)
 }
 
 
+/**
+ * \internal
+ * Create a FROM clause.
+ * The returned clause will include tables referenced in the given predicate.
+ * \param additionalEntity An optional entity which may be added to the returned clause.
+ * \param excludedEntity An optional entity which may not appear in the returned clause.
+ */
 static NSString*
 FromClause (PGTSConnection connection, NSPredicate* predicate, BXEntityDescription* additionalEntity, BXEntityDescription* excludedEntity)
 {
@@ -140,6 +171,11 @@ FromClause (PGTSConnection connection, NSPredicate* predicate, BXEntityDescripti
 }
 
 
+/**
+ * \internal
+ * Create an NSArray from a PGTSResultSet.
+ * Objects that are already registered wont'be recreated.
+ */
 static NSArray*
 Result (BXDatabaseContext* context, BXEntityDescription* entity, PGTSResultSet* res)
 {
@@ -157,6 +193,10 @@ Result (BXDatabaseContext* context, BXEntityDescription* entity, PGTSResultSet* 
 }
 
 
+/**
+ * \internal
+ * Create an UPDATE query.
+ */
 static NSString*
 UpdateQuery (PGTSConnection* connection, BXEntityDescription* entity, NSString* setClause, NSString* fromClause)
 {
@@ -176,6 +216,11 @@ UpdateQuery (PGTSConnection* connection, BXEntityDescription* entity, NSString* 
 }
 
 
+/**
+ * \internal
+ * Create a database error.
+ * Automatically fills some common fields in the userInfo dictionary.
+ */
 static NSError*
 DatabaseError (NSInteger errorCode, NSString* localizedError, BXDatabaseContext* context, BXEntityDescription* entity)
 {
@@ -192,6 +237,11 @@ DatabaseError (NSInteger errorCode, NSString* localizedError, BXDatabaseContext*
 }
 
 
+/**
+ * \internal
+ * Create object IDs from a PGTSResultSet.
+ * \param entity The IDs' entity.
+ */
 static NSArray*
 ObjectIDs (BXEntityDescription* entity, PGTSResultSet* res)
 {
@@ -209,6 +259,10 @@ ObjectIDs (BXEntityDescription* entity, PGTSResultSet* res)
 }
 
 
+/**
+ * An error handler for ROLLBACK errors.
+ * The intended use is to set a symbolic breakpoint for possible errors caught during ROLLBACK.
+ */
 static void
 bx_error_during_rollback (id self, NSError* error)
 {
@@ -259,6 +313,13 @@ bx_error_during_rollback (id self, NSError* error)
 	[mObservedEntities release];
 	[mObservers release];
 	[super dealloc];
+}
+
+
+- (void) finalize
+{
+	//Connections will finalize themselves.
+	[super finalize];
 }
 
 
@@ -893,29 +954,46 @@ error:
 	NSString* query = [NSString stringWithFormat: format, funcname, 0, quotedNames, entityName, whereClause];
 	[notifyConnection sendQuery: query delegate: nil callback: NULL parameterArray: parameters]; 
 }
+
+- (void) connect: (NSError **) error
+{
+	//FIXME: write this.
+}
+
+- (void) connectAsync: (NSError **) error
+{
+	//FIXME: write this.
+}
+
+- (void) disconnect
+{
+	//FIXME: write this.
+}
+
+- (BXDatabaseContext *) databaseContext
+{
+	return mContext;
+}
 @end
 
 
-@implementation BXPGInterface (PGTSConnectionDelegate)
-- (void) PGTSConnectionFailed: (PGTSConnection *) connection
+@interface BXPGInterface (ConnectionDelegate)
+- (void) connectionSucceeded
 {
 	//FIXME: write this.
 }
 
-
-- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
+- (void) connectionFailed: (NSError *) error
 {
 	//FIXME: write this.
 }
 
-
-- (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error
+- (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error
 {
 	//FIXME: write this.
 }
 
-
-- (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
+- (void) connection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
 	NSString* notificationName = [notification notificationName];
 	[[mEntityObservers objectForKey: notificationName] handleNotification: notification];

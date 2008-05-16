@@ -37,22 +37,27 @@
 @interface BXPGInterface : NSObject <BXInterface, PGTSConnectionDelegate> 
 {
     BXDatabaseContext* mContext; //Weak
-    PGTSConnection* mConnection;
-    PGTSConnection* mNotifyConnection;
 	
 	NSMutableSet* mObservedEntities;
 	NSMutableDictionary* mObservers;
 	
 	BXPGTransactionHandler* mTransactionHandler;
 }
+
+- (BXDatabaseContext *) databaseContext;
 - (BOOL) fetchForeignKeys: (NSError **) outError;
 - (BOOL) addClearLocksHandler: (NSError **) outError;
 - (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
 				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
+
 @end
 
 
-@interface BXPGInterface (PGTSConnectionDelegate) <PGTSConnectionDelegate>
+@interface BXPGInterface (ConnectionDelegate)
+- (void) connectionSucceeded;
+- (void) connectionFailed: (NSError *) error;
+- (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error;
+- (void) connection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
 @end
 
 

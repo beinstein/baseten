@@ -29,7 +29,111 @@
 #import "BXPGTransactionHandler.h"
 
 
+static NSString* 
+SSLMode (enum BXSSLMode mode)
+{
+	NSString* retval = @"require";
+	switch (mode) 
+	{
+		case kBXSSLModeDisable:
+			retval = @"disable";
+			break;
+			
+		case kBXSSLModePrefer:
+		default:
+			break;
+	}
+	return retval;
+}
+
+
 @implementation BXPGTransactionHandler
+@end
+
+
+@implementation BXPGTransactionHandler (Connecting)
+- (NSString *) connectionString
+{
+	BXDatabaseContext* ctx = [mInterface databaseContext];
+	NSURL* databaseURI = [ctx databaseURI];
+	NSMutableDictionary* connectionDict = [databaseURI BXPGConnectionDictionary];
+
+	enum BXSSLMode sslMode = [ctx sslMode];
+	[connectionDict setValue: SSLMode (mode) forKey: kPGTSSSLModeKey];
+	
+	return [connectionDict PGTSConnectionString];
+}
+
+
+- (void) prepareForConnecting
+{
+	mSyncErrorPtr = NULL;
+	
+	if (! mConnection)
+	{
+		mConnection = [[PGTSConnection alloc] init];
+		[mConnection setDelegate: self];
+	}
+	
+	//FIXME: handle SSL.
+}
+
+
+- (void) handleConnectionErrorFor: (PGTSConnection *) failedConnection
+{
+	ExpectV (mAsync || mSyncErrorPtr);
+	
+	NSString* errorMessage = [failedConnection errorString];
+	NSString* errorDescription = BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet");
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  errorMessage, NSLocalizedFailureReasonErrorKey,
+							  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
+							  errorMessage, kBXErrorMessageKey,
+							  errorDescription, NSLocalizedDescriptionKey,
+							  nil];
+	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionFailed userInfo: userInfo];
+
+	if (mAsync)
+		[mInterface connectionFailed: error];
+	else
+		*mSyncErrorPtr = error;
+}
+
+
+- (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass
+{
+	BXConnectionResetRecoveryAttempter* attempter = [[[aClass alloc] init] autorelease];
+	attempter->mHandler = self;
+	
+	NSMutableDictionary* userInfo = [[[error userInfo] mutableCopy] autorelease];
+	[userInfo setObject: attempter forKey: NSRecoveryAttempterErrorKey];
+	//FIXME: set the recovery options from attempter's class method or something.
+	return [NSError errorWithDomain: [error domain] code: [error code] userInfo: aDict];
+}
+
+
+- (void) handleSuccess
+{
+	mConnectionSucceeded = YES;
+	if (mAsync)
+		[mInterface connectionSucceeded];
+}	
+
+
+- (void) connectSync: (NSError **) outError
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) connectAsync
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+@end
+
+
+@implementation BXPGTransactionHandler (Transactions)
 - (NSString *) savepointQuery
 {
     mSavepointIndex++;
@@ -54,45 +158,108 @@
 
 - (void) rollback: (NSError **) outError
 {
+	[self doesNotRecognizeSelector: _cmd];
 }
 @end
 
 
-@implementation BXPGAutocommitTransactionHandler
-- (void) rollback: (NSError **) outError
+@implementation BXPGTransactionHandler (PGTSConnectionDelegate)
+- (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
-	ExpectV (outError);
-	
-    //The locked key should be cleared in any case to cope with the situation
-    //where the lock was acquired  after the last savepoint and the same key 
-    //is to be locked again.
-	if (PQTRANS_IDLE != [mConnection transactionStatus])
-	{
-		PGTSResultSet* res = [mConnection executeQuery: @"ROLLBACK; SELECT baseten.ClearLocks ();"];
-		*outError = [res error];
-	}
-	[self resetSavepointIndex];	
+	[mInterface PGTSConnection: connection gotNotification: notification];
+}
+
+
+- (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) PGTSConnectionFailed: (PGTSConnection *) connection
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
+{
+	[self doesNotRecognizeSelector: _cmd];
 }
 @end
 
 
-@implementation BXPGManualCommitTransactionHandler
-- (void) rollback: (NSError **) outError
+
+@implementation BXPGConnectionResetRecoveryAttempter
+- (void) dealloc
 {
-	ExpectV (outError);
-	
-    //The locked key should be cleared in any case to cope with the situation
-    //where the lock was acquired after the last savepoint and the same key 
-    //is to be locked again.
-	if (PQTRANS_IDLE != [mConnection transactionStatus])
+	[mRecoveryInvocation release];
+	[super dealloc];
+}
+
+
+- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+
+- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
+						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) setRecoveryInvocation: (NSInvocation *) anInvocation
+{
+	if (mRecoveryInvocation != anInvocation)
 	{
-		PGTSResultSet* res = nil;
-		NSError* localError = nil;
-		res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
-		if ((localError = [res error])) *outError = localError;
-		res = [mConnection executeQuery: @"ROLLBACK"];
-		if ((localError = [res error])) *outError = localError;
+		[mRecoveryInvocation release];
+		mRecoveryInvocation = [anInvocation retain];
 	}
-	[self resetSavepointIndex];	
+}
+
+
+- (void) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo
+{
+	NSMethodSignature* sig = [target methodSignatureForSelector: selector];
+	NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];
+	[invocation setTarget: target];
+	[invocation setSelector: selector];
+	[invocation setArgument: &contextInfo atIndex: 3];
+	
+	BOOL status = NO;
+	[invocation setArgument: &status atIndex: 2];
+	
+	return invocation;
+}
+@end
+
+
+
+@implementation BXPGConnectionResetRecoveryAttempter (PGTSConnectionDelegate)
+- (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) PGTSConnectionFailed: (PGTSConnection *) connection
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
+{
+	[self doesNotRecognizeSelector: _cmd];
 }
 @end

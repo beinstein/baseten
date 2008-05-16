@@ -1,5 +1,5 @@
 //
-// BXPGNotificationHandler.m
+// BXPGManualCommitTransactionHandler.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,49 +26,25 @@
 // $Id$
 //
 
-#import "BXPGNotificationHandler.h"
+#import <Foundation/Foundation.h>
+#import "BXPGTransactionHandler.h"
 
 
-@implementation BXPGTableNotificationHandler
-- (void) handleNotification: (PGTSNotification *) notification
+@interface BXPGManualCommitTransactionHandler : BXPGTransactionHandler 
 {
-	[self doesNotRecognizeSelector: _cmd];
+	PGTSConnection* mNotifyConnection;
+	NSTimer* mConnectionLostTimer;
+	int mCounter;
 }
-
-- (void) setConnection: (PGTSConnection *) connection
-{
-	if (mConnection != connection)
-	{
-		[mConnection release];
-		mConnection = [connection retain];
-	}
-}
-
-- (void) setInterface: (BXPGInterface *) anInterface
-{
-	mInterface = anInterface;
-}
-
-- (void) prepare
-{
-	ExpectV (mConnection);
-}
+- (PGTSConnection *) notifyConnection;
 @end
 
 
-@implementation BXPGNotificationHandler
-- (void) setLastCheck: (NSDate *) aDate
+@interface BXPGManualCommitConnectionResetRecoveryAttempter : BXPGConnectionResetRecoveryAttempter
 {
-	if (!mLastCheck || NSOrderedAscending == [mLastCheck compare: aDate])
-	{
-		[mLastCheck release];
-		mLastCheck = [aDate retain];
-	}
-}
-
-- (void) prepare
-{
-	[super prepare];
-	ExpectV (mLastCheck);
+	PGTSConnection* mNotifyConnection;
+	int mCounter;
+	BOOL mIsAsync;
+	BOOL mSucceeded;
 }
 @end

@@ -27,10 +27,53 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <PGTS/PGTS.h>
+#import "BXPGInterface.h"
 
 
 @interface BXPGTransactionHandler : NSObject 
 {
+	BXPGInterface* mInterface; //Weak.
+	PGTSConnection* mConnection;
 	NSUInteger mSavepointIndex;
+	
+	NSError** mSyncErrorPtr;
+	BOOL mAsync;
+	BOOL mConnectionSucceeded;
+	
+	BOOL mIsResetting;
 }
+- (void) connectAsync;
+- (BOOL) connectSync: (NSError **) outError;
+- (void) rollback: (NSError **) outError;
+
+- (void) prepareForConnecting;
+- (NSString *) connectionString;
+- (NSError *) packErrorFor: (PGTSConnection *) failedConnection;
+- (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass;
+@end
+
+
+@interface BXPGTransactionHandler (PGTSConnectionDelegate) <PGTSConnectionDelegate>
+@end
+
+
+@interface BXPGConnectionResetRecoveryAttempter : NSObject
+{
+	@public
+	BXPGTransactionHandler* mHandler;
+	
+	@protected
+	NSInvocation* mRecoveryInvocation;
+}
+- (void) setRecoveryInvocation: (NSInvocation *) anInvocation;
+- (void) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo;
+
+- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex;
+- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
+						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo;
+@end
+
+
+@interface BXPGConnectionResetRecoveryAttempter (PGTSConnectionDelegate) <PGTSConnectionDelegate>
 @end

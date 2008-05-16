@@ -1,5 +1,5 @@
 //
-// BXPGNotificationHandler.m
+// BXPGAutocommitTransactionHandler.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,49 +26,18 @@
 // $Id$
 //
 
-#import "BXPGNotificationHandler.h"
+#import <Foundation/Foundation.h>
+#import "BXPGTransactionHandler.h"
 
 
-@implementation BXPGTableNotificationHandler
-- (void) handleNotification: (PGTSNotification *) notification
+@interface BXPGAutocommitTransactionHandler : BXPGTransactionHandler 
 {
-	[self doesNotRecognizeSelector: _cmd];
 }
-
-- (void) setConnection: (PGTSConnection *) connection
-{
-	if (mConnection != connection)
-	{
-		[mConnection release];
-		mConnection = [connection retain];
-	}
-}
-
-- (void) setInterface: (BXPGInterface *) anInterface
-{
-	mInterface = anInterface;
-}
-
-- (void) prepare
-{
-	ExpectV (mConnection);
-}
+- (PGTSConnection *) connection;
 @end
 
 
-@implementation BXPGNotificationHandler
-- (void) setLastCheck: (NSDate *) aDate
+@interface BXPGAutocommitConnectionResetRecoveryAttempter : BXPGConnectionResetRecoveryAttempter
 {
-	if (!mLastCheck || NSOrderedAscending == [mLastCheck compare: aDate])
-	{
-		[mLastCheck release];
-		mLastCheck = [aDate retain];
-	}
-}
-
-- (void) prepare
-{
-	[super prepare];
-	ExpectV (mLastCheck);
 }
 @end
