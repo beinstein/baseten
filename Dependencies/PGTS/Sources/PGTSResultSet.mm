@@ -125,6 +125,7 @@ ErrorUserInfoKey (char fieldCode)
     FieldIndexMap* mFieldIndices;
     FieldClassMap* mFieldClasses;
     Class mRowClass;
+	id mUserInfo;
     
     BOOL mKnowsFieldClasses;
     BOOL mDeterminesFieldClassesFromDB;
@@ -463,6 +464,19 @@ ErrorUserInfoKey (char fieldCode)
 	return retval;
 }
 
+- (void) setUserInfo: (id) userInfo
+{
+	if (mUserInfo != userInfo)
+	{
+		[mUserInfo release];
+		mUserInfo = [userInfo retain];
+	}
+}
+
+- (id) userInfo
+{
+	return mUserInfo;
+}
 @end
 
 

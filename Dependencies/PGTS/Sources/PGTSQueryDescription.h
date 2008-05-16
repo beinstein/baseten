@@ -42,6 +42,7 @@
 - (int) identifier;
 - (PGTSQuery *) query;
 - (void) setQuery: (PGTSQuery *) aQuery;
+- (void) setUserInfo: (id) userInfo;
 - (BOOL) sent;
 - (BOOL) finished;
 
@@ -58,6 +59,7 @@
 	id mDelegate;
 	int mIdentifier;
 	PGTSQuery* mQuery;
+	id mUserInfo;
 	BOOL mSent;
 	BOOL mFinished;
 }

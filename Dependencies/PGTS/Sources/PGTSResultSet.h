@@ -65,6 +65,8 @@
 - (void) setIdentifier: (int) anIdentifier;
 - (NSError *) error;
 - (NSString *) errorString;
+- (void) setUserInfo: (id) userInfo;
+- (id) userInfo;
 
 - (void) setDeterminesFieldClassesAutomatically: (BOOL) aBool;
 @end

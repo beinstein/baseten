@@ -101,6 +101,9 @@ NextIdentifier ()
     return nil;
 }
 
+- (void) setUserInfo: (id) userInfo
+{
+}
 @end
 
 
@@ -204,7 +207,16 @@ NextIdentifier ()
         retval = [self receiveForConnection: connection] ?: retval;
         [connection processNotifications];
     }
+	[retval setUserInfo: mUserInfo];
     return retval;
 }
 
+- (void) setUserInfo: (id) userInfo
+{
+	if (mUserInfo != userInfo)
+	{
+		[mUserInfo release];
+		mUserInfo = [userInfo retain];
+	}
+}
 @end

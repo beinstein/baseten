@@ -447,6 +447,13 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
    parameterArray: (NSArray *) parameters
 {
+	return [self sendQuery: queryString delegate: delegate callback: callback 
+			parameterArray: parameters userInfo: nil];
+}
+
+- (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
+   parameterArray: (NSArray *) parameters userInfo: (id) userInfo
+{
 	PGTSQueryDescription* desc = [[[PGTSConcreteQueryDescription alloc] init] autorelease];
 	PGTSParameterQuery* query = [[[PGTSParameterQuery alloc] init] autorelease];
 	[query setQuery: queryString];
@@ -454,6 +461,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 	[desc setQuery: query];
 	[desc setDelegate: delegate];
 	[desc setCallback: callback];
+	[desc setUserInfo: userInfo];
 	
 	int retval = [desc identifier];
 	[self sendOrEnqueueQuery: desc];

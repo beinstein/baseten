@@ -93,4 +93,6 @@
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback;
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback parameters: (id) p1, ...;
 - (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback parameterArray: (NSArray *) parameters;
+- (int) sendQuery: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
+   parameterArray: (NSArray *) parameters userInfo: (id) userInfo;
 @end
