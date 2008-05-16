@@ -326,6 +326,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	if (CONNECTION_BAD == PQstatus (mConnection))
 		[mDelegate PGTSConnectionLost: self error: nil]; //FIXME: set the error.
+	//FIXME: also indicate that a reset will be sufficient instead of reconnecting.
+}
+
+- (ConnStatusType) connectionStatus
+{
+	return PQstatus (mConnection);
 }
 @end
 

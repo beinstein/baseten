@@ -67,14 +67,17 @@
 }
 - (id) init;
 - (void) dealloc;
-- (BOOL) connectAsync: (NSString *) connectionString;
+- (void) connectAsync: (NSString *) connectionString;
 - (BOOL) connectSync: (NSString *) connectionString;
+- (void) resetAsync;
+- (BOOL) resetSync;
 - (void) disconnect;
 - (void) setDelegate: (id <PGTSConnectionDelegate>) anObject;
 - (PGTSDatabaseDescription *) databaseDescription;
 - (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc;
 - (id) deserializationDictionary;
 - (NSString *) errorString;
+- (ConnStatusType) connectionStatus;
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;
