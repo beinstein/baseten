@@ -124,19 +124,30 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	[self setConnector: connector];
 	[connector release];
 	
+	[connector setConnection: mConnection];
 	[connector setDelegate: self];
 	[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
 	return [connector connect: [connectionString UTF8String]];
 }
 
-- (BOOL) connectAsync: (NSString *) connectionString
+- (void) connectAsync: (NSString *) connectionString
 {
-	return [self connectUsingClass: [PGTSAsynchronousConnector class] connectionString: connectionString];
+	[self connectUsingClass: [PGTSAsynchronousConnector class] connectionString: connectionString];
 }
 
 - (BOOL) connectSync: (NSString *) connectionString
 {
 	return [self connectUsingClass: [PGTSSynchronousConnector class] connectionString: connectionString];
+}
+
+- (void) resetAsync
+{
+	[self connectUsingClass: [PGTSAsynchronousReconnector class] connectionString: nil];
+}
+
+- (BOOL) resetSync
+{
+	return [self connectUsingClass: [PGTSSynchronousReconnector class] connectionString: nil];
 }
 
 - (void) disconnect

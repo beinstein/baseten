@@ -41,10 +41,14 @@
 {
 	id <PGTSConnectorDelegate> mDelegate;
 	PostgresPollingStatusType (* mPollFunction)(PGconn *);
+	PGconn* mConnection;
 }
 - (BOOL) connect: (const char *) connectionString;
 - (void) cancel;
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
+- (void) setConnection: (PGconn *) connection;
+
+- (BOOL) start: (const char *) connectionString;
 @end
 
 
@@ -53,7 +57,6 @@
 	CFRunLoopRef mRunLoop;
 	CFSocketRef mSocket;
 	CFRunLoopSourceRef mSocketSource;
-	PGconn* mConnection;
 	BOOL mSSLSetUp;
 }
 - (void) socketReady;
