@@ -26,29 +26,24 @@
 // $Id$
 //
 
-#import <PGTS/PGTSConnection.h>
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSDatabaseDescription.h>
-#import <PGTS/PGTSIndexDescription.h>
-#import <PGTS/PGTSTableDescription.h>
-#import <PGTS/PGTSTypeDescription.h>
-#import <PGTS/PGTSFieldDescription.h>
+#import <PGTS/postgresql/libpq-fe.h>
 
-#if 0
-#import <PGTS/PGTSConstants.h>
-#import <PGTS/PGTSResultRowProtocol.h>
-#import <PGTS/PGTSConnectionDelegate.h>
-#import <PGTS/PGTSConnectionPool.h>
-#import <PGTS/PGTSConnectionPoolItem.h>
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/PGTSModificationNotifier.h>
-#import <PGTS/PGTSLockNotifier.h>
-#import <PGTS/PGTSExceptions.h>
-#import <PGTS/PGTSCertificateVerificationDelegate.h>
+#import <PGTS/PGTSConnection.h>
+#import <PGTS/PGTSNotification.h>
+#import <PGTS/PGTSResultSet.h>
 
 #import <PGTS/PGTSAbstractDescription.h>
+#import <PGTS/PGTSAbstractObjectDescription.h>
 #import <PGTS/PGTSAbstractClassDescription.h>
-#import <PGTS/PGTSForeignKeyDescription.h>
-#endif
+#import <PGTS/PGTSDatabaseDescription.h>
+#import <PGTS/PGTSTypeDescription.h>
+#import <PGTS/PGTSTableDescription.h>
+#import <PGTS/PGTSIndexDescription.h>
+#import <PGTS/PGTSFieldDescription.h>
 
-#import <PGTS/postgresql/libpq-fe.h>
+#import <PGTS/NSExpression+PGTSAdditions.h>
+#import <PGTS/NSPredicate+PGTSAdditions.h>
+
+#import <PGTS/PGTSCertificateVerificationDelegate.h>
+
+#import <PGTS/PGTSConstants.h>
