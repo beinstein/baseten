@@ -27,29 +27,28 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BaseTen.h>
 #import <PGTS/PGTS.h>
-
+#import "BaseTen.h"
+#import "BXPGTransactionHandler.h"
 
 @class BXPGNotificationHandler;
 
 
-@interface BXPGInterface : NSObject <BXInterface, PGTSConnectionDelegate> 
+@interface BXPGInterface : NSObject <BXInterface> 
 {
     BXDatabaseContext* mContext; //Weak
+	NSMutableDictionary* mForeignKeys;
+	BXPGTransactionHandler* mTransactionHandler;
 	
 	NSMutableSet* mObservedEntities;
-	NSMutableDictionary* mObservers;
-	
-	BXPGTransactionHandler* mTransactionHandler;
+	NSMutableDictionary* mObservers;	
 }
-
 - (BXDatabaseContext *) databaseContext;
 - (BOOL) fetchForeignKeys: (NSError **) outError;
 - (BOOL) addClearLocksHandler: (NSError **) outError;
 - (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
 				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
-
+- (void) setTransactionHandler: (BXPGTransactionHandler *) handler;
 @end
 
 

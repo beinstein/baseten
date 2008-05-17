@@ -48,6 +48,20 @@ SSLMode (enum BXSSLMode mode)
 
 
 @implementation BXPGTransactionHandler
+- (PGTSConnection *) connection
+{
+	return mConnection;
+}
+
+- (void) setInterface: (BXPGInterface *) interface
+{
+	mInterface = interface;
+}
+
+- (BOOL) autocommits
+{
+	return NO;
+}
 @end
 
 
@@ -127,6 +141,12 @@ SSLMode (enum BXSSLMode mode)
 
 
 - (void) connectAsync
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) disconnect
 {
 	[self doesNotRecognizeSelector: _cmd];
 }

@@ -80,7 +80,7 @@ BXObjectIDsByEntity (NSArray *ids)
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
     TSEnumerate (objectID, e, [ids objectEnumerator])
     {
-        BXEntityDescription* entity = [objectID entity];
+        BXEntityDescription* entity = [(BXDatabaseObjectID *) objectID entity];
         NSMutableArray* array = [dict objectForKey: entity];
         if (nil == array)
         {
@@ -327,7 +327,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
         {
 			[self setCanConnect: NO];
 			[self lazyInit];
-			[[self databaseInterface] connect: &localError];
+			[[self databaseInterface] connectSync: &localError];
 			
 			if (nil == localError)
 				[self connectedToDatabase: (nil == localError) async: NO error: &localError];
@@ -358,7 +358,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		if (NO == [self isConnected])
 		{
 			[self lazyInit];
-			[mDatabaseInterface connectAsync: &localError];
+			[mDatabaseInterface connectAsync];
 		}
 	}
 	
@@ -409,10 +409,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (void) setAutocommits: (BOOL) aBool
 {
-    [self willChangeValueForKey: @"autocommits"];
     mAutocommits = aBool;
-    [mDatabaseInterface setAutocommits: aBool];
-    [self didChangeValueForKey: @"autocommits"];
 }
 
 /**
@@ -1251,7 +1248,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
             BXDatabaseObject* object = [self registeredObjectWithID: currentID];
             if (nil == object)
             {
-                BXEntityDescription* entity = [currentID entity];
+                BXEntityDescription* entity = [(BXDatabaseObjectID *) currentID entity];
                 object = [[[[entity databaseObjectClass] alloc] init] autorelease];
                 [object registerWithContext: self objectID: currentID];
             }
@@ -1277,7 +1274,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
             id currentObject = [self registeredObjectWithID: currentID];
             if (nil == currentObject)
 			{
-				BXEntityDescription* entity = [currentID entity];
+				BXEntityDescription* entity = [(BXDatabaseObjectID *) currentID entity];
 				NSMutableArray* predicates = [entities objectForKey: entity];
 				if (nil == predicates)
 				{

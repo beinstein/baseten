@@ -30,6 +30,12 @@
 
 
 @implementation BXPGAutocommitTransactionHandler (Connecting)
+- (void) disconnect
+{
+	[mConnection disconnect];
+}
+
+
 - (void) connectAsync
 {
 	[self prepareForConnecting];
@@ -84,6 +90,12 @@
 
 
 @implementation BXPGAutocommitTransactionHandler (Transactions)
+- (BOOL) autocommits
+{
+	return YES;
+}
+
+
 - (void) rollback: (NSError **) outError
 {
 	ExpectV (outError);

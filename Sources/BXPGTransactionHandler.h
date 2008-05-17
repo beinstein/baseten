@@ -30,6 +30,8 @@
 #import <PGTS/PGTS.h>
 #import "BXPGInterface.h"
 
+@class BXPGInterface;
+
 
 @interface BXPGTransactionHandler : NSObject 
 {
@@ -43,14 +45,19 @@
 	
 	BOOL mIsResetting;
 }
+- (PGTSConnection *) connection;
+- (void) setInterface: (BXPGInterface *) interface;
+
 - (void) connectAsync;
 - (BOOL) connectSync: (NSError **) outError;
+- (void) disconnect;
 - (void) rollback: (NSError **) outError;
 
 - (void) prepareForConnecting;
 - (NSString *) connectionString;
 - (NSError *) packErrorFor: (PGTSConnection *) failedConnection;
 - (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass;
+- (BOOL) autocommits;
 @end
 
 

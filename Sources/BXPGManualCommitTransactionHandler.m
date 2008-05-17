@@ -30,6 +30,14 @@
 
 
 @implementation BXPGManualCommitTransactionHandler (Connecting)
+- (void) disconnect
+{
+	[mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+	[mNotifyConnection disconnect];
+	[mConnection disconnect];
+}
+
+
 - (void) prepareForConnecting
 {
 	mCounter = 2;
@@ -115,13 +123,17 @@
 
 - (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error
 {
-	//FIXME: determine somehow, whether the error is recoverable by connection reset or not.
-	if (0 && [mConnection pgConnection] && [mNotifyConnection pgConnection])
+	if (! mHandlingConnectionLoss)
 	{
-		Class attempterClass = [BXPGManualCommitConnectionResetRecoveryAttempter class];
-		error = [self duplicateError: error recoveryAttempterClass: attempterClass];
+		mHandlingConnectionLoss = YES;
+		//FIXME: determine somehow, whether the error is recoverable by connection reset or not.
+		if (0 && [mConnection pgConnection] && [mNotifyConnection pgConnection])
+		{
+			Class attempterClass = [BXPGManualCommitConnectionResetRecoveryAttempter class];
+			error = [self duplicateError: error recoveryAttempterClass: attempterClass];
+		}
+		[mInterface connectionLost: self error: error];
 	}
-	[mInterface connectionLost: self error: error];
 }
 @end
 
@@ -185,6 +197,7 @@
 		[mRecoveryInvocation setArgument: &mSucceeded atIndex: 2];
 		[mRecoveryInvocation invoke];
 		//FIXME: check modification tables?
+		//FIXME: clear mHandlingConnectionLoss.
 	}
 }
 

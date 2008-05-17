@@ -33,8 +33,8 @@
 @interface BXPGManualCommitTransactionHandler : BXPGTransactionHandler 
 {
 	PGTSConnection* mNotifyConnection;
-	NSTimer* mConnectionLostTimer;
 	int mCounter;
+	BOOL mHandlingConnectionLoss;
 }
 - (PGTSConnection *) notifyConnection;
 @end

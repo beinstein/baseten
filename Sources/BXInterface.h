@@ -58,7 +58,6 @@
 @protocol BXInterface <NSObject>
 
 - (id) initWithContext: (BXDatabaseContext *) aContext;
-- (void) setDatabaseURI: (NSURL *) anURI;
 
 /** 
  * \internal
@@ -110,17 +109,20 @@
  * \name Connecting to the database 
  */
 //@{
-- (void) connect: (NSError **) error;
-- (void) connectAsync: (NSError **) error;
+- (BOOL) connectSync: (NSError **) error;
+- (void) connectAsync;
 - (void) disconnect;
 //@}
 
+#if 0
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;
+#endif
 
 - (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
+#if 0
 /**
  * \internal
  * \name Transactions 
@@ -128,14 +130,17 @@
 //@{
 - (void) rollback;
 - (BOOL) save: (NSError **) error;
+#endif
 
 - (void) setAutocommits: (BOOL) aBool;
 - (BOOL) autocommits;
 
+#if 0
 - (BOOL) rollbackToLastSavepoint: (NSError **) error;
 - (BOOL) establishSavepoint: (NSError **) error;
 //@}
+#endif
 
 - (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
-- (void) rejectedTrust;
+//- (void) rejectedTrust;
 @end

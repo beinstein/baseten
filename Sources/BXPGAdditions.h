@@ -27,9 +27,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BaseTen.h>
 #import <PGTS/PGTS.h>
 #import <Log4Cocoa/Log4Cocoa.h>
+#import "BaseTen.h"
 #define Expect( X )	log4AssertValueReturn( X, nil, @"Expected " #X " to have been set.");
 #define ExpectR( X, RETVAL )	log4AssertValueReturn( X, RETVAL, @"Expected " #X " to have been set.");
 #define ExpectV( X ) log4AssertVoidReturn( X, @"Expected " #X " to have been set.");
@@ -46,6 +46,6 @@
 @end
 
 
-@implementation BXAttributeDescription (BXPGInterfaceAdditions)
+@interface BXAttributeDescription (BXPGInterfaceAdditions)
 - (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end
