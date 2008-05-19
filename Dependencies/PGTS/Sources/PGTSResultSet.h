@@ -49,6 +49,7 @@
 - (BOOL) setClass: (Class) aClass forKey: (NSString *) aName;
 - (BOOL) setClass: (Class) aClass forFieldAtIndex: (int) fieldIndex;
 - (PGresult *) PGresult;
+- (NSArray *) resultAsArray;
 
 - (BOOL) isAtEnd;
 - (int) currentRow;

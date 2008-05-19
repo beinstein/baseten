@@ -261,17 +261,13 @@ ErrorUserInfoKey (char fieldCode)
 
 - (NSArray *) resultAsArray
 {
-    //FIXME: make this work.
-#if 0
-    if (NO == deserializedFields && YES == determinesFieldClassesAutomatically)
-        [self fetchFieldDescriptions];
-    
-    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: mTuples];
-    for (int i = 0; i < mTuples; i++)
-        [rval addObject: [self objectInRowsAtIndex: i]];
-    return rval;
-#endif
-    return nil;
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [self count]];
+	[self goBeforeFirstRow];
+	while ([self advanceRow]) 
+	{
+		[retval addObject: [self currentRowAsDictionary]];
+	}
+	return retval;
 }
 
 - (int) identifier
@@ -353,7 +349,6 @@ ErrorUserInfoKey (char fieldCode)
 {
 	return mResult;
 }
-
 @end
 
 

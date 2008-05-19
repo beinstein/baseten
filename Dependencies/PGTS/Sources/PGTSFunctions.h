@@ -38,6 +38,8 @@ for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
 
 
 PGTS_EXPORT id PGTSOidAsObject (Oid o);
+PGTS_EXPORT enum PGTSDeleteRule PGTSDeleteRule (const unichar rule);
+
 #if 0
 PGTS_EXPORT void PGTSNoticeProcessor (void* sender, const char* message);
 PGTS_EXPORT NSString* PGTSModificationName (unichar type);
