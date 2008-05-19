@@ -477,10 +477,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (BOOL) logsQueries
 {
-    BOOL rval = mLogsQueries;
-    if (nil != mDatabaseInterface)
-        rval =  [mDatabaseInterface logsQueries];
-    return rval;
+	return mLogsQueries;
 }
 
 /**
@@ -490,9 +487,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (void) setLogsQueries: (BOOL) aBool
 {
-    mLogsQueries = aBool;
-    if (nil != mDatabaseInterface)
-        [mDatabaseInterface setLogsQueries: aBool];
+	mLogsQueries = aBool;
 }
 
 /**
@@ -2170,12 +2165,9 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
 	if (nil == mDatabaseInterface)
 	{
-		[self willChangeValueForKey: @"autocommits"];
 		mDatabaseInterface = [[[[self class] interfaceClassForScheme: 
             [mDatabaseURI scheme]] alloc] initWithContext: self];
 		[mDatabaseInterface setAutocommits: mAutocommits];
-		[self didChangeValueForKey: @"autocommits"];
-		[mDatabaseInterface setLogsQueries: mLogsQueries];
 	}
 	return mDatabaseInterface;
 }
@@ -2198,9 +2190,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
 	
 	if (YES == mUsesKeychain && NULL == mKeychainPasswordItem)
-        [self fetchPasswordFromKeychain];
-	    
-    [mDatabaseInterface setDatabaseURI: mDatabaseURI];
+        [self fetchPasswordFromKeychain];	    
 }
 
 + (void) loadedAppKitFramework

@@ -106,8 +106,8 @@
 - (void) disconnect;
 //@}
 
-#if 0
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
+#if 0
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;
 #endif

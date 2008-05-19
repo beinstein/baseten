@@ -67,6 +67,11 @@ SSLMode (enum BXSSLMode mode)
 {
 	return (CONNECTION_OK == [mConnection connectionStatus]);
 }
+
+- (PGTSDatabaseDescription *) databaseDescription
+{
+	return [mConnection databaseDescription];
+}
 @end
 
 
@@ -158,7 +163,7 @@ SSLMode (enum BXSSLMode mode)
 @end
 
 
-@implementation BXPGTransactionHandler (Transactions)
+@implementation BXPGTransactionHandler (TransactionHelpers)
 - (NSString *) savepointQuery
 {
     mSavepointIndex++;
@@ -180,10 +185,78 @@ SSLMode (enum BXSSLMode mode)
 {
 	return mSavepointIndex;
 }
+@end
+
+
+@implementation BXPGTransactionHandler (Transactions)
+- (BOOL) beginIfNeeded: (NSError **) outError
+{
+	ExpectV (outError, NO);
+	
+	BOOL retval = NO;
+	PGTransactionStatusType status = [mConnection transactionStateus];
+	switch (status) 
+	{
+		case PQTRANS_INTRANS:
+			retval = YES;
+			break;
+			
+		case PQTRANS_IDLE:
+		{
+			PGTSResultSet* res = [connection executeQuery: @"BEGIN"];
+			if ([res querySucceeded])
+				retval = YES;
+			else
+				*outError = [res error];
+			
+			break;
+		}
+			
+		default:
+			//FIXME: set an error.
+			break;
+	}
+	return retval;
+}
+
+
+- (BOOL) save: (NSError **) outError
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
 
 - (void) rollback: (NSError **) outError
 {
 	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (BOOL) savepointIfNeeded: (NSerror **) outError
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+
+- (BOOL) beginSubTransactionIfNeeded: (NSError **) outError
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+
+- (BOOL) endSubtransactionIfNeeded: (NSError **) outError
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+
+- (BOOL) autocommits
+{
+	return NO;
 }
 @end
 

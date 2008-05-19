@@ -90,9 +90,24 @@
 
 
 @implementation BXPGAutocommitTransactionHandler (Transactions)
-- (BOOL) autocommits
+- (BOOL) save: (NSError **) outError
 {
-	return YES;
+	ExpectV (outError)
+	
+	//COMMIT handles all transaction states.
+	BOOL retval = YES;
+	if (PQTRANS_IDLE != [mConnection transactionStatus])
+	{
+		retval = NO;
+		
+		PGTSResultSet* res = [mConnection executeQuery: @"COMMIT; SELECT baseten.ClearLocks ();"];
+		*outError = [res error];
+		
+		if ([res querySucceeded])
+			retval = YES;
+	}
+	[self resetSavepointIndex];	
+	return retval;
 }
 
 
@@ -103,12 +118,37 @@
     //The locked key should be cleared in any case to cope with the situation
     //where the lock was acquired  after the last savepoint and the same key 
     //is to be locked again.
+	//ROLLBACK handles all transaction states.
 	if (PQTRANS_IDLE != [mConnection transactionStatus])
 	{
 		PGTSResultSet* res = [mConnection executeQuery: @"ROLLBACK; SELECT baseten.ClearLocks ();"];
 		*outError = [res error];
 	}
 	[self resetSavepointIndex];	
+}
+
+
+- (BOOL) savepointIfNeeded: (NSerror **) outError
+{
+	return YES;
+}
+
+
+- (BOOL) beginSubTransactionIfNeeded: (NSError **) outError
+{
+	return [self beginIfNeeded: outError];
+}
+
+
+- (BOOL) endSubtransactionIfNeeded: (NSError **) outError
+{
+	return [self save: outError];
+}
+
+
+- (BOOL) autocommits
+{
+	return YES;
 }
 @end
 

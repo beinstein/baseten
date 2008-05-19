@@ -51,13 +51,54 @@
 - (void) connectAsync;
 - (BOOL) connectSync: (NSError **) outError;
 - (void) disconnect;
-- (void) rollback: (NSError **) outError;
 - (BOOL) connected;
 
 - (void) prepareForConnecting;
 - (NSString *) connectionString;
 - (NSError *) packErrorFor: (PGTSConnection *) failedConnection;
 - (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass;
+- (PGTSDatabaseDescription *) databaseDescription;
+
+
+/**
+ * \internal
+ * Begins a transaction.
+ * Begins a transactions unless there already is one.
+ */
+- (BOOL) beginIfNeeded: (NSError **) outError;
+
+/**
+ * \internal
+ * Commits the current transaction.
+ */
+- (BOOL) save: (NSError **) outError;
+
+/**
+ * \internal
+ * Cancels the current transaction.
+ */
+- (void) rollback: (NSError **) outError;
+
+/**
+ * \internal
+ * Creates a savepoint if needed.
+ * Use with single queries.
+ */
+- (BOOL) savepointIfNeeded: (NSError **) outError;
+
+/**
+ * \internal
+ * Creates a savepoint or begins a transaction.
+ * Use with multiple queries.
+ */
+- (BOOL) beginSubTransactionIfNeeded: (NSError **) outError;
+
+/**
+ * \internal
+ * Ends a previously begun subtransaction.
+ */
+- (BOOL) endSubtransactionIfNeeded: (NSError **) outError;
+
 - (BOOL) autocommits;
 @end
 

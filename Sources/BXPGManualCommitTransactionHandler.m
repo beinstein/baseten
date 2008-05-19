@@ -29,6 +29,15 @@
 #import "BXPGTransactionHandler.h"
 
 
+@implementation BXPGManualCommitTransactionHandler
+- (PGTSDatabaseDescription *) databaseDescription
+{
+	return [mNotifyConnection databaseDescription];
+}
+@end
+
+
+
 @implementation BXPGManualCommitTransactionHandler (Connecting)
 - (BOOL) connected
 {
@@ -123,7 +132,10 @@
 	if (failedConnection)
 		[self handleConnectionErrorFor: failedConnection];
 	else
+	{
+		[mNotifyConnection setDatabaseDescription: [mConnection databaseDescription]];
 		[self handleSuccess];
+	}
 }
 
 
@@ -146,6 +158,31 @@
 
 
 @interface BXPGManualCommitTransactionHandler (Transactions)
+- (BOOL) save: (NSError **) outError
+{
+	ExpectV (outError)
+	
+	//COMMIT handles all transaction states.
+	BOOL retval = YES;
+	if (PQTRANS_IDLE != [mConnection transactionStatus])
+	{
+		retval = NO;
+		
+		PGTSResultSet* res = nil;
+		NSError* localError = nil;
+		res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+		if ((localError = [res error])) *outError = localError;
+		res = [mConnection executeQuery: @"ROLLBACK"];
+		if ((localError = [res error])) *outError = localError;
+		
+		if ([res querySucceeded])
+			retval = YES;
+	}
+	[self resetSavepointIndex];	
+	return retval;
+}
+
+
 - (void) rollback: (NSError **) outError
 {
 	ExpectV (outError);
@@ -153,6 +190,7 @@
     //The locked key should be cleared in any case to cope with the situation
     //where the lock was acquired after the last savepoint and the same key 
     //is to be locked again.
+	//COMMIT handles all transaction states.
 	if (PQTRANS_IDLE != [mConnection transactionStatus])
 	{
 		PGTSResultSet* res = nil;
@@ -163,6 +201,49 @@
 		if ((localError = [res error])) *outError = localError;
 	}
 	[self resetSavepointIndex];	
+}
+
+
+- (BOOL) savepointIfNeeded: (NSerror **) outError
+{
+	ExpectV (outError, NO);
+	
+	BOOL retval = NO;
+	if ((retval = [self beginIfNeeded: outError]))
+	{
+		PGTransactionStatusType status = [mConnection transactionStatus];
+		if (PQTRANS_INTRANS == status)
+		{
+			PGTSResultSet* res = [mConnection executeQuery: [self savepointQuery]];
+			if ([res querySucceeded])
+				retval = YES;
+			else
+				*outError = [res error];
+		}
+		else
+		{
+			//FIXME: handle the error.
+		}
+	}
+	return retval;
+}
+
+
+- (BOOL) beginSubTransactionIfNeeded: (NSError **) outError
+{
+	return [self savepointIfNeeded: outError];
+}
+
+
+- (BOOL) endSubtransactionIfNeeded: (NSError **) outError
+{
+	return YES;
+}
+
+
+- (BOOL) autocommits
+{
+	return NO;
 }
 @end
 
