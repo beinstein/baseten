@@ -30,6 +30,12 @@
 
 
 @implementation BXPGManualCommitTransactionHandler (Connecting)
+- (BOOL) connected
+{
+	return (CONNECTION_OK == [mConnection connectionStatus] &&
+			CONNECTION_OK == [mNotifyConnection connectionStatus]);
+}
+
 - (void) disconnect
 {
 	[mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];

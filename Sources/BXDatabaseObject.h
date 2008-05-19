@@ -74,7 +74,7 @@ enum BXObjectLockStatus
  * \param   receiver            The target object
  */
 //FIXME: change the error parameter to an NSError.
-- (void) BXLockAcquired: (BOOL) lockAcquired object: (BXDatabaseObject *) receiver errorMessage: (NSString *) error;
+- (void) BXLockAcquired: (BOOL) lockAcquired object: (BXDatabaseObject *) receiver error: (NSError *) error;
 @end
 
 

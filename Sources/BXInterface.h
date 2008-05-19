@@ -61,21 +61,13 @@
 
 /** 
  * \internal
- * \name Capabilities 
- */
-//@{
-- (BOOL) messagesForViewModifications;
-//@}
-
-/** 
- * \internal
  * \name Queries 
  */
 //@{
 - (id) createObjectForEntity: (BXEntityDescription *) entity withFieldValues: (NSDictionary *) fieldValues
                        class: (Class) aClass error: (NSError **) error;
-- (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
-                           returningFaults: (BOOL) returnFaults class: (Class) aClass error: (NSError **) error;
+- (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
+					returningFaults: (BOOL) returnFaults class: (Class) aClass error: (NSError **) error;
 - (BOOL) fireFault: (BXDatabaseObject *) anObject keys: (NSArray *) keys error: (NSError **) error;
 - (NSArray *) executeUpdateWithDictionary: (NSDictionary *) aDict
                                  objectID: (BXDatabaseObjectID *) anID
@@ -122,7 +114,6 @@
 
 - (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
-#if 0
 /**
  * \internal
  * \name Transactions 
@@ -130,16 +121,14 @@
 //@{
 - (void) rollback;
 - (BOOL) save: (NSError **) error;
-#endif
 
 - (void) setAutocommits: (BOOL) aBool;
 - (BOOL) autocommits;
 
-#if 0
 - (BOOL) rollbackToLastSavepoint: (NSError **) error;
 - (BOOL) establishSavepoint: (NSError **) error;
 //@}
-#endif
+
 
 - (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 //- (void) rejectedTrust;

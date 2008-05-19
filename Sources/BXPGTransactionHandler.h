@@ -52,6 +52,7 @@
 - (BOOL) connectSync: (NSError **) outError;
 - (void) disconnect;
 - (void) rollback: (NSError **) outError;
+- (BOOL) connected;
 
 - (void) prepareForConnecting;
 - (NSString *) connectionString;

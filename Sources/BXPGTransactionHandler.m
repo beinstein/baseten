@@ -62,6 +62,11 @@ SSLMode (enum BXSSLMode mode)
 {
 	return NO;
 }
+
+- (BOOL) connected
+{
+	return (CONNECTION_OK == [mConnection connectionStatus]);
+}
 @end
 
 

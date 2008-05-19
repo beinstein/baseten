@@ -29,6 +29,37 @@
 #import "BXPGAdditions.h"
 
 
+@implementation NSObject (BXPGAdditions)
+- (NSString *) BXPGEscapedName: (PGTSConnection *) connection
+{
+	return [NSString stringWithFormat: @"\"%@\"", [[self description] PGTSEscapedString: connection]];
+}
+
+- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
+{
+	return [self BXPGEscapedName: connection];
+}
+@end
+
+
+@implementation BXEntityDescription (BXPGInterfaceAdditions)
+- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
+{
+    return [NSString stringWithFormat: @"%@.%@", 
+			[[self schemaName] BXPGEscapedName: connection], [[self name] BXPGEscapedName: connection]];
+}
+@end
+
+
+@implementation BXAttributeDescription (BXPGInterfaceAdditions)
+- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
+{    
+	return [NSString stringWithFormat: @"%@.%@", 
+			[[self entity] BXPGQualifiedName: connection], [[self name] BXPGEscapedName: connection]];
+}
+@end
+
+
 @implementation PGTSFieldDescriptionProxy (BXPGAttributeDescription)
 - (void) addAttributeFor: (BXEntityDescription *) entity attributes: (NSMutableDictionary *) attrs primaryKeyFields: (NSSet *) pkey
 {
@@ -47,22 +78,9 @@
 {
 	return [[attribute objectForKey: [self name]] PGTSQualifiedName: connection];
 }
-@end
 
-
-@implementation BXEntityDescription (BXPGInterfaceAdditions)
-- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection
+- (NSString *) BXPGEscapedName: (PGTSConnection *) connection
 {
-    return [NSString stringWithFormat: @"%@.%@", 
-			[[self schemaName] PGTSEscapedName: connection], [[self name] PGTSEscapedName: connection]];
-}
-@end
-
-
-@implementation BXAttributeDescription (BXPGInterfaceAdditions)
-- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection
-{    
-	return [NSString stringWithFormat: @"%@.%@", 
-			[[self entity] PGTSQualifiedName: connection], [[self name] PGTSEscapedName: connection]];
+	return [[self name] BXPGEscapedName: connection];
 }
 @end

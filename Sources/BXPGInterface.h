@@ -44,11 +44,17 @@
 	NSMutableDictionary* mObservers;	
 }
 - (BXDatabaseContext *) databaseContext;
+- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error;
 - (BOOL) fetchForeignKeys: (NSError **) outError;
 - (BOOL) addClearLocksHandler: (NSError **) outError;
 - (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
 				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
 - (void) setTransactionHandler: (BXPGTransactionHandler *) handler;
+- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error;
+- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete;
+- (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
+					returningFaults: (BOOL) returnFaults class: (Class) aClass forUpdate: (BOOL) forUpdate error: (NSError **) error;
 @end
 
 
@@ -57,13 +63,4 @@
 - (void) connectionFailed: (NSError *) error;
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error;
 - (void) connection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
-@end
-
-
-@interface BXPGInterface (Transactions)
-- (NSString *) savepointQuery;
-- (NSString *) rollbackToSavepointQuery;
-- (void) resetSavepointIndex;
-- (unsigned int) savepointIndex;
-- (void) internalRollback: (NSError **) outError;
 @end

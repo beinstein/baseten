@@ -30,27 +30,33 @@
 #import <PGTS/private/PGTSHOM.h>
 #import <PGTS/private/PGTSFunctions.h>
 #import "BaseTen.h"
+#import "BXRelationshipDescription.h"
+#import "BXOneToOneRelationshipDescription.h"
+#import "BXManyToManyRelationshipDescription.h"
+#import "BXForeignKey.h"
+#import "BXDatabaseAdditions.h";
+
 #import "BXPGInterface.h"
 #import "BXPGLockHandler.h"
 #import "BXPGModificationHandler.h"
 #import "BXPGClearLocksHandler.h"
 #import "BXPGAdditions.h"
-#import "BXRelationshipDescription.h"
-#import "BXRelationshipDescriptionPrivate.h"
-#import "BXOneToOneRelationshipDescription.h"
-#import "BXManyToManyRelationshipDescription.h"
-#import "BXForeignKey.h"
+#import "BXPGAutocommitTransactionHandler.h"
+#import "BXPGManualCommitTransactionHandler.h"
 
 //FIXME: it'd be nicer if we didn't need any private headers.
 #import "BXDatabaseContextPrivate.h"
+#import "BXPropertyDescriptionPrivate.h"
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXDatabaseObjectIDPrivate.h"
+#import "BXRelationshipDescriptionPrivate.h"
 
 
-static NSString* kBXLockerKey = @"BXLockerKey";
-static NSString* kBXWhereClauseKey = @"BXWhereClauseKey";
-static NSString* kBXParametersKey = @"BXParametersKey";
+static NSString* kBXPGLockerKey = @"BXPGLockerKey";
+static NSString* kBXPGWhereClauseKey = @"BXPGWhereClauseKey";
+static NSString* kBXPGParametersKey = @"BXPGParametersKey";
+static NSString* kBXPGObjectKey = @"BXPGObjectKey";
 
 
 /**
@@ -97,7 +103,7 @@ ReturnedFields (PGTSConnection* connection, BXEntityDescription* entity)
 {
 	NSArray* attrs = [[entity attributesByName] allValues];
 	NSArray* returned = [attrs PGTSSelectFunction: &ShouldReturn];
-	NSArray* qualifiedNames = (id) [[returned PGTSCollect] PGTSQualifiedName: connection];
+	NSArray* qualifiedNames = (id) [[returned PGTSCollect] BXPGQualifiedName: connection];
 	return [qualifiedNames componentsJoinedByString: @", "];	
 }
 
@@ -110,7 +116,7 @@ static NSString*
 InsertQuery (PGTSConnection* connection, BXEntityDescription* entity, NSArray* insertedAttrs)
 {
 	NSString* retval = nil;
-	NSString* entityName = [entity PGTSQualifiedName: connection];
+	NSString* entityName = [entity BXPGQualifiedName: connection];
 	NSString* returned = ReturnedFields (connection, entity);
 	if (0 == [insertedAttrs count])
 	{
@@ -120,7 +126,7 @@ InsertQuery (PGTSConnection* connection, BXEntityDescription* entity, NSArray* i
 	else
 	{
 		NSString* format = @"INSERT INTO %@ (%@) VALUES (%@) RETURNING %@";
-		NSString* nameString = [(id) [[insertedAttrs PGTSCollect] PGTSQualifiedName: connection] componentsJoinedByString: @", "];
+		NSString* nameString = [(id) [[insertedAttrs PGTSCollect] BXPGQualifiedName: connection] componentsJoinedByString: @", "];
 		retval = [NSString stringWithFormat: format, entityName, nameString, FieldAliases ([insertedAttrs count]), returned];
 	}
 	return retval;
@@ -166,7 +172,7 @@ SelectQueryFormat (PGTSConnection* connection, BOOL forUpdate)
  * \param excludedEntity An optional entity which may not appear in the returned clause.
  */
 static NSString*
-FromClause (PGTSConnection connection, NSPredicate* predicate, BXEntityDescription* additionalEntity, BXEntityDescription* excludedEntity)
+FromClause (PGTSConnection* connection, NSPredicate* predicate, BXEntityDescription* additionalEntity, BXEntityDescription* excludedEntity)
 {
 	NSString* fromClause = nil;
 	
@@ -178,7 +184,7 @@ FromClause (PGTSConnection connection, NSPredicate* predicate, BXEntityDescripti
 	
 	if (0 < [entitySet count])
 	{
-		NSArray* components = [[entitySet PGTSCollectReturning: [NSMutableArray class]] PGTSQualifiedName: connection];
+		NSArray* components = (id) [[entitySet PGTSCollectReturning: [NSMutableArray class]] BXPGQualifiedName: connection];
 		fromClause = [components componentsJoinedByString: @", "];
 		log4AssertValueReturn (nil != fromClause, nil, @"Expected to have a from clause (predicate: %@).", predicate);
 	}
@@ -215,11 +221,11 @@ Result (BXDatabaseContext* context, BXEntityDescription* entity, PGTSResultSet* 
  * Create an UPDATE query.
  */
 static NSString*
-UpdateQuery (PGTSConnection* connection, BXEntityDescription* entity, NSString* setClause, NSString* fromClause)
+UpdateQuery (PGTSConnection* connection, BXEntityDescription* entity, NSString* setClause, NSString* fromClause, NSString* whereClause)
 {
 	NSString* query = nil;
-	NSString* entityName = [entity PGTSQualifiedName: connection];
-	NSString* pkeyFields = [(id) [[[entity primaryKeyFields] PGTSCollect] PGTSEscapedName: connection] componentsJoinedByString: @", "];
+	NSString* entityName = [entity BXPGQualifiedName: connection];
+	NSString* pkeyFields = [(id) [[[entity primaryKeyFields] PGTSCollect] BXPGEscapedName: connection] componentsJoinedByString: @", "];
 	if (fromClause)
 	{
 		NSString* queryFormat = @"UPDATE %@ SET %@ FROM %@ WHERE %@ RETURNING %@";
@@ -269,7 +275,7 @@ ObjectIDs (BXEntityDescription* entity, PGTSResultSet* res)
 		NSDictionary* pkey = [res currentRowAsDictionary];
 		BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: entity
 													   primaryKeyFields: pkey];
-		[objectIDs addObject: objectID];
+		[retval addObject: objectID];
 	}
 	
 	[self checkSuperEntities: entity]; //FIXME: is this needed?
@@ -416,7 +422,18 @@ error:
 }
 
 
-- (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity 
+- (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity 
+                             withPredicate: (NSPredicate *) predicate 
+                           returningFaults: (BOOL) returnFaults 
+                                     class: (Class) aClass 
+                                     error: (NSError **) error
+{
+	return [self executeFetchForEntity: entity withPredicate: predicate returningFaults: returnFaults 
+								 class: aClass forUpdate: NO error: error];
+}
+
+
+- (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity 
                              withPredicate: (NSPredicate *) predicate 
                            returningFaults: (BOOL) returnFaults 
                                      class: (Class) aClass
@@ -426,8 +443,8 @@ error:
 	Expect (entity);
 	Expect (aClass);
 	Expect (error);
-    NSMutableArray* retval = nil;
-	PGTSTableDescription* table = [self validateEntity: entity error: error];
+    NSArray* retval = nil;
+	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error; //FIXME: set the error.
 	if (! [self observeIfNeeded: entity error: error]) goto error;
 	
@@ -448,7 +465,7 @@ error:
 	}
 	else
 	{
-		retval = Result (mContext, entity, res);
+		retval = Result (mContext, entity, res, aClass);
 	}
 
 error:
@@ -478,13 +495,15 @@ error:
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
-	NSString* whereClause = WhereClause (connection, predicate, context);
-	NSMutableArray* parameters = [ctx objectForKey: kPGTSParametersKey] ?: [NSMutableArray parameters];
+	NSString* whereClause = WhereClause (connection, predicate, ctx);
+	NSMutableArray* parameters = [ctx objectForKey: kPGTSParametersKey] ?: [NSMutableArray array];
 	NSString* fromClause = FromClause (connection, predicate, nil, entity);
 	NSString* setClause = [valueDict PGTSSetClauseParameters: parameters connection: connection];
-	NSString* updateQuery = UpdateQuery (connection, entity, setClause, fromClause);
+	NSString* updateQuery = UpdateQuery (connection, entity, setClause, fromClause, whereClause);
 	[connection executeQuery: updateQuery parameterArray: parameters];
 	
+	//FIXME: finish this.
+	return retval;
 }
 
 
@@ -495,12 +514,12 @@ error:
 	log4AssertValueReturn (0 < [keys count], NO, @"Expected to have received some keys to fetch.");
 	
     BOOL retval = NO;
-	NSArray* qualifiedNames = [[keys PGTSCollect] PGTSQualifiedName: connection];
+	PGTSConnection* connection = [mTransactionHandler connection];
 	NSString* fieldNames = [keys componentsJoinedByString: @", "];
 	NSPredicate* predicate = [[anObject objectID] predicate];
-	PGTSConnection* connection = [mTransactionHandler connection];
 
-	NSString* fromClause = FromClause (connection, predicate, entity, nil);
+	NSString* fromClause = FromClause (connection, predicate, [anObject entity], nil);
+	NSMutableDictionary* ctx = [NSMutableDictionary dictionary];
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
 	NSString* queryFormat = SelectQueryFormat (connection, NO);
 
@@ -535,14 +554,14 @@ error:
 		predicate = [objectID predicate];
 	}
 	
-	PGTSTableDescription* table = [self validateEntity: entity error: error];
+	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error;
 	if (! [self observeIfNeeded: entity error: error]) goto error;
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
-	NSString* fromClause = [entity PGTSQualifiedName: connection];
+	NSString* fromClause = [entity BXPGQualifiedName: connection];
 	NSString* returnedFields = ReturnedFields (connection, entity);
 	NSString* queryFormat = @"DELETE FROM %@ WHERE %@ RETURNING %@";
 	NSString* query = [NSString stringWithFormat: queryFormat, returnedFields, fromClause, whereClause];
@@ -676,6 +695,8 @@ error:
 			i++;
 		}
 	}
+	
+bail:
     return retval;
 }
 
@@ -706,7 +727,7 @@ error:
 				NSArray* dstFNames = [res valueForKey: @"dstfnames"];
 				log4AssertValueReturn ([srcFNames count] == [dstFNames count], NO,
 									  @"Expected array counts to match. Row: %@.", 
-									  [res currentRowAsArray]);
+									  [res currentRowAsDictionary]);
 				
 				for (unsigned int i = 0, count = [srcFNames count]; i < count; i++)
 					[key addSrcFieldName: [srcFNames objectAtIndex: i] dstFieldName: [dstFNames objectAtIndex: i]];
@@ -746,28 +767,28 @@ error:
 
 - (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
+	return (nil != [self tableForEntity: entity error: error]);
+}
+
+
+- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error
+{
 	ExpectR (entity, NO);
 	ExpectR (error, NO);
-	BOOL retval = [entity isValidated];
-	if (! retval)
+	PGTSDatabaseDescription* database = [mNotifyConnection databaseDescription];
+	PGTSTableDescription* table = [database table: [entity name] inSchema: [entity schemaName]];
+	if (table && ! [entity isValidated])
 	{
-		PGTSDatabaseDescription* database = [mNotifyConnection databaseDescription];
-		PGTSTableDescription* table = [database table: [entity name] inSchema: [entity schemaName]];
-		if (table)
-		{
-			//If attributes exists, it only contains primary key fields but we haven't received them from the database.
-			NSMutableDictionary* attributes = ([[[entity attributesByName] mutableCopy] autorelease] ?: [NSMutableDictionary dictionary]);
-			
-			//While we're at it, set the fields as well as the primary key.
-			NSSet* pkey = [[table primaryKey] fields];
-			[[[table allFields] PGTSDo] addAttributeFor: entity attributes: attributes primaryKeyFields: pkey];
-			[entity setAttributes: attributes];
-			
-			if ('v' == [table kind])
-				[entity setIsView: YES];
-			
-			retval = YES;
-		}
+		//If attributes exists, it only contains primary key fields but we haven't received them from the database.
+		NSMutableDictionary* attributes = ([[[entity attributesByName] mutableCopy] autorelease] ?: [NSMutableDictionary dictionary]);
+		
+		//While we're at it, set the fields as well as the primary key.
+		NSSet* pkey = [[table primaryKey] fields];
+		[[[table fields] PGTSDo] addAttributeFor: entity attributes: attributes primaryKeyFields: pkey];
+		[entity setAttributes: attributes];
+		
+		if ('v' == [table kind])
+			[entity setIsView: YES];
 	}
 	else
 	{
@@ -775,7 +796,7 @@ error:
 		NSString* localizedError = [NSString stringWithFormat: errorFormat, [entity name], [entity schemaName]];
 		*error = DatabaseError (kBXErrorNoTableForEntity, localizedError, mContext, entity);
 	}
-	return retval;
+	return table;
 }
 
 
@@ -890,7 +911,7 @@ error:
 		mObservers = [[NSMutableDictionary alloc] init];
 		
 	//Create the observer.
-	BXPGNotificationHandler* handler = [[[handlerClass alloc] init] autorelease];
+	BXPGTableNotificationHandler* handler = [[[handlerClass alloc] init] autorelease];
 	[handler setInterface: self];
 	[handler setLastCheck: lastCheck];
 	[handler prepare];
@@ -918,16 +939,16 @@ error:
 	PGTSConnection* connection = [mTransactionHandler connection];
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 	NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
-	NSString* fromClause = [entity PGTSQualifiedName: connection];
+	NSString* fromClause = [entity BXPGQualifiedName: connection];
 	NSString* queryFormat = @"SELECT null FROM ONLY %@ WHERE %@ FOR UPDATE NOWAIT";
 	NSString* queryString = [NSString stringWithFormat: queryFormat, fromClause, whereClause];
 
 	NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
 	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  sender, kBXLockerKey,
-							  anObject, kBXObjectKey,
-							  whereClause, kBXWhereClauseKey,
-							  parameters, kBXParametersKey,
+							  sender, kBXPGLockerKey,
+							  anObject, kBXPGObjectKey,
+							  whereClause, kBXPGWhereClauseKey,
+							  parameters, kBXPGParametersKey,
 							  nil];
 	[connection sendQuery: queryString delegate: self callback: @selector (lockedRow:) 
 			parameterArray: parameters userInfo: userInfo];
@@ -937,11 +958,13 @@ error:
 - (void) lockedRow: (PGTSResultSet *) res
 {
 	NSDictionary* userInfo = [res userInfo];
-	id <BXObjectAsynchronousLocking> sender = [userInfo objectForKey: kBXLockerKey];
-	BXDatabaseObject* object = [userInfo objectForKey: kBXObjectKey];
+	id <BXObjectAsynchronousLocking> sender = [userInfo objectForKey: kBXPGLockerKey];
+	BXDatabaseObject* object = [userInfo objectForKey: kBXPGObjectKey];
 	
 	if ([res querySucceeded])
 	{
+		NSString* whereClause = [userInfo objectForKey: kBXPGWhereClauseKey];
+		NSArray* parameters = [userInfo objectForKey: kBXPGParametersKey];
 		[sender BXLockAcquired: YES object: object error: nil];
 		[self markLocked: [object entity] whereClause: whereClause parameters: parameters willDelete: NO];
 	}
@@ -966,18 +989,32 @@ error:
 	NSString* format = @"SELECT %@ ('U', %u, %@) FROM %@ WHERE %@";
 	if (willDelete)
 		format = @"SELECT %@ ('D', %u, %@) FROM %@ WHERE %@";
-        
+
+	//Table
+	NSError* localError = nil;
+	PGTSTableDescription* table = [self tableForEntity: entity error: &localError];
+	//FIXME: handle the error.
+	
 	//Get and sort the primary key fields.
 	NSDictionary* attrs = [entity attributesByName];
 	NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
 	log4AssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
-	NSArray* quoted = [[pkeyFields PGTSCollect] qualifiedAttributeName: attrs connection: mNotifyConnection];
+	NSArray* quoted = (id) [[pkeyFields PGTSCollect] qualifiedAttributeName: attrs connection: mNotifyConnection];
 	NSString* quotedNames = [quoted componentsJoinedByString: @", "];
-	NSString* entityName = [entity PGTSQualifiedName: notifyConnection];
+	NSString* entityName = [entity BXPGQualifiedName: notifyConnection];
 	
 	//Execute the query.
 	NSString* query = [NSString stringWithFormat: format, funcname, 0, quotedNames, entityName, whereClause];
 	[notifyConnection sendQuery: query delegate: nil callback: NULL parameterArray: parameters]; 
+}
+
+/**
+ * \internal
+ * Unlock a locked object synchronously.
+ */
+- (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey
+{
+    //FIXME: write this.
 }
 
 - (void) prepareForConnecting
@@ -1033,6 +1070,39 @@ error:
 {
 	//FIXME: commit mode may only be changed before connecting.
 }
+
+- (BOOL) save: (NSError **) error
+{
+	//FIXME: write this.
+	return NO;
+}
+
+- (void) rollback
+{
+    if ([self connected])
+    {
+		NSError* localError = nil;
+		[mTransactionHandler rollback: &localError];
+		if (localError) bx_error_during_rollback (self, localError);
+    }
+}
+
+- (BOOL) rollbackToLastSavepoint: (NSError **) error
+{
+	//FIXME: write this.
+	return NO;
+}
+
+- (BOOL) establishSavepoint: (NSError **) error
+{
+	//FIXME: write this.
+	return NO;
+}
+
+- (NSArray *) keyPathComponents: (NSString *) keyPath
+{
+	return [keyPath BXKeyPathComponentsWithQuote: @"\""];
+}
 @end
 
 
@@ -1056,18 +1126,5 @@ error:
 {
 	NSString* notificationName = [notification notificationName];
 	[[mEntityObservers objectForKey: notificationName] handleNotification: notification];
-}
-@end
-
-
-@implementation BXPGInterface (Transactions)
-- (void) rollback
-{
-    if ([self connected])
-    {
-		NSError* localError = nil;
-		[mTransactionHandler rollback: &localError];
-		if (localError) bx_error_during_rollback (self, error);
-    }
 }
 @end
