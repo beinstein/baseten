@@ -31,6 +31,7 @@
 #import "BaseTen.h"
 #import "BXPGTransactionHandler.h"
 
+@class BXPGTransactionHandler;
 @class BXPGNotificationHandler;
 
 

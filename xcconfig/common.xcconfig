@@ -6,7 +6,6 @@ GCC_PREFIX_HEADER = Sources/BaseTen_Prefix.pch
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(SRCROOT)/Dependencies/PGTS/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/MKCCollections/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/PGTS/Contrib/Log4Cocoa/build/$(BUILD_STYLE) .
 INFOPLIST_FILE = Info.plist
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(SRCROOT)/Dependencies/PGTS/build/$(BUILD_STYLE) $(SRCROOT)/Dependencies/MKCCollections/build/$(BUILD_STYLE) $(SDKROOT_$(arch))/usr/lib .
-OTHER_LDFLAGS = $(OTHER_LDFLAGS) -ObjC -headerpad_max_install_names
+OTHER_LDFLAGS = $(OTHER_LDFLAGS) -ObjC -headerpad_max_install_names -weak_framework AppKit -lPGTS -lMKCCollections
 PRODUCT_NAME = BaseTen
 WRAPPER_EXTENSION = framework
-

@@ -35,6 +35,12 @@
 #define ExpectV( X ) log4AssertVoidReturn( X, @"Expected " #X " to have been set.");
 
 
+@interface NSObject (BXPGAdditions)
+- (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
+- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
+@end
+
+
 @interface PGTSFieldDescriptionProxy (BXPGInterfaceAdditions)
 - (void) addAttributeFor: (BXEntityDescription *) entity attributes: (NSMutableDictionary *) attrs primaryKeyFields: (NSSet *) pkey;
 - (NSString *) qualifiedAttributeName: (NSDictionary *) attributes connection: (PGTSConnection *) connection;
@@ -49,4 +55,9 @@
 
 @interface BXAttributeDescription (BXPGInterfaceAdditions)
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
+@end
+
+
+@interface NSURL (BXPGInterfaceAdditions)
+- (NSMutableDictionary *) BXPGConnectionDictionary;
 @end

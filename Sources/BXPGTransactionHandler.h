@@ -53,12 +53,18 @@
 - (void) disconnect;
 - (BOOL) connected;
 
+- (NSString *) savepointQuery;
+- (NSString *) rollbackToSavepointQuery;
+- (void) resetSavepointIndex;
+- (NSUInteger) savepointIndex;
+
 - (void) prepareForConnecting;
 - (NSString *) connectionString;
-- (NSError *) packErrorFor: (PGTSConnection *) failedConnection;
 - (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass;
 - (PGTSDatabaseDescription *) databaseDescription;
 
+- (void) handleConnectionErrorFor: (PGTSConnection *) failedConnection;
+- (void) handleSuccess;
 
 /**
  * \internal
@@ -116,7 +122,7 @@
 	NSInvocation* mRecoveryInvocation;
 }
 - (void) setRecoveryInvocation: (NSInvocation *) anInvocation;
-- (void) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo;
+- (NSInvocation *) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo;
 
 - (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex;
 - (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 

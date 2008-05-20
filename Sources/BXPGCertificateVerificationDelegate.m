@@ -36,10 +36,11 @@
 
 - (void) dealloc
 {
-	[self clearCaches];
+	//[self clearCaches];
 	[super dealloc];
 }
 
+#if 0
 - (void) clearCaches
 {
 	if (NULL != mOpenSSLCertificates)
@@ -135,5 +136,6 @@
 	
 	return rval;
 }
+#endif
 
 @end

@@ -95,7 +95,7 @@
  * \internal 
  * Handle the error if a lock couldn't be acquired. 
  */
-- (void) BXLockAcquired: (BOOL) lockAcquired object: (BXDatabaseObject *) receiver errorMessage: (NSString *) dbError
+- (void) BXLockAcquired: (BOOL) lockAcquired object: (BXDatabaseObject *) receiver error: (NSError *) dbError
 {
     if (NO == lockAcquired)
     {
@@ -103,15 +103,7 @@
         //[[self BXWindow] endEditingFor: nil];
 		[self discardEditing];
 		
-		NSString* errorMessage = [NSString stringWithFormat: @"The database server said:\n%@", dbError];
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-			@"Couldn't lock the edited row", NSLocalizedDescriptionKey,
-			errorMessage, NSLocalizedRecoverySuggestionErrorKey,
-			nil];
-        NSError* error = [NSError errorWithDomain: kBXErrorDomain
-                                             code: kBXErrorLockNotAcquired
-                                         userInfo: userInfo];
-        [self BXHandleError: error];
+        [self BXHandleError: dbError];
     }
 }
 

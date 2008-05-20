@@ -71,7 +71,8 @@
 		[self connect];
 	else
 	{
-		[mDatabaseInterface rejectedTrust];
+		//FIXME: make this work in some other manner.
+		//[mDatabaseInterface rejectedTrust];
 		[self setCanConnect: YES];
 		
 		//FIXME: Create an NSError and set it in userInfo to kBXErrorKey.

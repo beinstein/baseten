@@ -31,7 +31,7 @@
 #import "BXConnectionPanel.h"
 #import "BXAuthenticationPanel.h"
 #import "BXDatabaseContextAdditions.h"
-#import "../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/Log4Cocoa.h"
+#import <Log4Cocoa/Log4Cocoa.h>
 
 
 /**

@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import "BXPGAdditions.h"
+#import "BXPGNotificationHandler.h"
 
 
 @interface BXPGModificationHandler : BXPGTableNotificationHandler

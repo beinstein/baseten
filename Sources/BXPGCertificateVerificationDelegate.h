@@ -34,6 +34,7 @@
 
 @interface BXPGCertificateVerificationDelegate : PGTSCertificateVerificationDelegate 
 {
+#if 0
 	@public
 	BXDatabaseContext* mContext;
 	BXPGInterface* mInterface;
@@ -42,8 +43,9 @@
 	@protected
 	NSString* mConnectionString;
 	X509** mOpenSSLCertificates;
+#endif
 }
 
-- (void) clearCaches;
+//- (void) clearCaches;
 
 @end

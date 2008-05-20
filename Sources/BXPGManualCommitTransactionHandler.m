@@ -26,13 +26,19 @@
 // $Id$
 //
 
-#import "BXPGTransactionHandler.h"
+#import "BXPGManualCommitTransactionHandler.h"
+#import "BXPGAdditions.h"
 
 
 @implementation BXPGManualCommitTransactionHandler
 - (PGTSDatabaseDescription *) databaseDescription
 {
 	return [mNotifyConnection databaseDescription];
+}
+
+- (PGTSConnection *) notifyConnection
+{
+	return mNotifyConnection;
 }
 @end
 
@@ -69,7 +75,7 @@
 - (void) connectAsync
 {	
 	[self prepareForConnecting];
-	mSync = NO;
+	mAsync = YES;
 	
 	NSString* connectionString = nil; //FIXME: get this somehow.
 	[mConnection connectAsync: connectionString];
@@ -79,10 +85,10 @@
 
 - (BOOL) connectSync: (NSError **) outError
 {
-	ExpectV (outError);
+	ExpectR (outError, NO);
 	
 	[self prepareForConnecting];
-	mSync = YES;
+	mAsync = NO;
 	mSyncErrorPtr = outError;
 	
 	NSString* connectionString = [self connectionString];
@@ -93,27 +99,6 @@
 	
 	mSyncErrorPtr = NULL;
 	return mConnectionSucceeded;
-}
-
-
-- (void) waitForConnection
-{
-	//Wait until both connections have finished.
-	mCounter--;
-	if (! mCounter)
-		[self finishedConnecting];
-}
-
-
-- (void) PGTSConnectionFailed: (PGTSConnection *) connection
-{
-	[self waitForConnection];
-}
-
-
-- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
-{
-	[self waitForConnection];
 }
 
 
@@ -139,6 +124,27 @@
 }
 
 
+- (void) waitForConnection
+{
+	//Wait until both connections have finished.
+	mCounter--;
+	if (! mCounter)
+		[self finishedConnecting];
+}
+
+
+- (void) PGTSConnectionFailed: (PGTSConnection *) connection
+{
+	[self waitForConnection];
+}
+
+
+- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
+{
+	[self waitForConnection];
+}
+
+
 - (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error
 {
 	if (! mHandlingConnectionLoss)
@@ -157,10 +163,10 @@
 
 
 
-@interface BXPGManualCommitTransactionHandler (Transactions)
+@implementation BXPGManualCommitTransactionHandler (Transactions)
 - (BOOL) save: (NSError **) outError
 {
-	ExpectV (outError)
+	ExpectR(outError, NO);
 	
 	//COMMIT handles all transaction states.
 	BOOL retval = YES;
@@ -204,9 +210,9 @@
 }
 
 
-- (BOOL) savepointIfNeeded: (NSerror **) outError
+- (BOOL) savepointIfNeeded: (NSError **) outError
 {
-	ExpectV (outError, NO);
+	ExpectR (outError, NO);
 	
 	BOOL retval = NO;
 	if ((retval = [self beginIfNeeded: outError]))
@@ -254,8 +260,8 @@
 {
 	if (0 == recoveryOptionIndex)
 	{
-		[mConnection resetSync];
-		[mNotifyConnection resetSync];
+		[[mHandler connection] resetSync];
+		[[(id) mHandler notifyConnection] resetSync];
 		//-finishedConnecting gets executed here.
 	}
 	return mSucceeded;
@@ -264,19 +270,22 @@
 
 - (void) finishedConnecting
 {
-	ConnStatusType s1 = [mConnection connectionStatus];
-	ConnStatusType s2 = [mNotifyConnection connectionStatus];
+	PGTSConnection* connection = [mHandler connection];
+	PGTSConnection* notifyConnection = [(id) mHandler notifyConnection];
+	
+	ConnStatusType s1 = [connection connectionStatus];
+	ConnStatusType s2 = [notifyConnection connectionStatus];
 	mSucceeded = (CONNECTION_OK == s1 && CONNECTION_OK == s2);
 	
 	if (! mSucceeded)
 	{
-		[mConnection disconnect];
-		[mNotifyConnection disconnect];
+		[connection disconnect];
+		[notifyConnection disconnect];
 	}
 	else
 	{
-		[mConnection setDelegate: mHandler];
-		[mNotifyConnection setDelegate: mHandler];
+		[connection setDelegate: mHandler];
+		[notifyConnection setDelegate: mHandler];
 	}
 	
 	if (mIsAsync)
@@ -307,10 +316,12 @@
 	NSInvocation* i = [self recoveryInvocation: delegate selector: didRecoverSelector contextInfo: contextInfo];
 	[self setRecoveryInvocation: i];
 	
-	[mConnection setDelegate: self];
-	[mNotifyConnection setDelegate: self];
-	[mConnection resetAsync];
-	[mNotifyConnection resetAsync];
+	PGTSConnection* connection = [mHandler connection];
+	PGTSConnection* notifyConnection = [(id) mHandler notifyConnection];
+	[connection setDelegate: self];
+	[notifyConnection setDelegate: self];
+	[connection resetAsync];
+	[notifyConnection resetAsync];
 }
 
 

@@ -33,7 +33,6 @@
 @interface BXPGAutocommitTransactionHandler : BXPGTransactionHandler 
 {
 }
-- (PGTSConnection *) connection;
 @end
 
 

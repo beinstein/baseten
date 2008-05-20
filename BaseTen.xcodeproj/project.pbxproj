@@ -183,6 +183,10 @@
 		537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
 		537F05150DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */; };
 		537F05160DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
+		538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538678D30DE31BA0000C9A78 /* IOKit.framework */; };
+		538678D50DE31BA0000C9A78 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538678D30DE31BA0000C9A78 /* IOKit.framework */; };
+		538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 538679870DE31C1D000C9A78 /* libstdc++.6.dylib */; };
+		538679890DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 538679870DE31C1D000C9A78 /* libstdc++.6.dylib */; };
 		5389E1A30C464107002714B8 /* BXRelationshipDescriptionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5389E1A20C464107002714B8 /* BXRelationshipDescriptionPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5389E1FA0C465449002714B8 /* BXForeignKeyPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5389E1F90C465449002714B8 /* BXForeignKeyPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		539EDD650C46203C00B6E5EC /* BXRelationshipDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -450,6 +454,8 @@
 		5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectID.h; path = Sources/BXDatabaseObjectID.h; sourceTree = "<group>"; };
 		5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectID.m; path = Sources/BXDatabaseObjectID.m; sourceTree = "<group>"; };
 		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
+		538678D30DE31BA0000C9A78 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		538679870DE31C1D000C9A78 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "/usr/lib/libstdc++.6.dylib"; sourceTree = "<absolute>"; };
 		5389E1A20C464107002714B8 /* BXRelationshipDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescriptionPrivate.h; path = Sources/BXRelationshipDescriptionPrivate.h; sourceTree = "<group>"; };
 		5389E1F90C465449002714B8 /* BXForeignKeyPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKeyPrivate.h; path = Sources/BXForeignKeyPrivate.h; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
@@ -491,6 +497,8 @@
 				5354440A0D634A47002A6C47 /* libcrypto.dylib in Frameworks */,
 				5354440B0D634A47002A6C47 /* libssl.dylib in Frameworks */,
 				5354440C0D634A47002A6C47 /* Security.framework in Frameworks */,
+				538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */,
+				538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -503,6 +511,8 @@
 				53DBE8020B666C3B00C3D20A /* libcrypto.dylib in Frameworks */,
 				53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */,
 				531266E50B68F9CA00637EDA /* Security.framework in Frameworks */,
+				538678D50DE31BA0000C9A78 /* IOKit.framework in Frameworks */,
+				538679890DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,10 +546,12 @@
 			children = (
 				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
 				53DBE8120B666C7900C3D20A /* libssl.dylib */,
+				538679870DE31C1D000C9A78 /* libstdc++.6.dylib */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				531266E40B68F9CA00637EDA /* Security.framework */,
 				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
+				538678D30DE31BA0000C9A78 /* IOKit.framework */,
 				5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */,
 				53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */,
 				530ADC7609ED1BC1004A13C3 /* PGTS.xcodeproj */,
@@ -1239,6 +1251,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444210D634A98002A6C47 /* debug-gc.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
 			};
 			name = Debug;
 		};
@@ -1246,6 +1263,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444230D634A98002A6C47 /* release-gc.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
 			};
 			name = Release;
 		};
@@ -1253,6 +1275,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444220D634A98002A6C47 /* debug-non-gc.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
 			};
 			name = Debug;
 		};
@@ -1260,6 +1287,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444240D634A98002A6C47 /* release-non-gc.xcconfig */;
 			buildSettings = {
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
 			};
 			name = Release;
 		};

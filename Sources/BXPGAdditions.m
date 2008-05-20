@@ -26,13 +26,18 @@
 // $Id$
 //
 
+#import <PGTS/PGTSAdditions.h>
 #import "BXPGAdditions.h"
+#import "BXDatabaseAdditions.h"
+#import "BXPropertyDescriptionPrivate.h"
+#import "BXAttributeDescriptionPrivate.h"
 
 
 @implementation NSObject (BXPGAdditions)
 - (NSString *) BXPGEscapedName: (PGTSConnection *) connection
 {
-	return [NSString stringWithFormat: @"\"%@\"", [[self description] PGTSEscapedString: connection]];
+	NSString* name = [[self description] PGTSEscapedString: connection];
+	return [NSString stringWithFormat: @"\"%@\"", name];
 }
 
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
@@ -45,8 +50,9 @@
 @implementation BXEntityDescription (BXPGInterfaceAdditions)
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
 {
-    return [NSString stringWithFormat: @"%@.%@", 
-			[[self schemaName] BXPGEscapedName: connection], [[self name] BXPGEscapedName: connection]];
+	NSString* schemaName = [[self schemaName] BXPGEscapedName: connection];
+	NSString* name = [[self name] BXPGEscapedName: connection];
+    return [NSString stringWithFormat: @"%@.%@", schemaName, name];
 }
 @end
 
@@ -63,24 +69,47 @@
 @implementation PGTSFieldDescriptionProxy (BXPGAttributeDescription)
 - (void) addAttributeFor: (BXEntityDescription *) entity attributes: (NSMutableDictionary *) attrs primaryKeyFields: (NSSet *) pkey
 {
-	BXAttributeDescription* desc = [attrs objectForKey: [self name]];
+	BXAttributeDescription* desc = [attrs objectForKey: [(id) self name]];
 	if (! desc)
-		desc = [BXAttributeDescription attributeWithName: [self name] entity: entity];
+		desc = [BXAttributeDescription attributeWithName: [(id) self name] entity: entity];
 	
 	BOOL isPrimaryKey = [pkey containsObject: self];
-	BOOL isOptional = (! ([self isNotNull] || isPrimaryKey));
+	BOOL isOptional = (! ([(id) self isNotNull] || isPrimaryKey));
 	[desc setOptional: isOptional];
 	[desc setPrimaryKey: isPrimaryKey];
-	[attrs setObject: desc forKey: [self name]];
+	[attrs setObject: desc forKey: [(id) self name]];
 }
 
 - (NSString *) qualifiedAttributeName: (NSDictionary *) attributes connection: (PGTSConnection *) connection
 {
-	return [[attribute objectForKey: [self name]] PGTSQualifiedName: connection];
+	return [[attributes objectForKey: [(id) self name]] PGTSQualifiedName: connection];
 }
 
 - (NSString *) BXPGEscapedName: (PGTSConnection *) connection
 {
-	return [[self name] BXPGEscapedName: connection];
+	return [[(id) self name] BXPGEscapedName: connection];
+}
+@end
+
+
+@implementation NSURL (BXPGInterfaceAdditions)
+#define SetIf( VALUE, KEY ) if ((VALUE)) [connectionDict setObject: VALUE forKey: KEY];
+- (NSMutableDictionary *) BXPGConnectionDictionary
+{
+	NSMutableDictionary* connectionDict = nil;
+	if (0 == [@"pgsql" caseInsensitiveCompare: [self scheme]])
+	{
+		connectionDict = [NSMutableDictionary dictionary];    
+		
+		NSString* relativePath = [self relativePath];
+		if (1 <= [relativePath length])
+			SetIf ([relativePath substringFromIndex: 1], kPGTSDatabaseNameKey);
+		
+		SetIf ([self host], kPGTSHostKey);
+		SetIf ([[self user] BXURLDecodedString], kPGTSUserNameKey);
+		SetIf ([[self password] BXURLDecodedString], kPGTSPasswordKey);
+		SetIf ([self port], kPGTSPortKey);
+	}
+	return connectionDict;
 }
 @end

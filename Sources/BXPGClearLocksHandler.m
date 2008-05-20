@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import "BXPGLockHandler.h"
+#import "BXPGClearLocksHandler.h"
 
 
 @implementation BXPGClearLocksHandler
@@ -37,6 +37,8 @@
 
 - (void) handleNotification: (PGTSNotification *) notification
 {
+	//FIXME: make this work.
+#if 0
     log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
 	
 	PGTSResultSet* xactRes = nil;
@@ -98,6 +100,7 @@
 error:
     //FIXME: a real exception
     [[NSException exceptionWithName: @"" reason: nil userInfo: nil] raise];	
+#endif
 }
 @end
 

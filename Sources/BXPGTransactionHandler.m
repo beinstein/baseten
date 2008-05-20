@@ -27,6 +27,9 @@
 //
 
 #import "BXPGTransactionHandler.h"
+#import "BXPGAdditions.h"
+#import "BXDatabaseAdditions.h"
+#import <PGTS/PGTSAdditions.h>
 
 
 static NSString* 
@@ -58,11 +61,6 @@ SSLMode (enum BXSSLMode mode)
 	mInterface = interface;
 }
 
-- (BOOL) autocommits
-{
-	return NO;
-}
-
 - (BOOL) connected
 {
 	return (CONNECTION_OK == [mConnection connectionStatus]);
@@ -72,10 +70,9 @@ SSLMode (enum BXSSLMode mode)
 {
 	return [mConnection databaseDescription];
 }
-@end
 
+#pragma mark Connecting
 
-@implementation BXPGTransactionHandler (Connecting)
 - (NSString *) connectionString
 {
 	BXDatabaseContext* ctx = [mInterface databaseContext];
@@ -83,7 +80,7 @@ SSLMode (enum BXSSLMode mode)
 	NSMutableDictionary* connectionDict = [databaseURI BXPGConnectionDictionary];
 
 	enum BXSSLMode sslMode = [ctx sslMode];
-	[connectionDict setValue: SSLMode (mode) forKey: kPGTSSSLModeKey];
+	[connectionDict setValue: SSLMode (sslMode) forKey: kPGTSSSLModeKey];
 	
 	return [connectionDict PGTSConnectionString];
 }
@@ -126,13 +123,13 @@ SSLMode (enum BXSSLMode mode)
 
 - (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass
 {
-	BXConnectionResetRecoveryAttempter* attempter = [[[aClass alloc] init] autorelease];
+	BXPGConnectionResetRecoveryAttempter* attempter = [[[aClass alloc] init] autorelease];
 	attempter->mHandler = self;
 	
 	NSMutableDictionary* userInfo = [[[error userInfo] mutableCopy] autorelease];
 	[userInfo setObject: attempter forKey: NSRecoveryAttempterErrorKey];
 	//FIXME: set the recovery options from attempter's class method or something.
-	return [NSError errorWithDomain: [error domain] code: [error code] userInfo: aDict];
+	return [NSError errorWithDomain: [error domain] code: [error code] userInfo: userInfo];
 }
 
 
@@ -144,9 +141,10 @@ SSLMode (enum BXSSLMode mode)
 }	
 
 
-- (void) connectSync: (NSError **) outError
+- (BOOL) connectSync: (NSError **) outError
 {
 	[self doesNotRecognizeSelector: _cmd];
+	return NO;
 }
 
 
@@ -160,10 +158,10 @@ SSLMode (enum BXSSLMode mode)
 {
 	[self doesNotRecognizeSelector: _cmd];
 }
-@end
 
 
-@implementation BXPGTransactionHandler (TransactionHelpers)
+#pragma mark TransactionHelpers
+
 - (NSString *) savepointQuery
 {
     mSavepointIndex++;
@@ -185,16 +183,16 @@ SSLMode (enum BXSSLMode mode)
 {
 	return mSavepointIndex;
 }
-@end
 
 
-@implementation BXPGTransactionHandler (Transactions)
+#pragma mark Transactions
+
 - (BOOL) beginIfNeeded: (NSError **) outError
 {
-	ExpectV (outError, NO);
+	ExpectR (outError, NO);
 	
 	BOOL retval = NO;
-	PGTransactionStatusType status = [mConnection transactionStateus];
+	PGTransactionStatusType status = [mConnection transactionStatus];
 	switch (status) 
 	{
 		case PQTRANS_INTRANS:
@@ -203,7 +201,7 @@ SSLMode (enum BXSSLMode mode)
 			
 		case PQTRANS_IDLE:
 		{
-			PGTSResultSet* res = [connection executeQuery: @"BEGIN"];
+			PGTSResultSet* res = [mConnection executeQuery: @"BEGIN"];
 			if ([res querySucceeded])
 				retval = YES;
 			else
@@ -233,7 +231,7 @@ SSLMode (enum BXSSLMode mode)
 }
 
 
-- (BOOL) savepointIfNeeded: (NSerror **) outError
+- (BOOL) savepointIfNeeded: (NSError **) outError
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return NO;
@@ -264,7 +262,7 @@ SSLMode (enum BXSSLMode mode)
 @implementation BXPGTransactionHandler (PGTSConnectionDelegate)
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
-	[mInterface PGTSConnection: connection gotNotification: notification];
+	[mInterface connection: connection gotNotification: notification];
 }
 
 
@@ -320,7 +318,7 @@ SSLMode (enum BXSSLMode mode)
 }
 
 
-- (void) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo
+- (NSInvocation *) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo
 {
 	NSMethodSignature* sig = [target methodSignatureForSelector: selector];
 	NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];

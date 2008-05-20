@@ -94,32 +94,11 @@
 			remoteGlobalIDString = 538177460D6342CB00A4CA72;
 			remoteInfo = "libLog4Cocoa + GC";
 		};
-		535444970D634DDC002A6C47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 535443BB0D634A47002A6C47;
-			remoteInfo = "BaseTen Framework + GC";
-		};
-		535444990D634DDC002A6C47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53B38EBC0BC2807400EAA5C3 /* Log4Cocoa.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5381770D0D6342CB00A4CA72;
-			remoteInfo = "libLog4Cocoa + GC";
-		};
 		53967ADF0A3725FD002DB5AE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
-			remoteInfo = "BaseTen Static";
-		};
-		53967B440A372810002DB5AE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
 		};
 		53B38EC30BC2807400EAA5C3 /* PBXContainerItemProxy */ = {
@@ -149,13 +128,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 530EBD140B4BBFAE00DFC1CA;
 			remoteInfo = Log4Cocoa;
-		};
-		53B38ECD0BC2808100EAA5C3 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53B38EBC0BC2807400EAA5C3 /* Log4Cocoa.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA;
-			remoteInfo = libLog4Cocoa;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -358,8 +330,8 @@
 		537E48D20A14BFE800A22080 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				53967AE00A3725FD002DB5AE /* BaseTen.framework */,
 				5354443E0D634CA4002A6C47 /* BaseTen.framework */,
+				53967AE00A3725FD002DB5AE /* BaseTen.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -439,8 +411,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				535444980D634DDC002A6C47 /* PBXTargetDependency */,
-				5354449A0D634DDC002A6C47 /* PBXTargetDependency */,
 			);
 			name = "BaseTenAppKit + GC";
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -461,8 +431,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				53967B450A372810002DB5AE /* PBXTargetDependency */,
-				53B38ECE0BC2808100EAA5C3 /* PBXTargetDependency */,
 			);
 			name = BaseTenAppKit;
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -651,29 +619,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		535444980D634DDC002A6C47 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "BaseTen Framework + GC";
-			targetProxy = 535444970D634DDC002A6C47 /* PBXContainerItemProxy */;
-		};
-		5354449A0D634DDC002A6C47 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "libLog4Cocoa + GC";
-			targetProxy = 535444990D634DDC002A6C47 /* PBXContainerItemProxy */;
-		};
-		53967B450A372810002DB5AE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "BaseTen Static";
-			targetProxy = 53967B440A372810002DB5AE /* PBXContainerItemProxy */;
-		};
-		53B38ECE0BC2808100EAA5C3 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = libLog4Cocoa;
-			targetProxy = 53B38ECD0BC2808100EAA5C3 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {

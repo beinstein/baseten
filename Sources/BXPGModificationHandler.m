@@ -32,6 +32,8 @@
 @implementation BXPGModificationHandler
 - (void) handleNotification: (PGTSNotification *) notification
 {
+	//FIXME: make this work.
+#if 0
     //When observing self-generated modifications, also the ones that still have NULL values for 
     //pgts_modification_timestamp should be included in the query.
     NSNumber* backendPID = nil;
@@ -83,5 +85,6 @@
             [res advanceRow];
         }        
     }
+#endif
 }
 @end

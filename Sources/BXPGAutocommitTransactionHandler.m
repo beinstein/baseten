@@ -26,7 +26,12 @@
 // $Id$
 //
 
-#import "BXPGTransactionHandler.h"
+#import "BXPGAutocommitTransactionHandler.h"
+#import "BXPGAdditions.h"
+
+
+@implementation BXPGAutocommitTransactionHandler
+@end
 
 
 @implementation BXPGAutocommitTransactionHandler (Connecting)
@@ -39,7 +44,7 @@
 - (void) connectAsync
 {
 	[self prepareForConnecting];
-	mSync = NO;
+	mAsync = YES;
 	
 	NSString* connectionString = [self connectionString];
 	[mConnection connectAsync: connectionString];
@@ -51,7 +56,7 @@
 	ExpectV (outError);
 	
 	[self prepareForConnecting];
-	mSync = YES;
+	mAsync = NO;
 	mSyncErrorPtr = outError;
 	
 	NSString* connectionString = nil; //FIXME: get this somehow.
@@ -60,13 +65,12 @@
 	//-finishedConnecting gets executed here.
 	
 	mSyncErrorPtr = NULL;
-	return mConnectionSucceeded;
 }
 
 
 - (void) PGTSConnectionFailed: (PGTSConnection *) connection
 {
-	[self handleConnectionErrorFor: failedConnection];
+	[self handleConnectionErrorFor: connection];
 }
 
 
@@ -92,7 +96,7 @@
 @implementation BXPGAutocommitTransactionHandler (Transactions)
 - (BOOL) save: (NSError **) outError
 {
-	ExpectV (outError)
+	ExpectR (outError, NO);
 	
 	//COMMIT handles all transaction states.
 	BOOL retval = YES;
@@ -128,7 +132,7 @@
 }
 
 
-- (BOOL) savepointIfNeeded: (NSerror **) outError
+- (BOOL) savepointIfNeeded: (NSError **) outError
 {
 	return YES;
 }
@@ -159,7 +163,7 @@
 {
 	BOOL retval = NO;
 	if (0 == recoveryOptionIndex)
-		retval = [mConnection resetSync];
+		retval = [[mHandler connection] resetSync];
 	return retval;
 }
 
@@ -170,8 +174,9 @@
 	NSInvocation* i = [self recoveryInvocation: delegate selector: didRecoverSelector contextInfo: contextInfo];
 	[self setRecoveryInvocation: i];
 	
-	[mConnection setDelegate: self];
-	[mConnection resetAsync];
+	PGTSConnection* connection = [mHandler connection];
+	[connection setDelegate: self];
+	[connection resetAsync];
 }
 
 

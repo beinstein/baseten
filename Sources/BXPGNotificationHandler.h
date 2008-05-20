@@ -27,6 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BXPGInterface.h"
 
 
 @interface BXPGNotificationHandler : NSObject 

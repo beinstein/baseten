@@ -27,9 +27,10 @@
 //
 
 #import "BXPGNotificationHandler.h"
+#import "BXPGAdditions.h"
 
 
-@implementation BXPGTableNotificationHandler
+@implementation BXPGNotificationHandler
 - (void) handleNotification: (PGTSNotification *) notification
 {
 	[self doesNotRecognizeSelector: _cmd];
@@ -56,7 +57,7 @@
 @end
 
 
-@implementation BXPGNotificationHandler
+@implementation BXPGTableNotificationHandler
 - (void) setLastCheck: (NSDate *) aDate
 {
 	if (!mLastCheck || NSOrderedAscending == [mLastCheck compare: aDate])
