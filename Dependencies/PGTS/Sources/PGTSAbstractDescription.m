@@ -32,6 +32,10 @@
 #import "PGTSHOM.h"
 
 
+extern inline
+id PGTSNilReturn (id anObject);
+
+
 @class PGTSInvocationRecorder;
 
 

@@ -47,6 +47,13 @@
 #define log4AssertValueReturn(...)
 
 
+
+@interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
+- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
+@end
+
+
+
 @implementation PGTSConnection
 
 static void
@@ -343,6 +350,11 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (ConnStatusType) connectionStatus
 {
 	return PQstatus (mConnection);
+}
+
+- (PGTransactionStatusType) transactionStatus
+{
+	return PQtransactionStatus (mConnection);
 }
 @end
 

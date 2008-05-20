@@ -56,8 +56,8 @@
 		538176360D633DC000A4CA72 /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176370D633DC000A4CA72 /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FF508804EA000BFAFB5 /* PGTS.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176380D633DC000A4CA72 /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 533A6AF209DEE51700D28AB0 /* PGTSConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		538176390D633DC000A4CA72 /* PGTSFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		5381763B0D633DC000A4CA72 /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		538176390D633DC000A4CA72 /* PGTSFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5381763B0D633DC000A4CA72 /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FEF08804EA000BFAFB5 /* PGTSAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176410D633DC000A4CA72 /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BA4FE708804EA000BFAFB5 /* PGTSConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176440D633DC000A4CA72 /* PGTSAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F923BC08B1372F00759909 /* PGTSAbstractDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		538176450D633DC000A4CA72 /* PGTSAbstractClassDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D9B38808B5256700ADB959 /* PGTSAbstractClassDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -88,7 +88,7 @@
 		53817AE60D63438C00A4CA72 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 538178FD0D6342FA00A4CA72 /* libLog4Cocoa.a */; };
 		5392A7A50DAD7B0E0012C7CD /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 5392A7A30DAD7B0E0012C7CD /* PGTSFoundationObjects.h */; settings = {ATTRIBUTES = (); }; };
 		5392A7A60DAD7B0E0012C7CD /* PGTSFoundationObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 5392A7A40DAD7B0E0012C7CD /* PGTSFoundationObjects.m */; };
-		5392A7A70DAD7B0E0012C7CD /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 5392A7A30DAD7B0E0012C7CD /* PGTSFoundationObjects.h */; };
+		5392A7A70DAD7B0E0012C7CD /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 5392A7A30DAD7B0E0012C7CD /* PGTSFoundationObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5392A7A80DAD7B0E0012C7CD /* PGTSFoundationObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 5392A7A40DAD7B0E0012C7CD /* PGTSFoundationObjects.m */; };
 		5392A7E10DAD7DFA0012C7CD /* PGTSQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 5392A7DD0DAD7DFA0012C7CD /* PGTSQuery.h */; settings = {ATTRIBUTES = (); }; };
 		5392A7E20DAD7DFA0012C7CD /* PGTSQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 5392A7DE0DAD7DFA0012C7CD /* PGTSQuery.m */; };
@@ -161,6 +161,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 538971AF0B821A570092E1B8;
 			remoteInfo = "PostgreSQL-8.2.3";
+		};
+		53A3AD7B0DE3248200A4B50F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 5381770D0D6342CB00A4CA72 /* libLog4Cocoa + GC */;
+			remoteInfo = "libLog4Cocoa + GC";
+		};
+		53A3AD7E0DE3249900A4B50F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */;
+			remoteInfo = libLog4Cocoa;
 		};
 		53D044150B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -581,6 +595,7 @@
 			);
 			dependencies = (
 				538971BC0B821A710092E1B8 /* PBXTargetDependency */,
+				53A3AD7F0DE3249900A4B50F /* PBXTargetDependency */,
 			);
 			name = "Static archive";
 			productName = "Static archive";
@@ -599,6 +614,7 @@
 			);
 			dependencies = (
 				5310877F0DD9FA050061A468 /* PBXTargetDependency */,
+				53A3AD7C0DE3248200A4B50F /* PBXTargetDependency */,
 			);
 			name = "Static archive + GC";
 			productName = "Static archive";
@@ -760,6 +776,16 @@
 			isa = PBXTargetDependency;
 			target = 538971AF0B821A570092E1B8 /* PostgreSQL-8.2.5 */;
 			targetProxy = 538971BB0B821A710092E1B8 /* PBXContainerItemProxy */;
+		};
+		53A3AD7C0DE3248200A4B50F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "libLog4Cocoa + GC";
+			targetProxy = 53A3AD7B0DE3248200A4B50F /* PBXContainerItemProxy */;
+		};
+		53A3AD7F0DE3249900A4B50F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = libLog4Cocoa;
+			targetProxy = 53A3AD7E0DE3249900A4B50F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

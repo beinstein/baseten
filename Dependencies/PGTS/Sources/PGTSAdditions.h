@@ -27,16 +27,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTSFoundationObjects.h>
 #import <PGTS/postgresql/libpq-fe.h> 
 
-
-#if 0
-#import <PGTS/PGTSResultSet.h>
-#import <PGTS/PGTSResultRowProtocol.h>
-
-@class PGTSTypeDescription;
-#endif
+@class PGTSConnection;
 
 
 #if defined(__cplusplus)
@@ -82,36 +75,16 @@ struct ObjectCompare <NSString *>
 - (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end
 
-#if 0
-@interface NSArray (PGTSAdditions)
-- (NSString *) PGTSFieldnames: (PGTSConnection *) connection;
+
+@interface NSMutableData (PGTSPrivateAdditions)
+- (void) PGTSAppendCString: (const char *) string;
 @end
+
 
 @interface NSDictionary (PGTSAdditions)
 - (NSString *) PGTSConnectionString;
-+ (id) PGTSDeserializationDictionary;
-- (NSDictionary *) PGTSFieldsSortedByTable;
-- (NSString *) PGTSSetClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
-- (NSString *) PGTSWhereClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
 @end
 
-@interface NSMutableDictionary (PGTSAdditions) <PGTSResultRowProtocol>
-@end
-
-@interface NSNotificationCenter (PGTSAdditions)
-+ (NSNotificationCenter *) PGTSNotificationCenter;
-@end
-
-@interface NSDate (PGTSAdditions)
-@end
-
-@interface NSCalendarDate (PGTSAdditions)
-@end
-
-@interface NSURL (PGTSAdditions)
-- (NSMutableDictionary *) PGTSConnectionDictionary;
-@end
-#endif
 
 @interface PGTSAbstractClass : NSObject
 {
@@ -141,9 +114,4 @@ struct ObjectCompare <NSString *>
 @interface PGTSSize : PGTSAbstractClass
 {
 }
-@end
-
-
-@interface NSMutableData (PGTSPrivateAdditions)
-- (void) PGTSAppendCString: (const char *) string;
 @end

@@ -29,7 +29,6 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <PGTS/postgresql/libpq-fe.h>
-#import <PGTS/PGTSConnector.h>
 #import <PGTS/PGTSCertificateVerificationDelegate.h>
 @class PGTSConnection;
 @class PGTSResultSet;
@@ -78,14 +77,11 @@
 - (id) deserializationDictionary;
 - (NSString *) errorString;
 - (ConnStatusType) connectionStatus;
+- (PGTransactionStatusType) transactionStatus;
+- (PGconn *) pgConnection;
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;
-@end
-
-
-@interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
 @end
 
 

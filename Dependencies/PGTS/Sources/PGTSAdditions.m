@@ -34,196 +34,7 @@
 #import "PGTSConstants.h"
 #import "PGTSTypeDescription.h"
 #import "PGTSConnectionPrivate.h"
-#if 0
-#import "PGTSFunctions.h"
-#import "PGTSFieldDescription.h"
-#import "PGTSDatabaseDescription.h"
-#import "PGTSACLItem.h"
-#import <Log4Cocoa/Log4Cocoa.h>
-
-
-//A workaround for libpq versions earlier than 8.0.8 and 8.1.4
-//#define PQescapeStringConn( conn, to, from, length, error ) PQescapeString( to, from, length )
-
-
-
-@interface NSDictionary (PGTSAdditionsPrivate)
-- (NSArray *) PGTSParameters1: (NSMutableArray *) parameters connection: (PGTSConnection *) connection qualified: (BOOL) qualified;
-@end
-
-
-@implementation NSObject (PGTSAdditions)
-- (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection
-{
-	NSString* rval = nil;
-	int length = 0;
-	char* charParameter = [self PGTSParameterLength: &length connection: connection];
-	if (NULL != charParameter)
-	{
-		PGconn* pgConn = [connection pgConnection];
-		char* escapedParameter = calloc (1 + 2 * length, sizeof (char));
-		PQescapeStringConn (pgConn, escapedParameter, charParameter, length, NULL);
-		const char* clientEncoding = PQparameterStatus (pgConn, "client_encoding");
-		NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
-		rval = [[[NSString alloc] initWithBytesNoCopy: escapedParameter length: strlen (escapedParameter)
-											 encoding: NSUTF8StringEncoding freeWhenDone: YES] autorelease];
-	}
-	return rval;
-}
-
-- (NSString *) PGTSEscapedName: (PGTSConnection *) connection
-{
-	return [NSString stringWithFormat: @"\"%@\"", [[self description] PGTSEscapedString: connection]];
-}
-
-- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection
-{
-	return [self PGTSEscapedName: connection];
-}
-@end
-
-
-@implementation NSDictionary (PGTSAdditions)
-/**
- * Read the bundled deserialization dictionary if needed.
- */
-+ (id) PGTSDeserializationDictionary
-{
-    static BOOL initialized = NO;
-    static NSMutableDictionary* dict = nil;
-    if (NO == initialized)
-    {
-        NSString* path = [[[NSBundle bundleForClass: [PGTSConnection class]] resourcePath] 
-            stringByAppendingString: @"/datatypeassociations.plist"];
-        NSData* plist = [NSData dataWithContentsOfFile: path];
-        log4AssertValueReturn (nil != plist, nil, @"datatypeassociations.plist was not found (looked from %@).", path);
-        
-        NSString* error = nil;
-        dict = [[NSPropertyListSerialization propertyListFromData: plist mutabilityOption: NSPropertyListMutableContainers 
-                                                           format: NULL errorDescription: &error] retain];
-        log4AssertValueReturn (nil != dict, nil, @"Error creating PGTSDeserializationDictionary: %@ (file: %@)", error, path);
-            
-        NSArray* keys = [dict allKeys];
-        TSEnumerate (key, e, [keys objectEnumerator])
-        {
-            Class class = NSClassFromString ([dict objectForKey: key]);
-            if (Nil == class)
-                [dict removeObjectForKey: key];
-            else
-                [dict setObject: class forKey: key];
-        }
-
-        initialized = YES;
-    }
-    return dict;
-}
-
-/**
- * Use the keys and values to form a connection string.
- */
-- (NSString *) PGTSConnectionString
-{
-	NSMutableString* connectionString = [NSMutableString string];
-	NSEnumerator* e = [self keyEnumerator];
-	NSString* currentKey;
-	NSString* format = @"%@ = '%@' ";
-	while ((currentKey = [e nextObject]))
-        if ([kPGTSConnectionDictionaryKeys containsObject: currentKey])
-            [connectionString appendFormat: format, currentKey, [self objectForKey: currentKey]];
-	return connectionString;
-}
-
-/**
- * Sort the fields by table.
- * \return An NSDictionary with PGTSTableInfo objects as keys. The values are also NSDictionaries
- *         which have PGTSFieldInfo objects as keys and their values as objects.
- */
-- (NSDictionary *) PGTSFieldsSortedByTable
-{
-    NSMutableDictionary* tables = [NSMutableDictionary dictionary];
-    TSEnumerate (field, e, [self keyEnumerator])
-    {
-        PGTSTableDescription* table = [field table];
-        NSMutableDictionary* fields = [tables objectForKey: table];
-        if (nil == fields)
-        {
-            fields = [NSMutableDictionary dictionary];
-            [tables setObject: fields forKey: table];
-        }
-        [fields setObject: [self objectForKey: field] forKey: field];
-    }
-    return tables;
-}
-
-/**
- * Use the keys and values to form a SET clause and append the values to an array.
- * \param parameters the value array
- */
-- (NSString *) PGTSSetClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
-{
-    return [[self PGTSParameters1: parameters connection: connection qualified: NO] componentsJoinedByString: @", "];
-}
-
-
-/**
- * Use the keys and values to form a WHERE clause and append the values to an array.
- * \param parameters the value array
- */
-- (NSString *) PGTSWhereClauseParameters: (NSMutableArray *) parameters connection: (PGTSConnection *) connection;
-{
-    return [[self PGTSParameters1: parameters connection: connection qualified: YES] componentsJoinedByString: @" AND "];
-}
-
-@end
-
-
-@implementation NSMutableDictionary (PGTSAdditions)
-- (void) PGTSSetRow: (int) row resultSet: (PGTSResultSet *) res
-{
-    [res setValuesFromRow: row target: self nullPlaceholder: [NSNull null]];
-}
-@end
-
-
-@implementation NSDictionary (PGTSAdditionsPrivate)
-/**
- * Make a key-value-pair of each item in the dictionary.
- * Keys and values are presented as follows: "key" = $n, where n ranges from 1 to number of items
- */
-- (NSArray *) PGTSParameters1: (NSMutableArray *) parameters connection: (PGTSConnection *) connection qualified: (BOOL) qualified
-{
-    NSMutableArray* fields = [NSMutableArray arrayWithCapacity: [self count]];
-    //Postgres's indexing is one-based
-    unsigned int i = [parameters count] + 1;
-    TSEnumerate (field, e, [self keyEnumerator])
-    {
-        [parameters addObject: [self objectForKey: field]];
-		NSString* name = nil;
-		if (qualified)
-			name = [field PGTSQualifiedName: connection];
-		else
-			name = [field PGTSEscapedName: connection];
-        [fields addObject: [NSString stringWithFormat: @"%@ = $%u", name, i]];
-        i++;
-    }
-    return fields;
-}
-@end
-
-
-@implementation NSNotificationCenter (PGTSAdditions)
-/**
- * Return the shared notification center that delivers notifications from the database.
- */
-+ (NSNotificationCenter *) PGTSNotificationCenter
-{
-    static id sharedInstance = nil;
-    if (!sharedInstance)
-        sharedInstance = [[[self class] alloc] init];
-    return sharedInstance;
-}
-@end
-#endif
+#import "PGTSFoundationObjects.h"
 
 
 @implementation NSString (PGTSAdditions)
@@ -280,31 +91,22 @@
     }
     return paramCount;
 }
-
-#if 0
-//FIXME: do we really need to escape field names?
-- (NSString *) PGTSQuotedString
-{
-    return [NSString stringWithFormat: @"\"%@\"", self];
-}
-#endif
-
 @end
 
 
-#if 0
-@implementation NSArray (PGTSAdditions)
-- (NSString *) PGTSFieldnames: (PGTSConnection *) connection
+@implementation NSDictionary (PGTSAdditions)
+- (NSString *) PGTSConnectionString
 {
-    NSMutableArray* names = [NSMutableArray arrayWithCapacity: [self count]];
-    TSEnumerate (currentName, e, [self objectEnumerator])
-    {
-        [names addObject: [NSString stringWithFormat: @"\"%@\"", [currentName PGTSEscapedString: connection]]];
-    }
-    return [names componentsJoinedByString: @","];
-}
+	NSMutableString* connectionString = [NSMutableString string];
+	NSEnumerator* e = [self keyEnumerator];
+	NSString* currentKey;
+	NSString* format = @"%@ = '%@' ";
+	while ((currentKey = [e nextObject]))
+        if ([kPGTSConnectionDictionaryKeys containsObject: currentKey])
+            [connectionString appendFormat: format, currentKey, [self objectForKey: currentKey]];
+	return connectionString;
+}	
 @end
-#endif
 
 
 @implementation NSNumber (PGTSAdditions)
@@ -338,8 +140,10 @@
 }
 @end
 
+
 @implementation PGTSFloat
 @end
+
 
 @implementation PGTSFloat (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -348,8 +152,10 @@
 }
 @end
 
+
 @implementation PGTSDouble
 @end
+
 
 @implementation PGTSDouble (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -358,8 +164,10 @@
 }
 @end
 
+
 @implementation PGTSBool
 @end
+
 
 @implementation PGTSBool (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -369,8 +177,10 @@
 }
 @end
 
+
 @implementation PGTSPoint
 @end
+
 
 @implementation PGTSPoint (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -398,8 +208,10 @@
 }
 @end
 
+
 @implementation PGTSSize
 @end
+
 
 @implementation PGTSSize (PGTSAdditions)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
