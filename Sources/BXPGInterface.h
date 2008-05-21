@@ -54,6 +54,7 @@
 		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete;
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
 					returningFaults: (BOOL) returnFaults class: (Class) aClass forUpdate: (BOOL) forUpdate error: (NSError **) error;
+- (NSArray *) observedOids;
 @end
 
 

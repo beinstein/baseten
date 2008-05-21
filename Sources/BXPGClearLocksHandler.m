@@ -41,24 +41,35 @@
 - (void) handleNotification: (PGTSNotification *) notification
 {
 	PGTSResultSet* xactRes = nil;
-	
+	NSError* error = nil;
+
 	xactRes = [mConnection executeQuery: @"BEGIN"];
-	if (! [xactRes querySucceeded]) goto error;
+	if (! [xactRes querySucceeded]) 
+	{
+		error = [xactRes error];
+		goto error;
+	}
 	
 	int backendPID = [mConnection backendPID];
-	NSArray* oids = nil; //FIXME: get this somehow.
+	NSArray* oids = [mInterface observedOids];
     
     //Which tables have pending locks?
     NSString* query = 
-	@"SELECT baseten_lock_relid, max (baseten_lock_timestamp) AS last_date "
+	@"SELECT baseten_lock_relid AS l_oid, "
+	@"   max (baseten_lock_timestamp) AS last_date, "
+	@"   baseten.locktablename (l_oid) AS lock_table_name "
 	@" FROM baseten.lock "
 	@" WHERE baseten_lock_cleared = true "
 	@"  AND baseten_lock_timestamp > $1 " 
 	@"  AND baseten_lock_backend_pid != $2 "
-	@"  AND baseten = ANY ($3) "
-	@" GROUP BY baseten_lock_relid";
+	@"  AND l_oid = ANY ($3) "
+	@" GROUP BY l_oid";
     PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID], oids];
-    if (NO == [res querySucceeded]) goto error;
+    if (NO == [res querySucceeded])
+	{
+		error = [res error];
+		goto error;
+	}
     
 	//Update the timestamp.
 	while ([res advanceRow]) 
@@ -66,12 +77,14 @@
 	
 	//Hopefully not too many tables, because we need to get unlocked rows for each of them.
 	//We can't union the queries, either, because the primary key fields differ.
-	NSNumber* relid = nil; //FIXME: get this somehow.
 	NSMutableArray* ids = [NSMutableArray array];
+	BXDatabaseContext* ctx = [mInterface databaseContext];
 	while ([res advanceRow])
 	{
 		[ids removeAllObjects];
 		NSString* query = nil;
+		NSNumber* relid = [res valueForKey: @"l_oid"];
+		PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [relid PGTSOidValue]];
 		
 		{
 			NSString* queryFormat =
@@ -80,15 +93,13 @@
 			@"WHERE baseten_lock_cleared = true "
 			@" AND baseten_lock_backend_pid != $1 "
 			@" AND baseten_lock_timestamp > $2 ";
-			
-			PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [relid PGTSOidValue]];
-			
+						
 			//Primary key field names.
 			NSArray* pkeyfnames = (id) [[[[[table primaryKey] fields] allObjects] PGTSCollect] BXPGEscapedName: mConnection];
 			NSString* pkeystr = [pkeyfnames componentsJoinedByString: @", "];
 			
 			//Table names.
-			NSString* lockTableName = nil; //FIXME: get this somehow.
+			NSString* lockTableName = [res valueForKey: @"lock_table_name"];
 			NSString* tableName = [table BXPGQualifiedName: mConnection];
 			
 			query = [NSString stringWithFormat: queryFormat, pkeystr, lockTableName, tableName];
@@ -96,13 +107,22 @@
 		
 		{
 			PGTSResultSet* unlockedRows = [mConnection executeQuery: query parameters: relid, mLastCheck];
-			if (! [unlockedRows querySucceeded]) goto error;
-		
+			if (! [unlockedRows querySucceeded])
+			{
+				error = [unlockedRows error];
+				goto error;
+			}
+
+			//Get the entity.
+			NSString* tableName = [table name];
+			NSString* schemaName = [table schemaName];
+			BXEntityDescription* entity = [ctx entityForTable: tableName inSchema: schemaName error: &error];
+			if (! entity) goto error;
+			
 			while ([unlockedRows advanceRow])
 			{
-				//FIXME: get the entity...
 				NSDictionary* row = [unlockedRows currentRowAsDictionary];
-				BXDatabaseObjectID* anID = [BXDatabaseObjectID IDWithEntity: nil primaryKeyFields: row];
+				BXDatabaseObjectID* anID = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: row];
 				[ids addObject: anID];
 			}
 		}
@@ -111,13 +131,17 @@
 		[[mInterface databaseContext] unlockedObjectsInDatabase: ids];
 	}
 	xactRes = [mConnection executeQuery: @"COMMIT"];
-	if (! [xactRes querySucceeded]) goto error;
+	if (! [xactRes querySucceeded])
+	{
+		error = [xactRes error];
+		goto error;
+	}
     
 	return;
 	
 error:
 	[mConnection executeQuery: @"ROLLBACK"];
-	//FIXME: handle the error; possibly by logging.
+	log4Warn (@"Got error during clear notification: %@", error);
 }
 @end
 

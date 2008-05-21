@@ -76,6 +76,7 @@
 - (BOOL) addClearLocksHandler: (PGTSConnection *) connection error: (NSError **) outError;
 
 - (void) handleNotification: (PGTSNotification *) notification;
+- (NSArray *) observedOids;
 
 
 /**

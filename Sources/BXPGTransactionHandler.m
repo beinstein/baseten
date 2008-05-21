@@ -406,6 +406,20 @@ SSLMode (enum BXSSLMode mode)
 	NSString* notificationName = [notification notificationName];
 	[[mObservers objectForKey: notificationName] handleNotification: notification];
 }
+
+
+- (NSArray *) observedOids
+{
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mObservedEntities count]];
+	TSEnumerate (currentEntity, e, [mObservedEntities objectEnumerator])
+	{
+		NSString* name = [currentEntity name];
+		NSString* schemaName = [currentEntity schemaName];
+		PGTSTableDescription* table = [[mConnection databaseDescription] table: name inSchema: schemaName];
+		[retval addObject: PGTSOidAsObject ([table oid])];
+	}
+	return retval;
+}
 @end
 
 

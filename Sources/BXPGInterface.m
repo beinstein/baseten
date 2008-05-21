@@ -1040,6 +1040,11 @@ bail:
 {
 	[mTransactionHandler handledTrust: trust accepted: accepted];
 }
+
+- (NSArray *) observedOids
+{
+	return [mTransactionHandler observedOids];
+}
 @end
 
 
