@@ -27,64 +27,74 @@
 //
 
 #import "BXPGModificationHandler.h"
+#import "BXEntityDescriptionPrivate.h"
+#import "BXDatabaseObjectIDPrivate.h"
+#import <tr1/unordered_map>
+
+typedef std::tr1::unordered_map <unichar, NSMutableArray*> ChangeMap;
 
 
 @implementation BXPGModificationHandler
 - (void) handleNotification: (PGTSNotification *) notification
 {
-	//FIXME: make this work.
-#if 0
     //When observing self-generated modifications, also the ones that still have NULL values for 
     //pgts_modification_timestamp should be included in the query.
-    NSNumber* backendPID = nil;
-    if (observesSelfGenerated)
-		backendPID = [NSNumber numberWithInt: 0];
-	else
-        backendPID = [NSNumber numberWithInt: [connection backendPID]];
-    
-    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, $2::timestamp, $3)", modificationTableName];
-	NSArray* parameters = [NSArray arrayWithObjects: 
-						   [NSNumber numberWithBool: PQTRANS_IDLE == [connection transactionStatus]],
-						   [self lastCheckForTable: modificationTableName], 
-						   backendPID, 
-						   nil];
-	PGTSResultSet* res = [self checkModificationsInTableNamed: modificationTableName
-														query: query 
-												   parameters: parameters];
-    if ([res advanceRow])
+	
+	int backendPID = [mEntity getsChangedByTriggers] ? 0 : [mConnection backendPID];
+	BOOL isIdle = (PQTRANS_IDLE == [mConnection transactionStatus]);
+	
+    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, $2::timestamp, $3)", [notification notificationName]];
+	PGTSResultSet* res = [mConnection executeQuery: query parameters: [NSNumber numberWithBool: isIdle], mLastCheck, [NSNumber numberWithInt: backendPID]];
+	
+	//Update the timestamp.
+	while ([res advanceRow]) 
+		[self setLastCheck: [res valueForKey: @"baseten_modification_timestamp"]];
+	
+	//Sort the changes by type.
+	ChangeMap* changes = new ChangeMap (3);
+	[res goBeforeFirstRow];
+    while ([res advanceRow])
     {
-		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-		NSMutableDictionary* baseUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-											 connection, kPGTSConnectionKey,
-											 backendPID, kPGTSBackendPIDKey,
-											 nil];		
-        unichar lastType = '\0';
-        NSMutableArray* rows = [NSMutableArray array];
-        
-        for (unsigned int i = 0, count = [res countOfRows]; i <= count; i++)
-        {
-            NSDictionary* row = [res currentRowAsDictionary];
-            unichar modificationType = [[row valueForKey: @"" PGTS_SCHEMA_NAME "_modification_type"] characterAtIndex: 0];                            
-            
-            if (('\0' != lastType && modificationType != lastType) || i == count)
-            {
-                //Send the notification
-                NSString* notificationName = PGTSModificationName (lastType);
-                NSMutableDictionary* userInfo = [[baseUserInfo mutableCopy] autorelease];
-                
-                [userInfo setObject: [[rows copy] autorelease] forKey: kPGTSRowsKey];
-                [nc postNotificationName: notificationName 
-                                  object: self
-                                userInfo: userInfo];
-                sendCount++;
-                [rows removeAllObjects];
-            }
-            
-            [rows addObject: row];
-            lastType = modificationType;
-            [res advanceRow];
-        }        
+		NSDictionary* row = [res currentRowAsDictionary];
+		unichar modificationType = [[row valueForKey: @"baseten_modification_type"] characterAtIndex: 0];                            
+		NSMutableArray* objectIDs = (* changes) [modificationType];
+		if (! objectIDs)
+		{
+			objectIDs = [NSMutableArray arrayWithCapacity: [res count]];
+			(* changes) [modificationType] = objectIDs;
+		}
+		
+		BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: mEntity primaryKeyFields: row];
+		[objectIDs addObject: objectID];
+	}
+	
+	//Send changes.
+	ChangeMap::iterator iterator = changes->begin ();
+    while (changes->end () != iterator)
+    {
+		unichar type = iterator->first;
+		NSArray* objectIDs = (* changes) [type];
+		switch (type)
+		{
+			case 'I':
+				[[mInterface databaseContext] addedObjectsToDatabase: objectIDs];
+				break;
+				
+			case 'U':
+				[[mInterface databaseContext] updatedObjectsInDatabase: objectIDs faultObjects: YES];
+				break;
+				
+			case 'D':
+				[[mInterface databaseContext] deletedObjectsFromDatabase: objectIDs];
+				break;
+				
+			default:
+				break;
+		}
+        iterator++;
     }
-#endif
+	
+	//Contents are already autoreleased.
+	delete changes;
 }
 @end

@@ -356,6 +356,11 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	return PQtransactionStatus (mConnection);
 }
+
+- (int) backendPID
+{
+	return PQbackendPID (mConnection);
+}
 @end
 
 

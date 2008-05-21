@@ -79,6 +79,7 @@
 - (ConnStatusType) connectionStatus;
 - (PGTransactionStatusType) transactionStatus;
 - (PGconn *) pgConnection;
+- (int) backendPID;
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;
