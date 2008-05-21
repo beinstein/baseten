@@ -73,7 +73,7 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*> ChangeMap;
     while (changes->end () != iterator)
     {
 		unichar type = iterator->first;
-		NSArray* objectIDs = (* changes) [type];
+		NSArray* objectIDs = iterator->second;
 		switch (type)
 		{
 			case 'I':

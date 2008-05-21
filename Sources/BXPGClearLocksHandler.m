@@ -27,6 +27,9 @@
 //
 
 #import "BXPGClearLocksHandler.h"
+#import "BXDatabaseObjectIDPrivate.h"
+#import <PGTS/PGTSAdditions.h>
+#import <PGTS/private/PGTSHOM.h>
 
 
 @implementation BXPGClearLocksHandler
@@ -37,70 +40,84 @@
 
 - (void) handleNotification: (PGTSNotification *) notification
 {
-	//FIXME: make this work.
-#if 0
-    log4AssertVoidReturn (nil != connection, @"Expected to have a connection.");
-	
 	PGTSResultSet* xactRes = nil;
-    PGTSResultSet* releasedRows = nil;
 	
-	xactRes = [connection executeQuery: @"BEGIN"];
+	xactRes = [mConnection executeQuery: @"BEGIN"];
 	if (! [xactRes querySucceeded]) goto error;
+	
+	int backendPID = [mConnection backendPID];
+	NSArray* oids = nil; //FIXME: get this somehow.
     
     //Which tables have pending locks?
-    NSString* query = @"SELECT " PGTS_SCHEMA_NAME "_lock_relid, max (" PGTS_SCHEMA_NAME "_lock_timestamp) AS last_date "
-	" FROM " PGTS_SCHEMA_NAME ".Lock "
-	" WHERE " PGTS_SCHEMA_NAME "_lock_cleared = true "
-	" AND " PGTS_SCHEMA_NAME "_lock_timestamp > $1 " 
-	" AND " PGTS_SCHEMA_NAME "_lock_backend_pid != $2 "
-	" AND " PGTS_SCHEMA_NAME "_lock_relid = ANY ($3) "
-	" GROUP BY " PGTS_SCHEMA_NAME "_lock_relid ORDER BY last_date ASC ";
-    PGTSResultSet* res = [connection executeQuery: query parameters: 
-						  lastClearCheck,
-						  [NSNumber numberWithInt: [connection backendPID]], 
-						  [[observedTables allObjects] valueForKey: @"oid"]];
+    NSString* query = 
+	@"SELECT baseten_lock_relid, max (baseten_lock_timestamp) AS last_date "
+	@" FROM baseten.lock "
+	@" WHERE baseten_lock_cleared = true "
+	@"  AND baseten_lock_timestamp > $1 " 
+	@"  AND baseten_lock_backend_pid != $2 "
+	@"  AND baseten = ANY ($3) "
+	@" GROUP BY baseten_lock_relid";
+    PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID], oids];
     if (NO == [res querySucceeded]) goto error;
     
-    //Iterate the tables and send notifications
-    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-    NSDictionary* baseUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								  connection, kPGTSConnectionKey,
-								  nil];
-    while ([res advanceRow])
-    {
-        //Check for locks for each table
-        NSNumber* relid = [res valueForKey: @"" PGTS_SCHEMA_NAME "_lock_relid"];
-        PGTSTableInfo* table = [[connection databaseInfo] tableInfoForTableWithOid: [relid PGTSOidValue]];
-        NSArray* pkeyfnames = [[[[table primaryKey] fields] allObjects] valueForKey: @"name"];
-        NSString* query = [NSString stringWithFormat: 
-						   @"SELECT DISTINCT ON (\"%@\") l.* "
-						   " FROM %@ l NATURAL INNER JOIN %@ "
-						   " WHERE " PGTS_SCHEMA_NAME "_lock_cleared = true "
-						   " AND " PGTS_SCHEMA_NAME "_lock_backend_pid != $1 "
-						   " AND " PGTS_SCHEMA_NAME "_lock_timestamp > $2 ", 
-						   [pkeyfnames componentsJoinedByString: @"\", \""],
-						   [self lockTableNameForTable: table], [table qualifiedName]];
-        releasedRows = [connection executeQuery: query parameters: relid, lastClearCheck];
-        
-        if (NO == [releasedRows querySucceeded]) goto error;
-        
-        //Post the notification
-        NSMutableDictionary* userInfo = [baseUserInfo mutableCopy];
-        [userInfo setObject: [releasedRows resultAsArray] forKey: kPGTSRowsKey];
-        [userInfo setObject: connection forKey: kPGTSConnectionKey];
-        [nc postNotificationName: kPGTSUnlockedRowsNotification object: self userInfo: [userInfo autorelease]];
-    }
-    if (0 < [res countOfRows])
-        [self setLastClearCheck: [res valueForKey: @"last_date"]];
+	//Update the timestamp.
+	while ([res advanceRow]) 
+		[self setLastCheck: [res valueForKey: @"last_date"]];	
 	
-	xactRes = [connection executeQuery: @"COMMIT"];
+	//Hopefully not too many tables, because we need to get unlocked rows for each of them.
+	//We can't union the queries, either, because the primary key fields differ.
+	NSNumber* relid = nil; //FIXME: get this somehow.
+	NSMutableArray* ids = [NSMutableArray array];
+	while ([res advanceRow])
+	{
+		[ids removeAllObjects];
+		NSString* query = nil;
+		
+		{
+			NSString* queryFormat =
+			@"SELECT DISTINCT ON (%@) l.* "
+			@"FROM %@ l NATURAL INNER JOIN %@ "
+			@"WHERE baseten_lock_cleared = true "
+			@" AND baseten_lock_backend_pid != $1 "
+			@" AND baseten_lock_timestamp > $2 ";
+			
+			PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [relid PGTSOidValue]];
+			
+			//Primary key field names.
+			NSArray* pkeyfnames = (id) [[[[[table primaryKey] fields] allObjects] PGTSCollect] BXPGEscapedName: mConnection];
+			NSString* pkeystr = [pkeyfnames componentsJoinedByString: @", "];
+			
+			//Table names.
+			NSString* lockTableName = nil; //FIXME: get this somehow.
+			NSString* tableName = [table BXPGQualifiedName: mConnection];
+			
+			query = [NSString stringWithFormat: queryFormat, pkeystr, lockTableName, tableName];
+		}
+		
+		{
+			PGTSResultSet* unlockedRows = [mConnection executeQuery: query parameters: relid, mLastCheck];
+			if (! [unlockedRows querySucceeded]) goto error;
+		
+			while ([unlockedRows advanceRow])
+			{
+				//FIXME: get the entity...
+				NSDictionary* row = [unlockedRows currentRowAsDictionary];
+				BXDatabaseObjectID* anID = [BXDatabaseObjectID IDWithEntity: nil primaryKeyFields: row];
+				[ids addObject: anID];
+			}
+		}
+		
+		//Only one entity allowed per array.
+		[[mInterface databaseContext] unlockedObjectsInDatabase: ids];
+	}
+	xactRes = [mConnection executeQuery: @"COMMIT"];
 	if (! [xactRes querySucceeded]) goto error;
     
-    return;
+	return;
+	
 error:
-    //FIXME: a real exception
-    [[NSException exceptionWithName: @"" reason: nil userInfo: nil] raise];	
-#endif
+	[mConnection executeQuery: @"ROLLBACK"];
+	//FIXME: handle the error; possibly by logging.
 }
 @end
 

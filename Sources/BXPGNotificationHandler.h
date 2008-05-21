@@ -34,18 +34,18 @@
 {
 	PGTSConnection* mConnection;
 	BXPGInterface* mInterface; //Weak.
+	NSDate* mLastCheck;
 }
 - (void) handleNotification: (PGTSNotification *) notification;
 - (void) setInterface: (BXPGInterface *) anInterface;
+- (void) setLastCheck: (NSDate *) date;
 - (void) prepare;
 @end
 
 
 @interface BXPGTableNotificationHandler : BXPGNotificationHandler
 {
-	NSDate* mLastCheck;
 	BXEntityDescription* mEntity;
 }
-- (void) setLastCheck: (NSDate *) date;
 - (void) setEntity: (BXEntityDescription *) entity;
 @end

@@ -595,6 +595,10 @@ error:
 	else
 		*error = [res error];
 	
+	log4AssertLog (! objectID || 0 == [retval count] || (1 == [retval count] && [retval containsObject: objectID]),
+				   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nretval: %@",
+				   objectID, predicate, retval);
+	
 	//FIXME: mark locked?
 
 error:

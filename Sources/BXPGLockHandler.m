@@ -27,64 +27,86 @@
 //
 
 #import "BXPGLockHandler.h"
+#import "BXDatabaseObjectIDPrivate.h"
+#import <PGTS/PGTSAdditions.h>
+#import <tr1/unordered_map>
+
+struct LockStruct 
+{
+	NSMutableArray* forUpdate;
+	NSMutableArray* forDelete;
+};
+typedef std::tr1::unordered_map <Oid, LockStruct> LockMap;
 
 
 @implementation BXPGLockHandler
 - (void) handleNotification: (PGTSNotification *) notification
 {
-	//FIXME: make this work.
-#if 0
-    //When observing self-generated modifications, also the ones that still have NULL values for 
-    //pgts_modification_timestamp should be included in the query.
-    NSNumber* backendPID = nil;
-    if (observesSelfGenerated)
-		backendPID = [NSNumber numberWithInt: 0];
-	else
-        backendPID = [NSNumber numberWithInt: [connection backendPID]];
-    
-    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, $2::timestamp, $3)", modificationTableName];
-	NSArray* parameters = [NSArray arrayWithObjects: 
-						   [NSNumber numberWithBool: PQTRANS_IDLE == [connection transactionStatus]],
-						   [self lastCheckForTable: modificationTableName], 
-						   backendPID, 
-						   nil];
-	PGTSResultSet* res = [self checkModificationsInTableNamed: modificationTableName
-														query: query 
-												   parameters: parameters];
-    if ([res advanceRow])
-    {
-		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-		NSMutableDictionary* baseUserInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-											 connection, kPGTSConnectionKey,
-											 backendPID, kPGTSBackendPIDKey,
-											 nil];		
-        unichar lastType = '\0';
-        NSMutableArray* rows = [NSMutableArray array];
-        
-        for (unsigned int i = 0, count = [res countOfRows]; i <= count; i++)
-        {
-            NSDictionary* row = [res currentRowAsDictionary];
-            unichar modificationType = [[row valueForKey: @"" PGTS_SCHEMA_NAME "_modification_type"] characterAtIndex: 0];                            
-            
-            if (('\0' != lastType && modificationType != lastType) || i == count)
-            {
-                //Send the notification
-                NSString* notificationName = PGTSModificationName (lastType);
-                NSMutableDictionary* userInfo = [[baseUserInfo mutableCopy] autorelease];
-                
-                [userInfo setObject: [[rows copy] autorelease] forKey: kPGTSRowsKey];
-                [nc postNotificationName: notificationName 
-                                  object: self
-                                userInfo: userInfo];
-                sendCount++;
-                [rows removeAllObjects];
-            }
-            
-            [rows addObject: row];
-            lastType = modificationType;
-            [res advanceRow];
-        }        
-    }
-#endif
+	int backendPID = [mConnection backendPID];
+	if ([notification backendPID] != backendPID)
+	{
+		NSString* query = 
+		@"SELECT * FROM %@ "
+		@"WHERE baseten_lock_cleared = false "
+		@" AND baseten_lock_timestamp > $1::timestamp "
+		@" AND baseten_lock_backend_pid != $2 "
+		@"ORDER BY baseten_lock_timestamp ASC";
+		PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID]];
+		
+		//Update the timestamp.
+		while ([res advanceRow]) 
+			[self setLastCheck: [res valueForKey: @"baseten_lock_timestamp"]];
+		
+		//Sort the locks.
+		LockMap* locks = new LockMap ([res count]);
+		while ([res advanceRow])
+		{
+			NSDictionary* row = [res currentRowAsDictionary];
+			unichar lockType = [[row valueForKey: @"baseten_lock_query_type"] characterAtIndex: 0];
+			Oid tableOid = [[row valueForKey: @"baseten_lock_relid"] PGTSOidValue];
+			
+			struct LockStruct ls = (* locks) [tableOid];
+			
+			NSMutableArray* ids = nil;
+			switch (lockType) 
+			{
+				case 'U':
+					ids = ls.forUpdate;
+					break;
+				case 'D':
+					ids = ls.forDelete;
+					break;
+			}
+			
+			if (! ids)
+			{
+				ids = [NSMutableArray arrayWithCapacity: [res count]];
+				switch (lockType) 
+				{
+					case 'U':
+						ls.forUpdate = ids;
+						break;
+					case 'D':
+						ls.forDelete = ids;
+						break;
+				}
+			}
+			
+			BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: mEntity primaryKeyFields: row];
+			[ids addObject: objectID];
+		}
+		
+		//Send changes.
+		LockMap::iterator iterator = locks->begin ();
+		BXDatabaseContext* ctx = [mInterface databaseContext];
+		while (locks->end () != iterator)
+		{
+			LockStruct ls = iterator->second;
+			if (ls.forUpdate) [ctx lockedObjectsInDatabase: ls.forUpdate status: kBXObjectLockedStatus];
+			if (ls.forDelete) [ctx lockedObjectsInDatabase: ls.forDelete status: kBXObjectDeletedStatus];
+		}
+		
+		delete locks;
+	}
 }
 @end

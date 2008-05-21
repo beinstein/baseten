@@ -34,7 +34,17 @@
 - (void) dealloc
 {
 	[mConnection release];
+	[mLastCheck release];
 	[super dealloc];
+}
+
+- (void) setLastCheck: (NSDate *) aDate
+{
+	if (!mLastCheck || NSOrderedAscending == [mLastCheck compare: aDate])
+	{
+		[mLastCheck release];
+		mLastCheck = [aDate retain];
+	}
 }
 
 - (void) handleNotification: (PGTSNotification *) notification
@@ -67,17 +77,7 @@
 - (void) dealloc
 {
 	[mEntity release];
-	[mLastCheck release];
 	[super dealloc];
-}
-
-- (void) setLastCheck: (NSDate *) aDate
-{
-	if (!mLastCheck || NSOrderedAscending == [mLastCheck compare: aDate])
-	{
-		[mLastCheck release];
-		mLastCheck = [aDate retain];
-	}
 }
 
 - (void) prepare
