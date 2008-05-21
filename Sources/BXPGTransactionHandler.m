@@ -30,6 +30,7 @@
 #import "BXPGAdditions.h"
 #import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
+#import "BXPGConnectionResetRecoveryAttempter.h"
 #import <PGTS/PGTSAdditions.h>
 
 
@@ -52,6 +53,13 @@ SSLMode (enum BXSSLMode mode)
 
 
 @implementation BXPGTransactionHandler
+- (void) dealloc
+{
+	[mConnection release];
+	[mCertificateVerificationDelegate release];
+	[super dealloc];
+}
+
 - (PGTSConnection *) connection
 {
 	return mConnection;
@@ -96,13 +104,18 @@ SSLMode (enum BXSSLMode mode)
 {
 	mSyncErrorPtr = NULL;
 	
+	if (! mCertificateVerificationDelegate)
+	{
+		mCertificateVerificationDelegate = [[BXPGCertificateVerificationDelegate alloc] init];
+		[mCertificateVerificationDelegate setHandler: self];
+	}	
+	
 	if (! mConnection)
 	{
 		mConnection = [[PGTSConnection alloc] init];
 		[mConnection setDelegate: self];
+		[mConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
 	}
-	
-	//FIXME: handle SSL.
 }
 
 
@@ -317,81 +330,5 @@ SSLMode (enum BXSSLMode mode)
 	{
 		[mCertificateVerificationDelegate setCertificates: nil];
 	}
-}
-@end
-
-
-
-@implementation BXPGConnectionResetRecoveryAttempter
-- (void) dealloc
-{
-	[mRecoveryInvocation release];
-	[super dealloc];
-}
-
-
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
-{
-	[self doesNotRecognizeSelector: _cmd];
-	return NO;
-}
-
-
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
-{
-	[self doesNotRecognizeSelector: _cmd];
-}
-
-
-- (void) setRecoveryInvocation: (NSInvocation *) anInvocation
-{
-	if (mRecoveryInvocation != anInvocation)
-	{
-		[mRecoveryInvocation release];
-		mRecoveryInvocation = [anInvocation retain];
-	}
-}
-
-
-- (NSInvocation *) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo
-{
-	NSMethodSignature* sig = [target methodSignatureForSelector: selector];
-	NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];
-	[invocation setTarget: target];
-	[invocation setSelector: selector];
-	[invocation setArgument: &contextInfo atIndex: 3];
-	
-	BOOL status = NO;
-	[invocation setArgument: &status atIndex: 2];
-	
-	return invocation;
-}
-@end
-
-
-
-@implementation BXPGConnectionResetRecoveryAttempter (PGTSConnectionDelegate)
-- (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
-{
-	[self doesNotRecognizeSelector: _cmd];
-}
-
-
-- (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error
-{
-	[self doesNotRecognizeSelector: _cmd];
-}
-
-
-- (void) PGTSConnectionFailed: (PGTSConnection *) connection
-{
-	[self doesNotRecognizeSelector: _cmd];
-}
-
-
-- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
-{
-	[self doesNotRecognizeSelector: _cmd];
 }
 @end

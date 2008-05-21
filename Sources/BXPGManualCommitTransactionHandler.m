@@ -27,6 +27,7 @@
 //
 
 #import "BXPGManualCommitTransactionHandler.h"
+#import "BXPGManualCommitConnectionResetRecoveryAttempter.h"
 #import "BXPGAdditions.h"
 
 
@@ -39,6 +40,12 @@
 - (PGTSConnection *) notifyConnection
 {
 	return mNotifyConnection;
+}
+
+- (void) dealloc
+{
+	[mNotifyConnection release];
+	[super dealloc];
 }
 @end
 
@@ -68,7 +75,8 @@
 	if (! mNotifyConnection)
 	{
 		mNotifyConnection = [[PGTSConnection alloc] init];
-		[mConnection setDelegate: self];
+		[mNotifyConnection setDelegate: self];
+		[mNotifyConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
 	}
 }
 
@@ -250,89 +258,5 @@
 - (BOOL) autocommits
 {
 	return NO;
-}
-@end
-
-
-
-@implementation BXPGManualCommitConnectionResetRecoveryAttempter
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
-{
-	if (0 == recoveryOptionIndex)
-	{
-		[[mHandler connection] resetSync];
-		[[(id) mHandler notifyConnection] resetSync];
-		//-finishedConnecting gets executed here.
-	}
-	return mSucceeded;
-}
-
-
-- (void) finishedConnecting
-{
-	PGTSConnection* connection = [mHandler connection];
-	PGTSConnection* notifyConnection = [(id) mHandler notifyConnection];
-	
-	ConnStatusType s1 = [connection connectionStatus];
-	ConnStatusType s2 = [notifyConnection connectionStatus];
-	mSucceeded = (CONNECTION_OK == s1 && CONNECTION_OK == s2);
-	
-	if (! mSucceeded)
-	{
-		[connection disconnect];
-		[notifyConnection disconnect];
-	}
-	else
-	{
-		[connection setDelegate: mHandler];
-		[notifyConnection setDelegate: mHandler];
-	}
-	
-	if (mIsAsync)
-	{
-		[mRecoveryInvocation setArgument: &mSucceeded atIndex: 2];
-		[mRecoveryInvocation invoke];
-		//FIXME: check modification tables?
-		//FIXME: clear mHandlingConnectionLoss.
-	}
-}
-
-
-- (void) waitForConnection
-{
-	//Wait until both connections have finished.
-	mCounter--;
-	if (! mCounter)
-		[self finishedConnecting];
-}
-
-
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
-{
-	mCounter = 2;
-	mIsAsync = YES;
-
-	NSInvocation* i = [self recoveryInvocation: delegate selector: didRecoverSelector contextInfo: contextInfo];
-	[self setRecoveryInvocation: i];
-	
-	PGTSConnection* connection = [mHandler connection];
-	PGTSConnection* notifyConnection = [(id) mHandler notifyConnection];
-	[connection setDelegate: self];
-	[notifyConnection setDelegate: self];
-	[connection resetAsync];
-	[notifyConnection resetAsync];
-}
-
-
-- (void) PGTSConnectionFailed: (PGTSConnection *) connection
-{
-	[self waitForConnection];
-}
-
-
-- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
-{
-	[self waitForConnection];
 }
 @end

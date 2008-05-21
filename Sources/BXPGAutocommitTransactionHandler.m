@@ -27,6 +27,7 @@
 //
 
 #import "BXPGAutocommitTransactionHandler.h"
+#import "BXPGAutocommitConnectionResetRecoveryAttempter.h"
 #import "BXPGAdditions.h"
 
 
@@ -153,48 +154,5 @@
 - (BOOL) autocommits
 {
 	return YES;
-}
-@end
-
-
-
-@implementation BXPGAutocommitConnectionResetRecoveryAttempter
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
-{
-	BOOL retval = NO;
-	if (0 == recoveryOptionIndex)
-		retval = [[mHandler connection] resetSync];
-	return retval;
-}
-
-
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
-{
-	NSInvocation* i = [self recoveryInvocation: delegate selector: didRecoverSelector contextInfo: contextInfo];
-	[self setRecoveryInvocation: i];
-	
-	PGTSConnection* connection = [mHandler connection];
-	[connection setDelegate: self];
-	[connection resetAsync];
-}
-
-
-- (void) PGTSConnectionFailed: (PGTSConnection *) connection
-{
-	[mRecoveryInvocation invoke];
-	[connection setDelegate: mHandler];
-	[connection disconnect];
-}
-
-
-- (void) PGTSConnectionEstablished: (PGTSConnection *) connection
-{
-	BOOL status = YES;
-	[mRecoveryInvocation setArgument: &status atIndex: 2];
-	[mRecoveryInvocation invoke];
-	[connection setDelegate: mHandler];
-	
-	//FIXME: check modification tables?
 }
 @end

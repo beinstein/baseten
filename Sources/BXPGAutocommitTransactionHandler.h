@@ -34,9 +34,3 @@
 {
 }
 @end
-
-
-@interface BXPGAutocommitConnectionResetRecoveryAttempter : BXPGConnectionResetRecoveryAttempter
-{
-}
-@end

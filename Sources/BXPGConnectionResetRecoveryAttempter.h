@@ -1,5 +1,5 @@
 //
-// BXPGManualCommitTransactionHandler.h
+// BXPGConnectionResetRecoveryAttempter.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,14 +27,26 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BXPGTransactionHandler.h"
+#import <PGTS/PGTS.h>
+@class BXPGTransactionHandler;
 
 
-@interface BXPGManualCommitTransactionHandler : BXPGTransactionHandler 
+@interface BXPGConnectionResetRecoveryAttempter : NSObject
 {
-	PGTSConnection* mNotifyConnection;
-	int mCounter;
-	BOOL mHandlingConnectionLoss;
+@public
+	BXPGTransactionHandler* mHandler;
+	
+@protected
+	NSInvocation* mRecoveryInvocation;
 }
-- (PGTSConnection *) notifyConnection;
+- (void) setRecoveryInvocation: (NSInvocation *) anInvocation;
+- (NSInvocation *) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo;
+
+- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex;
+- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
+						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo;
+@end
+
+
+@interface BXPGConnectionResetRecoveryAttempter (PGTSConnectionDelegate) <PGTSConnectionDelegate>
 @end

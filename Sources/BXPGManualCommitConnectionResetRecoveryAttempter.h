@@ -1,5 +1,5 @@
 //
-// BXPGManualCommitTransactionHandler.h
+// BXPGManualCommitConnectionResetRecoveryAttempter.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,15 +26,13 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import "BXPGTransactionHandler.h"
+#import "BXPGConnectionResetRecoveryAttempter.h"
 
 
-@interface BXPGManualCommitTransactionHandler : BXPGTransactionHandler 
+@interface BXPGManualCommitConnectionResetRecoveryAttempter : BXPGConnectionResetRecoveryAttempter
 {
-	PGTSConnection* mNotifyConnection;
 	int mCounter;
-	BOOL mHandlingConnectionLoss;
+	BOOL mIsAsync;
+	BOOL mSucceeded;
 }
-- (PGTSConnection *) notifyConnection;
 @end
