@@ -29,13 +29,6 @@
 #import <BaseTen/BaseTen.h>
 
 
-struct trustResult
-{
-	SecTrustRef trust;
-	SecTrustResultType result;
-};
-
-
 @interface BXDatabaseContext (PrivateMethods)
 /* Moved from the context. */
 - (BOOL) executeDeleteFromEntity: (BXEntityDescription *) anEntity withPredicate: (NSPredicate *) predicate 

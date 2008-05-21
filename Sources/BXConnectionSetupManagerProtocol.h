@@ -26,6 +26,7 @@
 // $Id$
 //
 
+
 @protocol BXConnectionSetupManager <NSObject>
 - (IBAction) connect: (id) sender;
 - (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust;

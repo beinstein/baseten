@@ -1040,6 +1040,7 @@ bail:
 #endif
 }
 
+
 /**
  * \internal
  * Unlock a locked object synchronously.
@@ -1048,6 +1049,7 @@ bail:
 {
     //FIXME: write this.
 }
+
 
 - (void) prepareForConnecting
 {
@@ -1062,11 +1064,13 @@ bail:
 	[handler release];
 }
 
+
 - (BOOL) connectSync: (NSError **) error
 {
 	[self prepareForConnecting];
 	return [mTransactionHandler connectSync: error];
 }
+
 
 - (void) connectAsync
 {
@@ -1074,10 +1078,12 @@ bail:
 	[mTransactionHandler connectAsync];
 }
 
+
 - (BXDatabaseContext *) databaseContext
 {
 	return mContext;
 }
+
 
 - (void) setTransactionHandler: (BXPGTransactionHandler *) handler
 {
@@ -1088,25 +1094,30 @@ bail:
 	}
 }
 
+
 - (BOOL) autocommits
 {
 	return [mTransactionHandler autocommits];
 }
+
 
 - (BOOL) connected
 {
 	return [mTransactionHandler connected];
 }
 
+
 - (void) setAutocommits: (BOOL) aBool
 {
 	//FIXME: commit mode may only be changed before connecting.
 }
 
+
 - (BOOL) save: (NSError **) error
 {
 	return [mTransactionHandler save: error];
 }
+
 
 - (void) rollback
 {
@@ -1118,20 +1129,29 @@ bail:
     }
 }
 
+
 - (BOOL) rollbackToLastSavepoint: (NSError **) error
 {
 	//FIXME: write this.
 	return NO;
 }
 
+
 - (BOOL) establishSavepoint: (NSError **) error
 {
 	return [mTransactionHandler savepointIfNeeded: error];
 }
 
+
 - (NSArray *) keyPathComponents: (NSString *) keyPath
 {
 	return [keyPath BXKeyPathComponentsWithQuote: @"\""];
+}
+
+
+- (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted
+{
+	[mTransactionHandler handledTrust: trust accepted: accepted];
 }
 @end
 

@@ -29,6 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTS.h>
 #import "BXPGInterface.h"
+#import "BXPGCertificateVerificationDelegate.h"
 
 @class BXPGInterface;
 
@@ -36,6 +37,7 @@
 @interface BXPGTransactionHandler : NSObject 
 {
 	BXPGInterface* mInterface; //Weak.
+	BXPGCertificateVerificationDelegate* mCertificateVerificationDelegate;
 	PGTSConnection* mConnection;
 	NSUInteger mSavepointIndex;
 	
@@ -47,6 +49,7 @@
 }
 - (PGTSConnection *) connection;
 - (void) setInterface: (BXPGInterface *) interface;
+- (BOOL) isAsync;
 
 - (void) connectAsync;
 - (BOOL) connectSync: (NSError **) outError;
@@ -111,6 +114,11 @@
 
 @interface BXPGTransactionHandler (PGTSConnectionDelegate) <PGTSConnectionDelegate>
 @end
+
+
+@interface BXPGTransactionHandler (BXPGTrustHandler) <BXPGTrustHandler>
+@end
+
 
 
 @interface BXPGConnectionResetRecoveryAttempter : NSObject

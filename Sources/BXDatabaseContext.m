@@ -1689,25 +1689,25 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result
 {
-	BOOL rval = NO;
+	BOOL retval = NO;
 	enum BXCertificatePolicy policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
 	switch (policy)
 	{			
 		case kBXCertificatePolicyAllow:
 		case kBXCertificatePolicyUndefined:
-			rval = YES;
+			retval = YES;
 			break;
 			
 		case kBXCertificatePolicyDeny:
 		default:
 			break;
 	}
-	return rval;
+	return retval;
 }
 
-- (void) handleInvalidTrustAsync: (NSValue *) value
+- (void) handleInvalidCopiedTrustAsync: (NSValue *) value
 {
-	struct trustResult trustResult;
+	struct BXTrustResult trustResult = {};
 	[value getValue: &trustResult];
 	SecTrustRef trust = trustResult.trust;
 	SecTrustResultType result = trustResult.result;

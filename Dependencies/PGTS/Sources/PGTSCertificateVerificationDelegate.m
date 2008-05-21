@@ -77,12 +77,14 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 - (BOOL) PGTSAllowSSLForConnection: (PGTSConnection *) connection context: (void *) x509_ctx preverifyStatus: (int) preverifyStatus
 {
 	BOOL rval = NO;
-	SecTrustResultType result = kSecTrustResultInvalid;
-	SecTrustRef trust = [self copyTrustFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx];
+	SecTrustResultType result = kSecTrustResultInvalid;	
+	CFArrayRef certificates = [self copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx];
+	SecTrustRef trust = [self copyTrustFromCertificates: certificates];
 	OSStatus status = SecTrustEvaluate (trust, &result);
 	if (noErr == status && kSecTrustResultProceed == result)
 		rval = YES;
 
+	SafeCFRelease (certificates);
 	SafeCFRelease (trust);
 	return rval;
 }
@@ -109,33 +111,47 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
  * Create a trust.
  * To verify a certificate, we need to
  * create a trust. To create a trust, we need to find search policies.
+ * \param certificates An array of SecCertificateRefs.
  */
-- (SecTrustRef) copyTrustFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx
+- (SecTrustRef) copyTrustFromCertificates: (CFArrayRef) certificates
+{
+	SecTrustRef trust = NULL;
+	OSStatus status = SecTrustCreateWithCertificates (certificates, [self policies], &trust);
+	if (noErr != status)
+		trust = NULL;
+	return trust;
+}
+
+/**
+ * Create Security certificates from OpenSSL certificates.
+ * \return An array of SecCertificateRefs.
+ */
+- (CFArrayRef) copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx
 {
 	BIO* bioOutput = BIO_new (BIO_s_mem ());
 	
 	int count = M_sk_num (x509_ctx->untrusted);
-	NSMutableArray* certs = [NSMutableArray arrayWithCapacity: count + 1];
+	CFMutableArrayRef certs = (CFMutableArrayRef) [[NSMutableArray alloc] initWithCapacity: count + 1];
 	SecCertificateRef serverCert = [self copyCertificateFromX509: x509_ctx->cert bioOutput: bioOutput];
-	CFArrayAppendValue ((CFMutableArrayRef) certs, serverCert);
+	CFArrayAppendValue (certs, serverCert);
 	SafeCFRelease (serverCert);
 	
 	for (int i = 0; i < count; i++)
 	{
 		SecCertificateRef chainCert = [self copyCertificateFromX509: (X509 *) M_sk_value (x509_ctx->untrusted, i)
 														  bioOutput: bioOutput];
-		CFArrayAppendValue ((CFMutableArrayRef) certs, chainCert);
+		CFArrayAppendValue (certs, chainCert);
 		SafeCFRelease (chainCert);
 	}
 	
-	SecTrustRef trust = NULL;
-	OSStatus status = SecTrustCreateWithCertificates ((CFArrayRef) certs, [self policies], &trust);
-	status = noErr;
-	
 	BIO_free (bioOutput);
-	return trust;
+	return certs;
 }
 
+/**
+ * Create a SecCertificateRef from an OpenSSL certificate.
+ * \param bioOutput A memory buffer so we don't have to allocate one.
+ */
 - (SecCertificateRef) copyCertificateFromX509: (X509 *) opensslCert bioOutput: (BIO *) bioOutput
 {
 	SecCertificateRef cert = NULL;

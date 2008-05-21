@@ -29,6 +29,7 @@
 #import "BXPGTransactionHandler.h"
 #import "BXPGAdditions.h"
 #import "BXDatabaseAdditions.h"
+#import "BXInterface.h"
 #import <PGTS/PGTSAdditions.h>
 
 
@@ -69,6 +70,11 @@ SSLMode (enum BXSSLMode mode)
 - (PGTSDatabaseDescription *) databaseDescription
 {
 	return [mConnection databaseDescription];
+}
+
+- (BOOL) isAsync
+{
+	return mAsync;
 }
 
 #pragma mark Connecting
@@ -281,6 +287,36 @@ SSLMode (enum BXSSLMode mode)
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection
 {
 	[self doesNotRecognizeSelector: _cmd];
+}
+@end
+
+
+@implementation BXPGTransactionHandler (BXPGTrustHandler)
+- (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result
+{
+	BOOL retval = NO;
+	BXDatabaseContext* ctx = [mInterface databaseContext];
+	if (mAsync)
+	{
+		CFRetain (trust);
+		struct BXTrustResult trustResult = {trust, result};
+		NSValue* resultValue = [NSValue valueWithBytes: &trustResult objCType: @encode (struct BXTrustResult)];				
+		[ctx performSelectorOnMainThread: @selector (handleInvalidCopiedTrustAsync:) withObject: resultValue waitUntilDone: NO];
+	}
+	else
+	{
+		retval = [ctx handleInvalidTrust: trust result: result];
+	}
+	return retval;
+}
+
+
+- (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted
+{
+	if (! accepted)
+	{
+		[mCertificateVerificationDelegate setCertificates: nil];
+	}
 }
 @end
 

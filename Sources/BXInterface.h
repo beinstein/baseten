@@ -37,6 +37,13 @@
 @class BXEntityDescription;
 
 
+struct BXTrustResult
+{
+	SecTrustRef trust;
+	SecTrustResultType result;
+};
+
+
 @interface BXDatabaseContext (DBInterfaces)
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
@@ -44,7 +51,7 @@
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectLockStatus) status;
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
-- (void) handleInvalidTrustAsync: (NSValue *) value;
+- (void) handleInvalidCopiedTrustAsync: (NSValue *) value;
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
 - (enum BXSSLMode) sslMode;
 @end
@@ -129,7 +136,6 @@
 - (BOOL) establishSavepoint: (NSError **) error;
 //@}
 
-
+- (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted;
 - (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
-//- (void) rejectedTrust;
 @end

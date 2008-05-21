@@ -166,14 +166,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5381770D0D6342CB00A4CA72 /* libLog4Cocoa + GC */;
+			remoteGlobalIDString = 5381770D0D6342CB00A4CA72;
 			remoteInfo = "libLog4Cocoa + GC";
 		};
 		53A3AD7E0DE3249900A4B50F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53C1DF760B4BD4AB007947D8 /* Log4Cocoa.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA /* libLog4Cocoa */;
+			remoteGlobalIDString = 530EC0020B4BCDB100DFC1CA;
 			remoteInfo = libLog4Cocoa;
 		};
 		53D044150B4C1DFD00DB9308 /* PBXContainerItemProxy */ = {

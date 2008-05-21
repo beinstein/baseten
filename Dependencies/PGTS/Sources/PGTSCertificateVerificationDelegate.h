@@ -39,7 +39,8 @@
 
 + (id) defaultCertificateVerificationDelegate;
 - (CSSM_CERT_TYPE) x509Version: (X509 *) x509Cert;
-- (SecTrustRef) copyTrustFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx;
+- (SecTrustRef) copyTrustFromCertificates: (CFArrayRef) certificates;
+- (CFArrayRef) copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx;
 - (SecCertificateRef) copyCertificateFromX509: (X509 *) opensslCert bioOutput: (BIO *) bioOutput;
 - (NSArray *) policies;
 

@@ -14,7 +14,6 @@
 			);
 			dependencies = (
 				537385760DD9FBB7006F965A /* PBXTargetDependency */,
-				537385780DD9FBB7006F965A /* PBXTargetDependency */,
 			);
 			name = "BaseTen + GC";
 			productName = "BaseTen + GC";
@@ -26,7 +25,6 @@
 			);
 			dependencies = (
 				53EFE9F40BA96469008666B7 /* PBXTargetDependency */,
-				53EFE9F60BA9646D008666B7 /* PBXTargetDependency */,
 			);
 			name = BaseTen;
 			productName = BaseTen;
@@ -350,13 +348,6 @@
 			remoteGlobalIDString = 535443BB0D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
-		537385770DD9FBB7006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 535444570D634D9C002A6C47;
-			remoteInfo = "BaseTenAppKit + GC";
-		};
 		53EFE9E40BA96444008666B7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
@@ -370,13 +361,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
 			remoteInfo = "BaseTen Static";
-		};
-		53EFE9F50BA9646D008666B7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = BaseTenAppKit;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1206,20 +1190,10 @@
 			target = 535443BB0D634A47002A6C47 /* BaseTen Framework + GC */;
 			targetProxy = 537385750DD9FBB7006F965A /* PBXContainerItemProxy */;
 		};
-		537385780DD9FBB7006F965A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "BaseTenAppKit + GC";
-			targetProxy = 537385770DD9FBB7006F965A /* PBXContainerItemProxy */;
-		};
 		53EFE9F40BA96469008666B7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5368D60E0A3711C800D136DC /* BaseTen Framework */;
 			targetProxy = 53EFE9F30BA96469008666B7 /* PBXContainerItemProxy */;
-		};
-		53EFE9F60BA9646D008666B7 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = BaseTenAppKit;
-			targetProxy = 53EFE9F50BA9646D008666B7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -61,18 +61,19 @@
 	[panel setAlternateButtonTitle: [appKitBundle localizedStringForKey: @"Cancel" value: @"Cancel" table: @"Common"]];
 	[panel beginSheetForWindow: aWindow modalDelegate: self 
 				didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
-				   contextInfo: NULL trust: trust message: nil];
+				   contextInfo: trust trust: trust message: nil];
 }
 
-- (void) certificateTrustSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+- (void) certificateTrustSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) trust
 {
 	mDisplayingSheet = NO;
-	if (NSFileHandlingPanelOKButton == returnCode) 
+	BOOL accepted = (NSFileHandlingPanelOKButton == returnCode);
+	[mDatabaseInterface handledTrust: (SecTrustRef) trust accepted: accepted];
+	
+	if (accepted)
 		[self connect];
 	else
 	{
-		//FIXME: make this work in some other manner.
-		//[mDatabaseInterface rejectedTrust];
 		[self setCanConnect: YES];
 		
 		//FIXME: Create an NSError and set it in userInfo to kBXErrorKey.
