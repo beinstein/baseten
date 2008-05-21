@@ -354,8 +354,6 @@ bx_error_during_rollback (id self, NSError* error)
 	[mContext release];
 	[mForeignKeys release];
 	[mTransactionHandler release];
-	[mObservedEntities release];
-	[mObservers release];
 	[super dealloc];
 }
 
@@ -419,7 +417,7 @@ bx_error_during_rollback (id self, NSError* error)
 	
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 	if (! [self validateEntity: entity error: error]) goto error;
-	if (! [self observeIfNeeded: entity error: error]) goto error;
+	if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
 	//Inserted values
 	NSArray* insertedAttrs = [valueDict allKeys];
@@ -467,7 +465,7 @@ error:
     NSArray* retval = nil;
 	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error; //FIXME: set the error.
-	if (! [self observeIfNeeded: entity error: error]) goto error;
+	if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
@@ -581,7 +579,7 @@ error:
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error;
-	if (! [self observeIfNeeded: entity error: error]) goto error;
+	if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
@@ -798,9 +796,16 @@ bail:
 
 - (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
+	return [self tableForEntity: entity inDatabase: [mTransactionHandler databaseDescription] error: error];
+}
+
+
+- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity 
+							   inDatabase: (PGTSDatabaseDescription *) database 
+									error: (NSError **) error
+{
 	ExpectR (entity, NO);
 	ExpectR (error, NO);
-	PGTSDatabaseDescription* database = [mTransactionHandler databaseDescription];
 	PGTSTableDescription* table = [database table: [entity name] inSchema: [entity schemaName]];
 	if (table && ! [entity isValidated])
 	{
@@ -822,128 +827,6 @@ bail:
 		*error = DatabaseError (kBXErrorNoTableForEntity, localizedError, mContext, entity);
 	}
 	return table;
-}
-
-
-- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error
-{
-	ExpectR (error, NO);
-	ExpectR (entity, NO);
-	
-	BOOL retval = NO;
-	
-	if ([mObservedEntities containsObject: entity])
-		retval = YES;
-	else
-	{
-		//FIXME: move this to the transaction handler?
-		//PostgreSQL backends don't deliver notifications to interfaces during transactions
-#if 0
-		log4AssertValueReturn (mConnection == mNotifyConnection || PQTRANS_IDLE == [mNotifyConnection transactionStatus], NO,
-							   @"Connection %p was expected to be in PQTRANS_IDLE (status: %d connection: %p notifyconnection: %p).", 
-							   mNotifyConnection, [mNotifyConnection transactionStatus], mConnection, mNotifyConnection);
-		
-		if (! mObservedEntities)
-			mObservedEntities = [[NSMutableSet alloc] init];
-		
-		PGTSTableDescription* table = [[mNotifyConnection databaseDescription] table: [entity name] inSchema: [entity schemaName]];
-		if (! table)
-		{
-			NSString* errorFormat = BXLocalizedString (@"existenceErrorFmt", @"Table %@ in schema %@ does not exist.", @"Error description format");
-			NSString* message = [NSString stringWithFormat: errorFormat, [entity name], [entity schemaName]];
-			*error = DatabaseError (kBXErrorObservingFailed, message, mContext, entity);
-		}
-		else if ([self addClearLocksHandler: error])
-		{
-			id oid = PGTSOidAsObject ([table oid]);
-			NSString* query = 
-			@"SELECT CURRENT_TIMESTAMP::TIMESTAMP WITHOUT TIME ZONE AS ts, null AS nname UNION ALL "
-			@"SELECT null AS ts, baseten.ObserveModifications ($1) AS nname UNION ALL "
-			@"SELECT null AS ts, baseten.ObserveLocks ($1) AS nname";
-			PGTSResultSet* res = [mConnection executeQuery: query parameters: oid];
-			if ([res querySucceeded] && 3 == [res count])
-			{
-				[res advanceRow];
-				NSDate* lastCheck = [res valueForKey: @"ts"];
-				
-				[self addObserverClass: [BXPGModificationHandler class] forResult: res lastCheck: lastCheck error: error];
-				[self addObserverClass: [BXPGLockHandler class] forResult: res lastCheck: lastCheck error: error];
-
-				[mObservedEntities addObject: entity];			
-				retval = YES;
-			}
-			else
-			{
-				*error = [res error];
-			}
-		}
-#endif
-	}
-	
-	//Inheritance.
-	TSEnumerate (currentEntity, e, [entity inheritedEntities])
-	{
-		if (! retval)
-			break;
-		retval = [self observeIfNeeded: currentEntity error: error];
-	}
-	
-    return retval;
-}
-
-
-//FIXME: move this to the transaction handler.
-- (BOOL) addClearLocksHandler: (NSError **) outError
-{
-	ExpectR (outError, NO);
-	
-	BOOL retval = NO;
-#if 0	
-	NSString* nname = [BXPGClearLocksHandler notificationName];
-	if (! [mObservers objectForKey: nname])
-	{		
-		PGTSResultSet* res = [mNotifyConnection executeQuery: @"LISTEN $1", nname];
-		if ([res querySucceeded])
-		{
-			if (! mObservers)
-				mObservers = [[NSMutableDictionary alloc] init];
-			BXPGClearLocksHandler* handler = [[BXPGClearLocksHandler alloc] init];
-			[handler setInterface: self];
-			[handler prepare];
-			[mObservers setObject: handler forKey: nname];
-			[handler release];
-			
-			retval = YES;
-		}
-		else
-		{
-			*outError = [res error];
-		}
-	}
-#endif
-	return retval;
-}
-
-
-- (void) addObserverClass: (Class) handlerClass forResult: (PGTSResultSet *) res lastCheck: (NSDate *) lastCheck error: (NSError **) outError
-{
-	ExpectV (handlerClass);
-	ExpectV (res)
-	ExpectV (outError);
-	
-	[res advanceRow];
-	NSString* notificationName = [res valueForKey: @"nname"];
-		
-	if (! mObservers)
-		mObservers = [[NSMutableDictionary alloc] init];
-		
-	//Create the observer.
-	BXPGTableNotificationHandler* handler = [[[handlerClass alloc] init] autorelease];
-	[handler setInterface: self];
-	[handler setLastCheck: lastCheck];
-	[handler prepare];
-	
-	[mObservers setObject: handler forKey: notificationName];
 }
 
 
@@ -1174,7 +1057,6 @@ bail:
 
 - (void) connection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
-	NSString* notificationName = [notification notificationName];
-	[[mObservers objectForKey: notificationName] handleNotification: notification];
+	[mTransactionHandler handleNotification: notification];
 }
 @end

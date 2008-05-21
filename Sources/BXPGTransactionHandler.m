@@ -26,12 +26,20 @@
 // $Id$
 //
 
-#import "BXPGTransactionHandler.h"
-#import "BXPGAdditions.h"
+#import <PGTS/PGTSAdditions.h>
+#import <PGTS/PGTSFunctions.h>
+
 #import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
+
+#import "BXPGTransactionHandler.h"
+#import "BXPGAdditions.h"
 #import "BXPGConnectionResetRecoveryAttempter.h"
-#import <PGTS/PGTSAdditions.h>
+#import "BXPGModificationHandler.h"
+#import "BXPGLockHandler.h"
+#import "BXPGClearLocksHandler.h"
+
+#import "BXEntityDescriptionPrivate.h"
 
 
 static NSString* 
@@ -57,6 +65,8 @@ SSLMode (enum BXSSLMode mode)
 {
 	[mConnection release];
 	[mCertificateVerificationDelegate release];
+	[mObservedEntities release];
+	[mObservers release];
 	[super dealloc];
 }
 
@@ -274,6 +284,127 @@ SSLMode (enum BXSSLMode mode)
 - (BOOL) autocommits
 {
 	return NO;
+}
+
+
+#pragma mark Observing
+
+
+- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+
+- (BOOL) observeIfNeeded: (BXEntityDescription *) entity connection: (PGTSConnection *) connection error: (NSError **) error
+{
+	ExpectR (error, NO);
+	ExpectR (entity, NO);
+	
+	BOOL retval = NO;
+	
+	if ([mObservedEntities containsObject: entity])
+		retval = YES;
+	else
+	{
+		if (! mObservedEntities)
+			mObservedEntities = [[NSMutableSet alloc] init];
+		if (! mObservers)
+			mObservers = [[NSMutableDictionary alloc] init];
+		
+		PGTSDatabaseDescription* database = [connection databaseDescription];
+		PGTSTableDescription* table = [mInterface tableForEntity: entity inDatabase: database error: error];
+		if (table && [self addClearLocksHandler: connection error: error])
+		{
+			//Start listening to notifications and get the notification names.
+			id oid = PGTSOidAsObject ([table oid]);
+			NSString* query = 
+			@"SELECT CURRENT_TIMESTAMP::TIMESTAMP WITHOUT TIME ZONE AS ts, null AS nname UNION ALL "
+			@"SELECT null AS ts, baseten.ObserveModifications ($1) AS nname UNION ALL "
+			@"SELECT null AS ts, baseten.ObserveLocks ($1) AS nname";
+			PGTSResultSet* res = [connection executeQuery: query parameters: oid];
+			if ([res querySucceeded] && 3 == [res count])
+			{
+				[res advanceRow];
+				NSDate* lastCheck = [res valueForKey: @"ts"];
+				
+				Class observerClasses [] = {[BXPGModificationHandler class], [BXPGLockHandler class], Nil};
+				Class aClass = Nil;
+				int i = 0;
+				while ((aClass = observerClasses [i]))
+				{
+					[res advanceRow];
+					
+					//Create the observer.
+					BXPGTableNotificationHandler* handler = [[aClass alloc] init];
+					
+					[handler setInterface: mInterface];
+					[handler setLastCheck: lastCheck];
+					[handler setEntity: entity];
+					[handler prepare];
+					
+					[mObservers setObject: handler forKey: [res valueForKey: @"nname"]];
+					[handler release];
+					
+					i++;
+				}
+				
+				[mObservedEntities addObject: entity];			
+				retval = YES;
+			}
+			else
+			{
+				*error = [res error];
+			}
+		}
+	}
+	
+	//Inheritance.
+	TSEnumerate (currentEntity, e, [entity inheritedEntities])
+	{
+		if (! retval)
+			break;
+		retval = [self observeIfNeeded: currentEntity connection: connection error: error];
+	}
+	
+    return retval;
+}
+
+
+- (BOOL) addClearLocksHandler: (PGTSConnection *) connection 
+						error: (NSError **) outError
+{
+	ExpectR (outError, NO);
+	
+	BOOL retval = NO;
+	NSString* nname = [BXPGClearLocksHandler notificationName];
+	if (! [mObservers objectForKey: nname])
+	{		
+		PGTSResultSet* res = [connection executeQuery: @"LISTEN $1" parameters: nname];
+		if ([res querySucceeded])
+		{
+			BXPGClearLocksHandler* handler = [[BXPGClearLocksHandler alloc] init];
+			[handler setInterface: mInterface];
+			[handler prepare];
+			[mObservers setObject: handler forKey: nname];
+			[handler release];
+			
+			retval = YES;
+		}
+		else
+		{
+			*outError = [res error];
+		}
+	}
+	return retval;
+}
+
+
+- (void) handleNotification: (PGTSNotification *) notification
+{
+	NSString* notificationName = [notification notificationName];
+	[[mObservers objectForKey: notificationName] handleNotification: notification];
 }
 @end
 

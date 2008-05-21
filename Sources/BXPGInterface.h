@@ -39,19 +39,17 @@
 {
     BXDatabaseContext* mContext; //Weak
 	NSMutableDictionary* mForeignKeys;
-	BXPGTransactionHandler* mTransactionHandler;
-	
-	NSMutableSet* mObservedEntities;
-	NSMutableDictionary* mObservers;	
+	BXPGTransactionHandler* mTransactionHandler;	
 }
-- (BXDatabaseContext *) databaseContext;
-- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error;
-- (BOOL) fetchForeignKeys: (NSError **) outError;
-- (BOOL) addClearLocksHandler: (NSError **) outError;
-- (void) addObserverClass: (Class) observerClass forResult: (PGTSResultSet *) res 
-				lastCheck: (NSDate *) lastCheck error: (NSError **) outError;
-- (void) setTransactionHandler: (BXPGTransactionHandler *) handler;
+
 - (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error;
+- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity 
+							   inDatabase: (PGTSDatabaseDescription *) database 
+									error: (NSError **) error;
+
+- (BXDatabaseContext *) databaseContext;
+- (BOOL) fetchForeignKeys: (NSError **) outError;
+- (void) setTransactionHandler: (BXPGTransactionHandler *) handler;
 - (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
 		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete;
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 

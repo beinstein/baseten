@@ -44,6 +44,8 @@
 @interface BXPGTableNotificationHandler : BXPGNotificationHandler
 {
 	NSDate* mLastCheck;
+	BXEntityDescription* mEntity;
 }
 - (void) setLastCheck: (NSDate *) date;
+- (void) setEntity: (BXEntityDescription *) entity;
 @end

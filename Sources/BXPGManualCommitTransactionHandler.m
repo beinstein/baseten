@@ -50,6 +50,13 @@
 @end
 
 
+@implementation BXPGManualCommitTransactionHandler (Observing)
+- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error
+{
+	return [self observeIfNeeded: entity connection: mNotifyConnection error: error];
+}
+@end
+
 
 @implementation BXPGManualCommitTransactionHandler (Connecting)
 - (BOOL) connected

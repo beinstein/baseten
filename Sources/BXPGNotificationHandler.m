@@ -31,6 +31,12 @@
 
 
 @implementation BXPGNotificationHandler
+- (void) dealloc
+{
+	[mConnection release];
+	[super dealloc];
+}
+
 - (void) handleNotification: (PGTSNotification *) notification
 {
 	[self doesNotRecognizeSelector: _cmd];
@@ -58,6 +64,13 @@
 
 
 @implementation BXPGTableNotificationHandler
+- (void) dealloc
+{
+	[mEntity release];
+	[mLastCheck release];
+	[super dealloc];
+}
+
 - (void) setLastCheck: (NSDate *) aDate
 {
 	if (!mLastCheck || NSOrderedAscending == [mLastCheck compare: aDate])
@@ -71,5 +84,14 @@
 {
 	[super prepare];
 	ExpectV (mLastCheck);
+}
+
+- (void) setEntity: (BXEntityDescription *) entity
+{
+	if (mEntity != entity)
+	{
+		[mEntity release];
+		mEntity = [entity retain];
+	}
 }
 @end

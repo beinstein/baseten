@@ -35,6 +35,14 @@
 @end
 
 
+@implementation BXPGAutocommitTransactionHandler (Observing)
+- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error
+{
+	return [self observeIfNeeded: entity connection: mConnection error: error];
+}
+@end
+
+
 @implementation BXPGAutocommitTransactionHandler (Connecting)
 - (void) disconnect
 {
