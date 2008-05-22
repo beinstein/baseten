@@ -947,6 +947,7 @@ bail:
 		transactionHandlerClass = [BXPGManualCommitTransactionHandler class];
 	BXPGTransactionHandler* handler = [[transactionHandlerClass alloc] init];
 	[handler setInterface: self];
+	
 	[self setTransactionHandler: handler];
 	[handler release];
 }
@@ -1051,12 +1052,12 @@ bail:
 @implementation BXPGInterface (ConnectionDelegate)
 - (void) connectionSucceeded
 {
-	//FIXME: write this.
+	[mContext connectedToDatabase: YES async: YES error: NULL];
 }
 
 - (void) connectionFailed: (NSError *) error
 {
-	//FIXME: write this.
+	[mContext connectedToDatabase: NO async: YES error: &error];
 }
 
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error

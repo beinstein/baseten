@@ -68,7 +68,7 @@
 	mAsync = NO;
 	mSyncErrorPtr = outError;
 	
-	NSString* connectionString = nil; //FIXME: get this somehow.
+	NSString* connectionString = [self connectionString];
 	[mConnection connectSync: connectionString];
 	
 	//-finishedConnecting gets executed here.
