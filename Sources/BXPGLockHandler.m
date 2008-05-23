@@ -51,6 +51,7 @@ typedef std::tr1::unordered_map <Oid, LockStruct> LockMap;
 		@" AND baseten_lock_timestamp > $1::timestamp "
 		@" AND baseten_lock_backend_pid != $2 "
 		@"ORDER BY baseten_lock_timestamp ASC";
+		query = [NSString stringWithFormat: query, mTableName];
 		PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID]];
 		
 		//Update the timestamp.

@@ -34,5 +34,5 @@
 @interface BXPGModificationHandler : BXPGTableNotificationHandler
 {
 }
-
+- (void) checkModifications: (int) backendPID;
 @end

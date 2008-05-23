@@ -37,13 +37,17 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*> ChangeMap;
 @implementation BXPGModificationHandler
 - (void) handleNotification: (PGTSNotification *) notification
 {
-    //When observing self-generated modifications, also the ones that still have NULL values for 
-    //pgts_modification_timestamp should be included in the query.
-	
 	int backendPID = [mEntity getsChangedByTriggers] ? 0 : [mConnection backendPID];
+	[self checkModifications: backendPID];
+}
+
+- (void) checkModifications: (int) backendPID
+{
+    //When observing self-generated modifications, also the ones that still have NULL values for 
+    //pgts_modification_timestamp should be included in the query.	
 	BOOL isIdle = (PQTRANS_IDLE == [mConnection transactionStatus]);
 	
-    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, $2::timestamp, $3)", [notification notificationName]];
+    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, $2::timestamp, $3)", mTableName];
 	PGTSResultSet* res = [mConnection executeQuery: query parameters: [NSNumber numberWithBool: isIdle], mLastCheck, [NSNumber numberWithInt: backendPID]];
 	
 	//Update the timestamp.

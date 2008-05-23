@@ -39,8 +39,10 @@
 	BXPGInterface* mInterface; //Weak.
 	BXPGCertificateVerificationDelegate* mCertificateVerificationDelegate;
 	PGTSConnection* mConnection;
+	
 	NSMutableSet* mObservedEntities;
-	NSMutableDictionary* mObservers;	
+	NSMutableDictionary* mObservers;
+	NSMutableDictionary* mChangeHandlers;
 	
 	NSUInteger mSavepointIndex;
 	NSError** mSyncErrorPtr;
@@ -75,6 +77,8 @@
 - (BOOL) observeIfNeeded: (BXEntityDescription *) entity connection: (PGTSConnection *) connection error: (NSError **) error;
 - (BOOL) addClearLocksHandler: (PGTSConnection *) connection error: (NSError **) outError;
 
+- (void) checkSuperEntities: (BXEntityDescription *) entity;
+- (void) checkSuperEntities: (BXEntityDescription *) entity connection: (PGTSConnection *) connection;
 - (void) handleNotification: (PGTSNotification *) notification;
 - (NSArray *) observedOids;
 

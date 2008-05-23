@@ -67,6 +67,7 @@ SSLMode (enum BXSSLMode mode)
 	[mCertificateVerificationDelegate release];
 	[mObservedEntities release];
 	[mObservers release];
+	[mChangeHandlers release];
 	[super dealloc];
 }
 
@@ -312,6 +313,8 @@ SSLMode (enum BXSSLMode mode)
 			mObservedEntities = [[NSMutableSet alloc] init];
 		if (! mObservers)
 			mObservers = [[NSMutableDictionary alloc] init];
+		if (! mChangeHandlers)
+			mChangeHandlers = [[NSMutableDictionary alloc] init];
 		
 		PGTSDatabaseDescription* database = [connection databaseDescription];
 		PGTSTableDescription* table = [mInterface tableForEntity: entity inDatabase: database error: error];
@@ -335,6 +338,7 @@ SSLMode (enum BXSSLMode mode)
 				while ((aClass = observerClasses [i]))
 				{
 					[res advanceRow];
+					NSString* nname = [res valueForKey: @"nname"];
 					
 					//Create the observer.
 					BXPGTableNotificationHandler* handler = [[aClass alloc] init];
@@ -343,9 +347,12 @@ SSLMode (enum BXSSLMode mode)
 					[handler setConnection: connection];
 					[handler setLastCheck: lastCheck];
 					[handler setEntity: entity];
+					[handler setTableName: nname];
 					[handler prepare];
 					
-					[mObservers setObject: handler forKey: [res valueForKey: @"nname"]];
+					[mObservers setObject: handler forKey: nname];
+					if (0 == i)
+						[mChangeHandlers setObject: handler forKey: entity];
 					[handler release];
 					
 					i++;
@@ -408,6 +415,19 @@ SSLMode (enum BXSSLMode mode)
 {
 	NSString* notificationName = [notification notificationName];
 	[[mObservers objectForKey: notificationName] handleNotification: notification];
+}
+
+
+- (void) checkSuperEntities: (BXEntityDescription *) entity connection: (PGTSConnection *) connection
+{
+	TSEnumerate (superEntity, e, [[entity inheritedEntities] objectEnumerator])
+		[[mChangeHandlers objectForKey: superEntity] checkModifications: 0];
+}
+
+
+- (void) checkSuperEntities: (BXEntityDescription *) entity
+{
+	[self doesNotRecognizeSelector: _cmd];
 }
 
 

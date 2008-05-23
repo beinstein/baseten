@@ -435,8 +435,7 @@ bx_error_during_rollback (id self, NSError* error)
 	[res advanceRow];
 	retval = [res currentRowAsObject];
 	
-	//FIXME: this is probably needed.
-	//[self checkSuperEntities: entity];
+	[mTransactionHandler checkSuperEntities: entity];
 	
 error:
 	return retval;
@@ -593,9 +592,14 @@ error:
 	NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
 	PGTSResultSet* res = [connection executeQuery: query parameters: parameters];
 	if ([res querySucceeded])
+	{
 		retval = ObjectIDs (entity, res);
+		[mTransactionHandler checkSuperEntities: entity];
+	}
 	else
+	{
 		*error = [res error];
+	}
 	
 	log4AssertLog (! objectID || 0 == [retval count] || (1 == [retval count] && [retval containsObject: objectID]),
 				   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nretval: %@",

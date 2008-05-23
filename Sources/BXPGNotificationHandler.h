@@ -47,6 +47,8 @@
 @interface BXPGTableNotificationHandler : BXPGNotificationHandler
 {
 	BXEntityDescription* mEntity;
+	NSString* mTableName;
 }
 - (void) setEntity: (BXEntityDescription *) entity;
+- (void) setTableName: (NSString *) aName;
 @end

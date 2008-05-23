@@ -77,6 +77,7 @@
 - (void) dealloc
 {
 	[mEntity release];
+	[mTableName release];
 	[super dealloc];
 }
 
@@ -84,6 +85,15 @@
 {
 	[super prepare];
 	ExpectV (mLastCheck);
+}
+
+- (void) setTableName: (NSString *) aName
+{
+	if (mTableName != aName)
+	{
+		[mTableName release];
+		mTableName = [aName retain];
+	}
 }
 
 - (void) setEntity: (BXEntityDescription *) entity

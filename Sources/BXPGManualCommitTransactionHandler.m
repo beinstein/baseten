@@ -55,6 +55,11 @@
 {
 	return [self observeIfNeeded: entity connection: mNotifyConnection error: error];
 }
+
+- (void) checkSuperEntities: (BXEntityDescription *) entity
+{
+	[self checkSuperEntities: entity connection: mNotifyConnection];
+}
 @end
 
 
