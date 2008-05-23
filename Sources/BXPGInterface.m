@@ -493,7 +493,6 @@ error:
 }
 
 
-//FIXME: valueDict needs attributes, not strings, as keys.
 - (NSArray *) executeUpdateWithDictionary: (NSDictionary *) valueDict
                                  objectID: (BXDatabaseObjectID *) objectID
                                    entity: (BXEntityDescription *) entity
@@ -522,15 +521,37 @@ error:
 	NSString* fromClause = FromClause (connection, predicate, nil, entity);
 	NSString* setClause = SetClause (connection, valueDict, parameters);
 	NSString* updateQuery = UpdateQuery (connection, entity, setClause, fromClause, whereClause);
-	[connection executeQuery: updateQuery parameterArray: parameters];
+	PGTSResultSet* res = [connection executeQuery: updateQuery parameterArray: parameters];
 	
-	//FIXME: finish this.
+	if ([res querySucceeded])
+	{
+		[self markLocked: entity whereClause: whereClause parameters: parameters willDelete: NO];
+		[mTransactionHandler checkSuperEntities: entity];
+		NSArray* objectIDs = ObjectIDs (entity, res);
+
+		NSDictionary* values = (id) [[valueDict PGTSKeyCollect] name];
+		if (objectID)
+		{
+			BXDatabaseObject* object = [mContext registeredObjectWithID: objectID];
+			[object setCachedValuesForKeysWithDictionary: values];
+		}
+		else
+		{
+			TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+			{
+				BXDatabaseObject* object = [mContext registeredObjectWithID: currentID];
+				[object setCachedValuesForKeysWithDictionary: values];
+			}
+		}
+													   
+		retval = objectIDs;
+	}
+	
 error:
 	return retval;
 }
 
 
-//FIXME: keys needs attributes, not strings.
 - (BOOL) fireFault: (BXDatabaseObject *) anObject keys: (NSArray *) keys error: (NSError **) error
 {
 	ExpectR (error, NO);

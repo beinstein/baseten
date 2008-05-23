@@ -1986,7 +1986,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
         NSArray* primaryKeyFields = [[[anObject objectID] entity] primaryKeyFields];
         if (nil == primaryKeyFields)
             primaryKeyFields = [anEntity primaryKeyFields];
-        BOOL updatedPkey = (nil != [[primaryKeyFields valueForKey: @"name"] firstObjectCommonWithArray: [aDict allKeys]]);
+        BOOL updatedPkey = (nil != [primaryKeyFields firstObjectCommonWithArray: [aDict allKeys]]);
         log4AssertValueReturn (!updatedPkey || anObject, nil, 
                                @"Expected anObject to be known in case its pkey should be modified.");
 

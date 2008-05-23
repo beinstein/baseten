@@ -185,16 +185,18 @@
  * \param oi Either 1 or 0
  */
 - (NSMutableDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
-								entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi
+									   entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi
 {
 	log4AssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
 	
 	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
+	NSDictionary* attributes = [entity attributesByName];
 	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
 	{
-		NSString* attributeKey = [currentFieldArray objectAtIndex: ei];
+		NSString* attributeName = [currentFieldArray objectAtIndex: ei];
+		BXAttributeDescription* attribute = [attributes objectForKey: attributeName];
 		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
-		[retval setObject: (object ? [object primitiveValueForKey: objectKey] : [NSNull null]) forKey: attributeKey];
+		[retval setObject: (object ? [object primitiveValueForKey: objectKey] : [NSNull null]) forKey: attribute];
 	}	
 	return retval;
 }

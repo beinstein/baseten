@@ -68,6 +68,7 @@
 @interface NSDictionary (PGTSHOM)
 - (id) PGTSAny;
 - (id) PGTSCollect;
+- (id) PGTSKeyCollect;
 - (id) PGTSDo;
 - (id) PGTSVisit: (id) visitor;
 @end

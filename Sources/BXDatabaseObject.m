@@ -434,7 +434,8 @@ ParseSelector (SEL aSelector, NSString** key)
 			if (nil == retval)
 			{
 				log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-				if ([mContext fireFault: self key: aKey error: &error])
+				NSDictionary* attrs = [[self entity] attributesByName];
+				if ([mContext fireFault: self key: [attrs objectForKey: aKey] error: &error])
 					retval = [self cachedValueForKey: aKey];
 			}
 			break;
@@ -511,8 +512,10 @@ ParseSelector (SEL aSelector, NSString** key)
 				if (nil == aVal)
 					aVal = [NSNull null];
 
+				BXEntityDescription* entity = [mObjectID entity];
+				BXAttributeDescription* attr = [[entity attributesByName] objectForKey: aKey];
 				[mContext executeUpdateObject: self entity: nil predicate: nil
-							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: aKey]
+							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: attr]
 										error: &error];
                 break;
 			}
@@ -560,7 +563,17 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     log4AssertVoidReturn (nil != mContext, @"Expected to have a database context.");
     NSError* error = nil;
-    if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: aDict error: &error])
+	
+	//Replace string keys with attributes.
+	NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity: [aDict count]];
+	NSDictionary* attributes = [[self entity] attributesByName];
+	TSEnumerate (currentKey, e, [aDict keyEnumerator])
+	{
+		id attr = [attributes objectForKey: currentKey];
+		[dict setObject: [aDict objectForKey: currentKey] forKey: attr];
+	}
+	
+    if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: dict error: &error])
 		[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
 }
 

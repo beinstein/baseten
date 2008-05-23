@@ -402,6 +402,11 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), nil);
 }
 
+- (id) PGTSKeyCollect
+{
+	return HOMTrampoline (self, @selector (PGTSKeyCollect:userInfo:), nil);
+}
+
 - (id) PGTSDo
 {
 	return HOMTrampoline (self, @selector (PGTSDo:userInfo:), nil);
@@ -424,6 +429,20 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 		[retval setObject: collected forKey: currentKey];
 	}
 	[invocation setReturnValue: &retval];	
+}
+
+- (void) PGTSKeyCollect: (NSInvocation *) invocation userInfo: (id) userInfo
+{
+	id retval = [NSMutableDictionary dictionaryWithCapacity: [self count]];
+	TSEnumerate (currentKey, e, [self keyEnumerator])
+	{
+		id collected = nil;
+		[invocation invokeWithTarget: currentKey];
+		[invocation getReturnValue: &collected];
+		if (collected)
+			[retval setObject: [self objectForKey: currentKey] forKey: collected];
+	}
+	[invocation setReturnValue: &retval];
 }
 
 - (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) userInfo
