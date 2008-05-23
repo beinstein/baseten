@@ -42,8 +42,6 @@
 
 
 @interface PGTSFieldDescriptionProxy (BXPGInterfaceAdditions)
-- (void) addAttributeFor: (BXEntityDescription *) entity attributes: (NSMutableDictionary *) attrs primaryKeyFields: (NSSet *) pkey;
-- (NSString *) qualifiedAttributeName: (NSDictionary *) attributes connection: (PGTSConnection *) connection;
 - (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
 @end
 
@@ -60,4 +58,8 @@
 
 @interface NSURL (BXPGInterfaceAdditions)
 - (NSMutableDictionary *) BXPGConnectionDictionary;
+@end
+
+
+@interface BXDatabaseObject (BXPGInterfaceAdditions) <PGTSResultRowProtocol>
 @end

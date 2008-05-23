@@ -340,6 +340,7 @@ SSLMode (enum BXSSLMode mode)
 					BXPGTableNotificationHandler* handler = [[aClass alloc] init];
 					
 					[handler setInterface: mInterface];
+					[handler setConnection: connection];
 					[handler setLastCheck: lastCheck];
 					[handler setEntity: entity];
 					[handler prepare];
@@ -361,7 +362,7 @@ SSLMode (enum BXSSLMode mode)
 	}
 	
 	//Inheritance.
-	TSEnumerate (currentEntity, e, [entity inheritedEntities])
+	TSEnumerate (currentEntity, e, [[entity inheritedEntities] objectEnumerator])
 	{
 		if (! retval)
 			break;
@@ -380,12 +381,14 @@ SSLMode (enum BXSSLMode mode)
 	BOOL retval = NO;
 	NSString* nname = [BXPGClearLocksHandler notificationName];
 	if (! [mObservers objectForKey: nname])
-	{		
-		PGTSResultSet* res = [connection executeQuery: @"LISTEN $1" parameters: nname];
+	{
+		NSString* query = [NSString stringWithFormat: @"LISTEN %@", [nname BXPGEscapedName: connection]];
+		PGTSResultSet* res = [connection executeQuery: query];
 		if ([res querySucceeded])
 		{
 			BXPGClearLocksHandler* handler = [[BXPGClearLocksHandler alloc] init];
 			[handler setInterface: mInterface];
+			[handler setConnection: connection];
 			[handler prepare];
 			[mObservers setObject: handler forKey: nname];
 			[handler release];

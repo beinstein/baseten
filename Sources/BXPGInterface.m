@@ -51,6 +51,7 @@
 #import "BXDatabaseObjectPrivate.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "BXAttributeDescriptionPrivate.h"
 
 
 static NSString* kBXPGLockerKey = @"BXPGLockerKey";
@@ -229,6 +230,7 @@ UpdateQuery (PGTSConnection* connection, BXEntityDescription* entity, NSString* 
 {
 	NSString* query = nil;
 	NSString* entityName = [entity BXPGQualifiedName: connection];
+	//FIXME: -BXPGEscapedName: might not get called here.
 	NSString* pkeyFields = [(id) [[[entity primaryKeyFields] PGTSCollect] BXPGEscapedName: connection] componentsJoinedByString: @", "];
 	if (fromClause)
 	{
@@ -811,18 +813,21 @@ bail:
 	ExpectR (entity, NO);
 	ExpectR (error, NO);
 	PGTSTableDescription* table = [database table: [entity name] inSchema: [entity schemaName]];
-	if (table && ! [entity isValidated])
+	if (table)
 	{
-		//If attributes exists, it only contains primary key fields but we haven't received them from the database.
-		NSMutableDictionary* attributes = ([[[entity attributesByName] mutableCopy] autorelease] ?: [NSMutableDictionary dictionary]);
-		
-		//While we're at it, set the fields as well as the primary key.
-		NSSet* pkey = [[table primaryKey] fields];
-		[[[table fields] PGTSDo] addAttributeFor: entity attributes: attributes primaryKeyFields: pkey];
-		[entity setAttributes: attributes];
-		
-		if ('v' == [table kind])
-			[entity setIsView: YES];
+		if (! [entity isValidated])
+		{
+			//If attributes exists, it only contains primary key fields but we haven't received them from the database.
+			NSMutableDictionary* attributes = ([[[entity attributesByName] mutableCopy] autorelease] ?: [NSMutableDictionary dictionary]);
+			
+			//While we're at it, set the fields as well as the primary key.
+			NSSet* pkey = [[table primaryKey] fields];
+			[[[table fields] PGTSVisit: self] addAttributeFor: nil into: attributes entity: entity primaryKeyFields: pkey];
+			[entity setAttributes: attributes];
+			
+			if ('v' == [table kind])
+				[entity setIsView: YES];
+		}
 	}
 	else
 	{
@@ -914,10 +919,11 @@ bail:
 	//FIXME: handle the error.
 	
 	//Get and sort the primary key fields.
-	NSDictionary* attrs = [entity attributesByName];
 	NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
 	log4AssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
-	NSArray* quoted = (id) [[pkeyFields PGTSCollect] qualifiedAttributeName: attrs connection: mNotifyConnection];
+	
+	NSMutableArray* quoted = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
+	[[pkeyFields PGTSVisit: self] qualifiedNameFor: nil into: quoted entity: entity connection: mNotifyConnection];
 	NSString* quotedNames = [quoted componentsJoinedByString: @", "];
 	NSString* entityName = [entity BXPGQualifiedName: notifyConnection];
 	
@@ -1069,4 +1075,38 @@ bail:
 {
 	[mTransactionHandler handleNotification: notification];
 }
+@end
+
+
+@implementation BXPGInterface (Visitor)
+- (void) addAttributeFor: (PGTSFieldDescription *) field into: (NSMutableDictionary *) attrs 
+				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey
+{
+	NSString* name = [field name];
+	BXAttributeDescription* desc = [attrs objectForKey: name];
+	if (! desc)
+		desc = [BXAttributeDescription attributeWithName: name entity: entity];
+	
+	BOOL isPrimaryKey = [pkey containsObject: field];
+	BOOL isOptional = (! ([field isNotNull] || isPrimaryKey));
+	[desc setOptional: isOptional];
+	[desc setPrimaryKey: isPrimaryKey];
+	
+	//Internal fields are excluded by default.
+	if ([field index] <= 0)
+		[desc setExcluded: YES];
+	
+	[attrs setObject: desc forKey: name];
+}
+
+
+- (void) qualifiedNameFor: (PGTSFieldDescription *) field into: (NSMutableArray *) array 
+				   entity: (BXEntityDescription *) entity connection: (PGTSConnection *) connection
+{
+	NSString* name = [field name];
+	BXAttributeDescription* attr = [[entity attributesByName] objectForKey: name];
+	NSString* qname = [attr BXPGQualifiedName: connection];
+	[array addObject: qname];
+}
+
 @end

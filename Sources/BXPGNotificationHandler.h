@@ -38,6 +38,7 @@
 }
 - (void) handleNotification: (PGTSNotification *) notification;
 - (void) setInterface: (BXPGInterface *) anInterface;
+- (void) setConnection: (PGTSConnection *) connection;
 - (void) setLastCheck: (NSDate *) date;
 - (void) prepare;
 @end

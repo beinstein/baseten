@@ -64,3 +64,11 @@
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error;
 - (void) connection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
 @end
+
+
+@interface BXPGInterface (Visitor)
+- (void) addAttributeFor: (PGTSFieldDescription *) field into: (NSMutableDictionary *) attrs 
+				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey;
+- (void) qualifiedNameFor: (PGTSFieldDescription *) field into: (NSMutableArray *) array 
+				   entity: (BXEntityDescription *) entity connection: (PGTSConnection *) connection;
+@end

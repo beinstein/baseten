@@ -31,6 +31,7 @@
 #import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
+#import "BXDatabaseObjectPrivate.h"
 
 
 @implementation NSObject (BXPGAdditions)
@@ -67,24 +68,6 @@
 
 
 @implementation PGTSFieldDescriptionProxy (BXPGAttributeDescription)
-- (void) addAttributeFor: (BXEntityDescription *) entity attributes: (NSMutableDictionary *) attrs primaryKeyFields: (NSSet *) pkey
-{
-	BXAttributeDescription* desc = [attrs objectForKey: [(id) self name]];
-	if (! desc)
-		desc = [BXAttributeDescription attributeWithName: [(id) self name] entity: entity];
-	
-	BOOL isPrimaryKey = [pkey containsObject: self];
-	BOOL isOptional = (! ([(id) self isNotNull] || isPrimaryKey));
-	[desc setOptional: isOptional];
-	[desc setPrimaryKey: isPrimaryKey];
-	[attrs setObject: desc forKey: [(id) self name]];
-}
-
-- (NSString *) qualifiedAttributeName: (NSDictionary *) attributes connection: (PGTSConnection *) connection
-{
-	return [[attributes objectForKey: [(id) self name]] PGTSQualifiedName: connection];
-}
-
 - (NSString *) BXPGEscapedName: (PGTSConnection *) connection
 {
 	return [[(id) self name] BXPGEscapedName: connection];
@@ -111,5 +94,14 @@
 		SetIf ([self port], kPGTSPortKey);
 	}
 	return connectionDict;
+}
+@end
+
+
+@implementation BXDatabaseObject (BXPGInterfaceAdditions)
+- (void) PGTSSetRow: (int) row resultSet: (PGTSResultSet *) res
+{
+    [res goToRow: row];
+    [self setCachedValuesForKeysWithDictionary: [res currentRowAsDictionary]];
 }
 @end

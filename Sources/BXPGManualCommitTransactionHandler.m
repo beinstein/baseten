@@ -92,7 +92,7 @@
 	[self prepareForConnecting];
 	mAsync = YES;
 	
-	NSString* connectionString = nil; //FIXME: get this somehow.
+	NSString* connectionString = [self connectionString];
 	[mConnection connectAsync: connectionString];
 	[mNotifyConnection connectAsync: connectionString];
 }
