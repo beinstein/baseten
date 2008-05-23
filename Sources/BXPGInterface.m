@@ -284,7 +284,6 @@ ObjectIDs (BXEntityDescription* entity, PGTSResultSet* res)
 		[retval addObject: objectID];
 	}
 	
-	//[self checkSuperEntities: entity]; //FIXME: is this needed?
 	return retval;
 }
 
@@ -616,6 +615,7 @@ error:
 	{
 		retval = ObjectIDs (entity, res);
 		[mTransactionHandler checkSuperEntities: entity];
+		[self markLocked: entity whereClause: whereClause parameters: parameters willDelete: YES];
 	}
 	else
 	{
@@ -626,8 +626,6 @@ error:
 				   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nretval: %@",
 				   objectID, predicate, retval);
 	
-	//FIXME: mark locked?
-
 error:
 	return retval;
 }
