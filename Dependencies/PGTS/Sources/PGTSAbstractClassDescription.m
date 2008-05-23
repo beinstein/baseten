@@ -86,7 +86,7 @@
 - (PGTSRoleDescription *) owner
 {
     //return mOwner; 
-	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSAbstractDescription owner] called." userInfo: nil] raise];
+	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
 
@@ -165,7 +165,7 @@
 	[self fetchFromDatabase];
     return [mACLItems allObjects];
 #endif
-	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSAbstractDescription ACLItems] called." userInfo: nil] raise];
+	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
 

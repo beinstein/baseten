@@ -57,6 +57,7 @@ id PGTSNilReturn (id anObject)
 			  description: (PGTSAbstractDescription *) anObject;
 - (id) performSynchronizedAndReturnObject;
 - (void) performSynchronizedOnDescription: (NSInvocation *) invocation;
+- (id) performSynchronizedAndReturnProxies;
 - (id) invocationRecorder;
 @end
 
@@ -73,7 +74,6 @@ id PGTSNilReturn (id anObject)
 + (BOOL) accessInstanceVariablesDirectly;
 - (NSString *) name;
 - (void) setName: (NSString *) aString;
-- (BOOL) isEqual: (id) anObject;
 - (id) proxy;
 - (Class) proxyClass;
 

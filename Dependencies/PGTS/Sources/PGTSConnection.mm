@@ -72,13 +72,35 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 }
 
 
++ (void) initialize
+{
+	static BOOL tooLate = NO;
+	if (! tooLate)
+	{
+		tooLate = YES;
+		
+		{
+            NSMutableArray* keys = [[NSMutableArray alloc] init];            
+            PQconninfoOption *option = PQconndefaults ();
+            char* keyword = NULL;
+            while ((keyword = option->keyword))
+            {
+                NSString* key = [NSString stringWithUTF8String: keyword];
+                [keys addObject: key];
+                option++;
+            }
+			kPGTSConnectionDictionaryKeys = keys;
+		}
+	}
+}
+
+
 - (id) init
 {
 	if ((self = [super init]))
 	{
 		mQueue = [[NSMutableArray alloc] init];
 		mCertificateVerificationDelegate = [PGTSCertificateVerificationDelegate defaultCertificateVerificationDelegate];
-		[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
 	}
 	return self;
 }
@@ -113,7 +135,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	[mQueue release];
 	[self setConnector: nil];
     [mDatabase release];
-	[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
     [self freeCFTypes];
 	[super dealloc];
 }
@@ -166,6 +187,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
         PQfinish (mConnection);
         mConnection = NULL;
     }
+	[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
 }
 
 - (PGconn *) pgConnection

@@ -67,7 +67,7 @@ static NSString* kPGTSConnectionMonitorExitNotification = @"PGTSConnectionMonito
 		{
 			if (! sharedInstance)
 			{
-				if (! NSClassFromString (@"NSApplication"))
+				if (NSClassFromString (@"NSApplication"))
 					sharedInstance = [[PGTSAppKitConnectionMonitor alloc] init];
 				else
 					sharedInstance = [[PGTSFoundationConnectionMonitor alloc] init];

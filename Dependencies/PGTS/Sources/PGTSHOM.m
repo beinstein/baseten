@@ -132,36 +132,41 @@
 {
 	[mInvocation autorelease];
 	mInvocation = [anInvocation retain];
+	[mInvocation setTarget: mTarget];
 	[mRecorder gotInvocation];
 }
 @end
 
 
-@interface PGTSHOMInvocationRecorder : PGTSInvocationRecorder
+@interface PGTSCallbackInvocationRecorder : PGTSInvocationRecorder
 {
-	id mCollection;
 	id mUserInfo;
+	id mCollection;
 	SEL mCallback;
 }
-- (void) setCollection: (id) collection callback: (SEL) callback;
+- (void) setCollection: (id) collection;
+- (void) setCallback: (SEL) callback;
 - (void) setUserInfo: (id) anObject;
 - (id) userInfo;
 @end
 
 
-@implementation PGTSHOMInvocationRecorder
+@implementation PGTSCallbackInvocationRecorder
+- (void) dealloc
+{
+	[mUserInfo release];
+	[mCollection release];
+	[super dealloc];
+}
+
 - (void) gotInvocation
 {
 	[mCollection performSelector: mCallback withObject: mHelper->mInvocation withObject: mUserInfo];
 }
 
-- (void) setCollection: (id) collection callback: (SEL) callback
+- (void) setCallback: (SEL) callback
 {
 	mCallback = callback;
-	[mCollection release];
-	mCollection = [collection retain];
-	
-	[self setTarget: [mCollection PGTSAny]];
 }
 
 - (void) setUserInfo: (id) anObject
@@ -177,7 +182,51 @@
 {
 	return mUserInfo;
 }
+
+- (void) setCollection: (id) anObject
+{
+	if (mCollection != anObject)
+	{
+		[mCollection release];
+		mCollection = [anObject retain];
+	}
+}
 @end
+
+
+
+@interface PGTSHOMInvocationRecorder : PGTSCallbackInvocationRecorder
+{
+}
+- (void) setCollection: (id) collection callback: (SEL) callback;
+@end
+
+
+@implementation PGTSHOMInvocationRecorder
+- (void) setCollection: (id) collection callback: (SEL) callback
+{
+	[self setCallback: callback];
+	[self setCollection: collection];
+	[self setTarget: [mCollection PGTSAny]];
+}
+@end
+
+
+static id 
+VisitorTrampoline (id self, id target, SEL callback, id userInfo)
+{
+	id retval = nil;
+	if (0 < [self count])
+	{
+		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
+		[recorder setTarget: target];
+		[recorder setCollection: self];
+		[recorder setCallback: callback];
+		[recorder setUserInfo: userInfo];
+		retval = [recorder record];
+	}
+	return retval;
+}
 
 
 static id
@@ -230,6 +279,17 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 }
 
 
+static void
+Visit (NSInvocation* invocation, NSEnumerator* enumerator)
+{
+	TSEnumerate (currentObject, e, enumerator)
+	{
+		[invocation setArgument: &currentObject atIndex: 2];
+		[invocation invoke];
+	}
+}
+
+
 
 @implementation NSSet (PGTSHOM)
 - (id) PGTSAny
@@ -244,12 +304,17 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 
 - (id) PGTSCollectReturning: (Class) aClass
 {
-	return HOMTrampoline (self, @selector (PGTSCollect:), aClass);
+	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
 }
 
 - (id) PGTSDo
 {
-	return HOMTrampoline (self, @selector (PGTSDo:), nil);
+	return HOMTrampoline (self, @selector (PGTSDo:userInfo:), nil);
+}
+
+- (id) PGTSVisit: (id) visitor
+{
+	return VisitorTrampoline (self, visitor, @selector (PGTSVisit:userInfo:), nil);
 }
 
 - (id) PGTSSelectFunction: (int (*)(id)) fptr
@@ -268,6 +333,11 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 {
 	Do (invocation, [self objectEnumerator]);
 }
+
+- (void) PGTSVisit: (NSInvocation *) invocation userInfo: (id) userInfo
+{
+	Visit (invocation, [self objectEnumerator]);
+}
 @end
 
 
@@ -284,12 +354,17 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 
 - (id) PGTSCollectReturning: (Class) aClass
 {
-	return HOMTrampoline (self, @selector (PGTSCollect:), aClass);
+	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
 }
 
 - (id) PGTSDo
 {
-	return HOMTrampoline (self, @selector (PGTSDo:), nil);
+	return HOMTrampoline (self, @selector (PGTSDo:userInfo:), nil);
+}
+
+- (id) PGTSVisit: (id) visitor
+{
+	return VisitorTrampoline (self, visitor, @selector (PGTSVisit:userInfo:), nil);
 }
 
 - (id) PGTSSelectFunction: (int (*)(id)) fptr
@@ -304,9 +379,14 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 	CollectAndPerformSetArray (self, retval, invocation);
 }
 
-- (void) PGTSDo: (NSInvocation *) invocation
+- (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	Do (invocation, [self objectEnumerator]);
+}
+
+- (void) PGTSVisit: (NSInvocation *) invocation userInfo: (id) userInfo
+{
+	Visit (invocation, [self objectEnumerator]);
 }
 @end
 
@@ -319,12 +399,17 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 
 - (id) PGTSCollect
 {
-	return HOMTrampoline (self, @selector (PGTSCollect:), nil);
+	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), nil);
 }
 
 - (id) PGTSDo
 {
-	return HOMTrampoline (self, @selector (PGTSDo:), nil);
+	return HOMTrampoline (self, @selector (PGTSDo:userInfo:), nil);
+}
+
+- (id) PGTSVisit: (id) visitor
+{
+	return VisitorTrampoline (self, visitor, @selector (PGTSVisit:userInfo:), nil);
 }
 
 - (void) PGTSCollect: (NSInvocation *) invocation userInfo: (id) userInfo
@@ -344,5 +429,10 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 - (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	Do (invocation, [self objectEnumerator]);
+}
+
+- (void) PGTSVisit: (NSInvocation *) invocation userInfo: (id) userInfo
+{
+	Visit (invocation, [self objectEnumerator]);
 }
 @end

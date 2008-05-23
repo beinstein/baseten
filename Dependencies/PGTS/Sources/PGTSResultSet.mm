@@ -364,11 +364,15 @@ ErrorUserInfoKey (char fieldCode)
     return mCurrentRow;
 }
 
-- (id) currentRowAsObject
+- (id <PGTSResultRowProtocol>) currentRowAsObject
 {
-    //FIXME: make this work.
-    return nil;
-    //return [self objectInRowsAtIndex: mCurrentRow];
+    id retval = [[[mRowClass alloc] init] autorelease];
+	
+    if (retval)
+        [retval PGTSSetRow: mCurrentRow resultSet: self];
+    
+    //We are too simple to cache and reuse these.
+    return retval;
 }
 
 - (void) setRowClass: (Class) aClass

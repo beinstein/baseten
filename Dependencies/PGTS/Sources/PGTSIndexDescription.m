@@ -27,6 +27,7 @@
 //
 
 #import "PGTSIndexDescription.h"
+#import "PGTSHOM.h"
 
 
 //FIXME: implement this.
@@ -39,8 +40,12 @@
 
 - (NSSet *) fields
 {
-	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSIndexDescriptionProxy fields:] called." userInfo: nil] raise];
-	return nil;
+	if (! mFields)
+	{
+		[[[self invocationRecorder] record] fields];
+		mFields = [[self performSynchronizedAndReturnProxies] retain];
+	}
+	return mFields;
 }
 
 @end

@@ -33,6 +33,7 @@
 #import "PGTSTypeDescription.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSAdditions.h"
+#import "PGTSResultSet.h"
 #import <PGTS/postgresql/libpq-fe.h>
 
 //FIXME: enable logging.
@@ -155,10 +156,11 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
 {
     id retval = [NSMutableArray array];
     //Used with type: argument later
-    PGTSTypeDescription* elementType = [[typeInfo database] typeWithOid: [typeInfo elementOid]];
+	PGTSConnection* connection = [set connection];
+    PGTSTypeDescription* elementType = [[connection databaseDescription] typeWithOid: [typeInfo elementOid]];
     if (nil != elementType)
     {
-        NSDictionary* deserializationDictionary = [[elementType connection] deserializationDictionary];
+        NSDictionary* deserializationDictionary = [connection deserializationDictionary];
         Class elementClass = [deserializationDictionary objectForKey: [elementType name]];
         if (Nil == elementClass)
             elementClass = [NSData class];

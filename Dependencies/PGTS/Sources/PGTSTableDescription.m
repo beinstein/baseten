@@ -60,15 +60,6 @@ PrimaryKey (NSArray* uIndexes)
 	[super dealloc];
 }
 
-- (id) performSynchronizedAndReturnProxies
-{
-	id concreteObjects = [self performSynchronizedAndReturnObject];
-	[[concreteObjects PGTSDo] setConnection: mConnection];
-	id retval = [[concreteObjects PGTSCollect] proxy];
-	[[concreteObjects PGTSDo] setConnection: nil];
-	return retval;
-}
-
 - (NSDictionary *) fields
 {
 	if (! mFields)

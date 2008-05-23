@@ -292,8 +292,11 @@
             [rval setOwner: role];
             
             [rval setSchemaName: schemaName];
+			//FIXME: enable this.
+#if 0
             TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
                 [rval addACLItem: currentACLItem];
+#endif
             [self updateTableCache: rval];
         }
     }

@@ -102,8 +102,10 @@
 	NSString* currentKey;
 	NSString* format = @"%@ = '%@' ";
 	while ((currentKey = [e nextObject]))
+	{
         if ([kPGTSConnectionDictionaryKeys containsObject: currentKey])
             [connectionString appendFormat: format, currentKey, [self objectForKey: currentKey]];
+	}
 	return connectionString;
 }	
 @end

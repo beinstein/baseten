@@ -172,7 +172,10 @@ NextIdentifier ()
 
 - (int) sendForConnection: (PGTSConnection *) connection
 {
-    return [mQuery sendQuery: connection];
+    int retval = [mQuery sendQuery: connection];
+	//FIXME: check retval?
+	mSent = YES;
+	return retval;
 }
 
 - (PGTSResultSet *) receiveForConnection: (PGTSConnection *) connection
@@ -180,8 +183,6 @@ NextIdentifier ()
     PGTSResultSet* retval = nil;
     PGconn* pgConn = [connection pgConnection];
     PGresult* result = PQgetResult (pgConn);
-	if (CONNECTION_BAD != PQstatus (pgConn))
-		mSent = YES;
 	
     if (result)
     {

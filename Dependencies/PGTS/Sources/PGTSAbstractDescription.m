@@ -113,6 +113,15 @@ id PGTSNilReturn (id anObject);
 	}	
 }
 
+- (id) performSynchronizedAndReturnProxies
+{
+	id concreteObjects = [self performSynchronizedAndReturnObject];
+	[[concreteObjects PGTSDo] setConnection: mConnection];
+	id retval = [[concreteObjects PGTSCollect] proxy];
+	[[concreteObjects PGTSDo] setConnection: nil];
+	return retval;
+}
+
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
 {
 	NSMethodSignature* retval = [mDescription methodSignatureForSelector: selector];
@@ -124,6 +133,21 @@ id PGTSNilReturn (id anObject);
 - (void) forwardInvocation: (NSInvocation *) invocation
 {
 	[self performSynchronizedOnDescription: invocation];
+}
+
+- (BOOL) isEqual: (PGTSAbstractDescriptionProxy *) anObject
+{
+	BOOL retval = NO;
+	if ([anObject isKindOfClass: [mDescription class]])
+	{
+		retval = [mDescription isEqual: anObject->mDescription];
+	}
+	return retval;
+}
+
+- (unsigned int) hash
+{
+	return [mDescription hash];
 }
 @end
 
@@ -218,13 +242,13 @@ id PGTSNilReturn (id anObject);
 
 - (PGTSDatabaseDescription *) database
 {
-	[NSException raise: NSInternalInconsistencyException format: @"-[PGTSAbstractDescription database] called."];
+	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
 
 - (PGTSConnection *) connection;
 {
-	[NSException raise: NSInternalInconsistencyException format: @"-[PGTSAbstractDescription connection] called."];
+	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
 @end

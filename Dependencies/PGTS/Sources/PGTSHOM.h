@@ -61,6 +61,7 @@
 - (id) PGTSCollect;
 - (id) PGTSCollectReturning: (Class) aClass;
 - (id) PGTSSelectFunction: (int (*)(id)) fptr;
+- (id) PGTSVisit: (id) visitor;
 @end
 
 
@@ -68,4 +69,5 @@
 - (id) PGTSAny;
 - (id) PGTSCollect;
 - (id) PGTSDo;
+- (id) PGTSVisit: (id) visitor;
 @end

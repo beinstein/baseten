@@ -53,7 +53,6 @@
     if ((self = [super init]))
     {
         mIndex = 0;
-        //mIndexInResultSet = NSNotFound;
     }
     return self;
 }
@@ -97,7 +96,7 @@
 - (PGTSTypeDescription *) type
 {
 	//This is only supposed to be called via the proxy.
-	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSFieldDescription type] called." userInfo: nil] raise];
+	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
 

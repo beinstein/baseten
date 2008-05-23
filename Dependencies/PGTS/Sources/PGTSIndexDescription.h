@@ -40,6 +40,7 @@
 
 @interface PGTSIndexDescriptionProxy : PGTSAbstractClassDescriptionProxy <PGTSIndexDescription>
 {
+	NSSet* mFields;
 }
 @end
 
