@@ -26,6 +26,12 @@
 // $Id$
 //
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+#define NSUInteger unsigned int
+#define NSInteger int
+#endif
+
+
 #import <BaseTen/BXDatabaseContext.h>
 #import <BaseTen/BXConstants.h>
 #import <BaseTen/BXDatabaseObject.h>

@@ -122,8 +122,8 @@
 		530A435F0A5C0E0100A4722B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				530A43850A5C0E0100A4722B /* BaseTen.framework */,
 				538B40F50D634EA40009005B /* BaseTen.framework */,
+				530A43850A5C0E0100A4722B /* BaseTen.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -311,14 +311,14 @@
 		530A43550A5C0DC500A4722B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
 		530A43560A5C0DC500A4722B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Release;
 		};
@@ -348,6 +348,7 @@
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
@@ -378,7 +379,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../..\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
