@@ -450,15 +450,17 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 static NSArray*
 StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 {
-    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: argCount + 1];
-	[retval addObject: lastArg ?: [NSNull null]];
-	argCount--;
+    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: argCount];
+	if (0 < argCount)
+	{
+		[retval addObject: lastArg ?: [NSNull null]];
 
-    for (int i = 0; i < argCount; i++)
-    {
-        id argument = va_arg (arguments, id);
-        [retval addObject: argument ?: [NSNull null]];
-    }
+	    for (int i = 1; i < argCount; i++)
+    	{
+        	id argument = va_arg (arguments, id);
+	        [retval addObject: argument ?: [NSNull null]];
+    	}
+	}
     return retval;
 }
 
@@ -478,12 +480,15 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 {
     PGTSResultSet* retval = nil;
     [self sendQuery: queryString delegate: nil callback: NULL parameterArray: parameters];
-    while (0 < [mQueue count])
-    {
-        PGTSQueryDescription* desc = [mQueue objectAtIndex: 0];
-        retval = [desc finishForConnection: self];
-        [mQueue removeObjectAtIndex: 0];
-    }
+	
+	PGTSQueryDescription* desc = nil;
+	while (0 < [mQueue count] && (desc = [[mQueue objectAtIndex: 0] retain])) 
+	{
+		[mQueue removeObjectAtIndex: 0];
+		retval = [desc finishForConnection: self];
+		[desc release];
+	}
+	
     return retval;
 }
 

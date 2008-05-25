@@ -43,6 +43,15 @@
 #import <BaseTen/BXPolicyDelegate.h>
 #import <BaseTen/BXRelationshipDescription.h>
 
+/*
+ * Helpful breakpoints:
+ *
+ * _log4AssertionDebug
+ * bx_error_during_rollback
+ * bx_error_during_clear_notification
+ *
+ */
+
 
 /**
  * \mainpage Introduction

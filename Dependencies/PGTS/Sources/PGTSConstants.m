@@ -107,6 +107,7 @@ NSString* const kPGTSErrorSourceFunction          = @"kPGTSErrorSourceFunction";
 NSString* const kPGTSErrorStatementPosition       = @"kPGTSErrorStatementPosition";
 NSString* const kPGTSErrorInternalPosition        = @"kPGTSErrorInternalPosition";
 NSString* const kPGTSErrorSourceLine              = @"kPGTSErrorSourceLine";
+NSString* const kPGTSErrorMessage				  = @"kPGTSErrorMessage";
 
 
 /** Declared in PGTSConnectionDelegate.h */

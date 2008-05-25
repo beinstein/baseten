@@ -32,6 +32,13 @@
 #import <PGTS/private/PGTSHOM.h>
 
 
+static void
+bx_error_during_clear_notification (id self, NSError* error)
+{
+	log4Warn (@"During clear notification: %@", error);
+}
+
+
 @implementation BXPGClearLocksHandler
 + (NSString *) notificationName
 {
@@ -55,15 +62,15 @@
     
     //Which tables have pending locks?
     NSString* query = 
-	@"SELECT baseten_lock_relid AS l_oid, "
+	@"SELECT baseten_lock_relid, "
 	@"   max (baseten_lock_timestamp) AS last_date, "
-	@"   baseten.locktablename (l_oid) AS lock_table_name "
+	@"   baseten.locktablename (baseten_lock_relid) AS lock_table_name "
 	@" FROM baseten.lock "
 	@" WHERE baseten_lock_cleared = true "
 	@"  AND baseten_lock_timestamp > $1 " 
 	@"  AND baseten_lock_backend_pid != $2 "
-	@"  AND l_oid = ANY ($3) "
-	@" GROUP BY l_oid";
+	@"  AND baseten_lock_relid = ANY ($3) "
+	@" GROUP BY baseten_lock_relid";
     PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID], oids];
     if (NO == [res querySucceeded])
 	{
@@ -83,7 +90,7 @@
 	{
 		[ids removeAllObjects];
 		NSString* query = nil;
-		NSNumber* relid = [res valueForKey: @"l_oid"];
+		NSNumber* relid = [res valueForKey: @"baseten_lock_relid"];
 		PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [relid PGTSOidValue]];
 		
 		{
@@ -141,7 +148,7 @@
 	
 error:
 	[mConnection executeQuery: @"ROLLBACK"];
-	log4Warn (@"Got error during clear notification: %@", error);
+	bx_error_during_clear_notification (self, error);
 }
 @end
 

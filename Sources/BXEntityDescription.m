@@ -116,26 +116,29 @@ static id gEntities;
  */
 - (void) dealloc2
 {
-	[mRelationships release];
-	mRelationships = nil;
-	
-	[mAttributes release];
-	mAttributes = nil;
-	
 	[mDatabaseURI release];
 	mDatabaseURI = nil;
 	
 	[mSchemaName release];
 	mSchemaName = nil;
-    
+
+	[mAttributes release];
+	mAttributes = nil;
+
+	[mValidationLock release];
+	mValidationLock = nil;
+
+	[mObjectIDs release];
+	mObjectIDs = nil;
+	
+	[mRelationships release];
+	mRelationships = nil;
+	    
     [mSuperEntities release];
     mSuperEntities = nil;
     
     [mSubEntities release];
     mSubEntities = nil;
-	
-	[mValidationLock release];
-	mValidationLock = nil;
 	
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }

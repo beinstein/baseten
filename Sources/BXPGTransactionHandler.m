@@ -63,8 +63,8 @@ SSLMode (enum BXSSLMode mode)
 @implementation BXPGTransactionHandler
 - (void) dealloc
 {
-	[mConnection release];
 	[mCertificateVerificationDelegate release];
+	[mConnection release];
 	[mObservedEntities release];
 	[mObservers release];
 	[mChangeHandlers release];

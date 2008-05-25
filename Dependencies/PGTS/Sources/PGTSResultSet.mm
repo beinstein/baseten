@@ -114,6 +114,14 @@ ErrorUserInfoKey (char fieldCode)
 }
 
 
+
+@interface PGTSResultError : NSError
+{
+}
+@end
+
+
+
 @interface PGTSConcreteResultSet : PGTSResultSet
 {
     PGTSConnection* mConnection; //Weak
@@ -132,6 +140,15 @@ ErrorUserInfoKey (char fieldCode)
 }
 + (id) resultWithPGresult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
 - (id) initWithPGResult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
+@end
+
+
+
+@implementation PGTSResultError
+- (NSString *) description
+{
+	return [[self userInfo] objectForKey: kPGTSErrorMessage];
+}
 @end
 
 
@@ -287,64 +304,78 @@ ErrorUserInfoKey (char fieldCode)
 
 - (NSError *) error
 {
-    char fields [] = {
-        PG_DIAG_SEVERITY,
-        PG_DIAG_SQLSTATE,
-        PG_DIAG_MESSAGE_PRIMARY,
-        PG_DIAG_MESSAGE_DETAIL,
-        PG_DIAG_MESSAGE_HINT,
-        PG_DIAG_STATEMENT_POSITION,
-        PG_DIAG_INTERNAL_POSITION,
-        PG_DIAG_INTERNAL_QUERY,
-        PG_DIAG_CONTEXT,
-        PG_DIAG_SOURCE_FILE,
-        PG_DIAG_SOURCE_LINE,
-        PG_DIAG_SOURCE_FUNCTION,
-        '\0'
-    };
-    
-    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity: (sizeof (fields) - 1) / sizeof (char)];
-    
-    for (int i = 0; '\0' != fields [i]; i++)
-    {
-        char* value = PQresultErrorField (mResult, fields [i]);
-        if (! value) continue;
-        
-        id objectValue = nil;
-        switch (fields [i])
-        {
-            case PG_DIAG_SEVERITY: //FIXME: perhaps add the severity as a constant number?
-            case PG_DIAG_SQLSTATE:
-            case PG_DIAG_MESSAGE_PRIMARY:
-            case PG_DIAG_MESSAGE_DETAIL:
-            case PG_DIAG_MESSAGE_HINT:
-            case PG_DIAG_INTERNAL_QUERY:
-            case PG_DIAG_CONTEXT:
-            case PG_DIAG_SOURCE_FILE:
-            case PG_DIAG_SOURCE_FUNCTION:
-            {
-                objectValue = [NSString stringWithUTF8String: value];
-                break;
-            }
-                
-            case PG_DIAG_STATEMENT_POSITION:
-            case PG_DIAG_INTERNAL_POSITION:
-            case PG_DIAG_SOURCE_LINE:
-            {
-                long longValue = strtol (value, NULL, 10);
-                objectValue = [NSNumber numberWithLong: longValue];
-                break;
-            }
-                
-            default:
-                continue;
-        }
-        NSString* key = ErrorUserInfoKey (fields [i]);
-        if (objectValue && key) [userInfo setObject: objectValue forKey: key];
-    }
-    return [NSError errorWithDomain: kPGTSErrorDomain code: kPGTSUnsuccessfulQueryError userInfo: userInfo];
+	NSError* retval = nil;
+	ExecStatusType status = PQresultStatus (mResult);
+	if (PGRES_FATAL_ERROR == status || PGRES_NONFATAL_ERROR == status)
+	{
+		char fields [] = {
+			PG_DIAG_SEVERITY,
+			PG_DIAG_SQLSTATE,
+			PG_DIAG_MESSAGE_PRIMARY,
+			PG_DIAG_MESSAGE_DETAIL,
+			PG_DIAG_MESSAGE_HINT,
+			PG_DIAG_STATEMENT_POSITION,
+			PG_DIAG_INTERNAL_POSITION,
+			PG_DIAG_INTERNAL_QUERY,
+			PG_DIAG_CONTEXT,
+			PG_DIAG_SOURCE_FILE,
+			PG_DIAG_SOURCE_LINE,
+			PG_DIAG_SOURCE_FUNCTION,
+			'\0'
+		};
+		
+		NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity: (sizeof (fields)) / sizeof (char)];
+		
+		for (int i = 0; '\0' != fields [i]; i++)
+		{
+			char* value = PQresultErrorField (mResult, fields [i]);
+			if (! value) continue;
+			
+			id objectValue = nil;
+			switch (fields [i])
+			{
+				case PG_DIAG_SEVERITY: //FIXME: perhaps add the severity as a constant number?
+				case PG_DIAG_SQLSTATE:
+				case PG_DIAG_MESSAGE_PRIMARY:
+				case PG_DIAG_MESSAGE_DETAIL:
+				case PG_DIAG_MESSAGE_HINT:
+				case PG_DIAG_INTERNAL_QUERY:
+				case PG_DIAG_CONTEXT:
+				case PG_DIAG_SOURCE_FILE:
+				case PG_DIAG_SOURCE_FUNCTION:
+				{
+					objectValue = [NSString stringWithUTF8String: value];
+					break;
+				}
+					
+				case PG_DIAG_STATEMENT_POSITION:
+				case PG_DIAG_INTERNAL_POSITION:
+				case PG_DIAG_SOURCE_LINE:
+				{
+					long longValue = strtol (value, NULL, 10);
+					objectValue = [NSNumber numberWithLong: longValue];
+					break;
+				}
+					
+				default:
+					continue;
+			}
+			NSString* key = ErrorUserInfoKey (fields [i]);
+			if (objectValue && key) [userInfo setObject: objectValue forKey: key];
+		}
+		
+		{
+			//Human-readable error message.
+			NSString* message = [NSString stringWithUTF8String: PQresultErrorMessage (mResult)];
+			[userInfo setObject: message forKey: kPGTSErrorMessage];
+		}
+		
+		retval = [[PGTSResultError alloc] initWithDomain: kPGTSErrorDomain code: kPGTSUnsuccessfulQueryError userInfo: userInfo];
+		[retval autorelease];
+	}
+	return retval;
 }
-
+	
 - (PGresult *) PGresult
 {
 	return mResult;

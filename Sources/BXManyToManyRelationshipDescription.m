@@ -39,11 +39,12 @@
 
 @implementation BXManyToManyRelationshipDescription
 
-- (void) dealloc
+/** Deallocation helper. */
+- (void) dealloc2
 {
 	[mDstForeignKey release];
 	[mHelperEntity release];
-	[super dealloc];
+	[super dealloc2];
 }
 
 - (NSString *) description

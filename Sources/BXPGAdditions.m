@@ -37,8 +37,7 @@
 @implementation NSObject (BXPGAdditions)
 - (NSString *) BXPGEscapedName: (PGTSConnection *) connection
 {
-	NSString* name = [[self description] PGTSEscapedString: connection];
-	return [NSString stringWithFormat: @"\"%@\"", name];
+	return [self PGTSEscapedName: connection];
 }
 
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
@@ -63,6 +62,18 @@
 {    
 	return [NSString stringWithFormat: @"%@.%@", 
 			[[self entity] BXPGQualifiedName: connection], [[self name] BXPGEscapedName: connection]];
+}
+
+- (NSString *) BXPGEscapedName: (PGTSConnection *) connection
+{
+	return [[self name] BXPGEscapedName: connection];
+}
+
+- (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context
+{
+    PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
+    log4AssertValueReturn (nil != connection, nil, @"Expected connection not to be nil.");
+    return [self BXPGQualifiedName: connection];
 }
 @end
 

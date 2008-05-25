@@ -28,7 +28,8 @@
 
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTSAbstractObjectDescription.h>
-#import <PGTS/postgresql/libpq-fe.h> 
+#import <PGTS/postgresql/libpq-fe.h>
+#import <PGTS/PGTSConstants.h>
 
 @class PGTSRoleDescription;
 @class PGTSACLItem;

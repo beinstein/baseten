@@ -43,7 +43,7 @@ enum BXPropertyFlag
 
 @interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSMutableCopying, NSCoding>
 {
-    BXEntityDescription*  mEntity;
+    BXEntityDescription*  mEntity; //Weak
 	enum BXPropertyFlag   mFlags;
 }
 

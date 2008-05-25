@@ -94,6 +94,33 @@
 @end
 
 
+@implementation NSObject (PGTSAdditions)
+- (NSString *) PGTSEscapedName: (PGTSConnection *) connection
+{
+	NSString* name = [[self description] PGTSEscapedString: connection];
+	return [NSString stringWithFormat: @"\"%@\"", name];
+}
+
+- (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection
+{
+	NSString* rval = nil;
+	int length = 0;
+	char* charParameter = [self PGTSParameterLength: &length connection: connection];
+	if (NULL != charParameter)
+	{
+		PGconn* pgConn = [connection pgConnection];
+		char* escapedParameter = (char *) calloc (1 + 2 * length, sizeof (char));
+		PQescapeStringConn (pgConn, escapedParameter, charParameter, length, NULL);
+		const char* clientEncoding = PQparameterStatus (pgConn, "client_encoding");
+		NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
+		rval = [[[NSString alloc] initWithBytesNoCopy: escapedParameter length: strlen (escapedParameter)
+											 encoding: NSUTF8StringEncoding freeWhenDone: YES] autorelease];
+	}
+	return rval;
+}
+@end
+
+
 @implementation NSDictionary (PGTSAdditions)
 - (NSString *) PGTSConnectionString
 {

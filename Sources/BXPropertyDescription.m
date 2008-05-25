@@ -35,7 +35,7 @@
 #import <Log4Cocoa/Log4Cocoa.h>
 
 
-static id gProperties;
+static id gProperties = nil;
 
 
 /**
@@ -47,7 +47,7 @@ static id gProperties;
 /** \note Override dealloc2 in subclasses instead! */
 - (void) dealloc
 {
-	[[self class] unregisterProperty: self];
+	[[self class] unregisterProperty: self entity: mEntity];
 	[self dealloc2];
 	[super dealloc];
 }
@@ -89,7 +89,7 @@ static id gProperties;
 	{
 		[self setEntity: [decoder decodeObjectForKey: @"entity"]];
 		[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
-		log4AssertLog ([[self class] registerProperty: self], 
+		log4AssertLog ([[self class] registerProperty: self entity: mEntity], 
 					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
@@ -127,7 +127,7 @@ static id gProperties;
 - (NSString *) description
 {
     //return [NSString stringWithFormat: @"<%@ (%p) name: %@ entity: %@>", [self class], self, name, mEntity];
-    return [NSString stringWithFormat: @"%@.%@.%@", [mEntity schemaName], [mEntity name], mName];
+	return [self qualifiedName];
 }
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXPropertyDescription *) anotherObject
@@ -165,9 +165,10 @@ static id gProperties;
 	}
 }
 
-+ (BOOL) registerProperty: (id) aProperty
++ (BOOL) registerProperty: (id) aProperty entity: (BXEntityDescription *) entity
 {
 	BOOL retval = NO;
+
 	@synchronized (gProperties)
 	{
 		if (! [gProperties containsObject: aProperty])
@@ -176,11 +177,17 @@ static id gProperties;
 			[gProperties addObject: aProperty];
 		}
 	}
+
+	//FIXME: log4Debug
+	//NSLog (@"Called registerProperty: %@ entity: %@", [aProperty qualifiedName], entity);
+
 	return retval;
 }
 
-+ (void) unregisterProperty: (id) aProperty
++ (void) unregisterProperty: (id) aProperty entity: (BXEntityDescription *) entity
 {
+	//FIXME: log4Debug
+	//NSLog (@"Called unregisterProperty: %@ entity: %@", [aProperty qualifiedName], entity);
 	@synchronized (gProperties)
 	{
 		[gProperties removeObject: aProperty];
@@ -197,7 +204,7 @@ static id gProperties;
     {
 		[self setEntity: anEntity];
 		//Check only since only our code is supposed to create new properties.
-		log4AssertLog ([[self class] registerProperty: self], 
+		log4AssertLog ([[self class] registerProperty: self entity: mEntity], 
 					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
@@ -223,4 +230,8 @@ static id gProperties;
 		mFlags &= ~kBXPropertyOptional;
 }
 
+- (NSString *) qualifiedName
+{
+	return [NSString stringWithFormat: @"%@.%@.%@", [mEntity schemaName], [mEntity name], mName];
+}
 @end

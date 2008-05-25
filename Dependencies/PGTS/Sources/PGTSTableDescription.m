@@ -120,9 +120,6 @@ PrimaryKey (NSArray* uIndexes)
 
 - (void) dealloc
 {
-    [[mFields allValues] makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
-    [mUniqueIndexes makeObjectsPerformSelector: @selector (setTable:) withObject: nil];
-
     [mFields release];
 	[mFieldIndexes release];
     [mUniqueIndexes release];
@@ -200,8 +197,8 @@ PrimaryKey (NSArray* uIndexes)
 		NSString* query = @"SELECT attname, attnum, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1";
 		PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
 		
-		mFields = [NSMutableDictionary dictionaryWithCapacity: [res count]];
-		mFieldIndexes = [NSMutableDictionary dictionaryWithCapacity: [res count]];
+		mFields = [[NSMutableDictionary alloc] initWithCapacity: [res count]];
+		mFieldIndexes = [[NSMutableDictionary alloc] initWithCapacity: [res count]];
 		while ([res advanceRow])
 		{
 			NSString* name = [res valueForKey: @"attname"];

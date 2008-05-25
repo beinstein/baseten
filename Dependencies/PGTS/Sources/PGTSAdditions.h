@@ -72,8 +72,8 @@ struct ObjectCompare <NSString *>
 @interface NSObject (PGTSAdditions)
 - (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection;
 - (NSString *) PGTSEscapedName: (PGTSConnection *) connection;
-- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
 @end
+
 
 
 @interface NSMutableData (PGTSPrivateAdditions)

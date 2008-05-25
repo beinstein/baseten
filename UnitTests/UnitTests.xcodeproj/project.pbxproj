@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
 		5317CEB20D1ACB0900A48792 /* UndoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B2C1390BE88608002B66B1 /* UndoTests.m */; };
 		5317CEB40D1ACB0B00A48792 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
 		5317CEB50D1ACB0C00A48792 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
@@ -22,6 +21,7 @@
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
 		53C98A140CF0803A00D6A0A7 /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
+		53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538B40F50D634EA40009005B /* BaseTen.framework */; };
 		53F8E1DD0CBF7FF100C000C5 /* UnitTestAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A494840BD4D92F008E850E /* UnitTestAdditions.m */; };
 /* End PBXBuildFile section */
 
@@ -40,12 +40,12 @@
 			remoteGlobalIDString = 535444130D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
-		53D059730CDB8F5800430536 /* PBXContainerItemProxy */ = {
+		53D03BB80DE82987002D14C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
-			remoteInfo = "BaseTen Static";
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -94,9 +94,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */,
 				539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */,
 				53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */,
+				53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -202,7 +202,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				53D059740CDB8F5800430536 /* PBXTargetDependency */,
+				53D03BB90DE82987002D14C4 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -272,7 +272,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "# Run the unit tests in this test bundle.\n#export NSZombieEnabled=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/otest\" -SenTest TestLoader \"build/${BUILD_STYLE}/UnitTests.octest\"\n";
+			shellScript = "# Run the unit tests in this test bundle.\n#export NSZombieEnabled=YES\nexport OBJC_DISABLE_GC=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/otest\" -SenTest TestLoader \"build/${BUILD_STYLE}/UnitTests.octest\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -300,10 +301,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		53D059740CDB8F5800430536 /* PBXTargetDependency */ = {
+		53D03BB90DE82987002D14C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "BaseTen Static";
-			targetProxy = 53D059730CDB8F5800430536 /* PBXContainerItemProxy */;
+			name = "BaseTen Framework + GC";
+			targetProxy = 53D03BB80DE82987002D14C4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

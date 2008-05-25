@@ -60,8 +60,7 @@ static NSString* kBXPGParametersKey = @"BXPGParametersKey";
 static NSString* kBXPGObjectKey = @"BXPGObjectKey";
 
 
-//FIXME: write these.
-#define log4CAssertValueReturn(...)
+//FIXME: write this.
 #define ExpectC(...)
 
 
@@ -132,7 +131,7 @@ InsertQuery (PGTSConnection* connection, BXEntityDescription* entity, NSArray* i
 	else
 	{
 		NSString* format = @"INSERT INTO %@ (%@) VALUES (%@) RETURNING %@";
-		NSString* nameString = [(id) [[insertedAttrs PGTSCollect] BXPGQualifiedName: connection] componentsJoinedByString: @", "];
+		NSString* nameString = [(id) [[insertedAttrs PGTSCollect] BXPGEscapedName: connection] componentsJoinedByString: @", "];
 		retval = [NSString stringWithFormat: format, entityName, nameString, FieldAliases ([insertedAttrs count]), returned];
 	}
 	return retval;
@@ -178,12 +177,12 @@ SelectQueryFormat (PGTSConnection* connection, BOOL forUpdate)
  * \param excludedEntity An optional entity which may not appear in the returned clause.
  */
 static NSString*
-FromClause (PGTSConnection* connection, NSPredicate* predicate, BXEntityDescription* additionalEntity, BXEntityDescription* excludedEntity)
+FromClause (id self, PGTSConnection* connection, NSPredicate* predicate, BXEntityDescription* additionalEntity, BXEntityDescription* excludedEntity)
 {
 	NSString* fromClause = nil;
 	
 	NSMutableSet* entitySet = [NSMutableSet setWithSet: [predicate BXEntitySet]];
-	log4CAssertValueReturn (nil != entitySet, nil, @"Expected to receive an entity set (predicate: %@).", predicate);
+	log4AssertValueReturn (nil != entitySet, nil, @"Expected to receive an entity set (predicate: %@).", predicate);
 	if (additionalEntity) [entitySet addObject: additionalEntity];
 	//FIXME: a better way to exclude the corrent table for update would be to change BXEntitySet (above) so that in case of an update, it wouldn't return the target entity, unless a self-join was intended.
 	if (excludedEntity) [entitySet removeObject: excludedEntity]; 
@@ -352,7 +351,6 @@ bx_error_during_rollback (id self, NSError* error)
 
 - (void) dealloc
 {
-	[mContext release];
 	[mForeignKeys release];
 	[mTransactionHandler release];
 	[super dealloc];
@@ -368,7 +366,6 @@ bx_error_during_rollback (id self, NSError* error)
 - (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
 {
 	Expect (queryString);
-	Expect (parameters);
 	Expect (error);
 	
 	NSArray* retval = nil;
@@ -414,7 +411,6 @@ bx_error_during_rollback (id self, NSError* error)
 	Expect (aClass);
 	Expect (error);
     id retval = nil;
-	PGTSResultSet* res = nil;
 	
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 	if (! [self validateEntity: entity error: error]) goto error;
@@ -424,7 +420,8 @@ bx_error_during_rollback (id self, NSError* error)
 	NSArray* insertedAttrs = [valueDict allKeys];
 	NSString* query = InsertQuery ([mTransactionHandler connection], entity, insertedAttrs);
 	NSArray* values = [valueDict objectsForKeys: insertedAttrs notFoundMarker: [NSNull null]];
-	if (! (res = [[mTransactionHandler connection] executeQuery: query parameterArray: values]))
+	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameterArray: values];
+	if (! [res querySucceeded])
 	{
 		*error = [res error];
 		goto error;
@@ -471,7 +468,7 @@ error:
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 	NSString* queryFormat = SelectQueryFormat (connection, forUpdate);
 	NSString* returnedFields = ReturnedFields (connection, entity);
-	NSString* fromClause = FromClause (connection, predicate, entity, nil);
+	NSString* fromClause = FromClause (self, connection, predicate, entity, nil);
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
 	NSString* query = [NSString stringWithFormat: queryFormat, returnedFields, fromClause, whereClause];
 	
@@ -517,7 +514,7 @@ error:
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
 	NSMutableArray* parameters = [ctx objectForKey: kPGTSParametersKey] ?: [NSMutableArray array];
-	NSString* fromClause = FromClause (connection, predicate, nil, entity);
+	NSString* fromClause = FromClause (self, connection, predicate, nil, entity);
 	NSString* setClause = SetClause (connection, valueDict, parameters);
 	NSString* updateQuery = UpdateQuery (connection, entity, setClause, fromClause, whereClause);
 	PGTSResultSet* res = [connection executeQuery: updateQuery parameterArray: parameters];
@@ -561,8 +558,9 @@ error:
 	NSString* fieldNames = [keys componentsJoinedByString: @", "];
 	NSPredicate* predicate = [[anObject objectID] predicate];
 
-	NSString* fromClause = FromClause (connection, predicate, [anObject entity], nil);
+	NSString* fromClause = FromClause (self, connection, predicate, [anObject entity], nil);
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionary];
+	[ctx setObject: connection forKey: kPGTSConnectionKey];
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
 	NSString* queryFormat = SelectQueryFormat (connection, NO);
 
@@ -608,7 +606,7 @@ error:
 	NSString* fromClause = [entity BXPGQualifiedName: connection];
 	NSString* returnedFields = ReturnedFields (connection, entity);
 	NSString* queryFormat = @"DELETE FROM %@ WHERE %@ RETURNING %@";
-	NSString* query = [NSString stringWithFormat: queryFormat, returnedFields, fromClause, whereClause];
+	NSString* query = [NSString stringWithFormat: queryFormat, fromClause, whereClause, returnedFields];
 	NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
 	PGTSResultSet* res = [connection executeQuery: query parameters: parameters];
 	if ([res querySucceeded])
