@@ -110,10 +110,11 @@
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %@", [object valueForKey: @"id"]];
 
     //First update just one object
+	id value1Attr = [[updatetest attributesByName] objectForKey: @"value1"];
     [context executeUpdateObject: nil
 						  entity: updatetest 
                        predicate: predicate
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertEqualObjects (number, [object valueForKey: @"value1"]);
@@ -124,7 +125,7 @@
     [context executeUpdateObject: nil
 						  entity: updatetest 
                        predicate: nil
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     NSArray* values = [res valueForKey: @"value1"];
@@ -133,11 +134,12 @@
     
     //Then update an object's primary key
     number = [NSNumber numberWithInt: -1];
+	id idattr = [[updatetest attributesByName] objectForKey: @"id"];
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
     [context executeUpdateObject: object
 						  entity: updatetest
                        predicate: predicate
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"id"]
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: idattr]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);

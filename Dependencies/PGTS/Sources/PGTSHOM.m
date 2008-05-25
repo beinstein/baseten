@@ -107,10 +107,9 @@
 
 
 @implementation PGTSInvocationRecorderHelper
-//FIXME: testing only.
-- (void) doesNotRecognizeSelector: (SEL) aSel
+static void
+pgts_hom_unrecognized_selector ()
 {
-	NSLog (@"selector: %s", aSel);
 }
 
 + (void) initialize
@@ -125,7 +124,14 @@
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) selector
 {
-	return [mTarget methodSignatureForSelector: selector];
+	NSMethodSignature* signature = [mTarget methodSignatureForSelector: selector];
+	if (! signature)
+	{
+		pgts_hom_unrecognized_selector ();
+		//We need to raise an exception because we don't implement -doesNotRecognizeSelector.
+		[NSException raise: NSInvalidArgumentException format: @"%@ does not respond to %s.", mTarget, selector];
+	}
+	return signature;
 }
 
 - (void) forwardInvocation: (NSInvocation *) anInvocation
@@ -404,7 +410,16 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 
 - (id) PGTSKeyCollect
 {
-	return HOMTrampoline (self, @selector (PGTSKeyCollect:userInfo:), nil);
+	id retval = nil;
+	if (0 < [self count])
+	{
+		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
+		[recorder setCallback: @selector (PGTSKeyCollect:userInfo:)];
+		[recorder setCollection: self];
+		[recorder setTarget: [[self allKeys] PGTSAny]];
+		retval = [recorder record];
+	}
+	return retval;
 }
 
 - (id) PGTSDo

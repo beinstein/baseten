@@ -497,7 +497,6 @@ error:
 {
 	Expect (valueDict);
 	Expect (objectID || entity);
-	Expect (predicate);
 	Expect (error);
 	
 	NSArray* retval = nil;

@@ -104,9 +104,15 @@
 	return [self predicateForEntity: dstEntity valuesInObject: anObject entityIndex: 1 objectIndex: 0];
 }
 
-- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) anObject
+- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) object
 {
-	NSDictionary* values = [self dstDictionaryFor: dstEntity valuesFromSrcObject: anObject];
+	NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
+	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	{
+		NSString* name = [currentFieldArray objectAtIndex: 1];
+		NSString* objectKey = [currentFieldArray objectAtIndex: 0];
+		[values setObject: ([object primitiveValueForKey: objectKey] ?: [NSNull null]) forKey: name];
+	}	
 	BXDatabaseObjectID* retval = [BXDatabaseObjectID IDWithEntity: dstEntity primaryKeyFields: values];
 	return retval;
 }
