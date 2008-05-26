@@ -27,9 +27,10 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import "TestLoader.h"
 @class BXDatabaseContext;
 
-@interface ConnectTest : SenTestCase 
+@interface ConnectTest : BXTestCase 
 {
     BXDatabaseContext* ctx;
 	int expectedCount;

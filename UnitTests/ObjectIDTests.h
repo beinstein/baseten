@@ -27,11 +27,13 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-
+#import "TestLoader.h"
 
 @class BXDatabaseContext;
 
-@interface ObjectIDTests : SenTestCase {
+
+@interface ObjectIDTests : BXTestCase 
+{
 	BXDatabaseContext* ctx;
 }
 

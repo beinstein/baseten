@@ -197,7 +197,6 @@
 				530A43870A5C0FD000A4722B /* Resources */,
 				530A43880A5C0FD000A4722B /* Sources */,
 				530A43890A5C0FD000A4722B /* Frameworks */,
-				530A438A0A5C0FD000A4722B /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -259,23 +258,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		530A438A0A5C0FD000A4722B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# Run the unit tests in this test bundle.\n#export NSZombieEnabled=YES\nexport OBJC_DISABLE_GC=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/otest\" -SenTest TestLoader \"build/${BUILD_STYLE}/UnitTests.octest\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		530A43880A5C0FD000A4722B /* Sources */ = {
