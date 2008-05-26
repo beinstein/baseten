@@ -219,6 +219,8 @@
 		53DBE8130B666C7900C3D20A /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53DBE8120B666C7900C3D20A /* libssl.dylib */; };
 		53E01F4D0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53E01F4E0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */; };
+		53E068250DEAE02A0004363D /* BXProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53E068240DEAE02A0004363D /* BXProbes.d */; };
+		53E068260DEAE02A0004363D /* BXProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53E068240DEAE02A0004363D /* BXProbes.d */; };
 		53EFEA960BA98028008666B7 /* BXDatabaseObjectPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -481,6 +483,7 @@
 		53DBE8120B666C7900C3D20A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
 		53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectKeyPathExpression.h; path = Sources/BXObjectKeyPathExpression.h; sourceTree = "<group>"; };
 		53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectKeyPathExpression.m; path = Sources/BXObjectKeyPathExpression.m; sourceTree = "<group>"; };
+		53E068240DEAE02A0004363D /* BXProbes.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; name = BXProbes.d; path = Sources/BXProbes.d; sourceTree = "<group>"; };
 		53E11A250A791A8D00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
 		53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = "<group>"; };
 		53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenPalette.xcodeproj; path = InterfaceBuilderPalette/BaseTenPalette.xcodeproj; sourceTree = "<group>"; };
@@ -609,6 +612,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				53E068240DEAE02A0004363D /* BXProbes.d */,
 				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
 				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
 				5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */,
@@ -1176,6 +1180,7 @@
 				531A21510DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m in Sources */,
 				531A21570DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m in Sources */,
 				531A215D0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m in Sources */,
+				53E068260DEAE02A0004363D /* BXProbes.d in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1219,6 +1224,7 @@
 				531A21530DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m in Sources */,
 				531A21590DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m in Sources */,
 				531A215F0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m in Sources */,
+				53E068250DEAE02A0004363D /* BXProbes.d in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

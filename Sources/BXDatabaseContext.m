@@ -2107,7 +2107,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 					[[recorder recordWithPersistentTarget: self] executeDeleteObject: anObject entity: entity 
 																		   predicate: predicate error: NULL];
 					
-					//Undo manager does things in reverse order
+					//Undo manager does things in reverse order.
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager beginUndoGrouping];
 

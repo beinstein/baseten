@@ -28,6 +28,7 @@
 
 #import "BXPGTransactionHandler.h"
 #import "BXPGConnectionResetRecoveryAttempter.h"
+#import "BXProbes.h"
 
 
 @implementation BXPGConnectionResetRecoveryAttempter
@@ -101,5 +102,17 @@
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection
 {
 	[self doesNotRecognizeSelector: _cmd];
+}
+
+- (void) PGTSConnection: (PGTSConnection *) connection receivedNotice: (NSError *) notice
+{
+	//log4Debug (@"%p: %s", connection, message);
+	if (BASETEN_RECEIVED_PG_NOTICE_ENABLED ())
+	{
+		NSString* message = [[notice userInfo] objectForKey: kPGTSErrorMessage];
+		char* message_s = strdup ([message UTF8String]);
+		BASETEN_RECEIVED_PG_NOTICE (connection, message_s);
+		free (message_s);
+	}
 }
 @end

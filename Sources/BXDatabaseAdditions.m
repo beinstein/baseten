@@ -364,8 +364,8 @@ URLDecode (const char* bytes, size_t length, id sender)
     NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithDictionary: [self userInfo]];
     [userInfo setObject: self forKey: kBXErrorKey];
     return [BXException exceptionWithName: kBXExceptionUnhandledError 
-                                            reason: [self localizedFailureReason]
-                                          userInfo: userInfo];
+								   reason: [self localizedFailureReason]
+								 userInfo: userInfo];
 }
 @end
 

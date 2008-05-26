@@ -29,6 +29,7 @@
 #import "BXPGManualCommitTransactionHandler.h"
 #import "BXPGManualCommitConnectionResetRecoveryAttempter.h"
 #import "BXPGAdditions.h"
+#import "BXProbes.h"
 
 
 @implementation BXPGManualCommitTransactionHandler
@@ -208,8 +209,17 @@
 		NSError* localError = nil;
 		res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
 		if ((localError = [res error])) *outError = localError;
-		res = [mConnection executeQuery: @"COMMIT"];
+		
+		NSString* query = @"COMMIT";
+		res = [mConnection executeQuery: query];
 		if ((localError = [res error])) *outError = localError;
+		
+		if (BASETEN_SENT_COMMIT_TRANSACTION_ENABLED ())
+		{
+			char* message_s = strdup ([query UTF8String]);
+			BASETEN_SENT_COMMIT_TRANSACTION (mConnection, [res status], message_s);
+			free (message_s);
+		}				
 		
 		if ([res querySucceeded])
 			retval = YES;
@@ -233,8 +243,17 @@
 		NSError* localError = nil;
 		res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
 		if ((localError = [res error])) *outError = localError;
-		res = [mConnection executeQuery: @"ROLLBACK"];
+		
+		NSString* query = @"ROLLBACK";
+		res = [mConnection executeQuery: query];
 		if ((localError = [res error])) *outError = localError;
+		
+		if (BASETEN_SENT_ROLLBACK_TRANSACTION_ENABLED ())
+		{
+			char* message_s = strdup ([query UTF8String]);
+			BASETEN_SENT_ROLLBACK_TRANSACTION (mConnection, [res status], message_s);
+			free (message_s);
+		}		
 	}
 	[self resetSavepointIndex];	
 }
@@ -250,7 +269,16 @@
 		PGTransactionStatusType status = [mConnection transactionStatus];
 		if (PQTRANS_INTRANS == status)
 		{
-			PGTSResultSet* res = [mConnection executeQuery: [self savepointQuery]];
+			NSString* query = [self savepointQuery];
+			PGTSResultSet* res = [mConnection executeQuery: query];
+			
+			if (BASETEN_SENT_SAVEPOINT_ENABLED ())
+			{
+				char* message_s = strdup ([query UTF8String]);
+				BASETEN_SENT_SAVEPOINT (mConnection, [res status], message_s);
+				free (message_s);
+			}
+			
 			if ([res querySucceeded])
 				retval = YES;
 			else
@@ -260,6 +288,37 @@
 		{
 			//FIXME: handle the error.
 		}
+	}
+	return retval;
+}
+
+
+- (BOOL) rollbackToLastSavepoint: (NSError **) outError
+{
+	ExpectR (outError, NO);
+	
+	BOOL retval = NO;
+	PGTransactionStatusType status = [mConnection transactionStatus];
+	if (PQTRANS_IDLE != status)
+	{
+		NSString* query = [self rollbackToSavepointQuery];
+		PGTSResultSet* res = [mConnection executeQuery: query];
+		
+		if (BASETEN_SENT_ROLLBACK_TO_SAVEPOINT_ENABLED ())
+		{
+			char* message_s = strdup ([query UTF8String]);
+			BASETEN_SENT_ROLLBACK_TO_SAVEPOINT (mConnection, [res status], message_s);
+			free (message_s);			
+		}
+		
+		if ([res querySucceeded])
+			retval = YES;
+		else
+			*outError = [res error];
+	}
+	else 
+	{
+		//FIXME: set the error.
 	}
 	return retval;
 }

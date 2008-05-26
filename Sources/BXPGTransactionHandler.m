@@ -31,6 +31,7 @@
 
 #import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
+#import "BXProbes.h"
 
 #import "BXPGTransactionHandler.h"
 #import "BXPGAdditions.h"
@@ -208,8 +209,8 @@ SSLMode (enum BXSSLMode mode)
 
 - (NSString *) rollbackToSavepointQuery
 {
-	mSavepointIndex++;
-    return [NSString stringWithFormat: @"SAVEPOINT BXPGSavepoint%u", mSavepointIndex];
+    return [NSString stringWithFormat: @"ROLLBACK TO SAVEPOINT BXPGSavepoint%u", mSavepointIndex];
+	mSavepointIndex--;
 }
 
 - (void) resetSavepointIndex
@@ -239,7 +240,16 @@ SSLMode (enum BXSSLMode mode)
 			
 		case PQTRANS_IDLE:
 		{
-			PGTSResultSet* res = [mConnection executeQuery: @"BEGIN"];
+			NSString* query = @"BEGIN";
+			PGTSResultSet* res = [mConnection executeQuery: query];
+			
+			if (BASETEN_SENT_BEGIN_TRANSACTION_ENABLED ())
+			{
+				char* message_s = strdup ([query UTF8String]);
+				BASETEN_SENT_BEGIN_TRANSACTION (mConnection, [res status], message_s);
+				free (message_s);
+			}			
+			
 			if ([res querySucceeded])
 				retval = YES;
 			else
@@ -270,6 +280,13 @@ SSLMode (enum BXSSLMode mode)
 
 
 - (BOOL) savepointIfNeeded: (NSError **) outError
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+
+- (BOOL) rollbackToLastSavepoint: (NSError **) outError
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return NO;
@@ -450,6 +467,18 @@ SSLMode (enum BXSSLMode mode)
 
 
 @implementation BXPGTransactionHandler (PGTSConnectionDelegate)
+- (void) PGTSConnection: (PGTSConnection *) connection receivedNotice: (NSError *) notice
+{
+	//log4Debug (@"%p: %s", connection, message);
+	if (BASETEN_RECEIVED_PG_NOTICE_ENABLED ())
+	{
+		NSString* message = [[notice userInfo] objectForKey: kPGTSErrorMessage];
+		char* message_s = strdup ([message UTF8String]);
+		BASETEN_RECEIVED_PG_NOTICE (connection, message_s);
+		free (message_s);
+	}
+}
+
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
 	NSString* notificationName = [notification notificationName];

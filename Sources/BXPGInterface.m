@@ -1046,8 +1046,7 @@ bail:
 
 - (BOOL) rollbackToLastSavepoint: (NSError **) error
 {
-	//FIXME: write this.
-	return NO;
+	return [mTransactionHandler rollbackToLastSavepoint: error];
 }
 
 

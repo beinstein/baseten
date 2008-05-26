@@ -112,6 +112,12 @@
 
 /**
  * \internal
+ * Rollback to last savepoint.
+ */
+- (BOOL) rollbackToLastSavepoint: (NSError **) outError;
+
+/**
+ * \internal
  * Creates a savepoint or begins a transaction.
  * Use with multiple queries.
  */
@@ -119,7 +125,7 @@
 
 /**
  * \internal
- * Ends a previously begun subtransaction.
+ * Commits a previously begun subtransaction.
  */
 - (BOOL) endSubtransactionIfNeeded: (NSError **) outError;
 

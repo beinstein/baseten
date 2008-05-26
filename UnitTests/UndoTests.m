@@ -95,7 +95,8 @@
     MKCAssertEqualObjects (fetchedValue, newValue);
     
     [undoManager undo];
-    MKCAssertEqualObjects ([object primitiveValueForKey: @"value1"], oldValue);
+	id currentValue = [object primitiveValueForKey: @"value1"];
+    MKCAssertEqualObjects (currentValue, oldValue);
     fetchedValue = [[self objectWithId: objectId entity: updatetest] primitiveValueForKey: @"value1"];
     MKCAssertEqualObjects (fetchedValue, oldValue);
     

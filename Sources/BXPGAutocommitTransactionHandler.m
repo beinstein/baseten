@@ -29,6 +29,7 @@
 #import "BXPGAutocommitTransactionHandler.h"
 #import "BXPGAutocommitConnectionResetRecoveryAttempter.h"
 #import "BXPGAdditions.h"
+#import "BXProbes.h"
 
 
 @implementation BXPGAutocommitTransactionHandler
@@ -121,8 +122,16 @@
 	{
 		retval = NO;
 		
-		PGTSResultSet* res = [mConnection executeQuery: @"COMMIT; SELECT baseten.ClearLocks ();"];
+		NSString* query = @"COMMIT; SELECT baseten.ClearLocks ();";
+		PGTSResultSet* res = [mConnection executeQuery: query];
 		*outError = [res error];
+		
+		if (BASETEN_SENT_COMMIT_TRANSACTION_ENABLED ())
+		{
+			char* message_s = strdup ([query UTF8String]);
+			BASETEN_SENT_COMMIT_TRANSACTION (mConnection, [res status], message_s);
+			free (message_s);
+		}		
 		
 		if ([res querySucceeded])
 			retval = YES;
@@ -142,8 +151,16 @@
 	//ROLLBACK handles all transaction states.
 	if (PQTRANS_IDLE != [mConnection transactionStatus])
 	{
-		PGTSResultSet* res = [mConnection executeQuery: @"ROLLBACK; SELECT baseten.ClearLocks ();"];
+		NSString* query = @"ROLLBACK; SELECT baseten.ClearLocks ();";
+		PGTSResultSet* res = [mConnection executeQuery: query];
 		*outError = [res error];
+		
+		if (BASETEN_SENT_ROLLBACK_TRANSACTION_ENABLED ())
+		{
+			char* message_s = strdup ([query UTF8String]);
+			BASETEN_SENT_ROLLBACK_TRANSACTION (mConnection, [res status], message_s);
+			free (message_s);
+		}		
 	}
 	[self resetSavepointIndex];	
 }
