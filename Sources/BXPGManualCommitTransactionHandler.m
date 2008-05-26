@@ -75,6 +75,7 @@
 	[mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
 	[mNotifyConnection disconnect];
 	[mConnection disconnect];
+	[self didDisconnect];
 }
 
 
@@ -153,6 +154,13 @@
 }
 
 
+- (void) handleSuccess
+{
+	[super handleSuccess];
+	log4Debug (@"mNotifyConnection: %p", mNotifyConnection);
+}
+
+
 - (void) PGTSConnectionFailed: (PGTSConnection *) connection
 {
 	[self waitForConnection];
@@ -170,6 +178,8 @@
 	if (! mHandlingConnectionLoss)
 	{
 		mHandlingConnectionLoss = YES;
+		[self didDisconnect];
+
 		//FIXME: determine somehow, whether the error is recoverable by connection reset or not.
 		if (0 && [mConnection pgConnection] && [mNotifyConnection pgConnection])
 		{
@@ -198,7 +208,7 @@
 		NSError* localError = nil;
 		res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
 		if ((localError = [res error])) *outError = localError;
-		res = [mConnection executeQuery: @"ROLLBACK"];
+		res = [mConnection executeQuery: @"COMMIT"];
 		if ((localError = [res error])) *outError = localError;
 		
 		if ([res querySucceeded])

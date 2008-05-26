@@ -39,6 +39,7 @@
 #import "PGTSFunctions.h"
 #import "PGTSConnectionMonitor.h"
 #import "PGTSNotification.h"
+#import "PGTSProbes.h"
 #import <AppKit/AppKit.h>
 
 //FIXME: enable logging.
@@ -56,10 +57,18 @@
 
 @implementation PGTSConnection
 
+//FIXME: replace this with a notice receiver (which takes a PGresult) that will do something more useful.
 static void
 NoticeProcessor (void* connection, const char* message)
 {
-	//FIXME: handle the message.
+	//FIXME: log4Debug
+	//NSLog (@"%p: %s", connection, message);
+	if (PGTS_RECEIVE_NOTICE_ENABLED ())
+	{
+		char* message_s = strdup (message);
+		PGTS_RECEIVE_NOTICE (connection, message_s);
+		free (message_s);
+	}
 }
 
 static void
@@ -180,7 +189,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) disconnect
 {
-    NSLog (@"Disconnecting.");
+	//FIXME: log4Debug or log4Info
+    //NSLog (@"Disconnecting.");
     [mConnector cancel];
     if (mConnection)
     {

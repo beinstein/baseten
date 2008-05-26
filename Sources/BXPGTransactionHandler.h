@@ -67,6 +67,7 @@
 - (NSUInteger) savepointIndex;
 
 - (void) prepareForConnecting;
+- (void) didDisconnect;
 - (NSString *) connectionString;
 - (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass;
 - (PGTSDatabaseDescription *) databaseDescription;
@@ -80,7 +81,6 @@
 
 - (void) checkSuperEntities: (BXEntityDescription *) entity;
 - (void) checkSuperEntities: (BXEntityDescription *) entity connection: (PGTSConnection *) connection;
-- (void) handleNotification: (PGTSNotification *) notification;
 - (NSArray *) observedOids;
 
 

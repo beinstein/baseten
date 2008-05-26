@@ -553,7 +553,6 @@ URLDecode (const char* bytes, size_t length, id sender)
 
 - (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey
 {
-    
     enum BXModificationType retval = kBXNoModification;
     [[self objectForKey: aKey] getValue: &retval];
     return retval;

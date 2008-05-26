@@ -98,6 +98,13 @@ SSLMode (enum BXSSLMode mode)
 
 #pragma mark Connecting
 
+- (void) didDisconnect
+{
+	[mObservedEntities removeAllObjects];
+	[mObservers removeAllObjects];
+	[mChangeHandlers removeAllObjects];
+}
+
 - (NSString *) connectionString
 {
 	BXDatabaseContext* ctx = [mInterface databaseContext];
@@ -126,7 +133,7 @@ SSLMode (enum BXSSLMode mode)
 		mConnection = [[PGTSConnection alloc] init];
 		[mConnection setDelegate: self];
 		[mConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
-	}
+	}	
 }
 
 
@@ -168,6 +175,7 @@ SSLMode (enum BXSSLMode mode)
 	mConnectionSucceeded = YES;
 	if (mAsync)
 		[mInterface connectionSucceeded];
+	log4Debug (@"mConnection: %p", mConnection);
 }	
 
 
@@ -387,7 +395,9 @@ SSLMode (enum BXSSLMode mode)
 	
 	BOOL retval = NO;
 	NSString* nname = [BXPGClearLocksHandler notificationName];
-	if (! [mObservers objectForKey: nname])
+	if ([mObservers objectForKey: nname])
+		retval = YES;
+	else
 	{
 		NSString* query = [NSString stringWithFormat: @"LISTEN %@", [nname BXPGEscapedName: connection]];
 		PGTSResultSet* res = [connection executeQuery: query];
@@ -408,13 +418,6 @@ SSLMode (enum BXSSLMode mode)
 		}
 	}
 	return retval;
-}
-
-
-- (void) handleNotification: (PGTSNotification *) notification
-{
-	NSString* notificationName = [notification notificationName];
-	[[mObservers objectForKey: notificationName] handleNotification: notification];
 }
 
 
@@ -449,7 +452,9 @@ SSLMode (enum BXSSLMode mode)
 @implementation BXPGTransactionHandler (PGTSConnectionDelegate)
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
-	[mInterface connection: connection gotNotification: notification];
+	NSString* notificationName = [notification notificationName];
+	log4Debug (@"Got notification (%p): %@", self, connection, notificationName);
+	[[mObservers objectForKey: notificationName] handleNotification: notification];
 }
 
 

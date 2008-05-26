@@ -607,7 +607,7 @@ error:
 	NSString* queryFormat = @"DELETE FROM %@ WHERE %@ RETURNING %@";
 	NSString* query = [NSString stringWithFormat: queryFormat, fromClause, whereClause, returnedFields];
 	NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
-	PGTSResultSet* res = [connection executeQuery: query parameters: parameters];
+	PGTSResultSet* res = [connection executeQuery: query parameterArray: parameters];
 	if ([res querySucceeded])
 	{
 		retval = ObjectIDs (entity, res);
@@ -1089,11 +1089,6 @@ bail:
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error
 {
 	//FIXME: write this.
-}
-
-- (void) connection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
-{
-	[mTransactionHandler handleNotification: notification];
 }
 @end
 

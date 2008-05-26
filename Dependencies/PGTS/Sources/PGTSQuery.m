@@ -30,6 +30,7 @@
 #import "PGTSFoundationObjects.h"
 #import "PGTSConnection.h"
 #import "PGTSConnectionPrivate.h"
+#import "PGTSProbes.h"
 
 
 @implementation PGTSQuery
@@ -81,9 +82,7 @@
 }
 
 - (int) sendQuery: (PGTSConnection *) connection
-{
-    //NSLog (@"sendquery: %@ %@", mQuery, mParameters);
-    
+{    
     int retval = 0;
 	int nParams = [self parameterCount];
     const char** paramValues  = calloc (nParams, sizeof (char *));
@@ -105,6 +104,16 @@
 
     retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
                             	paramValues, paramLengths, paramFormats, 0);
+	
+    NSLog (@"sendquery: %@ %@", mQuery, mParameters);
+	if (PGTS_SEND_QUERY_ENABLED ())
+	{
+		char* query_s = strdup ([mQuery UTF8String] ?: "");
+		char* params_s = strdup ([[mParameters description] UTF8String] ?: "");
+		PGTS_SEND_QUERY (self, retval, query_s, params_s);
+		free (query_s);
+		free (params_s);
+	}
 
     free (paramTypes);
     free (paramValues);

@@ -41,6 +41,8 @@
 		5312071F0DE81377008E6570 /* libLog4Cocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D044160B4C1DFD00DB9308 /* libLog4Cocoa.a */; };
 		531266140B68E28100637EDA /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531266130B68E28100637EDA /* Security.framework */; };
 		532BF12E0A3717BA002E6BFE /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 5325EAD70A1B2EF600FEA842 /* postgresql */; settings = {ATTRIBUTES = (Public, ); }; };
+		5352E8E70DEA2A2800825067 /* PGTSProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 5352E8E60DEA2A2800825067 /* PGTSProbes.d */; };
+		5352E8E80DEA2A2800825067 /* PGTSProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 5352E8E60DEA2A2800825067 /* PGTSProbes.d */; };
 		535519E90DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */; };
 		535519EA0DD7ADB40074FF01 /* PGTSConnectionMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 535519E80DD7ADB40074FF01 /* PGTSConnectionMonitor.m */; };
 		535519EB0DD7ADB40074FF01 /* PGTSConnectionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */; };
@@ -229,6 +231,7 @@
 		53298E0E0B330EFB00DE7CC8 /* PGTSACLItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSACLItem.m; path = Sources/PGTSACLItem.m; sourceTree = "<group>"; };
 		533A6AF209DEE51700D28AB0 /* PGTSConstants.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = PGTSConstants.h; path = Sources/PGTSConstants.h; sourceTree = "<group>"; };
 		534CFECB095DCCDC00BF3440 /* Kerberos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kerberos.framework; path = /System/Library/Frameworks/Kerberos.framework; sourceTree = "<absolute>"; };
+		5352E8E60DEA2A2800825067 /* PGTSProbes.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; name = PGTSProbes.d; path = Sources/PGTSProbes.d; sourceTree = "<group>"; };
 		535519E70DD7ADB40074FF01 /* PGTSConnectionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnectionMonitor.h; path = Sources/PGTSConnectionMonitor.h; sourceTree = "<group>"; };
 		535519E80DD7ADB40074FF01 /* PGTSConnectionMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSConnectionMonitor.m; path = Sources/PGTSConnectionMonitor.m; sourceTree = "<group>"; };
 		5356066C0DB948F0009EE317 /* PGTSConnectionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnectionPrivate.h; path = Sources/PGTSConnectionPrivate.h; sourceTree = "<group>"; };
@@ -392,6 +395,7 @@
 				53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */,
 				53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */,
 				53BA4FF108804EA000BFAFB5 /* PGTSFunctions.m */,
+				5352E8E60DEA2A2800825067 /* PGTSProbes.d */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -733,6 +737,7 @@
 				530F62480DD4A6FD00EA42DD /* NSPredicate+PGTSAdditions.m in Sources */,
 				535519EC0DD7ADB40074FF01 /* PGTSConnectionMonitor.m in Sources */,
 				53087B760DDB16850041ACA5 /* PGTSNotification.m in Sources */,
+				5352E8E70DEA2A2800825067 /* PGTSProbes.d in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -764,6 +769,7 @@
 				5310876F0DD9F90F0061A468 /* PGTSRoleDescription.m in Sources */,
 				531087720DD9F91A0061A468 /* PGTSCertificateVerificationDelegate.m in Sources */,
 				53087B740DDB16850041ACA5 /* PGTSNotification.m in Sources */,
+				5352E8E80DEA2A2800825067 /* PGTSProbes.d in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

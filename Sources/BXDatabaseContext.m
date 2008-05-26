@@ -240,7 +240,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 - (void) dealloc
 {
     mDeallocating = YES;
-    [self rollback];
+    //[self rollback]; //FIXME: I don't think this is really needed.
     if (mRetainRegisteredObjects)
         [mObjects makeObjectsPerformSelector:@selector (release) withObject:nil];
     [mObjects makeObjectsPerformSelector: @selector (BXDatabaseContextWillDealloc) withObject: nil];

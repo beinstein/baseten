@@ -52,6 +52,7 @@
 - (void) disconnect
 {
 	[mConnection disconnect];
+	[self didDisconnect];
 }
 
 
@@ -96,6 +97,8 @@
 
 - (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error
 {
+	[self didDisconnect];
+	
 	//FIXME: determine somehow, whether the error is recoverable by connection reset or not.
 	if (0)
 	{

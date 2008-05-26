@@ -62,7 +62,6 @@
 - (void) connectionSucceeded;
 - (void) connectionFailed: (NSError *) error;
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error;
-- (void) connection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
 @end
 
 
