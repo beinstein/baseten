@@ -30,5 +30,5 @@
 provider PGTS
 {
 	probe send_query (void* connection, long sendStatus, char* query, char* parameters);
-	probe receive_notice (void* connection, char* message);
+	probe received_notification (void* connection, long be_pid, char* name, void* extra);
 };

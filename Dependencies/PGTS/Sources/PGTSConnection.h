@@ -44,6 +44,7 @@
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection;
 - (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error;
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
+- (void) PGTSConnection: (PGTSConnection *) connection receivedNotice: (NSError *) notice;
 @end
 
 

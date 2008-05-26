@@ -33,12 +33,13 @@
 @interface PGTSResultSet : NSObject
 {
 }
-+ (id) resultWithPGresult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
++ (id) resultWithPGresult: (const PGresult *) aResult connection: (PGTSConnection *) aConnection;
++ (NSError *) errorForPGresult: (const PGresult *) result;
 @end
 
 
 @interface PGTSResultSet (Implementation)
-- (id) initWithPGResult: (PGresult *) aResult connection: (PGTSConnection *) aConnection;
+- (id) initWithPGResult: (const PGresult *) aResult connection: (PGTSConnection *) aConnection;
 - (PGTSConnection *) connection;
 - (BOOL) querySucceeded;
 - (ExecStatusType) status;

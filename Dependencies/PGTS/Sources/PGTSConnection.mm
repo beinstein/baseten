@@ -57,19 +57,14 @@
 
 @implementation PGTSConnection
 
-//FIXME: replace this with a notice receiver (which takes a PGresult) that will do something more useful.
 static void
-NoticeProcessor (void* connection, const char* message)
+NoticeReceiver (void* connectionPtr, const PGresult* notice)
 {
-	//FIXME: log4Debug
-	//NSLog (@"%p: %s", connection, message);
-	if (PGTS_RECEIVE_NOTICE_ENABLED ())
-	{
-		char* message_s = strdup (message);
-		PGTS_RECEIVE_NOTICE (connection, message_s);
-		free (message_s);
-	}
+	PGTSConnection* connection = (PGTSConnection *) connectionPtr;
+	NSError* error = [PGTSResultSet errorForPGresult: notice];
+	[connection->mDelegate PGTSConnection: connection receivedNotice: error];
 }
+
 
 static void
 SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address, const void* data, void* self)
@@ -259,6 +254,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		PGTSNotification* notification = [[[PGTSNotification alloc] init] autorelease];
 		[notification setBackendPID: pgNotification->be_pid];
 		[notification setNotificationName: name];
+		PGTS_RECEIVED_NOTIFICATION (self, pgNotification->be_pid, pgNotification->relname, pgNotification->extra);		
 		PQfreeNotify (pgNotification);
 		[mDelegate PGTSConnection: self gotNotification: notification];
 	}    
@@ -410,7 +406,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
         PQsetClientEncoding (connection, "UNICODE"); 
 		PQexec (connection, "SET standard_conforming_strings TO true");
 		PQexec (connection, "SET datestyle TO 'ISO, YMD'");
-		PQsetNoticeProcessor (connection, &NoticeProcessor, (void *) self);
+		PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
         //FIXME: set other things as well?
 		
 		//Create a runloop source to receive data asynchronously.

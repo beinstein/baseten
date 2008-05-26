@@ -389,13 +389,13 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				5352E8E60DEA2A2800825067 /* PGTSProbes.d */,
 				32DBCF5E0370ADEE00C91783 /* PGTS_Prefix.pch */,
 				53BA4FF508804EA000BFAFB5 /* PGTS.h */,
 				533A6AF209DEE51700D28AB0 /* PGTSConstants.h */,
 				53BA4FEA08804EA000BFAFB5 /* PGTSConstants.m */,
 				53BA4FE108804EA000BFAFB5 /* PGTSFunctions.h */,
 				53BA4FF108804EA000BFAFB5 /* PGTSFunctions.m */,
-				5352E8E60DEA2A2800825067 /* PGTSProbes.d */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -646,8 +646,8 @@
 			);
 			projectRoot = "";
 			targets = (
-				536580D10A36FDFB00CDEC90 /* Static archive */,
 				5381762E0D633DC000A4CA72 /* Static archive + GC */,
+				536580D10A36FDFB00CDEC90 /* Static archive */,
 				538971AF0B821A570092E1B8 /* PostgreSQL-8.2.5 */,
 			);
 		};
