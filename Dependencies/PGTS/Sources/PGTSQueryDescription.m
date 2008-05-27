@@ -31,6 +31,7 @@
 #import "PGTSResultSet.h"
 #import "PGTSQuery.h"
 #import "PGTSConnectionPrivate.h"
+#import "PGTSProbes.h"
 #import <PGTS/postgresql/libpq-fe.h>
 
 
@@ -193,6 +194,13 @@ NextIdentifier ()
     else
     {
         mFinished = YES;
+		
+		if (PGTS_FINISHED_QUERY_ENABLED ())
+		{
+			char* query_s = strdup ([[mQuery query] UTF8String]);
+			PGTS_FINISHED_QUERY (connection, query_s);
+			free (query_s);
+		}
     }
     return retval;
 }

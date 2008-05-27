@@ -418,10 +418,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (BOOL) autocommits
 {
-    BOOL rval = mAutocommits;
+    BOOL retval = mAutocommits;
     if (nil != mDatabaseInterface)
-        rval = [mDatabaseInterface autocommits];
-    return mAutocommits;
+        retval = [mDatabaseInterface autocommits];
+    return retval;
 }
 
 /**

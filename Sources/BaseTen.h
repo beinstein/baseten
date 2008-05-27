@@ -51,6 +51,7 @@
  * bx_error_during_clear_notification
  * bx_test_failed
  * pgts_hom_unrecognized_selector
+ * BXHandleError2
  *
  */
 

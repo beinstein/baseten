@@ -711,8 +711,8 @@
 		537385610DD9FB0A006F965A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				537385670DD9FB0A006F965A /* libPGTS.a */,
 				537385690DD9FB0A006F965A /* libPGTS.a */,
+				537385670DD9FB0A006F965A /* libPGTS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";

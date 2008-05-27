@@ -35,6 +35,7 @@
 @interface PGTSQuery : NSObject
 {
 }
+- (NSString *) query;
 - (int) sendQuery: (PGTSConnection *) connection;
 @end
 
@@ -53,6 +54,5 @@
 {
 	NSString* mQuery;
 }
-- (NSString *) query;
 - (void) setQuery: (NSString *) aString;
 @end

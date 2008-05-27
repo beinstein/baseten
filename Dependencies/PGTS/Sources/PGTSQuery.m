@@ -35,12 +35,16 @@
 
 
 @implementation PGTSQuery
-
 - (int) sendQuery: (PGTSConnection *) connection
 {
 	return 0;
 }
 
+- (NSString *) query
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return nil;
+}
 @end
 
 
@@ -168,7 +172,7 @@ ParameterString (int nParams, const char** values, int* formats)
 		const char* params = ParameterString (nParams, paramValues, paramFormats);
 		char* query_s = strdup ([mQuery UTF8String] ?: "");
 		char* params_s = strdup (params ?: "");
-		PGTS_SEND_QUERY (self, retval, query_s, params_s);
+		PGTS_SEND_QUERY (connection, retval, query_s, params_s);
 		free (query_s);
 		free (params_s);
 	}
