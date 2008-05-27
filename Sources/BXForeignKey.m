@@ -27,6 +27,7 @@
 //
 
 #import <Log4Cocoa/Log4Cocoa.h>
+#import <PGTS/private/PGTSHOM.h>
 
 #import "BXForeignKey.h"
 #import "BXForeignKeyPrivate.h"
@@ -53,6 +54,17 @@
 {
 	[mFieldNames release];
 	[super dealloc];
+}
+
+- (NSString *) description
+{
+	NSArray* fieldNames = [mFieldNames allObjects];
+	NSArray* from = [[fieldNames PGTSCollect] objectAtIndex: 0];
+	NSArray* to   = [[fieldNames PGTSCollect] objectAtIndex: 1];
+	NSString* retval = [NSString stringWithFormat: @"<%@ (%p): %@ (%@ -> %@)>", 
+						[self class], self, [self name],
+						[from componentsJoinedByString: @", "], [to componentsJoinedByString: @", "]];
+	return retval;
 }
 
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName
@@ -104,18 +116,42 @@
 	return [self predicateForEntity: dstEntity valuesInObject: anObject entityIndex: 1 objectIndex: 0];
 }
 
-- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) object
+- (BXDatabaseObjectID *) objectIDForEntity: (BXEntityDescription *) entity fromObject: (BXDatabaseObject *) object
+							   entityIndex: (int) ei objectIndex: (int) oi
 {
+	BOOL haveValues = YES;
 	NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
 	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
 	{
-		NSString* name = [currentFieldArray objectAtIndex: 1];
-		NSString* objectKey = [currentFieldArray objectAtIndex: 0];
-		[values setObject: ([object primitiveValueForKey: objectKey] ?: [NSNull null]) forKey: name];
-	}	
-	BXDatabaseObjectID* retval = [BXDatabaseObjectID IDWithEntity: dstEntity primaryKeyFields: values];
-	return retval;
+		NSString* name = [currentFieldArray objectAtIndex: ei];
+		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
+		id value = [object primitiveValueForKey: objectKey];
+		if (value)
+			[values setObject: value forKey: name];
+		else
+		{
+			haveValues = NO;
+			break;
+		}
+	}
+	
+	BXDatabaseObjectID* retval = nil;
+	if (haveValues)
+		retval = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: values];
+	return retval;	
 }
+
+
+- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) object
+{
+	return [self objectIDForEntity: dstEntity fromObject: object entityIndex: 1 objectIndex: 0];
+}
+
+- (BXDatabaseObjectID *) objectIDForSrcEntity: (BXEntityDescription *) srcEntity fromObject: (BXDatabaseObject *) object
+{
+	return [self objectIDForEntity: srcEntity fromObject: object entityIndex: 0 objectIndex: 1];
+}
+
 
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
 							  dstEntity: (BXEntityDescription *) dstEntity

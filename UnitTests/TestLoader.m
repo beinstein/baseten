@@ -99,8 +99,8 @@
 		relationshipSuite,
 		nil] objectEnumerator]];
 	
-	//SenTestRun* run = [bxSuite run];
-    SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [UndoTests class]] run];
+	SenTestRun* run = [bxSuite run];
+    //SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [ForeignKeyTests class]] run];
 	STAssertTrue (0 == [run failureCount], @"Expected tests to succeed.");
 }
 @end

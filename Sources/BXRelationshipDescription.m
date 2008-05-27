@@ -170,11 +170,11 @@
 						   @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
 
 	id retval = nil;
-	//Many-to-many relationships don't call super's implementation, so we can determine from this, if we are one-to-one.
-	if (! [self isToMany] || [self isInverse])
+	//Many-to-many relationships don't call super's implementation, so we can determine from this, if we are to-one.
+	if ([self isInverse])
 	{
 		BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: [self destinationEntity] fromObject: aDatabaseObject];
-		retval = [[aDatabaseObject databaseContext] registeredObjectWithID: objectID];
+		retval = (objectID ? [[aDatabaseObject databaseContext] objectWithID: objectID error: error] : [NSNull null]);
 	}
 	
 	if (! retval)

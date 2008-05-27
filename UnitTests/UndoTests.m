@@ -125,7 +125,6 @@
     MKCAssertEqualObjects (foreignObjects, foreignObjects2);    
 }
 
-#if 0
 - (void) testUndoWithAutocommit
 {
     [self undoAutocommit: YES];
@@ -135,7 +134,6 @@
 {
     [self undoAutocommit: NO];
 }
-#endif
 
 - (void) testUndoWithMTORelationship
 {
