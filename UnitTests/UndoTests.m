@@ -122,17 +122,7 @@
     
     [undoManager undo];
     MKCAssertTrue (2 == [foreignObjects count]);
-    MKCAssertEqualObjects (foreignObjects, foreignObjects2);
-    
-    if (autocommit)
-    {
-        [context setAutocommits: YES];
-        MKCAssertTrue ([context autocommits]);
-    }
-    else
-    {
-        MKCAssertFalse ([context autocommits]);
-    }
+    MKCAssertEqualObjects (foreignObjects, foreignObjects2);    
 }
 
 #if 0

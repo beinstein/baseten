@@ -554,7 +554,7 @@ error:
 	
     BOOL retval = NO;
 	PGTSConnection* connection = [mTransactionHandler connection];
-	NSString* fieldNames = [keys componentsJoinedByString: @", "];
+	NSString* fieldNames = [(id) [[keys PGTSCollect] BXPGQualifiedName: connection] componentsJoinedByString: @", "];
 	NSPredicate* predicate = [[anObject objectID] predicate];
 
 	NSString* fromClause = FromClause (self, connection, predicate, [anObject entity], nil);
