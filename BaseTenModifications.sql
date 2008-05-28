@@ -1539,6 +1539,7 @@ BEGIN
         || pkey_decl || ')'
         || ' INHERITS ("baseten".Modification)';
     EXECUTE 'REVOKE ALL PRIVILEGES ON ' || mtablename || ' FROM PUBLIC';
+    EXECUTE 'GRANT INSERT ON ' || mtablename || ' TO basetenuser';
     EXECUTE 'GRANT SELECT ON ' || mtablename || ' TO basetenread';
     
     -- Triggers for the _modification_ table
