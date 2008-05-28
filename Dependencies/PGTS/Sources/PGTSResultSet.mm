@@ -170,7 +170,8 @@ ErrorUserInfoKey (char fieldCode)
     FieldIndexMap::iterator iterator = mFieldIndices->begin ();
     while (mFieldIndices->end () != iterator)
     {
-        [iterator->first autorelease];
+		[[iterator->first retain] autorelease];
+        CFRelease (iterator->first);
         iterator++;
     }
     delete mFieldIndices;
@@ -234,7 +235,8 @@ ErrorUserInfoKey (char fieldCode)
                 mFields = i;
                 break;
             }
-            NSString* stringName = [[NSString alloc] initWithCString: fname encoding: NSUTF8StringEncoding];
+			NSString* stringName = [NSString stringWithUTF8String: fname];
+			CFRetain (stringName);
             (* mFieldIndices) [stringName] = i;
         }
         mDeterminesFieldClassesFromDB = YES;

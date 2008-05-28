@@ -117,6 +117,11 @@ pgts_hom_unrecognized_selector ()
 	//This is required by the runtime.
 }
 
+- (void) finalize
+{
+	//This is required by the runtime.
+}
+
 + (id) alloc
 {
 	return NSAllocateObject (self, 0, NULL);

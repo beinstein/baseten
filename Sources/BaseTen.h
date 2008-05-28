@@ -26,7 +26,8 @@
 // $Id$
 //
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
+//FIXME: this doesn't seem to work.
+#if 0 && MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
 #define NSUInteger unsigned int
 #define NSInteger int
 #endif
