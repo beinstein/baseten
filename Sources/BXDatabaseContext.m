@@ -416,6 +416,8 @@ bx_query_during_reconnect ()
  */
 - (void) setAutocommits: (BOOL) aBool
 {
+	if ([mDatabaseInterface connected])
+		[NSException raise: NSInvalidArgumentException format: @"Commit mode cannot be set after connecting."];
     mAutocommits = aBool;
 }
 
@@ -425,10 +427,7 @@ bx_query_during_reconnect ()
  */
 - (BOOL) autocommits
 {
-    BOOL retval = mAutocommits;
-    if (nil != mDatabaseInterface)
-        retval = [mDatabaseInterface autocommits];
-    return retval;
+    return mAutocommits;
 }
 
 /**

@@ -346,6 +346,8 @@ bx_error_during_rollback (id self, NSError* error)
 - (void) disconnect
 {
 	[mTransactionHandler disconnect];
+	[mTransactionHandler release];
+	mTransactionHandler = nil;
 }
 
 
