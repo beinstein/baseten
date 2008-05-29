@@ -28,6 +28,7 @@
 
 #import "BXPGTransactionHandler.h"
 #import "BXPGConnectionResetRecoveryAttempter.h"
+#import "BXDatabaseContextPrivate.h"
 #import "BXProbes.h"
 
 
@@ -75,6 +76,12 @@
 	[invocation setArgument: &status atIndex: 2];
 	
 	return invocation;
+}
+
+
+- (void) allowConnecting: (BOOL) allow
+{
+	[[[mHandler interface] databaseContext] setAllowReconnecting: allow];
 }
 @end
 

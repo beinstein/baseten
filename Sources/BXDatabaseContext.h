@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
+#import <BaseTen/BXConstants.h>
 
 #ifndef IBAction
 #define IBAction void
@@ -73,6 +74,8 @@
 	IBOutlet id								policyDelegate;
 	/** A delegate for error handling. \see NSObject(BXErrorHandlerDelegate) */
 	IBOutlet id								errorHandlerDelegate;
+	
+	enum BXConnectionErrorHandlingState		mConnectionErrorHandlingState;
 
     BOOL									mLogsQueries;
     BOOL									mAutocommits;

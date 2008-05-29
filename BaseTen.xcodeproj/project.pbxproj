@@ -601,9 +601,6 @@
 				5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */,
 				533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */,
 				533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */,
-				5301302609D43A450037C485 /* BXConstants.h */,
-				53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */,
-				5301302709D43A450037C485 /* BXConstants.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
 				53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */,
@@ -625,6 +622,9 @@
 				5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */,
 				5321F83B0CF7807700E663CE /* BXInvocation.h */,
 				5321F83C0CF7807700E663CE /* BXInvocation.m */,
+				5301302609D43A450037C485 /* BXConstants.h */,
+				53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */,
+				5301302709D43A450037C485 /* BXConstants.m */,
 				32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */,
 			);
 			name = "Other Sources";

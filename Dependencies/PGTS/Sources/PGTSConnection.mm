@@ -397,10 +397,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded
 {
 	[self setConnector: nil];
+	mConnection = connection;
 	if (succeeded)
 	{
-		mConnection = connection;
-		
 		//Rather than call PQsendquery etc. multiple times, monitor the socket state.
 		PQsetnonblocking (connection, 0); 
 		//Use UTF-8.

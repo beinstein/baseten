@@ -105,3 +105,10 @@ enum BXSSLMode
 	kBXSSLModeDisable,
 	kBXSSLModePrefer
 };
+
+enum BXConnectionErrorHandlingState
+{
+	kBXConnectionErrorNone = 0,
+	kBXConnectionErrorResolving,
+	kBXConnectionErrorNoReconnect
+};

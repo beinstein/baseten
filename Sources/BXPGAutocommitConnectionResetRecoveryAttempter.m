@@ -36,6 +36,8 @@
 	BOOL retval = NO;
 	if (0 == recoveryOptionIndex)
 		retval = [[mHandler connection] resetSync];
+	
+	[self allowConnecting: retval];
 	return retval;
 }
 
@@ -54,6 +56,7 @@
 
 - (void) PGTSConnectionFailed: (PGTSConnection *) connection
 {
+	[self allowConnecting: NO];
 	[mRecoveryInvocation invoke];
 	[connection setDelegate: mHandler];
 	[connection disconnect];
@@ -63,6 +66,7 @@
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection
 {
 	BOOL status = YES;
+	[self allowConnecting: YES];
 	[mRecoveryInvocation setArgument: &status atIndex: 2];
 	[mRecoveryInvocation invoke];
 	[connection setDelegate: mHandler];

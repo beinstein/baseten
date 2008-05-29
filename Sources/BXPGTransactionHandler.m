@@ -175,6 +175,7 @@ SSLMode (enum BXSSLMode mode)
 	[userInfo setObject: attempter forKey: NSRecoveryAttempterErrorKey];
 	[userInfo setObject: @"Database Error" forKey: NSLocalizedDescriptionKey]; //FIXME: localization.
 	[userInfo setObject: @"Connection to the database was lost." forKey: NSLocalizedFailureReasonErrorKey];
+	[userInfo setObject: @"Connection to the database was lost." forKey: NSLocalizedRecoverySuggestionErrorKey];
 	if (error) [userInfo setObject: error forKey: NSUnderlyingErrorKey];
 	
 	NSArray* options = [NSArray arrayWithObjects: @"Try to Reconnect", @"Continue", nil]; //FIXME: localization.

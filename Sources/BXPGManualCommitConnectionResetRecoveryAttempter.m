@@ -40,6 +40,8 @@
 		[[(id) mHandler notifyConnection] resetSync];
 		//-finishedConnecting gets executed here.
 	}
+	
+	[self allowConnecting: mSucceeded];
 	return mSucceeded;
 }
 
@@ -66,6 +68,7 @@
 	
 	if (mIsAsync)
 	{
+		[self allowConnecting: mSucceeded];
 		[mRecoveryInvocation setArgument: &mSucceeded atIndex: 2];
 		[mRecoveryInvocation invoke];
 		//FIXME: check modification tables?
