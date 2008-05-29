@@ -46,6 +46,7 @@ struct BXTrustResult
 
 @interface BXDatabaseContext (DBInterfaces)
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
+- (void) connectionLost: (NSError *) error;
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;

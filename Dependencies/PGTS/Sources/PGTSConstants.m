@@ -30,8 +30,8 @@
 #import <PGTS/PGTSConstants.h>
 
 
-NSDictionary* kPGTSDefaultConnectionDictionary    = nil;
-NSArray* kPGTSConnectionDictionaryKeys            = nil;
+__strong NSDictionary* kPGTSDefaultConnectionDictionary    = nil;
+__strong NSArray* kPGTSConnectionDictionaryKeys            = nil;
 
 NSString* const kPGTSHostKey                      = @"host";
 NSString* const kPGTSHostAddressKey               = @"hostaddr";

@@ -84,7 +84,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		tooLate = YES;
 		
 		{
-            NSMutableArray* keys = [[NSMutableArray alloc] init];            
+            NSMutableArray* keys = [[NSMutableArray alloc] init];
+			CFRetain (keys);
             PQconninfoOption *option = PQconndefaults ();
             char* keyword = NULL;
             while ((keyword = option->keyword))
@@ -135,6 +136,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) dealloc
 {
+	[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
     [self disconnect];
 	[mQueue release];
 	[self setConnector: nil];
@@ -192,7 +194,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
         PQfinish (mConnection);
         mConnection = NULL;
     }
-	[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
 }
 
 - (PGconn *) pgConnection
@@ -355,7 +356,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) workspaceWillSleep: (NSNotification *) n
 {
-	[self disconnect];
+ 	[self disconnect];
 	mDidDisconnectOnSleep = YES;
 }
 

@@ -31,7 +31,7 @@
 #import "BXProbes.h"
 
 
-@implementation BXPGConnectionResetRecoveryAttempter
+@implementation BXPGConnectionRecoveryAttempter
 - (void) dealloc
 {
 	[mRecoveryInvocation release];
@@ -80,7 +80,7 @@
 
 
 
-@implementation BXPGConnectionResetRecoveryAttempter (PGTSConnectionDelegate)
+@implementation BXPGConnectionRecoveryAttempter (PGTSConnectionDelegate)
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
 	[self doesNotRecognizeSelector: _cmd];

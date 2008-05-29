@@ -29,7 +29,7 @@
 #import "BXPGConnectionResetRecoveryAttempter.h"
 
 
-@interface BXPGManualCommitConnectionResetRecoveryAttempter : BXPGConnectionResetRecoveryAttempter
+@interface BXPGManualCommitConnectionResetRecoveryAttempter : BXPGConnectionRecoveryAttempter
 {
 	int mCounter;
 	BOOL mIsAsync;

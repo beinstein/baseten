@@ -1087,7 +1087,7 @@ bail:
 
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error
 {
-	//FIXME: write this.
+	[mContext connectionLost: error];
 }
 @end
 

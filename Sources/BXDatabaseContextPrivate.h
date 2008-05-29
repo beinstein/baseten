@@ -103,3 +103,11 @@
 @interface BXDatabaseContext (Callbacks)
 - (void) BXConnectionSetupManagerFinishedAttempt;
 @end
+
+
+@interface BXDatabaseContext (DefaultErrorHandler)
+- (void) BXDatabaseContext: (BXDatabaseContext *) context 
+				  hadError: (NSError *) error 
+			willBePassedOn: (BOOL) willBePassedOn;
+- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
+@end

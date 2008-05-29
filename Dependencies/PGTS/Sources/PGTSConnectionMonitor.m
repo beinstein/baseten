@@ -28,6 +28,7 @@
 
 #import "PGTSConnectionMonitor.h"
 #import "PGTSAdditions.h"
+#import "PGTSProbes.h"
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <IOKit/IOMessage.h>
 #import <AppKit/AppKit.h>
@@ -100,22 +101,34 @@ ProcessWillExit ()
 static void
 WorkspaceWillSleep (void* refCon, io_service_t service, natural_t messageType, void* messageArgument)
 {
+	
 	PGTSFoundationConnectionMonitor* monitor = (id) refCon;
     switch (messageType)
     {
         case kIOMessageCanSystemSleep:
         case kIOMessageSystemWillSleep:
-			[[NSNotificationCenter defaultCenter] postNotificationName: kPGTSConnectionMonitorSleepNotification object: (id) refCon];
+		{
+			PGTS_BEGIN_SLEEP_PREPARATION ();
+			NSString* note = kPGTSConnectionMonitorSleepNotification;
+			[[NSNotificationCenter defaultCenter] postNotificationName: note object: monitor];
             IOAllowPowerChange ([monitor IOPowerSession], (long) messageArgument);
+			PGTS_END_SLEEP_PREPARATION ();
             break;
+		}
 			
 		case kIOMessageSystemHasPoweredOn:
-			[[NSNotificationCenter defaultCenter] postNotificationName: kPGTSConnectionMonitorAwakeNotification object: (id) refCon];
+		{
+			PGTS_BEGIN_WAKE_PREPARATION ()
+			NSString* note = kPGTSConnectionMonitorAwakeNotification;
+			[[NSNotificationCenter defaultCenter] postNotificationName: note object: monitor];
+			PGTS_END_WAKE_PREPARATION ()
 			break;
+		}
 			
         default:
             break;
     }
+
 }
 
 

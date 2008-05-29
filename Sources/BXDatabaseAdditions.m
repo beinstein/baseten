@@ -75,6 +75,9 @@
 		if (nil == host) host = [self host];
 		if (nil == host) host = @"";
 		[URLString appendString: host];
+		
+		NSNumber* port = [self port];
+		if (port) [URLString appendFormat: @":%@", port];
 	
 		if (nil != dbName)
             dbName = [dbName BXURLEncodedString];

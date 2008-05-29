@@ -30,6 +30,7 @@
 #import <PGTS/PGTS.h>
 #import <PGTS/PGTSFunctions.h>
 #import <Log4Cocoa/Log4Cocoa.h>
+#import <AppKit/AppKit.h>
 #import <stdlib.h>
 #import <string.h>
 #import <pthread.h>
@@ -1334,6 +1335,11 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 @implementation BXDatabaseContext (DBInterfaces)
 
+- (void) connectionLost: (NSError *) error
+{
+	[errorHandlerDelegate BXDatabaseContext: self lostConnection: error];
+}
+
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 {
 	log4AssertLog (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
@@ -2624,5 +2630,21 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 {
 	if (! willBePassedOn)
 		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
+}
+
+- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error
+{
+	if (gHaveAppKitFramework)
+	{
+		//FIXME: do something about this; not just logging.
+		if ([NSApp presentError: error])
+			NSLog (@"Reconnected.");
+		else
+			NSLog (@"Failed to reconnect.");
+	}
+	else
+	{
+		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
+	}
 }
 @end

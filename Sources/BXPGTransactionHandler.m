@@ -82,6 +82,11 @@ SSLMode (enum BXSSLMode mode)
 	mInterface = interface;
 }
 
+- (BXPGInterface *) interface
+{
+	return mInterface;
+}
+
 - (BOOL) connected
 {
 	return (CONNECTION_OK == [mConnection connectionStatus]);
@@ -159,15 +164,23 @@ SSLMode (enum BXSSLMode mode)
 }
 
 
-- (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass
+- (NSError *) connectionError: (NSError *) error recoveryAttempterClass: (Class) aClass
 {
-	BXPGConnectionResetRecoveryAttempter* attempter = [[[aClass alloc] init] autorelease];
+	//FIXME: move (parts of) this to the context.
+	
+	BXPGConnectionRecoveryAttempter* attempter = [[[aClass alloc] init] autorelease];
 	attempter->mHandler = self;
 	
-	NSMutableDictionary* userInfo = [[[error userInfo] mutableCopy] autorelease];
+	NSMutableDictionary* userInfo = [NSMutableDictionary dictionary];
 	[userInfo setObject: attempter forKey: NSRecoveryAttempterErrorKey];
-	//FIXME: set the recovery options from attempter's class method or something.
-	return [NSError errorWithDomain: [error domain] code: [error code] userInfo: userInfo];
+	[userInfo setObject: @"Database Error" forKey: NSLocalizedDescriptionKey]; //FIXME: localization.
+	[userInfo setObject: @"Connection to the database was lost." forKey: NSLocalizedFailureReasonErrorKey];
+	if (error) [userInfo setObject: error forKey: NSUnderlyingErrorKey];
+	
+	NSArray* options = [NSArray arrayWithObjects: @"Try to Reconnect", @"Continue", nil]; //FIXME: localization.
+	[userInfo setObject: options forKey: NSLocalizedRecoveryOptionsErrorKey];
+	
+	return [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionLost userInfo: userInfo];
 }
 
 

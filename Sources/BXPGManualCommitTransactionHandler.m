@@ -28,6 +28,7 @@
 
 #import "BXPGManualCommitTransactionHandler.h"
 #import "BXPGManualCommitConnectionResetRecoveryAttempter.h"
+#import "BXPGReconnectionRecoveryAttempter.h"
 #import "BXPGAdditions.h"
 #import "BXProbes.h"
 
@@ -181,12 +182,13 @@
 		mHandlingConnectionLoss = YES;
 		[self didDisconnect];
 
-		//FIXME: determine somehow, whether the error is recoverable by connection reset or not.
-		if (0 && [mConnection pgConnection] && [mNotifyConnection pgConnection])
-		{
-			Class attempterClass = [BXPGManualCommitConnectionResetRecoveryAttempter class];
-			error = [self duplicateError: error recoveryAttempterClass: attempterClass];
-		}
+		Class attempterClass = Nil;
+		if ([mConnection pgConnection] && [mNotifyConnection pgConnection])
+			attempterClass = [BXPGManualCommitConnectionResetRecoveryAttempter class];
+		else
+			attempterClass = [BXPGReconnectionRecoveryAttempter class];
+
+		error = [self connectionError: error recoveryAttempterClass: attempterClass];
 		[mInterface connectionLost: self error: error];
 	}
 }

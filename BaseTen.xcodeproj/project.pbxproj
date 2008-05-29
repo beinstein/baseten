@@ -53,6 +53,10 @@
 		5321F83D0CF7807800E663CE /* BXInvocation.h in Headers */ = {isa = PBXBuildFile; fileRef = 5321F83B0CF7807700E663CE /* BXInvocation.h */; };
 		5321F83E0CF7807800E663CE /* BXInvocation.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321F83C0CF7807700E663CE /* BXInvocation.m */; };
 		532D61000B9454110028E90B /* BXConnectionSetupManagerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5331CB590DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */; };
+		5331CB5A0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */; };
+		5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */; };
+		5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */; };
 		5339AB930A7542ED00994B1A /* BXException.h in Headers */ = {isa = PBXBuildFile; fileRef = 5339AB910A7542EC00994B1A /* BXException.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5339AB940A7542ED00994B1A /* BXException.m in Sources */ = {isa = PBXBuildFile; fileRef = 5339AB920A7542EC00994B1A /* BXException.m */; };
 		5347BB520B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -414,6 +418,8 @@
 		5328FBD40C4580CD006DE171 /* BXForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKey.h; path = Sources/BXForeignKey.h; sourceTree = "<group>"; };
 		5328FBD50C4580CD006DE171 /* BXForeignKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXForeignKey.m; path = Sources/BXForeignKey.m; sourceTree = "<group>"; };
 		532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; lineEnding = 0; name = BXConnectionSetupManagerProtocol.h; path = Sources/BXConnectionSetupManagerProtocol.h; sourceTree = "<group>"; };
+		5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPGReconnectionRecoveryAttempter.h; sourceTree = "<group>"; };
+		5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPGReconnectionRecoveryAttempter.m; sourceTree = "<group>"; };
 		533229E30A024C2500BDB151 /* BXEntityDescription.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXEntityDescription.m; path = Sources/BXEntityDescription.m; sourceTree = "<group>"; };
 		533229E40A024C2500BDB151 /* BXEntityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescription.h; path = Sources/BXEntityDescription.h; sourceTree = "<group>"; };
 		533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXObjectStatusInfo.h; path = Sources/BXObjectStatusInfo.h; sourceTree = "<group>"; };
@@ -661,6 +667,8 @@
 				531A21550DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m */,
 				531A215A0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h */,
 				531A215B0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m */,
+				5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */,
+				5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */,
 			);
 			name = "Recovery Attempters";
 			sourceTree = "<group>";
@@ -849,6 +857,7 @@
 				531A21500DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h in Headers */,
 				531A21560DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h in Headers */,
 				531A215C0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h in Headers */,
+				5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -905,6 +914,7 @@
 				531A21520DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h in Headers */,
 				531A21580DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h in Headers */,
 				531A215E0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h in Headers */,
+				5331CB590DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1181,6 +1191,7 @@
 				531A21570DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m in Sources */,
 				531A215D0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m in Sources */,
 				53E068260DEAE02A0004363D /* BXProbes.d in Sources */,
+				5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1225,6 +1236,7 @@
 				531A21590DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m in Sources */,
 				531A215F0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m in Sources */,
 				53E068250DEAE02A0004363D /* BXProbes.d in Sources */,
+				5331CB5A0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

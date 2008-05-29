@@ -32,4 +32,9 @@ provider PGTS
 	probe send_query (void* connection, long sendStatus, char* query, char* parameters);
 	probe finished_query (void* connection, char* query);
 	probe received_notification (void* connection, long be_pid, char* name, void* extra);
+	
+	probe begin_sleep_preparation ();
+	probe end_sleep_preparation ();
+	probe begin_wake_preparation ();
+	probe end_wake_preparation ();
 };

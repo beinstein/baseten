@@ -1,5 +1,5 @@
 //
-// BXPGConnectionResetRecoveryAttempter.h
+// BXPGReconnectionRecoveryAttempter.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,27 +27,10 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTS.h>
-#import "BaseTen.h"
-@class BXPGTransactionHandler;
+#import "BXPGConnectionResetRecoveryAttempter.h"
 
 
-@interface BXPGConnectionRecoveryAttempter : NSObject
+@interface BXPGReconnectionRecoveryAttempter : BXPGConnectionRecoveryAttempter 
 {
-@public
-	BXPGTransactionHandler* mHandler;
-	
-@protected
-	NSInvocation* mRecoveryInvocation;
 }
-- (void) setRecoveryInvocation: (NSInvocation *) anInvocation;
-- (NSInvocation *) recoveryInvocation: (id) target selector: (SEL) selector contextInfo: (void *) contextInfo;
-
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex;
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo;
-@end
-
-
-@interface BXPGConnectionRecoveryAttempter (PGTSConnectionDelegate) <PGTSConnectionDelegate>
 @end

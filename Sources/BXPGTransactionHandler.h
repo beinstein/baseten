@@ -53,6 +53,7 @@
 	BOOL mIsResetting;
 }
 - (PGTSConnection *) connection;
+- (BXPGInterface *) interface;
 - (void) setInterface: (BXPGInterface *) interface;
 - (BOOL) isAsync;
 
@@ -69,7 +70,7 @@
 - (void) prepareForConnecting;
 - (void) didDisconnect;
 - (NSString *) connectionString;
-- (NSError *) duplicateError: (NSError *) error recoveryAttempterClass: (Class) aClass;
+- (NSError *) connectionError: (NSError *) error recoveryAttempterClass: (Class) aClass;
 - (PGTSDatabaseDescription *) databaseDescription;
 
 - (void) handleConnectionErrorFor: (PGTSConnection *) failedConnection;

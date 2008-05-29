@@ -29,7 +29,7 @@
 #import "BXPGConnectionResetRecoveryAttempter.h"
 
 
-@interface BXPGAutocommitConnectionResetRecoveryAttempter : BXPGConnectionResetRecoveryAttempter
+@interface BXPGAutocommitConnectionResetRecoveryAttempter : BXPGConnectionRecoveryAttempter
 {
 }
 @end

@@ -28,6 +28,7 @@
 
 #import "BXPGAutocommitTransactionHandler.h"
 #import "BXPGAutocommitConnectionResetRecoveryAttempter.h"
+#import "BXPGReconnectionRecoveryAttempter.h"
 #import "BXPGAdditions.h"
 #import "BXProbes.h"
 
@@ -100,12 +101,13 @@
 {
 	[self didDisconnect];
 	
-	//FIXME: determine somehow, whether the error is recoverable by connection reset or not.
-	if (0)
-	{
-		Class attempterClass = [BXPGAutocommitConnectionResetRecoveryAttempter class];
-		error = [self duplicateError: error recoveryAttempterClass: attempterClass];
-	}
+	Class attempterClass = Nil;
+	if ([connection pgConnection])
+		attempterClass = [BXPGAutocommitConnectionResetRecoveryAttempter class];
+	else
+		attempterClass = [BXPGReconnectionRecoveryAttempter class];
+
+	error = [self connectionError: error recoveryAttempterClass: attempterClass];
 	[mInterface connectionLost: self error: error];
 }
 @end
