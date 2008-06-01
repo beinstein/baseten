@@ -425,7 +425,8 @@ bx_error_during_rollback (id self, NSError* error)
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameterArray: values];
 	if (! [res querySucceeded])
 	{
-		*error = [res error];
+		//FIXME: pack errors elsewhere, too.
+		*error = [[self databaseContext] packQueryError: [res error]];
 		goto error;
 	}
 	

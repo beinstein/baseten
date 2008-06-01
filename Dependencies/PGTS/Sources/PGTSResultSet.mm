@@ -588,6 +588,7 @@ ErrorUserInfoKey (char fieldCode)
 			[userInfo setObject: message forKey: kPGTSErrorMessage];
 			//FIXME: I'm not quite sure which key should have the human-readable message and what should be made the exception name.
 			[userInfo setObject: message forKey: NSLocalizedFailureReasonErrorKey];
+			[userInfo setObject: message forKey: NSLocalizedRecoverySuggestionErrorKey];
 		}
 		
 		retval = [[PGTSResultError alloc] initWithDomain: kPGTSErrorDomain code: kPGTSUnsuccessfulQueryError userInfo: userInfo];

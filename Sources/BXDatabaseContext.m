@@ -1351,6 +1351,24 @@ bx_query_during_reconnect ()
 
 @implementation BXDatabaseContext (DBInterfaces)
 
+- (NSError *) packQueryError: (NSError *) error
+{
+	NSString* title = BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet");
+	NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+									 title, NSLocalizedDescriptionKey,
+									 self, kBXDatabaseContextKey,
+									 nil];
+	if (error) 
+	{
+		[userInfo setObject: error forKey: NSUnderlyingErrorKey];
+		if ([error localizedFailureReason])
+			[userInfo setObject: [error localizedFailureReason] forKey: NSLocalizedFailureReasonErrorKey];
+		if ([error localizedRecoverySuggestion])
+			[userInfo setObject: [error localizedRecoverySuggestion] forKey: NSLocalizedRecoverySuggestionErrorKey];
+	}
+	return [NSError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];	
+}
+
 - (void) connectionLost: (NSError *) error
 {
 	[errorHandlerDelegate BXDatabaseContext: self lostConnection: error];

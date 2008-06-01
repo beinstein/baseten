@@ -54,6 +54,7 @@ struct BXTrustResult
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
 - (void) handleInvalidCopiedTrustAsync: (NSValue *) value;
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
+- (NSError *) packQueryError: (NSError *) error;
 - (enum BXSSLMode) sslMode;
 @end
 
