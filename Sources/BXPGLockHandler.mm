@@ -1,5 +1,5 @@
 //
-// BXPGLockHandler.m
+// BXPGLockHandler.mm
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.

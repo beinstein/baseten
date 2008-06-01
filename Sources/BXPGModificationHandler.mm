@@ -1,5 +1,5 @@
 //
-// BXPGModificationHandler.m
+// BXPGModificationHandler.mm
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
