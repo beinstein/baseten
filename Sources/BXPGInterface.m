@@ -115,31 +115,6 @@ ReturnedFields (PGTSConnection* connection, BXEntityDescription* entity)
 
 /**
  * \internal
- * Create an insert query.
- */
-static NSString*
-InsertQuery (PGTSConnection* connection, BXEntityDescription* entity, NSArray* insertedAttrs)
-{
-	NSString* retval = nil;
-	NSString* entityName = [entity BXPGQualifiedName: connection];
-	NSString* returned = ReturnedFields (connection, entity);
-	if (0 == [insertedAttrs count])
-	{
-		NSString* format = @"INSERT INTO %@ DEFAULT VALUES RETURNING %@";
-		retval = [NSString stringWithFormat: format, entityName, returned];
-	}
-	else
-	{
-		NSString* format = @"INSERT INTO %@ (%@) VALUES (%@) RETURNING %@";
-		NSString* nameString = [(id) [[insertedAttrs PGTSCollect] BXPGEscapedName: connection] componentsJoinedByString: @", "];
-		retval = [NSString stringWithFormat: format, entityName, nameString, FieldAliases ([insertedAttrs count]), returned];
-	}
-	return retval;
-}
-
-
-/**
- * \internal
  * Create a WHERE clause.
  * The context dictionary will contain an array of paramters,
  * which may be passed to a -sendQuery:...paramters: method.
@@ -420,7 +395,9 @@ bx_error_during_rollback (id self, NSError* error)
 	
 	//Inserted values
 	NSArray* insertedAttrs = [valueDict allKeys];
-	NSString* query = InsertQuery ([mTransactionHandler connection], entity, insertedAttrs);
+	NSString* query = [self insertQuery: entity insertedAttrs: insertedAttrs error: error];
+	if (! query) goto error;
+	
 	NSArray* values = [valueDict objectsForKeys: insertedAttrs notFoundMarker: [NSNull null]];
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameterArray: values];
 	if (! [res querySucceeded])
@@ -1073,6 +1050,119 @@ bail:
 - (NSArray *) observedOids
 {
 	return [mTransactionHandler observedOids];
+}
+
+/**
+ * \internal
+ * Create an insert query.
+ */
+- (NSString *) insertQuery: (BXEntityDescription *) entity insertedAttrs: (NSArray *) insertedAttrs error: (NSError **) error
+{
+	Expect (entity);
+	Expect (error);
+
+	NSString* retval = nil;
+	PGTSConnection* connection = [mTransactionHandler connection];
+	NSString* entityName = [entity BXPGQualifiedName: connection];
+	NSString* returned = ReturnedFields (connection, entity);
+
+	//If the entity is a view and the user hasn't specified default values for the underlying tables'
+	//primary key fields, we try to do them a favour and insert the default value expressions if
+	//they are known.
+	NSArray* attrs = insertedAttrs;
+	NSString* valueString = nil;
+	if ([entity isView])
+	{
+		NSMutableArray* newAttrs = [[attrs mutableCopy] autorelease];
+		NSMutableArray* defaultValues = [NSMutableArray array];
+		NSArray* pkeyFields = [entity primaryKeyFields];
+		TSEnumerate (currentField, e, [pkeyFields objectEnumerator])
+		{
+			if (! [insertedAttrs containsObject: currentField])
+			{
+				NSString* valueExpression = [self viewDefaultValue: currentField error: error];
+				if (* error) 
+					goto error;
+				else if (valueExpression)
+				{
+					[newAttrs addObject: currentField];
+					[defaultValues addObject: valueExpression];
+				}
+			}
+		}
+		
+		NSString* aliases = nil;
+		if ([insertedAttrs count])
+			aliases = FieldAliases ([insertedAttrs count]);
+		NSString* defaults = [defaultValues componentsJoinedByString: @", "];
+		
+		if (defaults)
+		{
+			insertedAttrs = newAttrs;
+			if (aliases)
+				valueString = [NSString stringWithFormat: @"%@, %@", aliases, defaults];
+			else
+				valueString = defaults;
+		}
+		else if (aliases)
+		{
+			valueString = aliases;
+		}
+	}
+	
+	if (0 == [insertedAttrs count])
+	{
+		NSString* format = @"INSERT INTO %@ DEFAULT VALUES RETURNING %@";
+		retval = [NSString stringWithFormat: format, entityName, returned];
+	}
+	else
+	{
+		if (! valueString)
+			valueString = FieldAliases ([insertedAttrs count]);
+		
+		NSString* format = @"INSERT INTO %@ (%@) VALUES (%@) RETURNING %@";
+		NSString* nameString = [(id) [[insertedAttrs PGTSCollect] BXPGEscapedName: connection] componentsJoinedByString: @", "];
+		retval = [NSString stringWithFormat: format, entityName, nameString, valueString, returned];
+	}
+	
+error:
+	return retval;
+}
+
+- (NSString *) viewDefaultValue: (BXAttributeDescription *) attr error: (NSError **) error
+{
+	Expect (attr);
+	Expect (error);
+	
+	return [self recursiveDefaultValue: [attr name] entity: [attr entity] error: error];
+}
+	
+- (NSString *) recursiveDefaultValue: (NSString *) name entity: (BXEntityDescription *) entity error: (NSError **) error
+{
+	Expect (name);
+	Expect (entity);
+	Expect (error);
+	
+	NSString* defaultValue = nil;
+	if ([entity isView])
+	{
+		TSEnumerate (currentEntity, e, [[entity inheritedEntities] objectEnumerator])
+		{
+			defaultValue = [self recursiveDefaultValue: name entity: currentEntity error: error];
+			if (defaultValue || *error)
+				break;
+		}
+	}
+	else
+	{
+		PGTSTableDescription* table = [self tableForEntity: entity error: error];
+		if (table)
+		{
+			NSDictionary* fields = [table fields];
+			defaultValue = [[fields objectForKey: name] defaultValue];
+		}
+	}
+	return defaultValue;
 }
 @end
 

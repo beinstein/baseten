@@ -194,7 +194,10 @@ PrimaryKey (NSArray* uIndexes)
 {
 	if (! mFields)
 	{
-		NSString* query = @"SELECT attname, attnum, atttypid, attnotnull FROM pg_attribute WHERE attisdropped = false AND attrelid = $1";
+		NSString* query = 
+		@"SELECT a.attname, a.attnum, a.atttypid, a.attnotnull, pg_get_expr (d.adbin, d.adrelid, false) AS default "
+		@" FROM pg_attribute a LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid "
+		@" WHERE a.attisdropped = false AND a.attrelid = $1"; 
 		PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
 		
 		mFields = [[NSMutableDictionary alloc] initWithCapacity: [res count]];
@@ -208,7 +211,8 @@ PrimaryKey (NSArray* uIndexes)
 			[field setName: name];
 			[field setIndex: [index intValue]];
 			[field setTypeOid: [[res valueForKey: @"atttypid"] PGTSOidValue]];
-			[field setNotNull: [[res valueForKey: @"attnotnull"] boolValue]];
+			[field setNotNull: [[res valueForKey: @"attnotnull"] boolValue]];			
+			[field setDefaultValue: [res valueForKey: @"default"]];
 			
 			[mFields setObject: field forKey: [field name]];
 			[mFieldIndexes setObject: name forKey: index];

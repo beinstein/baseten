@@ -88,6 +88,12 @@
     return mIndex;
 }
 
+- (id) defaultValue
+{
+	//Potential thread-unsafety.
+	return [[mDefaultValue copy] autorelease];
+}
+
 - (Oid) typeOid
 {
     return mTypeOid;
@@ -129,5 +135,14 @@
 - (void) setNotNull: (BOOL) aBool
 {
 	mIsNotNull = aBool;
+}
+
+- (void) setDefaultValue: (id) anObject
+{
+	if (mDefaultValue != anObject)
+	{
+		[mDefaultValue release];
+		mDefaultValue = [anObject retain];
+	}
 }
 @end
