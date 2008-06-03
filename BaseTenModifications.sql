@@ -1038,7 +1038,7 @@ GRANT EXECUTE ON FUNCTION "baseten".LockTableName (OID) TO basetenread;
 -- which should be one of insert, update and delete
 CREATE FUNCTION "baseten".ModificationRuleName (TEXT)
 RETURNS TEXT AS $$
-    SELECT 'basetenModification_' || upper ($1);
+    SELECT '~basetenModification_' || upper ($1);
 $$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".ModificationRuleName (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".ModificationRuleName (TEXT) TO basetenread;
@@ -1226,13 +1226,12 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CancelModificationObserving (OID) FR
 
 
 -- A helper function
-CREATE FUNCTION "baseten".PrepareForMOTableInsert (TEXT, OID, NAME, NAME []) 
+CREATE FUNCTION "baseten".PrepareForMOTableInsert (OID, NAME, NAME []) 
 RETURNS VOID AS $marker$
 DECLARE
-    querytype		TEXT DEFAULT $1;
-    tableoid		ALIAS FOR $2;
-    tablename		ALIAS FOR $3;
-    fieldnames		NAME [] DEFAULT $4;
+    tableoid		ALIAS FOR $1;
+    tablename		ALIAS FOR $2;
+    fieldnames		NAME [] DEFAULT $3;
     query			TEXT;
     mtablename		TEXT;
     funcname		TEXT;
@@ -1252,7 +1251,7 @@ BEGIN
         'END;                                                                                ' ||
         '$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER';
     query := 
-        'CREATE TRIGGER ' || "baseten".ModificationRuleName ('INSERT')                         ||
+        'CREATE TRIGGER ' || quote_ident ("baseten".ModificationRuleName ('INSERT'))           ||
         '    AFTER INSERT ON ' || tablename || ' FOR EACH ROW EXECUTE PROCEDURE              ' || 
              funcname || ' ()'; 
     EXECUTE fdecl;
@@ -1262,7 +1261,32 @@ BEGIN
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".PrepareForMOTableInsert (TEXT, OID, NAME, NAME []) 
+	"baseten".PrepareForMOTableInsert (OID, NAME, NAME []) 
+	FROM PUBLIC;
+
+
+-- Another helper function
+CREATE FUNCTION "baseten".PrepareForMOViewInsert (OID, NAME, TEXT) 
+RETURNS VOID AS $marker$
+DECLARE
+    tableoid		ALIAS FOR $1;
+    tablename		ALIAS FOR $2;
+    default_value   ALIAS FOR $3;
+	mrulename		TEXT;
+    mtablename      TEXT;
+    query			TEXT;
+	insertion		TEXT;
+BEGIN
+	mrulename := "baseten".ModificationRuleName ('INSERT');
+    mtablename := "baseten".ModificationTableName (tableoid);
+    insertion := 'INSERT INTO ' || mtablename || ' ("baseten_modification_type", id) VALUES (''I'', ' || default_value || ')';
+    query := 'CREATE RULE ' || quote_ident (mrulename) || ' AS ON INSERT TO ' || tablename || ' DO ALSO (' || insertion || ');';
+    EXECUTE query;
+    RETURN;
+END;
+$marker$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION
+	"baseten".PrepareForMOViewInsert (OID, NAME, TEXT)
 	FROM PUBLIC;
 
 
@@ -1310,7 +1334,7 @@ BEGIN
     END IF;
 
     query := 
-        'CREATE RULE ' || mrulename || ' AS ON ' || querytype ||
+        'CREATE RULE ' || quote_ident (mrulename) || ' AS ON ' || querytype ||
         ' TO ' || tablename || whereclause || ' DO ALSO (' || insertion || ')';
     EXECUTE query;
     RETURN;
@@ -1458,12 +1482,15 @@ $marker$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving2 (OID, TEXT) FROM PUBLIC;
 
 
+
 -- Creates a table for tracking modifications to the given table.
 -- The table inherits "baseten".Modification.
 -- Also, rules and a trigger are created to track the changes.
-CREATE FUNCTION "baseten".PrepareForModificationObserving (OID) RETURNS "baseten".TableType AS $marker$
+CREATE FUNCTION "baseten".PrepareForModificationObserving (OID, BOOLEAN, TEXT) RETURNS "baseten".TableType AS $marker$
 DECLARE
     toid        ALIAS FOR $1;   -- Relation OID
+    handle_view_serial_id_column ALIAS FOR $2;
+    view_id_default_value ALIAS FOR $3;
     pkeyfields  RECORD;
     pkey_decl   TEXT;           -- Declaration for creating fields corresponding to the primary key
     query       TEXT;
@@ -1555,9 +1582,13 @@ BEGIN
 	-- Instead, rules may be used, since values corresponding to the primary key have to be
 	-- specified on insert and sequences are not used.
 	IF isview THEN
-		PERFORM "baseten".PrepareForMOOther ('insert', toid, tname, pkeyfields.fname);
+        IF handle_view_serial_id_column THEN
+            PERFORM "baseten".PrepareForMOViewInsert (toid, tname, view_id_default_value);
+        ELSE
+            PERFORM "baseten".PrepareForMOOther ('insert', toid, tname, pkeyfields.fname);
+        END IF;
 	ELSE
-		PERFORM "baseten".PrepareForMOTableInsert ('insert', toid, tname, pkeyfields.fname) ;
+		PERFORM "baseten".PrepareForMOTableInsert (toid, tname, pkeyfields.fname) ;
 	END IF;
 	PERFORM "baseten".PrepareForMOOther ('delete', toid, tname, pkeyfields.fname);
 	PERFORM "baseten".PrepareForMOOther ('update', toid, tname, pkeyfields.fname);
@@ -1568,9 +1599,15 @@ BEGIN
     RETURN rval;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
-COMMENT ON FUNCTION "baseten".PrepareForModificationObserving (OID) IS 'BaseTen-enables a relation';
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving (OID) FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving (OID, BOOLEAN, TEXT) FROM PUBLIC;
 	
+
+CREATE FUNCTION "baseten".PrepareForModificationObserving (OID) RETURNS "baseten".TableType AS $$
+    SELECT "baseten".PrepareForModificationObserving ($1, false, null);
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".PrepareForModificationObserving (OID) FROM PUBLIC;
+COMMENT ON FUNCTION "baseten".PrepareForModificationObserving (OID) IS 'BaseTen-enables a relation';
+
 
 CREATE FUNCTION "baseten".refreshcaches () RETURNS void AS $$
 	TRUNCATE "baseten".viewdependency, "baseten".srcdstview, "baseten".relationship_v;
