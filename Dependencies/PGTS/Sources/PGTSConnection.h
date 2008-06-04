@@ -64,6 +64,7 @@
     id mDelegate;
 	
 	BOOL mDidDisconnectOnSleep;
+	BOOL mProcessingNotifications;
 }
 - (id) init;
 - (void) dealloc;

@@ -248,17 +248,25 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) processNotifications
 {
-    PGnotify* pgNotification = NULL;
-	while ((pgNotification = PQnotifies (mConnection)))
+	//Notifications may cause methods to be called. They might require a specific order
+	//(e.g. self-updating collections in BaseTen), which breaks if this is called recursively.
+	//Hence we prevent it.
+	if (! mProcessingNotifications)
 	{
-		NSString* name = [NSString stringWithUTF8String: pgNotification->relname];
-		PGTSNotification* notification = [[[PGTSNotification alloc] init] autorelease];
-		[notification setBackendPID: pgNotification->be_pid];
-		[notification setNotificationName: name];
-		PGTS_RECEIVED_NOTIFICATION (self, pgNotification->be_pid, pgNotification->relname, pgNotification->extra);		
-		PQfreeNotify (pgNotification);
-		[mDelegate PGTSConnection: self gotNotification: notification];
-	}    
+		mProcessingNotifications = YES;
+		PGnotify* pgNotification = NULL;
+		while ((pgNotification = PQnotifies (mConnection)))
+		{
+			NSString* name = [NSString stringWithUTF8String: pgNotification->relname];
+			PGTSNotification* notification = [[[PGTSNotification alloc] init] autorelease];
+			[notification setBackendPID: pgNotification->be_pid];
+			[notification setNotificationName: name];
+			PGTS_RECEIVED_NOTIFICATION (self, pgNotification->be_pid, pgNotification->relname, pgNotification->extra);		
+			PQfreeNotify (pgNotification);
+			[mDelegate PGTSConnection: self gotNotification: notification];
+		}    
+		mProcessingNotifications = NO;
+	}
 }
 
 - (int) sendNextQuery
