@@ -68,7 +68,6 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 
 @interface MKCPolishedHeaderView : NSTableHeaderView 
 {
-    id mHeaderFields;
     NSDictionary* mColours;
     enum MKCPolishDrawingMask mDrawingMask;
 }

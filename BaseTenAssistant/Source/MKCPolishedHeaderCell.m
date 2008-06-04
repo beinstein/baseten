@@ -1,5 +1,5 @@
 //
-// MKCCenteredTextFieldCell.h
+// MKCPolishedHeaderCell.m
 // BaseTen Setup
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -23,14 +23,25 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: MKCCenteredTextFieldCell.h 241 2008-02-22 16:08:56Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
-#import <Cocoa/Cocoa.h>
+#import "MKCPolishedHeaderCell.h"
+#import "Additions.h"
 
 
-@interface MKCCenteredTextFieldCell : NSTextFieldCell 
+@implementation MKCPolishedHeaderCell
+
+- (id) init
 {
+    if ((self = [super init]))
+    {
+        _cFlags.vCentered = 1;
+		[self setDrawsBackground: NO];
+		[self setBezeled: NO];
+		[self setBordered: NO];
+    }
+    return self;
 }
 
 @end

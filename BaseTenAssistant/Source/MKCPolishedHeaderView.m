@@ -28,7 +28,8 @@
 
 #import "MKCPolishedHeaderView.h"
 #import "Additions.h"
-#import "MKCCenteredTextFieldCell.h"
+#import "MKCPolishedHeaderCell.h"
+#import <BaseTen/BXDatabaseAdditions.h>
 #import <MKCCollections/MKCCollections.h>
 
 
@@ -151,10 +152,7 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 {
     if ((self = [super initWithFrame: aRect]))
     {
-        mDrawingMask = kMKCPolishDrawingMaskInvalid;
-        mHeaderFields = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger
-													   valueType: kMKCCollectionTypeObject];
-		
+        mDrawingMask = kMKCPolishDrawingMaskInvalid;		
         [self setAutoresizesSubviews: YES];
     }
     return self;
@@ -163,17 +161,7 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 - (void) dealloc
 {
     [mColours release];
-    [mHeaderFields release];
     [super dealloc];
-}
-
-- (void) awakeFromNib
-{
-	if (nil == mHeaderFields)
-	{
-        mHeaderFields = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeInteger
-													   valueType: kMKCCollectionTypeObject];
-	}
 }
 
 - (NSRect) headerRectOfColumn: (int) columnIndex
@@ -196,7 +184,6 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
         [self setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopLine | kMKCPolishDrawTopAccent];
     
     float height = [self bounds].size.height;
-	NSAssert (nil != mHeaderFields, @"mHeaderFields was nil.");
     NSAssert (height >= 3.0, @"This view may not be shorter than 3.0 units.");
     
     NSRect polishRect = rect;
@@ -207,7 +194,7 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
     NSTableView* tableView = [self tableView];
     NSArray* tableColumns = [tableView tableColumns];
 			
-    NSRect headerFieldRect = NSZeroRect;
+    //NSRect headerFieldRect = NSZeroRect;
     for (int count = [tableView numberOfColumns], i = count - 1; i >= 0; i--)
     {
         NSRect columnHeaderRect = [self headerRectOfColumn: i];
@@ -233,42 +220,17 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 			//Calculate the field bounds.
 			columnHeaderRect.origin.x += 5.0;
 			columnHeaderRect.size.width -= 5.0;
-			headerFieldRect = NSUnionRect (headerFieldRect, columnHeaderRect);
-			
-			//If the field doesn't exist, create an object. Otherwise, just resize.
-			id field = [mHeaderFields objectAtIndex: i];
-			if (nil == field)
-            {
-                NSTableHeaderCell* headerCell = [[tableColumns objectAtIndex: i] headerCell];
-                NSString* columnTitle = [headerCell stringValue];
-                
-                if (nil == columnTitle || 0 == [columnTitle length])
-                    [mHeaderFields setObject: [NSNull null] atIndex: i];
-                else
-                {
-                    NSTextField* textField = [[NSTextField alloc] initWithFrame: headerFieldRect];
-                    headerFieldRect = NSZeroRect;
-                    
-					NSCell* cell = [[[MKCCenteredTextFieldCell alloc] init] autorelease];
-					[cell setLineBreakMode: NSLineBreakByTruncatingTail];
-                    [textField setCell: cell];
-                    [mHeaderFields setObject: textField atIndex: i];
-                    [textField setStringValue: columnTitle];
-                    [textField setBezeled: NO];
-                    [textField setBordered: NO];
-                    [textField setDrawsBackground: NO];                    
-                    [textField setEditable: NO];
-                    [textField setSelectable: NO];
-                    [self addSubview: textField];
-                    [textField makeEtchedSmall: NO];
-                    [textField release];
-                }                
-            }
-			else if (([self inLiveResize] || -1 != [self resizedColumn]) && [NSNull null] != (id) field)
+
+			NSTableColumn* column = [tableColumns objectAtIndex: i];
+			id headerCell = [column headerCell];
+			if (! [headerCell isKindOfClass: [MKCPolishedHeaderCell class]])
 			{
-				[field setFrame: headerFieldRect];
-				headerFieldRect = NSZeroRect;
+				NSString* title = [headerCell stringValue];
+				headerCell = [[[MKCPolishedHeaderCell alloc] initTextCell: title] autorelease];
+				[column setHeaderCell: headerCell];
+				[headerCell makeEtchedSmall: NO];
 			}
+			[headerCell drawWithFrame: columnHeaderRect inView: self];
         }
     }
 }
