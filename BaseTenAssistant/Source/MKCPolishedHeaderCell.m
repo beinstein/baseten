@@ -40,8 +40,23 @@
 		[self setDrawsBackground: NO];
 		[self setBezeled: NO];
 		[self setBordered: NO];
+		[self setBackgroundColor: [NSColor clearColor]];
     }
     return self;
 }
 
+- (BOOL) drawsBackground
+{
+	return NO;
+}
+
+- (BOOL) isOpaque
+{
+	return NO;
+}
+
+- (void) _drawBezelWithFrame: (NSRect) fp8 highlighted: (BOOL) fp24 inView: (id) fp28
+{
+	//It seems that the bezel cannot be prevented in any other manner.
+}
 @end

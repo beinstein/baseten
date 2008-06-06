@@ -29,7 +29,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface MKCPolishedHeaderCell : NSTextFieldCell 
+@interface MKCPolishedHeaderCell : NSTableHeaderCell 
 {
 }
 @end

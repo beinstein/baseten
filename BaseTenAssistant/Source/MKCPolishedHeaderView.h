@@ -29,6 +29,11 @@
 #import <Cocoa/Cocoa.h>
 
 
+extern NSString* kMKCEnabledColoursKey;
+extern NSString* kMKCDisabledColoursKey;
+extern NSString* kMKCSelectedColoursKey;
+
+
 extern NSString* kMKCGradientKey;
 extern NSString* kMKCTopAccentColourKey;
 extern NSString* kMKCLeftAccentColourKey;
@@ -70,6 +75,8 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 {
     NSDictionary* mColours;
     enum MKCPolishDrawingMask mDrawingMask;
+	NSTableColumn* mColumnSortedBy;
+	BOOL mReversedOrder;
 }
 
 + (NSDictionary *) darkColours;

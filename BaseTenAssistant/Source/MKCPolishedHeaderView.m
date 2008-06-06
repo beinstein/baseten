@@ -32,6 +32,9 @@
 #import <BaseTen/BXDatabaseAdditions.h>
 #import <MKCCollections/MKCCollections.h>
 
+NSString* kMKCEnabledColoursKey		 = @"kMKCEnabledColoursKey";
+NSString* kMKCDisabledColoursKey	 = @"kMKCDisabledColoursKey";
+NSString* kMKCSelectedColoursKey	 = @"kMKCSelectedColoursKey";
 
 NSString* kMKCGradientKey            = @"kMKCGradientKey";
 NSString* kMKCTopAccentColourKey     = @"kMKCTopAccentColourKey";
@@ -42,6 +45,8 @@ NSString* kMKCTopLineColourKey       = @"kMKCTopLineColourKey";
 NSString* kMKCRightAccentColourKey   = @"kMKCRightAccentColourKey";
 NSString* kMKCBottomLineColourKey    = @"kMKCBottomLineColourKey";
 NSString* kMKCSeparatorLineColourKey = @"kMKCSeparatorLineColourKey";
+
+static NSString* kKVObservingContext = @"kKVObservingContext";
 
 
 void
@@ -88,17 +93,36 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 + (NSDictionary *) darkColours
 {
     NSGradient* gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceRed: 191.0 / 255.0 green: 194.0 / 255.0 blue: 191.0 / 255.0 alpha: 1.0]
-                                                      endingColor: [NSColor colorWithDeviceRed: 147.0 / 255.0 green: 148.0 / 255.0 blue: 148.0 / 255.0 alpha: 1.0]] autorelease];
+                                                      endingColor: [NSColor colorWithDeviceRed: 167.0 / 255.0 green: 148.0 / 255.0 blue: 148.0 / 255.0 alpha: 1.0]] autorelease];
+	NSDictionary* enabled = [NSDictionary dictionaryWithObjectsAndKeys:
+							 gradient, kMKCGradientKey,
+							 [NSColor colorWithDeviceWhite: 62.0  / 255.0 alpha: 1.0], kMKCBottomLineColourKey,
+							 [NSColor colorWithDeviceWhite: 224.0 / 255.0 alpha: 1.0], kMKCTopAccentColourKey,
+							 [NSColor colorWithDeviceWhite: 62.0  / 255.0 alpha: 1.0], kMKCTopLineColourKey,
+							 [NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0], kMKCLeftLineColourKey,
+							 [NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0], kMKCRightAccentColourKey,
+							 [NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0], kMKCSeparatorLineColourKey,
+							 [NSColor colorWithDeviceWhite: 224.0 / 255.0 alpha: 1.0], kMKCLeftAccentColourKey,
+							 nil];
+	
+	NSMutableDictionary* selected = [[enabled mutableCopy] autorelease];
+#if 0
+	gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceRed: 130.0 / 255.0 green: 147.0 / 255.0 blue: 166.0 / 255.0 alpha: 1.0]
+											  endingColor: [NSColor colorWithDeviceRed: 67.0 / 255.0 green: 90.0 / 255.0 blue: 115.0 / 255.0 alpha: 1.0]] autorelease];
+#endif
+	gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceRed: 194.0 / 255.0 green: 207.0 / 255.0 blue: 221.0 / 255.0 alpha: 1.0]
+											  endingColor: [NSColor colorWithDeviceRed: 125.0 / 255.0 green: 147.0 / 255.0 blue: 178.0 / 255.0 alpha: 1.0]] autorelease];
+	[selected setObject: gradient forKey: kMKCGradientKey];
+
+	NSMutableDictionary* disabled = [[enabled mutableCopy] autorelease];
+	gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceWhite: 219.0 / 255.0 alpha: 1.0] 
+											  endingColor: [NSColor colorWithDeviceWhite: 187.0 / 255.0 alpha: 1.0]] autorelease];
+	[disabled setObject: gradient forKey: kMKCGradientKey];
     return [NSDictionary dictionaryWithObjectsAndKeys:
-        gradient, kMKCGradientKey,
-        [NSColor colorWithDeviceWhite: 62.0  / 255.0 alpha: 1.0], kMKCBottomLineColourKey,
-        [NSColor colorWithDeviceWhite: 224.0 / 255.0 alpha: 1.0], kMKCTopAccentColourKey,
-        [NSColor colorWithDeviceWhite: 62.0  / 255.0 alpha: 1.0], kMKCTopLineColourKey,
-        [NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0], kMKCLeftLineColourKey,
-        [NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0], kMKCRightAccentColourKey,
-        [NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0], kMKCSeparatorLineColourKey,
-        [NSColor colorWithDeviceWhite: 224.0 / 255.0 alpha: 1.0], kMKCLeftAccentColourKey,
-        nil];
+			enabled, kMKCEnabledColoursKey,
+			disabled, kMKCDisabledColoursKey,
+			selected, kMKCSelectedColoursKey,
+			nil];
 }
 
 + (NSDictionary *) lightColours
@@ -106,32 +130,47 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
     NSGradient* gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceWhite: 254.0 / 255.0 alpha: 1.0]
                                                       endingColor: [NSColor colorWithDeviceRed: 211.0 / 255.0 green: 211.0 / 255.0 blue: 210.0 / 255.0 alpha: 1.0]] autorelease];
     NSColor* borderColour = [NSColor colorWithDeviceWhite: 141.0 / 255.0 alpha: 1.0];
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-        gradient, kMKCGradientKey,
-        borderColour, kMKCTopLineColourKey,
-        borderColour, kMKCBottomLineColourKey,
-        borderColour, kMKCLeftLineColourKey,
-		[NSColor colorWithDeviceWhite: 190.0 / 255.0 alpha: 1.0], kMKCRightLineColourKey,
-        [NSColor whiteColor], kMKCLeftAccentColourKey,
-        [NSColor blueColor], kMKCRightAccentColourKey,
-        nil];    
+    NSDictionary* enabled = [NSDictionary dictionaryWithObjectsAndKeys:
+							 gradient, kMKCGradientKey,
+							 borderColour, kMKCTopLineColourKey,
+							 borderColour, kMKCBottomLineColourKey,
+							 borderColour, kMKCLeftLineColourKey,
+							 [NSColor colorWithDeviceWhite: 190.0 / 255.0 alpha: 1.0], kMKCRightLineColourKey,
+							 [NSColor whiteColor], kMKCLeftAccentColourKey,
+							 [NSColor blueColor], kMKCRightAccentColourKey,
+							 nil];    
+	NSDictionary* disabled = enabled;
+	NSDictionary* selected = enabled;
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+			enabled, kMKCEnabledColoursKey,
+			disabled, kMKCDisabledColoursKey,
+			selected, kMKCSelectedColoursKey,
+			nil];
+	
 }
 
 + (NSDictionary *) testColours
 {
     NSGradient* gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceWhite: 254.0 / 255.0 alpha: 1.0]
                                                       endingColor: [NSColor colorWithDeviceRed: 211.0 / 255.0 green: 211.0 / 255.0 blue: 210.0 / 255.0 alpha: 1.0]] autorelease];
-    return [NSDictionary dictionaryWithObjectsAndKeys:
-        gradient, kMKCGradientKey,
-        [NSColor redColor], kMKCBottomLineColourKey,
-        [NSColor yellowColor], kMKCTopAccentColourKey,
-        [NSColor greenColor], kMKCTopLineColourKey,
-        [NSColor purpleColor], kMKCLeftLineColourKey,
-        [NSColor cyanColor], kMKCRightLineColourKey,
-        [NSColor whiteColor], kMKCLeftAccentColourKey,
-        [NSColor blueColor], kMKCRightAccentColourKey,
-        [NSColor brownColor], kMKCSeparatorLineColourKey,
-        nil];    
+    NSDictionary* enabled = [NSDictionary dictionaryWithObjectsAndKeys:
+							 gradient, kMKCGradientKey,
+							 [NSColor redColor], kMKCBottomLineColourKey,
+							 [NSColor yellowColor], kMKCTopAccentColourKey,
+							 [NSColor greenColor], kMKCTopLineColourKey,
+							 [NSColor purpleColor], kMKCLeftLineColourKey,
+							 [NSColor cyanColor], kMKCRightLineColourKey,
+							 [NSColor whiteColor], kMKCLeftAccentColourKey,
+							 [NSColor blueColor], kMKCRightAccentColourKey,
+							 [NSColor brownColor], kMKCSeparatorLineColourKey,
+							 nil];    
+	NSDictionary* disabled = enabled;
+	NSDictionary* selected = enabled;
+	return [NSDictionary dictionaryWithObjectsAndKeys:
+			enabled, kMKCEnabledColoursKey,
+			disabled, kMKCDisabledColoursKey,
+			selected, kMKCSelectedColoursKey,
+			nil];	
 }
 
 - (NSDictionary *) colours
@@ -148,21 +187,80 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
     }
 }
 
-- (id) initWithFrame: (NSRect) aRect
+- (void) awakeFromNib
 {
-    if ((self = [super initWithFrame: aRect]))
-    {
-        mDrawingMask = kMKCPolishDrawingMaskInvalid;		
-        [self setAutoresizesSubviews: YES];
-    }
-    return self;
+	mDrawingMask = kMKCPolishDrawingMaskInvalid;		
+	NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial;
+	[[self tableView] addObserver: self forKeyPath: @"sortDescriptors" options: options context: kKVObservingContext];
+	
+	NSWindow* window = [self window];
+	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+	[nc addObserver: self selector: @selector (stateChanged:) name: NSApplicationDidBecomeActiveNotification object: NSApp];
+	[nc addObserver: self selector: @selector (stateChanged:) name: NSApplicationDidResignActiveNotification object: NSApp];
+	[nc addObserver: self selector: @selector (stateChanged:) name: NSWindowDidBecomeKeyNotification object: window];
+	[nc addObserver: self selector: @selector (stateChanged:) name: NSWindowDidResignKeyNotification object: window];
 }
 
 - (void) dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+	[[self tableView] removeObserver: self forKeyPath: @"sortDescriptors"];
     [mColours release];
     [super dealloc];
 }
+
+- (void) stateChanged: (NSNotification *) notification
+{
+	[self setNeedsDisplay: YES];
+}
+
+- (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object change: (NSDictionary *) change context: (void *) context
+{
+    if (kKVObservingContext == context) 
+	{
+		if (mColumnSortedBy)
+		{
+			NSInteger index = [[[self tableView] tableColumns] indexOfObject: mColumnSortedBy];
+			if (0 <= index)
+				[self setNeedsDisplayInRect: [self headerRectOfColumn: index]];
+		}
+		
+		mColumnSortedBy = nil;
+		mReversedOrder = NO;
+		
+		NSArray* newDescs = [change objectForKey: NSKeyValueChangeNewKey];
+		if (0 < [newDescs count])
+		{
+			NSSortDescriptor* d1 = [newDescs objectAtIndex: 0];
+			NSSortDescriptor* d2 = [d1 reversedSortDescriptor];
+			
+			NSInteger i = 0;
+			TSEnumerate (currentColumn, e, [[[self tableView] tableColumns] objectEnumerator])
+			{
+				NSSortDescriptor* currentDesc = [currentColumn sortDescriptorPrototype];
+				if ([currentDesc isEqual: d1])
+				{
+					mColumnSortedBy = currentColumn;
+					break;
+				}
+				else if ([currentDesc isEqual: d2])
+				{
+					mColumnSortedBy = currentColumn;
+					mReversedOrder = YES;
+					break;
+				}
+				i++;
+			}
+			if (i < [[[self tableView] tableColumns] count])
+				[self setNeedsDisplayInRect: [self headerRectOfColumn: i]];
+		}
+	}
+	else 
+	{
+		[super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
+	}
+}
+
 
 - (NSRect) headerRectOfColumn: (int) columnIndex
 {
@@ -186,31 +284,93 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
     float height = [self bounds].size.height;
     NSAssert (height >= 3.0, @"This view may not be shorter than 3.0 units.");
     
-    NSRect polishRect = rect;
-    polishRect.size.height = height;
-    polishRect.origin.y = 0.0;
-    MKCDrawPolishInRect (polishRect, mColours, mDrawingMask);
+	NSDictionary* enabledColours = nil;
+	NSDictionary* selectedColours = nil;
+	if ([[self window] isKeyWindow] && [NSApp isActive])
+	{
+		enabledColours = [mColours objectForKey: kMKCEnabledColoursKey];
+		selectedColours = [mColours objectForKey: kMKCSelectedColoursKey];
+	}
+	else
+	{
+		enabledColours = [mColours objectForKey: kMKCDisabledColoursKey];
+		selectedColours = [mColours objectForKey: kMKCDisabledColoursKey];
+	}
+
+	{
+	    NSRect polishRect = rect;
+	    polishRect.size.height = height;
+	    //polishRect.origin.y = 0.0;
+		if (! mColumnSortedBy)
+		    MKCDrawPolishInRect (polishRect, enabledColours, mDrawingMask);
+		else
+		{
+			NSInteger sortColumn = [[[self tableView] tableColumns] indexOfObject: mColumnSortedBy];
+			NSRect sortColumnRect = [self headerRectOfColumn: sortColumn];
+			if (NSContainsRect (sortColumnRect, polishRect))
+			{
+				//Fill only the sorting column.
+				MKCDrawPolishInRect (polishRect, selectedColours, mDrawingMask);
+			}
+			else if (! NSIntersectsRect (sortColumnRect, polishRect))
+			{
+				//Fill other columns than the sorting column.
+				MKCDrawPolishInRect (polishRect, enabledColours, mDrawingMask);
+			}
+			else
+			{
+				//Divide the area into three parts and fill them.
+				if (polishRect.origin.x < sortColumnRect.origin.x)
+				{
+					NSRect leftPart = polishRect;
+					leftPart.size.width = sortColumnRect.origin.x;
+					MKCDrawPolishInRect (leftPart, enabledColours, mDrawingMask);
+				}
+				
+				MKCDrawPolishInRect (sortColumnRect, selectedColours, mDrawingMask);
+				
+				float padding = sortColumnRect.origin.x + sortColumnRect.size.width;
+				if (polishRect.origin.x + polishRect.size.width > padding)
+				{
+					NSRect rightPart = polishRect;
+					rightPart.size.width += rightPart.origin.x;
+					rightPart.size.width -= padding;
+					rightPart.origin.x = padding;
+					MKCDrawPolishInRect (rightPart, enabledColours, mDrawingMask);
+				}
+			}
+		}
+	}
 
     NSTableView* tableView = [self tableView];
     NSArray* tableColumns = [tableView tableColumns];
-			
-    //NSRect headerFieldRect = NSZeroRect;
+	
     for (int count = [tableView numberOfColumns], i = count - 1; i >= 0; i--)
     {
         NSRect columnHeaderRect = [self headerRectOfColumn: i];
+		NSTableColumn* column = [tableColumns objectAtIndex: i];
         
         NSPoint end = columnHeaderRect.origin;
         end.x += columnHeaderRect.size.width - 1.0;
         end.y += columnHeaderRect.size.height - 1.0;
-        if (kMKCPolishDrawSeparatorLines & mDrawingMask && i != count - 1 && NSPointInRect (end, rect))
+		
+		NSDictionary* colours = nil;
+		if (column == mColumnSortedBy)
+			colours = selectedColours;
+		else
+			colours = enabledColours;
+		
+        if (kMKCPolishDrawSeparatorLines & mDrawingMask && 
+			(i != count - 1 || column == mColumnSortedBy) && 
+			NSPointInRect (end, rect))
         {
-            [[mColours objectForKey: kMKCSeparatorLineColourKey] set];
+            [[colours objectForKey: kMKCSeparatorLineColourKey] set];
             NSRectFill (NSMakeRect (end.x, 1.0, 1.0, height - 2.0));
         }
         
         if (kMKCPolishDrawLeftAccent & mDrawingMask)
         {
-            [[mColours objectForKey: kMKCLeftAccentColourKey] set];
+            [[colours objectForKey: kMKCLeftAccentColourKey] set];
             NSRectFill (NSMakeRect (columnHeaderRect.origin.x, 1.0, 1.0, height - 2.0));
         }
         
@@ -221,7 +381,6 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 			columnHeaderRect.origin.x += 5.0;
 			columnHeaderRect.size.width -= 5.0;
 
-			NSTableColumn* column = [tableColumns objectAtIndex: i];
 			id headerCell = [column headerCell];
 			if (! [headerCell isKindOfClass: [MKCPolishedHeaderCell class]])
 			{
@@ -230,6 +389,9 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 				[column setHeaderCell: headerCell];
 				[headerCell makeEtchedSmall: NO];
 			}
+			
+			if (column == mColumnSortedBy)
+				[headerCell drawSortIndicatorWithFrame: columnHeaderRect inView: self ascending: !mReversedOrder priority: 0];
 			[headerCell drawWithFrame: columnHeaderRect inView: self];
         }
     }
@@ -237,7 +399,7 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
 
 - (void) _drawHeaderFillerInRect: (NSRect) rect matchLastState: (char) flag
 {
-    MKCDrawPolishInRect (rect, mColours, mDrawingMask);
+    MKCDrawPolishInRect (rect, [mColours objectForKey: kMKCEnabledColoursKey], mDrawingMask);
 }
 
 - (BOOL) isFlipped
