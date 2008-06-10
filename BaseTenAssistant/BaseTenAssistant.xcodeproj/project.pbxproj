@@ -92,28 +92,28 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53BCB0AA0DF696CD0011E823 /* PGTS.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 538176830D633DC000A4CA72 /* libPGTS.a */;
+			remoteGlobalIDString = 538176830D633DC000A4CA72;
 			remoteInfo = "Static archive + GC";
 		};
 		53BCB0BB0DF696CD0011E823 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53BCB0AA0DF696CD0011E823 /* PGTS.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 536580D20A36FDFB00CDEC90 /* libPGTS.a */;
+			remoteGlobalIDString = 536580D20A36FDFB00CDEC90;
 			remoteInfo = "Static archive";
 		};
 		53BCB26A0DF6970F0011E823 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53BCB0AA0DF696CD0011E823 /* PGTS.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5381762E0D633DC000A4CA72 /* Static archive + GC */;
+			remoteGlobalIDString = 5381762E0D633DC000A4CA72;
 			remoteInfo = "Static archive + GC";
 		};
 		53BCB26C0DF6970F0011E823 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 534343BA0D2D89800047974F /* MKCCollections.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 53F42F210D6332EA00C714CD /* Static library + GC */;
+			remoteGlobalIDString = 53F42F210D6332EA00C714CD;
 			remoteInfo = "Static library + GC";
 		};
 /* End PBXContainerItemProxy section */

@@ -1072,10 +1072,11 @@ bail:
 	NSArray* attrs = insertedAttrs;
 	NSString* valueString = nil;
 	if ([entity isView])
-	{
+	{		
 		NSMutableArray* newAttrs = [[attrs mutableCopy] autorelease];
 		NSMutableArray* defaultValues = [NSMutableArray array];
 		NSArray* pkeyFields = [entity primaryKeyFields];
+		
 		TSEnumerate (currentField, e, [pkeyFields objectEnumerator])
 		{
 			if (! [insertedAttrs containsObject: currentField])
@@ -1094,10 +1095,10 @@ bail:
 		NSString* aliases = nil;
 		if ([insertedAttrs count])
 			aliases = FieldAliases ([insertedAttrs count]);
-		NSString* defaults = [defaultValues componentsJoinedByString: @", "];
 		
-		if (defaults)
+		if ([defaultValues count])
 		{
+			NSString* defaults = [defaultValues componentsJoinedByString: @", "];
 			insertedAttrs = newAttrs;
 			if (aliases)
 				valueString = [NSString stringWithFormat: @"%@, %@", aliases, defaults];

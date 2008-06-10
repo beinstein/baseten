@@ -163,10 +163,7 @@ ParameterString (int nParams, const char** values, int* formats)
         paramFormats [i] = [parameter PGTSIsBinaryParameter];
     }
 
-    retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
-                            	paramValues, paramLengths, paramFormats, 0);
-	
-    //NSLog (@"sendquery: %@ %@", mQuery, mParameters);
+	//NSLog (@"sendquery: %@ %@", mQuery, mParameters);
 	if (PGTS_SEND_QUERY_ENABLED ())
 	{
 		const char* params = ParameterString (nParams, paramValues, paramFormats);
@@ -176,7 +173,10 @@ ParameterString (int nParams, const char** values, int* formats)
 		free (query_s);
 		free (params_s);
 	}
-
+	
+    retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
+                            	paramValues, paramLengths, paramFormats, 0);
+	
     free (paramTypes);
     free (paramValues);
     free (paramLengths);
