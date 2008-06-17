@@ -849,7 +849,7 @@ bx_query_during_reconnect ()
 
 /** 
  * \name Retrieving objects from the database.
- * These methods block until the result has been retrieved.\n
+ * These methods block until the result has been retrieved.
  * If the method execution fails and the \c error parameter is NULL, a BXException named 
  * \c kBXExceptionUnhandledError is thrown.\n
  * If the method execution fails and the \c error parameter is not NULL, the given 

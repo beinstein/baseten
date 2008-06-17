@@ -1,22 +1,13 @@
-/*
-h1, h2, h3, h4 
+p, div, li, td, th, h1, h2, h3, h4, h5, h6,
+dl.el
 {
-    font-family: arial,verdana,'Bitstream Vera Sans',helvetica,sans-serif;
-    font-weight: bold;
-    letter-spacing: -0.018em;
+    font-family: "Lucida Grande", Verdana, sans-serif;
 }
 
-h1 
-{ 
-    font-size: 19px; 
-    margin: .15em 1em 0 0 
-}
-
-body, th, td 
+p, div, li, td, th
 {
-    font: normal 13px verdana, arial, 'Bitstream Vera Sans', helvetica, sans-serif;
+    font-size: small;
 }
-    */
 
 a#logo
 {
@@ -25,5 +16,98 @@ a#logo
 
 div#logo-container
 {
+    position: relative;
+    left: -4px;
+    margin-bottom: 0.5em;
+    margin-left: 1em;
+}
+
+h1
+{
+    margin-top: 0;
+    font-size: 160%;
+}
+
+h2
+{
+    margin-top: 2em;
+}
+
+div.navigation
+{
+    float: right;
+    width: 12em;
+    margin-right: 1em;
+}
+
+div.tabs
+{
+    border: thin gray solid;
     margin-bottom: 1em;
+}
+
+div.container
+{
+    float: left;
+    width: 100%;
+    margin-right: -14em;
+}
+
+div.contents
+{
+    margin-right: 14em;
+    margin-left: 1em;
+}
+
+
+div.footer
+{
+    clear: both;
+}
+
+div.memitem /* , div.contents > ul */
+{
+    border-bottom: 1px gray solid;
+}
+
+div.contents > ul:last-child
+{
+    border-bottom: none;
+}
+
+div.contents > ul > li
+{
+}
+
+hr, h1 br, code
+{
+    display: none;
+}
+
+div.groupHeader
+{
+    font-size: 120%;
+    font-weight: bold;
+    margin-top: 2em;
+}
+
+div.memproto
+{
+    font-size: 110%;
+    font-weight: bold;
+}
+
+td.paramkey
+{
+    text-align: right;
+}
+
+td.paramtype
+{
+    text-align: center;
+}
+
+li dl
+{
+    font-style: italic;
 }
