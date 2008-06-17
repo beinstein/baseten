@@ -39,6 +39,7 @@
 #import "PGTSTypeDescription.h"
 #import "PGTSFoundationObjects.h"
 #import "PGTSAdditions.h"
+#import "PGTSScannedMemoryAllocator.h"
 
 //FIXME: enable (some of) these.
 #if 0
@@ -49,8 +50,16 @@
 #endif
 
 
-typedef std::tr1::unordered_map <NSString*, int, ObjectHash, ObjectCompare <NSString *> > FieldIndexMap;
-typedef std::tr1::unordered_map <int, Class> FieldClassMap;
+typedef std::tr1::unordered_map <NSString*, int, 
+	ObjectHash, 
+	ObjectCompare <NSString *>, 
+	PGTS::scanned_memory_allocator <std::pair <NSString * const, int> > > 
+	FieldIndexMap;
+typedef std::tr1::unordered_map <int, Class, 
+	std::tr1::hash <int>, 
+	std::equal_to <int>, 
+	PGTS::scanned_memory_allocator <std::pair <const int, Class> > > 
+	FieldClassMap;
 
 
 static NSString*
@@ -170,8 +179,7 @@ ErrorUserInfoKey (char fieldCode)
     FieldIndexMap::iterator iterator = mFieldIndices->begin ();
     while (mFieldIndices->end () != iterator)
     {
-		[[iterator->first retain] autorelease];
-        CFRelease (iterator->first);
+		[iterator->first autorelease];
         iterator++;
     }
     delete mFieldIndices;
@@ -236,8 +244,7 @@ ErrorUserInfoKey (char fieldCode)
                 break;
             }
 			NSString* stringName = [NSString stringWithUTF8String: fname];
-			CFRetain (stringName);
-            (* mFieldIndices) [stringName] = i;
+            (* mFieldIndices) [[stringName retain]] = i;
         }
         mDeterminesFieldClassesFromDB = YES;
     }        

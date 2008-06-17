@@ -30,13 +30,19 @@
 #import "BXDatabaseObjectIDPrivate.h"
 #import <PGTS/PGTSAdditions.h>
 #import <tr1/unordered_map>
+#import <PGTS/private/PGTSScannedMemoryAllocator.h>
+
 
 struct LockStruct 
 {
-	NSMutableArray* forUpdate;
-	NSMutableArray* forDelete;
+	__strong NSMutableArray* forUpdate;
+	__strong NSMutableArray* forDelete;
 };
-typedef std::tr1::unordered_map <Oid, LockStruct> LockMap;
+typedef std::tr1::unordered_map <Oid, LockStruct, 
+	std::tr1::hash <Oid>, 
+	std::equal_to <Oid>, 
+	PGTS::scanned_memory_allocator <std::pair <const Oid, LockStruct> > > 
+	LockMap;
 
 
 @implementation BXPGLockHandler

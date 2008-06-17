@@ -30,8 +30,13 @@
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import <tr1/unordered_map>
+#import <PGTS/private/PGTSScannedMemoryAllocator.h>
 
-typedef std::tr1::unordered_map <unichar, NSMutableArray*> ChangeMap;
+typedef std::tr1::unordered_map <unichar, NSMutableArray*,
+	std::tr1::hash <unichar>,
+	std::equal_to <unichar>,
+	PGTS::scanned_memory_allocator <std::pair <const unichar, NSMutableArray*> > > 
+	ChangeMap;
 
 
 @implementation BXPGModificationHandler
