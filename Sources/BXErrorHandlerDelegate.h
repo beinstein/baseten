@@ -37,9 +37,15 @@
 @interface NSObject (BXErrorHandlerDelegate)
 /**
  * Handle an error.
- * Whenever an error occurs in the database context, this method will be called.
- * This concerns mostly connection or query errors. For example, key-value validation
- * errors won't be passed to the error handler.
+ * Various methods in BXDatabaseContext have an NSError** parameter. In addition,
+ * the context has an errorHandlerDelegate outlet. If no error handler has been 
+ * set, the database context will handle errors itself. 
+ * 
+ * When the NSError** parameter has been supplied to the methods, no action 
+ * will be taken and the error is assumed to have been handled. If the parameter
+ * is NULL and an error occurs, a BXException named \c kBXExceptionUnhandledError
+ * will be thrown.
+ *
  * \param context			The database context from which the error originated.
  * \param anError			The error.
  * \param willBePassedOn	Whether the calling method's NSError** parameter was set or not.

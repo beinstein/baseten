@@ -79,21 +79,21 @@ div.contents > ul > li
 {
 }
 
-hr, h1 br, code
+hr, h1 br
 {
     display: none;
 }
 
 div.groupHeader
 {
-    font-size: 120%;
+    font-size: 130%;
     font-weight: bold;
     margin-top: 2em;
 }
 
 div.memproto
 {
-    font-size: 110%;
+    font-size: 120%;
     font-weight: bold;
 }
 

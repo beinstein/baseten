@@ -77,7 +77,6 @@
 	
 	enum BXConnectionErrorHandlingState		mConnectionErrorHandlingState;
 
-    BOOL									mLogsQueries;
     BOOL									mAutocommits;
     BOOL									mDeallocating;
 	BOOL									mDisplayingSheet;
@@ -103,14 +102,14 @@
 
 - (void) setAutocommits: (BOOL) aBool;
 - (BOOL) autocommits;
-
-- (BOOL) logsQueries;
-- (void) setLogsQueries: (BOOL) aBool;
+- (void) rollback;
+- (BOOL) save: (NSError **) error;
 
 - (void) connect;
 - (void) connectIfNeeded: (NSError **) error;
 - (void) disconnect; /* Only for ending asynchronous connection attempt */
 
+- (NSArray *) faultsWithIDs: (NSArray *) anArray;
 - (BXDatabaseObject *) registeredObjectWithID: (BXDatabaseObjectID *) objectID;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs nullObjects: (BOOL) returnNullObjects;
@@ -141,12 +140,8 @@
 
 
 @interface BXDatabaseContext (Queries)
-- (void) rollback;
-- (BOOL) save: (NSError **) error;
-
 - (id) objectWithID: (BXDatabaseObjectID *) anID error: (NSError **) error;
 - (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error;
-- (NSArray *) faultsWithIDs: (NSArray *) anArray;
 
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) 
                     predicate error: (NSError **) error;

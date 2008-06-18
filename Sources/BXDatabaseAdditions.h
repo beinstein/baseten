@@ -132,7 +132,7 @@ enum BXModificationType;
 @end
 
 
-@interface NSObject (BXDatabaeAdditions)
+@interface NSObject (BXDatabaseAdditions)
 - (BOOL) BXIsRelationshipProxy;
 @end
 

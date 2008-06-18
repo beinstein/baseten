@@ -563,7 +563,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 @end
 
 
-@implementation NSObject (BXDatabaeAdditions)
+@implementation NSObject (BXDatabaseAdditions)
 - (BOOL) BXIsRelationshipProxy
 {
 	return NO;

@@ -14,9 +14,21 @@
 			);
 			dependencies = (
 				537385760DD9FBB7006F965A /* PBXTargetDependency */,
+				53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */,
 			);
 			name = "BaseTen + GC";
 			productName = "BaseTen + GC";
+		};
+		53BD79F70E092ABC009CAFE6 /* Documentation */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 53BD79FA0E092ADB009CAFE6 /* Build configuration list for PBXAggregateTarget "Documentation" */;
+			buildPhases = (
+				53BD79F60E092ABC009CAFE6 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = Documentation;
+			productName = Documentation;
 		};
 /* End PBXAggregateTarget section */
 
@@ -117,6 +129,7 @@
 		537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
 		538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538678D30DE31BA0000C9A78 /* IOKit.framework */; };
 		538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 538679870DE31C1D000C9A78 /* libstdc++.6.dylib */; };
+		53BD79D70E09140D009CAFE6 /* BXErrorHandlerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */; };
 		53E068260DEAE02A0004363D /* BXProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53E068240DEAE02A0004363D /* BXProbes.d */; };
 /* End PBXBuildFile section */
 
@@ -226,6 +239,13 @@
 			remoteGlobalIDString = 535443BB0D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
+		53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 53BD79F70E092ABC009CAFE6 /* Documentation */;
+			remoteInfo = Documentation;
+		};
 		53EFE9E40BA96444008666B7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
@@ -333,6 +353,7 @@
 		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
 		53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescriptionPrivate.h; path = Sources/BXPropertyDescriptionPrivate.h; sourceTree = "<group>"; };
+		53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXErrorHandlerDelegate.h; path = Sources/BXErrorHandlerDelegate.h; sourceTree = "<group>"; };
 		53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConstantsPrivate.h; path = Sources/BXConstantsPrivate.h; sourceTree = "<group>"; };
 		53D0D17B0B6F8A6800D2D101 /* BXPolicyDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPolicyDelegate.h; path = Sources/BXPolicyDelegate.h; sourceTree = "<group>"; };
 		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
@@ -453,6 +474,7 @@
 			isa = PBXGroup;
 			children = (
 				53E068240DEAE02A0004363D /* BXProbes.d */,
+				53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */,
 				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
 				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
 				5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */,
@@ -694,6 +716,7 @@
 				531A21560DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h in Headers */,
 				531A215C0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h in Headers */,
 				5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */,
+				53BD79D70E09140D009CAFE6 /* BXErrorHandlerDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -759,6 +782,7 @@
 			targets = (
 				537385720DD9FBAE006F965A /* BaseTen + GC */,
 				535443BB0D634A47002A6C47 /* BaseTen Framework + GC */,
+				53BD79F70E092ABC009CAFE6 /* Documentation */,
 			);
 		};
 /* End PBXProject section */
@@ -871,6 +895,19 @@
 			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
+		53BD79F60E092ABC009CAFE6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SRCROOT\"\ndoxygen\ncd Documentation/html\nmake\nopen *.docset\nexit 0";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -936,6 +973,11 @@
 			isa = PBXTargetDependency;
 			target = 535443BB0D634A47002A6C47 /* BaseTen Framework + GC */;
 			targetProxy = 537385750DD9FBB7006F965A /* PBXContainerItemProxy */;
+		};
+		53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 53BD79F70E092ABC009CAFE6 /* Documentation */;
+			targetProxy = 53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1008,6 +1050,27 @@
 			};
 			name = Release;
 		};
+		53BD79F80E092ABD009CAFE6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = Documentation;
+			};
+			name = Debug;
+		};
+		53BD79F90E092ABD009CAFE6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = Documentation;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1034,6 +1097,15 @@
 			buildConfigurations = (
 				537385730DD9FBAE006F965A /* Debug */,
 				537385740DD9FBAE006F965A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53BD79FA0E092ADB009CAFE6 /* Build configuration list for PBXAggregateTarget "Documentation" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53BD79F80E092ABD009CAFE6 /* Debug */,
+				53BD79F90E092ABD009CAFE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
