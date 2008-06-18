@@ -45,7 +45,6 @@
     //NSLog (@"revert: %p", ctx);
 
     [databaseURIField setObjectValue: [ctx databaseURI]];
-    [logsQueriesButton setState: ([ctx logsQueries])];
     [autocommitsButton setState: ([ctx autocommits])];
 	[connectsOnAwakeButton setState: ([ctx connectsOnAwake])];
     
@@ -61,17 +60,6 @@
     [[undoManager prepareWithInvocationTarget: autocommitsButton] setState: [ctx autocommits]];
     [undoManager endUndoGrouping];
     [ctx setAutocommits: (NSOnState == [autocommitsButton state])];
-}
-
-- (IBAction) setLogQueries: (id) sender
-{
-    id ctx = [self object];
-    NSUndoManager* undoManager = [[self window] undoManager];
-    [undoManager beginUndoGrouping];
-    [[undoManager prepareWithInvocationTarget: self] setLogQueries: nil];
-    [[undoManager prepareWithInvocationTarget: logsQueriesButton] setState: [ctx logsQueries]];
-    [undoManager endUndoGrouping];
-    [ctx setLogsQueries: (NSOnState == [logsQueriesButton state])];
 }
 
 - (IBAction) setConnectOnAwake: (id) sender
