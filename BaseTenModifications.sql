@@ -389,6 +389,18 @@ REVOKE ALL PRIVILEGES ON "baseten".conname FROM PUBLIC;
 GRANT SELECT ON "baseten".conname TO basetenread;
 
 
+CREATE TABLE "baseten".ignoredfkey (
+    schemaname NAME,
+    relname NAME,
+    fkeyname NAME,
+    PRIMARY KEY (schemaname, relname, fkeyname)
+);
+REVOKE ALL PRIVILEGES ON "baseten".ignoredfkey FROM PUBLIC;
+-- FIXME: privileges?
+GRANT SELECT ON "baseten".ignoredfkey TO basetenread;
+
+
+-- FIXME: take ignoredfkey into account here, too.
 -- Fkeys in pkeys
 CREATE VIEW "baseten".fkeypkeycount AS
 -- In the sub-select we search for all primary keys and their columns.
@@ -446,7 +458,8 @@ INNER JOIN pg_class cl2 ON (cl2.oid = c1.confrelid)
 INNER JOIN pg_namespace ns1 ON (ns1.oid = cl1.relnamespace)
 INNER JOIN pg_namespace ns2 ON (ns2.oid = cl2.relnamespace)
 -- Only select foreign keys
-WHERE c1.contype = 'f';
+WHERE c1.contype = 'f' AND
+    ROW (ns1.nspname, cl1.relname, c1.conname) NOT IN (SELECT * FROM "baseten".ignoredfkey);
 REVOKE ALL PRIVILEGES ON "baseten".foreignkey FROM PUBLIC;
 GRANT SELECT ON "baseten".foreignkey TO basetenread;
 
