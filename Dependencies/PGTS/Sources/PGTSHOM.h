@@ -52,6 +52,7 @@
 - (id) PGTSCollect;
 - (id) PGTSCollectReturning: (Class) aClass;
 - (id) PGTSSelectFunction: (int (*)(id)) fptr;
+- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 @end
 
 
@@ -61,14 +62,15 @@
 - (id) PGTSCollect;
 - (id) PGTSCollectReturning: (Class) aClass;
 - (id) PGTSSelectFunction: (int (*)(id)) fptr;
+- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 - (id) PGTSVisit: (id) visitor;
 @end
 
 
 @interface NSDictionary (PGTSHOM)
 - (id) PGTSAny;
+- (id) PGTSDo;
 - (id) PGTSCollect;
 - (id) PGTSKeyCollect;
-- (id) PGTSDo;
 - (id) PGTSVisit: (id) visitor;
 @end
