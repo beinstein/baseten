@@ -290,6 +290,18 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 }
 
 
+static id
+SelectFunction2 (id sender, id retval, int (* fptr)(id, void*), void* arg)
+{
+	TSEnumerate (currentObject, e, [sender objectEnumerator])
+	{
+		if (fptr (currentObject, arg))
+			[retval addObject: currentObject];
+	}
+	return retval;
+}
+
+
 static void
 Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
@@ -332,6 +344,12 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	id retval = [NSMutableSet setWithCapacity: [self count]];
 	return SelectFunction (self, retval, fptr);
+}
+
+- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg
+{
+	id retval = [NSMutableSet setWithCapacity: [self count]];
+	return SelectFunction2 (self, retval, fptr, arg);
 }
 
 - (void) PGTSCollect: (NSInvocation *) invocation userInfo: (Class) retclass
@@ -382,6 +400,12 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	id retval = [NSMutableArray arrayWithCapacity: [self count]];
 	return SelectFunction (self, retval, fptr);
+}
+
+- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg
+{
+	id retval = [NSMutableArray arrayWithCapacity: [self count]];
+	return SelectFunction2 (self, retval, fptr, arg);
 }
 
 - (void) PGTSCollect: (NSInvocation *) invocation userInfo: (Class) retclass
