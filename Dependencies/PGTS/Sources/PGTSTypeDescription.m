@@ -91,6 +91,11 @@
     return mDelimiter;
 }
 
+- (char) kind
+{
+	return mKind;
+}
+
 - (void) setElementOid: (Oid) elementOid
 {
 	mElementOid = elementOid;
@@ -99,5 +104,10 @@
 - (void) setDelimiter: (char) delimiter
 {
 	mDelimiter = delimiter;
+}
+
+- (void) setKind: (char) kind
+{
+	mKind = kind;
 }
 @end

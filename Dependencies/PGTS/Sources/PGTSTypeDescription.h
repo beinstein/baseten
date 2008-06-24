@@ -38,9 +38,11 @@
     Oid mElementOid;
     unsigned int mElementCount;
     char mDelimiter;
+	char mKind;
 }
 - (Oid) elementOid;
 - (char) delimiter;
 - (void) setElementOid: (Oid) elementOid;
 - (void) setDelimiter: (char) delimiter;
+- (char) kind;
 @end

@@ -276,8 +276,32 @@ ErrorUserInfoKey (char fieldCode)
     {
         PGTSTypeDescription* type = [db typeWithOid: PQftype (mResult, i)];
         NSString* name = [type name];
-        [self setClass: [deserializationDictionary objectForKey: name] forFieldAtIndex: i];
-    }	
+		Class aClass = [deserializationDictionary objectForKey: name];
+		
+		if (! aClass)
+		{
+			//Come up with some reasonable defaults. Maybe a delegate could be asked, too?
+			switch ([type kind]) 
+			{
+				case 'e':
+					aClass = [NSString class];
+					break;
+					
+				case 'c':
+					//FIXME: handle composite types.
+				case 'd':
+					//FIXME: handle domains.
+				case 'p':
+					//FIXME: handle pseudo-types.
+				case 'b':
+				default:
+					aClass = [NSData class];					
+					break;
+			}			
+		}
+		
+		[self setClass: aClass forFieldAtIndex: i];
+	}
 }
 
 - (int) numberOfFields

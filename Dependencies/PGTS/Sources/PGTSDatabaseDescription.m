@@ -235,7 +235,7 @@
 	
 	if (0 < [fetched count])
 	{
-		NSString* query = @"SELECT t.oid, typname, typnamespace, nspname, typelem, typdelim "
+		NSString* query = @"SELECT t.oid, typname, typnamespace, nspname, typelem, typdelim, typtype "
 		@"FROM pg_type t, pg_namespace n WHERE t.oid = ANY ($1) AND t.typnamespace = n.oid";
 		PGTSResultSet* res = [mConnection executeQuery: query parameters: fetched];
 		[res setDeterminesFieldClassesAutomatically: NO];
@@ -245,10 +245,11 @@
 		[res setClass: [NSString class] forKey: @"nspname"];
 		[res setClass: [NSNumber class] forKey: @"typelem"];
 		[res setClass: [NSString class] forKey: @"typdelim"];
+		[res setClass: [NSString class] forKey: @"typtype"];
 				
 		while ([res advanceRow])
 		{
-			//Oid needs to be fetched manually because we the system doesn't know its type yet.
+			//Oid needs to be fetched manually because the system doesn't know its type yet.
 			PGTSTypeDescription* type = [[PGTSTypeDescription alloc] init];			
 			char* oidString = PQgetvalue ([res PGresult], [res currentRow], 0);
 			long long oid = strtoll (oidString, NULL, 10);
@@ -262,6 +263,7 @@
 			[type setSchemaName: [res valueForKey: @"nspname"]];
 			[type setElementOid: [[res valueForKey: @"typelem"] PGTSOidValue]];
 			[type setDelimiter: [[res valueForKey: @"typdelim"] characterAtIndex: 0]];
+			[type setKind: [[res valueForKey: @"typtype"] characterAtIndex: 0]];
 		}
 	}
 	return retval;
