@@ -67,7 +67,7 @@
         [self setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopLine | kMKCPolishDrawTopAccent | kMKCPolishDrawRightLine];
 	
 	NSDictionary* enabledColours = nil;
-	if ([[self window] isKeyWindow] && [NSApp isActive])
+	if (MKCShouldDrawEnabled ([self window]))
 		enabledColours = [mColours objectForKey: kMKCEnabledColoursKey];
 	else
 		enabledColours = [mColours objectForKey: kMKCDisabledColoursKey];

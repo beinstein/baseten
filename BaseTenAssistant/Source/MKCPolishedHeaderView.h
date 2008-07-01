@@ -70,6 +70,9 @@ enum MKCPolishDrawingMask {
 void
 MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMask mask);
 
+BOOL
+MKCShouldDrawEnabled (NSWindow* window);
+
 
 @interface MKCPolishedHeaderView : NSTableHeaderView 
 {

@@ -87,6 +87,18 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
     }
 }
 
+BOOL
+MKCShouldDrawEnabled (NSWindow* window)
+{
+#if 0
+	BOOL isNonActivating = ([window styleMask] & NSNonactivatingPanelMask ? YES : NO);
+	BOOL retval = ([NSApp isActive] && ([window isMainWindow] || (isNonActivating && [window isKeyWindow])));
+#endif
+	BOOL retval = ([NSApp isActive] && [window isKeyWindow]);
+	return retval;
+}
+
+
 
 @implementation MKCPolishedHeaderView
 
@@ -286,7 +298,7 @@ MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMa
     
 	NSDictionary* enabledColours = nil;
 	NSDictionary* selectedColours = nil;
-	if ([[self window] isKeyWindow] && [NSApp isActive])
+	if (MKCShouldDrawEnabled ([self window]))
 	{
 		enabledColours = [mColours objectForKey: kMKCEnabledColoursKey];
 		selectedColours = [mColours objectForKey: kMKCSelectedColoursKey];
