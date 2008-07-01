@@ -64,7 +64,7 @@
 	NSString*										mDatabaseName;
 	NSTimer*										mNetServiceTimer;
 	NSString*										mGivenHostname;
-	NSMutableSet*									mResolvingNetServices;
+	NSMutableSet*									mNetServices;
 	
 	BOOL                                            mShowsOtherButton;
 	BOOL											mShowsBonjourButton;

@@ -81,7 +81,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 	[mDatabaseName release];
 	[mNetServiceTimer release];
 	[mGivenHostname release];
-	[mResolvingNetServices release];
+	[mNetServices release];
     
 	[super dealloc];
 }
@@ -171,8 +171,8 @@ static NSArray* gManuallyNotifiedKeys = nil;
 		mNetServiceBrowser = [[NSNetServiceBrowser alloc] init];
 		[mNetServiceBrowser setDelegate: self];
 	}
-	if (! mResolvingNetServices)
-		mResolvingNetServices = [[NSMutableSet alloc] init];
+	if (! mNetServices)
+		mNetServices = [[NSMutableSet alloc] init];
 	
 	[mNetServiceBrowser searchForServicesOfType: @"_postgresql._tcp." inDomain: @""];
 }
@@ -240,24 +240,32 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (void) netServiceBrowser: (NSNetServiceBrowser *) netServiceBrowser 
 			didFindService: (NSNetService *) netService moreComing: (BOOL) moreServicesComing
 {
-	[netService resolveWithTimeout: 10.0];
-	[netService setDelegate: self];
-	[mResolvingNetServices addObject: netService];
+	if (! [mNetServices containsObject: netService])
+	{
+		[mNetServices addObject: netService];
+		[netService resolveWithTimeout: 10.0];
+		[netService setDelegate: self];
+	}
 	
 	if (! moreServicesComing)
+	{
 		[mNetServiceBrowser stop];
+
+		mNetServiceTimer = [[NSTimer alloc] initWithFireDate: [NSDate dateWithTimeIntervalSinceNow: 10.0]
+													interval: 0.0 target: self selector: @selector (startDiscovery)
+													userInfo: nil repeats: NO];
+		[[NSRunLoop currentRunLoop] addTimer: mNetServiceTimer forMode: NSDefaultRunLoopMode];
+	}
 }
 
 - (void) netServiceDidResolveAddress: (NSNetService *) netService
 {
 	[mBonjourArrayController addObject: netService];
-	[mResolvingNetServices removeObject: netService];
 }
 
 - (void) netService: (NSNetService *) netService didNotResolve: (NSDictionary *) errorDict
 {
 	[mBonjourArrayController addObject: netService];
-	[mResolvingNetServices removeObject: netService];
 }
 @end
 
