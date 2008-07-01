@@ -26,15 +26,11 @@
 // $Id$
 //
 
-//FIXME: enable these.
-#define log4AssertValueReturn(...) 
-#define log4AssertLog(...)
-#define log4Debug(...)
-#define log4Info(...)
 
 #import "PGTSConnector.h"
 #import "PGTSConnection.h"
 #import "PGTSCertificateVerificationDelegateProtocol.h"
+#import "BXLogger.h"
 #import <sys/select.h>
 
 #ifdef USE_SSL
@@ -176,7 +172,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	{
 		mSSLSetUp = YES;
 		SSL* ssl = PQgetssl (mConnection);
-		log4AssertValueReturn (ssl, NO, @"Expected ssl struct not to be NULL.");
+		BXAssertVoidReturn (ssl, @"Expected ssl struct not to be NULL.");
 		SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
 		SSL_set_ex_data (ssl, SSLConnectionExIndex (), mConnection);
 	}
@@ -231,10 +227,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 			CFSocketSetSocketFlags (mSocket, flags);
 			mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
 			
-			log4AssertLog (mSocket, @"Expected source to have been created.");
-			log4AssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
-			log4AssertLog (mSocketSource, @"Expected socketSource to have been created.");
-			log4AssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
+			BXAssertLog (mSocket, @"Expected source to have been created.");
+			BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
+			BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
+			BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
 			
 			CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
 			CFStringRef mode = kCFRunLoopCommonModes;
@@ -270,7 +266,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		
 		//FIXME: this is rather an an error than information.
 		if (bsdSocket < 0)
-			log4Info (@"Unable to get connection socket from libpq");
+			BXLogInfo (@"Unable to get connection socket from libpq");
 		else
 		{
 			BOOL sslSetUp = NO;
@@ -284,13 +280,13 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 				selectStatus = 0;
 				pollingStatus = mPollFunction (mConnection);
 				
-				log4Debug (@"Polling status: %d connection status: %d", pollingStatus, PQstatus (mConnection));
+				BXLogDebug (@"Polling status: %d connection status: %d", pollingStatus, PQstatus (mConnection));
 #ifdef USE_SSL
 				if (NO == sslSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
 				{
 					sslSetUp = YES;
 					SSL* ssl = PQgetssl (mConnection);
-					log4AssertValueReturn (NULL != ssl, NO, @"Expected ssl struct not to be NULL.");
+					BXAssertValueReturn (NULL != ssl, NO, @"Expected ssl struct not to be NULL.");
 					SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
 					SSL_set_ex_data (ssl, SSLConnectionExIndex (), self);
 				}

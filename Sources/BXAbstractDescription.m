@@ -27,8 +27,7 @@
 //
 
 #import "BXAbstractDescription.h"
-
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "BXLogger.h"
 
 
 /**
@@ -41,7 +40,7 @@
 {
     if ((self = [super init]))
     {
-        log4AssertValueReturn (nil != aName, nil, @"Expected name not to be nil.");
+        BXAssertValueReturn (nil != aName, nil, @"Expected name not to be nil.");
         mName = [aName copy];
     }
     return self;

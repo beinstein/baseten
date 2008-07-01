@@ -40,13 +40,8 @@
 #import "PGTSConnectionMonitor.h"
 #import "PGTSNotification.h"
 #import "PGTSProbes.h"
+#import "BXLogger.h"
 #import <AppKit/AppKit.h>
-
-//FIXME: enable logging.
-#define log4AssertLog(...) 
-#define log4AssertVoidReturn(...)
-#define log4AssertValueReturn(...)
-
 
 
 @interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
@@ -186,8 +181,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) disconnect
 {
-	//FIXME: log4Debug or log4Info
-    //NSLog (@"Disconnecting.");
+    BXLogInfo (@"Disconnecting.");
     [mConnector cancel];
     if (mConnection)
     {
@@ -275,7 +269,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	PGTSQueryDescription* desc = [mQueue objectAtIndex: 0];
 	if (nil != desc)
 	{
-		log4AssertVoidReturn (! [desc sent], @"Expected %@ not to have been sent.", desc);	
+		BXAssertValueReturn (! [desc sent], retval, @"Expected %@ not to have been sent.", desc);	
 		retval = [desc sendForConnection: self];
 		
 		[self checkConnectionStatus];
@@ -322,11 +316,11 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
         NSString* path = [[[NSBundle bundleForClass: [PGTSConnection class]] resourcePath]
             stringByAppendingString: @"/datatypeassociations.plist"];
         NSData* plist = [NSData dataWithContentsOfFile: path];
-        log4AssertValueReturn (nil != plist, nil, @"datatypeassociations.plist was not found (looked from %@).", path);
+        BXAssertValueReturn (nil != plist, nil, @"datatypeassociations.plist was not found (looked from %@).", path);
         NSString* error = nil;
         mPGTypes = [[NSPropertyListSerialization propertyListFromData: plist mutabilityOption: NSPropertyListMutableContainers
                                                                format: NULL errorDescription: &error] retain];
-        log4AssertValueReturn (nil != dict, nil, @"Error creating PGTSDeserializationDictionary: %@ (file: %@)", error, path);
+        BXAssertValueReturn (nil != mPGTypes, nil, @"Error creating PGTSDeserializationDictionary: %@ (file: %@)", error, path);
         NSArray* keys = [mPGTypes allKeys];
         TSEnumerate (key, e, [keys objectEnumerator])
         {
@@ -426,10 +420,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		CFSocketSetSocketFlags (mSocket, flags);
 		mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
 		
-		log4AssertLog (mSocket, @"Expected source to have been created.");
-		log4AssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
-		log4AssertLog (mSocketSource, @"Expected socketSource to have been created.");
-		log4AssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
+		BXAssertLog (mSocket, @"Expected source to have been created.");
+		BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
+		BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
+		BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
 		
         CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
         CFStringRef mode = kCFRunLoopCommonModes;

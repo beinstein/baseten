@@ -31,6 +31,7 @@
 #import "BXPGReconnectionRecoveryAttempter.h"
 #import "BXPGAdditions.h"
 #import "BXProbes.h"
+#import "BXLogger.h"
 
 
 @implementation BXPGAutocommitTransactionHandler

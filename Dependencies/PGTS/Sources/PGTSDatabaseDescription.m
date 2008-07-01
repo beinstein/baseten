@@ -35,9 +35,7 @@
 #import "PGTSFunctions.h"
 #import "PGTSRoleDescription.h"
 #import "PGTSHOM.h"
-//FIXME: enable logging.
-//#import <Log4Cocoa/Log4Cocoa.h>
-#define log4AssertValueReturn(...)
+#import "BXLogger.h"
     
 
 @implementation PGTSDatabaseDescriptionProxy
@@ -159,7 +157,7 @@
     {
         NSString* query = @"SELECT oid FROM pg_namespace WHERE nspname = $1";
         PGTSResultSet* res = [mConnection executeQuery: query parameters: schemaName];
-        log4AssertValueReturn ([res querySucceeded], NO, @"Query failed (%@).", [res errorMessage]);
+        BXAssertValueReturn ([res querySucceeded], NO, @"Query failed (%@).", [res errorString]);
         if (0 == [res count])
 			schema = [NSNull null];
         else

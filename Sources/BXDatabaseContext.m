@@ -29,7 +29,6 @@
 #import <MKCCollections/MKCCollections.h>
 #import <PGTS/PGTS.h>
 #import <PGTS/PGTSFunctions.h>
-#import <Log4Cocoa/Log4Cocoa.h>
 #import <AppKit/AppKit.h>
 #import <stdlib.h>
 #import <string.h>
@@ -56,6 +55,7 @@
 #import "BXConstantsPrivate.h"
 #import "BXInvocationRecorder.h"
 #import "BXErrorHandlerDelegate.h"
+#import "BXLogger.h"
             
 
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
@@ -115,7 +115,7 @@ BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescrip
 												schema: NULL
 									  primaryKeyFields: &pkeyFields];
 			//FIXME: C function logging.
-			//log4AssertCLog (parsed, @"Expected object URI to be parseable.");
+			BXAssertVoidReturn (parsed, @"Expected object URI to be parseable.");
 			if (! parsed) break;
 			
             BXDatabaseObjectID* newID = [BXDatabaseObjectID IDWithEntity: currentEntity primaryKeyFields: pkeyFields];
@@ -123,7 +123,6 @@ BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescrip
             [newID release];
         }
         BXAddObjectIDsForInheritance2 (idsByEntity, currentEntity);
-        //Yay, tail recursion! Let's hope the compiler notices.
     }    
 }
 
@@ -268,7 +267,7 @@ bx_query_during_reconnect ()
     if (NULL != mKeychainPasswordItem)
         CFRelease (mKeychainPasswordItem);
     
-    log4Debug (@"Deallocating BXDatabaseContext");
+    BXLogDebug (@"Deallocating BXDatabaseContext");
     [super dealloc];
 }
 
@@ -925,7 +924,7 @@ bx_query_during_reconnect ()
 	NSError* localError = nil;
 	int groupingLevel = [mUndoManager groupingLevel];
 
-	log4AssertLog (NULL != error, @"Expected error to be set.");
+	BXAssertLog (NULL != error, @"Expected error to be set.");
 
 	if ([mUndoManager isRedoing])
 		--groupingLevel;
@@ -941,7 +940,7 @@ bx_query_during_reconnect ()
 		int lastLevel = [mUndoGroupingLevels lastIndex];
 		if (lastLevel != groupingLevel)
 		{
-			log4AssertValueReturn (NSNotFound == (unsigned) lastLevel || lastLevel < groupingLevel, NO, 
+			BXAssertValueReturn (NSNotFound == (unsigned) lastLevel || lastLevel < groupingLevel, NO, 
 								   @"Undo group level stack is corrupt.");
 			[mUndoGroupingLevels addIndex: groupingLevel];
 		}
@@ -1432,7 +1431,7 @@ bx_query_during_reconnect ()
 
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 {
-	log4AssertLog (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
+	BXAssertLog (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
 	
 	if (NO == connected)
 	{
@@ -2020,7 +2019,7 @@ bx_query_during_reconnect ()
                    withDictionary: (NSDictionary *) aDict 
                             error: (NSError **) error
 {
-	log4AssertValueReturn ((anObject || anEntity) && aDict, nil, @"Expected to be called with parameters.");
+	BXAssertValueReturn ((anObject || anEntity) && aDict, nil, @"Expected to be called with parameters.");
     NSError* localError = nil;
 	NSArray* objectIDs = nil;
 	if ([self checkErrorHandling] && [self checkDatabaseURI: &localError])
@@ -2029,7 +2028,7 @@ bx_query_during_reconnect ()
         if (nil == primaryKeyFields)
             primaryKeyFields = [anEntity primaryKeyFields];
         BOOL updatedPkey = (nil != [primaryKeyFields firstObjectCommonWithArray: [aDict allKeys]]);
-        log4AssertValueReturn (!updatedPkey || anObject, nil, 
+        BXAssertValueReturn (!updatedPkey || anObject, nil, 
                                @"Expected anObject to be known in case its pkey should be modified.");
 
 		NSDictionary* oldPkey = nil;
@@ -2184,7 +2183,7 @@ bx_query_during_reconnect ()
 - (BOOL) checkDatabaseURI: (NSError **) error
 {
 	BOOL rval = YES;
-	log4AssertLog (NULL != error, @"Expected error not to be null.");
+	BXAssertLog (NULL != error, @"Expected error not to be null.");
 	if (nil == mDatabaseURI)
 	{
 		rval = NO;
@@ -2365,7 +2364,7 @@ bx_query_during_reconnect ()
 
 - (void) iterateValidationQueue: (NSError **) error
 {
-    log4AssertVoidReturn (NULL != error, @"Expected error to be set.");
+    BXAssertVoidReturn (NULL != error, @"Expected error to be set.");
     while (0 < [mLazilyValidatedEntities count])
     {
         NSSet* entities = [[mLazilyValidatedEntities copy] autorelease];
@@ -2401,7 +2400,7 @@ bx_query_during_reconnect ()
 {
 	//This should be safe even with multiple threads.
 
-	log4AssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
+	BXAssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
 	if (! [entity isValidated])
 	{
 		NSLock* lock = [entity validationLock];
@@ -2576,7 +2575,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     SecItemAttr attributes [] = {kSecModDateItemAttr, kSecNegativeItemAttr};
     SecExternalFormat formats [] = {kSecFormatUnknown, kSecFormatUnknown};
     unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
-	log4AssertValueReturn (count == sizeof (formats) / sizeof (SecExternalFormat), NULL,
+	BXAssertValueReturn (count == sizeof (formats) / sizeof (SecExternalFormat), NULL,
 						   @"Expected arrays to have an equal number of items.");
     SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
     
@@ -2610,7 +2609,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
         SecExternalFormat formats [] = {kSecFormatUnknown};
         unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
 		unsigned int formatCount = sizeof (formats) / sizeof (SecExternalFormat);
-        log4AssertValueReturn (count == formatCount, NO,
+        BXAssertValueReturn (count == formatCount, NO,
 							   @"Expected arrays to have an equal number of items (attributes: %u formats: %u).", count, formatCount);
         SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
         

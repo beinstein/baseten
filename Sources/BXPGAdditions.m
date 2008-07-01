@@ -32,6 +32,7 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXDatabaseObjectPrivate.h"
+#import "BXLogger.h"
 
 
 @implementation NSObject (BXPGAdditions)
@@ -72,7 +73,7 @@
 - (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context
 {
     PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-    log4AssertValueReturn (nil != connection, nil, @"Expected connection not to be nil.");
+    BXAssertValueReturn (nil != connection, nil, @"Expected connection not to be nil.");
     return [self BXPGQualifiedName: connection];
 }
 @end

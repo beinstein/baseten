@@ -30,9 +30,9 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
+#import "BXLogger.h"
 
 #import <MKCCollections/MKCCollections.h>
-#import <Log4Cocoa/Log4Cocoa.h>
 
 
 static id gProperties = nil;
@@ -89,7 +89,7 @@ static id gProperties = nil;
 	{
 		[self setEntity: [decoder decodeObjectForKey: @"entity"]];
 		[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
-		log4AssertLog ([[self class] registerProperty: self entity: mEntity], 
+		BXAssertLog ([[self class] registerProperty: self entity: mEntity], 
 					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
@@ -132,7 +132,7 @@ static id gProperties = nil;
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXPropertyDescription *) anotherObject
 {
-    log4AssertValueReturn ([anotherObject isKindOfClass: [BXPropertyDescription class]], NSOrderedSame,
+    BXAssertValueReturn ([anotherObject isKindOfClass: [BXPropertyDescription class]], NSOrderedSame,
 						   @"Property descriptions can only be compared with other similar objects for now.");
     NSComparisonResult rval = NSOrderedSame;
     if (self != anotherObject)
@@ -178,16 +178,14 @@ static id gProperties = nil;
 		}
 	}
 
-	//FIXME: log4Debug
-	//NSLog (@"Called registerProperty: %@ entity: %@", [aProperty qualifiedName], entity);
+	BXLogDebug (@"Called registerProperty: %@ entity: %@", [aProperty qualifiedName], entity);
 
 	return retval;
 }
 
 + (void) unregisterProperty: (id) aProperty entity: (BXEntityDescription *) entity
 {
-	//FIXME: log4Debug
-	//NSLog (@"Called unregisterProperty: %@ entity: %@", [aProperty qualifiedName], entity);
+	BXLogDebug (@"Called unregisterProperty: %@ entity: %@", [aProperty qualifiedName], entity);
 	@synchronized (gProperties)
 	{
 		[gProperties removeObject: aProperty];
@@ -204,7 +202,7 @@ static id gProperties = nil;
     {
 		[self setEntity: anEntity];
 		//Check only since only our code is supposed to create new properties.
-		log4AssertLog ([[self class] registerProperty: self entity: mEntity], 
+		BXAssertLog ([[self class] registerProperty: self entity: mEntity], 
 					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
@@ -212,7 +210,7 @@ static id gProperties = nil;
 
 - (id) initWithName: (NSString *) name
 {
-	log4Error (@"This initializer should not have been called (name: %@).", name);
+	BXLogError (@"This initializer should not have been called (name: %@).", name);
     [self release];
     return nil;
 }

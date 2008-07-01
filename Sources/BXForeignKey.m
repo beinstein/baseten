@@ -26,7 +26,6 @@
 // $Id$
 //
 
-#import <Log4Cocoa/Log4Cocoa.h>
 #import <PGTS/private/PGTSHOM.h>
 
 #import "BXForeignKey.h"
@@ -37,6 +36,7 @@
 #import "BXObjectKeyPathExpression.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseObjectPrivate.h"
+#import "BXLogger.h"
 
 
 @implementation BXForeignKey
@@ -69,8 +69,8 @@
 
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName
 {
-	log4AssertVoidReturn (nil != srcFName, @"Expected srcFName not to be nil.");
-	log4AssertVoidReturn (nil != dstFName, @"Expected dstFName not to be nil.");
+	BXAssertVoidReturn (nil != srcFName, @"Expected srcFName not to be nil.");
+	BXAssertVoidReturn (nil != dstFName, @"Expected dstFName not to be nil.");
 	[mFieldNames addObject: [NSArray arrayWithObjects: srcFName, dstFName, nil]];
 }
 
@@ -156,8 +156,8 @@
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
 							  dstEntity: (BXEntityDescription *) dstEntity
 {
-	log4AssertValueReturn (nil != srcEntity, nil, @"Expected srcEntity to be set.");
-	log4AssertValueReturn (nil != dstEntity, nil, @"Expected dstEntity to be set.");
+	BXAssertValueReturn (nil != srcEntity, nil, @"Expected srcEntity to be set.");
+	BXAssertValueReturn (nil != dstEntity, nil, @"Expected dstEntity to be set.");
 	
 	NSDictionary* srcAttributes = [srcEntity attributesByName];
 	NSDictionary* dstAttributes = [dstEntity attributesByName];
@@ -199,7 +199,7 @@
 						 entityIndex: (unsigned int) ei 
 						 objectIndex: (unsigned int) oi
 {
-	log4AssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
+	BXAssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
 	
 	NSDictionary* attributes = [entity attributesByName];
 	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
@@ -229,7 +229,7 @@
 - (NSMutableDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
 									   entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi
 {
-	log4AssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
+	BXAssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
 	
 	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
 	NSDictionary* attributes = [entity attributesByName];

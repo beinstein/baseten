@@ -1,5 +1,0 @@
-#include "../../../../../common-xcconfig/common.xcconfig"
-#include "../../../../../common-xcconfig/gc.xcconfig"
-#include "../../../../../common-xcconfig/staticlib.xcconfig"
-#include "../../../../../common-xcconfig/debug.xcconfig"
-#include "common.xcconfig"

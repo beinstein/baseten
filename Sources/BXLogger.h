@@ -32,19 +32,31 @@
 #import <mach-o/dyld.h>
 
 
+#ifndef BX_EXPORT
+#ifdef __cplusplus
+#define BX_EXPORT extern "C"
+#else
+#define BX_EXPORT extern
+#endif
+#endif
+
+
 #define BX_LOG_ARGS __BASE_FILE__, __PRETTY_FUNCTION__, __builtin_return_address(0), __LINE__
 
-//Note that " , ##__VA_ARGS__" tells the preprocessor to remove the comma if __VA_ARGS__ is empty.
-#define BXLogDebug(message, ...)   if (BXLogLevel >= kBXLogLevelDebug)   BXLog (BX_LOG_ARGS, kBXLogLevelDebug,   message , ##__VA_ARGS__)
-#define BXLogInfo(message, ...)    if (BXLogLevel >= kBXLogLevelInfo)    BXLog (BX_LOG_ARGS, kBXLogLevelInfo,    message , ##__VA_ARGS__)
-#define BXLogWarning(message, ...) if (BXLogLevel >= kBXLogLevelWarning) BXLog (BX_LOG_ARGS, kBXLogLevelWarning, message , ##__VA_ARGS__)
-#define BXLogError(message, ...)   if (BXLogLevel >= kBXLogLevelError)   BXLog (BX_LOG_ARGS, kBXLogLevelError,   message , ##__VA_ARGS__)
-#define BXLogFatal(message, ...)   if (BXLogLevel >= kBXLogLevelFatal)   BXLog (BX_LOG_ARGS, kBXLogLevelFatal,   message , ##__VA_ARGS__)
 
+//Note that " , ##__VA_ARGS__" tells the preprocessor to remove the comma if __VA_ARGS__ is empty.
+#define BXLogDebug(message, ...)   do { if (BXLogLevel >= kBXLogLevelDebug)   BXLog (BX_LOG_ARGS, kBXLogLevelDebug,   message , ##__VA_ARGS__); } while (0)
+#define BXLogInfo(message, ...)    do { if (BXLogLevel >= kBXLogLevelInfo)    BXLog (BX_LOG_ARGS, kBXLogLevelInfo,    message , ##__VA_ARGS__); } while (0)
+#define BXLogWarning(message, ...) do { if (BXLogLevel >= kBXLogLevelWarning) BXLog (BX_LOG_ARGS, kBXLogLevelWarning, message , ##__VA_ARGS__); } while (0)
+#define BXLogError(message, ...)   do { if (BXLogLevel >= kBXLogLevelError)   BXLog (BX_LOG_ARGS, kBXLogLevelError,   message , ##__VA_ARGS__); } while (0)
+#define BXLogFatal(message, ...)   do { if (BXLogLevel >= kBXLogLevelFatal)   BXLog (BX_LOG_ARGS, kBXLogLevelFatal,   message , ##__VA_ARGS__); } while (0)
+
+#define BXAssertLog(assertion, message, ...) \
+	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); }} while (0)
 #define BXAssertVoidReturn(assertion, message, ...) \
-	if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return; }
+	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return; }} while (0)
 #define BXAssertValueReturn(assertion, retval, message, ...) \
-	if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return (retval); }
+	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return (retval); }} while (0)
 
 
 enum BXLogLevel
@@ -58,9 +70,11 @@ enum BXLogLevel
 };
 
 //Do not use outside this file in case we decide to change the implementation.
-extern enum BXLogLevel BXLogLevel;
+BX_EXPORT enum BXLogLevel BXLogLevel;
 
 
-extern void BXSetLogLevel (enum BXLogLevel level);
-extern void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...);
-extern void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args);
+BX_EXPORT void BXSetLogLevel (enum BXLogLevel level);
+BX_EXPORT void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...);
+BX_EXPORT void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args);
+
+BX_EXPORT void BXAssertionDebug ();

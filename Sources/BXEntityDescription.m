@@ -36,9 +36,9 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
 #import "BXConstantsPrivate.h"
+#import "BXLogger.h"
 
 #import <MKCCollections/MKCCollections.h>
-#import <Log4Cocoa/Log4Cocoa.h>
 
 
 static id gEntities;
@@ -70,14 +70,14 @@ static id gEntities;
 
 - (id) init
 {
-	log4Error (@"This initializer should not have been called.");
+	BXLogError (@"This initializer should not have been called.");
     [self release];
     return nil;
 }
 
 - (id) initWithName: (NSString *) aName
 {
-	log4Error (@"This initializer should not have been called (name: %@).", aName);
+	BXLogError (@"This initializer should not have been called (name: %@).", aName);
     [self release];
     return nil;
 }
@@ -199,9 +199,9 @@ static id gEntities;
 		
 		BXEntityDescription* aDesc = (BXEntityDescription *) anObject;
         
-		log4AssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
+		BXAssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
 							   @"Properties should not be nil in -isEqual:.");
-		log4AssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
+		BXAssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
 							   @"Properties should not be nil in -isEqual:.");
 		
 		
@@ -280,7 +280,7 @@ bail:
 			BXAttributeDescription* attribute = nil;
 			if ([currentField isKindOfClass: [BXAttributeDescription class]])
 			{
-				log4AssertVoidReturn ([currentField entity] == self, 
+				BXAssertVoidReturn ([currentField entity] == self, 
 									  @"Expected to receive only attributes in which entity is self (self: %@ currentField: %@).",
 									  self, currentField);
 				attribute = currentField;
@@ -342,7 +342,7 @@ bail:
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity
 {
-    log4AssertValueReturn ([anotherEntity isKindOfClass: [BXEntityDescription class]], NSOrderedSame, 
+    BXAssertValueReturn ([anotherEntity isKindOfClass: [BXEntityDescription class]], NSOrderedSame, 
 					 @"Entity descriptions can only be compared with other similar objects for now.");
     NSComparisonResult rval = NSOrderedSame;
     if (self != anotherEntity)
@@ -444,8 +444,8 @@ bail:
  */
 - (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
 {
-	log4AssertValueReturn (nil != sName, nil, @"Expected sName not to be nil.");
-	log4AssertValueReturn (nil != anURI, nil, @"Expected anURI to be set.");
+	BXAssertValueReturn (nil != sName, nil, @"Expected sName not to be nil.");
+	BXAssertValueReturn (nil != anURI, nil, @"Expected anURI to be set.");
 	
     if ((self = [super initWithName: tName]))
     {
@@ -467,7 +467,7 @@ bail:
 {
 	@synchronized (mObjectIDs)
 	{
-		log4AssertVoidReturn ([anID entity] == self, 
+		BXAssertVoidReturn ([anID entity] == self, 
 							  @"Attempted to register an object ID the entity of which is other than self.\n"
 							  "\tanID:\t%@ \n\tself:\t%@", anID, self);
 		if (self == [anID entity])
@@ -526,7 +526,7 @@ bail:
 		{
 			if ([currentField isKindOfClass: [NSString class]])
 				currentField = [mAttributes objectForKey: currentField];
-			log4AssertValueReturn ([currentField isKindOfClass: [BXAttributeDescription class]], nil, 
+			BXAssertValueReturn ([currentField isKindOfClass: [BXAttributeDescription class]], nil, 
 								   @"Expected to receive NSStrings or BXAttributeDescriptions (%@ was a %@).",
 								   currentField, [currentField class]);
 			
@@ -585,13 +585,13 @@ bail:
 
 - (void) viewGetsUpdatedWith: (NSArray *) entities
 {
-	log4AssertVoidReturn ([self isView], @"Expected entity %@ to be a view.", self);
+	BXAssertVoidReturn ([self isView], @"Expected entity %@ to be a view.", self);
 	[self inherits: entities];
 }
 
 - (id) viewsUpdated
 {
-	log4AssertValueReturn ([self isView], nil, @"Expected entity %@ to be a view.", self);
+	BXAssertValueReturn ([self isView], nil, @"Expected entity %@ to be a view.", self);
 	return [self inheritedEntities];
 }
 
@@ -602,8 +602,8 @@ bail:
         //FIXME: We only implement cascading notifications from "root tables" to 
         //inheriting tables and not vice-versa.
         //FIXME: only single entity supported for now.
-        log4AssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
-        log4AssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
+        BXAssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
+        BXAssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
             [mSuperEntities addObject: currentEntity];

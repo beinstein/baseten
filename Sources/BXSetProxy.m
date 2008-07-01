@@ -29,7 +29,7 @@
 #import "BXSetProxy.h"
 #import "BXDatabaseContext.h"
 #import "BXDatabaseAdditions.h"
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "BXLogger.h"
 
 
 /**
@@ -61,7 +61,7 @@
 - (void) addedObjectsWithIDs: (NSArray *) ids
 {
     NSArray* objects = [mContext faultsWithIDs: ids];
-	log4Debug (@"Adding objects: %@", objects);
+	BXLogDebug (@"Adding objects: %@", objects);
     if (nil != mFilterPredicate)
         objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
     
@@ -76,7 +76,7 @@
 					 withSetMutation: NSKeyValueUnionSetMutation 
 						usingObjects: change];
 	}
-	log4Debug (@"Contents after adding: %@", mContainer);
+	BXLogDebug (@"Contents after adding: %@", mContainer);
 }
 
 - (void) removedObjectsWithIDs: (NSArray *) ids
@@ -93,7 +93,7 @@
 					 withSetMutation: NSKeyValueMinusSetMutation 
 						usingObjects: change];
 	}
-	log4Debug (@"Contents after removal: %@", mContainer);
+	BXLogDebug (@"Contents after removal: %@", mContainer);
 }
 
 - (void) updatedObjectsWithIDs: (NSArray *) ids
@@ -111,8 +111,8 @@
 	//Remove redundant objects
     [added minusSet: mContainer];
     [removed intersectSet: mContainer];	    
-	log4Debug (@"Removing:\t%@", removed);
-	log4Debug (@"Adding:\t%@", added);
+	BXLogDebug (@"Removing:\t%@", removed);
+	BXLogDebug (@"Adding:\t%@", added);
     
     //Determine the change
     NSMutableSet* changed = nil;
@@ -154,7 +154,7 @@
         }
         [mOwner didChangeValueForKey: [self key] withSetMutation: mutation usingObjects: changed];
     }
-	log4Debug (@"Count after operation:\t%d", [mContainer count]);
+	BXLogDebug (@"Count after operation:\t%d", [mContainer count]);
 }
 
 @end

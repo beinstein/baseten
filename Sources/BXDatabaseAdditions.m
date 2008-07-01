@@ -35,8 +35,7 @@
 #import "BXException.h"
 #import "BXDatabaseObject.h"
 #import "BXAttributeDescription.h"
-
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "BXLogger.h"
 
 
 @implementation NSURL (BXDatabaseAdditions)
@@ -270,7 +269,7 @@ URLDecode (const char* bytes, size_t length, id sender)
                                        type: (NSPredicateOperatorType) type
 {
     unsigned int count = [properties count];
-	log4AssertValueReturn (count == [otherProperties count], nil, @"Expected given arrays' counts to match.");
+	BXAssertValueReturn (count == [otherProperties count], nil, @"Expected given arrays' counts to match.");
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: count];
     for (unsigned int i = 0; i < count; i++)
     {

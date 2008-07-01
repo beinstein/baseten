@@ -78,8 +78,8 @@ static char* LibraryName_a (const void* addr)
 {
 	Dl_info info = {};
 	char* retval = NULL;
-	if (0 == dladdr (addr, &info))
-		asprintf (&retval, "(%s) ", LastPathComponent (info.dli_fname));
+	if (dladdr (addr, &info))
+		retval = strdup (LastPathComponent (info.dli_fname));
 	return retval;
 }
 
@@ -99,7 +99,7 @@ static char* ExecutableName_a ()
 	return retval;
 }
 
-extern void BXAssertionDebug ()
+void BXAssertionDebug ()
 {
 	BXLogInfo (@"Break on BXAssertionDebug to inspect.");
 }
@@ -122,8 +122,8 @@ void BXLog_v (const char* fileName, const char* functionName, void* functionAddr
 	const char* message = [[[[NSString alloc] initWithFormat: messageFmt arguments: args] autorelease] UTF8String];
 	
 	char isMain = ([NSThread isMainThread] ? 'm' : 's');
-	fprintf (stderr, "%23s  %s %s[%d]  %s:%d  %s [%p%c] \t%8s %s\n", 
-		date, executable, library ?: "", getpid (), file, line, functionName, [NSThread currentThread], isMain, LogLevel (level), message);
+	fprintf (stderr, "%23s  %s (%s) [%d]  %s:%d  %s [%p%c] \t%8s %s\n", 
+		date, executable, library ?: "???", getpid (), file, line, functionName, [NSThread currentThread], isMain, LogLevel (level), message);
 	
 	if (executable)
 		free (executable);

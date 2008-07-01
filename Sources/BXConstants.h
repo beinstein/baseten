@@ -26,36 +26,45 @@
 // $Id$
 //
 
-extern NSString* const kBXNoDatabaseURIException;
-extern NSString* const kBXUnsupportedDatabaseException;
-extern NSString* const kBXExceptionUnhandledError;
-extern NSString* const kBXFailedToExecuteQueryException;
-extern NSString* const kBXPGUnableToObserveModificationsException;
-extern NSString* const kBXDatabaseContextKey;
-extern NSString* const kBXURIKey;
-extern NSString* const kBXObjectIDsKey;
-extern NSString* const kBXInsertNotification;
-extern NSString* const kBXDeleteNotification;
-extern NSString* const kBXUpdateNotification;
-extern NSString* const kBXLockNotification;
-extern NSString* const kBXUnlockNotification;
-extern NSString* const kBXObjectsKey;
-extern NSString* const kBXEntityDescriptionKey;
-extern NSString* const kBXContextKey;
-extern NSString* const kBXErrorKey;
-extern NSString* const kBXObjectKey;
-extern NSString* const kBXEntityDescriptionKey;
-extern NSString* const kBXObjectLockStatusKey;
-extern NSString* const kBXObjectIDKey;
-extern NSString* const kBXEntityDescriptionKey;
-extern NSString* const kBXPrimaryKeyFieldsKey;
-extern NSString* const kBXConnectionSuccessfulNotification;
-extern NSString* const kBXConnectionFailedNotification;
-extern NSString* const kBXConnectionSetupAlertDidEndNotification;
-extern NSString* const kBXAttributeKey;
+#ifndef BX_EXPORT
+#ifdef __cplusplus
+#define BX_EXPORT extern "C"
+#else
+#define BX_EXPORT extern
+#endif
+#endif
 
-extern NSString* const kBXErrorDomain;
-extern NSString* const kBXErrorMessageKey;
+
+BX_EXPORT NSString* const kBXNoDatabaseURIException;
+BX_EXPORT NSString* const kBXUnsupportedDatabaseException;
+BX_EXPORT NSString* const kBXExceptionUnhandledError;
+BX_EXPORT NSString* const kBXFailedToExecuteQueryException;
+BX_EXPORT NSString* const kBXPGUnableToObserveModificationsException;
+BX_EXPORT NSString* const kBXDatabaseContextKey;
+BX_EXPORT NSString* const kBXURIKey;
+BX_EXPORT NSString* const kBXObjectIDsKey;
+BX_EXPORT NSString* const kBXInsertNotification;
+BX_EXPORT NSString* const kBXDeleteNotification;
+BX_EXPORT NSString* const kBXUpdateNotification;
+BX_EXPORT NSString* const kBXLockNotification;
+BX_EXPORT NSString* const kBXUnlockNotification;
+BX_EXPORT NSString* const kBXObjectsKey;
+BX_EXPORT NSString* const kBXEntityDescriptionKey;
+BX_EXPORT NSString* const kBXContextKey;
+BX_EXPORT NSString* const kBXErrorKey;
+BX_EXPORT NSString* const kBXObjectKey;
+BX_EXPORT NSString* const kBXEntityDescriptionKey;
+BX_EXPORT NSString* const kBXObjectLockStatusKey;
+BX_EXPORT NSString* const kBXObjectIDKey;
+BX_EXPORT NSString* const kBXEntityDescriptionKey;
+BX_EXPORT NSString* const kBXPrimaryKeyFieldsKey;
+BX_EXPORT NSString* const kBXConnectionSuccessfulNotification;
+BX_EXPORT NSString* const kBXConnectionFailedNotification;
+BX_EXPORT NSString* const kBXConnectionSetupAlertDidEndNotification;
+BX_EXPORT NSString* const kBXAttributeKey;
+
+BX_EXPORT NSString* const kBXErrorDomain;
+BX_EXPORT NSString* const kBXErrorMessageKey;
 enum BXError
 {
     kBXErrorUnsuccessfulQuery = 1,

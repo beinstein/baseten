@@ -31,10 +31,10 @@
  * Notifications for self-updating containers to be sent before the others.
  */
 //@{
-extern NSString* const kBXInsertEarlyNotification;
-extern NSString* const kBXDeleteEarlyNotification;
-extern NSString* const kBXUpdateEarlyNotification;
+BX_EXPORT NSString* const kBXInsertEarlyNotification;
+BX_EXPORT NSString* const kBXDeleteEarlyNotification;
+BX_EXPORT NSString* const kBXUpdateEarlyNotification;
 //@}
 
-extern NSString* const kBXEntityDescriptionWillDeallocNotification;
+BX_EXPORT NSString* const kBXEntityDescriptionWillDeallocNotification;
 

@@ -44,6 +44,8 @@
 #import "BXPGAutocommitTransactionHandler.h"
 #import "BXPGManualCommitTransactionHandler.h"
 
+#import "BXLogger.h"
+
 //FIXME: it'd be nicer if we didn't need any private headers.
 #import "BXDatabaseContextPrivate.h"
 #import "BXPropertyDescriptionPrivate.h"
@@ -58,10 +60,6 @@ static NSString* kBXPGLockerKey = @"BXPGLockerKey";
 static NSString* kBXPGWhereClauseKey = @"BXPGWhereClauseKey";
 static NSString* kBXPGParametersKey = @"BXPGParametersKey";
 static NSString* kBXPGObjectKey = @"BXPGObjectKey";
-
-
-//FIXME: write this.
-#define ExpectC(...)
 
 
 /**
@@ -157,7 +155,7 @@ FromClause (id self, PGTSConnection* connection, NSPredicate* predicate, BXEntit
 	NSString* fromClause = nil;
 	
 	NSMutableSet* entitySet = [NSMutableSet setWithSet: [predicate BXEntitySet]];
-	log4AssertValueReturn (nil != entitySet, nil, @"Expected to receive an entity set (predicate: %@).", predicate);
+	BXAssertValueReturn (nil != entitySet, nil, @"Expected to receive an entity set (predicate: %@).", predicate);
 	if (additionalEntity) [entitySet addObject: additionalEntity];
 	//FIXME: a better way to exclude the corrent table for update would be to change BXEntitySet (above) so that in case of an update, it wouldn't return the target entity, unless a self-join was intended.
 	if (excludedEntity) [entitySet removeObject: excludedEntity]; 
@@ -228,7 +226,7 @@ UpdateQuery (PGTSConnection* connection, BXEntityDescription* entity, NSString* 
 static NSError*
 DatabaseError (NSInteger errorCode, NSString* localizedError, BXDatabaseContext* context, BXEntityDescription* entity)
 {
-	ExpectC (localizedError);
+	ExpectCR (localizedError, nil);
 	NSString* title = BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet");
 	NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 									 localizedError, NSLocalizedFailureReasonErrorKey,
@@ -286,7 +284,7 @@ SetClause (PGTSConnection* connection, NSDictionary* valueDict, NSMutableArray* 
 static void
 bx_error_during_rollback (id self, NSError* error)
 {
-	log4Error (@"Got error during ROLLBACK: %@", [error localizedDescription]);
+	BXLogError (@"Got error during ROLLBACK: %@", [error localizedDescription]);
 }
 
 
@@ -530,7 +528,7 @@ error:
 - (BOOL) fireFault: (BXDatabaseObject *) anObject keys: (NSArray *) keys error: (NSError **) error
 {
 	ExpectR (error, NO);
-	log4AssertValueReturn (0 < [keys count], NO, @"Expected to have received some keys to fetch.");
+	BXAssertValueReturn (0 < [keys count], NO, @"Expected to have received some keys to fetch.");
 	
     BOOL retval = NO;
 	PGTSConnection* connection = [mTransactionHandler connection];
@@ -599,7 +597,7 @@ error:
 		*error = [res error];
 	}
 	
-	log4AssertLog (! objectID || 0 == [retval count] || (1 == [retval count] && [retval containsObject: objectID]),
+	BXAssertLog (! objectID || 0 == [retval count] || (1 == [retval count] && [retval containsObject: objectID]),
 				   @"Expected to have deleted only one row. \nobjectID: %@\npredicate: %@\nretval: %@",
 				   objectID, predicate, retval);
 	
@@ -754,7 +752,7 @@ bail:
 				
 				NSArray* srcFNames = [res valueForKey: @"srcfnames"];
 				NSArray* dstFNames = [res valueForKey: @"dstfnames"];
-				log4AssertValueReturn ([srcFNames count] == [dstFNames count], NO,
+				BXAssertValueReturn ([srcFNames count] == [dstFNames count], NO,
 									  @"Expected array counts to match. Row: %@.", 
 									  [res currentRowAsDictionary]);
 				
@@ -904,7 +902,7 @@ bail:
 #if 0
 	ExpectV (entity);
 	ExpectV (whereClause);
-	log4AssertVoidReturn (PQTRANS_IDLE == [notifyConnection transactionStatus], 
+	BXAssertVoidReturn (PQTRANS_IDLE == [notifyConnection transactionStatus], 
 						  @"Expected notifyConnection not to have transaction.");
 	NSString* funcname = nil; //FIXME: get this somehow.
 	
@@ -920,7 +918,7 @@ bail:
 	
 	//Get and sort the primary key fields.
 	NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
-	log4AssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
+	BXAssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
 	
 	NSMutableArray* quoted = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
 	[[pkeyFields PGTSVisit: self] qualifiedNameFor: nil into: quoted entity: entity connection: mNotifyConnection];

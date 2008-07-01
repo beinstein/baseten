@@ -32,6 +32,7 @@
 #import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
 #import "BXProbes.h"
+#import "BXLogger.h"
 
 #import "BXPGTransactionHandler.h"
 #import "BXPGAdditions.h"
@@ -190,7 +191,7 @@ SSLMode (enum BXSSLMode mode)
 	mConnectionSucceeded = YES;
 	if (mAsync)
 		[mInterface connectionSucceeded];
-	log4Debug (@"mConnection: %p", mConnection);
+	BXLogDebug (@"mConnection: %p", mConnection);
 }	
 
 
@@ -483,7 +484,7 @@ SSLMode (enum BXSSLMode mode)
 @implementation BXPGTransactionHandler (PGTSConnectionDelegate)
 - (void) PGTSConnection: (PGTSConnection *) connection receivedNotice: (NSError *) notice
 {
-	//log4Debug (@"%p: %s", connection, message);
+	//BXLogDebug (@"%p: %s", connection, message);
 	if (BASETEN_RECEIVED_PG_NOTICE_ENABLED ())
 	{
 		NSString* message = [[notice userInfo] objectForKey: kPGTSErrorMessage];
@@ -496,7 +497,7 @@ SSLMode (enum BXSSLMode mode)
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
 	NSString* notificationName = [notification notificationName];
-	log4Debug (@"Got notification (%p): %@", self, connection, notificationName);
+	BXLogDebug (@"Got notification (%p): %@", self, connection, notificationName);
 	[[mObservers objectForKey: notificationName] handleNotification: notification];
 }
 

@@ -31,6 +31,7 @@
 #import "BXPGReconnectionRecoveryAttempter.h"
 #import "BXPGAdditions.h"
 #import "BXProbes.h"
+#import "BXLogger.h"
 
 
 @implementation BXPGManualCommitTransactionHandler
@@ -159,7 +160,7 @@
 - (void) handleSuccess
 {
 	[super handleSuccess];
-	log4Debug (@"mNotifyConnection: %p", mNotifyConnection);
+	BXLogDebug (@"mNotifyConnection: %p", mNotifyConnection);
 }
 
 

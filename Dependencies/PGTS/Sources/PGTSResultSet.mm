@@ -43,7 +43,6 @@
 
 //FIXME: enable (some of) these.
 #if 0
-#import <Log4Cocoa/Log4Cocoa.h>
 #import "PGTSResultSetPrivate.h"
 #import "PGTSResultRow.h"
 #import "PGTSFunctions.h"

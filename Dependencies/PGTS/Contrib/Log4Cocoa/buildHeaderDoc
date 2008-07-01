@@ -1,6 +1,0 @@
-## set the HEADERDOC_HOME environment variable to point to where you have HeaderDoc installed
-setenv HEADERDOC_HOME ~/bin/headerdoc-8.0b1
-
-$HEADERDOC_HOME/headerDoc2HTML.pl -o doc .
-
-$HEADERDOC_HOME/gatherHeaderDoc.pl doc

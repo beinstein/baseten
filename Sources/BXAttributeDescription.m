@@ -32,7 +32,7 @@
 #import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
 
-#import <Log4Cocoa/Log4Cocoa.h>
+
 
 
 

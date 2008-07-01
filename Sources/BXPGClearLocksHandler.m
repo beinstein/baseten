@@ -28,6 +28,7 @@
 
 #import "BXPGClearLocksHandler.h"
 #import "BXDatabaseObjectIDPrivate.h"
+#import "BXLogger.h"
 #import <PGTS/PGTSAdditions.h>
 #import <PGTS/private/PGTSHOM.h>
 
@@ -35,7 +36,7 @@
 static void
 bx_error_during_clear_notification (id self, NSError* error)
 {
-	log4Warn (@"During clear notification: %@", error);
+	BXLogWarning (@"During clear notification: %@", error);
 }
 
 

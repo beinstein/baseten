@@ -35,13 +35,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSResultSet.h"
 #import <PGTS/postgresql/libpq-fe.h>
-
-//FIXME: enable logging.
-#define log4Warn(...) 
-#define log4Error(...)
-#define log4Debug(...)
-#define log4AssertLog(...)
-#define L4_BLOCK_ASSERTIONS
+#import "BXLogger.h"
 
 
 @implementation NSObject (PGTSFoundationObjects)
@@ -74,7 +68,7 @@
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
     if (nil == connection)
-        log4Warn (@"Connection pointer was nil.");
+        BXLogWarning (@"Connection pointer was nil.");
     else
     {
         const char* clientEncoding = PQparameterStatus ([connection pgConnection], "client_encoding");
@@ -97,7 +91,7 @@
 	
 	if (NULL == unescaped)
 	{
-		log4Error (@"PQunescapeBytea failed for characters: %s", value); //FIXME: Handle error?
+		BXLogError (@"PQunescapeBytea failed for characters: %s", value); //FIXME: Handle error?
 		return nil;
 	}
 	
@@ -362,7 +356,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-	log4Debug (@"Given value: %s", value);
+	BXLogDebug (@"Given value: %s", value);
 	
 	size_t length = strlen (value) + 1;
     char* datetime = alloca (length);
@@ -386,10 +380,10 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     id rval = [NSCalendarDate dateWithString: dateString
                               calendarFormat: @"%Y-%m-%d %H:%M:%S"];
     rval = [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate] + interval];
-    log4AssertLog (nil != rval, @"Failed to match string to date format");
+    BXAssertLog (nil != rval, @"Failed to match string to date format");
 #ifndef L4_BLOCK_ASSERTIONS
 	double integralPart = 0.0;
-	log4AssertLog (NULL == subseconds || 0.0 < modf ([rval timeIntervalSince1970], &integralPart),
+	BXAssertLog (NULL == subseconds || 0.0 < modf ([rval timeIntervalSince1970], &integralPart),
 				   @"Expected date to have a fractional part (timestamp: %f, subseconds: %s)",
 				   [rval timeIntervalSince1970], subseconds);
 #endif
@@ -484,7 +478,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
         }
     }
     
-    log4AssertLog (nil != rval, @"Failed matching string %s to date format.", value);
+    BXAssertLog (nil != rval, @"Failed matching string %s to date format.", value);
     return rval;
 }
 

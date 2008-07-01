@@ -113,7 +113,7 @@
 
 - (void) PGTSConnection: (PGTSConnection *) connection receivedNotice: (NSError *) notice
 {
-	//log4Debug (@"%p: %s", connection, message);
+	//BXLogDebug (@"%p: %s", connection, message);
 	if (BASETEN_RECEIVED_PG_NOTICE_ENABLED ())
 	{
 		NSString* message = [[notice userInfo] objectForKey: kPGTSErrorMessage];

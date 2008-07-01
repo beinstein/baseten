@@ -31,7 +31,7 @@
 #import "BXConstants.h"
 #import "BXConstantsPrivate.h"
 #import "BXDatabaseAdditions.h"
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "BXLogger.h"
 
 
 /**
@@ -72,7 +72,7 @@
     else
     {
         //Only allow the non-mutating methods
-		log4AssertLog (Nil != mNonMutatingClass, @"Expected mimiced class to be set.");
+		BXAssertLog (Nil != mNonMutatingClass, @"Expected mimiced class to be set.");
         rval = [mNonMutatingClass instanceMethodSignatureForSelector: aSelector];
     }
     return rval;
@@ -112,8 +112,8 @@
                           added: (NSMutableArray **) added 
                         removed: (NSMutableArray **) removed
 {
-    log4AssertVoidReturn (NULL != added && NULL != removed, 
-                          @"Expected given pointers not to have been NULL.")
+    BXAssertVoidReturn (NULL != added && NULL != removed, 
+						@"Expected given pointers not to have been NULL.");
     if (nil == mFilterPredicate)
     {
         //If filter predicate is not set, then every object in the entity should be added.
@@ -138,11 +138,11 @@
     if (NO == mChanging)
     {
         NSDictionary* userInfo = [notification userInfo];
-        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
+        BXAssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
                               @"Expected to observe another context.");
         
         NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];        
-        log4Debug (@"Adding object ids: %@", ids);
+        BXLogDebug (@"Adding object ids: %@", ids);
         [self addedObjectsWithIDs: ids];
     }
 }
@@ -152,11 +152,11 @@
     if (NO == mChanging)
     {
         NSDictionary* userInfo = [notification userInfo];
-        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
+        BXAssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
                               @"Expected to observe another context.");
         
         NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
-        log4Debug (@"Updating for object ids: %@", ids);
+        BXLogDebug (@"Updating for object ids: %@", ids);
         [self updatedObjectsWithIDs: ids];
     }
 }
@@ -166,11 +166,11 @@
     if (NO == mChanging)
     {
         NSDictionary* userInfo = [notification userInfo];
-        log4AssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
+        BXAssertVoidReturn (mContext == [userInfo objectForKey: kBXContextKey], 
                               @"Expected to observe another context.");
         
         NSArray* ids = [userInfo objectForKey: kBXObjectIDsKey];
-        log4Debug (@"Removing object ids: %@", ids);
+        BXLogDebug (@"Removing object ids: %@", ids);
         [self removedObjectsWithIDs: ids];
     }
 }
@@ -183,7 +183,7 @@
 - (void) addedObjectsWithIDs: (NSArray *) ids
 {    
     NSArray* objects = [mContext faultsWithIDs: ids];
-	log4Debug (@"Adding objects: %@", objects);
+	BXLogDebug (@"Adding objects: %@", objects);
     if (nil != mFilterPredicate)
         objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
     
@@ -193,7 +193,7 @@
     [self handleAddedObjects: objects];
     [mOwner didChangeValueForKey: [self key]];
     
-    log4Debug (@"Contents after adding: %@", mContainer);
+    BXLogDebug (@"Contents after adding: %@", mContainer);
 }
 
 - (void) removedObjectsWithIDs: (NSArray *) ids
@@ -203,7 +203,7 @@
     [mOwner willChangeValueForKey: [self key]];    
     [self handleRemovedObjects: [mContext registeredObjectsWithIDs: ids]];
     [mOwner didChangeValueForKey: [self key]];
-    log4Debug (@"Contents after removal: %@", mContainer);
+    BXLogDebug (@"Contents after removal: %@", mContainer);
 }
 
 - (void) updatedObjectsWithIDs: (NSArray *) ids
@@ -226,8 +226,8 @@
 	
 	BOOL changed = (0 < [removedObjects count] || 0 < [addedObjects count]);
     
-	log4Debug (@"Removing:\t%@", removedObjects);
-	log4Debug (@"Adding:\t%@", addedObjects);
+	BXLogDebug (@"Removing:\t%@", removedObjects);
+	BXLogDebug (@"Adding:\t%@", addedObjects);
 	
     //Post notifications since modifying a self-updating collection won't cause
     //value cache to be changed.
@@ -239,7 +239,7 @@
 		[mOwner didChangeValueForKey: [self key]];
 	}
 	
-	log4Debug (@"Count after operation:\t%d", [mContainer count]);
+	BXLogDebug (@"Count after operation:\t%d", [mContainer count]);
 }
 
 - (void) handleAddedObjects: (NSArray *) objectArray
@@ -292,7 +292,7 @@
 
 - (void) setEntity: (BXEntityDescription *) entity
 {
-    log4AssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
+    BXAssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
     
     //Set up the modification notification
     if (mEntity != entity) 

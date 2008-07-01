@@ -37,8 +37,8 @@
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
+#import "BXLogger.h"
 
-#import <Log4Cocoa/Log4Cocoa.h>
 #import <MKCCollections/MKCCollections.h>
 
 
@@ -77,7 +77,7 @@
     TSEnumerate (currentKey, e, [keys objectEnumerator])
     {
         id currentValue = [pkeyDict objectForKey: currentKey];
-        log4AssertValueReturn ([NSNull null] != currentValue, nil, @"A pkey value was NSNull. Entity: %@", anEntity);
+        BXAssertValueReturn ([NSNull null] != currentValue, nil, @"A pkey value was NSNull. Entity: %@", anEntity);
         
         NSString* valueForURL = @"";
         char argtype = 'd';
@@ -319,11 +319,11 @@ bail:
     NSArray* pkeyFields = [entity primaryKeyFields];
     if (nil != pkeyFields)
     {
-        log4AssertVoidReturn ([pkeyFields count] <= [pkeyDict count],
+        BXAssertVoidReturn ([pkeyFields count] <= [pkeyDict count],
                               @"Expected to have received values for all primary key fields.");
         TSEnumerate (currentAttribute, e, [pkeyFields objectEnumerator])
         {
-            log4AssertVoidReturn (nil != [pkeyDict objectForKey: [currentAttribute name]], 
+            BXAssertVoidReturn (nil != [pkeyDict objectForKey: [currentAttribute name]], 
                                   @"Primary key not included: %@ given: %@", currentAttribute, pkeyDict);
         }
     }
@@ -339,13 +339,13 @@ bail:
     NSArray* keys = [pkeyFValues allKeys];
     TSEnumerate (currentKey, e, [keys objectEnumerator])
     {
-        log4AssertValueReturn ([currentKey isKindOfClass: [NSString class]],
+        BXAssertValueReturn ([currentKey isKindOfClass: [NSString class]],
                                nil, @"Expected to receive only NSStrings as keys. Keys: %@", keys);
     }
     [self verifyPkey: pkeyFValues entity: aDesc];
 
     NSURL* uri = [[self class] URIRepresentationForEntity: aDesc primaryKeyFields: pkeyFValues];
-    log4AssertValueReturn (nil != uri, nil, @"Expected to have received an URI.");
+    BXAssertValueReturn (nil != uri, nil, @"Expected to have received an URI.");
     return [[[self class] alloc] initWithEntity: aDesc objectURI: uri];
 }
 
@@ -355,18 +355,18 @@ bail:
  */
 - (id) initWithEntity: (BXEntityDescription *) anEntity objectURI: (NSURL *) anURI
 {
-    log4AssertValueReturn (nil != anEntity, nil, @"Expected entity not to be nil.");
-    log4AssertValueReturn (nil != anURI, nil, @"Expected anURI not to be nil.");
+    BXAssertValueReturn (nil != anEntity, nil, @"Expected entity not to be nil.");
+    BXAssertValueReturn (nil != anURI, nil, @"Expected anURI not to be nil.");
     
     if ((self = [super init]))
     {
 		{
 			NSString* entityName = nil;
 			NSString* schemaName = nil;
-			log4AssertValueReturn ([[self class] parseURI: anURI entity: &entityName schema: &schemaName primaryKeyFields: NULL],
+			BXAssertValueReturn ([[self class] parseURI: anURI entity: &entityName schema: &schemaName primaryKeyFields: NULL],
 								   nil, @"Expected object URI to be parseable.");
-			log4AssertValueReturn ([[anEntity name] isEqualToString: entityName], nil, @"Expected entity names to match.");
-			log4AssertValueReturn ([[anEntity schemaName] isEqualToString: schemaName], nil, @"Expected schema names to match.");
+			BXAssertValueReturn ([[anEntity name] isEqualToString: entityName], nil, @"Expected entity names to match.");
+			BXAssertValueReturn ([[anEntity schemaName] isEqualToString: schemaName], nil, @"Expected schema names to match.");
 		}
 		
         mURIRepresentation = [anURI retain];
@@ -388,7 +388,7 @@ bail:
 #if 0
 - (BXDatabaseObjectID *) partialKeyForView: (BXEntityDescription *) view
 {
-    log4AssertValueReturn ([view isView], nil, @"Expected given entity (%@) to be a view.", view);
+    BXAssertValueReturn ([view isView], nil, @"Expected given entity (%@) to be a view.", view);
     
     NSArray* keys = [view primaryKeyFields];
     NSArray* myKeys = [[self entity] correspondingProperties: keys];
@@ -409,13 +409,13 @@ bail:
 							  entity: NULL
 							  schema: NULL
 					primaryKeyFields: &retval];
-	log4AssertLog (ok, @"Expected URI to have been parsed correctly: %@", mURIRepresentation);
+	BXAssertLog (ok, @"Expected URI to have been parsed correctly: %@", mURIRepresentation);
 	return retval;
 }
 
 - (void) setEntity: (BXEntityDescription *) entity
 {
-    log4AssertVoidReturn (NO == mRegistered, @"Expected object ID not to have been registered.");
+    BXAssertVoidReturn (NO == mRegistered, @"Expected object ID not to have been registered.");
     NSString* path = [NSString stringWithFormat: @"../%@/%@?%@", 
         [entity schemaName], [entity name], [mURIRepresentation query]];
     

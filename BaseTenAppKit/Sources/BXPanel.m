@@ -27,8 +27,7 @@
 //
 
 #import "BXPanel.h"
-
-#import <Log4Cocoa/Log4Cocoa.h>
+#import <BaseTen/BXLogger.h>
 
 
 @implementation BXPanel
@@ -46,7 +45,7 @@
     if (NULL != didEndSelector)
     {
 		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: didEndSelector];
-        log4AssertVoidReturn (5 == [signature numberOfArguments], @"Expected number of arguments to be 5, was %d",
+        BXAssertVoidReturn (5 == [signature numberOfArguments], @"Expected number of arguments to be 5, was %d",
 							  [signature numberOfArguments]);
         
 		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];

@@ -28,11 +28,16 @@
 
 #import <Foundation/Foundation.h>
 #import <PGTS/PGTS.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+
 #import "BaseTen.h"
-#define Expect( X )	log4AssertValueReturn( X, nil, @"Expected " #X " to have been set.");
-#define ExpectR( X, RETVAL )	log4AssertValueReturn( X, RETVAL, @"Expected " #X " to have been set.");
-#define ExpectV( X ) log4AssertVoidReturn( X, @"Expected " #X " to have been set.");
+
+#define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to have been set.");
+#define ExpectR( X, RETVAL )	BXAssertValueReturn( X, RETVAL, @"Expected " #X " to have been set.");
+#define ExpectV( X ) BXAssertVoidReturn( X, @"Expected " #X " to have been set.");
+//C function variants.
+#define ExpectC( X ) Expect( X )
+#define ExpectCV( X ) ExpectV( X )
+#define ExpectCR( X, RETVAL ) ExpectR( X, RETVAL )
 
 
 @interface NSObject (BXPGAdditions)

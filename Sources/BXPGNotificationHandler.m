@@ -28,6 +28,7 @@
 
 #import "BXPGNotificationHandler.h"
 #import "BXPGAdditions.h"
+#import "BXLogger.h"
 
 
 @implementation BXPGNotificationHandler
