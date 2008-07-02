@@ -246,16 +246,6 @@ static NSArray* gManuallyNotifiedKeys = nil;
 		[netService resolveWithTimeout: 10.0];
 		[netService setDelegate: self];
 	}
-	
-	if (! moreServicesComing)
-	{
-		[mNetServiceBrowser stop];
-
-		mNetServiceTimer = [[NSTimer alloc] initWithFireDate: [NSDate dateWithTimeIntervalSinceNow: 10.0]
-													interval: 0.0 target: self selector: @selector (startDiscovery)
-													userInfo: nil repeats: NO];
-		[[NSRunLoop currentRunLoop] addTimer: mNetServiceTimer forMode: NSDefaultRunLoopMode];
-	}
 }
 
 - (void) netServiceDidResolveAddress: (NSNetService *) netService
