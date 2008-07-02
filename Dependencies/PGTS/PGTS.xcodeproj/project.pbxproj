@@ -81,7 +81,6 @@
 		5396AFA90DAEA6EB00BCDD39 /* PGTSResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 5396AFA50DAEA6EB00BCDD39 /* PGTSResultSet.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5396AFB50DAEA95A00BCDD39 /* PGTSResultSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5396AFB30DAEA95A00BCDD39 /* PGTSResultSet.mm */; };
 		53ED2FBD0E1AC2CC0095BE8B /* BXLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ED2FBB0E1AC2CC0095BE8B /* BXLogger.h */; };
-		53ED2FBE0E1AC2CC0095BE8B /* BXLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ED2FBC0E1AC2CC0095BE8B /* BXLogger.m */; };
 		53EED6E40E072A5500D66815 /* PGTSScannedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53EED6E30E072A5500D66815 /* PGTSScannedMemoryAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
@@ -501,7 +500,6 @@
 				531087720DD9F91A0061A468 /* PGTSCertificateVerificationDelegate.m in Sources */,
 				53087B740DDB16850041ACA5 /* PGTSNotification.m in Sources */,
 				5352E8E80DEA2A2800825067 /* PGTSProbes.d in Sources */,
-				53ED2FBE0E1AC2CC0095BE8B /* BXLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

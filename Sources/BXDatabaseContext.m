@@ -236,6 +236,7 @@ bx_query_during_reconnect ()
 		mCanConnect = YES;
 		mConnectsOnAwake = NO;
 		errorHandlerDelegate = self;
+		mSendsLockQueries = YES;
 		
 		mEntities = [[NSMutableSet alloc] init];
 		mRelationships = [[NSMutableSet alloc] init];
@@ -472,6 +473,7 @@ bx_query_during_reconnect ()
  * Instead, other users get information about locked rows.
  * If the context gets deallocated during a transaction, a ROLLBACK
  * is sent to the database.
+ * \note If autocommit is enabled, sending lock queries will be turned off. It may be re-enabled afterwards, though.
  * \param   aBool   Whether or not to use autocommit.
  */
 - (void) setAutocommits: (BOOL) aBool
@@ -479,6 +481,8 @@ bx_query_during_reconnect ()
 	if ([mDatabaseInterface connected])
 		[NSException raise: NSInvalidArgumentException format: @"Commit mode cannot be set after connecting."];
     mAutocommits = aBool;
+	if (mAutocommits)
+		[self setSendsLockQueries: NO];
 }
 
 /**
@@ -488,6 +492,27 @@ bx_query_during_reconnect ()
 - (BOOL) autocommits
 {
     return mAutocommits;
+}
+
+/**
+ * Set whether the context should try to lock rows before editing.
+ * BaseTen's controller subclasses notify the context in NSEditorRegistration's methods.
+ * This method controls whether the context pays attention to those messages.
+ * The context may still receive lock notifications from other contexts.
+ */
+- (void) setSendsLockQueries: (BOOL) aBool
+{
+	if ([mDatabaseInterface connected])
+		[NSException raise: NSInvalidArgumentException format: @"Lock mode cannot be set after connecting."];
+	mSendsLockQueries = aBool;
+}
+
+/**
+ * Whether the context tries to lock rows before editing.
+ */
+- (BOOL) sendsLockQueries
+{
+	return mSendsLockQueries;
 }
 
 /**
@@ -1532,6 +1557,7 @@ bx_query_during_reconnect ()
 		}
 		[[self notificationCenter] postNotification: notification];
 	}
+	[self setConnectionSetupManager: nil];
 }
 
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
@@ -1942,7 +1968,7 @@ bx_query_during_reconnect ()
 - (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectLockStatus) status
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
-	if ([self checkErrorHandling]) [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];    
+	if (mSendsLockQueries && [self checkErrorHandling]) [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];    
 }
 
 /**
@@ -1951,7 +1977,7 @@ bx_query_during_reconnect ()
  */
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey
 {
-    if ([self checkErrorHandling]) [mDatabaseInterface unlockObject: anObject key: aKey];
+    if (mSendsLockQueries && [self checkErrorHandling]) [mDatabaseInterface unlockObject: anObject key: aKey];
 }
 
 /**
@@ -2275,7 +2301,11 @@ bx_query_during_reconnect ()
 
 - (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject
 {
-	mConnectionSetupManager = anObject;
+	if (mConnectionSetupManager != anObject)
+	{
+		[mConnectionSetupManager release];
+		mConnectionSetupManager = [anObject retain];
+	}
 }
 
 - (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject

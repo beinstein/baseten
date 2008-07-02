@@ -35,6 +35,19 @@
 @class BXPGInterface;
 
 
+BX_EXPORT NSString* kBXPGUserInfoKey;
+BX_EXPORT NSString* kBXPGDelegateKey;
+BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
+
+
+@protocol BXPGResultSetPlaceholder <NSObject>
+- (BOOL) querySucceeded;
+- (id) userInfo;
+- (NSError *) error;
+@end
+
+
+
 @interface BXPGTransactionHandler : NSObject 
 {
 	BXPGInterface* mInterface; //Weak.
@@ -44,6 +57,7 @@
 	NSMutableSet* mObservedEntities;
 	NSMutableDictionary* mObservers;
 	NSMutableDictionary* mChangeHandlers;
+	NSMutableDictionary* mLockHandlers;
 	
 	NSUInteger mSavepointIndex;
 	NSError** mSyncErrorPtr;
@@ -85,6 +99,16 @@
 - (NSArray *) observedOids;
 
 
+- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete;
+- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
+		 connection: (PGTSConnection *) connection notifyConnection: (PGTSConnection *) notifyConnection;
+
+- (void) sendPlaceholderResultTo: (id) receiver callback: (SEL) callback 
+					   succeeded: (BOOL) didSucceed userInfo: (id) userInfo;
+- (void) forwardResult: (id) result;
+
 /**
  * \internal
  * Begins a transaction.
@@ -123,6 +147,7 @@
  * Use with multiple queries.
  */
 - (BOOL) beginSubTransactionIfNeeded: (NSError **) outError;
+- (void) beginAsyncSubTransactionFor: (id) delegate callback: (SEL) callback userInfo: (NSDictionary *) userInfo;
 
 /**
  * \internal
@@ -130,7 +155,16 @@
  */
 - (BOOL) endSubtransactionIfNeeded: (NSError **) outError;
 
+/**
+ * \internal
+ * Rollback a previously begun subtransaction.
+ */
+- (void) rollbackSubtransaction;
+
 - (BOOL) autocommits;
+
+- (BOOL) beginIfNeededAsync: (BOOL) async delegate: (id) delegate callback: (SEL) callback 
+				   userInfo: (id) userInfo outError: (NSError **) outError;
 @end
 
 
@@ -140,4 +174,3 @@
 
 @interface BXPGTransactionHandler (BXPGTrustHandler) <BXPGTrustHandler>
 @end
-

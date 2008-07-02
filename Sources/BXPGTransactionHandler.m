@@ -28,6 +28,7 @@
 
 #import <PGTS/PGTSAdditions.h>
 #import <PGTS/PGTSFunctions.h>
+#import <PGTS/private/PGTSHOM.h>
 
 #import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
@@ -42,6 +43,11 @@
 #import "BXPGClearLocksHandler.h"
 
 #import "BXEntityDescriptionPrivate.h"
+
+
+NSString* kBXPGUserInfoKey = @"kBXPGUserInfoKey";
+NSString* kBXPGDelegateKey = @"kBXPGDelegateKey";
+NSString* kBXPGCallbackSelectorStringKey = @"kBXPGCallbackSelectorStringKey";
 
 
 static NSString* 
@@ -62,7 +68,74 @@ SSLMode (enum BXSSLMode mode)
 }
 
 
+@interface BXPGResultSetPlaceholder : NSObject <BXPGResultSetPlaceholder>
+{
+	id mUserInfo;
+	BOOL mDidSucceed;
+}
+- (void) setUserInfo: (id) anObject;
+- (void) setQuerySucceeded: (BOOL) aBool;
+- (BOOL) querySucceeded;
+- (id) userInfo;
+@end
+
+
+@implementation BXPGResultSetPlaceholder
+- (void) setUserInfo: (id) anObject
+{
+	if (mUserInfo != anObject)
+	{
+		[mUserInfo release];
+		mUserInfo = [anObject retain];
+	}
+}
+
+- (void) setQuerySucceeded: (BOOL) aBool
+{
+	mDidSucceed = aBool;
+}
+
+- (BOOL) querySucceeded
+{
+	return mDidSucceed;
+}
+
+- (id) userInfo
+{
+	return mUserInfo;
+}
+
+- (NSError *) error
+{
+	return nil;
+}
+@end
+
+
 @implementation BXPGTransactionHandler
+- (void) sendPlaceholderResultTo: (id) receiver callback: (SEL) callback 
+					   succeeded: (BOOL) didSucceed userInfo: (id) userInfo
+{
+	id arg = [[[BXPGResultSetPlaceholder alloc] init] autorelease];
+	[arg setQuerySucceeded: didSucceed];
+	[arg setUserInfo: userInfo];
+	[receiver performSelector: callback withObject: arg];
+}
+
+- (void) forwardResult: (id) result
+{
+	ExpectV (result);
+	
+	NSDictionary* userInfoDict = [result userInfo];
+	
+	id receiver = [userInfoDict objectForKey: kBXPGDelegateKey];
+	id receiverUserInfo = [userInfoDict objectForKey: kBXPGUserInfoKey];
+	SEL callback = NSSelectorFromString ([userInfoDict objectForKey: kBXPGCallbackSelectorStringKey]);
+	
+	[result setUserInfo: receiverUserInfo];
+	[receiver performSelector: callback withObject: result];
+}
+
 - (void) dealloc
 {
 	[mCertificateVerificationDelegate release];
@@ -70,6 +143,7 @@ SSLMode (enum BXSSLMode mode)
 	[mObservedEntities release];
 	[mObservers release];
 	[mChangeHandlers release];
+	[mLockHandlers release];
 	[super dealloc];
 }
 
@@ -103,6 +177,50 @@ SSLMode (enum BXSSLMode mode)
 	return mAsync;
 }
 
+- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
+{
+	[super doesNotRecognizeSelector: _cmd];
+}
+
+- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
+		 connection: (PGTSConnection *) connection notifyConnection: (PGTSConnection *) notifyConnection
+{
+	ExpectV (entity);
+	ExpectV (whereClause);
+	
+	if (PQTRANS_INTRANS == [connection transactionStatus])
+	{
+		NSString* funcname = [[mLockHandlers objectForKey: entity] lockFunctionName];
+		
+		//Lock type
+		NSString* format = @"SELECT %@ ('U', %u, %@) FROM %@ WHERE %@";
+		if (willDelete)
+			format = @"SELECT %@ ('D', %u, %@) FROM %@ WHERE %@";
+		
+		//Table
+		NSError* localError = nil;
+		PGTSTableDescription* table = [mInterface tableForEntity: entity error: &localError];
+		BXAssertLog (table, @"Expected to get a table description. Error: %@", localError);
+		if (table)
+		{
+			//Get and sort the primary key fields.
+			NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
+			BXAssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
+			
+			NSMutableArray* quoted = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
+			[[pkeyFields PGTSVisit: self] qualifiedNameFor: nil into: quoted entity: entity connection: notifyConnection];
+			NSString* quotedNames = [quoted componentsJoinedByString: @", "];
+			NSString* entityName = [entity BXPGQualifiedName: notifyConnection];
+			
+			//Execute the query.
+			NSString* query = [NSString stringWithFormat: format, funcname, 0, quotedNames, entityName, whereClause];
+			[notifyConnection sendQuery: query delegate: nil callback: NULL parameterArray: parameters]; 			
+		}
+	}
+}
+
 #pragma mark Connecting
 
 - (void) didDisconnect
@@ -110,6 +228,7 @@ SSLMode (enum BXSSLMode mode)
 	[mObservedEntities removeAllObjects];
 	[mObservers removeAllObjects];
 	[mChangeHandlers removeAllObjects];
+	[mLockHandlers removeAllObjects];
 }
 
 - (NSString *) connectionString
@@ -241,43 +360,51 @@ SSLMode (enum BXSSLMode mode)
 
 #pragma mark Transactions
 
-- (BOOL) beginIfNeeded: (NSError **) outError
+- (BOOL) beginIfNeededAsync: (BOOL) async delegate: (id) delegate callback: (SEL) callback 
+				   userInfo: (id) userInfo outError: (NSError **) outError
 {
-	ExpectR (outError, NO);
-	
 	BOOL retval = NO;
 	PGTransactionStatusType status = [mConnection transactionStatus];
 	switch (status) 
 	{
 		case PQTRANS_INTRANS:
 			retval = YES;
+			if (async)
+				[self sendPlaceholderResultTo: delegate callback: callback succeeded: YES userInfo: userInfo];
 			break;
 			
 		case PQTRANS_IDLE:
 		{
 			NSString* query = @"BEGIN";
-			PGTSResultSet* res = [mConnection executeQuery: query];
-			
-			if (BASETEN_SENT_BEGIN_TRANSACTION_ENABLED ())
+			if (async)
 			{
-				char* message_s = strdup ([query UTF8String]);
-				BASETEN_SENT_BEGIN_TRANSACTION (mConnection, [res status], message_s);
-				free (message_s);
-			}			
-			
-			if ([res querySucceeded])
-				retval = YES;
-			else
-				*outError = [res error];
-			
+				[mConnection sendQuery: query delegate: delegate callback: callback 
+						parameterArray: nil userInfo: userInfo];
+			}
+			else 
+			{
+				PGTSResultSet* res = [mConnection executeQuery: query];
+				
+				if ([res querySucceeded])
+					retval = YES;
+				else
+					*outError = [res error];				
+			}
 			break;
 		}
 			
 		default:
+			[self sendPlaceholderResultTo: delegate callback: callback succeeded: NO userInfo: userInfo];
 			//FIXME: set an error.
 			break;
 	}
 	return retval;
+}
+
+- (BOOL) beginIfNeeded: (NSError **) outError
+{
+	ExpectR (outError, NO);
+	return [self beginIfNeededAsync: NO delegate: nil callback: NULL userInfo: nil outError: outError];
 }
 
 
@@ -315,10 +442,22 @@ SSLMode (enum BXSSLMode mode)
 }
 
 
+- (void) beginAsyncSubTransactionFor: (id) delegate callback: (SEL) callback userInfo: (NSDictionary *) userInfo
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
 - (BOOL) endSubtransactionIfNeeded: (NSError **) outError
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return NO;
+}
+
+
+- (void) rollbackSubtransaction
+{
+	[self doesNotRecognizeSelector: _cmd];
 }
 
 
@@ -355,6 +494,8 @@ SSLMode (enum BXSSLMode mode)
 			mObservers = [[NSMutableDictionary alloc] init];
 		if (! mChangeHandlers)
 			mChangeHandlers = [[NSMutableDictionary alloc] init];
+		if (! mLockHandlers)
+			mLockHandlers = [[NSMutableDictionary alloc] init];
 		
 		PGTSDatabaseDescription* database = [connection databaseDescription];
 		PGTSTableDescription* table = [mInterface tableForEntity: entity inDatabase: database error: error];
@@ -391,10 +532,20 @@ SSLMode (enum BXSSLMode mode)
 					[handler prepare];
 					
 					[mObservers setObject: handler forKey: nname];
-					if (0 == i)
-						[mChangeHandlers setObject: handler forKey: entity];
-					[handler release];
-					
+					switch (i)
+					{
+						case 0:
+							[mChangeHandlers setObject: handler forKey: entity];
+							break;
+							
+						case 1:
+							[mLockHandlers setObject: handler forKey: entity];
+							break;
+							
+						default:
+							break;
+					}
+					[handler release];					
 					i++;
 				}
 				

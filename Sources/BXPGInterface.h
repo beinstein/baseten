@@ -39,7 +39,10 @@
 {
     BXDatabaseContext* mContext; //Weak
 	NSMutableDictionary* mForeignKeys;
-	BXPGTransactionHandler* mTransactionHandler;	
+	BXPGTransactionHandler* mTransactionHandler;
+	
+	NSMutableSet* mLockedObjects;
+	BOOL mLocking;
 }
 
 - (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error;
@@ -50,8 +53,6 @@
 - (BXDatabaseContext *) databaseContext;
 - (BOOL) fetchForeignKeys: (NSError **) outError;
 - (void) setTransactionHandler: (BXPGTransactionHandler *) handler;
-- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
-		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete;
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
 					returningFaults: (BOOL) returnFaults class: (Class) aClass forUpdate: (BOOL) forUpdate error: (NSError **) error;
 - (NSArray *) observedOids;

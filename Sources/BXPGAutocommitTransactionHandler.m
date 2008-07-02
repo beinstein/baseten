@@ -35,6 +35,12 @@
 
 
 @implementation BXPGAutocommitTransactionHandler
+- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
+{
+	[self markLocked: entity whereClause: whereClause parameters: parameters willDelete: willDelete
+		  connection: mConnection notifyConnection: mConnection];
+}
 @end
 
 
@@ -125,7 +131,9 @@
 	{
 		retval = NO;
 		
-		NSString* query = @"COMMIT; SELECT baseten.ClearLocks ();";
+		NSString* query = @"COMMIT";
+		if ([[mInterface databaseContext] sendsLockQueries])
+			query = @"COMMIT; SELECT baseten.ClearLocks ();";
 		PGTSResultSet* res = [mConnection executeQuery: query];
 		*outError = [res error];
 		
@@ -154,7 +162,9 @@
 	//ROLLBACK handles all transaction states.
 	if (PQTRANS_IDLE != [mConnection transactionStatus])
 	{
-		NSString* query = @"ROLLBACK; SELECT baseten.ClearLocks ();";
+		NSString* query = @"ROLLBACK";
+		if ([[mInterface databaseContext] sendsLockQueries])
+			query = @"ROLLBACK; SELECT baseten.ClearLocks ();";
 		PGTSResultSet* res = [mConnection executeQuery: query];
 		*outError = [res error];
 		
@@ -181,9 +191,24 @@
 }
 
 
+- (void) beginAsyncSubTransactionFor: (id) delegate callback: (SEL) callback userInfo: (NSDictionary *) userInfo
+{
+	[self beginIfNeededAsync: YES delegate: delegate callback: callback userInfo: userInfo outError: NULL];
+}
+
+
 - (BOOL) endSubtransactionIfNeeded: (NSError **) outError
 {
 	return [self save: outError];
+}
+
+
+- (void) rollbackSubtransaction
+{
+	//FIXME: consider whether we need an error pointer here or just assert that the query succeeds.
+	NSError* localError = nil;
+	[self rollback: &localError];
+	BXAssertLog (! localError, @"Expected rollback to savepoint succeed. Error: %@", localError);
 }
 
 

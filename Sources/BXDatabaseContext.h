@@ -86,6 +86,7 @@
 	BOOL									mCanConnect;
 	BOOL									mDidDisconnect;
 	BOOL									mConnectsOnAwake;
+	BOOL									mSendsLockQueries;
 }
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
@@ -132,6 +133,9 @@
 
 - (void) setConnectsOnAwake: (BOOL) aBool;
 - (BOOL) connectsOnAwake;
+
+- (void) setSendsLockQueries: (BOOL) aBool;
+- (BOOL) sendsLockQueries;
 
 - (void) refreshObject: (BXDatabaseObject *) object mergeChanges: (BOOL) flag;
 

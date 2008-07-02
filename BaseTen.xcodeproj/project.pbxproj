@@ -114,6 +114,7 @@
 		5364BB790DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */; };
 		5364BB7E0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */; };
 		5364BB7F0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */; };
+		5364EF5C0E1B940A003D3DB6 /* BXLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364EF5B0E1B940A003D3DB6 /* BXLogger.m */; };
 		5373856E0DD9FB8D006F965A /* libPGTS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 537385690DD9FB0A006F965A /* libPGTS.a */; };
 		537F01620DDC580500498B93 /* BXPGLockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01600DDC580500498B93 /* BXPGLockHandler.h */; };
 		537F01630DDC580500498B93 /* BXPGLockHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 537F01610DDC580500498B93 /* BXPGLockHandler.mm */; };
@@ -183,41 +184,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 8D1AC9740486D14A00FE50C9;
 			remoteInfo = BaseTenPalette;
-		};
-		537385520DD9FAFF006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 530EC0030B4BCDB100DFC1CA;
-			remoteInfo = libLog4Cocoa;
-		};
-		537385540DD9FAFF006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 538177460D6342CB00A4CA72;
-			remoteInfo = "libLog4Cocoa + GC";
-		};
-		537385560DD9FAFF006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53C1DF180B4BD429007947D8;
-			remoteInfo = "AllTests (Upgraded)";
-		};
-		537385580DD9FAFF006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53C1DF1F0B4BD429007947D8;
-			remoteInfo = "Documentation (Upgraded)";
-		};
-		5373855A0DD9FAFF006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 530EBD140B4BBFAE00DFC1CA;
-			remoteInfo = Log4Cocoa;
 		};
 		537385680DD9FB0A006F965A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -309,6 +275,7 @@
 		5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGAutocommitTransactionHandler.m; path = Sources/BXPGAutocommitTransactionHandler.m; sourceTree = "<group>"; };
 		5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGManualCommitTransactionHandler.h; path = Sources/BXPGManualCommitTransactionHandler.h; sourceTree = "<group>"; };
 		5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGManualCommitTransactionHandler.m; path = Sources/BXPGManualCommitTransactionHandler.m; sourceTree = "<group>"; };
+		5364EF5B0E1B940A003D3DB6 /* BXLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXLogger.m; path = Sources/BXLogger.m; sourceTree = "<group>"; };
 		537E98370AAF538B00542F9C /* BXContainerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXContainerProxy.h; path = Sources/BXContainerProxy.h; sourceTree = "<group>"; };
 		537E98380AAF538B00542F9C /* BXContainerProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXContainerProxy.m; path = Sources/BXContainerProxy.m; sourceTree = "<group>"; };
 		537E98650AAF57E100542F9C /* BXSetProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetProxy.h; path = Sources/BXSetProxy.h; sourceTree = "<group>"; };
@@ -341,7 +308,6 @@
 		539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescriptionPrivate.h; path = Sources/BXEntityDescriptionPrivate.h; sourceTree = "<group>"; };
 		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
 		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseTen.icns; sourceTree = "<group>"; };
-		53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Log4Cocoa.xcodeproj; path = Dependencies/PGTS/Contrib/Log4Cocoa/Log4Cocoa.xcodeproj; sourceTree = "<group>"; };
 		53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescription.h; path = Sources/BXPropertyDescription.h; sourceTree = "<group>"; };
 		53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPropertyDescription.m; path = Sources/BXPropertyDescription.m; sourceTree = "<group>"; };
 		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
@@ -417,7 +383,6 @@
 				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				538678D30DE31BA0000C9A78 /* IOKit.framework */,
 				5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */,
-				53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */,
 				530ADC7609ED1BC1004A13C3 /* PGTS.xcodeproj */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
 				53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */,
@@ -470,6 +435,7 @@
 			children = (
 				53E068240DEAE02A0004363D /* BXProbes.d */,
 				53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */,
+				5364EF5B0E1B940A003D3DB6 /* BXLogger.m */,
 				53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */,
 				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
 				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
@@ -555,18 +521,6 @@
 			isa = PBXGroup;
 			children = (
 				5373852F0DD9FAC1006F965A /* BaseTenPalette.palette */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		5373854B0DD9FAFF006F965A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				537385530DD9FAFF006F965A /* libLog4Cocoa.a */,
-				537385550DD9FAFF006F965A /* libLog4Cocoa.a */,
-				537385570DD9FAFF006F965A /* AllTests */,
-				537385590DD9FAFF006F965A /* Documentation */,
-				5373855B0DD9FAFF006F965A /* Log4Cocoa.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -762,10 +716,6 @@
 					ProjectRef = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
 				},
 				{
-					ProductGroup = 5373854B0DD9FAFF006F965A /* Products */;
-					ProjectRef = 53B38ED80BC2809A00EAA5C3 /* Log4Cocoa.xcodeproj */;
-				},
-				{
 					ProductGroup = 5321F8750CF781ED00E663CE /* Products */;
 					ProjectRef = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
 				},
@@ -810,41 +760,6 @@
 			fileType = wrapper.cfbundle;
 			path = BaseTenPalette.palette;
 			remoteRef = 5373852E0DD9FAC1006F965A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		537385530DD9FAFF006F965A /* libLog4Cocoa.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libLog4Cocoa.a;
-			remoteRef = 537385520DD9FAFF006F965A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		537385550DD9FAFF006F965A /* libLog4Cocoa.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libLog4Cocoa.a;
-			remoteRef = 537385540DD9FAFF006F965A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		537385570DD9FAFF006F965A /* AllTests */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = AllTests;
-			remoteRef = 537385560DD9FAFF006F965A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		537385590DD9FAFF006F965A /* Documentation */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = Documentation;
-			remoteRef = 537385580DD9FAFF006F965A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5373855B0DD9FAFF006F965A /* Log4Cocoa.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = Log4Cocoa.framework;
-			remoteRef = 5373855A0DD9FAFF006F965A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		537385690DD9FB0A006F965A /* libPGTS.a */ = {
@@ -942,6 +857,7 @@
 				531A215D0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m in Sources */,
 				53E068260DEAE02A0004363D /* BXProbes.d in Sources */,
 				5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */,
+				5364EF5C0E1B940A003D3DB6 /* BXLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

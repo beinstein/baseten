@@ -67,6 +67,12 @@ static NSArray* gManuallyNotifiedKeys = nil;
     return self;
 }
 
+- (void) finalize
+{
+	[mNetServiceBrowser stop];
+	[super finalize];
+}
+
 - (void) dealloc
 {
 	[[mDatabaseContext notificationCenter] removeObserver: self];

@@ -40,15 +40,81 @@
 	return [mNotifyConnection databaseDescription];
 }
 
+
 - (PGTSConnection *) notifyConnection
 {
 	return mNotifyConnection;
 }
 
+
 - (void) dealloc
 {
 	[mNotifyConnection release];
 	[super dealloc];
+}
+
+
+- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
+{
+	[self markLocked: entity whereClause: whereClause parameters: parameters willDelete: willDelete
+		  connection: mConnection notifyConnection: mNotifyConnection];
+}
+
+
+- (BOOL) savepointAsync: (BOOL) async delegate: (id) delegate callback: (SEL) callback 
+			   userInfo: (id) userInfo outError: (NSError **) outError;
+{
+	BOOL retval = NO;
+	if (async)
+	{
+		NSDictionary* newUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									 NSStringFromSelector (callback), kBXPGCallbackSelectorStringKey,
+									 delegate, kBXPGDelegateKey,
+									 userInfo, kBXPGUserInfoKey,
+									 nil];
+		[self beginIfNeededAsync: YES delegate: self callback: @selector (begunTransaction:) 
+						userInfo: newUserInfo outError: NULL];
+	}
+	else if ((retval = [self beginIfNeeded: outError]))
+	{
+		PGTransactionStatusType status = [mConnection transactionStatus];
+		if (PQTRANS_INTRANS == status)
+		{
+			NSString* query = [self savepointQuery];
+			PGTSResultSet* res = [mConnection executeQuery: query];
+			if ([res querySucceeded])
+				retval = YES;
+			else
+				*outError = [res error];
+		}
+		else
+		{
+			retval = NO;
+			//FIXME: handle the error.
+		}
+	}
+	return retval;
+}
+
+
+- (void) begunTransaction: (id <BXPGResultSetPlaceholder>) placeholderResult
+{
+	if ([placeholderResult querySucceeded])
+	{
+		[mConnection sendQuery: [self savepointQuery] delegate: self callback: @selector (createdSavepoint:)
+				parameterArray: nil userInfo: [placeholderResult userInfo]];
+	}
+	else
+	{
+		[self forwardResult: placeholderResult];
+	}
+}
+
+
+- (void) createdSavepoint: (PGTSResultSet *) res
+{
+	[self forwardResult: res];
 }
 @end
 
@@ -75,7 +141,8 @@
 
 - (void) disconnect
 {
-	[mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+	if ([[mInterface databaseContext] sendsLockQueries])
+		[mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
 	[mNotifyConnection disconnect];
 	[mConnection disconnect];
 	[self didDisconnect];
@@ -210,8 +277,12 @@
 		
 		PGTSResultSet* res = nil;
 		NSError* localError = nil;
-		res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
-		if ((localError = [res error])) *outError = localError;
+
+		if ([[mInterface databaseContext] sendsLockQueries])
+		{
+			res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+			if ((localError = [res error])) *outError = localError;
+		}
 		
 		NSString* query = @"COMMIT";
 		res = [mConnection executeQuery: query];
@@ -244,8 +315,12 @@
 	{
 		PGTSResultSet* res = nil;
 		NSError* localError = nil;
-		res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
-		if ((localError = [res error])) *outError = localError;
+		
+		if ([[mInterface databaseContext] sendsLockQueries])
+		{
+			res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+			if ((localError = [res error])) *outError = localError;
+		}
 		
 		NSString* query = @"ROLLBACK";
 		res = [mConnection executeQuery: query];
@@ -265,34 +340,7 @@
 - (BOOL) savepointIfNeeded: (NSError **) outError
 {
 	ExpectR (outError, NO);
-	
-	BOOL retval = NO;
-	if ((retval = [self beginIfNeeded: outError]))
-	{
-		PGTransactionStatusType status = [mConnection transactionStatus];
-		if (PQTRANS_INTRANS == status)
-		{
-			NSString* query = [self savepointQuery];
-			PGTSResultSet* res = [mConnection executeQuery: query];
-			
-			if (BASETEN_SENT_SAVEPOINT_ENABLED ())
-			{
-				char* message_s = strdup ([query UTF8String]);
-				BASETEN_SENT_SAVEPOINT (mConnection, [res status], message_s);
-				free (message_s);
-			}
-			
-			if ([res querySucceeded])
-				retval = YES;
-			else
-				*outError = [res error];
-		}
-		else
-		{
-			//FIXME: handle the error.
-		}
-	}
-	return retval;
+	return [self savepointAsync: NO delegate: nil callback: NULL userInfo: nil outError: outError];
 }
 
 
@@ -333,9 +381,24 @@
 }
 
 
+- (void) beginAsyncSubTransactionFor: (id) delegate callback: (SEL) callback userInfo: (NSDictionary *) userInfo
+{
+	[self savepointAsync: YES delegate: delegate callback: callback userInfo: userInfo outError: NULL];
+}
+
+
 - (BOOL) endSubtransactionIfNeeded: (NSError **) outError
 {
 	return YES;
+}
+
+
+- (void) rollbackSubtransaction
+{
+	//FIXME: consider whether we need an error pointer here or just assert that the query succeeds.
+	NSError* localError = nil;
+	[self rollbackToLastSavepoint: &localError];
+	BXAssertLog (! localError, @"Expected rollback to savepoint succeed. Error: %@", localError);
 }
 
 

@@ -305,12 +305,7 @@ bx_error_during_rollback (id self, NSError* error)
     if ((self = [super init]))
     {
         mContext = aContext; //Weak
-#if 0
-        mAutocommits = YES;
-        mLogsQueries = NO;
-        mClearedLocks = NO;
-        mState = kBXPGQueryIdle;
-#endif
+		mLockedObjects = [[NSMutableSet alloc] init];
     }
     return self;
 }
@@ -328,13 +323,14 @@ bx_error_during_rollback (id self, NSError* error)
 {
 	[mForeignKeys release];
 	[mTransactionHandler release];
+	[mLockedObjects release];
 	[super dealloc];
 }
 
 
 - (NSString *) description
 {
-	return [NSString stringWithFormat: @"<%@: %p (%@)", [self class], self, mTransactionHandler];
+	return [NSString stringWithFormat: @"<%@: %p (%@)>", [self class], self, mTransactionHandler];
 }
 
 
@@ -498,7 +494,7 @@ error:
 	
 	if ([res querySucceeded])
 	{
-		[self markLocked: entity whereClause: whereClause parameters: parameters willDelete: NO];
+		[mTransactionHandler markLocked: entity whereClause: whereClause parameters: parameters willDelete: NO];
 		[mTransactionHandler checkSuperEntities: entity];
 		NSArray* objectIDs = ObjectIDs (entity, res);
 
@@ -590,7 +586,7 @@ error:
 	{
 		retval = ObjectIDs (entity, res);
 		[mTransactionHandler checkSuperEntities: entity];
-		[self markLocked: entity whereClause: whereClause parameters: parameters willDelete: YES];
+		[mTransactionHandler markLocked: entity whereClause: whereClause parameters: parameters willDelete: YES];
 	}
 	else
 	{
@@ -620,7 +616,7 @@ error:
 		NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
 		NSString* views [4] = {@"onetomany", @"onetoone", @"manytomany", @"relationship_v"};
 		
-		//Entities between views and between tables and views are stored in a different place.
+		//Relationships between views and between tables and views are stored in a different place.
 		//If given entity is a view, we only need to check those.
 		int i = 0;
 		if ([entity isView])
@@ -849,28 +845,54 @@ bail:
 		   lockType: (enum BXObjectLockStatus) type
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
-	BXDatabaseObjectID* objectID = [anObject objectID];
-	BXEntityDescription* entity = [objectID entity];
+	if (mLocking)
+		[sender BXLockAcquired: NO object: anObject error: nil]; //FIXME: set the error.
+	else if ([mLockedObjects containsObject: anObject])
+		[sender BXLockAcquired: YES object: anObject error: nil];
+	else
+	{
+		mLocking = YES;
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  sender, kBXPGLockerKey,
+								  anObject, kBXPGObjectKey,
+								  nil];
+		[mTransactionHandler beginAsyncSubTransactionFor: self callback: @selector (begunForLocking:) userInfo: userInfo];
+	}
+}
 
-	//FIXME: error handling.
-	NSError* localError = nil;
-	[mTransactionHandler beginSubTransactionIfNeeded: &localError]; //FIXME: make this async.
-	PGTSConnection* connection = [mTransactionHandler connection];
-	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
-	NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
-	NSString* fromClause = [entity BXPGQualifiedName: connection];
-	NSString* queryFormat = @"SELECT null FROM ONLY %@ WHERE %@ FOR UPDATE NOWAIT";
-	NSString* queryString = [NSString stringWithFormat: queryFormat, fromClause, whereClause];
+- (void) begunForLocking: (id <BXPGResultSetPlaceholder>) placeholderResult
+{
+	NSDictionary* userInfo = [placeholderResult userInfo];
+	id <BXObjectAsynchronousLocking> sender = [userInfo objectForKey: kBXPGLockerKey];
+	if ([placeholderResult querySucceeded])
+	{
+		BXDatabaseObject* object = [userInfo objectForKey: kBXPGObjectKey];		
+		BXDatabaseObjectID* objectID = [object objectID];
+		BXEntityDescription* entity = [objectID entity];
 
-	NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
-	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  sender, kBXPGLockerKey,
-							  anObject, kBXPGObjectKey,
-							  whereClause, kBXPGWhereClauseKey,
-							  parameters, kBXPGParametersKey,
-							  nil];
-	[connection sendQuery: queryString delegate: self callback: @selector (lockedRow:) 
-			parameterArray: parameters userInfo: userInfo];
+		PGTSConnection* connection = [mTransactionHandler connection];
+		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+		NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
+		NSString* fromClause = [entity BXPGQualifiedName: connection];
+		NSString* queryFormat = @"SELECT null FROM ONLY %@ WHERE %@ FOR UPDATE NOWAIT";
+		NSString* queryString = [NSString stringWithFormat: queryFormat, fromClause, whereClause];
+		NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
+
+		NSDictionary* newUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									 sender, kBXPGLockerKey,
+									 object, kBXPGObjectKey,
+									 whereClause, kBXPGWhereClauseKey,
+									 parameters, kBXPGParametersKey,
+									 nil];
+		[connection sendQuery: queryString delegate: self callback: @selector (lockedRow:) 
+			   parameterArray: parameters userInfo: newUserInfo];	
+	}
+	else
+	{
+		[sender BXLockAcquired: NO object: nil error: [placeholderResult error]];
+		[mTransactionHandler rollbackSubtransaction];
+		mLocking = NO;
+	}
 }
 
 
@@ -882,53 +904,18 @@ bail:
 	
 	if ([res querySucceeded])
 	{
+		[mLockedObjects addObject: object];
 		NSString* whereClause = [userInfo objectForKey: kBXPGWhereClauseKey];
 		NSArray* parameters = [userInfo objectForKey: kBXPGParametersKey];
 		[sender BXLockAcquired: YES object: object error: nil];
-		[self markLocked: [object entity] whereClause: whereClause parameters: parameters willDelete: NO];
+		[mTransactionHandler markLocked: [object entity] whereClause: whereClause parameters: parameters willDelete: NO];
 	}
 	else
 	{
-		//FIXME: end the transaction?
 		[sender BXLockAcquired: NO object: nil error: [res error]];
+		[mTransactionHandler rollbackSubtransaction];
 	}
-}
-
-
-//FIXME: move this to the transaction handler.
-- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
-		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
-{
-#if 0
-	ExpectV (entity);
-	ExpectV (whereClause);
-	BXAssertVoidReturn (PQTRANS_IDLE == [notifyConnection transactionStatus], 
-						  @"Expected notifyConnection not to have transaction.");
-	NSString* funcname = nil; //FIXME: get this somehow.
-	
-	//Lock type
-	NSString* format = @"SELECT %@ ('U', %u, %@) FROM %@ WHERE %@";
-	if (willDelete)
-		format = @"SELECT %@ ('D', %u, %@) FROM %@ WHERE %@";
-
-	//Table
-	NSError* localError = nil;
-	PGTSTableDescription* table = [self tableForEntity: entity error: &localError];
-	//FIXME: handle the error.
-	
-	//Get and sort the primary key fields.
-	NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
-	BXAssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
-	
-	NSMutableArray* quoted = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
-	[[pkeyFields PGTSVisit: self] qualifiedNameFor: nil into: quoted entity: entity connection: mNotifyConnection];
-	NSString* quotedNames = [quoted componentsJoinedByString: @", "];
-	NSString* entityName = [entity BXPGQualifiedName: notifyConnection];
-	
-	//Execute the query.
-	NSString* query = [NSString stringWithFormat: format, funcname, 0, quotedNames, entityName, whereClause];
-	[notifyConnection sendQuery: query delegate: nil callback: NULL parameterArray: parameters]; 
-#endif
+	mLocking = NO;
 }
 
 
@@ -938,7 +925,17 @@ bail:
  */
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey
 {
-    //FIXME: write this.
+	if ([mLockedObjects containsObject: anObject])
+	{
+		[mLockedObjects removeObject: anObject];
+	
+		NSError* localError = nil;
+		if (! [mTransactionHandler endSubtransactionIfNeeded: &localError])
+		{
+			BXLogError (@"Subtransaction failed! Error: %@", localError);
+			[mTransactionHandler rollbackSubtransaction];
+		}
+	}
 }
 
 
@@ -1007,7 +1004,13 @@ bail:
 
 - (BOOL) save: (NSError **) error
 {
-	return [mTransactionHandler save: error];
+	BOOL retval = NO;
+	if ([mTransactionHandler save: error])
+	{
+		[mLockedObjects removeAllObjects];
+		retval = YES;
+	}
+	return retval;
 }
 
 
@@ -1015,6 +1018,7 @@ bail:
 {
     if ([self connected])
     {
+		[mLockedObjects removeAllObjects];
 		NSError* localError = nil;
 		[mTransactionHandler rollback: &localError];
 		if (localError) bx_error_during_rollback (self, localError);

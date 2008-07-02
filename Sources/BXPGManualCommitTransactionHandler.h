@@ -37,4 +37,7 @@
 	BOOL mHandlingConnectionLoss;
 }
 - (PGTSConnection *) notifyConnection;
+
+- (BOOL) savepointAsync: (BOOL) async delegate: (id) delegate callback: (SEL) callback 
+			   userInfo: (id) userInfo outError: (NSError **) outError;
 @end

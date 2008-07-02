@@ -31,7 +31,6 @@ provider BaseTen
 {
 	probe received_pg_notice (void* connection, char* message);
 
-	probe sent_begin_transaction (void* connection, long status, char* name);
 	probe sent_rollback_transaction (void* connection, long status, char* name);
 	probe sent_commit_transaction (void* connection, long status, char* name);
 	probe sent_savepoint (void* connection, long status, char* name);

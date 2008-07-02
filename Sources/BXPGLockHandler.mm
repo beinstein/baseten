@@ -28,7 +28,9 @@
 
 #import "BXPGLockHandler.h"
 #import "BXDatabaseObjectIDPrivate.h"
+#import "BXLogger.h"
 #import <PGTS/PGTSAdditions.h>
+#import <PGTS/PGTSFunctions.h>
 #import <tr1/unordered_map>
 #import <PGTS/private/PGTSScannedMemoryAllocator.h>
 
@@ -46,6 +48,30 @@ typedef std::tr1::unordered_map <Oid, LockStruct,
 
 
 @implementation BXPGLockHandler
+- (void) dealloc
+{
+	[mLockFunctionName release];
+	[super dealloc];
+}
+
+- (NSString *) lockFunctionName
+{
+	if (! mLockFunctionName)
+	{
+		NSError* localError = nil;
+		PGTSTableDescription* table = [mInterface tableForEntity: mEntity error: &localError];
+		BXAssertValueReturn (table, @"Expected to get a table description. Error: %@", localError);
+		if (table)
+		{
+			PGTSResultSet* res = [mConnection executeQuery: @"SELECT baseten.LockNotifyFunctionName ($1::OID) AS fname" 
+												parameters: PGTSOidAsObject ([table oid])];
+			[res advanceRow];
+			mLockFunctionName = [[res valueForKey: @"fname"] retain];
+		}
+	}
+	return mLockFunctionName;
+}
+
 - (void) handleNotification: (PGTSNotification *) notification
 {
 	int backendPID = [mConnection backendPID];
