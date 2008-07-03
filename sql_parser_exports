@@ -1,0 +1,5 @@
+_psql_scan_setup
+_psql_scan_finish
+_psql_scan
+_psql_scan_slash_command_end
+_psql_scan_slash_pushback
