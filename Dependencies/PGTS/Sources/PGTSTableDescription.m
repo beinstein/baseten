@@ -298,6 +298,7 @@ PrimaryKey (NSArray* uIndexes)
                     [index setFields: indexFields];
                     [index setTable: self];
                     [self setUniqueIndexes: [NSArray arrayWithObject: index]];
+                    [index release];
                 }
             }
             default:
