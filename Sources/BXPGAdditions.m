@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import <PGTS/PGTSAdditions.h>
+#import "PGTSAdditions.h"
 #import "BXPGAdditions.h"
 #import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"

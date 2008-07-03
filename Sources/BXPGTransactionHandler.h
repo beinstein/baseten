@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTS.h>
+#import "PGTS.h"
 #import "BXPGInterface.h"
 #import "BXPGCertificateVerificationDelegate.h"
 

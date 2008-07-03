@@ -1,0 +1,398 @@
+diff -urN postgresql-8.2.4/src/include/libpq/pqcomm.h postgresql-8.2.4-tsnorri/src/include/libpq/pqcomm.h
+--- postgresql-8.2.4/src/include/libpq/pqcomm.h	2006-06-08 01:24:45.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/include/libpq/pqcomm.h	2007-04-05 11:12:02.000000000 +0300
+@@ -147,19 +147,6 @@
+ #define MAX_STARTUP_PACKET_LENGTH 10000
+ 
+ 
+-/* These are the authentication request codes sent by the backend. */
+-
+-#define AUTH_REQ_OK			0	/* User is authenticated  */
+-#define AUTH_REQ_KRB4		1	/* Kerberos V4. Not supported any more. */
+-#define AUTH_REQ_KRB5		2	/* Kerberos V5 */
+-#define AUTH_REQ_PASSWORD	3	/* Password */
+-#define AUTH_REQ_CRYPT		4	/* crypt password */
+-#define AUTH_REQ_MD5		5	/* md5 password */
+-#define AUTH_REQ_SCM_CREDS	6	/* transfer SCM credentials */
+-
+-typedef uint32 AuthRequest;
+-
+-
+ /*
+  * A client can also send a cancel-current-operation request to the postmaster.
+  * This is uglier than sending it directly to the client's backend, but it
+diff -urN postgresql-8.2.4/src/interfaces/libpq/blibpqdll.def postgresql-8.2.4-tsnorri/src/interfaces/libpq/blibpqdll.def
+--- postgresql-8.2.4/src/interfaces/libpq/blibpqdll.def	2007-02-07 06:44:09.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/blibpqdll.def	2007-04-05 11:12:02.000000000 +0300
+@@ -137,6 +137,8 @@
+     _PQdescribePortal          @ 134
+     _PQsendDescribePrepared    @ 135
+     _PQsendDescribePortal      @ 136
++    _PQauthRequest             @ 137
++    _PQerrorCode               @ 138
+ 
+ ; Aliases for MS compatible names
+     PQconnectdb               = _PQconnectdb
+@@ -275,3 +277,5 @@
+     PQdescribePortal          = _PQdescribePortal
+     PQsendDescribePrepared    = _PQsendDescribePrepared
+     PQsendDescribePortal      = _PQsendDescribePortal
++    PQauthRequest             = _PQauthRequest
++    PQerrorCode               = _PQerrorCode
+diff -urN postgresql-8.2.4/src/interfaces/libpq/exports.txt postgresql-8.2.4-tsnorri/src/interfaces/libpq/exports.txt
+--- postgresql-8.2.4/src/interfaces/libpq/exports.txt	2006-08-18 22:52:39.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/exports.txt	2007-04-05 11:12:02.000000000 +0300
+@@ -136,3 +136,5 @@
+ PQdescribePortal          134
+ PQsendDescribePrepared    135
+ PQsendDescribePortal      136
++PQauthRequest             137
++PQerrorCode               138
+diff -urN postgresql-8.2.4/src/interfaces/libpq/fe-connect.c postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-connect.c
+--- postgresql-8.2.4/src/interfaces/libpq/fe-connect.c	2006-11-21 18:28:00.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-connect.c	2007-04-05 11:16:08.000000000 +0300
+@@ -911,6 +911,9 @@
+ 				}
+ 				break;
+ 
++            case PGRES_POLLING_ACTIVE:
++                break;
++
+ 			default:
+ 				/* Just in case we failed to set it in PQconnectPoll */
+ 				conn->status = CONNECTION_BAD;
+@@ -998,6 +1001,8 @@
+ 
+ 			/* Special cases: proceed without waiting. */
+ 		case CONNECTION_SSL_STARTUP:
++        case CONNECTION_SSL_CONTINUE:
++        case CONNECTION_AUTH_START:
+ 		case CONNECTION_NEEDED:
+ 			break;
+ 
+@@ -1305,13 +1310,17 @@
+ 		case CONNECTION_SSL_STARTUP:
+ 			{
+ #ifdef USE_SSL
+-				PostgresPollingStatusType pollres;
+-
+ 				/*
+ 				 * On first time through, get the postmaster's response to our
+ 				 * SSL negotiation packet.
+ 				 */
+-				if (conn->ssl == NULL)
++				if (conn->ssl != NULL)
++                {
++                    /* We shouldn't end up here */
++                    conn->status = CONNECTION_SSL_CONTINUE;
++                    return PGRES_POLLING_WRITING;
++                }
++                else
+ 				{
+ 					/*
+ 					 * We use pqReadData here since it has the logic to
+@@ -1344,6 +1353,9 @@
+ 						/* Do one-time setup; this creates conn->ssl */
+ 						if (pqsecure_initialize(conn) == -1)
+ 							goto error_return;
++
++                        conn->status = CONNECTION_SSL_CONTINUE;
++                        return pqsecure_prepare_client (conn);
+ 					}
+ 					else if (SSLok == 'N')
+ 					{
+@@ -1390,10 +1402,18 @@
+ 					}
+ 				}
+ 
++#else							/* !USE_SSL */
++				/* can't get here */
++				goto error_return;
++#endif   /* USE_SSL */
++            }
++        case CONNECTION_SSL_CONTINUE:
++            {
++#ifdef USE_SSL
+ 				/*
+ 				 * Begin or continue the SSL negotiation process.
+ 				 */
+-				pollres = pqsecure_open_client(conn);
++				PostgresPollingStatusType pollres = pqsecure_open_client(conn);
+ 				if (pollres == PGRES_POLLING_OK)
+ 				{
+ 					/* SSL handshake done, ready to send startup packet */
+@@ -1435,7 +1455,6 @@
+ 				char		beresp;
+ 				int			msgLength;
+ 				int			avail;
+-				AuthRequest areq;
+ 
+ 				/*
+ 				 * Scan the message from current point (note that if we find
+@@ -1622,14 +1641,24 @@
+ 
+ 				/* It is an authentication request. */
+ 				/* Get the type of request. */
+-				if (pqGetInt((int *) &areq, 4, conn))
++                /* If credentials are needed but haven't been supplied, return. */
++				if (pqGetInt((int *) &conn->areq, 4, conn))
+ 				{
+ 					/* We'll come back when there are more data */
+ 					return PGRES_POLLING_READING;
+ 				}
++                else if (AUTH_REQ_OK != conn->areq && NULL == conn->pguser)
++                {
++                    conn->status = CONNECTION_AUTH_START;
++                    return PGRES_POLLING_ACTIVE;
++                }
++	            /* Otherwise fall through. */
++    		}
+ 
++        case CONNECTION_AUTH_START:
++            {
+ 				/* Get the password salt if there is one. */
+-				if (areq == AUTH_REQ_MD5)
++				if (conn->areq == AUTH_REQ_MD5)
+ 				{
+ 					if (pqGetnchar(conn->md5Salt,
+ 								   sizeof(conn->md5Salt), conn))
+@@ -1638,7 +1667,7 @@
+ 						return PGRES_POLLING_READING;
+ 					}
+ 				}
+-				if (areq == AUTH_REQ_CRYPT)
++				if (conn->areq == AUTH_REQ_CRYPT)
+ 				{
+ 					if (pqGetnchar(conn->cryptSalt,
+ 								   sizeof(conn->cryptSalt), conn))
+@@ -1664,10 +1693,11 @@
+ 				 * XXX fe-auth.c has not been fixed to support PQExpBuffers,
+ 				 * so:
+ 				 */
+-				if (pg_fe_sendauth(areq, conn, conn->pghost, conn->pgpass,
++				if (pg_fe_sendauth(conn->areq, conn, conn->pghost, conn->pgpass,
+ 								   conn->errorMessage.data) != STATUS_OK)
+ 				{
+ 					conn->errorMessage.len = strlen(conn->errorMessage.data);
++                    conn->errorCode = PGCONN_AUTH_FAILURE;
+ 					goto error_return;
+ 				}
+ 				conn->errorMessage.len = strlen(conn->errorMessage.data);
+@@ -1680,7 +1710,7 @@
+ 				if (pqFlush(conn))
+ 					goto error_return;
+ 
+-				if (areq == AUTH_REQ_OK)
++				if (conn->areq == AUTH_REQ_OK)
+ 				{
+ 					/* We are done with authentication exchange */
+ 					conn->status = CONNECTION_AUTH_OK;
+@@ -1725,6 +1755,8 @@
+ 					if (res->resultStatus != PGRES_FATAL_ERROR)
+ 						printfPQExpBuffer(&conn->errorMessage,
+ 										  libpq_gettext("unexpected message from server during startup\n"));
++                    else
++                        conn->errorCode = PGCONN_AUTH_FAILURE;
+ 
+ 					/*
+ 					 * if the resultStatus is FATAL, then conn->errorMessage
+@@ -1860,6 +1893,8 @@
+ 	conn->std_strings = false;	/* unless server says differently */
+ 	conn->verbosity = PQERRORS_DEFAULT;
+ 	conn->sock = -1;
++    conn->areq = '\0';
++    conn->errorCode = PGCONN_NO_ERROR;
+ #ifdef USE_SSL
+ 	conn->allow_ssl_try = true;
+ 	conn->wait_ssl_try = false;
+@@ -3308,6 +3342,14 @@
+ 	return conn->status;
+ }
+ 
++PGConnectionErrorCode
++PQerrorCode(const PGconn *conn)
++{
++    if (!conn)
++        return PGCONN_NO_ERROR;
++    return conn->errorCode;
++}
++
+ PGTransactionStatusType
+ PQtransactionStatus(const PGconn *conn)
+ {
+@@ -3495,6 +3537,12 @@
+ 	return old;
+ }
+ 
++AuthRequest
++PQauthRequest(PGconn *conn)
++{
++    return conn->areq;
++}
++
+ /*
+  * The default notice message receiver just gets the standard notice text
+  * and sends it to the notice processor.  This two-level setup exists
+diff -urN postgresql-8.2.4/src/interfaces/libpq/fe-protocol3.c postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-protocol3.c
+--- postgresql-8.2.4/src/interfaces/libpq/fe-protocol3.c	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-protocol3.c	2007-04-05 11:12:02.000000000 +0300
+@@ -847,6 +847,11 @@
+ 	 */
+ 	if (isError)
+ 	{
++        char* sqlState = PQresultErrorField (res, PG_DIAG_SQLSTATE);
++        //FIXME: the different states should be inside a switch statement but this is a hack anyway.
++        if (0 == strcmp ("28000", sqlState))
++            conn->errorCode = PGCONN_AUTH_FAILURE;
++
+ 		res->errMsg = pqResultStrdup(res, workBuf.data);
+ 		if (!res->errMsg)
+ 			goto fail;
+diff -urN postgresql-8.2.4/src/interfaces/libpq/fe-secure.c postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-secure.c
+--- postgresql-8.2.4/src/interfaces/libpq/fe-secure.c	2006-10-06 20:14:01.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/fe-secure.c	2007-04-05 11:12:02.000000000 +0300
+@@ -193,10 +193,10 @@
+ }
+ 
+ /*
+- *	Attempt to negotiate secure session.
++ *  Set conn->ssl.
+  */
+ PostgresPollingStatusType
+-pqsecure_open_client(PGconn *conn)
++pqsecure_prepare_client(PGconn *conn)
+ {
+ #ifdef USE_SSL
+ 	/* First time through? */
+@@ -221,7 +221,21 @@
+ 		 * detect whether client_cert_cb() has stored a message.
+ 		 */
+ 		resetPQExpBuffer(&conn->errorMessage);
+-	}
++    }
++    return PGRES_POLLING_ACTIVE;
++#else
++	/* shouldn't get here */
++	return PGRES_POLLING_FAILED;
++#endif
++}
++
++/*
++ *	Attempt to negotiate secure session.
++ */
++PostgresPollingStatusType
++pqsecure_open_client(PGconn *conn)
++{
++#ifdef USE_SSL
+ 	/* Begin or continue the actual handshake */
+ 	return open_client_SSL(conn);
+ #else
+@@ -892,6 +906,8 @@
+ 										  libpq_gettext("SSL error: %s\n"),
+ 										  err);
+ 						SSLerrfree(err);
++
++                        conn->errorCode = PGCONN_SSL_ERROR;
+ 					}
+ 					close_SSL(conn);
+ 					return PGRES_POLLING_FAILED;
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpq-fe.h postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-fe.h
+--- postgresql-8.2.4/src/interfaces/libpq/libpq-fe.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-fe.h	2007-04-05 11:12:02.000000000 +0300
+@@ -53,11 +53,20 @@
+ 								 * backend startup. */
+ 	CONNECTION_SETENV,			/* Negotiating environment. */
+ 	CONNECTION_SSL_STARTUP,		/* Negotiating SSL. */
+-	CONNECTION_NEEDED			/* Internal state: connect() needed */
++	CONNECTION_NEEDED,			/* Internal state: connect() needed */
++    CONNECTION_SSL_CONTINUE,
++    CONNECTION_AUTH_START
+ } ConnStatusType;
+ 
+ typedef enum
+ {
++    PGCONN_NO_ERROR = 0,
++    PGCONN_AUTH_FAILURE,
++    PGCONN_SSL_ERROR
++} PGConnectionErrorCode;
++
++typedef enum
++{
+ 	PGRES_POLLING_FAILED = 0,
+ 	PGRES_POLLING_READING,		/* These two indicate that one may	  */
+ 	PGRES_POLLING_WRITING,		/* use select before polling again.   */
+@@ -99,6 +108,20 @@
+ 	PQERRORS_VERBOSE			/* all the facts, ma'am */
+ } PGVerbosity;
+ 
++
++/* These are the authentication request codes sent by the backend. */
++typedef enum
++{
++    AUTH_REQ_OK = 0,	/* User is authenticated  */
++    AUTH_REQ_KRB4,      /* Kerberos V4. Not supported any more. */
++    AUTH_REQ_KRB5,      /* Kerberos V5 */
++    AUTH_REQ_PASSWORD,  /* Password */
++    AUTH_REQ_CRYPT,     /* crypt password */
++    AUTH_REQ_MD5,       /* md5 password */
++    AUTH_REQ_SCM_CREDS  /* transfer SCM credentials */
++} AuthRequest;
++
++
+ /* PGconn encapsulates a connection to the backend.
+  * The contents of this struct are not supposed to be known to applications.
+  */
+@@ -265,6 +288,8 @@
+ extern int	PQbackendPID(const PGconn *conn);
+ extern int	PQclientEncoding(const PGconn *conn);
+ extern int	PQsetClientEncoding(PGconn *conn, const char *encoding);
++extern AuthRequest PQauthRequest(PGconn *conn);
++extern PGConnectionErrorCode PQerrorCode(const PGconn *conn);
+ 
+ /* Get the OpenSSL structure associated with a connection. Returns NULL for
+  * unencrypted connections or if any other TLS library is in use. */
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpq-int.h postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-int.h
+--- postgresql-8.2.4/src/interfaces/libpq/libpq-int.h	2006-10-04 03:30:13.000000000 +0300
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpq-int.h	2007-04-05 11:12:02.000000000 +0300
+@@ -284,6 +284,7 @@
+ 
+ 	/* Status indicators */
+ 	ConnStatusType status;
++    PGConnectionErrorCode errorCode;
+ 	PGAsyncStatusType asyncStatus;
+ 	PGTransactionStatusType xactStatus; /* never changes to ACTIVE */
+ 	PGQueryClass queryclass;
+@@ -310,6 +311,7 @@
+ 	int			addrlist_family;	/* needed to know how to free addrlist */
+ 	PGSetenvStatusType setenv_state;	/* for 2.0 protocol only */
+ 	const PQEnvironmentOption *next_eo;
++    AuthRequest areq;
+ 
+ 	/* Miscellaneous stuff */
+ 	int			be_pid;			/* PID of backend --- needed for cancels */
+@@ -485,6 +487,7 @@
+ 
+ extern int	pqsecure_initialize(PGconn *);
+ extern void pqsecure_destroy(void);
++extern PostgresPollingStatusType pqsecure_prepare_client(PGconn *);
+ extern PostgresPollingStatusType pqsecure_open_client(PGconn *);
+ extern void pqsecure_close(PGconn *);
+ extern ssize_t pqsecure_read(PGconn *, void *ptr, size_t len);
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpqddll.def postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqddll.def
+--- postgresql-8.2.4/src/interfaces/libpq/libpqddll.def	2007-02-07 06:44:09.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqddll.def	2007-04-05 11:12:02.000000000 +0300
+@@ -137,3 +137,5 @@
+     PQdescribePortal          @ 134
+     PQsendDescribePrepared    @ 135
+     PQsendDescribePortal      @ 136
++    PQauthRequest             @ 137
++    PQerrorCode               @ 138
+diff -urN postgresql-8.2.4/src/interfaces/libpq/libpqdll.def postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqdll.def
+--- postgresql-8.2.4/src/interfaces/libpq/libpqdll.def	2007-02-07 06:44:09.000000000 +0200
++++ postgresql-8.2.4-tsnorri/src/interfaces/libpq/libpqdll.def	2007-04-05 11:12:02.000000000 +0300
+@@ -137,3 +137,5 @@
+     PQdescribePortal          @ 134
+     PQsendDescribePrepared    @ 135
+     PQsendDescribePortal      @ 136
++    PQauthRequest             @ 137
++    PQerrorCode               @ 138

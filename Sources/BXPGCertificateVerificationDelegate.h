@@ -27,9 +27,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTS.h>
 #import <BaseTen/BaseTen.h>
 #import <Security/Security.h>
+#import "PGTS.h"
 
 
 @protocol BXPGTrustHandler <NSObject>

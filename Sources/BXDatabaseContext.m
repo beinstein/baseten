@@ -26,13 +26,14 @@
 // $Id$
 //
 
-#import <MKCCollections/MKCCollections.h>
-#import <PGTS/PGTS.h>
-#import <PGTS/PGTSFunctions.h>
 #import <AppKit/AppKit.h>
 #import <stdlib.h>
 #import <string.h>
 #import <pthread.h>
+
+#import "MKCCollections.h"
+#import "PGTS.h"
+#import "PGTSFunctions.h"
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"

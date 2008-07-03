@@ -26,9 +26,9 @@
 // $Id$
 //
 
-#import <PGTS/PGTS.h>
-#import <PGTS/private/PGTSHOM.h>
-#import <PGTS/PGTSFunctions.h>
+#import "PGTS.h"
+#import "PGTSHOM.h"
+#import "PGTSFunctions.h"
 #import "BaseTen.h"
 #import "BXRelationshipDescription.h"
 #import "BXOneToOneRelationshipDescription.h"

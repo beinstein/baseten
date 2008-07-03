@@ -29,8 +29,8 @@
 #import "BXPGClearLocksHandler.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXLogger.h"
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/private/PGTSHOM.h>
+#import "PGTSAdditions.h"
+#import "PGTSHOM.h"
 
 
 static void

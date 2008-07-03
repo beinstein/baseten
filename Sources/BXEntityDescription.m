@@ -38,7 +38,7 @@
 #import "BXConstantsPrivate.h"
 #import "BXLogger.h"
 
-#import <MKCCollections/MKCCollections.h>
+#import "MKCCollections.h"
 
 
 static id gEntities;

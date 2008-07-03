@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import <PGTS/private/PGTSHOM.h>
+#import "PGTSHOM.h"
 
 #import "BXForeignKey.h"
 #import "BXForeignKeyPrivate.h"

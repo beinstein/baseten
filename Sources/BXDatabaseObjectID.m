@@ -38,8 +38,7 @@
 #import "BXDatabaseObjectPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXLogger.h"
-
-#import <MKCCollections/MKCCollections.h>
+#import "MKCCollections.h"
 
 
 /**

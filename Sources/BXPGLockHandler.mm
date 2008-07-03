@@ -29,10 +29,10 @@
 #import "BXPGLockHandler.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXLogger.h"
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/PGTSFunctions.h>
+#import "PGTSAdditions.h"
+#import "PGTSFunctions.h"
+#import "PGTSScannedMemoryAllocator.h"
 #import <tr1/unordered_map>
-#import <PGTS/private/PGTSScannedMemoryAllocator.h>
 
 
 struct LockStruct 

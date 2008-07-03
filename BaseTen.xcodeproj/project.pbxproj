@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		5362E86C0E1CE46D005C7654 /* PostgreSQL */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5362E8C80E1CE4E8005C7654 /* Build configuration list for PBXAggregateTarget "PostgreSQL" */;
+			buildPhases = (
+				5362E86B0E1CE46D005C7654 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = PostgreSQL;
+			productName = PostgreSQL;
+		};
 		537385720DD9FBAE006F965A /* BaseTen + GC */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 537385890DD9FBE0006F965A /* Build configuration list for PBXAggregateTarget "BaseTen + GC" */;
@@ -115,7 +126,81 @@
 		5364BB7E0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */; };
 		5364BB7F0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */; };
 		5364EF5C0E1B940A003D3DB6 /* BXLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364EF5B0E1B940A003D3DB6 /* BXLogger.m */; };
-		5373856E0DD9FB8D006F965A /* libPGTS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 537385690DD9FB0A006F965A /* libPGTS.a */; };
+		53666CD80E1CD8D20028DBEA /* PGTSTypeDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666C990E1CD8D20028DBEA /* PGTSTypeDescription.m */; };
+		53666CDA0E1CD8D20028DBEA /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9B0E1CD8D20028DBEA /* PGTS.h */; };
+		53666CDB0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9C0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h */; };
+		53666CDC0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666C9D0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m */; };
+		53666CDD0E1CD8D20028DBEA /* PGTSAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9E0E1CD8D20028DBEA /* PGTSAbstractDescription.h */; };
+		53666CDE0E1CD8D20028DBEA /* PGTSAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666C9F0E1CD8D20028DBEA /* PGTSAbstractDescription.m */; };
+		53666CDF0E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h */; };
+		53666CE00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA10E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m */; };
+		53666CE10E1CD8D20028DBEA /* PGTSACLItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA20E1CD8D20028DBEA /* PGTSACLItem.h */; };
+		53666CE20E1CD8D20028DBEA /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA30E1CD8D20028DBEA /* PGTSACLItem.m */; };
+		53666CE30E1CD8D20028DBEA /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */; };
+		53666CE40E1CD8D20028DBEA /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */; };
+		53666CE50E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h */; };
+		53666CE60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m */; };
+		53666CE70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA80E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h */; };
+		53666CE90E1CD8D20028DBEA /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CAA0E1CD8D20028DBEA /* PGTSConnection.h */; };
+		53666CEA0E1CD8D20028DBEA /* PGTSConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53666CAB0E1CD8D20028DBEA /* PGTSConnection.mm */; };
+		53666CED0E1CD8D20028DBEA /* PGTSConnectionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CAE0E1CD8D20028DBEA /* PGTSConnectionMonitor.h */; };
+		53666CEE0E1CD8D20028DBEA /* PGTSConnectionMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CAF0E1CD8D20028DBEA /* PGTSConnectionMonitor.m */; };
+		53666CF00E1CD8D20028DBEA /* PGTSConnectionPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB10E1CD8D20028DBEA /* PGTSConnectionPrivate.h */; };
+		53666CF10E1CD8D20028DBEA /* PGTSConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB20E1CD8D20028DBEA /* PGTSConnector.h */; };
+		53666CF20E1CD8D20028DBEA /* PGTSConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB30E1CD8D20028DBEA /* PGTSConnector.m */; };
+		53666CF30E1CD8D20028DBEA /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB40E1CD8D20028DBEA /* PGTSConstants.h */; };
+		53666CF40E1CD8D20028DBEA /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB50E1CD8D20028DBEA /* PGTSConstants.m */; };
+		53666CF50E1CD8D20028DBEA /* PGTSDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB60E1CD8D20028DBEA /* PGTSDatabaseDescription.h */; };
+		53666CF60E1CD8D20028DBEA /* PGTSDatabaseDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB70E1CD8D20028DBEA /* PGTSDatabaseDescription.m */; };
+		53666CF90E1CD8D20028DBEA /* PGTSFieldDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CBA0E1CD8D20028DBEA /* PGTSFieldDescription.h */; };
+		53666CFA0E1CD8D20028DBEA /* PGTSFieldDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CBB0E1CD8D20028DBEA /* PGTSFieldDescription.m */; };
+		53666CFD0E1CD8D20028DBEA /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */; };
+		53666CFE0E1CD8D20028DBEA /* PGTSFoundationObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */; };
+		53666CFF0E1CD8D20028DBEA /* PGTSFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC00E1CD8D20028DBEA /* PGTSFunctions.h */; };
+		53666D000E1CD8D20028DBEA /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */; };
+		53666D010E1CD8D20028DBEA /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC20E1CD8D20028DBEA /* PGTSHOM.h */; };
+		53666D020E1CD8D20028DBEA /* PGTSHOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC30E1CD8D20028DBEA /* PGTSHOM.m */; };
+		53666D030E1CD8D20028DBEA /* PGTSIndexDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC40E1CD8D20028DBEA /* PGTSIndexDescription.h */; };
+		53666D040E1CD8D20028DBEA /* PGTSIndexDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC50E1CD8D20028DBEA /* PGTSIndexDescription.m */; };
+		53666D050E1CD8D20028DBEA /* PGTSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC60E1CD8D20028DBEA /* PGTSNotification.h */; };
+		53666D060E1CD8D20028DBEA /* PGTSNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC70E1CD8D20028DBEA /* PGTSNotification.m */; };
+		53666D070E1CD8D20028DBEA /* PGTSProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC80E1CD8D20028DBEA /* PGTSProbes.d */; };
+		53666D080E1CD8D20028DBEA /* PGTSQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC90E1CD8D20028DBEA /* PGTSQuery.h */; };
+		53666D090E1CD8D20028DBEA /* PGTSQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CCA0E1CD8D20028DBEA /* PGTSQuery.m */; };
+		53666D0A0E1CD8D20028DBEA /* PGTSQueryDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CCB0E1CD8D20028DBEA /* PGTSQueryDescription.h */; };
+		53666D0B0E1CD8D20028DBEA /* PGTSQueryDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CCC0E1CD8D20028DBEA /* PGTSQueryDescription.m */; };
+		53666D0C0E1CD8D20028DBEA /* PGTSResultSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CCD0E1CD8D20028DBEA /* PGTSResultSet.h */; };
+		53666D0D0E1CD8D20028DBEA /* PGTSResultSet.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53666CCE0E1CD8D20028DBEA /* PGTSResultSet.mm */; };
+		53666D0E0E1CD8D20028DBEA /* PGTSResultSetPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CCF0E1CD8D20028DBEA /* PGTSResultSetPrivate.h */; };
+		53666D0F0E1CD8D20028DBEA /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD00E1CD8D20028DBEA /* PGTSRoleDescription.h */; };
+		53666D100E1CD8D20028DBEA /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CD10E1CD8D20028DBEA /* PGTSRoleDescription.m */; };
+		53666D110E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */; };
+		53666D120E1CD8D20028DBEA /* PGTSSchemaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD30E1CD8D20028DBEA /* PGTSSchemaDescription.h */; };
+		53666D130E1CD8D20028DBEA /* PGTSSchemaDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CD40E1CD8D20028DBEA /* PGTSSchemaDescription.m */; };
+		53666D140E1CD8D20028DBEA /* PGTSTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD50E1CD8D20028DBEA /* PGTSTableDescription.h */; };
+		53666D150E1CD8D20028DBEA /* PGTSTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CD60E1CD8D20028DBEA /* PGTSTableDescription.m */; };
+		53666D160E1CD8D20028DBEA /* PGTSTypeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD70E1CD8D20028DBEA /* PGTSTypeDescription.h */; };
+		53666D630E1CDE3A0028DBEA /* MKCAbstractIntegerDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D520E1CDE3A0028DBEA /* MKCAbstractIntegerDictionary.m */; };
+		53666D650E1CDE3A0028DBEA /* MKCCollections.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D540E1CDE3A0028DBEA /* MKCCollections.h */; };
+		53666D660E1CDE3A0028DBEA /* MKCCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D550E1CDE3A0028DBEA /* MKCCompatibility.h */; };
+		53666D670E1CDE3A0028DBEA /* MKCDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D560E1CDE3A0028DBEA /* MKCDictionary.h */; };
+		53666D680E1CDE3A0028DBEA /* MKCDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D570E1CDE3A0028DBEA /* MKCDictionary.m */; };
+		53666D690E1CDE3A0028DBEA /* MKCDictionaryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D580E1CDE3A0028DBEA /* MKCDictionaryEnumerator.m */; };
+		53666D6A0E1CDE3A0028DBEA /* MKCDictionaryEnumerators.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D590E1CDE3A0028DBEA /* MKCDictionaryEnumerators.h */; };
+		53666D6B0E1CDE3A0028DBEA /* MKCDictionaryKeyEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D5A0E1CDE3A0028DBEA /* MKCDictionaryKeyEnumerator.m */; };
+		53666D6C0E1CDE3A0028DBEA /* MKCDictionaryPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D5B0E1CDE3A0028DBEA /* MKCDictionaryPrivate.h */; };
+		53666D6D0E1CDE3A0028DBEA /* MKCHashTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D5C0E1CDE3A0028DBEA /* MKCHashTable.h */; };
+		53666D6E0E1CDE3A0028DBEA /* MKCHashTable.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D5D0E1CDE3A0028DBEA /* MKCHashTable.m */; };
+		53666D6F0E1CDE3A0028DBEA /* MKCIntegerDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D5E0E1CDE3A0028DBEA /* MKCIntegerDictionary.m */; };
+		53666D700E1CDE3A0028DBEA /* MKCIntegerDictionaryEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D5F0E1CDE3A0028DBEA /* MKCIntegerDictionaryEnumerator.m */; };
+		53666D710E1CDE3A0028DBEA /* MKCIntegerDictionaryKeyEnumerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D600E1CDE3A0028DBEA /* MKCIntegerDictionaryKeyEnumerator.m */; };
+		53666D720E1CDE3A0028DBEA /* MKCIntegerKeyDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D610E1CDE3A0028DBEA /* MKCIntegerKeyDictionary.m */; };
+		53666D730E1CDE3A0028DBEA /* MKCObjectDictionary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D620E1CDE3A0028DBEA /* MKCObjectDictionary.m */; };
+		53666D7D0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D790E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m */; };
+		53666D7E0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D7A0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h */; };
+		53666D7F0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */; };
+		53666D800E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */; };
+		53666DAC0E1CE2180028DBEA /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 53666DAB0E1CE2180028DBEA /* postgresql */; settings = {ATTRIBUTES = (Private, ); }; };
 		537F01620DDC580500498B93 /* BXPGLockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01600DDC580500498B93 /* BXPGLockHandler.h */; };
 		537F01630DDC580500498B93 /* BXPGLockHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 537F01610DDC580500498B93 /* BXPGLockHandler.mm */; };
 		537F016A0DDC580E00498B93 /* BXPGModificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01660DDC580E00498B93 /* BXPGModificationHandler.h */; };
@@ -150,27 +235,6 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		5321F8790CF781ED00E663CE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3;
-			remoteInfo = "Static library";
-		};
-		532AB8EE0D63495C00B5B71C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53F42F390D6332EA00C714CD;
-			remoteInfo = "Static library + GC";
-		};
-		535444170D634A66002A6C47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 53F42F210D6332EA00C714CD;
-			remoteInfo = "Static library + GC";
-		};
 		535444940D634DA9002A6C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
@@ -178,26 +242,19 @@
 			remoteGlobalIDString = 535444870D634D9C002A6C47;
 			remoteInfo = "BaseTenAppKit + GC";
 		};
+		5362E8700E1CE4A9005C7654 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5362E86C0E1CE46D005C7654;
+			remoteInfo = PostgreSQL;
+		};
 		5373852E0DD9FAC1006F965A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 8D1AC9740486D14A00FE50C9;
 			remoteInfo = BaseTenPalette;
-		};
-		537385680DD9FB0A006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 530ADC7609ED1BC1004A13C3 /* PGTS.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 538176830D633DC000A4CA72;
-			remoteInfo = "Static archive + GC";
-		};
-		5373856C0DD9FB77006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 530ADC7609ED1BC1004A13C3 /* PGTS.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 5381762E0D633DC000A4CA72;
-			remoteInfo = "Static archive + GC";
 		};
 		537385750DD9FBB7006F965A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -228,7 +285,6 @@
 		530132E109D460230037C485 /* BXPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGInterface.h; path = Sources/BXPGInterface.h; sourceTree = "<group>"; };
 		530132E209D460230037C485 /* BXPGInterface.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; includeInIndex = 1; name = BXPGInterface.m; path = Sources/BXPGInterface.m; sourceTree = "<group>"; };
 		53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseAdditions.m; path = Sources/BXDatabaseAdditions.m; sourceTree = "<group>"; };
-		530ADC7609ED1BC1004A13C3 /* PGTS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PGTS.xcodeproj; path = Dependencies/PGTS/PGTS.xcodeproj; sourceTree = "<group>"; };
 		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
 		531266E40B68F9CA00637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		531A214E0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGConnectionResetRecoveryAttempter.h; path = Sources/BXPGConnectionResetRecoveryAttempter.h; sourceTree = "<group>"; };
@@ -245,14 +301,13 @@
 		5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXInvocationRecorder.m; path = Sources/BXInvocationRecorder.m; sourceTree = "<group>"; };
 		5321F83B0CF7807700E663CE /* BXInvocation.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = BXInvocation.h; path = Sources/BXInvocation.h; sourceTree = "<group>"; };
 		5321F83C0CF7807700E663CE /* BXInvocation.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXInvocation.m; path = Sources/BXInvocation.m; sourceTree = "<group>"; };
-		5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MKCCollections.xcodeproj; path = Dependencies/MKCCollections/MKCCollections.xcodeproj; sourceTree = "<group>"; };
 		5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
 		5328FB6C0C457AC4006DE171 /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelationshipDescription.m; path = Sources/BXRelationshipDescription.m; sourceTree = "<group>"; };
 		5328FBD40C4580CD006DE171 /* BXForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKey.h; path = Sources/BXForeignKey.h; sourceTree = "<group>"; };
 		5328FBD50C4580CD006DE171 /* BXForeignKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXForeignKey.m; path = Sources/BXForeignKey.m; sourceTree = "<group>"; };
 		532D60FF0B9454110028E90B /* BXConnectionSetupManagerProtocol.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 4; lineEnding = 0; name = BXConnectionSetupManagerProtocol.h; path = Sources/BXConnectionSetupManagerProtocol.h; sourceTree = "<group>"; };
-		5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXPGReconnectionRecoveryAttempter.h; sourceTree = "<group>"; };
-		5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXPGReconnectionRecoveryAttempter.m; sourceTree = "<group>"; };
+		5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGReconnectionRecoveryAttempter.h; path = Sources/BXPGReconnectionRecoveryAttempter.h; sourceTree = "<group>"; };
+		5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGReconnectionRecoveryAttempter.m; path = Sources/BXPGReconnectionRecoveryAttempter.m; sourceTree = "<group>"; };
 		533229E30A024C2500BDB151 /* BXEntityDescription.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXEntityDescription.m; path = Sources/BXEntityDescription.m; sourceTree = "<group>"; };
 		533229E40A024C2500BDB151 /* BXEntityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescription.h; path = Sources/BXEntityDescription.h; sourceTree = "<group>"; };
 		533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXObjectStatusInfo.h; path = Sources/BXObjectStatusInfo.h; sourceTree = "<group>"; };
@@ -276,6 +331,83 @@
 		5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGManualCommitTransactionHandler.h; path = Sources/BXPGManualCommitTransactionHandler.h; sourceTree = "<group>"; };
 		5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGManualCommitTransactionHandler.m; path = Sources/BXPGManualCommitTransactionHandler.m; sourceTree = "<group>"; };
 		5364EF5B0E1B940A003D3DB6 /* BXLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXLogger.m; path = Sources/BXLogger.m; sourceTree = "<group>"; };
+		53666C990E1CD8D20028DBEA /* PGTSTypeDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSTypeDescription.m; path = Sources/PGTSTypeDescription.m; sourceTree = "<group>"; };
+		53666C9B0E1CD8D20028DBEA /* PGTS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTS.h; path = Sources/PGTS.h; sourceTree = "<group>"; };
+		53666C9C0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSAbstractClassDescription.h; path = Sources/PGTSAbstractClassDescription.h; sourceTree = "<group>"; };
+		53666C9D0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSAbstractClassDescription.m; path = Sources/PGTSAbstractClassDescription.m; sourceTree = "<group>"; };
+		53666C9E0E1CD8D20028DBEA /* PGTSAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSAbstractDescription.h; path = Sources/PGTSAbstractDescription.h; sourceTree = "<group>"; };
+		53666C9F0E1CD8D20028DBEA /* PGTSAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSAbstractDescription.m; path = Sources/PGTSAbstractDescription.m; sourceTree = "<group>"; };
+		53666CA00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSAbstractObjectDescription.h; path = Sources/PGTSAbstractObjectDescription.h; sourceTree = "<group>"; };
+		53666CA10E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSAbstractObjectDescription.m; path = Sources/PGTSAbstractObjectDescription.m; sourceTree = "<group>"; };
+		53666CA20E1CD8D20028DBEA /* PGTSACLItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSACLItem.h; path = Sources/PGTSACLItem.h; sourceTree = "<group>"; };
+		53666CA30E1CD8D20028DBEA /* PGTSACLItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSACLItem.m; path = Sources/PGTSACLItem.m; sourceTree = "<group>"; };
+		53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSAdditions.h; path = Sources/PGTSAdditions.h; sourceTree = "<group>"; };
+		53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSAdditions.m; path = Sources/PGTSAdditions.m; sourceTree = "<group>"; };
+		53666CA60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCertificateVerificationDelegate.h; path = Sources/PGTSCertificateVerificationDelegate.h; sourceTree = "<group>"; };
+		53666CA70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSCertificateVerificationDelegate.m; path = Sources/PGTSCertificateVerificationDelegate.m; sourceTree = "<group>"; };
+		53666CA80E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCertificateVerificationDelegateProtocol.h; path = Sources/PGTSCertificateVerificationDelegateProtocol.h; sourceTree = "<group>"; };
+		53666CAA0E1CD8D20028DBEA /* PGTSConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnection.h; path = Sources/PGTSConnection.h; sourceTree = "<group>"; };
+		53666CAB0E1CD8D20028DBEA /* PGTSConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGTSConnection.mm; path = Sources/PGTSConnection.mm; sourceTree = "<group>"; };
+		53666CAE0E1CD8D20028DBEA /* PGTSConnectionMonitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnectionMonitor.h; path = Sources/PGTSConnectionMonitor.h; sourceTree = "<group>"; };
+		53666CAF0E1CD8D20028DBEA /* PGTSConnectionMonitor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSConnectionMonitor.m; path = Sources/PGTSConnectionMonitor.m; sourceTree = "<group>"; };
+		53666CB10E1CD8D20028DBEA /* PGTSConnectionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnectionPrivate.h; path = Sources/PGTSConnectionPrivate.h; sourceTree = "<group>"; };
+		53666CB20E1CD8D20028DBEA /* PGTSConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConnector.h; path = Sources/PGTSConnector.h; sourceTree = "<group>"; };
+		53666CB30E1CD8D20028DBEA /* PGTSConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSConnector.m; path = Sources/PGTSConnector.m; sourceTree = "<group>"; };
+		53666CB40E1CD8D20028DBEA /* PGTSConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConstants.h; path = Sources/PGTSConstants.h; sourceTree = "<group>"; };
+		53666CB50E1CD8D20028DBEA /* PGTSConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSConstants.m; path = Sources/PGTSConstants.m; sourceTree = "<group>"; };
+		53666CB60E1CD8D20028DBEA /* PGTSDatabaseDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSDatabaseDescription.h; path = Sources/PGTSDatabaseDescription.h; sourceTree = "<group>"; };
+		53666CB70E1CD8D20028DBEA /* PGTSDatabaseDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSDatabaseDescription.m; path = Sources/PGTSDatabaseDescription.m; sourceTree = "<group>"; };
+		53666CBA0E1CD8D20028DBEA /* PGTSFieldDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSFieldDescription.h; path = Sources/PGTSFieldDescription.h; sourceTree = "<group>"; };
+		53666CBB0E1CD8D20028DBEA /* PGTSFieldDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSFieldDescription.m; path = Sources/PGTSFieldDescription.m; sourceTree = "<group>"; };
+		53666CBC0E1CD8D20028DBEA /* PGTSForeignKeyDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSForeignKeyDescription.h; path = Sources/PGTSForeignKeyDescription.h; sourceTree = "<group>"; };
+		53666CBD0E1CD8D20028DBEA /* PGTSForeignKeyDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSForeignKeyDescription.m; path = Sources/PGTSForeignKeyDescription.m; sourceTree = "<group>"; };
+		53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSFoundationObjects.h; path = Sources/PGTSFoundationObjects.h; sourceTree = "<group>"; };
+		53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSFoundationObjects.m; path = Sources/PGTSFoundationObjects.m; sourceTree = "<group>"; };
+		53666CC00E1CD8D20028DBEA /* PGTSFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSFunctions.h; path = Sources/PGTSFunctions.h; sourceTree = "<group>"; };
+		53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSFunctions.m; path = Sources/PGTSFunctions.m; sourceTree = "<group>"; };
+		53666CC20E1CD8D20028DBEA /* PGTSHOM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSHOM.h; path = Sources/PGTSHOM.h; sourceTree = "<group>"; };
+		53666CC30E1CD8D20028DBEA /* PGTSHOM.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSHOM.m; path = Sources/PGTSHOM.m; sourceTree = "<group>"; };
+		53666CC40E1CD8D20028DBEA /* PGTSIndexDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSIndexDescription.h; path = Sources/PGTSIndexDescription.h; sourceTree = "<group>"; };
+		53666CC50E1CD8D20028DBEA /* PGTSIndexDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSIndexDescription.m; path = Sources/PGTSIndexDescription.m; sourceTree = "<group>"; };
+		53666CC60E1CD8D20028DBEA /* PGTSNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSNotification.h; path = Sources/PGTSNotification.h; sourceTree = "<group>"; };
+		53666CC70E1CD8D20028DBEA /* PGTSNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSNotification.m; path = Sources/PGTSNotification.m; sourceTree = "<group>"; };
+		53666CC80E1CD8D20028DBEA /* PGTSProbes.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; name = PGTSProbes.d; path = Sources/PGTSProbes.d; sourceTree = "<group>"; };
+		53666CC90E1CD8D20028DBEA /* PGTSQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSQuery.h; path = Sources/PGTSQuery.h; sourceTree = "<group>"; };
+		53666CCA0E1CD8D20028DBEA /* PGTSQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSQuery.m; path = Sources/PGTSQuery.m; sourceTree = "<group>"; };
+		53666CCB0E1CD8D20028DBEA /* PGTSQueryDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSQueryDescription.h; path = Sources/PGTSQueryDescription.h; sourceTree = "<group>"; };
+		53666CCC0E1CD8D20028DBEA /* PGTSQueryDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSQueryDescription.m; path = Sources/PGTSQueryDescription.m; sourceTree = "<group>"; };
+		53666CCD0E1CD8D20028DBEA /* PGTSResultSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSResultSet.h; path = Sources/PGTSResultSet.h; sourceTree = "<group>"; };
+		53666CCE0E1CD8D20028DBEA /* PGTSResultSet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGTSResultSet.mm; path = Sources/PGTSResultSet.mm; sourceTree = "<group>"; };
+		53666CCF0E1CD8D20028DBEA /* PGTSResultSetPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSResultSetPrivate.h; path = Sources/PGTSResultSetPrivate.h; sourceTree = "<group>"; };
+		53666CD00E1CD8D20028DBEA /* PGTSRoleDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSRoleDescription.h; path = Sources/PGTSRoleDescription.h; sourceTree = "<group>"; };
+		53666CD10E1CD8D20028DBEA /* PGTSRoleDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSRoleDescription.m; path = Sources/PGTSRoleDescription.m; sourceTree = "<group>"; };
+		53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSScannedMemoryAllocator.h; path = Sources/PGTSScannedMemoryAllocator.h; sourceTree = "<group>"; };
+		53666CD30E1CD8D20028DBEA /* PGTSSchemaDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSchemaDescription.h; path = Sources/PGTSSchemaDescription.h; sourceTree = "<group>"; };
+		53666CD40E1CD8D20028DBEA /* PGTSSchemaDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSSchemaDescription.m; path = Sources/PGTSSchemaDescription.m; sourceTree = "<group>"; };
+		53666CD50E1CD8D20028DBEA /* PGTSTableDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTableDescription.h; path = Sources/PGTSTableDescription.h; sourceTree = "<group>"; };
+		53666CD60E1CD8D20028DBEA /* PGTSTableDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSTableDescription.m; path = Sources/PGTSTableDescription.m; sourceTree = "<group>"; };
+		53666CD70E1CD8D20028DBEA /* PGTSTypeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTypeDescription.h; path = Sources/PGTSTypeDescription.h; sourceTree = "<group>"; };
+		53666D520E1CDE3A0028DBEA /* MKCAbstractIntegerDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAbstractIntegerDictionary.m; path = Sources/MKCAbstractIntegerDictionary.m; sourceTree = "<group>"; };
+		53666D540E1CDE3A0028DBEA /* MKCCollections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCCollections.h; path = Sources/MKCCollections.h; sourceTree = "<group>"; };
+		53666D550E1CDE3A0028DBEA /* MKCCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCCompatibility.h; path = Sources/MKCCompatibility.h; sourceTree = "<group>"; };
+		53666D560E1CDE3A0028DBEA /* MKCDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionary.h; path = Sources/MKCDictionary.h; sourceTree = "<group>"; };
+		53666D570E1CDE3A0028DBEA /* MKCDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionary.m; path = Sources/MKCDictionary.m; sourceTree = "<group>"; };
+		53666D580E1CDE3A0028DBEA /* MKCDictionaryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionaryEnumerator.m; path = Sources/MKCDictionaryEnumerator.m; sourceTree = "<group>"; };
+		53666D590E1CDE3A0028DBEA /* MKCDictionaryEnumerators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionaryEnumerators.h; path = Sources/MKCDictionaryEnumerators.h; sourceTree = "<group>"; };
+		53666D5A0E1CDE3A0028DBEA /* MKCDictionaryKeyEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionaryKeyEnumerator.m; path = Sources/MKCDictionaryKeyEnumerator.m; sourceTree = "<group>"; };
+		53666D5B0E1CDE3A0028DBEA /* MKCDictionaryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionaryPrivate.h; path = Sources/MKCDictionaryPrivate.h; sourceTree = "<group>"; };
+		53666D5C0E1CDE3A0028DBEA /* MKCHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCHashTable.h; path = Sources/MKCHashTable.h; sourceTree = "<group>"; };
+		53666D5D0E1CDE3A0028DBEA /* MKCHashTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCHashTable.m; path = Sources/MKCHashTable.m; sourceTree = "<group>"; };
+		53666D5E0E1CDE3A0028DBEA /* MKCIntegerDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerDictionary.m; path = Sources/MKCIntegerDictionary.m; sourceTree = "<group>"; };
+		53666D5F0E1CDE3A0028DBEA /* MKCIntegerDictionaryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerDictionaryEnumerator.m; path = Sources/MKCIntegerDictionaryEnumerator.m; sourceTree = "<group>"; };
+		53666D600E1CDE3A0028DBEA /* MKCIntegerDictionaryKeyEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerDictionaryKeyEnumerator.m; path = Sources/MKCIntegerDictionaryKeyEnumerator.m; sourceTree = "<group>"; };
+		53666D610E1CDE3A0028DBEA /* MKCIntegerKeyDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerKeyDictionary.m; path = Sources/MKCIntegerKeyDictionary.m; sourceTree = "<group>"; };
+		53666D620E1CDE3A0028DBEA /* MKCObjectDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCObjectDictionary.m; path = Sources/MKCObjectDictionary.m; sourceTree = "<group>"; };
+		53666D790E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSPredicate+PGTSAdditions.m"; path = "Sources/NSPredicate+PGTSAdditions.m"; sourceTree = "<group>"; };
+		53666D7A0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSExpression+PGTSAdditions.h"; path = "Sources/NSExpression+PGTSAdditions.h"; sourceTree = "<group>"; };
+		53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSExpression+PGTSAdditions.m"; path = "Sources/NSExpression+PGTSAdditions.m"; sourceTree = "<group>"; };
+		53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSPredicate+PGTSAdditions.h"; path = "Sources/NSPredicate+PGTSAdditions.h"; sourceTree = "<group>"; };
+		53666DAB0E1CE2180028DBEA /* postgresql */ = {isa = PBXFileReference; explicitFileType = folder; fileEncoding = 4; name = postgresql; path = "BaseTen-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		537E98370AAF538B00542F9C /* BXContainerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXContainerProxy.h; path = Sources/BXContainerProxy.h; sourceTree = "<group>"; };
 		537E98380AAF538B00542F9C /* BXContainerProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXContainerProxy.m; path = Sources/BXContainerProxy.m; sourceTree = "<group>"; };
 		537E98650AAF57E100542F9C /* BXSetProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXSetProxy.h; path = Sources/BXSetProxy.h; sourceTree = "<group>"; };
@@ -337,7 +469,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5373856E0DD9FB8D006F965A /* libPGTS.a in Frameworks */,
 				535444090D634A47002A6C47 /* Foundation.framework in Frameworks */,
 				5354440A0D634A47002A6C47 /* libcrypto.dylib in Frameworks */,
 				5354440B0D634A47002A6C47 /* libssl.dylib in Frameworks */,
@@ -361,8 +492,10 @@
 		0867D691FE84028FC02AAC07 /* BXDatabase */ = {
 			isa = PBXGroup;
 			children = (
-				08FB77AEFE84172EC02AAC07 /* Classes */,
-				32C88DFF0371C24200C91783 /* Other Sources */,
+				08FB77AEFE84172EC02AAC07 /* BaseTen */,
+				53666C8E0E1CD89F0028DBEA /* PGTS */,
+				53666D740E1CDE3E0028DBEA /* MKCCollections */,
+				53666C800E1CD8580028DBEA /* Utility */,
 				53F77DA10A3806580058F7D6 /* xcconfig */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -382,8 +515,6 @@
 				531266E40B68F9CA00637EDA /* Security.framework */,
 				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				538678D30DE31BA0000C9A78 /* IOKit.framework */,
-				5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */,
-				530ADC7609ED1BC1004A13C3 /* PGTS.xcodeproj */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
 				53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */,
 			);
@@ -401,7 +532,7 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
-		08FB77AEFE84172EC02AAC07 /* Classes */ = {
+		08FB77AEFE84172EC02AAC07 /* BaseTen */ = {
 			isa = PBXGroup;
 			children = (
 				530ADD8309ED21EF004A13C3 /* BaseTen.h */,
@@ -423,32 +554,19 @@
 				5339AB920A7542EC00994B1A /* BXException.m */,
 				53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */,
 				53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */,
+				53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */,
+				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
+				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
+				5301302609D43A450037C485 /* BXConstants.h */,
+				53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */,
+				5301302709D43A450037C485 /* BXConstants.m */,
+				53E068240DEAE02A0004363D /* BXProbes.d */,
+				32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */,
 				53D0D1980B6F908A00D2D101 /* PostgreSQL Interface */,
 				53B8730F0A0A53D9007315BC /* Descriptions */,
 				537E983E0AAF539E00542F9C /* Automatically-updating containers */,
 			);
-			name = Classes;
-			sourceTree = "<group>";
-		};
-		32C88DFF0371C24200C91783 /* Other Sources */ = {
-			isa = PBXGroup;
-			children = (
-				53E068240DEAE02A0004363D /* BXProbes.d */,
-				53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */,
-				5364EF5B0E1B940A003D3DB6 /* BXLogger.m */,
-				53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */,
-				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
-				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
-				5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */,
-				5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */,
-				5321F83B0CF7807700E663CE /* BXInvocation.h */,
-				5321F83C0CF7807700E663CE /* BXInvocation.m */,
-				5301302609D43A450037C485 /* BXConstants.h */,
-				53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */,
-				5301302709D43A450037C485 /* BXConstants.m */,
-				32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */,
-			);
-			name = "Other Sources";
+			name = BaseTen;
 			sourceTree = "<group>";
 		};
 		531A21AF0DE46860006C757A /* Notification Handlers */ = {
@@ -494,15 +612,6 @@
 			name = "Recovery Attempters";
 			sourceTree = "<group>";
 		};
-		5321F8750CF781ED00E663CE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5321F87A0CF781ED00E663CE /* libMKCCollections.a */,
-				532AB8EF0D63495C00B5B71C /* libMKCCollections.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		5328FB7F0C457DB9006DE171 /* Relationships */ = {
 			isa = PBXGroup;
 			children = (
@@ -517,18 +626,154 @@
 			name = Relationships;
 			sourceTree = "<group>";
 		};
+		53666C800E1CD8580028DBEA /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */,
+				5364EF5B0E1B940A003D3DB6 /* BXLogger.m */,
+				5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */,
+				5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */,
+				5321F83B0CF7807700E663CE /* BXInvocation.h */,
+				5321F83C0CF7807700E663CE /* BXInvocation.m */,
+				53666CC20E1CD8D20028DBEA /* PGTSHOM.h */,
+				53666CC30E1CD8D20028DBEA /* PGTSHOM.m */,
+				53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */,
+			);
+			name = Utility;
+			sourceTree = "<group>";
+		};
+		53666C8E0E1CD89F0028DBEA /* PGTS */ = {
+			isa = PBXGroup;
+			children = (
+				53666D860E1CE01A0028DBEA /* Predicates */,
+				53666D850E1CDFF80028DBEA /* Connection */,
+				53666D2E0E1CDDA70028DBEA /* Metadata */,
+				53666D820E1CDF100028DBEA /* Queries */,
+				53666D890E1CE05C0028DBEA /* Other */,
+				53666DAB0E1CE2180028DBEA /* postgresql */,
+			);
+			name = PGTS;
+			sourceTree = "<group>";
+		};
+		53666D2E0E1CDDA70028DBEA /* Metadata */ = {
+			isa = PBXGroup;
+			children = (
+				53666C990E1CD8D20028DBEA /* PGTSTypeDescription.m */,
+				53666C9C0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h */,
+				53666C9D0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m */,
+				53666C9E0E1CD8D20028DBEA /* PGTSAbstractDescription.h */,
+				53666C9F0E1CD8D20028DBEA /* PGTSAbstractDescription.m */,
+				53666CA00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h */,
+				53666CA10E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m */,
+				53666CA20E1CD8D20028DBEA /* PGTSACLItem.h */,
+				53666CA30E1CD8D20028DBEA /* PGTSACLItem.m */,
+				53666CB60E1CD8D20028DBEA /* PGTSDatabaseDescription.h */,
+				53666CB70E1CD8D20028DBEA /* PGTSDatabaseDescription.m */,
+				53666CBA0E1CD8D20028DBEA /* PGTSFieldDescription.h */,
+				53666CBB0E1CD8D20028DBEA /* PGTSFieldDescription.m */,
+				53666CBC0E1CD8D20028DBEA /* PGTSForeignKeyDescription.h */,
+				53666CBD0E1CD8D20028DBEA /* PGTSForeignKeyDescription.m */,
+				53666CC40E1CD8D20028DBEA /* PGTSIndexDescription.h */,
+				53666CC50E1CD8D20028DBEA /* PGTSIndexDescription.m */,
+				53666CD00E1CD8D20028DBEA /* PGTSRoleDescription.h */,
+				53666CD10E1CD8D20028DBEA /* PGTSRoleDescription.m */,
+				53666CD30E1CD8D20028DBEA /* PGTSSchemaDescription.h */,
+				53666CD40E1CD8D20028DBEA /* PGTSSchemaDescription.m */,
+				53666CD50E1CD8D20028DBEA /* PGTSTableDescription.h */,
+				53666CD60E1CD8D20028DBEA /* PGTSTableDescription.m */,
+				53666CD70E1CD8D20028DBEA /* PGTSTypeDescription.h */,
+			);
+			name = Metadata;
+			sourceTree = "<group>";
+		};
+		53666D740E1CDE3E0028DBEA /* MKCCollections */ = {
+			isa = PBXGroup;
+			children = (
+				53666D520E1CDE3A0028DBEA /* MKCAbstractIntegerDictionary.m */,
+				53666D540E1CDE3A0028DBEA /* MKCCollections.h */,
+				53666D550E1CDE3A0028DBEA /* MKCCompatibility.h */,
+				53666D560E1CDE3A0028DBEA /* MKCDictionary.h */,
+				53666D570E1CDE3A0028DBEA /* MKCDictionary.m */,
+				53666D580E1CDE3A0028DBEA /* MKCDictionaryEnumerator.m */,
+				53666D590E1CDE3A0028DBEA /* MKCDictionaryEnumerators.h */,
+				53666D5A0E1CDE3A0028DBEA /* MKCDictionaryKeyEnumerator.m */,
+				53666D5B0E1CDE3A0028DBEA /* MKCDictionaryPrivate.h */,
+				53666D5C0E1CDE3A0028DBEA /* MKCHashTable.h */,
+				53666D5D0E1CDE3A0028DBEA /* MKCHashTable.m */,
+				53666D5E0E1CDE3A0028DBEA /* MKCIntegerDictionary.m */,
+				53666D5F0E1CDE3A0028DBEA /* MKCIntegerDictionaryEnumerator.m */,
+				53666D600E1CDE3A0028DBEA /* MKCIntegerDictionaryKeyEnumerator.m */,
+				53666D610E1CDE3A0028DBEA /* MKCIntegerKeyDictionary.m */,
+				53666D620E1CDE3A0028DBEA /* MKCObjectDictionary.m */,
+			);
+			name = MKCCollections;
+			sourceTree = "<group>";
+		};
+		53666D820E1CDF100028DBEA /* Queries */ = {
+			isa = PBXGroup;
+			children = (
+				53666CC90E1CD8D20028DBEA /* PGTSQuery.h */,
+				53666CCA0E1CD8D20028DBEA /* PGTSQuery.m */,
+				53666CCB0E1CD8D20028DBEA /* PGTSQueryDescription.h */,
+				53666CCC0E1CD8D20028DBEA /* PGTSQueryDescription.m */,
+				53666CCD0E1CD8D20028DBEA /* PGTSResultSet.h */,
+				53666CCE0E1CD8D20028DBEA /* PGTSResultSet.mm */,
+				53666CCF0E1CD8D20028DBEA /* PGTSResultSetPrivate.h */,
+			);
+			name = Queries;
+			sourceTree = "<group>";
+		};
+		53666D850E1CDFF80028DBEA /* Connection */ = {
+			isa = PBXGroup;
+			children = (
+				53666CC60E1CD8D20028DBEA /* PGTSNotification.h */,
+				53666CC70E1CD8D20028DBEA /* PGTSNotification.m */,
+				53666CB20E1CD8D20028DBEA /* PGTSConnector.h */,
+				53666CB30E1CD8D20028DBEA /* PGTSConnector.m */,
+				53666CAA0E1CD8D20028DBEA /* PGTSConnection.h */,
+				53666CAB0E1CD8D20028DBEA /* PGTSConnection.mm */,
+				53666CAE0E1CD8D20028DBEA /* PGTSConnectionMonitor.h */,
+				53666CAF0E1CD8D20028DBEA /* PGTSConnectionMonitor.m */,
+				53666CB10E1CD8D20028DBEA /* PGTSConnectionPrivate.h */,
+			);
+			name = Connection;
+			sourceTree = "<group>";
+		};
+		53666D860E1CE01A0028DBEA /* Predicates */ = {
+			isa = PBXGroup;
+			children = (
+				53666D790E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m */,
+				53666D7A0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h */,
+				53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */,
+				53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */,
+			);
+			name = Predicates;
+			sourceTree = "<group>";
+		};
+		53666D890E1CE05C0028DBEA /* Other */ = {
+			isa = PBXGroup;
+			children = (
+				53666CC80E1CD8D20028DBEA /* PGTSProbes.d */,
+				53666C9B0E1CD8D20028DBEA /* PGTS.h */,
+				53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */,
+				53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */,
+				53666CA60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h */,
+				53666CA70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m */,
+				53666CA80E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h */,
+				53666CB40E1CD8D20028DBEA /* PGTSConstants.h */,
+				53666CB50E1CD8D20028DBEA /* PGTSConstants.m */,
+				53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */,
+				53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */,
+				53666CC00E1CD8D20028DBEA /* PGTSFunctions.h */,
+				53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */,
+			);
+			name = Other;
+			sourceTree = "<group>";
+		};
 		5373852B0DD9FAC1006F965A /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				5373852F0DD9FAC1006F965A /* BaseTenPalette.palette */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		537385610DD9FB0A006F965A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				537385690DD9FB0A006F965A /* libPGTS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -667,6 +912,44 @@
 				5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */,
 				53BD79D70E09140D009CAFE6 /* BXErrorHandlerDelegate.h in Headers */,
 				53ED2E8E0E1AB7CB0095BE8B /* BXLogger.h in Headers */,
+				53666CDA0E1CD8D20028DBEA /* PGTS.h in Headers */,
+				53666CDB0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h in Headers */,
+				53666CDD0E1CD8D20028DBEA /* PGTSAbstractDescription.h in Headers */,
+				53666CDF0E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h in Headers */,
+				53666CE10E1CD8D20028DBEA /* PGTSACLItem.h in Headers */,
+				53666CE30E1CD8D20028DBEA /* PGTSAdditions.h in Headers */,
+				53666CE50E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h in Headers */,
+				53666CE70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h in Headers */,
+				53666CE90E1CD8D20028DBEA /* PGTSConnection.h in Headers */,
+				53666CED0E1CD8D20028DBEA /* PGTSConnectionMonitor.h in Headers */,
+				53666CF00E1CD8D20028DBEA /* PGTSConnectionPrivate.h in Headers */,
+				53666CF10E1CD8D20028DBEA /* PGTSConnector.h in Headers */,
+				53666CF30E1CD8D20028DBEA /* PGTSConstants.h in Headers */,
+				53666CF50E1CD8D20028DBEA /* PGTSDatabaseDescription.h in Headers */,
+				53666CF90E1CD8D20028DBEA /* PGTSFieldDescription.h in Headers */,
+				53666CFD0E1CD8D20028DBEA /* PGTSFoundationObjects.h in Headers */,
+				53666CFF0E1CD8D20028DBEA /* PGTSFunctions.h in Headers */,
+				53666D010E1CD8D20028DBEA /* PGTSHOM.h in Headers */,
+				53666D030E1CD8D20028DBEA /* PGTSIndexDescription.h in Headers */,
+				53666D050E1CD8D20028DBEA /* PGTSNotification.h in Headers */,
+				53666D080E1CD8D20028DBEA /* PGTSQuery.h in Headers */,
+				53666D0A0E1CD8D20028DBEA /* PGTSQueryDescription.h in Headers */,
+				53666D0C0E1CD8D20028DBEA /* PGTSResultSet.h in Headers */,
+				53666D0E0E1CD8D20028DBEA /* PGTSResultSetPrivate.h in Headers */,
+				53666D0F0E1CD8D20028DBEA /* PGTSRoleDescription.h in Headers */,
+				53666D110E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h in Headers */,
+				53666D120E1CD8D20028DBEA /* PGTSSchemaDescription.h in Headers */,
+				53666D140E1CD8D20028DBEA /* PGTSTableDescription.h in Headers */,
+				53666D160E1CD8D20028DBEA /* PGTSTypeDescription.h in Headers */,
+				53666D650E1CDE3A0028DBEA /* MKCCollections.h in Headers */,
+				53666D660E1CDE3A0028DBEA /* MKCCompatibility.h in Headers */,
+				53666D670E1CDE3A0028DBEA /* MKCDictionary.h in Headers */,
+				53666D6A0E1CDE3A0028DBEA /* MKCDictionaryEnumerators.h in Headers */,
+				53666D6C0E1CDE3A0028DBEA /* MKCDictionaryPrivate.h in Headers */,
+				53666D6D0E1CDE3A0028DBEA /* MKCHashTable.h in Headers */,
+				53666D7E0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h in Headers */,
+				53666D800E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h in Headers */,
+				53666DAC0E1CE2180028DBEA /* postgresql in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -687,8 +970,7 @@
 				5354440F0D634A47002A6C47 /* PBXBuildRule */,
 			);
 			dependencies = (
-				535444180D634A66002A6C47 /* PBXTargetDependency */,
-				5373856D0DD9FB77006F965A /* PBXTargetDependency */,
+				5362E8710E1CE4A9005C7654 /* PBXTargetDependency */,
 			);
 			name = "BaseTen Framework + GC";
 			productName = "BXDatabase Static";
@@ -715,39 +997,18 @@
 					ProductGroup = 5373852B0DD9FAC1006F965A /* Products */;
 					ProjectRef = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
 				},
-				{
-					ProductGroup = 5321F8750CF781ED00E663CE /* Products */;
-					ProjectRef = 5321F8740CF781ED00E663CE /* MKCCollections.xcodeproj */;
-				},
-				{
-					ProductGroup = 537385610DD9FB0A006F965A /* Products */;
-					ProjectRef = 530ADC7609ED1BC1004A13C3 /* PGTS.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
 				537385720DD9FBAE006F965A /* BaseTen + GC */,
 				535443BB0D634A47002A6C47 /* BaseTen Framework + GC */,
 				53BD79F70E092ABC009CAFE6 /* Documentation */,
+				5362E86C0E1CE46D005C7654 /* PostgreSQL */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		5321F87A0CF781ED00E663CE /* libMKCCollections.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMKCCollections.a;
-			remoteRef = 5321F8790CF781ED00E663CE /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		532AB8EF0D63495C00B5B71C /* libMKCCollections.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMKCCollections.a;
-			remoteRef = 532AB8EE0D63495C00B5B71C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		535444950D634DA9002A6C47 /* BaseTenAppKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -760,13 +1021,6 @@
 			fileType = wrapper.cfbundle;
 			path = BaseTenPalette.palette;
 			remoteRef = 5373852E0DD9FAC1006F965A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		537385690DD9FB0A006F965A /* libPGTS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libPGTS.a;
-			remoteRef = 537385680DD9FB0A006F965A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -797,6 +1051,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5362E86B0E1CE46D005C7654 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "my_build_dir=\"$BUILT_PRODUCTS_DIR\"/BaseTen-PostgreSQL\nversion=\"8.2.5\"\npostgresql_source_file=\"postgresql-base-${version}.tar.bz2\"\npostgresql_root=\"${my_build_dir}/postgresql-${version}\"\n\nfunction extract\n{\n    # Extract the sources\n    if [ ! -d \"$postgresql_root\" ]\n    then\n        if [ -e \"$postgresql_root\" ]\n        then\n            echo \"A file named ${postgresql_root} exists and is not a folder. Exiting.\"\n            exit 1\n        fi\n        gnutar -jxf \"$postgresql_source_file\" -C \"$my_build_dir\"\n        patch -p1 -d \"$postgresql_root\" < \"$SRCROOT\"/libpq.patch\n    fi\n}\n\nfunction build\n{\n    ptype=`uname -p`\n    my_host=\n    my_target=\"$1\"\n    if [ -z \"$my_target\" ]\n    then\n        my_target=\"$ptype\"\n    fi\n\n\tunset CC\n\tunset CPP\n\tunset CFLAGS\n\tunset CPPFLAGS\n\tunset CXXFLAGS\n\tunset LDFLAGS\n\n    if [ \"powerpc\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch ppc\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n\n        if [ \"i386\" = \"$ptype\" ]\n        then\n            my_host=\"--host=powerpc-apple-darwin8.9.0\"\n        fi\n    elif [ \"i386\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch i386\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n\n        if [ \"powerpc\" = \"$ptype\" ]\n        then\n            my_host=\"--host=i386-apple-darwin8.9.0\"\n        fi\n    else\n        echo \"Unsupported architecture $my_target\"\n        exit 1\n    fi\n\n    pushd \"$postgresql_root\"\n    make distclean 2> /dev/null\n\n    if [ \"Debug\" = \"$BUILD_STYLE\" ]\n    then\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl --enable-debug \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared --enable-debug \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    else\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    fi\n\n    make clean 2> /dev/null\n\n    mkdir -p ../\"$my_target\"\n\n\t## PG 8.2 doesn't like to be built piece by piece.\n\tmake -j 4 2> /dev/null\n\n    for x in src/include src/interfaces/libpq src/bin/psql\n    do\n        pushd \"$x\"\n        make install\n        popd\n    done\n    \n    popd\n}\n\nif [ ! -e \"$my_build_dir\"/universal/lib/libpq.a ] || \\\n   [ ! -e \"$my_build_dir\"/universal/bin/psql ] ||\n   [ ! -e \"$my_build_dir\"/postgresql ]\nthen\n\tmkdir -p \"$my_build_dir\"\n\tpushd \"$SRCROOT\"/Contrib/PostgreSQL\n\textract\n\n\tif [ ! -e \"$my_build_dir\"/powerpc/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/powerpc/bin/psql ]\n\tthen\n\t    build powerpc\n\tfi\n\n\tif [ ! -e \"$my_build_dir\"/i386/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/i386/bin/psql ]\n\tthen\n\t    build i386\n\tfi\n\n\tmkdir -p \"$my_build_dir\"/universal/bin\n\tmkdir -p \"$my_build_dir\"/universal/lib\n\tfor file in lib/libpq.a bin/psql\n\tdo\n\t    lipo -create -output \"$my_build_dir\"/universal/\"$file\" \\\n\t\t\t\"$my_build_dir\"/i386/\"$file\" \\\n\t\t\t\"$my_build_dir\"/powerpc/\"$file\"\n\tdone\n\tcp -R \"$my_build_dir\"/powerpc/include \"$my_build_dir\"/postgresql\n\t\"$postgresql_root\"/configure --version | head -n 1 > \"$my_build_dir\"/VERSION\n\n\tpopd\nfi\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
 		53BD79F60E092ABC009CAFE6 /* ShellScript */ = {
@@ -858,21 +1126,53 @@
 				53E068260DEAE02A0004363D /* BXProbes.d in Sources */,
 				5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */,
 				5364EF5C0E1B940A003D3DB6 /* BXLogger.m in Sources */,
+				53666CD80E1CD8D20028DBEA /* PGTSTypeDescription.m in Sources */,
+				53666CDC0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m in Sources */,
+				53666CDE0E1CD8D20028DBEA /* PGTSAbstractDescription.m in Sources */,
+				53666CE00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m in Sources */,
+				53666CE20E1CD8D20028DBEA /* PGTSACLItem.m in Sources */,
+				53666CE40E1CD8D20028DBEA /* PGTSAdditions.m in Sources */,
+				53666CE60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m in Sources */,
+				53666CEA0E1CD8D20028DBEA /* PGTSConnection.mm in Sources */,
+				53666CEE0E1CD8D20028DBEA /* PGTSConnectionMonitor.m in Sources */,
+				53666CF20E1CD8D20028DBEA /* PGTSConnector.m in Sources */,
+				53666CF40E1CD8D20028DBEA /* PGTSConstants.m in Sources */,
+				53666CF60E1CD8D20028DBEA /* PGTSDatabaseDescription.m in Sources */,
+				53666CFA0E1CD8D20028DBEA /* PGTSFieldDescription.m in Sources */,
+				53666CFE0E1CD8D20028DBEA /* PGTSFoundationObjects.m in Sources */,
+				53666D000E1CD8D20028DBEA /* PGTSFunctions.m in Sources */,
+				53666D020E1CD8D20028DBEA /* PGTSHOM.m in Sources */,
+				53666D040E1CD8D20028DBEA /* PGTSIndexDescription.m in Sources */,
+				53666D060E1CD8D20028DBEA /* PGTSNotification.m in Sources */,
+				53666D070E1CD8D20028DBEA /* PGTSProbes.d in Sources */,
+				53666D090E1CD8D20028DBEA /* PGTSQuery.m in Sources */,
+				53666D0B0E1CD8D20028DBEA /* PGTSQueryDescription.m in Sources */,
+				53666D0D0E1CD8D20028DBEA /* PGTSResultSet.mm in Sources */,
+				53666D100E1CD8D20028DBEA /* PGTSRoleDescription.m in Sources */,
+				53666D130E1CD8D20028DBEA /* PGTSSchemaDescription.m in Sources */,
+				53666D150E1CD8D20028DBEA /* PGTSTableDescription.m in Sources */,
+				53666D630E1CDE3A0028DBEA /* MKCAbstractIntegerDictionary.m in Sources */,
+				53666D680E1CDE3A0028DBEA /* MKCDictionary.m in Sources */,
+				53666D690E1CDE3A0028DBEA /* MKCDictionaryEnumerator.m in Sources */,
+				53666D6B0E1CDE3A0028DBEA /* MKCDictionaryKeyEnumerator.m in Sources */,
+				53666D6E0E1CDE3A0028DBEA /* MKCHashTable.m in Sources */,
+				53666D6F0E1CDE3A0028DBEA /* MKCIntegerDictionary.m in Sources */,
+				53666D700E1CDE3A0028DBEA /* MKCIntegerDictionaryEnumerator.m in Sources */,
+				53666D710E1CDE3A0028DBEA /* MKCIntegerDictionaryKeyEnumerator.m in Sources */,
+				53666D720E1CDE3A0028DBEA /* MKCIntegerKeyDictionary.m in Sources */,
+				53666D730E1CDE3A0028DBEA /* MKCObjectDictionary.m in Sources */,
+				53666D7D0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m in Sources */,
+				53666D7F0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		535444180D634A66002A6C47 /* PBXTargetDependency */ = {
+		5362E8710E1CE4A9005C7654 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Static library + GC";
-			targetProxy = 535444170D634A66002A6C47 /* PBXContainerItemProxy */;
-		};
-		5373856D0DD9FB77006F965A /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "Static archive + GC";
-			targetProxy = 5373856C0DD9FB77006F965A /* PBXContainerItemProxy */;
+			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
+			targetProxy = 5362E8700E1CE4A9005C7654 /* PBXContainerItemProxy */;
 		};
 		537385760DD9FBB7006F965A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -931,6 +1231,20 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
+			};
+			name = Release;
+		};
+		5362E86D0E1CE46D005C7654 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = PostgreSQL;
+			};
+			name = Debug;
+		};
+		5362E86E0E1CE46D005C7654 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = PostgreSQL;
 			};
 			name = Release;
 		};
@@ -993,6 +1307,15 @@
 			buildConfigurations = (
 				535444110D634A47002A6C47 /* Debug */,
 				535444120D634A47002A6C47 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5362E8C80E1CE4E8005C7654 /* Build configuration list for PBXAggregateTarget "PostgreSQL" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5362E86D0E1CE46D005C7654 /* Debug */,
+				5362E86E0E1CE46D005C7654 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -29,4 +29,3 @@
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
 #endif
-#define L4_CURRENT_LIBRARY "BaseTen"

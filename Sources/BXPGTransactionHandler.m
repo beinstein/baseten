@@ -26,9 +26,9 @@
 // $Id$
 //
 
-#import <PGTS/PGTSAdditions.h>
-#import <PGTS/PGTSFunctions.h>
-#import <PGTS/private/PGTSHOM.h>
+#import "PGTSAdditions.h"
+#import "PGTSFunctions.h"
+#import "PGTSHOM.h"
 
 #import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
