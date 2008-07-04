@@ -232,6 +232,8 @@
 		538A83860E1D2ACD0025B3C8 /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82B90E1D15BB0025B3C8 /* print.c */; };
 		538A83870E1D2ACE0025B3C8 /* prompt.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A83050E1D1DD30025B3C8 /* prompt.c */; };
 		538A83880E1D2ACF0025B3C8 /* stringutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82F80E1D1C1B0025B3C8 /* stringutils.c */; };
+		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; };
+		539758530E1E86200042120A /* BXDataModelCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 539758510E1E86200042120A /* BXDataModelCompiler.m */; };
 		53BD79D70E09140D009CAFE6 /* BXErrorHandlerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */; };
 		53E068260DEAE02A0004363D /* BXProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53E068240DEAE02A0004363D /* BXProbes.d */; };
 		53ED2E8E0E1AB7CB0095BE8B /* BXLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */; settings = {ATTRIBUTES = (); }; };
@@ -496,6 +498,8 @@
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
 		538A83CC0E1D85420025B3C8 /* sql_parser_exports */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sql_parser_exports; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
+		539758500E1E86200042120A /* BXDataModelCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDataModelCompiler.h; path = Sources/BXDataModelCompiler.h; sourceTree = "<group>"; };
+		539758510E1E86200042120A /* BXDataModelCompiler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDataModelCompiler.m; path = Sources/BXDataModelCompiler.m; sourceTree = "<group>"; };
 		539EDD730C46218B00B6E5EC /* BXAttributeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAttributeDescription.h; path = Sources/BXAttributeDescription.h; sourceTree = "<group>"; };
 		539EDD740C46218B00B6E5EC /* BXAttributeDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAttributeDescription.m; path = Sources/BXAttributeDescription.m; sourceTree = "<group>"; };
 		539EDD800C46243100B6E5EC /* BXAttributeDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAttributeDescriptionPrivate.h; path = Sources/BXAttributeDescriptionPrivate.h; sourceTree = "<group>"; };
@@ -631,6 +635,8 @@
 				5301302609D43A450037C485 /* BXConstants.h */,
 				53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */,
 				5301302709D43A450037C485 /* BXConstants.m */,
+				539758500E1E86200042120A /* BXDataModelCompiler.h */,
+				539758510E1E86200042120A /* BXDataModelCompiler.m */,
 				53E068240DEAE02A0004363D /* BXProbes.d */,
 				32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */,
 				53D0D1980B6F908A00D2D101 /* PostgreSQL Interface */,
@@ -1061,6 +1067,7 @@
 				53666D800E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h in Headers */,
 				53666DAC0E1CE2180028DBEA /* postgresql in Headers */,
 				5328754A0E1E515500CC507E /* BXPGSQLScriptReader.h in Headers */,
+				539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1297,6 +1304,7 @@
 				53666D7D0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m in Sources */,
 				53666D7F0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m in Sources */,
 				5328754B0E1E515500CC507E /* BXPGSQLScriptReader.m in Sources */,
+				539758530E1E86200042120A /* BXDataModelCompiler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

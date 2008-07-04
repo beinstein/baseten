@@ -1,5 +1,5 @@
 //
-// BXPGAdditions.h
+// BXDataModelCompiler.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,37 +27,27 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTS.h"
-
-#import "BaseTen.h"
-#import "BXLogger.h"
+#import <CoreData/CoreData.h>
 
 
-@interface NSObject (BXPGAdditions)
-- (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
+@protocol BXDataModelCompilerDelegate <NSObject>
+- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus;
 @end
 
 
-@interface PGTSFieldDescriptionProxy (BXPGInterfaceAdditions)
-- (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
-@end
+@interface BXDataModelCompiler : NSObject 
+{
+	NSURL* mModelURL;
+	NSURL* mCompiledModelURL;
+	NSTask* mMomcTask;
+	id <BXDataModelCompilerDelegate> mDelegate;
+}
 
+- (NSURL *) compiledModelURL;
+- (void) setModelURL: (NSURL *) aFileURL;
+- (void) setDelegate: (id <BXDataModelCompilerDelegate>) anObject;
+- (void) compileDataModel;
 
-@interface BXEntityDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
-@end
+- (void) setCompiledModelURL: (NSURL *) aFileURL;
 
-
-@interface BXAttributeDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
-@end
-
-
-@interface NSURL (BXPGInterfaceAdditions)
-- (NSMutableDictionary *) BXPGConnectionDictionary;
-@end
-
-
-@interface BXDatabaseObject (BXPGInterfaceAdditions) <PGTSResultRowProtocol>
 @end

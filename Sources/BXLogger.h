@@ -59,6 +59,15 @@
 	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return (retval); }} while (0)
 
 
+#define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to have been set.");
+#define ExpectR( X, RETVAL )	BXAssertValueReturn( X, RETVAL, @"Expected " #X " to have been set.");
+#define ExpectV( X ) BXAssertVoidReturn( X, @"Expected " #X " to have been set.");
+//C function variants.
+#define ExpectC( X ) Expect( X )
+#define ExpectCV( X ) ExpectV( X )
+#define ExpectCR( X, RETVAL ) ExpectR( X, RETVAL )
+
+
 enum BXLogLevel
 {
 	kBXLogLevelOff = 0,
