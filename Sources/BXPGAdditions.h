@@ -30,6 +30,7 @@
 #import "PGTS.h"
 
 #import "BaseTen.h"
+#import "BXLogger.h"
 
 #define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to have been set.");
 #define ExpectR( X, RETVAL )	BXAssertValueReturn( X, RETVAL, @"Expected " #X " to have been set.");

@@ -50,6 +50,8 @@
 		531A21570DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A21550DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m */; };
 		531A215C0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A215A0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h */; };
 		531A215D0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A215B0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m */; };
+		5328754A0E1E515500CC507E /* BXPGSQLScriptReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 532875480E1E515500CC507E /* BXPGSQLScriptReader.h */; };
+		5328754B0E1E515500CC507E /* BXPGSQLScriptReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 532875490E1E515500CC507E /* BXPGSQLScriptReader.m */; };
 		5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */; };
 		5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */; };
 		535443C50D634A47002A6C47 /* BaseTen.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADD8309ED21EF004A13C3 /* BaseTen.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -322,6 +324,8 @@
 		5321F8340CF77FFB00E663CE /* BXInvocationRecorder.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXInvocationRecorder.m; path = Sources/BXInvocationRecorder.m; sourceTree = "<group>"; };
 		5321F83B0CF7807700E663CE /* BXInvocation.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = BXInvocation.h; path = Sources/BXInvocation.h; sourceTree = "<group>"; };
 		5321F83C0CF7807700E663CE /* BXInvocation.m */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.objc; name = BXInvocation.m; path = Sources/BXInvocation.m; sourceTree = "<group>"; };
+		532875480E1E515500CC507E /* BXPGSQLScriptReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLScriptReader.h; path = Sources/BXPGSQLScriptReader.h; sourceTree = "<group>"; };
+		532875490E1E515500CC507E /* BXPGSQLScriptReader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScriptReader.m; path = Sources/BXPGSQLScriptReader.m; sourceTree = "<group>"; };
 		5328FB6B0C457AC4006DE171 /* BXRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescription.h; path = Sources/BXRelationshipDescription.h; sourceTree = "<group>"; };
 		5328FB6C0C457AC4006DE171 /* BXRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXRelationshipDescription.m; path = Sources/BXRelationshipDescription.m; sourceTree = "<group>"; };
 		5328FBD40C4580CD006DE171 /* BXForeignKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKey.h; path = Sources/BXForeignKey.h; sourceTree = "<group>"; };
@@ -914,6 +918,8 @@
 				537F01710DDC58F100498B93 /* BXPGAdditions.m */,
 				53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */,
 				53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */,
+				532875480E1E515500CC507E /* BXPGSQLScriptReader.h */,
+				532875490E1E515500CC507E /* BXPGSQLScriptReader.m */,
 				531A21AF0DE46860006C757A /* Notification Handlers */,
 				531A21B00DE4686E006C757A /* Transaction Handlers */,
 				531A21B10DE4687D006C757A /* Recovery Attempters */,
@@ -1039,6 +1045,7 @@
 				53666D7E0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h in Headers */,
 				53666D800E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h in Headers */,
 				53666DAC0E1CE2180028DBEA /* postgresql in Headers */,
+				5328754A0E1E515500CC507E /* BXPGSQLScriptReader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1271,6 +1278,7 @@
 				53666D730E1CDE3A0028DBEA /* MKCObjectDictionary.m in Sources */,
 				53666D7D0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m in Sources */,
 				53666D7F0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m in Sources */,
+				5328754B0E1E515500CC507E /* BXPGSQLScriptReader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
