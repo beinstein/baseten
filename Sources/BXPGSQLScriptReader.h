@@ -30,7 +30,8 @@
 #import <stdio.h>
 
 @class PGTSConnection;
-#import "BXPGSQLScanner.h"
+@class BXPGSQLScanner;
+@protocol BXPGSQLScannerDelegate;
 
 
 #define BXPGSQLScannerBufferSize 1024
@@ -46,8 +47,4 @@
 - (void) openFileAtURL: (NSURL *) fileURL;
 - (void) readAndExecuteAsynchronously;
 - (void) setScanner: (BXPGSQLScanner *) scanner;
-@end
-
-
-@interface BXPGSQLScriptReader (BXPGSQLScannerDelegate) <BXPGSQLScannerDelegate>
 @end

@@ -3,3 +3,4 @@ _psql_scan_finish
 _psql_scan
 _psql_scan_slash_command_end
 _psql_scan_slash_pushback
+.objc_class_name_*

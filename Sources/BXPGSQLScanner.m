@@ -116,15 +116,6 @@ QueryFromBuffer (PQExpBuffer buffer)
 			
 			/* end of line, SQL possibly complete */
 			case PSCAN_EOL:
-			{
-				NSString* query = QueryFromBuffer (mQueryBuffer);
-				psql_scan_finish (mScanState);
-				mCurrentLine = NULL;
-				mShouldStartScanning = YES;
-				[mDelegate scanner: self scannedQuery: query complete: YES];
-				break;
-			}
-		
 			/* end of line, SQL statement incomplete */
 			case PSCAN_INCOMPLETE:
 			{
@@ -134,6 +125,7 @@ QueryFromBuffer (PQExpBuffer buffer)
 				if (nextLine)
 				{
 					mCurrentLine = nextLine;
+					mShouldStartScanning = YES;
 					[self continueScanning];
 					//Tail recursion.
 				}

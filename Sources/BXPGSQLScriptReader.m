@@ -32,6 +32,10 @@
 #import "BXPGAdditions.h"
 
 
+@interface BXPGSQLScriptReader (BXPGSQLScannerDelegate) <BXPGSQLScannerDelegate>
+@end
+
+
 @implementation BXPGSQLScriptReader
 - (void) setConnection: (PGTSConnection *) connection
 {
@@ -63,9 +67,14 @@
 - (void) readAndExecuteAsynchronously
 {
 	ExpectV (mFile);
-	ExpectV (mScanner);
 	ExpectV (mConnection);
 
+	if (! mScanner)
+	{
+		mScanner = [[BXPGSQLScanner alloc] init];
+		[mScanner setDelegate: self];
+	}
+	
 	[mScanner continueScanning];
 }
 

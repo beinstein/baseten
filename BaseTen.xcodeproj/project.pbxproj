@@ -24,6 +24,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				532876C90E1E778600CC507E /* PBXTargetDependency */,
 				537385760DD9FBB7006F965A /* PBXTargetDependency */,
 				53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */,
 			);
@@ -34,7 +35,7 @@
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 53BD79FA0E092ADB009CAFE6 /* Build configuration list for PBXAggregateTarget "Documentation" */;
 			buildPhases = (
-				53BD79F60E092ABC009CAFE6 /* ShellScript */,
+				53BD79F60E092ABC009CAFE6 /* Run doxygen */,
 			);
 			dependencies = (
 			);
@@ -50,7 +51,7 @@
 		531A21570DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A21550DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.m */; };
 		531A215C0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A215A0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.h */; };
 		531A215D0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A215B0DE432F9006C757A /* BXPGManualCommitConnectionResetRecoveryAttempter.m */; };
-		5328754A0E1E515500CC507E /* BXPGSQLScriptReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 532875480E1E515500CC507E /* BXPGSQLScriptReader.h */; };
+		5328754A0E1E515500CC507E /* BXPGSQLScriptReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 532875480E1E515500CC507E /* BXPGSQLScriptReader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5328754B0E1E515500CC507E /* BXPGSQLScriptReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 532875490E1E515500CC507E /* BXPGSQLScriptReader.m */; };
 		5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */; };
 		5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */; };
@@ -251,6 +252,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		532876C80E1E778600CC507E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5362E86C0E1CE46D005C7654;
+			remoteInfo = PostgreSQL;
+		};
 		535444940D634DA9002A6C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
@@ -285,6 +293,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 538A82C00E1D16AC0025B3C8;
 			remoteInfo = "SQL Parser";
+		};
+		5397580D0E1E7B790042120A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
+			remoteInfo = PostgreSQL;
 		};
 		53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1084,6 +1099,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5397580E0E1E7B790042120A /* PBXTargetDependency */,
 			);
 			name = "SQL Parser";
 			productName = "SQL Parser";
@@ -1182,18 +1198,20 @@
 			shellScript = "my_build_dir=\"$BUILT_PRODUCTS_DIR\"/BaseTen-PostgreSQL\nversion=\"8.2.5\"\npostgresql_source_file=\"postgresql-base-${version}.tar.bz2\"\npostgresql_root=\"${my_build_dir}/postgresql-${version}\"\n\nfunction extract\n{\n    # Extract the sources\n    if [ ! -d \"$postgresql_root\" ]\n    then\n        if [ -e \"$postgresql_root\" ]\n        then\n            echo \"A file named ${postgresql_root} exists and is not a folder. Exiting.\"\n            exit 1\n        fi\n        gnutar -jxf \"$postgresql_source_file\" -C \"$my_build_dir\"\n        patch -p1 -d \"$postgresql_root\" < \"$SRCROOT\"/libpq.patch\n    fi\n}\n\nfunction build\n{\n    ptype=`uname -p`\n    my_host=\n    my_target=\"$1\"\n    if [ -z \"$my_target\" ]\n    then\n        my_target=\"$ptype\"\n    fi\n\n\tunset CC\n\tunset CPP\n\tunset CFLAGS\n\tunset CPPFLAGS\n\tunset CXXFLAGS\n\tunset LDFLAGS\n\n    if [ \"powerpc\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch ppc\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n\n        if [ \"i386\" = \"$ptype\" ]\n        then\n            my_host=\"--host=powerpc-apple-darwin8.9.0\"\n        fi\n    elif [ \"i386\" = \"$my_target\" ]\n    then\n        export CFLAGS=\"-arch i386\"\n        export CPPFLAGS=\"-isystem=/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n        export LDFLAGS=\"-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -mmacosx-version-min=10.4\"\n\n        if [ \"powerpc\" = \"$ptype\" ]\n        then\n            my_host=\"--host=i386-apple-darwin8.9.0\"\n        fi\n    else\n        echo \"Unsupported architecture $my_target\"\n        exit 1\n    fi\n\n    pushd \"$postgresql_root\"\n    make distclean 2> /dev/null\n\n    if [ \"Debug\" = \"$BUILD_STYLE\" ]\n    then\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl --enable-debug \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared --enable-debug \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    else\n        echo \"Configure options: $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\ \n        --prefix=$my_build_dir/$my_target\"\n        ./configure $my_host --with-bonjour --disable-shared \\\n        --without-zlib --without-readline --with-openssl \\\n        --prefix=$my_build_dir/\"$my_target\"\n    fi\n\n    make clean 2> /dev/null\n\n    mkdir -p ../\"$my_target\"\n\n\t## PG 8.2 doesn't like to be built piece by piece.\n\tmake -j 4 2> /dev/null\n\n    for x in src/include src/interfaces/libpq src/bin/psql\n    do\n        pushd \"$x\"\n        make install\n        popd\n    done\n    \n    popd\n}\n\nif [ ! -e \"$my_build_dir\"/universal/lib/libpq.a ] || \\\n   [ ! -e \"$my_build_dir\"/universal/bin/psql ] ||\n   [ ! -e \"$my_build_dir\"/postgresql ]\nthen\n\tmkdir -p \"$my_build_dir\"\n\tpushd \"$SRCROOT\"/Contrib/PostgreSQL\n\textract\n\n\tif [ ! -e \"$my_build_dir\"/powerpc/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/powerpc/bin/psql ]\n\tthen\n\t    build powerpc\n\tfi\n\n\tif [ ! -e \"$my_build_dir\"/i386/lib/libpq.a ] || [ ! -e \"$my_build_dir\"/i386/bin/psql ]\n\tthen\n\t    build i386\n\tfi\n\n\tmkdir -p \"$my_build_dir\"/universal/bin\n\tmkdir -p \"$my_build_dir\"/universal/lib\n\tfor file in lib/libpq.a bin/psql\n\tdo\n\t    lipo -create -output \"$my_build_dir\"/universal/\"$file\" \\\n\t\t\t\"$my_build_dir\"/i386/\"$file\" \\\n\t\t\t\"$my_build_dir\"/powerpc/\"$file\"\n\tdone\n\tcp -R \"$my_build_dir\"/powerpc/include \"$my_build_dir\"/postgresql\n\t\"$postgresql_root\"/configure --version | head -n 1 > \"$my_build_dir\"/VERSION\n\n\tpopd\nfi\nexit 0\n";
 			showEnvVarsInLog = 0;
 		};
-		53BD79F60E092ABC009CAFE6 /* ShellScript */ = {
+		53BD79F60E092ABC009CAFE6 /* Run doxygen */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run doxygen";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cd \"$SRCROOT\"\ndoxygen\ncd Documentation/html\nmake\nopen *.docset\nexit 0";
+			shellScript = "if [ -z \"$DOXYGEN\" ]\nthen\n\tDOXYGEN=`which doxygen`\n\tif [ -z \"$DOXYGEN\" ]\n\tthen\n\t\tif [ -x \"/usr/local/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/usr/local/bin/doxygen\"\n\t\telif [ -x \"/opt/local/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/opt/local/bin/doxygen\"\n\t\telif [ -x \"/sw/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/sw/bin/doxygen\"\n\t\tfi\n\tfi\nfi\n\nif [ -x \"$DOXYGEN\" ]\nthen\n\tcd \"$SRCROOT\"\n\t\"$DOXYGEN\"\n\tcd Documentation/html\n\tmake\n\topen *.docset\nelse\n\techo \"warning: didn't find doxygen; documentation not created.\"\nfi\nexit 0";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1304,6 +1322,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		532876C90E1E778600CC507E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
+			targetProxy = 532876C80E1E778600CC507E /* PBXContainerItemProxy */;
+		};
 		5362E8710E1CE4A9005C7654 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
@@ -1318,6 +1341,11 @@
 			isa = PBXTargetDependency;
 			target = 538A82C00E1D16AC0025B3C8 /* SQL Parser */;
 			targetProxy = 538A82CA0E1D176D0025B3C8 /* PBXContainerItemProxy */;
+		};
+		5397580E0E1E7B790042120A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
+			targetProxy = 5397580D0E1E7B790042120A /* PBXContainerItemProxy */;
 		};
 		53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1414,15 +1442,17 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
-				DEPLOYMENT_POSTPROCESSING = YES;
-				EXPORTED_SYMBOLS_FILE = sql_parser_exports;
+				DEPLOYMENT_POSTPROCESSING = NO;
+				GCC_DEBUGGING_SYMBOLS = default;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/internal",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server/libpq",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include/postgresql/internal",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				KEEP_PRIVATE_EXTERNS = NO;
@@ -1430,7 +1460,7 @@
 				PRODUCT_NAME = SQLParser;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
 			};
 			name = Debug;
@@ -1441,8 +1471,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEPLOYMENT_POSTPROCESSING = YES;
-				EXPORTED_SYMBOLS_FILE = sql_parser_exports;
+				DEPLOYMENT_POSTPROCESSING = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
@@ -1456,7 +1485,7 @@
 				PRODUCT_NAME = SQLParser;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SEPARATE_STRIP = YES;
-				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = "non-global";
 				ZERO_LINK = NO;
 			};
