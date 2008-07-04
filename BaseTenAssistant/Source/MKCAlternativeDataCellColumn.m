@@ -39,17 +39,17 @@
 
 - (id) dataCellForRow: (int) rowIndex
 {
-    id rval = nil;
+    id retval = nil;
     if (-1 == rowIndex)
-        rval = [super dataCell];
+        retval = [super dataCell];
     else
     {
         id tableView = [self tableView];
-        rval = [[tableView delegate] MKCTableView: tableView dataCellForColumn: self row: rowIndex];
-        if (nil == rval)
-            rval = [super dataCellForRow: rowIndex];
+        retval = [[tableView delegate] MKCTableView: tableView dataCellForColumn: self row: rowIndex];
+        if (nil == retval)
+            retval = [super dataCellForRow: rowIndex];
     }
-    return rval;
+    return retval;
 }
 
 @end

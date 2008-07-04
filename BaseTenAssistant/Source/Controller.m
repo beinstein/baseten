@@ -55,11 +55,6 @@
 #define BX_COMPAT_VERSION_DEC         [NSDecimalNumber decimalNumberWithMantissa: 14 exponent: -2 isNegative: NO]
 
 
-@interface NSWindow (Private)
-- (id) _borderView;
-@end
-
-
 @interface NSArrayController (BaseTenSetupApplicationAdditions)
 - (BOOL) MKCHasEmptySelection;
 @end
@@ -99,22 +94,22 @@
 @implementation Entity (BaseTenSetupApplicationAdditions)
 - (NSColor *) textColor
 {
-    NSColor* rval = nil;
+    NSColor* retval = nil;
     if (YES == alreadyExists)
-        rval = [NSColor redColor];
+        retval = [NSColor redColor];
     else
-        rval = [NSColor blackColor];
-    return rval;
+        retval = [NSColor blackColor];
+    return retval;
 }
 
 - (NSColor *) selectedTextColor
 {
-    NSColor* rval = nil;
+    NSColor* retval = nil;
     if (YES == alreadyExists)
-        rval = [NSColor redColor];
+        retval = [NSColor redColor];
     else
-        rval = [NSColor whiteColor];
-    return rval;
+        retval = [NSColor whiteColor];
+    return retval;
 }
 @end
 
@@ -300,7 +295,10 @@
     }
 }
 
-/** We don't know what is going on but allow the user to replace the schema. */
+/** 
+ * Handle error in version check.
+ * We don't know what is going on but allow the user to replace the schema. 
+ */
 - (void) handleVersionCheckError: (PGTSResultSet *) res
 {
     NSString* messageFormat = @"The following error occured: %@ Would you like the schema to be replaced with the "
@@ -314,6 +312,7 @@
 }
 
 /**
+ * Check schema version.
  * First we check that the schema compatibility version. If it's lower than ours, allow the user to ALTER but refuse to connect
  * if they fail to comply. If it's higher, don't allow the modification but refuse to connect anyway.
  * If the compatibility version matched, check the schema version. If it's lower than ours, allow the user to update, but allow the
@@ -321,7 +320,7 @@
  */
 - (BOOL) versionCheck
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     BOOL allowConnect = YES;
     unsigned int updateOnlyIfNeeded = 0;
     PGTSResultSet* res = nil;
@@ -380,14 +379,14 @@
                     else
                     {
                         //Connection can be made without bothering the user
-                        rval = YES;
+                        retval = YES;
                     }
                 }
             }
         }
     }
     
-    if (NO == rval)
+    if (NO == retval)
     {
         SEL didEndSelector = @selector (alertAlterDidEnd:returnCode:contextInfo:);
         NSString* alternateButton = @"Cancel";
@@ -402,7 +401,7 @@
         [alert beginSheetModalForWindow: mMainWindow modalDelegate: self didEndSelector: didEndSelector contextInfo: (void *) updateOnlyIfNeeded];
     }
     
-    return rval;
+    return retval;
 }
 
 - (void) setConnectionDict: (NSDictionary *) aConnectionDict
@@ -467,17 +466,17 @@
 
 - (NSString *) inspectorTitle
 {
-    NSString* rval = @"Inspector";
+    NSString* retval = @"Inspector";
     id selection = [mTableController selectedObjects];
     if (0 < [selection count])
     {
         Table* selectedTable = [selection objectAtIndex: 0];
         if ([selectedTable isView])
-            rval = @"View Inspector";
+            retval = @"View Inspector";
         else
-            rval = @"Table Inspector";
+            retval = @"Table Inspector";
     }
-    return rval;
+    return retval;
 }
 
 - (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object
@@ -1014,13 +1013,13 @@
 
 - (id) tableView: (NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *) aTableColumn row: (int) rowIndex
 {
-    id rval = nil;
+    id retval = nil;
     if (aTableView == mDBTableView)
     {
         if (aTableColumn == mTableEnabledColumn)
         {
             Table* currentTable = [[mTableController arrangedObjects] objectAtIndex: rowIndex];
-            rval = [NSNumber numberWithBool: [currentTable prepared]]; 
+            retval = [NSNumber numberWithBool: [currentTable prepared]]; 
         }
     }
     else
@@ -1031,20 +1030,20 @@
         
         id field = [table fieldInfoForFieldAtIndex: rowIndex + 1];
         if (mNameColumn == aTableColumn)
-            rval = [field name];
+            retval = [field name];
         else if (mTypeColumn == aTableColumn)
-            rval = [[field typeInfo] name];
+            retval = [[field typeInfo] name];
         else if (mDetailColumn == aTableColumn)
         {
             PGTSIndexInfo* pkey = [table primaryKey];
             if ([[pkey fields] containsObject: field])
-                rval = [NSNumber numberWithBool: YES];
+                retval = [NSNumber numberWithBool: YES];
             else
-                rval = [NSNumber numberWithBool: NO];
+                retval = [NSNumber numberWithBool: NO];
         }
     }
     
-    return rval;
+    return retval;
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *) aNotification
@@ -1092,15 +1091,15 @@
 
 - (BOOL) allowSettingPrimaryKey
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     id selection = [mTableController selectedObjects];
     if (0 < [selection count])
     {
         Table* selectedTable = [selection objectAtIndex: 0];
         if ([selectedTable isView] && NO == [selectedTable prepared])
-            rval = YES;
+            retval = YES;
     }
-    return rval;
+    return retval;
 }
 
 - (BOOL) allowEnabling

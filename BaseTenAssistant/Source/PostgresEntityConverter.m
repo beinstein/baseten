@@ -68,7 +68,7 @@
 @implementation NSDate (PGEAdditions)
 - (id) PGEDefaultValueForFieldType: (NSAttributeType) fieldType
 {
-	return [NSString stringWithFormat: @"timestamp with time zone 'epoch' + interval '%f seconds'", [self timeIntervalSince1970]];
+	return [NSString stringWithFormat: @"timestamp with time zone 'epoch' + interetval '%f seconds'", [self timeInteretvalSince1970]];
 }
 @end
 
@@ -78,81 +78,81 @@
 
 - (NSString *) nameForDeleteRule: (NSDeleteRule) rule
 {
-	NSString* rval = nil;
+	NSString* retval = nil;
 	switch (rule)
 	{
 		case NSNoActionDeleteRule:
-			rval = @"NO ACTION";
+			retval = @"NO ACTION";
 			break;
 			
 		case NSNullifyDeleteRule:
-			rval = @"SET NULL";
+			retval = @"SET NULL";
 			break;
 			
 		case NSCascadeDeleteRule:
-			rval = @"CASCADE";
+			retval = @"CASCADE";
 			break;
 			
 		case NSDenyDeleteRule:
-			rval = @"RESTRICT";
+			retval = @"RESTRICT";
 			break;
 			
 		default:
 			break;
 	}
-	return rval;
+	return retval;
 }
 
 - (NSString *) nameForAttributeType: (NSAttributeType) type
 {
-    NSString* rval = nil;
+    NSString* retval = nil;
     switch (type)
     {        
         case NSInteger16AttributeType:
-            rval =  @"smallint";
+            retval =  @"smallint";
             break;
             
         case NSInteger32AttributeType:
-            rval = @"integer";
+            retval = @"integer";
             break;
             
         case NSInteger64AttributeType:
-            rval = @"bigint";
+            retval = @"bigint";
             break;
             
         case NSDecimalAttributeType:
-            rval = @"numeric";
+            retval = @"numeric";
             break;
             
         case NSDoubleAttributeType:
-            rval = @"double precision";
+            retval = @"double precision";
             break;
             
         case NSFloatAttributeType:
-            rval = @"real";
+            retval = @"real";
             break;
             
         case NSStringAttributeType:
-            rval = @"text";
+            retval = @"text";
             break;
             
         case NSBooleanAttributeType:
-            rval = @"boolean";
+            retval = @"boolean";
             break;
             
         case NSDateAttributeType:
-            rval = @"timestamp with time zone";
+            retval = @"timestamp with time zone";
             break;
             
         case NSBinaryDataAttributeType:
-            rval = @"bytea";
+            retval = @"bytea";
             break;
             
         case NSUndefinedAttributeType:
         default:
             break;            
     }
-    return rval;
+    return retval;
 }
 
 /**
@@ -160,7 +160,7 @@
  */
 - (NSArray *) sortedEntities: (NSArray *) entityArray
 {
-    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [entityArray count]];
+    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [entityArray count]];
     NSMutableDictionary* unsatisfiedDependencies = [NSMutableDictionary dictionary];
     NSMutableSet* addedEntities = [NSMutableSet setWithCapacity: [entityArray count]];
     TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
@@ -169,12 +169,12 @@
         NSEntityDescription* superentityDesc = [entityDesc superentity];
         if (nil == superentityDesc || [addedEntities containsObject: superentityDesc])
         {
-            [rval addObject: currentEntity];
+            [retval addObject: currentEntity];
             [addedEntities addObject: entityDesc];
             
             //Check recursively if adding this entity made some other entities available
             NSMutableArray* subentities = [self add: [entityDesc name] fromUnsatisfied: unsatisfiedDependencies];
-            [rval addObjectsFromArray: subentities];
+            [retval addObjectsFromArray: subentities];
             [addedEntities addObjectsFromArray: [subentities valueForKey: @"entityDescription"]];
         }
         else
@@ -199,32 +199,32 @@
                 [entityDesc name], [[entityDesc superentity] name]]];
         }
     }
-    return rval;
+    return retval;
 }
 
 - (NSMutableArray *) add: (NSString *) aName fromUnsatisfied: (NSMutableDictionary *) unsatisfied
 {
-    NSMutableArray* rval = [NSMutableArray array];
+    NSMutableArray* retval = [NSMutableArray array];
     TSEnumerate (subEntity, e, [[unsatisfied objectForKey: aName] objectEnumerator])
     {
-        [rval addObject: subEntity];
-        [rval addObjectsFromArray: [self add: [[subEntity entityDescription] name] fromUnsatisfied: unsatisfied]];
+        [retval addObject: subEntity];
+        [retval addObjectsFromArray: [self add: [[subEntity entityDescription] name] fromUnsatisfied: unsatisfied]];
     }
     
     //The dependency was satisfied
     [unsatisfied removeObjectForKey: aName];
     
-    return rval;
+    return retval;
 }
 
 - (NSArray *) createStatementsForEntities: (NSArray *) entityArray
 {
     NSMutableSet* handledEntities = [NSMutableSet setWithCapacity: [entityArray count]];
-    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [entityArray count]];
+    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [entityArray count]];
     entityArray = [self sortedEntities: entityArray];
     TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
     {
-        [rval addObject: [self createStatementForEntity: currentEntity]];
+        [retval addObject: [self createStatementForEntity: currentEntity]];
         [handledEntities addObject: [currentEntity entityDescription]];
     }
     
@@ -304,15 +304,15 @@
 									[relationships [i] name]]];
 						}
 						
-                        [rval addObject: [NSString stringWithFormat: @"SELECT baseten.cancelmodificationobserving (c.oid) FROM pg_class c, pg_namespace n "
+                        [retval addObject: [NSString stringWithFormat: @"SELECT baseten.cancelmodificationobserving (c.oid) FROM pg_class c, pg_namespace n "
                             " WHERE c.relnamespace = n.oid AND n.nspname = '%@' AND c.relname = '%@';",
                             [schemaName PGTSEscapedString: connection], [helperTableName PGTSEscapedString: connection]]];
-                        [rval addObject: [NSString stringWithFormat: @"DROP TABLE IF EXISTS \"%@\".\"%@\" CASCADE;", schemaName, helperTableName]];
-                        [rval addObject: [NSString stringWithFormat: @"CREATE TABLE \"%@\".\"%@\" (\"%@\" integer, \"%@\" integer, PRIMARY KEY (\"%@\", \"%@\"));",
+                        [retval addObject: [NSString stringWithFormat: @"DROP TABLE IF EXISTS \"%@\".\"%@\" CASCADE;", schemaName, helperTableName]];
+                        [retval addObject: [NSString stringWithFormat: @"CREATE TABLE \"%@\".\"%@\" (\"%@\" integer, \"%@\" integer, PRIMARY KEY (\"%@\", \"%@\"));",
                             schemaName, helperTableName, id1Name, id2Name, id1Name, id2Name]];
-                        [rval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkey1Name, id1Name, schemaName, entity1Name]];
-                        [rval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkey2Name, id2Name, schemaName, entity2Name]];
-                        [rval addObject: [NSString stringWithFormat: @"SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n "
+                        [retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkey1Name, id1Name, schemaName, entity1Name]];
+                        [retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkey2Name, id2Name, schemaName, entity2Name]];
+                        [retval addObject: [NSString stringWithFormat: @"SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n "
                             " WHERE c.relnamespace = n.oid AND n.nspname = '%@' AND c.relname = '%@';", 
                             [schemaName PGTSEscapedString: connection], [helperTableName PGTSEscapedString: connection]]];
                     }
@@ -377,7 +377,7 @@
                         NSString* currentRelationshipName = [currentRelationship name];
                         NSString* columnName = [currentRelationshipName stringByAppendingString: @"_id"];
                         
-                        [rval addObject: [NSString stringWithFormat: statementFormat, 
+                        [retval addObject: [NSString stringWithFormat: statementFormat, 
                             schemaName, [currentEntityDesc name],
                             columnName,
                             ([currentRelationship isOptional] ? @"" : @"NOT NULL"),
@@ -386,7 +386,7 @@
                         
                         if (isOneToOne)
                         {
-                            [rval addObject: [NSString stringWithFormat:
+                            [retval addObject: [NSString stringWithFormat:
                                 @"ALTER TABLE \"%@\".\"%@\" ADD UNIQUE (\"%@\");", 
                                 schemaName, [currentEntityDesc name], columnName]];
                         }
@@ -400,7 +400,7 @@
         }
     }
     
-    return rval;
+    return retval;
 }
 
 - (NSString *) createStatementForEntity: (Entity *) entity
@@ -576,7 +576,7 @@
 
 - (NSArray *) dropStatementsForEntities: (NSArray *) entityArray
 {
-    NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [entityArray count]];
+    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [entityArray count]];
     TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
     {
         if ([currentEntity alreadyExists])
@@ -584,17 +584,17 @@
             PGTSResultSet* res = [connection executeQuery: @"SELECT baseten.IsObservingCompatible ($1) AS compatible;" parameters: [currentEntity identifier]];
             [res advanceRow];
             if (YES == [[res valueForKey: @"compatible"] boolValue])
-                [rval addObject: [NSString stringWithFormat: @"SELECT baseten.CancelModificationObserving (%@);", [currentEntity identifier]]];
-            [rval addObject: [NSString stringWithFormat: @"DROP TABLE \"%@\".\"%@\" CASCADE;", [currentEntity schemaName], [[currentEntity entityDescription] name]]];
+                [retval addObject: [NSString stringWithFormat: @"SELECT baseten.CancelModificationObserving (%@);", [currentEntity identifier]]];
+            [retval addObject: [NSString stringWithFormat: @"DROP TABLE \"%@\".\"%@\" CASCADE;", [currentEntity schemaName], [[currentEntity entityDescription] name]]];
         }
     }
-    return rval;
+    return retval;
 }
 
 - (NSError *) importEntities: (NSArray *) entityArray
 {
     NSMutableSet* createdSchemas = [NSMutableSet set];
-    NSError* rval = nil;
+    NSError* retval = nil;
     
     if (YES == dryRun)
         [self log: @"-- Beginning dry run."];
@@ -682,11 +682,11 @@
 			errorMessage,		NSLocalizedRecoverySuggestionErrorKey,
 			@"Import error",	NSLocalizedDescriptionKey,
 			nil];
-        rval = [NSError errorWithDomain: kBXSetupApplicationDomain code: kBXSetupErrorUndefined userInfo: userInfo];
+        retval = [NSError errorWithDomain: kBXSetupApplicationDomain code: kBXSetupErrorUndefined userInfo: userInfo];
     }
     [self log: @"\n"];
     [connection setOverlooksFailedQueries: YES];
-    return rval;
+    return retval;
 }
 
 @end

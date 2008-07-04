@@ -160,15 +160,15 @@
 
 - (NSError *) importEntities: (NSArray *) entities dryRun: (BOOL) dryRun
 {
-    NSError* rval = nil;
+    NSError* retval = nil;
     
     [mEntityConverter setAddsIDColumns: mAddsSerialColumns];
     [mEntityConverter setAddsForeignKeys: mMakesForeignKeys];
     [mEntityConverter setDryRun: dryRun];
     [mEntityConverter setController: mController];
     
-    rval = [mEntityConverter importEntities: entities];
-    return rval; 
+    retval = [mEntityConverter importEntities: entities];
+    return retval; 
 }
 
 @end
@@ -448,14 +448,14 @@
     id selection = [mImportArrayController selectedObjects];
     NSArray* attrs = [[[[selection objectAtIndex: 0] entityDescription] attributesByName] allValues];
     id attribute = [attrs objectAtIndex: rowIndex];
-    id rval = nil;
+    id retval = nil;
     
     if (mController->mNameColumn == aTableColumn)
-        rval = [attribute name];
+        retval = [attribute name];
     else if (mController->mTypeColumn == aTableColumn)
-        rval = [mEntityConverter nameForAttributeType: [attribute attributeType]];
+        retval = [mEntityConverter nameForAttributeType: [attribute attributeType]];
     
-    return rval;
+    return retval;
 }
 
 - (void) tableViewSelectionDidChange: (NSNotification *) aNotification
