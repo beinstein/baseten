@@ -281,7 +281,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 538A82C00E1D16AC0025B3C8 /* SQL Parser */;
+			remoteGlobalIDString = 538A82C00E1D16AC0025B3C8;
 			remoteInfo = "SQL Parser";
 		};
 		53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */ = {
@@ -475,6 +475,7 @@
 		538A83100E1D1E5F0025B3C8 /* keywords.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = keywords.c; path = "../../Build/Debug/BaseTen-PostgreSQL/postgresql-8.2.5/src/backend/parser/keywords.c"; sourceTree = SOURCE_ROOT; };
 		538A83140E1D1EE00025B3C8 /* BXPGSQLScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLScanner.h; path = Sources/BXPGSQLScanner.h; sourceTree = "<group>"; };
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
+		538A83CC0E1D85420025B3C8 /* sql_parser_exports */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sql_parser_exports; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
 		539EDD730C46218B00B6E5EC /* BXAttributeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAttributeDescription.h; path = Sources/BXAttributeDescription.h; sourceTree = "<group>"; };
 		539EDD740C46218B00B6E5EC /* BXAttributeDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAttributeDescription.m; path = Sources/BXAttributeDescription.m; sourceTree = "<group>"; };
@@ -859,6 +860,7 @@
 		538A83130E1D1E990025B3C8 /* From PostgreSQL */ = {
 			isa = PBXGroup;
 			children = (
+				538A80BB0E1D0FA00025B3C8 /* psqlscan.l */,
 				538A82D80E1D183C0025B3C8 /* psqlscan.h */,
 				538A80BD0E1D102C0025B3C8 /* common.h */,
 				538A80C30E1D10670025B3C8 /* print.h */,
@@ -866,7 +868,6 @@
 				538A80C10E1D105C0025B3C8 /* variables.h */,
 				538A82EC0E1D1BE20025B3C8 /* dumputils.h */,
 				538A82F90E1D1C1B0025B3C8 /* stringutils.h */,
-				538A80BB0E1D0FA00025B3C8 /* psqlscan.l */,
 				538A82DA0E1D19920025B3C8 /* common.c */,
 				538A82E90E1D1B990025B3C8 /* copy.c */,
 				538A83080E1D1E0A0025B3C8 /* dumputils.c */,
@@ -877,6 +878,7 @@
 				538A83050E1D1DD30025B3C8 /* prompt.c */,
 				538A82F80E1D1C1B0025B3C8 /* stringutils.c */,
 				538A82B60E1D151D0025B3C8 /* variables.c */,
+				538A83CC0E1D85420025B3C8 /* sql_parser_exports */,
 			);
 			name = "From PostgreSQL";
 			sourceTree = "<group>";

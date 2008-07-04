@@ -28,8 +28,21 @@
 
 #import <Foundation/Foundation.h>
 
-@interface BXPGScanner : NSObject 
-{
-}
 
+@protocol BXPGSQLScannerDelegate <NSObject>
+- (const char *) nextLineForScanner: (BXPGSQLScanner *) scanner;
+- (void) scanner: (BXPGSQLScanner *) scanner scannedQuery: (NSString *) query isComplete: (BOOL) isComplete;
+- (void) scanner: (BXPGSQLScanner *) scanner scannedCommand: (NSString *) command options: (NSString *) options;
+@end
+
+
+@interface BXPGSQLScanner : NSObject 
+{
+	PsqlScanState mScanState;
+    PQExpBuffer mQueryBuffer;
+	const char* mCurrentLine;
+	id <BXPGSQLScannerDelegate> mDelegate;
+	BOOL mShouldStartScanning;
+}
+- (void) continueScanning;
 @end
