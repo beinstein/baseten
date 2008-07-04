@@ -28,10 +28,20 @@
 
 #import <Foundation/Foundation.h>
 
+#ifndef PSQLSCAN_H
+typedef void* PsqlScanState;
+#endif
+
+#ifndef PQEXPBUFFER_H
+typedef void* PQExpBuffer;
+#endif
+
+
+@class BXPGSQLScanner;
 
 @protocol BXPGSQLScannerDelegate <NSObject>
 - (const char *) nextLineForScanner: (BXPGSQLScanner *) scanner;
-- (void) scanner: (BXPGSQLScanner *) scanner scannedQuery: (NSString *) query isComplete: (BOOL) isComplete;
+- (void) scanner: (BXPGSQLScanner *) scanner scannedQuery: (NSString *) query complete: (BOOL) isComplete;
 - (void) scanner: (BXPGSQLScanner *) scanner scannedCommand: (NSString *) command options: (NSString *) options;
 @end
 
@@ -44,5 +54,6 @@
 	id <BXPGSQLScannerDelegate> mDelegate;
 	BOOL mShouldStartScanning;
 }
+- (void) setDelegate: (id <BXPGSQLScannerDelegate>) anObject;
 - (void) continueScanning;
 @end

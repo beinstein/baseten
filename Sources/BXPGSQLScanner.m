@@ -26,12 +26,14 @@
 // $Id$
 //
 
-#import <stdint.h>
+#import <stdlib.h>
 
 typedef uint64_t uint64;
 
+#import <stdbool.h> //Should bool be char instead?
+#import "psqlscan.h"
 #import "settings.h"
-#import "pgsqlscan.h"
+#import "pqexpbuffer.h"
 
 PsqlSettings pset = {};
 
@@ -43,6 +45,16 @@ void UnsyncVariables ()
 
 #import "BXPGSQLScanner.h"
 
+static NSString* 
+QueryFromBuffer (PQExpBuffer buffer)
+{
+	char* query = buffer->data;
+	size_t length = buffer->len;
+	NSString* retval = [[[NSString alloc] initWithBytes: query length: length encoding: NSUTF8StringEncoding] autorelease];
+	resetPQExpBuffer (buffer);
+	return retval;
+}
+
 
 @implementation BXPGSQLScanner
 
@@ -50,7 +62,7 @@ void UnsyncVariables ()
 {
 	if ((self = [super init]))
 	{
-		mQueryBuffer = createPQExpBuffer ()
+		mQueryBuffer = createPQExpBuffer ();
 		mScanState = psql_scan_create ();
 		mShouldStartScanning = YES;
 	}
@@ -69,6 +81,11 @@ void UnsyncVariables ()
 	destroyPQExpBuffer (mQueryBuffer);
 	psql_scan_destroy (mScanState);
 	[super finalize];
+}
+
+- (void) setDelegate: (id <BXPGSQLScannerDelegate>) anObject
+{
+	mDelegate = anObject;
 }
 
 - (void) continueScanning
@@ -91,14 +108,22 @@ void UnsyncVariables ()
 		{
 			/* found command-ending semicolon */
 			case PSCAN_SEMICOLON:
-#error make me work
+			{
+				NSString* query = QueryFromBuffer (mQueryBuffer);
+				[mDelegate scanner: self scannedQuery: query complete: YES];
 				break;
+			}
 			
 			/* end of line, SQL possibly complete */
 			case PSCAN_EOL:
+			{
+				NSString* query = QueryFromBuffer (mQueryBuffer);
 				psql_scan_finish (mScanState);
-#error make me work
-				break;				
+				mCurrentLine = NULL;
+				mShouldStartScanning = YES;
+				[mDelegate scanner: self scannedQuery: query complete: YES];
+				break;
+			}
 		
 			/* end of line, SQL statement incomplete */
 			case PSCAN_INCOMPLETE:
@@ -114,10 +139,11 @@ void UnsyncVariables ()
 				}
 				else
 				{
-#error make the query.
+					NSString* query = QueryFromBuffer (mQueryBuffer);
 					psql_scan_finish (mScanState);
 					mCurrentLine = NULL;
-					[mDelegate scanner: self scannedQuery: nil complete: NO];
+					mShouldStartScanning = YES;
+					[mDelegate scanner: self scannedQuery: query complete: NO];
 				}				
 				break;
 			}				
