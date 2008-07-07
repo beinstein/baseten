@@ -50,6 +50,7 @@
 - (NSLock *) validationLock;
 - (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
 - (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag;
+- (void) setIsEnabled: (BOOL) flag;
 
 - (void) inherits: (NSArray *) entities;
 - (void) addSubEntity: (BXEntityDescription *) entity;

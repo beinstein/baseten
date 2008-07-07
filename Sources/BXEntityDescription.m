@@ -392,6 +392,11 @@ bail:
 {
 	return (mCapabilities & aCapability ? YES : NO);
 }
+
+- (BOOL) isEnabled
+{
+	return mFlags & kBXEntityIsEnabled ? YES : NO;
+}
 @end
 
 
@@ -697,5 +702,13 @@ bail:
 		mCapabilities |= aCapability;
 	else
 		mCapabilities &= ~aCapability;
+}
+
+- (void) setIsEnabled: (BOOL) flag
+{
+	if (flag)
+		mFlags |= kBXEntityIsEnabled;
+	else
+		mFlags &= ~kBXEntityIsEnabled;
 }
 @end

@@ -38,7 +38,7 @@
 enum BXEntityFlag
 {
 	kBXEntityNoFlag					= 0,
-	//kBXEntityHasAllRelationships	= 1 << 0, //Not needed
+	kBXEntityIsEnabled				= 1 << 0, //BaseTen enabling
 	kBXEntityIsValidated			= 1 << 1,
 	kBXEntityIsView					= 1 << 2,
 	kBXEntityGetsChangedByTriggers	= 1 << 3  //Testing for now
@@ -77,4 +77,5 @@ enum BXEntityFlag
 - (BOOL) isValidated;
 - (NSDictionary *) relationshipsByName;
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability;
+- (BOOL) isEnabled;
 @end

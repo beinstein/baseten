@@ -82,7 +82,10 @@
  */
 - (BXRelationshipDescription *) inverseRelationship
 {
-	return [[mDestinationEntity relationshipsByName] objectForKey: mInverseName];
+	BXRelationshipDescription* retval = nil;
+	if ([mDestinationEntity hasCapability: kBXEntityCapabilityRelationships])
+		retval = [[mDestinationEntity relationshipsByName] objectForKey: mInverseName];
+	return retval;
 }
 
 /**

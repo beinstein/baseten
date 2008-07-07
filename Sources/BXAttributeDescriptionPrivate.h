@@ -31,4 +31,7 @@
 - (void) setPrimaryKey: (BOOL) aBool;
 - (void) setExcluded: (BOOL) aBool;
 - (NSString *) BXAttributeName;
+
+- (void) setAttributeValueClass: (Class) aClass;
+- (void) setDatabaseTypeName: (NSString *) typeName;
 @end

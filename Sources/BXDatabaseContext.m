@@ -2452,16 +2452,21 @@ bx_query_during_reconnect ()
 			{
 				if (! [entity isValidated])
 				{
-					NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
-					if (nil == *error)
-					{
-						[entity setRelationships: relationships];
+					if (! [entity hasCapability: kBXEntityCapabilityRelationships])
 						[entity setValidated: YES];
+					else
+					{
+						NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
+						if (nil == *error)
+						{
+							[entity setRelationships: relationships];
+							[entity setValidated: YES];
+						}
 					}
-				}
 			
-				if ([entity isValidated])
-					[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+					if ([entity isValidated])
+						[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+				}
 			}
 		}
 		

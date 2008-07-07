@@ -829,6 +829,7 @@ bail:
 			
 			if ([table isEnabled])
 			{
+				[entity setIsEnabled: YES];
 				[entity setHasCapability: kBXEntityCapabilityAutomaticUpdate to: YES];
 				[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
 			}
@@ -1212,6 +1213,14 @@ error:
 	BOOL isOptional = (! ([field isNotNull] || isPrimaryKey));
 	[desc setOptional: isOptional];
 	[desc setPrimaryKey: isPrimaryKey];
+	
+	PGTSConnection* connection = [mTransactionHandler connection];
+	PGTSTypeDescription* typeDesc = [field type];
+	NSString* typeName = [typeDesc name];
+	[desc setDatabaseTypeName: typeName];
+	
+	NSDictionary* classDict = [connection deserializationDictionary];
+	[desc setAttributeValueClass: [classDict objectForKey: typeName]];
 	
 	//Internal fields are excluded by default.
 	if ([field index] <= 0)

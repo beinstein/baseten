@@ -33,9 +33,6 @@
 #import "BXPropertyDescriptionPrivate.h"
 
 
-
-
-
 /**
  * An attribute description contains information about a column in a specific entity.
  * \ingroup Descriptions
@@ -74,6 +71,20 @@
 	return (mFlags & kBXPropertyExcluded ? YES : NO);
 }
 
+- (NSString *) databaseTypeName
+{
+	return mDatabaseTypeName;
+}
+
+- (Class) attributeValueClass
+{
+	return mAttributeClass;
+}
+
+- (NSString *) attributeValueClassName
+{
+	return NSStringFromClass (mAttributeClass);
+}
 @end
 
 
@@ -126,4 +137,17 @@
 	return mName;
 }
 
+- (void) setAttributeValueClass: (Class) aClass
+{
+	mAttributeClass = aClass;
+}
+
+- (void) setDatabaseTypeName: (NSString *) typeName
+{
+	if (mDatabaseTypeName != typeName)
+	{
+		[mDatabaseTypeName release];
+		mDatabaseTypeName = [typeName retain];
+	}
+}
 @end

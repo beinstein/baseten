@@ -233,6 +233,53 @@ PrimaryKey (NSArray* uIndexes)
 	return [[self fields] objectForKey: aName];
 }
 
+- (void) fetchUniqueIndexesForTable
+{
+	//c.oid is unique
+	NSString* query = @"SELECT relname AS name, indexrelid AS oid, "
+	"indisprimary, indnatts, indkey::INTEGER[] FROM pg_index, pg_class c "
+	"WHERE indisunique = true AND indrelid = $1 AND indexrelid = c.oid "
+	"ORDER BY indisprimary DESC";
+	PGTSResultSet* res =  [mConnection executeQuery: query
+										 parameters: PGTSOidAsObject (mOid)];
+	unsigned int count = [res count];
+	if (0 < count)
+	{
+		NSMutableArray* indexes = [NSMutableArray arrayWithCapacity: count];
+		while (([res advanceRow]))
+		{
+			PGTSIndexDescription* currentIndex = [[PGTSIndexDescription alloc] init];
+			[indexes addObject: currentIndex];
+			[currentIndex release];
+			
+			//Some attributes from the result set
+			[currentIndex setName: [res valueForKey: @"name"]];
+			[currentIndex setOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+			[currentIndex setPrimaryKey: [[res valueForKey: @"indisprimary"] intValue]];
+			
+			//Get the field indexes and set the fields
+			NSMutableSet* indexFields = [NSMutableSet setWithCapacity: 
+										 [[res valueForKey: @"indnatts"] unsignedIntValue]];
+			TSEnumerate (currentFieldIndex, e, [[res valueForKey: @"indkey"] objectEnumerator])
+			{
+				int index = [currentFieldIndex intValue];
+				if (index > 0)
+					[indexFields addObject: [self fieldAtIndex: index]];
+			}
+			[currentIndex setTable: self];
+			[currentIndex setFields: indexFields];
+			
+			[currentIndex setSchemaOid: mSchemaOid];
+		}
+		[self setUniqueIndexes: indexes];
+	}
+}
+
+- (void) fetchUniqueIndexesForView
+{
+	//Views don't normally have unique indexes.
+}
+
 - (NSArray *) uniqueIndexes;
 {
     if (nil == mUniqueIndexes)
@@ -240,67 +287,13 @@ PrimaryKey (NSArray* uIndexes)
         switch ([self kind])
         {
             case 'r':
-            {
-                //c.oid is unique
-                NSString* query = @"SELECT relname AS name, indexrelid AS oid, "
-                "indisprimary, indnatts, indkey::INTEGER[] FROM pg_index, pg_class c "
-                "WHERE indisunique = true AND indrelid = $1 AND indexrelid = c.oid "
-                "ORDER BY indisprimary DESC";
-                PGTSResultSet* res =  [mConnection executeQuery: query
-                                                    parameters: PGTSOidAsObject (mOid)];
-                unsigned int count = [res count];
-                if (0 < count)
-                {
-                    NSMutableArray* indexes = [NSMutableArray arrayWithCapacity: count];
-                    while (([res advanceRow]))
-                    {
-                        PGTSIndexDescription* currentIndex = [[PGTSIndexDescription alloc] init];
-                        [indexes addObject: currentIndex];
-                        [currentIndex release];
-                        
-                        //Some attributes from the result set
-                        [currentIndex setName: [res valueForKey: @"name"]];
-                        [currentIndex setOid: [[res valueForKey: @"oid"] PGTSOidValue]];
-                        [currentIndex setPrimaryKey: [[res valueForKey: @"indisprimary"] intValue]];
-                        
-                        //Get the field indexes and set the fields
-                        NSMutableSet* indexFields = [NSMutableSet setWithCapacity: 
-                            [[res valueForKey: @"indnatts"] unsignedIntValue]];
-                        TSEnumerate (currentFieldIndex, e, [[res valueForKey: @"indkey"] objectEnumerator])
-                        {
-                            int index = [currentFieldIndex intValue];
-                            if (index > 0)
-                                [indexFields addObject: [self fieldAtIndex: index]];
-                        }
-                        [currentIndex setTable: self];
-                        [currentIndex setFields: indexFields];
-                        
-                        [currentIndex setSchemaOid: mSchemaOid];
-                    }
-                    [self setUniqueIndexes: indexes];
-                }
-            }
+				[self fetchUniqueIndexesForTable];
+				break;
+				
             case 'v':
-            {
-                //This requires the primarykey view
-                NSString* query = @"SELECT baseten.array_accum (attnum) AS attnum "
-                " FROM baseten.primarykey WHERE oid = $1 GROUP BY oid";
-                PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
-                if (NO == [res advanceRow])
-                    [self setUniqueIndexes: [NSArray array]];
-                else
-                {
-                    PGTSIndexDescription* index = [[PGTSIndexDescription alloc] init];
-                    NSMutableSet* indexFields = [NSMutableSet set];
-                    TSEnumerate (currentFieldIndex, e, [[res valueForKey: @"attnum"] objectEnumerator])
-                        [indexFields addObject: [self fieldAtIndex: [currentFieldIndex intValue]]];
-                    [index setPrimaryKey: YES];
-                    [index setFields: indexFields];
-                    [index setTable: self];
-                    [self setUniqueIndexes: [NSArray arrayWithObject: index]];
-                    [index release];
-                }
-            }
+				[self fetchUniqueIndexesForView];
+				break;
+				
             default:
                 break;
         }

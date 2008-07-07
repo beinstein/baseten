@@ -243,7 +243,7 @@ ParseSelector (SEL aSelector, NSString** key)
 		//Already deleted.
 		//FIXME: set outError.
 	}
-	else
+	else if ([[self entity] hasCapability: kBXEntityCapabilityRelationships])
 	{
 		retval = YES;
 		TSEnumerate (currentRel, e, [[[self entity] relationshipsByName] objectEnumerator])
