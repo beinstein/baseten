@@ -43,6 +43,8 @@
 #import "BXPGAdditions.h"
 #import "BXPGAutocommitTransactionHandler.h"
 #import "BXPGManualCommitTransactionHandler.h"
+#import "BXPGDatabaseDescription.h"
+#import "BXPGTableDescription.h"
 
 #import "BXLogger.h"
 
@@ -385,8 +387,9 @@ bx_error_during_rollback (id self, NSError* error)
 	
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 	if (! [self validateEntity: entity error: error]) goto error;
-	if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
-	
+	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
+		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
+		
 	//Inserted values
 	NSArray* insertedAttrs = [valueDict allKeys];
 	NSString* query = [self insertQuery: entity insertedAttrs: insertedAttrs error: error];
@@ -436,7 +439,8 @@ error:
     NSArray* retval = nil;
 	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error; //FIXME: set the error.
-	if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
+	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
+		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
@@ -571,7 +575,8 @@ error:
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error;
-	if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
+	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
+		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
 	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
@@ -611,7 +616,7 @@ error:
 	NSMutableDictionary* retval = [NSMutableDictionary dictionary];
 	PGTSConnection* connection = [mTransactionHandler connection];
 
-	if ([self fetchForeignKeys: error])
+	if ([(id) [connection databaseDescription] hasBaseTenSchema] && [self fetchForeignKeys: error])
 	{
 		NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
 		NSString* views [4] = {@"onetomany", @"onetoone", @"manytomany", @"relationship_v"};
@@ -730,7 +735,7 @@ bail:
 	BOOL retval = NO;
 	if (mForeignKeys)
 		retval = YES;
-	else
+	else if ([[mTransactionHandler databaseDescription] hasBaseTenSchema])
 	{
 		NSString* query = @"SELECT * from baseten.foreignkey";
 		PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
@@ -801,12 +806,12 @@ bail:
 
 
 - (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity 
-							   inDatabase: (PGTSDatabaseDescription *) database 
+							   inDatabase: (BXPGDatabaseDescription *) database 
 									error: (NSError **) error
 {
 	ExpectR (entity, NO);
 	ExpectR (error, NO);
-	PGTSTableDescription* table = [database table: [entity name] inSchema: [entity schemaName]];
+	BXPGTableDescription* table = (id) [database table: [entity name] inSchema: [entity schemaName]];
 	if (table)
 	{
 		if (! [entity isValidated])
@@ -821,6 +826,12 @@ bail:
 			
 			if ('v' == [table kind])
 				[entity setIsView: YES];
+			
+			if ([table isEnabled])
+			{
+				[entity setHasCapability: kBXEntityCapabilityAutomaticUpdate to: YES];
+				[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
+			}
 		}
 	}
 	else

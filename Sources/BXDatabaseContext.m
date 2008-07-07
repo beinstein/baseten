@@ -1218,6 +1218,7 @@ bx_query_during_reconnect ()
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     returningFaults: (BOOL) returnFaults updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
 {
+	[NSException raise: NSInvalidArgumentException format: @"Entity %@ can't access its relationships.", self];
     return [self executeFetchForEntity: entity withPredicate: predicate
                        returningFaults: returnFaults excludingFields: nil
                          returnedClass: (shouldUpdate ? [BXArrayProxy class] : Nil) 
@@ -1405,6 +1406,27 @@ bx_query_during_reconnect ()
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error
 {
 	return [self executeQuery: queryString parameters: nil error: error];
+}
+
+/**
+ * Execute a query directly.
+ * This method should only be used when fetching objects and modifying 
+ * them is cumbersome or doesn't accomplish the task altogether.
+ * \param parameters An NSArray of objects that are passed as replacements for $1, $2 etc. in the query.
+ * \return An NSArray of NSDictionaries that correspond to each row.
+ */
+- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
+{
+	NSError* localError = nil;
+	id retval = nil;
+	if ([self checkErrorHandling])
+	{
+		[self connectIfNeeded: &localError];
+    	if (nil == localError)
+			retval = [mDatabaseInterface executeQuery: queryString parameters: parameters error: &localError];
+		BXHandleError (error, localError);
+	}
+	return retval;
 }
 
 /**
@@ -1935,21 +1957,6 @@ bx_query_during_reconnect ()
 
 
 @implementation BXDatabaseContext (PrivateMethods)
-
-- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
-{
-	NSError* localError = nil;
-	id retval = nil;
-	if ([self checkErrorHandling])
-	{
-		[self connectIfNeeded: &localError];
-    	if (nil == localError)
-			retval = [mDatabaseInterface executeQuery: queryString parameters: parameters error: &localError];
-		BXHandleError (error, localError);
-	}
-	return retval;
-}
-
 /** 
  * \internal
  * Delete multiple objects at the same time. 

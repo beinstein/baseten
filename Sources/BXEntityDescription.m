@@ -337,7 +337,7 @@ bail:
 /** Whether this entity is marked as a view or not. */
 - (BOOL) isView
 {
-    return mFlags & kBXEntityIsView;
+    return mFlags & kBXEntityIsView ? YES : NO;
 }
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity
@@ -374,7 +374,7 @@ bail:
  */
 - (BOOL) isValidated
 {
-	return mFlags & kBXEntityIsValidated;
+	return mFlags & kBXEntityIsValidated ? YES : NO;
 }
 
 /**
@@ -383,7 +383,14 @@ bail:
  */
 - (NSDictionary *) relationshipsByName
 {
+	if (! [self hasCapability: kBXEntityCapabilityRelationships])
+		[NSException raise: NSInvalidArgumentException format: @"Entity %@ can't access its relationships.", self];
 	return [mRelationships dictionaryRepresentation];
+}
+
+- (BOOL) hasCapability: (enum BXEntityCapability) aCapability
+{
+	return (mCapabilities & aCapability ? YES : NO);
 }
 @end
 
@@ -673,7 +680,7 @@ bail:
  */
 - (BOOL) getsChangedByTriggers
 {
-	return mFlags & kBXEntityGetsChangedByTriggers;
+	return mFlags & kBXEntityGetsChangedByTriggers ? YES : NO;
 }
 
 - (void) setGetsChangedByTriggers: (BOOL) flag
@@ -684,4 +691,11 @@ bail:
 		mFlags &= ~kBXEntityGetsChangedByTriggers;
 }
 
+- (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag
+{
+	if (flag)
+		mCapabilities |= aCapability;
+	else
+		mCapabilities &= ~aCapability;
+}
 @end

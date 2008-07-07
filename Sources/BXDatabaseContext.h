@@ -166,6 +166,7 @@
 
 /* These methods should only be used for purposes which the ones above are not suited. */
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error;
+- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error;
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error;
 @end
 

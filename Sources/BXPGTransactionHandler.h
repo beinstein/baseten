@@ -33,6 +33,7 @@
 
 
 @class BXPGInterface;
+@class BXPGDatabaseDescription;
 
 
 BX_EXPORT NSString* kBXPGUserInfoKey;
@@ -85,7 +86,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 - (void) didDisconnect;
 - (NSString *) connectionString;
 - (NSError *) connectionError: (NSError *) error recoveryAttempterClass: (Class) aClass;
-- (PGTSDatabaseDescription *) databaseDescription;
+- (BXPGDatabaseDescription *) databaseDescription;
 
 - (void) handleConnectionErrorFor: (PGTSConnection *) failedConnection;
 - (void) handleSuccess;

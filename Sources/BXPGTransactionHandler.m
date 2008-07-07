@@ -41,6 +41,7 @@
 #import "BXPGModificationHandler.h"
 #import "BXPGLockHandler.h"
 #import "BXPGClearLocksHandler.h"
+#import "BXPGDatabaseDescription.h"
 
 #import "BXEntityDescriptionPrivate.h"
 
@@ -167,9 +168,9 @@ SSLMode (enum BXSSLMode mode)
 	return (CONNECTION_OK == [mConnection connectionStatus]);
 }
 
-- (PGTSDatabaseDescription *) databaseDescription
+- (BXPGDatabaseDescription *) databaseDescription
 {
-	return [mConnection databaseDescription];
+	return (id) [mConnection databaseDescription];
 }
 
 - (BOOL) isAsync
@@ -259,6 +260,10 @@ SSLMode (enum BXSSLMode mode)
 		mConnection = [[PGTSConnection alloc] init];
 		[mConnection setDelegate: self];
 		[mConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
+		
+		id desc = [[BXPGDatabaseDescription alloc] init];
+		[mConnection setDatabaseDescription: desc];
+		[desc release];
 	}	
 }
 
@@ -307,11 +312,24 @@ SSLMode (enum BXSSLMode mode)
 
 - (void) handleSuccess
 {
-	mConnectionSucceeded = YES;
-	if (mAsync)
-		[mInterface connectionSucceeded];
-	BXLogDebug (@"mConnection: %p", mConnection);
-}	
+	NSError* localError = nil;
+	if ([(id) [mConnection databaseDescription] checkBaseTenSchema: &localError])
+	{
+		mConnectionSucceeded = YES;
+		if (mAsync)
+		{
+			[mInterface connectionSucceeded];
+		}
+		BXLogDebug (@"mConnection: %p", mConnection);
+	}
+	else
+	{
+		if (mAsync)
+			*mSyncErrorPtr = localError;
+		else
+			[mInterface connectionFailed: localError];
+	}
+}
 
 
 - (BOOL) connectSync: (NSError **) outError
@@ -497,7 +515,7 @@ SSLMode (enum BXSSLMode mode)
 		if (! mLockHandlers)
 			mLockHandlers = [[NSMutableDictionary alloc] init];
 		
-		PGTSDatabaseDescription* database = [connection databaseDescription];
+		BXPGDatabaseDescription* database = (id) [connection databaseDescription];
 		PGTSTableDescription* table = [mInterface tableForEntity: entity inDatabase: database error: error];
 		if (table && [self addClearLocksHandler: connection error: error])
 		{

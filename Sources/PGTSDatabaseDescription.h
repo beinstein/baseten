@@ -34,6 +34,7 @@
 @class PGTSTableDescription;
 @class PGTSTypeDescription;
 @class PGTSRoleDescription;
+@class PGTSResultSet;
 
 
 @protocol PGTSDatabaseDescription <NSObject>
@@ -70,6 +71,7 @@
 - (id) proxyForConnection: (PGTSConnection *) connection;
 - (BOOL) schemaExists: (NSString *) schemaName;
 
-//FIXME: private.
+//FIXME: protected
 - (void) updateTableCache: (id) table;
+- (void) handleResult: (PGTSResultSet *) res forTable: (PGTSTableDescription *) desc;
 @end

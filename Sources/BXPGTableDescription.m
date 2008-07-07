@@ -1,5 +1,5 @@
 //
-// BXDataModelCompiler.h
+// BXPGTableDescription.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,31 +26,17 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "BXPGTableDescription.h"
 
 
-@class BXDataModelCompiler;
-
-
-@protocol BXDataModelCompilerDelegate <NSObject>
-- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus;
-@end
-
-
-@interface BXDataModelCompiler : NSObject 
+@implementation BXPGTableDescription
+- (void) setEnabled: (BOOL) aBool
 {
-	NSURL* mModelURL;
-	NSURL* mCompiledModelURL;
-	NSTask* mMomcTask;
-	id <BXDataModelCompilerDelegate> mDelegate;
+	mIsEnabled = aBool;
 }
 
-- (NSURL *) compiledModelURL;
-- (void) setModelURL: (NSURL *) aFileURL;
-- (void) setDelegate: (id <BXDataModelCompilerDelegate>) anObject;
-- (void) compileDataModel;
-
-- (void) setCompiledModelURL: (NSURL *) aFileURL;
-
+- (BOOL) isEnabled
+{
+	return mIsEnabled;
+}
 @end

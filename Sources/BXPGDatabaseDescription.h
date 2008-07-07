@@ -1,5 +1,5 @@
 //
-// BXDataModelCompiler.h
+// BXPGDatabaseDescription.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,30 +27,13 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "PGTSDatabaseDescription.h"
 
 
-@class BXDataModelCompiler;
-
-
-@protocol BXDataModelCompilerDelegate <NSObject>
-- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus;
-@end
-
-
-@interface BXDataModelCompiler : NSObject 
+@interface BXPGDatabaseDescription : PGTSDatabaseDescription
 {
-	NSURL* mModelURL;
-	NSURL* mCompiledModelURL;
-	NSTask* mMomcTask;
-	id <BXDataModelCompilerDelegate> mDelegate;
+	BOOL mHasBaseTenSchema;
 }
-
-- (NSURL *) compiledModelURL;
-- (void) setModelURL: (NSURL *) aFileURL;
-- (void) setDelegate: (id <BXDataModelCompilerDelegate>) anObject;
-- (void) compileDataModel;
-
-- (void) setCompiledModelURL: (NSURL *) aFileURL;
-
+- (BOOL) hasBaseTenSchema;
+- (BOOL) checkBaseTenSchema: (NSError **) outError;
 @end

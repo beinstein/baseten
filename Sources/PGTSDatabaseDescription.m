@@ -128,6 +128,7 @@
         }
 		
         [schema setObject: table forKey: [table name]];
+		[mTables setObject: table forKey: PGTSOidAsObject ([table oid])];
     }
 }
 @end
@@ -188,6 +189,11 @@
     [super dealloc];
 }
 
+- (Class) tableDescriptionClass
+{
+	return [PGTSTableDescription class];
+}
+
 - (PGTSTableDescription *) tableWithOid: (Oid) oidValue
 {
 	id retval = nil;
@@ -197,7 +203,7 @@
         retval = [mTables objectForKey: oidObject];
         if (! retval)
         {
-            retval = [[PGTSTableDescription alloc] init];
+            retval = [[[self tableDescriptionClass] alloc] init];
             [retval setOid: oidValue];
             [mTables setObject: retval forKey: oidObject];
             [retval release];
@@ -267,40 +273,51 @@
 	return retval;
 }
 
+- (NSString *) tableDescriptionQuery
+{
+	NSString* queryString = 
+	@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname "
+	" FROM pg_class c, pg_namespace n, pg_roles r "
+	" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";
+	return queryString;
+}
+
+- (void) handleResult: (PGTSResultSet *) res forTable: (PGTSTableDescription *) desc
+{
+	[desc setKind: [[res valueForKey: @"relkind"] characterAtIndex: 0]];
+	[desc setSchemaOid: [[res valueForKey: @"schemaoid"] PGTSOidValue]];
+	
+	PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
+																		 oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
+	[desc setOwner: role];
+	
+	//FIXME: enable this.
+#if 0
+	TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
+	[desc addACLItem: currentACLItem];
+#endif
+}
+
 - (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName
 {
     if (nil == schemaName || 0 == [schemaName length])
         schemaName = @"public";
-    PGTSTableDescription* rval = [[mSchemas objectForKey: schemaName] objectForKey: tableName];
-    if (nil == rval)
+    PGTSTableDescription* retval = [[mSchemas objectForKey: schemaName] objectForKey: tableName];
+    if (! retval)
     {
-        NSString* queryString = 
-        @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname "
-        " FROM pg_class c, pg_namespace n, pg_roles r "
-        " WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";
+		NSString* queryString = [self tableDescriptionQuery];
         PGTSResultSet* res = [mConnection executeQuery: queryString parameters: tableName, schemaName];
         if (0 < [res count])
         {
             [res advanceRow];
-            rval = [self tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
-            [rval setName: tableName];
-            [rval setKind: [[res valueForKey: @"relkind"] characterAtIndex: 0]];
-            [rval setSchemaOid: [[res valueForKey: @"schemaoid"] PGTSOidValue]];
-
-            PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"]
-                                                                                oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
-            [rval setOwner: role];
-            
-            [rval setSchemaName: schemaName];
-			//FIXME: enable this.
-#if 0
-            TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
-                [rval addACLItem: currentACLItem];
-#endif
-            [self updateTableCache: rval];
+            retval = [self tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+            [retval setName: tableName];
+            [retval setSchemaName: schemaName];
+			[self handleResult: res forTable: retval];
+            [self updateTableCache: retval];
         }
     }
-    return rval;
+    return retval;
 }
 
 - (void) updateTableCache: (id) table
@@ -315,6 +332,7 @@
             [mSchemas setObject: schema forKey: schemaName];
         }
         [schema setObject: table forKey: [table name]];
+		[mTables setObject: table forKey: PGTSOidAsObject ([table oid])];
     }
 }
 

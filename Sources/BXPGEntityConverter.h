@@ -1,5 +1,5 @@
 //
-// BXDataModelCompiler.h
+// BXPGEntityConverter.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,30 +27,41 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+@class Entity;
 
 
-@class BXDataModelCompiler;
+//FIXME: these might reside elsewhere
 
 
-@protocol BXDataModelCompilerDelegate <NSObject>
-- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus;
+@interface EntityConverter : NSObject
+{
+    BOOL dryRun;
+    BOOL addsForeignKeys;
+    BOOL addsIDColumns;
+    id connection;
+    id controller;
+}
+
+- (NSError *) importEntities: (NSArray *) entityArray;
+
+- (NSString *) nameForAttributeType: (NSAttributeType) type;
+- (id) connection;
+- (void) setConnection: (id) aConnection;
+- (BOOL) addsForeignKeys;
+- (void) setAddsForeignKeys: (BOOL) flag;
+- (BOOL) addsIDColumns;
+- (void) setAddsIDColumns: (BOOL) flag;
+- (void) setDryRun: (BOOL) flag;
+- (void) setController: (id) aController;
+- (void) log: (NSString *) query;
 @end
 
 
-@interface BXDataModelCompiler : NSObject 
+@interface PostgresEntityConverter : EntityConverter 
 {
-	NSURL* mModelURL;
-	NSURL* mCompiledModelURL;
-	NSTask* mMomcTask;
-	id <BXDataModelCompilerDelegate> mDelegate;
 }
-
-- (NSURL *) compiledModelURL;
-- (void) setModelURL: (NSURL *) aFileURL;
-- (void) setDelegate: (id <BXDataModelCompilerDelegate>) anObject;
-- (void) compileDataModel;
-
-- (void) setCompiledModelURL: (NSURL *) aFileURL;
-
+- (NSString *) nameForDeleteRule: (NSDeleteRule) rule;
+- (NSString *) createStatementForEntity: (Entity *) entity;
+- (NSArray *) createStatementsForEntities: (NSArray *) entityArray;
+- (NSMutableArray *) add: (NSString *) aName fromUnsatisfied: (NSMutableDictionary *) unsatisfied;
 @end

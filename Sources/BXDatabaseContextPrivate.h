@@ -71,7 +71,6 @@
                      validateImmediately: (BOOL) validateImmediately error: (NSError **) error;
 - (void) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 - (void) iterateValidationQueue: (NSError **) error;
-- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error;
 - (BOOL) checkErrorHandling;
 - (void) setAllowReconnecting: (BOOL) shouldAllow;
 @end

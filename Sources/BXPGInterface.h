@@ -33,6 +33,7 @@
 
 @class BXPGTransactionHandler;
 @class BXPGNotificationHandler;
+@class BXPGDatabaseDescription;
 
 
 @interface BXPGInterface : NSObject <BXInterface> 
@@ -47,7 +48,7 @@
 
 - (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error;
 - (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity 
-							   inDatabase: (PGTSDatabaseDescription *) database 
+							   inDatabase: (BXPGDatabaseDescription *) database 
 									error: (NSError **) error;
 
 - (BXDatabaseContext *) databaseContext;

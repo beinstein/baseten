@@ -1064,7 +1064,8 @@ ParseSelector (SEL aSelector, NSString** key)
 		else
 			retval = kBXDatabaseObjectKnownKey;
 	}
-	else if ([[entity relationshipsByName] objectForKey: aKey])
+	else if ([[self entity] hasCapability: kBXEntityCapabilityRelationships] && 
+			 [[entity relationshipsByName] objectForKey: aKey])
 	{
 		retval = kBXDatabaseObjectForeignKey;
 	}

@@ -121,3 +121,10 @@ enum BXConnectionErrorHandlingState
 	kBXConnectionErrorResolving,
 	kBXConnectionErrorNoReconnect
 };
+
+enum BXEntityCapability
+{
+	kBXEntityCapabilityNone				= 0,
+	kBXEntityCapabilityAutomaticUpdate	= (1 << 0),
+	kBXEntityCapabilityRelationships	= (1 << 1)
+};
