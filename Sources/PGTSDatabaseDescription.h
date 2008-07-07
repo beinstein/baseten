@@ -41,7 +41,8 @@
 - (PGTSTableDescription *) tableWithOid: (Oid) anOid;
 - (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
-- (NSSet *) typesWithOids: (const Oid *) oidArray;
+- (NSSet *) typesWithOids: (const Oid *) oidVector;
+- (NSSet *) tablesWithOids: (NSArray *) oidArray;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
 @end

@@ -36,7 +36,20 @@
 #import "PGTSRoleDescription.h"
 #import "PGTSHOM.h"
 #import "BXLogger.h"
-    
+
+
+static void FilterCached (NSDictionary* cache, id given, id returned, id fetched)
+{
+	TSEnumerate (currentOid, e, [given objectEnumerator])
+	{
+		PGTSTableDescription* table = [cache objectForKey: currentOid];
+		if (table)
+			[returned addObject: table];
+		else
+			[fetched addObject: currentOid];
+	}	
+}
+
 
 @implementation PGTSDatabaseDescriptionProxy
 - (void) dealloc
@@ -57,15 +70,37 @@
 
 - (PGTSTableDescription *) tableWithOid: (Oid) anOid
 {
-	//Get the cached proxy or create one.
-	id retval = [mTables objectForKey: PGTSOidAsObject (anOid)];
-	if (! retval)
+	id retval = nil;
+	NSSet* tables = [self tablesWithOids: [NSArray arrayWithObject: PGTSOidAsObject (anOid)]];
+	if (0 < [tables count])
+		retval = [tables anyObject];
+	return PGTSNilReturn (retval);	
+}
+
+- (NSSet *) tablesWithOids: (NSArray *) oidArray
+{
+	NSMutableSet* retval = nil;
+	if (0 < [oidArray count])
 	{
-		[[[self invocationRecorder] record] tableWithOid: anOid];
-		retval = [self performSynchronizedAndGetProxy];
-		[self updateTableCache: retval];
+		retval = [NSMutableSet setWithCapacity: [oidArray count]];
+		NSMutableArray* fetched = [NSMutableArray arrayWithCapacity: [oidArray count]];
+		FilterCached (mTables, oidArray, retval, fetched);
+		
+		if (0 < [fetched count])
+		{
+			[[[self invocationRecorder] record] tablesWithOids: fetched];
+			NSSet* realObjects = [self performSynchronizedAndReturnObject];
+			TSEnumerate (currentDesc, e, [realObjects objectEnumerator])
+			{
+				[currentDesc setConnection: mConnection];
+				id proxy = [currentDesc proxy];
+				[currentDesc setConnection: nil];
+				[retval addObject: proxy];
+				[self updateTableCache: proxy];			
+			}
+		}
 	}
-	return PGTSNilReturn (retval);
+	return PGTSNilReturn (retval);	
 }
 
 - (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName
@@ -85,12 +120,12 @@
 {
 	[[[self invocationRecorder] record] typesWithOids: oidVector];
 	id retval = [self performSynchronizedAndReturnObject];
-	return retval;
+	return PGTSNilReturn (retval);	
 }
 
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid
 {
-	Oid oidVector[] = {anOid, InvalidOid};
+	Oid oidVector [] = {anOid, InvalidOid};
 	id retval = [[self typesWithOids: oidVector] anyObject];
 	return PGTSNilReturn (retval);
 }
@@ -273,17 +308,30 @@
 	return retval;
 }
 
-- (NSString *) tableDescriptionQuery
+- (NSString *) tableDescriptionByNameQuery
 {
 	NSString* queryString = 
-	@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname "
+	@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
+	" c.relacl, c.relowner, c.relkind, r.rolname "
 	" FROM pg_class c, pg_namespace n, pg_roles r "
 	" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";
 	return queryString;
 }
 
+- (NSString *) tableDescriptionsByOidQuery
+{
+	NSString* queryString = 
+	@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
+	" c.relacl, c.relowner, c.relkind, r.rolname "
+	" FROM pg_class c, pg_namespace n, pg_roles r "
+	" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.oid = ANY ($1)";
+	return queryString;
+}
+
 - (void) handleResult: (PGTSResultSet *) res forTable: (PGTSTableDescription *) desc
 {
+	[desc setName: [res valueForKey: @"relname"]];
+	[desc setSchemaName: [res valueForKey: @"nspname"]];
 	[desc setKind: [[res valueForKey: @"relkind"] characterAtIndex: 0]];
 	[desc setSchemaOid: [[res valueForKey: @"schemaoid"] PGTSOidValue]];
 	
@@ -305,19 +353,40 @@
     PGTSTableDescription* retval = [[mSchemas objectForKey: schemaName] objectForKey: tableName];
     if (! retval)
     {
-		NSString* queryString = [self tableDescriptionQuery];
+		NSString* queryString = [self tableDescriptionByNameQuery];
         PGTSResultSet* res = [mConnection executeQuery: queryString parameters: tableName, schemaName];
         if (0 < [res count])
         {
             [res advanceRow];
             retval = [self tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
-            [retval setName: tableName];
-            [retval setSchemaName: schemaName];
 			[self handleResult: res forTable: retval];
             [self updateTableCache: retval];
         }
     }
     return retval;
+}
+
+- (NSSet *) tablesWithOids: (NSArray *) oids
+{
+	NSMutableSet* retval = nil;
+	if (0 < [oids count])
+	{
+		retval = [NSMutableSet setWithCapacity: [oids count]];
+		NSMutableArray* fetched = [NSMutableArray arrayWithCapacity: [oids count]];
+		FilterCached (mTables, oids, retval, fetched);
+		if (0 < [fetched count])
+		{
+			NSString* query = [self tableDescriptionsByOidQuery];
+			PGTSResultSet* res = [mConnection executeQuery: query parameterArray: [NSArray arrayWithObject: fetched]];
+			while ([res advanceRow])
+			{
+				PGTSTableDescription* desc = [self tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
+				[self handleResult: res forTable: desc];
+				[self updateTableCache: desc];
+			}
+		}
+	}
+	return retval;
 }
 
 - (void) updateTableCache: (id) table

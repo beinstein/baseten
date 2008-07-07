@@ -1179,6 +1179,51 @@ error:
 	}
 	return defaultValue;
 }
+
+- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error
+{
+	Expect (error);
+	NSDictionary* retval = nil;
+	
+	NSString* query = @"SELECT c.oid "
+    " FROM pg_class c, pg_namespace n "
+    " WHERE c.relnamespace = n.oid "
+    " AND (c.relkind = 'r' OR c.relkind = 'v') "
+    " AND n.nspname NOT IN ('baseten', 'pg_catalog', 'information_schema', 'pg_toast', 'pg_temp_1', 'pg_temp_2')";
+	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
+	if (! [res querySucceeded])
+	{
+		*error = [res error];
+		goto error;
+	}
+	else
+	{
+		NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [res count]];
+		while ([res advanceRow])
+			[oids addObject: [res valueForKey: @"oid"]];
+		
+		//Warm up the cache.
+		NSSet* tables = [[mTransactionHandler databaseDescription] tablesWithOids: oids];
+		NSMutableDictionary* retval = [NSMutableDictionary dictionary];
+		TSEnumerate (currentTable, e, [tables objectEnumerator])
+		{
+			NSString* tableName = [currentTable name];
+			NSString* schemaName = [currentTable schemaName];
+			BXEntityDescription* entity = [mContext entityForTable: tableName
+														  inSchema: schemaName
+															 error: error];
+			NSMutableDictionary* schema = [retval objectForKey: schemaName];
+			if (! schema)
+			{
+				schema = [NSMutableDictionary dictionary];
+				[retval setObject: schema forKey: schemaName];
+			}
+			[schema setObject: entity forKey: tableName];
+		}
+	}
+error:
+	return retval;
+}
 @end
 
 
@@ -1238,5 +1283,4 @@ error:
 	NSString* qname = [attr BXPGQualifiedName: connection];
 	[array addObject: qname];
 }
-
 @end

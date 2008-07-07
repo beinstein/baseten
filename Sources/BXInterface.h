@@ -121,6 +121,7 @@ struct BXTrustResult
 - (BOOL) logsQueries;
 #endif
 
+- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error;
 - (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
 /**
