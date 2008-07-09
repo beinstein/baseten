@@ -27,13 +27,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTS.h"
-#import "BaseTen.h"
-#import "BXPGTransactionHandler.h"
+#import <BaseTen/BaseTen.h>
+
 
 @class BXPGTransactionHandler;
 @class BXPGNotificationHandler;
 @class BXPGDatabaseDescription;
+@class PGTSConnection;
+@class PGTSTableDescription;
+@class PGTSFieldDescription;
 
 
 @interface BXPGInterface : NSObject <BXInterface> 
