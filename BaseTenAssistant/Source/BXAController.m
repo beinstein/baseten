@@ -221,6 +221,7 @@ __strong static BXAController* gController = nil;
 - (void) awakeFromNib
 {
 	gController = self;
+	mLastSelectedEntityWasView = YES;
 	
 	//Make main window's bottom edge lighter
 	[mMainWindow setContentBorderThickness: 24.0 forEdge: NSMinYEdge];
@@ -235,7 +236,7 @@ __strong static BXAController* gController = nil;
 	[nc addObserver: self selector: @selector (failedToConnect:) name: kBXConnectionFailedNotification object: nil];
 	
 	[mEntities addObserver: self forKeyPath: @"selection" 
-				   options: NSKeyValueObservingOptionPrior
+				   options: NSKeyValueObservingOptionInitial
 				   context: kBXAControllerCtx];	
 }
 
@@ -245,7 +246,25 @@ __strong static BXAController* gController = nil;
 {
     if (context == kBXAControllerCtx) 
 	{
-		NSLog (@"change: %@", change);
+		//selection.[...].isView might give us an NSStateMarker, which we don't want.
+		BOOL currentIsView = NO;
+		NSArray* selectedEntities = [mEntities selectedObjects];
+		if (0 < [selectedEntities count])
+			currentIsView = [[[selectedEntities objectAtIndex: 0] value]isView];
+		
+		NSView* scrollView = [[mAttributeTable superview] superview];
+		NSRect frame = [scrollView frame];			
+		if (mLastSelectedEntityWasView && !currentIsView)
+		{
+			frame.size.height += 75.0;
+			[scrollView setFrame: frame];
+		}
+		else if (!mLastSelectedEntityWasView && currentIsView)
+		{
+			frame.size.height -= 75.0;
+			[scrollView setFrame: frame];
+		}
+		mLastSelectedEntityWasView = currentIsView;
 	}
 	else 
 	{
@@ -290,23 +309,22 @@ __strong static BXAController* gController = nil;
 
 
 - (void) process: (BOOL) newState entity: (BXEntityDescription *) entity
-{
-	[entity setIsEnabled: newState];
-	
-	NSError* localError = nil;
-	NSArray* entityArray = [NSArray arrayWithObject: entity];
-	[(BXPGInterface *) [mContext databaseInterface] process: newState entities: entityArray error: &localError];
-	if (localError)
+{	
+	if (![entity isView] || [[entity primaryKeyFields] count])
 	{
-		[entity setIsEnabled: !newState];
-		[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+		NSError* localError = nil;
+		NSArray* entityArray = [NSArray arrayWithObject: entity];
+		[(BXPGInterface *) [mContext databaseInterface] process: newState entities: entityArray error: &localError];
+		if (localError)
+		{
+			[entity setIsEnabled: !newState];
+			[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+		}
 	}
 }
 
 - (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute
 {
-	[attribute setPrimaryKey: newState];
-
 	NSError* localError = nil;
 	NSArray* attributeArray = [NSArray arrayWithObject: attribute];
 	[(BXPGInterface *) [mContext databaseInterface] process: newState primaryKeyFields: attributeArray error: &localError];

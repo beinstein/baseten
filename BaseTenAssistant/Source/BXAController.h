@@ -67,6 +67,8 @@
     IBOutlet id mDBNameCell;
     IBOutlet id mUserNameCell;
     IBOutlet NSSecureTextField* mPasswordField;	
+	
+	BOOL mLastSelectedEntityWasView;
 }
 
 @property (readonly) BOOL hasBaseTenSchema;
