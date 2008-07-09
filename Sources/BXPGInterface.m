@@ -1238,8 +1238,15 @@ error:
 	
 	NSString* query = [NSString stringWithFormat: @"DELETE FROM baseten.viewprimarykey WHERE nspname = $1 AND relname = $2"];
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameters: [viewEntity schemaName], [viewEntity name]];
-	if (! [res querySucceeded])
+	if ([res querySucceeded])
+	{
+		TSEnumerate (currentAttribute, e, [viewEntity primaryKeyFields])
+			[currentAttribute setPrimaryKey: NO];
+	}
+	else
+	{
 		*outError = [res error];
+	}
 }
 
 - (void) process: (BOOL) shouldAdd primaryKeyFields: (NSArray *) attributeArray error: (NSError **) outError
@@ -1260,7 +1267,9 @@ error:
 			
 			PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: queryFormat parameters: 
 								  [entity schemaName], [entity name], [currentAttribute name]];
-			if (! [res querySucceeded])
+			if ([res querySucceeded])
+				[currentAttribute setPrimaryKey: shouldAdd];
+			else
 			{
 				*outError = [res error];
 				break;
@@ -1294,20 +1303,20 @@ error:
 		{
 			query =
 			@"SELECT baseten.prepareformodificationobserving ($1 [s]) "
-			"  FROM generate_series (1, array_upper ($1, 1)) AS s";
+			"  FROM generate_series (1, array_upper ($1::OID[], 1)) AS s";
 		}
 		else
 		{
 			query =
 			@"SELECT baseten.cancelmodificationobserving ($1 [s]) "
-			"  FROM generate_series (1, array_upper ($1, 1)) AS s";
+			"  FROM generate_series (1, array_upper ($1::OID[], 1)) AS s";
 		}
 		
 		PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameters: oids];
 		if ([res querySucceeded])
 		{
 			TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
-				[currentEntity setEnabled: shouldEnable];
+				[currentEntity setIsEnabled: shouldEnable];
 		}
 		else
 		{

@@ -73,4 +73,5 @@
 - (id) PGTSCollect;
 - (id) PGTSKeyCollect;
 - (id) PGTSVisit: (id) visitor;
+- (id) PGTSValueSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 @end

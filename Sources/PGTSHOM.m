@@ -498,4 +498,10 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	Visit (invocation, [self objectEnumerator]);
 }
+
+- (id) PGTSValueSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg
+{
+	id retval = [NSMutableArray arrayWithCapacity: [self count]];
+	return SelectFunction2 (self, retval, fptr, arg);
+}
 @end

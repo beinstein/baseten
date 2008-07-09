@@ -110,6 +110,7 @@
 
 - (void) setPrimaryKey: (BOOL) aBool
 {
+	[mEntity willChangeValueForKey: @"primaryKeyFields"];
 	if (aBool)
 	{
 		mFlags |= kBXPropertyPrimaryKey;
@@ -119,6 +120,7 @@
 	{
 		mFlags &= ~kBXPropertyPrimaryKey;
 	}
+	[mEntity didChangeValueForKey: @"primaryKeyFields"];
 }
 
 - (void) setExcluded: (BOOL) aBool

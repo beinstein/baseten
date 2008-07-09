@@ -37,6 +37,7 @@
 #import "BXDatabaseObject.h"
 #import "BXConstantsPrivate.h"
 #import "BXLogger.h"
+#import "PGTSHOM.h"
 
 #import "MKCCollections.h"
 
@@ -305,6 +306,16 @@ bail:
 	return [mObjectIDs allObjects];
 }
 
+static int
+FilterPkeyAttributes (id attribute, void* arg)
+{
+	int retval = 0;
+	long shouldBePkey = (long) arg;
+	if ([attribute isPrimaryKey] == shouldBePkey)
+		retval = 1;
+	return retval;
+}
+
 /**
  * Primary key fields for this entity.
  * The fields get determined automatically after database connection has been made.
@@ -313,11 +324,12 @@ bail:
  */
 - (NSArray *) primaryKeyFields
 {
-	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"YES == isPrimaryKey"];
-	NSArray* rval = [[[mAttributes allValues] filteredArrayUsingPredicate: predicate] 
-			sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)];
-	if (0 == [rval count]) rval = nil;
-	return rval;
+	return [mAttributes PGTSValueSelectFunction: &FilterPkeyAttributes argument: (void *) 1L] ?: nil;
+}
+	
++ (NSSet *) keyPathsForValuesAffectingFields
+{
+	return [NSSet setWithObject: @"primaryKeyFields"];
 }
 
 /** 
@@ -327,11 +339,7 @@ bail:
  */
 - (NSArray *) fields
 {
-	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"NO == isPrimaryKey"];
-	NSArray* rval = [[[mAttributes allValues] filteredArrayUsingPredicate: predicate] 
-			sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)];
-	if (0 == [rval count]) rval = nil;
-	return rval;
+	return [mAttributes PGTSValueSelectFunction: &FilterPkeyAttributes argument: (void *) 0L] ?: nil;
 }
 
 /** Whether this entity is marked as a view or not. */
