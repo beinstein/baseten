@@ -1,6 +1,6 @@
 //
-// MKCAlternativeDataCellColumn.m
-// BaseTen Setup
+// BXAEntityCell.h
+// BaseTen Assistant
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
@@ -23,35 +23,14 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: MKCAlternativeDataCellColumn.m 241 2008-02-22 16:08:56Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
-#import "MKCAlternativeDataCellColumn.h"
-
-@interface NSObject (MKCAlternativeDataCellColumnAdditions)
-- (id) MKCTableView: (NSTableView *) tableView 
-  dataCellForColumn: (MKCAlternativeDataCellColumn *) aColumn
-                row: (int) rowIndex
-			current: (NSCell *) aCell;
-@end
+#import <Cocoa/Cocoa.h>
+#import "MKCImageAndTextCell.h"
 
 
-@implementation MKCAlternativeDataCellColumn
-
-- (id) dataCellForRow: (int) rowIndex
+@interface BXAEntityCell : MKCImageAndTextCell 
 {
-    id retval = nil;
-    if (-1 == rowIndex)
-        retval = [super dataCell];
-    else
-    {
-        id tableView = [self tableView];
-		NSCell* currentCell = [super dataCellForRow: rowIndex];
-        retval = [[tableView delegate] MKCTableView: tableView dataCellForColumn: self row: rowIndex current: currentCell];
-        if (nil == retval)
-            retval = currentCell;
-    }
-    return retval;
 }
-
 @end

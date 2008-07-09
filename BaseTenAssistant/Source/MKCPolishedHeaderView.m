@@ -30,7 +30,6 @@
 #import "Additions.h"
 #import "MKCPolishedHeaderCell.h"
 #import <BaseTen/BXDatabaseAdditions.h>
-#import <MKCCollections/MKCCollections.h>
 
 NSString* kMKCEnabledColoursKey		 = @"kMKCEnabledColoursKey";
 NSString* kMKCDisabledColoursKey	 = @"kMKCDisabledColoursKey";

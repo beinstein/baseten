@@ -31,10 +31,7 @@
 
 @interface MKCImageAndTextCell : NSTextFieldCell 
 {
-	id mRepresentedObject;
 	NSImage* mImage;
 }
-
 @property (readwrite, retain) NSImage* image;
-
 @end
