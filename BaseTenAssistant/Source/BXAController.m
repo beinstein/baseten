@@ -35,8 +35,72 @@
 #import "MKCAlternativeDataCellColumn.h"
 #import "Additions.h"
 
+#import <BaseTen/BXEntityDescriptionPrivate.h>
+#import <BaseTen/BXPGInterface.h>
+#import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/BXAttributeDescriptionPrivate.h>
+
 
 static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
+
+
+//FIXME: come up with a way for the entities etc. to get an NSDocument or something if we want to be document based some day.
+__strong static BXAController* gController = nil;
+
+
+@implementation BXEntityDescription (BXAControllerAdditions)
+- (BOOL) isEnabledForAssistant
+{
+	NSLog (@"%@ is enabled: %d", [self name], [self isEnabled]);
+	return [self isEnabled];
+}
+
+- (void) setEnabledForAssistant: (BOOL) aBool
+{
+	NSLog (@"setEnabled: %d", aBool);
+	[gController process: aBool entity: self];
+}
+
++ (NSSet *) keyPathsForValuesAffectingAllowsSettingPrimaryKey
+{
+	return [NSSet setWithObjects: @"isView", @"isEnabled", nil];
+}
+
+- (BOOL) allowsSettingPrimaryKey
+{
+	BOOL retval = NO;
+	if ([self isView] && ! [self isEnabled])
+		retval = YES;
+	return retval;
+}
+
++ (NSSet *) keyPathsForValuesAffectingAllowsEnabling
+{
+	return [NSSet setWithObjects: @"isView", @"primaryKeyFields", nil];
+}
+
+- (BOOL) allowsEnabling
+{
+	BOOL retval = YES;
+	if ([self isView])
+		retval = (0 < [[self primaryKeyFields] count]);
+	return retval;
+}
+@end
+
+
+@implementation BXAttributeDescription (BXAControllerAdditions)
+- (BOOL) isPrimaryKeyForAssistant
+{
+	return [self isPrimaryKey];
+}
+
+- (void) setPrimaryKeyForAssistant: (BOOL) aBool
+{
+	NSLog (@"setPrimaryKey: %d", aBool);
+	[gController process: aBool attribute: self];
+}
+@end
 
 
 @implementation BXAController
@@ -156,6 +220,8 @@ static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
 
 - (void) awakeFromNib
 {
+	gController = self;
+	
 	//Make main window's bottom edge lighter
 	[mMainWindow setContentBorderThickness: 24.0 forEdge: NSMinYEdge];
 
@@ -223,16 +289,32 @@ static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
 }
 
 
-- (id) selectedEntityEnabled
+- (void) process: (BOOL) newState entity: (BXEntityDescription *) entity
 {
-	return [[mEntities selection] valueForKeyPath: @"value.isEnabled"];
+	[entity setIsEnabled: newState];
+	
+	NSError* localError = nil;
+	NSArray* entityArray = [NSArray arrayWithObject: entity];
+	[(BXPGInterface *) [mContext databaseInterface] process: newState entities: entityArray error: &localError];
+	if (localError)
+	{
+		[entity setIsEnabled: !newState];
+		[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	}
 }
 
-
-- (void) setSelectedEntityEnabled: (id) flag
+- (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute
 {
-	//FIXME: make me work.
-	NSLog (@"flag: %@", flag);
+	[attribute setPrimaryKey: newState];
+
+	NSError* localError = nil;
+	NSArray* attributeArray = [NSArray arrayWithObject: attribute];
+	[(BXPGInterface *) [mContext databaseInterface] process: newState primaryKeyFields: attributeArray error: &localError];
+	if (localError)
+	{
+		[attribute setPrimaryKey: !newState];
+		[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	}
 }
 @end
 
@@ -295,29 +377,6 @@ static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
 		[currentCell setEnabled: [self hasBaseTenSchema]];
 		
     return retval;
-}
-
-
-- (id) tableView: (NSTableView *) aTableView objectValueForTableColumn: (NSTableColumn *) aTableColumn row: (NSInteger) rowIndex
-{
-	id retval = nil;
-	if (aTableColumn == mTableEnabledColumn)
-	{
-		retval = [NSNumber numberWithBool: [[[[mEntities arrangedObjects] objectAtIndex: rowIndex] valueForKey: @"value"] isEnabled]];
-	}
-	else if (aTableColumn == mAttributeIsPkeyColumn)
-	{
-		retval = [NSNumber numberWithBool: [[[[mAttributes arrangedObjects] objectAtIndex: rowIndex] valueForKey: @"value"] isPrimaryKey]];
-	}
-	return retval;
-}
-
-
-- (void) tableView: (NSTableView *) aTableView setObjectValue: (id) anObject 
-    forTableColumn: (NSTableColumn *) aTableColumn row: (int) rowIndex
-{
-	//FIXME: make me work.
-	NSLog (@"anObject: %@ row: %d", anObject, rowIndex);
 }
 
 

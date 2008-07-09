@@ -70,7 +70,10 @@
 }
 
 @property (readonly) BOOL hasBaseTenSchema;
-@property (readwrite, assign) id selectedEntityEnabled;
+
+
+- (void) process: (BOOL) newState entity: (BXEntityDescription *) entity;
+- (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute;
 @end
 
 
