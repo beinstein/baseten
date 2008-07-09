@@ -176,6 +176,7 @@
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error;
+- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error;
 @end
 
 

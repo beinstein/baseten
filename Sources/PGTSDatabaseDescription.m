@@ -383,6 +383,7 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
 				PGTSTableDescription* desc = [self tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];
 				[self handleResult: res forTable: desc];
 				[self updateTableCache: desc];
+				[retval addObject: desc];
 			}
 		}
 	}

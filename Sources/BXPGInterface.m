@@ -1183,7 +1183,7 @@ error:
 - (NSDictionary *) entitiesBySchemaAndName: (NSError **) error
 {
 	Expect (error);
-	NSDictionary* retval = nil;
+	NSMutableDictionary* retval = nil;
 	
 	NSString* query = @"SELECT c.oid "
     " FROM pg_class c, pg_namespace n "
@@ -1204,7 +1204,7 @@ error:
 		
 		//Warm up the cache.
 		NSSet* tables = [[mTransactionHandler databaseDescription] tablesWithOids: oids];
-		NSMutableDictionary* retval = [NSMutableDictionary dictionary];
+		retval = [NSMutableDictionary dictionary];
 		TSEnumerate (currentTable, e, [tables objectEnumerator])
 		{
 			NSString* tableName = [currentTable name];
@@ -1223,6 +1223,105 @@ error:
 	}
 error:
 	return retval;
+}
+
+- (BOOL) canProcessEntities
+{
+	return [[mTransactionHandler databaseDescription] hasBaseTenSchema];
+}
+
+- (void) removePrimaryKeyForEntity: (BXEntityDescription *) viewEntity error: (NSError **) outError
+{
+	ExpectV (viewEntity);
+	ExpectV ([viewEntity isView]);
+	ExpectV (outError);	
+	
+	NSString* query = [NSString stringWithFormat: @"DELETE FROM baseten.viewprimarykey WHERE nspname = $1 AND relname = $2"];
+	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameters: [viewEntity schemaName], [viewEntity name]];
+	if (! [res querySucceeded])
+		*outError = [res error];
+}
+
+- (void) process: (BOOL) shouldAdd primaryKeyFields: (NSArray *) attributeArray error: (NSError **) outError
+{
+	ExpectV (attributeArray);
+	ExpectV (outError);
+	
+	TSEnumerate (currentAttribute, e, [attributeArray objectEnumerator])
+	{
+		BXEntityDescription* entity = [(BXAttributeDescription *) currentAttribute entity];
+		if ([entity isView] && [currentAttribute isPrimaryKey] != shouldAdd)
+		{
+			NSString* queryFormat = nil;
+			if (shouldAdd)
+				queryFormat = @"INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ($1, $2, $3)";
+			else
+				queryFormat = @"DELETE FROM baseten.viewprimarykey WHERE nspname = $1 AND relname = $2 AND attname = $3";
+			
+			PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: queryFormat parameters: 
+								  [entity schemaName], [entity name], [currentAttribute name]];
+			if (! [res querySucceeded])
+			{
+				*outError = [res error];
+				break;
+			}
+		}
+	}
+}
+
+- (void) process: (BOOL) shouldEnable entities: (NSArray *) entityArray error: (NSError **) outError
+{
+	ExpectV (entityArray);
+	ExpectV (outError);
+	
+	NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [entityArray count]];
+	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
+	{
+		if ([currentEntity isEnabled] != shouldEnable)
+		{
+			PGTSTableDescription* table = [self tableForEntity: currentEntity error: outError];
+			if (table)
+				[oids addObject: PGTSOidAsObject ([table oid])];
+			else
+				goto bail;
+		}
+	}
+	
+	if (0 < [oids count])
+	{
+		NSString* query = nil;
+		if (shouldEnable)
+		{
+			query =
+			@"SELECT baseten.prepareformodificationobserving ($1 [s]) "
+			"  FROM generate_series (1, array_upper ($1, 1)) AS s";
+		}
+		else
+		{
+			query =
+			@"SELECT baseten.cancelmodificationobserving ($1 [s]) "
+			"  FROM generate_series (1, array_upper ($1, 1)) AS s";
+		}
+		
+		PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameters: oids];
+		if ([res querySucceeded])
+		{
+			TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
+				[currentEntity setEnabled: shouldEnable];
+		}
+		else
+		{
+			*outError = [res error];
+		}
+	}
+	
+bail:
+	;
+}
+
+- (BOOL) hasBaseTenSchema
+{
+	return [[mTransactionHandler databaseDescription] hasBaseTenSchema];
 }
 @end
 

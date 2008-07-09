@@ -1897,6 +1897,13 @@ bx_query_during_reconnect ()
 
 
 @implementation BXDatabaseContext (HelperMethods)
+- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error
+{
+	//FIXME: cache these?
+	//FIXME: error handling.
+	NSError* localError = nil;
+	return [mDatabaseInterface entitiesBySchemaAndName: &localError];
+}
 
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
 {
@@ -2409,7 +2416,7 @@ bx_query_during_reconnect ()
         [mLazilyValidatedEntities removeAllObjects];
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
-            [self validateEntity: currentEntity error: error];
+            [self validateEntity: currentEntity error: error]; //FIXME: possible bottleneck.
             if (nil != *error)
             {
                 //Remember the remaining objects.
@@ -2462,10 +2469,10 @@ bx_query_during_reconnect ()
 							[entity setRelationships: relationships];
 							[entity setValidated: YES];
 						}
-					}
-			
-					if ([entity isValidated])
-						[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+						
+						if ([entity isValidated])
+							[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+					}			
 				}
 			}
 		}
