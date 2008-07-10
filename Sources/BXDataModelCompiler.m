@@ -96,13 +96,26 @@
 
 - (void) compileDataModel
 {
-	char* pathFormat = NULL;
 	//FIXME: handle errors in asprintf and mkstemps.
-	asprintf (&pathFormat, "%s/BaseTen.datamodel.%u.XXXXX.mom", 
-			  [NSTemporaryDirectory () UTF8String], getpid ());
-	if (-1 != mkstemps (pathFormat, 5))
+	
+	NSString* sourcePath = [mModelURL path];
+	char* pathFormat = NULL;
+	BOOL ok = NO;
+	if ([sourcePath hasSuffix: @".xcdatamodeld"])
 	{
-		NSString* sourcePath = [mModelURL path];
+		asprintf (&pathFormat, "%s/BaseTen.datamodel.%u.XXXXX", 
+				  [NSTemporaryDirectory () UTF8String], getpid ());
+		ok = (NULL != mkdtemp (pathFormat));
+	}
+	else
+	{
+		asprintf (&pathFormat, "%s/BaseTen.datamodel.%u.XXXXX.mom", 
+				  [NSTemporaryDirectory () UTF8String], getpid ());
+		ok = (-1 != mkstemps (pathFormat, 5));
+	}
+	
+	if (ok)
+	{
 		NSString* targetPath = [NSString stringWithCString: pathFormat encoding: NSUTF8StringEncoding];
 		NSString* momcPath = [[self class] momcPath];
 		NSArray* arguments = [NSArray arrayWithObjects: sourcePath, targetPath, nil];
@@ -111,11 +124,15 @@
 		mMomcTask = [[NSTask alloc] init];
 		[mMomcTask setLaunchPath: momcPath];
 		[mMomcTask setArguments: arguments];
+		[mMomcTask setStandardError: [NSFileHandle fileHandleWithStandardError]];
+		[mMomcTask setStandardOutput: [NSFileHandle fileHandleWithStandardOutput]];
 		[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector (momcTaskFinished:) 
 													 name: NSTaskDidTerminateNotification object: mMomcTask];
 		[mMomcTask launch];
 	}
-	free (pathFormat);
+	
+	if (pathFormat)
+		free (pathFormat);
 }
 
 - (void) momcTaskFinished: (NSNotification *) notification

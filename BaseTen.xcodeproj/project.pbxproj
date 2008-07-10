@@ -232,7 +232,7 @@
 		538A83860E1D2ACD0025B3C8 /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82B90E1D15BB0025B3C8 /* print.c */; };
 		538A83870E1D2ACE0025B3C8 /* prompt.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A83050E1D1DD30025B3C8 /* prompt.c */; };
 		538A83880E1D2ACF0025B3C8 /* stringutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82F80E1D1C1B0025B3C8 /* stringutils.c */; };
-		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; };
+		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539758530E1E86200042120A /* BXDataModelCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 539758510E1E86200042120A /* BXDataModelCompiler.m */; };
 		53B24CF40E223A14007AED76 /* BXPGDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF20E223A14007AED76 /* BXPGDatabaseDescription.h */; };
 		53B24CF50E223A14007AED76 /* BXPGDatabaseDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF30E223A14007AED76 /* BXPGDatabaseDescription.m */; };
