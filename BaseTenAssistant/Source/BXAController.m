@@ -28,12 +28,14 @@
 
 
 #import "BXAController.h"
+#import "BXAImportController.h"
+#import "Additions.h"
+
 #import "MKCBackgroundView.h"
 #import "MKCPolishedHeaderView.h"
 #import "MKCPolishedCornerView.h"
 #import "MKCForcedSizeToFitButtonCell.h"
 #import "MKCAlternativeDataCellColumn.h"
-#import "Additions.h"
 
 #import <BaseTen/BXEntityDescriptionPrivate.h>
 #import <BaseTen/BXPGInterface.h>
@@ -353,10 +355,45 @@ __strong static BXAController* gController = nil;
     [NSApp endSheet: mProgressPanel];
     [mProgressPanel orderOut: nil];
 }
+
+- (void) importModelAtURL: (NSURL *) URL
+{
+	if (! mImportController)
+		mImportController = [[BXAImportController alloc] initWithWindowNibName: @"Import"];
+	
+	NSManagedObjectModel* model = [[NSManagedObjectModel alloc] initWithContentsOfURL: URL];
+	[mImportController setObjectModel: model];
+	[mImportController showPanelAttachedTo: mMainWindow];	
+}
+
+- (void) compileAndImportModelAtURL: (NSURL *) URL
+{
+	if (! mCompiler)
+	{
+		mCompiler = [[BXDataModelCompiler alloc] init];
+		[mCompiler setDelegate: self];
+	}
+	[mCompiler setModelURL: URL];
+	[mCompiler compileDataModel];
+}
 @end
 
 
 @implementation BXAController (Delegation)
+- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus
+{
+	if (0 == exitStatus)
+	{
+		NSURL* modelURL = [mCompiler compiledModelURL];
+		[self importModelAtURL: modelURL];
+	}
+	else
+	{
+		//FIXME: handle the error.
+	}
+}
+
+
 - (NSRect) splitView: (NSSplitView *) splitView additionalEffectiveRectOfDividerAtIndex: (NSInteger) dividerIndex
 {
 	NSRect retval = NSZeroRect;
@@ -441,6 +478,26 @@ __strong static BXAController* gController = nil;
 	[mMainWindow makeKeyAndOrderFront: nil];
 	[self disconnect: nil];
 }
+
+
+- (void) importOpenPanelDidEnd: (NSOpenPanel *) panel returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+    if (NSOKButton == returnCode)
+    {		
+        NSURL* URL = [[panel URLs] objectAtIndex: 0];
+		NSString* URLString = [URL path];
+        if ([URLString hasSuffix: @".mom"] || [URLString hasSuffix: @".momd"])
+		{
+			//Delay a bit so the open panel gets removed.
+			[[NSRunLoop currentRunLoop] performSelector: @selector (importModelAtURL:) target: self argument: URL 
+												  order: 0 modes: [NSArray arrayWithObject: NSRunLoopCommonModes]];
+		}
+        else
+		{
+			[self compileAndImportModelAtURL: URL];
+		}
+    }
+}
 @end
 
 
@@ -479,6 +536,19 @@ __strong static BXAController* gController = nil;
     [self displayProgressPanel: @"Connecting..."];
 	
 	[mContext connect];
+}
+
+
+- (IBAction) importDataModel: (id) sender
+{
+    NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+    [openPanel setAllowsMultipleSelection: NO];
+    [openPanel setCanChooseDirectories: NO];
+    [openPanel setCanChooseFiles: YES];
+    [openPanel setResolvesAliases: YES];
+	NSArray* types = [NSArray arrayWithObjects: @"xcdatamodel", @"xcdatamodeld", @"mom", @"momd", nil];
+    [openPanel beginSheetForDirectory: nil file: nil types: types modalForWindow: mMainWindow modalDelegate: self 
+                       didEndSelector: @selector (importOpenPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
 }
 @end
 

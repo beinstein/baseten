@@ -28,9 +28,11 @@
 
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXDataModelCompiler.h>
 
 @class MKCBackgroundView;
 @class MKCPolishedCornerView;
+@class BXAImportController;
 
 
 @interface BXAController : NSObject 
@@ -68,6 +70,9 @@
     IBOutlet id mUserNameCell;
     IBOutlet NSSecureTextField* mPasswordField;	
 	
+	BXAImportController* mImportController;
+	BXDataModelCompiler* mCompiler;
+	
 	BOOL mLastSelectedEntityWasView;
 }
 
@@ -83,6 +88,7 @@
 - (IBAction) disconnect: (id) sender;
 - (IBAction) terminate: (id) sender;
 - (IBAction) connect: (id) sender;
+- (IBAction) importDataModel: (id) sender;
 @end
 
 
@@ -91,3 +97,6 @@
 - (void) hideProgressPanel;
 @end
 
+
+@interface BXAController (Delegation) <BXDataModelCompilerDelegate>
+@end
