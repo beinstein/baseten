@@ -1,5 +1,5 @@
 //
-// NSPredicate+PGTSAdditions.h
+// PGTSConstantValue.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -29,7 +29,10 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSPredicate (PGTSAdditions)
-- (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context;
-- (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context;
+@interface PGTSConstantValue : NSObject 
+{
+	id mValue;
+}
++ (id) valueWithString: (NSString *) aString;
+- (id) initWithString: (NSString *) aString;
 @end

@@ -77,11 +77,11 @@ RequireClass (id object, Class aClass)
 
 
 @implementation NSPredicate (PGTSAdditions)
-
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
 {
 	return [self PGTSExpressionWithObject: nil context: context];
 }
+
 
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
@@ -96,6 +96,7 @@ RequireClass (id object, Class aClass)
     return retval;
 }
 @end
+
 
 @implementation NSCompoundPredicate (PGTSAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context

@@ -218,6 +218,12 @@
 		537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
 		538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538678D30DE31BA0000C9A78 /* IOKit.framework */; };
 		538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 538679870DE31C1D000C9A78 /* libstdc++.6.dylib */; };
+		53877E930E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53877E910E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h */; };
+		53877E940E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E920E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m */; };
+		53877E990E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53877E970E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h */; };
+		53877E9A0E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */; };
+		53877EAD0E27667B0097C35F /* PGTSConstantValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53877EAB0E27667B0097C35F /* PGTSConstantValue.h */; };
+		53877EAE0E27667B0097C35F /* PGTSConstantValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877EAC0E27667B0097C35F /* PGTSConstantValue.m */; };
 		538A82C50E1D16DB0025B3C8 /* psqlscan.l in Sources */ = {isa = PBXBuildFile; fileRef = 538A80BB0E1D0FA00025B3C8 /* psqlscan.l */; };
 		538A82C80E1D172A0025B3C8 /* SQLParser.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 538A82C10E1D16AC0025B3C8 /* SQLParser.o */; };
 		538A830B0E1D1E150025B3C8 /* debug-gc.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 535444210D634A98002A6C47 /* debug-gc.xcconfig */; };
@@ -477,6 +483,12 @@
 		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
 		538678D30DE31BA0000C9A78 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		538679870DE31C1D000C9A78 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "/usr/lib/libstdc++.6.dylib"; sourceTree = "<absolute>"; };
+		53877E910E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSEntityDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
+		53877E920E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSEntityDescription+BXPGAdditions.m"; sourceTree = "<group>"; };
+		53877E970E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributeDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
+		53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributeDescription+BXPGAdditions.m"; sourceTree = "<group>"; };
+		53877EAB0E27667B0097C35F /* PGTSConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTSConstantValue.h; sourceTree = "<group>"; };
+		53877EAC0E27667B0097C35F /* PGTSConstantValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTSConstantValue.m; sourceTree = "<group>"; };
 		5389E1A20C464107002714B8 /* BXRelationshipDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescriptionPrivate.h; path = Sources/BXRelationshipDescriptionPrivate.h; sourceTree = "<group>"; };
 		5389E1F90C465449002714B8 /* BXForeignKeyPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKeyPrivate.h; path = Sources/BXForeignKeyPrivate.h; sourceTree = "<group>"; };
 		538A80BB0E1D0FA00025B3C8 /* psqlscan.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = psqlscan.l; path = "BaseTen-PostgreSQL/postgresql-8.2.5/src/bin/psql/psqlscan.l"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -829,10 +841,12 @@
 		53666D860E1CE01A0028DBEA /* Predicates */ = {
 			isa = PBXGroup;
 			children = (
+				53877EAB0E27667B0097C35F /* PGTSConstantValue.h */,
+				53877EAC0E27667B0097C35F /* PGTSConstantValue.m */,
+				53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */,
 				53666D790E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m */,
 				53666D7A0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h */,
 				53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */,
-				53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */,
 			);
 			name = Predicates;
 			sourceTree = "<group>";
@@ -923,6 +937,10 @@
 			children = (
 				539758B00E1EB24C0042120A /* BXPGEntityConverter.h */,
 				539758B10E1EB24C0042120A /* BXPGEntityConverter.m */,
+				53877E910E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h */,
+				53877E920E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m */,
+				53877E970E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h */,
+				53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */,
 			);
 			name = "SQL Generation";
 			sourceTree = "<group>";
@@ -1110,6 +1128,9 @@
 				539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */,
 				53B24CF40E223A14007AED76 /* BXPGDatabaseDescription.h in Headers */,
 				53B24CFA0E223C8C007AED76 /* BXPGTableDescription.h in Headers */,
+				53877E930E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h in Headers */,
+				53877E990E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h in Headers */,
+				53877EAD0E27667B0097C35F /* PGTSConstantValue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1349,6 +1370,9 @@
 				539758530E1E86200042120A /* BXDataModelCompiler.m in Sources */,
 				53B24CF50E223A14007AED76 /* BXPGDatabaseDescription.m in Sources */,
 				53B24CFB0E223C8C007AED76 /* BXPGTableDescription.m in Sources */,
+				53877E940E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m in Sources */,
+				53877E9A0E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m in Sources */,
+				53877EAE0E27667B0097C35F /* PGTSConstantValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

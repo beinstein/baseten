@@ -1,5 +1,5 @@
 //
-// NSPredicate+PGTSAdditions.h
+// PGTSConstantValue.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,10 +26,33 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
+#import "PGTSConstantValue.h"
 
 
-@interface NSPredicate (PGTSAdditions)
-- (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context;
-- (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context;
+@implementation PGTSConstantValue
++ (id) valueWithString: (NSString *) aString
+{
+	id retval = [[[self alloc] initWithString: aString] autorelease];
+	return retval;
+}
+
+- (id) initWithString: (NSString *) aString
+{
+	if ((self = [super init]))
+	{
+		mValue = [aString retain];
+	}
+	return retval;
+}
+
+- (void) dealloc
+{
+	[mValue release];
+	[super dealloc];
+}
+
+- (id) PGTSConstantExpressionValue: (id) context
+{
+    return mValue;
+}
 @end
