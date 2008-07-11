@@ -20,6 +20,7 @@
 		5374E69A0B0DC8A4000D353D /* MKCPolishedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E6980B0DC8A4000D353D /* MKCPolishedHeaderView.m */; };
 		5374E9450B0E001C000D353D /* MKCPolishedCornerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */; };
 		53877B010E263AED0097C35F /* BXAImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877B000E263AED0097C35F /* BXAImportController.m */; };
+		53877E3F0E26A51B0097C35F /* BXAFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E3E0E26A51B0097C35F /* BXAFieldCell.m */; };
 		5388DC660E23AC3F006CDBD8 /* BXAController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388DC650E23AC3F006CDBD8 /* BXAController.m */; };
 		5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
 		5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DE290E23AE48006CDBD8 /* Cocoa.framework */; };
@@ -121,6 +122,8 @@
 		537CA7120B1611C800898F1C /* Schema.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Schema.m; path = Source/Schema.m; sourceTree = "<group>"; };
 		53877AFF0E263AED0097C35F /* BXAImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAImportController.h; sourceTree = "<group>"; };
 		53877B000E263AED0097C35F /* BXAImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAImportController.m; sourceTree = "<group>"; };
+		53877E3D0E26A51B0097C35F /* BXAFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAFieldCell.h; sourceTree = "<group>"; };
+		53877E3E0E26A51B0097C35F /* BXAFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAFieldCell.m; sourceTree = "<group>"; };
 		5388DC640E23AC3F006CDBD8 /* BXAController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAController.h; sourceTree = "<group>"; };
 		5388DC650E23AC3F006CDBD8 /* BXAController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAController.m; sourceTree = "<group>"; };
 		5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -270,6 +273,8 @@
 				53EF33B40E23CC430027EA18 /* BXASchemaCell.m */,
 				53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */,
 				53EF34500E23D83B0027EA18 /* BXAEntityCell.m */,
+				53877E3D0E26A51B0097C35F /* BXAFieldCell.h */,
+				53877E3E0E26A51B0097C35F /* BXAFieldCell.m */,
 			);
 			name = "View Classes";
 			sourceTree = "<group>";
@@ -430,6 +435,7 @@
 				53EF33B50E23CC430027EA18 /* BXASchemaCell.m in Sources */,
 				53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */,
 				53877B010E263AED0097C35F /* BXAImportController.m in Sources */,
+				53877E3F0E26A51B0097C35F /* BXAFieldCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

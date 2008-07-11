@@ -1,5 +1,5 @@
 //
-// BXAImportController.h
+// BXAFieldCell.m
 // BaseTen Assistant
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,34 +26,13 @@
 // $Id$
 //
 
-#import <Cocoa/Cocoa.h>
-@class MKCPolishedHeaderView;
+#import "BXAFieldCell.h"
+#import <BaseTen/BXEntityDescription.h>
 
 
-@interface BXAImportController : NSWindowController 
+@implementation BXAFieldCell
+- (NSImage *) image
 {
-	NSManagedObjectModel* mModel;
-	NSString* mSchemaName;
-	
-	IBOutlet NSArrayController* mConfigurations;
-	IBOutlet NSArrayController* mEntities;
-	IBOutlet NSArrayController* mProperties;
-	
-	IBOutlet MKCPolishedHeaderView* mLeftHeaderView;
-	IBOutlet MKCPolishedHeaderView* mRightHeaderView;
-	
-	IBOutlet NSTableView* mTableView;
-	IBOutlet NSTableView* mFieldView;
+	return [NSImage imageNamed: @"Entity16"];
 }
-@property (readwrite, retain) NSManagedObjectModel* objectModel;
-@property (readwrite, retain) NSString* schemaName;
-- (void) showPanelAttachedTo: (NSWindow *) aWindow;
-@end
-
-
-@interface BXAImportController (IBActions)
-- (IBAction) selectedConfiguration: (id) sender;
-- (IBAction) acceptImport: (id) sender;
-- (IBAction) cancelImport: (id) sender;
-- (IBAction) dryRun: (id) sender;
 @end
