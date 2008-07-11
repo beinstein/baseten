@@ -1,5 +1,5 @@
 //
-// NSAttributeDescription+BXPGAdditions.h
+// NSRelationshipDescription+BXPGAdditions.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,10 +26,9 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import "NSRelationshipDescription+BXPGAdditions.h"
 
 
-@interface NSAttributeDescription (BXPGAdditions)
-- (NSString *) BXPGAttributeDefinition;
+@implementation NSRelationshipDescription (BXPGAdditions)
+
 @end

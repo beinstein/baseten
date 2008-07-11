@@ -224,6 +224,8 @@
 		53877E9A0E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */; };
 		53877EAD0E27667B0097C35F /* PGTSConstantValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53877EAB0E27667B0097C35F /* PGTSConstantValue.h */; };
 		53877EAE0E27667B0097C35F /* PGTSConstantValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877EAC0E27667B0097C35F /* PGTSConstantValue.m */; };
+		53877EEB0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53877EE90E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h */; };
+		53877EEC0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877EEA0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m */; };
 		538A82C50E1D16DB0025B3C8 /* psqlscan.l in Sources */ = {isa = PBXBuildFile; fileRef = 538A80BB0E1D0FA00025B3C8 /* psqlscan.l */; };
 		538A82C80E1D172A0025B3C8 /* SQLParser.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 538A82C10E1D16AC0025B3C8 /* SQLParser.o */; };
 		538A830B0E1D1E150025B3C8 /* debug-gc.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 535444210D634A98002A6C47 /* debug-gc.xcconfig */; };
@@ -483,12 +485,14 @@
 		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
 		538678D30DE31BA0000C9A78 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		538679870DE31C1D000C9A78 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "/usr/lib/libstdc++.6.dylib"; sourceTree = "<absolute>"; };
-		53877E910E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSEntityDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
-		53877E920E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSEntityDescription+BXPGAdditions.m"; sourceTree = "<group>"; };
-		53877E970E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributeDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
-		53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSAttributeDescription+BXPGAdditions.m"; sourceTree = "<group>"; };
-		53877EAB0E27667B0097C35F /* PGTSConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGTSConstantValue.h; sourceTree = "<group>"; };
-		53877EAC0E27667B0097C35F /* PGTSConstantValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGTSConstantValue.m; sourceTree = "<group>"; };
+		53877E910E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSEntityDescription+BXPGAdditions.h"; path = "Sources/NSEntityDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
+		53877E920E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSEntityDescription+BXPGAdditions.m"; path = "Sources/NSEntityDescription+BXPGAdditions.m"; sourceTree = "<group>"; };
+		53877E970E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSAttributeDescription+BXPGAdditions.h"; path = "Sources/NSAttributeDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
+		53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSAttributeDescription+BXPGAdditions.m"; path = "Sources/NSAttributeDescription+BXPGAdditions.m"; sourceTree = "<group>"; };
+		53877EAB0E27667B0097C35F /* PGTSConstantValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSConstantValue.h; path = Sources/PGTSConstantValue.h; sourceTree = "<group>"; };
+		53877EAC0E27667B0097C35F /* PGTSConstantValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSConstantValue.m; path = Sources/PGTSConstantValue.m; sourceTree = "<group>"; };
+		53877EE90E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSRelationshipDescription+BXPGAdditions.h"; path = "Sources/NSRelationshipDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
+		53877EEA0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSRelationshipDescription+BXPGAdditions.m"; path = "Sources/NSRelationshipDescription+BXPGAdditions.m"; sourceTree = "<group>"; };
 		5389E1A20C464107002714B8 /* BXRelationshipDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXRelationshipDescriptionPrivate.h; path = Sources/BXRelationshipDescriptionPrivate.h; sourceTree = "<group>"; };
 		5389E1F90C465449002714B8 /* BXForeignKeyPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXForeignKeyPrivate.h; path = Sources/BXForeignKeyPrivate.h; sourceTree = "<group>"; };
 		538A80BB0E1D0FA00025B3C8 /* psqlscan.l */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.lex; name = psqlscan.l; path = "BaseTen-PostgreSQL/postgresql-8.2.5/src/bin/psql/psqlscan.l"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -941,6 +945,8 @@
 				53877E920E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m */,
 				53877E970E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h */,
 				53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */,
+				53877EE90E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h */,
+				53877EEA0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m */,
 			);
 			name = "SQL Generation";
 			sourceTree = "<group>";
@@ -1131,6 +1137,7 @@
 				53877E930E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h in Headers */,
 				53877E990E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h in Headers */,
 				53877EAD0E27667B0097C35F /* PGTSConstantValue.h in Headers */,
+				53877EEB0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1373,6 +1380,7 @@
 				53877E940E26AE920097C35F /* NSEntityDescription+BXPGAdditions.m in Sources */,
 				53877E9A0E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m in Sources */,
 				53877EAE0E27667B0097C35F /* PGTSConstantValue.m in Sources */,
+				53877EEC0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
