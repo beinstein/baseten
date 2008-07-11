@@ -42,7 +42,7 @@
 	{
 		mValue = [aString retain];
 	}
-	return retval;
+	return self;
 }
 
 - (void) dealloc

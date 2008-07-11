@@ -27,6 +27,10 @@
 //
 
 #import "NSEntityDescription+BXPGAdditions.h"
+#import "NSAttributeDescription+BXPGAdditions.h"
+#import "BXLogger.h"
+#import "PGTSFunctions.h"
+
 
 
 @implementation NSEntityDescription (BXPGAdditions)
@@ -36,13 +40,12 @@
 
 	NSString* name = [self name];
 	NSEntityDescription* superentity = [self superentity];
-	NSDictionary* superEntityAttributes = [superentity attributesByName];
-
+	NSDictionary* attributes = [self attributesByName];
     NSMutableArray* attributeDefs = [NSMutableArray arrayWithCapacity: 1 + [attributes count]];    
-    if (YES == addsIDColumns)
+    if (YES == addSerialIDColumn)
         [attributeDefs addObject: @"id SERIAL"];
 	
-	TSEnumerate (currentAttribute, e, [[self attributesByName] objectEnumerator])
+	TSEnumerate (currentAttribute, e, [attributes objectEnumerator])
 	{
 		//Transient values are not stored
 		if ([currentAttribute isTransient])
@@ -57,7 +60,7 @@
 	if (superentity)
 		addition = [NSString stringWithFormat: @"INHERITS (\"%@\".\"%@\")", schemaName, [superentity name]];
 	
-	NSString* statementFormat = @"CREATE TABLE \"%@\".\"%@\" (%@) %@;"
+	NSString* statementFormat = @"CREATE TABLE \"%@\".\"%@\" (%@) %@;";
 	NSString* retval = [NSString stringWithFormat: statementFormat, schemaName, name,
 						[attributeDefs componentsJoinedByString: @", "], addition];
 	

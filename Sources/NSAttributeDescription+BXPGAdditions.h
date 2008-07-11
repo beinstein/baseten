@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+@class PGTSConnection;
 
 
 @interface NSAttributeDescription (BXPGAdditions)

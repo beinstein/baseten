@@ -27,32 +27,10 @@
 //
 
 #import "NSAttributeDescription+BXPGAdditions.h"
-
-
-static BOOL
-IsMaxLengthPredicate (NSPredicate* predicate)
-{
-	BOOL retval = NO;
-	if ([predicate isKindOfClass: [NSComparisonPredicate class]])
-	{
-		NSExpression* lhs = [currentPredicate leftExpression];
-		NSExpression* rhs = [currentPredicate rightExpression];
-		const NSPredicateOperatorType operator = [currentPredicate predicateOperatorType];
-		if ([lhs isEqual: lengthExp] && NSConstantValueExpressionType == [rhs expressionType])
-		{
-			if (operator == NSLessThanOrEqualToPredicateOperatorType ||
-				operator == NSLessThanPredicateOperatorType)
-				retval = YES;
-		}
-		else if ([rhs isEqual: lengthExp] && NSConstantValueExpressionType == [lhs expressionType])
-		{
-			if (operator == NSGreaterThanOrEqualToPredicateOperatorType ||
-				operator == NSGreaterThanPredicateOperatorType)
-				retval = YES;
-		}
-	}
-	return retval;
-}
+#import "NSPredicate+PGTSAdditions.h"
+#import "PGTSHOM.h"
+#import "PGTSConstantValue.h"
+#import "PGTSFunctions.h"
 
 
 @interface NSObject (BXPGAdditions)
@@ -86,7 +64,7 @@ IsMaxLengthPredicate (NSPredicate* predicate)
 @implementation NSDate (BXPGAdditions)
 - (id) BXPGDefaultValueForAttributeType: (NSAttributeType) attrType
 {
-	return [NSString stringWithFormat: @"timestamp with time zone 'epoch' + interval '%f seconds'", [self timeInteretvalSince1970]];
+	return [NSString stringWithFormat: @"timestamp with time zone 'epoch' + interval '%f seconds'", [self timeIntervalSince1970]];
 }
 @end
 
@@ -147,22 +125,10 @@ IsMaxLengthPredicate (NSPredicate* predicate)
 }
 
 
-- (NSString *) BXPGValueType
-{
-	NSString* retval = nil;
-	NSAttributeType attrType = [self attributeType];
-	NSInteger maxLength = NSIntegerMax;
-	if (NSStringAttributeType == attrType && NSIntegerMax != (maxLength = [self BXPGMaxLength]))
-		retval = [NSString stringWithFormat: @"varchar (%d)", maxLength];
-	else
-		retval = [[self class] BXPGNameForAttributeType: attrType];
-	return retval;
-}
-
-
 - (NSMutableSet *) BXPGParentPredicates
 {
-	NSEntityDescription* parent = self;
+	NSString* name = [self name];
+	NSEntityDescription* parent = [self entity];
 	NSMutableSet* parentPredicates = [NSMutableSet set];
 	while (nil != (parent = [parent superentity]))
 	{
@@ -180,64 +146,6 @@ IsMaxLengthPredicate (NSPredicate* predicate)
 }
 
 
-static NSExpression*
-CharLengthExpression (NSString* name)
-{
-	NSString* fcall = [NSString stringWithFormat: @"char_length (%@)", name];
-	PGTSConstantValue* value = [PGTSConstantValue valueWithString: fcall];
-	NSExpression* retval = [NSExpression expressionForConstantValue: value];
-	return retval;
-}
-
-//FIXME: this could be moved to NSKeyPathExpression handling in NSExpression+PGTSAdditions.
-- (NSPredicate *) BXPGTransformPredicate: (NSPredicate *) predicate
-{
-	NSPredicate* retval = predicate;
-	NSAttributeType attrType = [self attributeType];
-	//FIXME: handle more special cases? Are there any?
-	switch (attrType) 
-	{
-		case NSStringAttributeType:
-		{
-			//FIXME: this could be generalized. We don't iterate subpredicates because Xcode data modeler doesn't create compound predicates.
-			if ([predicate isKindOfClass: [NSComparisonPredicate class]])
-			{
-				NSExpression* lhs = [comparisonPredicate leftExpression];
-				NSExpression* rhs = [comparisonPredicate rightExpression];
-				NSExpression* lenghtExp = [NSExpression expressionForKeyPath: @"length"];
-				NSComparisonPredicate* comparisonPredicate = (NSComparisonPredicate *) predicate;
-				if ([lhs isEqual: lenghtExp])
-				{
-					NSExpression* lhs = CharLengthExpression ([self name]);
-					retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs 
-																	   modifier: [currentPredicate modifier] 
-																		   type: [currentPredicate predicateOperatorType] 
-																		options: [currentPredicate option]];
-				}
-				else if ([rhs isEqual: lenghtExp])
-				{
-					NSExpression* rhs = CharLengthExpression ([self name]);
-					retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs 
-																	   modifier: [currentPredicate modifier] 
-																		   type: [currentPredicate predicateOperatorType] 
-																		options: [currentPredicate option]];
-				}
-				else
-				{
-					//FIXME: report the error! We don't understand other key paths than length.
-					retval = nil;
-				}
-			}
-			break;
-		}
-			
-		default:
-			break;
-	}
-	return retval;
-}
-
-
 - (void) BXPGPredicate: (NSPredicate *) givenPredicate 
 			 lengthExp: (NSExpression *) lengthExp 
 			 maxLength: (NSInteger *) maxLength
@@ -247,6 +155,7 @@ CharLengthExpression (NSString* name)
 		NSComparisonPredicate* predicate = (NSComparisonPredicate *) givenPredicate;
 		NSExpression* lhs = [predicate leftExpression];
 		NSExpression* rhs = [predicate rightExpression];
+		NSPredicateOperatorType operator = [predicate predicateOperatorType];
 		
 		BOOL doTest = NO;
 		NSInteger value = 0;
@@ -298,6 +207,77 @@ CharLengthExpression (NSString* name)
 }
 
 
+- (NSString *) BXPGValueType
+{
+	NSString* retval = nil;
+	NSAttributeType attrType = [self attributeType];
+	NSInteger maxLength = NSIntegerMax;
+	if (NSStringAttributeType == attrType && NSIntegerMax != (maxLength = [self BXPGMaxLength]))
+		retval = [NSString stringWithFormat: @"varchar (%d)", maxLength];
+	else
+		retval = [[self class] BXPGNameForAttributeType: attrType];
+	return retval;
+}
+
+
+static NSExpression*
+CharLengthExpression (NSString* name)
+{
+	NSString* fcall = [NSString stringWithFormat: @"char_length (%@)", name];
+	PGTSConstantValue* value = [PGTSConstantValue valueWithString: fcall];
+	NSExpression* retval = [NSExpression expressionForConstantValue: value];
+	return retval;
+}
+
+//FIXME: this could be moved to NSKeyPathExpression handling in NSExpression+PGTSAdditions.
+- (NSPredicate *) BXPGTransformPredicate: (NSPredicate *) givenPredicate
+{
+	NSPredicate* retval = givenPredicate;
+	NSAttributeType attrType = [self attributeType];
+	//FIXME: handle more special cases? Are there any?
+	switch (attrType) 
+	{
+		case NSStringAttributeType:
+		{
+			//FIXME: this could be generalized. We don't iterate subpredicates because Xcode data modeler doesn't create compound predicates.
+			if ([givenPredicate isKindOfClass: [NSComparisonPredicate class]])
+			{
+				NSComparisonPredicate* predicate = (NSComparisonPredicate *) givenPredicate;
+				NSExpression* lhs = [predicate leftExpression];
+				NSExpression* rhs = [predicate rightExpression];
+				NSExpression* lenghtExp = [NSExpression expressionForKeyPath: @"length"];
+				if ([lhs isEqual: lenghtExp])
+				{
+					NSExpression* lhs = CharLengthExpression ([self name]);
+					retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs 
+																	   modifier: [predicate comparisonPredicateModifier] 
+																		   type: [predicate predicateOperatorType] 
+																		options: [predicate options]];
+				}
+				else if ([rhs isEqual: lenghtExp])
+				{
+					NSExpression* rhs = CharLengthExpression ([self name]);
+					retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs 
+																	   modifier: [predicate comparisonPredicateModifier] 
+																		   type: [predicate predicateOperatorType] 
+																		options: [predicate options]];
+				}
+				else
+				{
+					//FIXME: report the error! We don't understand other key paths than length.
+					retval = nil;
+				}
+			}
+			break;
+		}
+			
+		default:
+			break;
+	}
+	return retval;
+}
+
+
 - (NSArray *) BXPGAttributeConstraintsWithIDColumn: (BOOL) addedIDColumn schema: (NSString *) schemaName
 {
 	NSString* name = [self name];
@@ -306,14 +286,15 @@ CharLengthExpression (NSString* name)
 	
 	if (addedIDColumn)
 	{
-		NSString* constraint = [NSString stringWithFormat: format, schemaName, entityName, @"PRIMARY KEY (id)"];
+		NSString* format = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (id)";
+		NSString* constraint = [NSString stringWithFormat: format, schemaName, entityName];
 		[retval addObject: constraint];
 	}
 	
 	if (! [self isOptional])
 	{
 		NSString* format = @"ALTER TABLE \"%@\".\"%@\" ALTER COLUMN \"%@\" SET NOT NULL";
-		[retval addObject: [NSString stringWithFormat: schemaName, entityName, name]];
+		[retval addObject: [NSString stringWithFormat: format, schemaName, entityName, name]];
 	}
 	
 	return retval;
@@ -325,13 +306,12 @@ CharLengthExpression (NSString* name)
 {
 	NSString* name = [self name];
 	NSString* entityName = [[self entity] name];
-	NSArray* givenValidationPredicates = [currentAttribute validationPredicates];
+	NSArray* givenValidationPredicates = [self validationPredicates];
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [givenValidationPredicates count]];
 	
 	//Check parent's validation predicates so that we don't create the same predicates two times.
 	NSSet* parentPredicates = [self BXPGParentPredicates];
 	NSString* format = @"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT CHECK (%@)";
-	NSExpression* lengthExp = [NSExpression expressionForKeyPath: @"length"];
 	TSEnumerate (currentPredicate, e, [givenValidationPredicates objectEnumerator])
 	{
 		//Skip if parent has this one.
@@ -346,7 +326,7 @@ CharLengthExpression (NSString* name)
 		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObjectsAndKeys:
 									connection, kPGTSConnectionKey,
 									[NSNumber numberWithBool: YES], kPGTSExpressionParametersVerbatimKey,
-									nil]]];                                
+									nil];
 		NSString* SQLExpression = [currentPredicate PGTSExpressionWithObject: name context: ctx];
 		NSMutableString* constraint = [NSMutableString stringWithFormat: format, schemaName, entityName, SQLExpression];
 		[retval addObject: constraint];
@@ -362,13 +342,14 @@ CharLengthExpression (NSString* name)
 	NSString* typeDefinition = [self BXPGValueType];
 	if (typeDefinition)
 	{
-		retval = [NSMutableString stringWithFormat: @"\"%@\" %@", [self name], typeDefinition];
+		NSString* addition = @"";
 		id defaultValue = [self defaultValue];
 		if (defaultValue)
 		{
 			NSString* defaultExp = [defaultValue BXPGDefaultValueForAttributeType: [self attributeType]];
-			[attributeDef appendFormat: @" DEFAULT %@", defaultExp];
+			addition = [NSString stringWithFormat: @"DEFAULT %@", defaultExp];
 		}
+		retval = [NSString stringWithFormat: @"\"%@\" %@ %@", [self name], typeDefinition, addition];
 	}
 	return retval;
 }

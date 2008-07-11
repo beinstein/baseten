@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
 
 @interface PGTSNotification : NSObject 
