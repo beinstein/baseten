@@ -27,41 +27,15 @@
 //
 
 #import <Foundation/Foundation.h>
-@class Entity;
+
+@class BXDatabaseContext;
 
 
-//FIXME: these might reside elsewhere
-
-
-@interface EntityConverter : NSObject
-{
-    BOOL dryRun;
-    BOOL addsForeignKeys;
-    BOOL addsIDColumns;
-    id connection;
-    id controller;
-}
-
-- (NSError *) importEntities: (NSArray *) entityArray;
-
-- (NSString *) nameForAttributeType: (NSAttributeType) type;
-- (id) connection;
-- (void) setConnection: (id) aConnection;
-- (BOOL) addsForeignKeys;
-- (void) setAddsForeignKeys: (BOOL) flag;
-- (BOOL) addsIDColumns;
-- (void) setAddsIDColumns: (BOOL) flag;
-- (void) setDryRun: (BOOL) flag;
-- (void) setController: (id) aController;
-- (void) log: (NSString *) query;
-@end
-
-
-@interface PostgresEntityConverter : EntityConverter 
+@interface BXPGEntityConverter : NSObject
 {
 }
-- (NSString *) nameForDeleteRule: (NSDeleteRule) rule;
-- (NSString *) createStatementForEntity: (Entity *) entity;
-- (NSArray *) createStatementsForEntities: (NSArray *) entityArray;
-- (NSMutableArray *) add: (NSString *) aName fromUnsatisfied: (NSMutableDictionary *) unsatisfied;
+- (NSArray *) statementsForEntities: (NSArray *) entityArray 
+						 schemaName: (NSString *) schemaName
+						 	context: (BXDatabaseContext *) context
+							 errors: (NSArray **) outErrors;
 @end

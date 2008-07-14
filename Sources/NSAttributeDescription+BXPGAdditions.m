@@ -279,19 +279,12 @@ CharLengthExpression (NSString* name)
 }
 
 
-- (NSArray *) BXPGAttributeConstraintsWithIDColumn: (BOOL) addedIDColumn schema: (NSString *) schemaName
+- (NSArray *) BXPGAttributeConstraintsInSchema: (NSString *) schemaName
 {
 	NSString* name = [self name];
 	NSString* entityName = [[self entity] name];
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: 2];
-	
-	if (addedIDColumn)
-	{
-		NSString* format = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (id)";
-		NSString* constraint = [NSString stringWithFormat: format, schemaName, entityName];
-		[retval addObject: constraint];
-	}
-	
+		
 	if (! [self isOptional])
 	{
 		NSString* format = @"ALTER TABLE \"%@\".\"%@\" ALTER COLUMN \"%@\" SET NOT NULL";
@@ -369,23 +362,22 @@ ImportError (NSString* message, NSString* reason)
 
 - (BOOL) BXCanAddAttribute: (NSError **) outError
 {
-	ExpectR (outError, NO);
-
 	BOOL retval = NO;
-	NSString* errorFormat = @"Skipped attribute %@";
+	NSString* errorFormat = @"Skipped attribute %@ in %@.";
+	NSError* localError = nil;
 	switch ([self attributeType]) 
 	{
         case NSUndefinedAttributeType:
 		{
-			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name]];
-			*outError = ImportError (errorString, @"Attributes with undefined type are not supported.");
+			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name], [[self entity] name]];
+			localError = ImportError (errorString, @"Attributes with undefined type are not supported.");
 			break;
 		}
 			
 		case NSTransformableAttributeType:
 		{
-			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name]];
-			*outError = ImportError (errorString, @"Attributes with transformable type are not supported.");
+			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name], [[self entity] name]];
+			localError = ImportError (errorString, @"Attributes with transformable type are not supported.");
             break;
 		}
 			
@@ -393,6 +385,9 @@ ImportError (NSString* message, NSString* reason)
 			retval = YES;
 			break;
 	}
+	
+	if (outError)
+		*outError = localError;
 	return retval;
 }
 @end

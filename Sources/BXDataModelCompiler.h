@@ -34,7 +34,9 @@
 
 
 @protocol BXDataModelCompilerDelegate <NSObject>
-- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus;
+- (void) dataModelCompiler: (BXDataModelCompiler *) compiler 
+				  finished: (int) exitStatus
+			   errorOutput: (NSFileHandle *) handle;
 @end
 
 
@@ -43,6 +45,7 @@
 	NSURL* mModelURL;
 	NSURL* mCompiledModelURL;
 	NSTask* mMomcTask;
+	NSPipe* mErrorPipe;
 	id <BXDataModelCompilerDelegate> mDelegate;
 }
 

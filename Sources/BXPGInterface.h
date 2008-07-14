@@ -64,6 +64,8 @@
 - (NSString *) viewDefaultValue: (BXAttributeDescription *) attr error: (NSError **) error;
 - (NSString *) recursiveDefaultValue: (NSString *) name entity: (BXEntityDescription *) entity error: (NSError **) error;
 
+- (BXPGTransactionHandler *) transactionHandler;
+
 //Some of the methods needed by BaseTen Assistant.
 - (void) process: (BOOL) shouldAdd primaryKeyFields: (NSArray *) attributeArray error: (NSError **) outError;
 - (void) process: (BOOL) shouldEnable entities: (NSArray *) entityArray error: (NSError **) outError;

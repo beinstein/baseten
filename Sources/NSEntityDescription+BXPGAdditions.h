@@ -31,5 +31,8 @@
 
 
 @interface NSEntityDescription (BXPGAdditions)
-- (NSString *) BXPGCreateStatementsWithIDColumn: (BOOL) addSerialIDColumn inSchema: (NSString *) schemaName;
+- (NSString *) BXPGCreateStatementWithIDColumn: (BOOL) addSerialIDColumn 
+									  inSchema: (NSString *) schemaName
+										errors: (NSMutableArray *) errors;
+- (NSString *) BXPGPrimaryKeyConstraintInSchema: (NSString *) schemaName;
 @end

@@ -32,7 +32,9 @@
 
 
 @interface NSAttributeDescription (BXPGAdditions)
+- (BOOL) BXCanAddAttribute: (NSError **) outError;
 - (NSString *) BXPGAttributeDefinition;
+- (NSArray *) BXPGAttributeConstraintsInSchema: (NSString *) schemaName;
 - (NSArray *) BXPGConstraintsForValidationPredicatesInSchema: (NSString *) schemaName
 												  connection: (PGTSConnection *) connection;
 @end

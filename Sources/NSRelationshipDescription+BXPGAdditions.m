@@ -79,13 +79,12 @@ ImportError (NSString* message, NSString* reason)
 - (NSArray *) BXPGRelationshipConstraintsWithColumns: (BOOL) createColumns 
 										 constraints: (BOOL) createConstraints
 											  schema: (NSString *) schemaName
-									   errorMessages: (NSMutableArray *) errorMessages
+											  errors: (NSMutableArray *) errorMessages
 {
 	Expect (schemaName);
 	Expect (errorMessages);
 	
 	NSMutableArray* retval = nil;
-
 	if (! [self inverseRelationship] && [self isToMany])
 	{
 		NSString* messageFormat = @"Relationship %@ in %@ will be skipped.";
@@ -142,7 +141,7 @@ ImportError (NSString* message, NSString* reason)
 		if (createConstraints)
 		{
 			NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (\"%@\", \"%@\")";
-			[retval addObject: [NSString stringWithFormat: statementFormat, idName, dstIdName]];
+			[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, helperTableName, idName, dstIdName]];
 			
 			//Saved for implementing required MTM relationships.
 #if 0
@@ -169,7 +168,7 @@ ImportError (NSString* message, NSString* reason)
 	else
 	{
 		//FIXME: some of the checks below are not necessary since self may not be nil.
-		
+		retval = [NSMutableArray array];
 		NSRelationshipDescription* srcRelationship = self;
 		NSRelationshipDescription* inverseRelationship = [self inverseRelationship];
 		NSEntityDescription* entity = nil;

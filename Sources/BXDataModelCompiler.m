@@ -63,6 +63,7 @@
 	[mModelURL release];
 	[mCompiledModelURL release];
 	[mMomcTask release];
+	[mErrorPipe release];
 	[super dealloc];
 }
 
@@ -120,12 +121,12 @@
 		NSString* momcPath = [[self class] momcPath];
 		NSArray* arguments = [NSArray arrayWithObjects: sourcePath, targetPath, nil];
 		[self setCompiledModelURL: [NSURL fileURLWithPath: targetPath]];
+		mErrorPipe = [[NSPipe pipe] retain];
 		
 		mMomcTask = [[NSTask alloc] init];
 		[mMomcTask setLaunchPath: momcPath];
 		[mMomcTask setArguments: arguments];
-		[mMomcTask setStandardError: [NSFileHandle fileHandleWithStandardError]];
-		[mMomcTask setStandardOutput: [NSFileHandle fileHandleWithStandardOutput]];
+		[mMomcTask setStandardError: [mErrorPipe fileHandleForWriting]];
 		[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector (momcTaskFinished:) 
 													 name: NSTaskDidTerminateNotification object: mMomcTask];
 		[mMomcTask launch];
@@ -137,10 +138,12 @@
 
 - (void) momcTaskFinished: (NSNotification *) notification
 {
-	[mDelegate dataModelCompiler: self finished: [mMomcTask terminationStatus]];
+	[mDelegate dataModelCompiler: self finished: [mMomcTask terminationStatus] errorOutput: [mErrorPipe fileHandleForReading]];
 	
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
 	[mMomcTask release];
 	mMomcTask = nil;
+	[mErrorPipe release];
+	mErrorPipe = nil;
 }
 @end

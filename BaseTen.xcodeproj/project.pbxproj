@@ -161,7 +161,7 @@
 		53666CFE0E1CD8D20028DBEA /* PGTSFoundationObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */; };
 		53666CFF0E1CD8D20028DBEA /* PGTSFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC00E1CD8D20028DBEA /* PGTSFunctions.h */; };
 		53666D000E1CD8D20028DBEA /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */; };
-		53666D010E1CD8D20028DBEA /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC20E1CD8D20028DBEA /* PGTSHOM.h */; };
+		53666D010E1CD8D20028DBEA /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC20E1CD8D20028DBEA /* PGTSHOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666D020E1CD8D20028DBEA /* PGTSHOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC30E1CD8D20028DBEA /* PGTSHOM.m */; };
 		53666D030E1CD8D20028DBEA /* PGTSIndexDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC40E1CD8D20028DBEA /* PGTSIndexDescription.h */; };
 		53666D040E1CD8D20028DBEA /* PGTSIndexDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC50E1CD8D20028DBEA /* PGTSIndexDescription.m */; };
@@ -247,6 +247,8 @@
 		53B24CFA0E223C8C007AED76 /* BXPGTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF80E223C8C007AED76 /* BXPGTableDescription.h */; };
 		53B24CFB0E223C8C007AED76 /* BXPGTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF90E223C8C007AED76 /* BXPGTableDescription.m */; };
 		53BD79D70E09140D009CAFE6 /* BXErrorHandlerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BD79D60E09140D009CAFE6 /* BXErrorHandlerDelegate.h */; };
+		53D9DDEC0E2B4F300009D370 /* BXPGEntityConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 539758B10E1EB24C0042120A /* BXPGEntityConverter.m */; };
+		53D9DDED0E2B4F310009D370 /* BXPGEntityConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758B00E1EB24C0042120A /* BXPGEntityConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53E068260DEAE02A0004363D /* BXProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53E068240DEAE02A0004363D /* BXProbes.d */; };
 		53ED2E8E0E1AB7CB0095BE8B /* BXLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
@@ -1138,6 +1140,7 @@
 				53877E990E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.h in Headers */,
 				53877EAD0E27667B0097C35F /* PGTSConstantValue.h in Headers */,
 				53877EEB0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h in Headers */,
+				53D9DDED0E2B4F310009D370 /* BXPGEntityConverter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1381,6 +1384,7 @@
 				53877E9A0E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m in Sources */,
 				53877EAE0E27667B0097C35F /* PGTSConstantValue.m in Sources */,
 				53877EEC0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m in Sources */,
+				53D9DDEC0E2B4F300009D370 /* BXPGEntityConverter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

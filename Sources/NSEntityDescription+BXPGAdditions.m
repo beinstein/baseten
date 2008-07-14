@@ -33,7 +33,9 @@
 
 
 @implementation NSEntityDescription (BXPGAdditions)
-- (NSString *) BXPGCreateStatementsWithIDColumn: (BOOL) addSerialIDColumn inSchema: (NSString *) schemaName
+- (NSString *) BXPGCreateStatementWithIDColumn: (BOOL) addSerialIDColumn 
+									  inSchema: (NSString *) schemaName
+										errors: (NSMutableArray *) errors
 {
 	Expect (schemaName);
 
@@ -50,9 +52,18 @@
 		if ([currentAttribute isTransient])
 			continue;
 		
-		NSString* attrDef = [currentAttribute BXPGAttributeDefinition];
-		if (attrDef)
+		//Superentities' attributes won't be repeated here.
+		if (! [[currentAttribute entity] isEqual: self])
+			continue;
+		
+		NSError* attrError = nil;
+		if (! [currentAttribute BXCanAddAttribute: &attrError])
+			[errors addObject: attrError];
+		else
+		{
+			NSString* attrDef = [currentAttribute BXPGAttributeDefinition];
 			[attributeDefs addObject: attrDef];
+		}
 	}
 	
 	NSString* addition = @"";
@@ -64,5 +75,12 @@
 						[attributeDefs componentsJoinedByString: @", "], addition];
 	
 	return retval;
+}
+
+- (NSString *) BXPGPrimaryKeyConstraintInSchema: (NSString *) schemaName
+{
+	NSString* format = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (id)";
+	NSString* constraint = [NSString stringWithFormat: format, schemaName, [self name]];
+	return constraint;
 }
 @end

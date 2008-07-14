@@ -1332,6 +1332,11 @@ bail:
 {
 	return [[mTransactionHandler databaseDescription] hasBaseTenSchema];
 }
+
+- (BXPGTransactionHandler *) transactionHandler
+{
+	return mTransactionHandler;
+}
 @end
 
 
