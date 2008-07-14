@@ -29,6 +29,7 @@
 		53BCB27C0DF698350011E823 /* MKCPolishedHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */; };
 		53C4228B0B0E87C40008F4F2 /* MKCPolishedSeparatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */; };
 		53D7BFEE0D6C787200290858 /* MKCImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */; };
+		53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */; };
 		53DAFF180B4F0DE700C000FE /* View16.tif in Resources */ = {isa = PBXBuildFile; fileRef = 53DAFF170B4F0DE700C000FE /* View16.tif */; };
 		53E029D50D7C49C8001AED9C /* MKCBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */; };
 		53EF32B90E23B7220027EA18 /* Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E4B70B0D364E000D353D /* Additions.m */; };
@@ -144,6 +145,8 @@
 		53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedSeparatorView.m; path = Source/MKCPolishedSeparatorView.m; sourceTree = "<group>"; };
 		53D7BFEC0D6C787200290858 /* MKCImageAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCImageAndTextCell.h; path = Source/MKCImageAndTextCell.h; sourceTree = "<group>"; };
 		53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCImageAndTextCell.m; path = Source/MKCImageAndTextCell.m; sourceTree = "<group>"; };
+		53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAPGInterface.h; sourceTree = "<group>"; };
+		53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAPGInterface.m; sourceTree = "<group>"; };
 		53DAFF170B4F0DE700C000FE /* View16.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = View16.tif; path = Resources/View16.tif; sourceTree = "<group>"; };
 		53E029D30D7C49C8001AED9C /* MKCBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCBackgroundView.h; path = Source/MKCBackgroundView.h; sourceTree = "<group>"; };
 		53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCBackgroundView.m; path = Source/MKCBackgroundView.m; sourceTree = "<group>"; };
@@ -175,6 +178,8 @@
 				5388DC650E23AC3F006CDBD8 /* BXAController.m */,
 				53877AFF0E263AED0097C35F /* BXAImportController.h */,
 				53877B000E263AED0097C35F /* BXAImportController.m */,
+				53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */,
+				53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */,
 				53638FE90A3D927000618545 /* Controller.h */,
 				53638FEA0A3D927000618545 /* Controller.m */,
 				531517520AFA55F2003FB616 /* ImportController.h */,
@@ -436,6 +441,7 @@
 				53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */,
 				53877B010E263AED0097C35F /* BXAImportController.m in Sources */,
 				53877E3F0E26A51B0097C35F /* BXAFieldCell.m in Sources */,
+				53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

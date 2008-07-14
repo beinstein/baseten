@@ -29,6 +29,7 @@
 
 #import "BXAController.h"
 #import "BXAImportController.h"
+#import "BXAPGInterface.h"
 #import "Additions.h"
 
 #import "MKCBackgroundView.h"
@@ -42,12 +43,15 @@
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXAttributeDescriptionPrivate.h>
 
+#import <sys/socket.h>
+
 
 static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
 
 
 //FIXME: come up with a way for the entities etc. to get an NSDocument or something if we want to be document based some day.
 __strong static BXAController* gController = nil;
+
 
 
 @implementation BXEntityDescription (BXAControllerAdditions)
@@ -225,6 +229,8 @@ __strong static BXAController* gController = nil;
 	gController = self;
 	mLastSelectedEntityWasView = YES;
 	
+	[[mContext class] setInterfaceClass: [BXAPGInterface class] forScheme: @"pgsql"];
+	
 	//Make main window's bottom edge lighter
 	[mMainWindow setContentBorderThickness: 24.0 forEdge: NSMinYEdge];
 
@@ -276,7 +282,7 @@ __strong static BXAController* gController = nil;
 
 
 - (void) continueDisconnect
-{
+{	
 	[mContext disconnect];
 	[mStatusTextField setStringValue: @"Not connected."];
 	[mStatusTextField makeEtchedSmall: YES];
@@ -335,6 +341,15 @@ __strong static BXAController* gController = nil;
 		[attribute setPrimaryKey: !newState];
 		[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
 	}
+}
+
+- (void) logAppend: (NSString *) string
+{
+	NSDictionary* attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+						   [NSColor colorWithDeviceRed: 233.0 / 255.0 green: 185.0 / 255.0 blue: 89.0 / 255.0 alpha: 1.0], NSForegroundColorAttributeName,
+						   [NSFont fontWithName: @"Monaco" size: 11.0], NSFontAttributeName,
+						   nil];
+	[[mLogView textStorage] appendAttributedString: [[[NSAttributedString alloc] initWithString: string attributes: attrs] autorelease]];
 }
 @end
 
@@ -536,7 +551,7 @@ __strong static BXAController* gController = nil;
 
 
 - (IBAction) connect: (id) sender
-{
+{	
 	NSString* username = [mUserNameCell objectValue];
 	NSString* password = [mPasswordField objectValue];
 	NSString* credentials = (0 < [password length] ? [NSString stringWithFormat: @"%@:%@", username, password] : username);
@@ -548,12 +563,13 @@ __strong static BXAController* gController = nil;
 	NSString* URIFormat = [NSString stringWithFormat: @"pgsql://%@@%@/%@", credentials, target, [mDBNameCell objectValue]];
 	NSURL* connectionURI = [NSURL URLWithString: URIFormat];
 	[mContext setDatabaseURI: connectionURI];
+	[(id) [mContext databaseInterface] setController: self];
 	
     [NSApp endSheet: mConnectPanel];
     [mConnectPanel orderOut: nil];
     
     [self displayProgressPanel: @"Connecting..."];
-	
+		
 	[mContext connect];
 }
 
@@ -570,10 +586,17 @@ __strong static BXAController* gController = nil;
                        didEndSelector: @selector (importOpenPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
 }
 
+
 - (IBAction) dismissMomcErrorPanel: (id) sender
 {
 	[mMomcErrorPanel orderOut: nil];
 	[NSApp endSheet: mMomcErrorPanel];
+}
+
+
+- (IBAction) clearLog: (id) sender
+{
+    [[[mLogView textStorage] mutableString] setString: @""];    
 }
 @end
 

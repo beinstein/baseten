@@ -39,7 +39,9 @@
 {
 	MKCPolishedCornerView* mCornerView;
 	NSButtonCell* mInspectorButtonCell;
-
+	BXAImportController* mImportController;
+	BXDataModelCompiler* mCompiler;
+	
 	IBOutlet BXDatabaseContext* mContext;
 	IBOutlet NSDictionaryController* mEntitiesBySchema;
 	IBOutlet NSDictionaryController* mEntities;
@@ -63,6 +65,7 @@
 	IBOutlet NSTableColumn* mAttributeIsPkeyColumn;
 	
 	IBOutlet NSWindow* mLogWindow;
+	IBOutlet NSTextView* mLogView;
 	
 	IBOutlet NSPanel* mConnectPanel;
     IBOutlet id mHostCell;
@@ -72,10 +75,7 @@
     IBOutlet NSSecureTextField* mPasswordField;	
 	
 	IBOutlet NSPanel* mMomcErrorPanel;
-	
-	BXAImportController* mImportController;
-	BXDataModelCompiler* mCompiler;
-	
+		
 	BOOL mLastSelectedEntityWasView;
 }
 
@@ -84,6 +84,7 @@
 
 - (void) process: (BOOL) newState entity: (BXEntityDescription *) entity;
 - (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute;
+- (void) logAppend: (NSString *) string;
 @end
 
 
@@ -93,6 +94,7 @@
 - (IBAction) connect: (id) sender;
 - (IBAction) importDataModel: (id) sender;
 - (IBAction) dismissMomcErrorPanel: (id) sender;
+- (IBAction) clearLog: (id) sender;
 @end
 
 
