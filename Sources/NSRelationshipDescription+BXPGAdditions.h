@@ -31,4 +31,8 @@
 
 
 @interface NSRelationshipDescription (BXPGAdditions)
+- (NSArray *) BXPGRelationshipConstraintsWithColumns: (BOOL) createColumns 
+										 constraints: (BOOL) createConstraints
+											  schema: (NSString *) schemaName
+									   errorMessages: (NSMutableArray *) errorMessages;
 @end

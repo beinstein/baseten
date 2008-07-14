@@ -33,4 +33,6 @@
 
 @interface NSAttributeDescription (BXPGAdditions)
 - (NSString *) BXPGAttributeDefinition;
+- (NSArray *) BXPGConstraintsForValidationPredicatesInSchema: (NSString *) schemaName
+												  connection: (PGTSConnection *) connection;
 @end

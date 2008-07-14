@@ -31,6 +31,7 @@
 #import "PGTSHOM.h"
 #import "PGTSConstantValue.h"
 #import "PGTSFunctions.h"
+#import "BXLogger.h"
 
 
 @interface NSObject (BXPGAdditions)
@@ -338,18 +339,59 @@ CharLengthExpression (NSString* name)
 
 - (NSString *) BXPGAttributeDefinition
 {
-	NSMutableString* retval = nil;
 	NSString* typeDefinition = [self BXPGValueType];
-	if (typeDefinition)
+	NSString* addition = @"";
+	id defaultValue = [self defaultValue];
+	if (defaultValue)
 	{
-		NSString* addition = @"";
-		id defaultValue = [self defaultValue];
-		if (defaultValue)
+		NSString* defaultExp = [defaultValue BXPGDefaultValueForAttributeType: [self attributeType]];
+		addition = [NSString stringWithFormat: @"DEFAULT %@", defaultExp];
+	}
+	return [NSString stringWithFormat: @"\"%@\" %@ %@", [self name], typeDefinition, addition];
+}
+
+
+static NSError*
+ImportError (NSString* message, NSString* reason)
+{
+	Expect (message);
+	Expect (reason);
+	
+	//FIXME: set the domain and the code.
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  message, NSLocalizedFailureReasonErrorKey,
+							  reason, NSLocalizedRecoverySuggestionErrorKey,
+							  nil];
+	NSError* retval = [NSError errorWithDomain: @"" code: 0 userInfo: userInfo];
+	return retval;
+}
+
+
+- (BOOL) BXCanAddAttribute: (NSError **) outError
+{
+	ExpectR (outError, NO);
+
+	BOOL retval = NO;
+	NSString* errorFormat = @"Skipped attribute %@";
+	switch ([self attributeType]) 
+	{
+        case NSUndefinedAttributeType:
 		{
-			NSString* defaultExp = [defaultValue BXPGDefaultValueForAttributeType: [self attributeType]];
-			addition = [NSString stringWithFormat: @"DEFAULT %@", defaultExp];
+			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name]];
+			*outError = ImportError (errorString, @"Attributes with undefined type are not supported.");
+			break;
 		}
-		retval = [NSString stringWithFormat: @"\"%@\" %@ %@", [self name], typeDefinition, addition];
+			
+		case NSTransformableAttributeType:
+		{
+			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name]];
+			*outError = ImportError (errorString, @"Attributes with transformable type are not supported.");
+            break;
+		}
+			
+		default:
+			retval = YES;
+			break;
 	}
 	return retval;
 }

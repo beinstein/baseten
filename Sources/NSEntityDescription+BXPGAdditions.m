@@ -32,7 +32,6 @@
 #import "PGTSFunctions.h"
 
 
-
 @implementation NSEntityDescription (BXPGAdditions)
 - (NSString *) BXPGCreateStatementsWithIDColumn: (BOOL) addSerialIDColumn inSchema: (NSString *) schemaName
 {
