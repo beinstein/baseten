@@ -36,6 +36,7 @@
 @class PGTSConnection;
 @class PGTSTableDescription;
 @class PGTSFieldDescription;
+@class PGTSQuery;
 
 
 @interface BXPGInterface : NSObject <BXInterface> 
@@ -78,6 +79,11 @@
 - (void) connectionSucceeded;
 - (void) connectionFailed: (NSError *) error;
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error;
+
+- (FILE *) traceFile;
+- (BOOL) logsQueries;
+- (void) connection: (PGTSConnection *) connection sentQueryString: (const char *) queryString;
+- (void) connection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query;
 @end
 
 

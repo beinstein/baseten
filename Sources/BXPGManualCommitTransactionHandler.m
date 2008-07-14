@@ -159,6 +159,7 @@
 	{
 		mNotifyConnection = [[PGTSConnection alloc] init];
 		[mNotifyConnection setDelegate: self];
+		[mNotifyConnection setLogsQueries: [mInterface logsQueries]];
 		[mNotifyConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
 	}
 }

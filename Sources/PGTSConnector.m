@@ -94,6 +94,11 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 {
 	mConnection = connection;
 }
+
+- (void) setTraceFile: (FILE *) stream
+{
+	mTraceFile = stream;
+}
 @end
 
 
@@ -216,7 +221,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	{
 		int bsdSocket = PQsocket (mConnection);
 		if (0 <= bsdSocket)
-		{			
+		{
+			if (mTraceFile)
+				PQtrace (mConnection, mTraceFile);
+			
 			CFSocketContext context = {0, self, NULL, NULL, NULL};
 			CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
 			mSocket = CFSocketCreateWithNative (NULL, bsdSocket, callbacks, &SocketReady, &context);
@@ -264,9 +272,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		int bsdSocket = PQsocket (mConnection);
 		BOOL stop = NO;
 		
+		if (mTraceFile)
+			PQtrace (mConnection, mTraceFile);
+		
 		//FIXME: this is rather an an error than information.
 		if (bsdSocket < 0)
-			BXLogInfo (@"Unable to get connection socket from libpq");
+			BXLogInfo (@"Unable to get connection socket from libpq.");
 		else
 		{
 #ifdef USE_SSL

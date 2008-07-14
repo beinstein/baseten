@@ -122,4 +122,17 @@
 		free (message_s);
 	}
 }
+
+- (FILE *) PGTSConnectionTraceFile: (PGTSConnection *) connection
+{
+	return [mHandler PGTSConnectionTraceFile: connection];
+}
+
+- (void) PGTSConnection: (PGTSConnection *) connection sentQueryString: (const char *) queryString
+{
+}
+
+- (void) PGTSConnection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query
+{
+}
 @end

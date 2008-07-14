@@ -36,6 +36,7 @@
 @class PGTSQueryDescription;
 @class PGTSDatabaseDescription;
 @class PGTSNotification;
+@class PGTSQuery;
 @protocol PGTSConnectorDelegate;
 
 
@@ -45,7 +46,14 @@
 - (void) PGTSConnectionLost: (PGTSConnection *) connection error: (NSError *) error;
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
 - (void) PGTSConnection: (PGTSConnection *) connection receivedNotice: (NSError *) notice;
+- (FILE *) PGTSConnectionTraceFile: (PGTSConnection *) connection;
 @end
+
+@interface NSObject (PGTSConnectionDelegate)
+- (void) PGTSConnection: (PGTSConnection *) connection sentQueryString: (const char *) queryString;
+- (void) PGTSConnection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query;
+@end
+
 
 
 @interface PGTSConnection : NSObject
@@ -65,6 +73,7 @@
 	
 	BOOL mDidDisconnectOnSleep;
 	BOOL mProcessingNotifications;
+	BOOL mLogsQueries;
 }
 - (id) init;
 - (void) dealloc;
@@ -73,6 +82,7 @@
 - (void) resetAsync;
 - (BOOL) resetSync;
 - (void) disconnect;
+- (id <PGTSConnectionDelegate>) delegate;
 - (void) setDelegate: (id <PGTSConnectionDelegate>) anObject;
 - (PGTSDatabaseDescription *) databaseDescription;
 - (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc;
@@ -85,6 +95,9 @@
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;
+
+- (BOOL) logsQueries;
+- (void) setLogsQueries: (BOOL) flag;
 @end
 
 

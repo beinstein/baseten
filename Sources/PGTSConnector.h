@@ -42,6 +42,7 @@
 	id <PGTSConnectorDelegate> mDelegate;
 	PostgresPollingStatusType (* mPollFunction)(PGconn *);
 	PGconn* mConnection;
+	FILE* mTraceFile;
 }
 - (BOOL) connect: (const char *) connectionString;
 - (void) cancel;
@@ -49,6 +50,7 @@
 - (void) setConnection: (PGconn *) connection;
 
 - (BOOL) start: (const char *) connectionString;
+- (void) setTraceFile: (FILE *) stream;
 @end
 
 

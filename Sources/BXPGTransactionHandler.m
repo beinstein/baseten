@@ -260,6 +260,7 @@ SSLMode (enum BXSSLMode mode)
 		mConnection = [[PGTSConnection alloc] init];
 		[mConnection setDelegate: self];
 		[mConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
+		[mConnection setLogsQueries: [mInterface logsQueries]];
 		
 		id desc = [[BXPGDatabaseDescription alloc] init];
 		[mConnection setDatabaseDescription: desc];
@@ -686,6 +687,21 @@ SSLMode (enum BXSSLMode mode)
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection
 {
 	[self doesNotRecognizeSelector: _cmd];
+}
+
+- (FILE *) PGTSConnectionTraceFile: (PGTSConnection *) connection
+{
+	return [mInterface traceFile];
+}
+
+- (void) PGTSConnection: (PGTSConnection *) connection sentQueryString: (const char *) queryString
+{
+	[mInterface connection: connection sentQueryString: queryString];
+}
+
+- (void) PGTSConnection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query
+{
+	[mInterface connection: connection sentQuery: query];
 }
 @end
 

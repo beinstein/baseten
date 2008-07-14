@@ -1355,6 +1355,24 @@ bail:
 {
 	[mContext connectionLost: error];
 }
+
+- (FILE *) traceFile
+{
+	return NULL;
+}
+
+- (BOOL) logsQueries
+{
+	return NO;
+}
+
+- (void) connection: (PGTSConnection *) connection sentQueryString: (const char *) queryString
+{
+}
+
+- (void) connection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query
+{
+}
 @end
 
 

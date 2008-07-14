@@ -168,7 +168,7 @@
 		53666D050E1CD8D20028DBEA /* PGTSNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC60E1CD8D20028DBEA /* PGTSNotification.h */; };
 		53666D060E1CD8D20028DBEA /* PGTSNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC70E1CD8D20028DBEA /* PGTSNotification.m */; };
 		53666D070E1CD8D20028DBEA /* PGTSProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC80E1CD8D20028DBEA /* PGTSProbes.d */; };
-		53666D080E1CD8D20028DBEA /* PGTSQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC90E1CD8D20028DBEA /* PGTSQuery.h */; };
+		53666D080E1CD8D20028DBEA /* PGTSQuery.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC90E1CD8D20028DBEA /* PGTSQuery.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666D090E1CD8D20028DBEA /* PGTSQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CCA0E1CD8D20028DBEA /* PGTSQuery.m */; };
 		53666D0A0E1CD8D20028DBEA /* PGTSQueryDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CCB0E1CD8D20028DBEA /* PGTSQueryDescription.h */; };
 		53666D0B0E1CD8D20028DBEA /* PGTSQueryDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CCC0E1CD8D20028DBEA /* PGTSQueryDescription.m */; };

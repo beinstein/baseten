@@ -155,6 +155,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	
 	[connector setConnection: mConnection];
 	[connector setDelegate: self];
+	[connector setTraceFile: [mDelegate PGTSConnectionTraceFile: self]];
 	[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
 	return [connector connect: [connectionString UTF8String]];
 }
@@ -392,6 +393,28 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	return PQbackendPID (mConnection);
 }
+
+- (PGresult *) execQuery: (const char *) query
+{
+	if (mLogsQueries)
+		[mDelegate PGTSConnection: self sentQueryString: query];
+	return PQexec (mConnection, query);
+}
+
+- (id <PGTSConnectionDelegate>) delegate
+{
+	return mDelegate;
+}
+
+- (BOOL) logsQueries
+{
+	return mLogsQueries;
+}
+
+- (void) setLogsQueries: (BOOL) flag
+{
+	mLogsQueries = flag;
+}
 @end
 
 
@@ -406,8 +429,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		PQsetnonblocking (connection, 0); 
 		//Use UTF-8.
         PQsetClientEncoding (connection, "UNICODE"); 
-		PQexec (connection, "SET standard_conforming_strings TO true");
-		PQexec (connection, "SET datestyle TO 'ISO, YMD'");
+		[self execQuery: "SET standard_conforming_strings TO true"];
+		[self execQuery: "SET datestyle TO 'ISO, YMD'"];
 		PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
         //FIXME: set other things as well?
 		

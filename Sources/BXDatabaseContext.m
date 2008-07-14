@@ -183,13 +183,13 @@ bx_query_during_reconnect ()
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     if ([aClass conformsToProtocol: @protocol (BXInterface)])
     {
-        rval = YES;
+        retval = YES;
         [gInterfaceClassSchemes setValue: aClass forKey: scheme];
     }
-    return rval;
+    return retval;
 }
 
 + (Class) interfaceClassForScheme: (NSString *) scheme
