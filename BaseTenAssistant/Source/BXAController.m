@@ -359,11 +359,15 @@ __strong static BXAController* gController = nil;
 - (void) importModelAtURL: (NSURL *) URL
 {
 	if (! mImportController)
+	{
 		mImportController = [[BXAImportController alloc] initWithWindowNibName: @"Import"];
+		[mImportController setDatabaseContext: mContext];
+	}
 	
 	NSManagedObjectModel* model = [[NSManagedObjectModel alloc] initWithContentsOfURL: URL];
 	[mImportController setObjectModel: model];
-	[mImportController showPanelAttachedTo: mMainWindow];	
+	[mImportController setMainWindow: mMainWindow];
+	[mImportController showPanel];	
 }
 
 - (void) compileAndImportModelAtURL: (NSURL *) URL
@@ -380,7 +384,7 @@ __strong static BXAController* gController = nil;
 
 
 @implementation BXAController (Delegation)
-- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus
+- (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus errorOutput: (NSFileHandle *) handle
 {
 	if (0 == exitStatus)
 	{
@@ -389,7 +393,22 @@ __strong static BXAController* gController = nil;
 	}
 	else
 	{
-		//FIXME: handle the error.
+		NSData* output = [handle availableData];
+		const char* const bytes = [output bytes];
+		const char* const outputEnd = bytes + [output length];
+		const char* line = bytes;
+		const char* end = memchr (line, '\n', outputEnd - line);
+		
+		NSMutableArray* errors = [NSMutableArray array];
+		while (end && line < outputEnd && end < outputEnd)
+		{
+			NSString* lineString = [[NSString alloc] initWithBytes: line length: end - line encoding: NSUTF8StringEncoding];
+			[errors addObject: lineString];
+			line = end + 1;
+			end = memchr (line, '\n', outputEnd - line);
+		}
+		[mMomcErrors setContent: errors];
+		[NSApp beginSheet: mMomcErrorPanel modalForWindow: mMainWindow modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
 	}
 }
 
@@ -490,7 +509,7 @@ __strong static BXAController* gController = nil;
 		{
 			//Delay a bit so the open panel gets removed.
 			[[NSRunLoop currentRunLoop] performSelector: @selector (importModelAtURL:) target: self argument: URL 
-												  order: 0 modes: [NSArray arrayWithObject: NSRunLoopCommonModes]];
+												  order: NSUIntegerMax modes: [NSArray arrayWithObject: NSRunLoopCommonModes]];
 		}
         else
 		{
@@ -549,6 +568,12 @@ __strong static BXAController* gController = nil;
 	NSArray* types = [NSArray arrayWithObjects: @"xcdatamodel", @"xcdatamodeld", @"mom", @"momd", nil];
     [openPanel beginSheetForDirectory: nil file: nil types: types modalForWindow: mMainWindow modalDelegate: self 
                        didEndSelector: @selector (importOpenPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+}
+
+- (IBAction) dismissMomcErrorPanel: (id) sender
+{
+	[mMomcErrorPanel orderOut: nil];
+	[NSApp endSheet: mMomcErrorPanel];
 }
 @end
 

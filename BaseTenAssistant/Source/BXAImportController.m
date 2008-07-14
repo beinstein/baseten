@@ -29,6 +29,7 @@
 #import "BXAImportController.h"
 #import "MKCPolishedHeaderView.h"
 #import "MKCPolishedCornerView.h"
+#import <BaseTen/PGTSHOM.h>
 
 static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 
@@ -56,7 +57,7 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 
 
 @implementation BXAImportController
-@synthesize objectModel = mModel, schemaName = mSchemaName;
+@synthesize objectModel = mModel, schemaName = mSchemaName, databaseContext = mContext, mainWindow = mMainWindow;
 
 - (void) windowDidLoad
 {
@@ -96,33 +97,73 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 	[self selectedConfiguration: nil];	
 }
 
-- (void) showPanelAttachedTo: (NSWindow *) aWindow
+- (void) showPanel
 {
-	[NSApp beginSheet: [self window] modalForWindow: aWindow modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
+	[NSApp beginSheet: [self window] modalForWindow: mMainWindow modalDelegate: self 
+	   didEndSelector: @selector (importPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
 }
 
-- (void) endSheet
+- (void) continueImport: (NSArray *) statements
 {
-	NSWindow* panel = [self window];
-	[NSApp endSheet: panel];
-	[panel orderOut: nil];
+	NSLog (@"statements: %@", statements);
+}
+
+- (void) importErrorSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+	if (returnCode)
+		[self continueImport: (NSArray *) contextInfo];
+}
+
+
+static int 
+ShouldImport (id entity)
+{
+	return ([entity shouldImportBXA]);
+}
+
+
+- (void) importPanelDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+	//FIXME: implement dry run.
+	
+	if (returnCode)
+	{
+		if (! mEntityConverter)
+			mEntityConverter = [[BXPGEntityConverter alloc] init];
+		
+		NSArray* errors = nil;
+		NSArray* importedEntities = [[mEntities arrangedObjects] PGTSSelectFunction: &ShouldImport];
+		NSArray* statements = [mEntityConverter statementsForEntities: importedEntities schemaName: mSchemaName
+															  context: mContext errors: &errors];
+		
+		if (0 < [errors count])
+		{
+			[mImportErrors setContent: errors];
+			[NSApp beginSheet: mChangePanel modalForWindow: mMainWindow
+				modalDelegate: self didEndSelector: @selector (importErrorSheetDidEnd:returnCode:contextInfo:) 
+				  contextInfo: statements];
+		}
+		else
+		{
+			[self continueImport: statements];
+		}	
+	}
 }
 @end
-
-
+	
+	
 @implementation BXAImportController (IBActions)
-- (IBAction) acceptImport: (id) sender
+- (IBAction) endErrorPanel: (id) sender
 {
-	[self endSheet];
+	[mChangePanel orderOut: nil];
+	[NSApp endSheet: mChangePanel returnCode: [sender tag]];
 }
 
-- (IBAction) cancelImport: (id) sender
+- (IBAction) endImportPanel: (id) sender
 {
-	[self endSheet];
-}
-
-- (IBAction) dryRun: (id) sender
-{
+	NSWindow* panel = [self window];
+	[panel orderOut: nil];
+	[NSApp endSheet: panel returnCode: [sender tag]];
 }
 
 - (IBAction) selectedConfiguration: (id) sender

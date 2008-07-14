@@ -27,13 +27,17 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import <BaseTen/BXPGEntityConverter.h>
 @class MKCPolishedHeaderView;
 
 
 @interface BXAImportController : NSWindowController 
 {
+	BXDatabaseContext* mContext;
 	NSManagedObjectModel* mModel;
 	NSString* mSchemaName;
+	BXPGEntityConverter* mEntityConverter; //Currently we only support PostgreSQL.
+	NSWindow* mMainWindow;
 	
 	IBOutlet NSArrayController* mConfigurations;
 	IBOutlet NSArrayController* mEntities;
@@ -44,16 +48,20 @@
 	
 	IBOutlet NSTableView* mTableView;
 	IBOutlet NSTableView* mFieldView;
+	
+	IBOutlet NSArrayController* mImportErrors;
+	IBOutlet NSPanel* mChangePanel;
 }
+@property (readwrite, retain) NSWindow* mainWindow;
 @property (readwrite, retain) NSManagedObjectModel* objectModel;
 @property (readwrite, retain) NSString* schemaName;
-- (void) showPanelAttachedTo: (NSWindow *) aWindow;
+@property (readwrite, retain) BXDatabaseContext* databaseContext;
+- (void) showPanel;
 @end
 
 
 @interface BXAImportController (IBActions)
 - (IBAction) selectedConfiguration: (id) sender;
-- (IBAction) acceptImport: (id) sender;
-- (IBAction) cancelImport: (id) sender;
-- (IBAction) dryRun: (id) sender;
+- (IBAction) endErrorPanel: (id) sender;
+- (IBAction) endImportPanel: (id) sender;
 @end

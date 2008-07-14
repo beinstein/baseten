@@ -44,6 +44,7 @@
 	IBOutlet NSDictionaryController* mEntitiesBySchema;
 	IBOutlet NSDictionaryController* mEntities;
 	IBOutlet NSDictionaryController* mAttributes;
+	IBOutlet NSArrayController* mMomcErrors;
 
 	IBOutlet NSWindow* mMainWindow;
 	IBOutlet NSTableView* mDBSchemaView;
@@ -70,6 +71,8 @@
     IBOutlet id mUserNameCell;
     IBOutlet NSSecureTextField* mPasswordField;	
 	
+	IBOutlet NSPanel* mMomcErrorPanel;
+	
 	BXAImportController* mImportController;
 	BXDataModelCompiler* mCompiler;
 	
@@ -89,6 +92,7 @@
 - (IBAction) terminate: (id) sender;
 - (IBAction) connect: (id) sender;
 - (IBAction) importDataModel: (id) sender;
+- (IBAction) dismissMomcErrorPanel: (id) sender;
 @end
 
 
