@@ -43,6 +43,9 @@
 #import <BaseTen/BXPGInterface.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXAttributeDescriptionPrivate.h>
+#import <BaseTen/BXPGTransactionHandler.h>
+#import <BaseTen/BXPGDatabaseDescription.h>
+
 
 #import <sys/socket.h>
 
@@ -56,15 +59,18 @@ __strong static BXAController* gController = nil;
 
 
 @implementation BXEntityDescription (BXAControllerAdditions)
+- (BOOL) canEnableForAssistant
+{
+	return ([self isView] || [gController hasBaseTenSchema]);
+}
+
 - (BOOL) isEnabledForAssistant
 {
-	NSLog (@"%@ is enabled: %d", [self name], [self isEnabled]);
 	return [self isEnabled];
 }
 
 - (void) setEnabledForAssistant: (BOOL) aBool
 {
-	NSLog (@"setEnabled: %d", aBool);
 	[gController process: aBool entity: self];
 }
 
@@ -209,7 +215,10 @@ __strong static BXAController* gController = nil;
 		[button setTarget: targets [i]];
 		[button setAction: actions [i]];
 		[button setAttributedTitle: attributedTitles [i]];
-		[button setImage: [NSImage imageNamed: imageNames [i]]];				
+		[button setImage: [NSImage imageNamed: imageNames [i]]];
+		if (0 == i)
+			[button bind: @"enabled" toObject: self withKeyPath: @"hasBaseTenSchema" options: nil];
+		
 		switch (i)
 		{
 			case 2:
@@ -312,8 +321,8 @@ __strong static BXAController* gController = nil;
 
 - (BOOL) hasBaseTenSchema
 {
-	//FIXME: make me work.
-	return YES;
+	return [[[(BXPGInterface *) [mContext databaseInterface] transactionHandler] 
+			 databaseDescription] hasBaseTenSchema];
 }
 
 
@@ -466,6 +475,11 @@ __strong static BXAController* gController = nil;
 	[mStatusTextField setObjectValue: [NSString stringWithFormat: @"Connected to %@.", [mContext databaseURI]]];
 	NSDictionary* entities = [mContext entitiesBySchemaAndName: NULL];
 	[mEntitiesBySchema setContent: entities];
+	
+	NSError* error = nil;
+	BXPGInterface* interface = (id) [mContext databaseInterface];
+	if (! [[[interface transactionHandler] databaseDescription] checkBaseTenSchema: &error])
+		[NSApp presentError: error modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
 }
 
 
@@ -508,22 +522,27 @@ __strong static BXAController* gController = nil;
     BOOL retval = YES;
     switch ([menuItem tag])
     {
-        case 1:
+		case 0:
+			return retval;
+			
+        case 1: //Disconnect, Reload
             if (! [mContext isConnected] || YES == [mProgressPanel isVisible])
             {
                 retval = NO;
                 break;
             }
-            //Fall through
-            
-        case 2:
-            if (nil != [mMainWindow attachedSheet])
-                retval = NO;
-            break;
-            
-        default:
-            break;
+			
+		case 2: //Quit
+			break;
+			
+		case 3: //Import
+			retval = [self hasBaseTenSchema];
+			break;
+			
     }
+	if (nil != [mMainWindow attachedSheet])
+		retval = NO;
+	
     return retval;
 }
 
