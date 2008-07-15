@@ -37,7 +37,7 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 
 struct ImportContextInfo 
 {
-	NSArray* statements;
+	__strong NSArray* statements;
 	BOOL modifyDatabase;
 };
 

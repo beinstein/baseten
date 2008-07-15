@@ -96,20 +96,12 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Source/main.m; sourceTree = "<group>"; };
 		2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = SetupApplication_Prefix.pch; path = Source/SetupApplication_Prefix.pch; sourceTree = "<group>"; };
 		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql; path = ../BaseTenModifications.sql; sourceTree = SOURCE_ROOT; };
-		531517520AFA55F2003FB616 /* ImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportController.h; sourceTree = "<group>"; };
-		531517530AFA55F2003FB616 /* ImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportController.m; sourceTree = "<group>"; };
 		531DCAB70B52818E00200097 /* MKCAlternativeDataCellColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCAlternativeDataCellColumn.h; path = Source/MKCAlternativeDataCellColumn.h; sourceTree = "<group>"; };
 		531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAlternativeDataCellColumn.m; path = Source/MKCAlternativeDataCellColumn.m; sourceTree = "<group>"; };
 		532F429B0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		532F429F0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Import.xib; sourceTree = "<group>"; };
 		53425B630E2CD237005F6123 /* MKCStackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCStackView.h; path = Source/MKCStackView.h; sourceTree = "<group>"; };
 		53425B640E2CD237005F6123 /* MKCStackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCStackView.m; path = Source/MKCStackView.m; sourceTree = "<group>"; };
-		534E2D240B8DE503008025DC /* PostgresVerbatimString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostgresVerbatimString.h; path = Source/PostgresVerbatimString.h; sourceTree = "<group>"; };
-		534E2D250B8DE504008025DC /* PostgresVerbatimString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostgresVerbatimString.m; path = Source/PostgresVerbatimString.m; sourceTree = "<group>"; };
-		53638FDC0A3D913A00618545 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Table.h; path = Source/Table.h; sourceTree = "<group>"; };
-		53638FDD0A3D913A00618545 /* Table.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Table.m; path = Source/Table.m; sourceTree = "<group>"; };
-		53638FE90A3D927000618545 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Controller.h; sourceTree = "<group>"; };
-		53638FEA0A3D927000618545 /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Controller.m; sourceTree = "<group>"; };
 		536CB9C30B0D217000EBCB39 /* Log32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Log32.png; path = Resources/Log32.png; sourceTree = "<group>"; };
 		536CB9C40B0D217000EBCB39 /* Inspector32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Inspector32.png; path = Resources/Inspector32.png; sourceTree = "<group>"; };
 		536CB9C50B0D217000EBCB39 /* ImportModel32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ImportModel32.png; path = Resources/ImportModel32.png; sourceTree = "<group>"; };
@@ -122,8 +114,6 @@
 		5374E6980B0DC8A4000D353D /* MKCPolishedHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedHeaderView.m; path = Source/MKCPolishedHeaderView.m; sourceTree = "<group>"; };
 		5374E9420B0E001C000D353D /* MKCPolishedCornerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCPolishedCornerView.h; path = Source/MKCPolishedCornerView.h; sourceTree = "<group>"; };
 		5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedCornerView.m; path = Source/MKCPolishedCornerView.m; sourceTree = "<group>"; };
-		537CA7110B1611C800898F1C /* Schema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Schema.h; path = Source/Schema.h; sourceTree = "<group>"; };
-		537CA7120B1611C800898F1C /* Schema.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Schema.m; path = Source/Schema.m; sourceTree = "<group>"; };
 		53877AFF0E263AED0097C35F /* BXAImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAImportController.h; sourceTree = "<group>"; };
 		53877B000E263AED0097C35F /* BXAImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAImportController.m; sourceTree = "<group>"; };
 		53877E3D0E26A51B0097C35F /* BXAFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAFieldCell.h; path = Source/BXAFieldCell.h; sourceTree = "<group>"; };
@@ -132,13 +122,6 @@
 		5388DC650E23AC3F006CDBD8 /* BXAController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAController.m; sourceTree = "<group>"; };
 		5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5388DE290E23AE48006CDBD8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		53ABE38D0A41F41F001C456D /* MomcHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MomcHelper.m; path = Source/MomcHelper.m; sourceTree = "<group>"; };
-		53ABE6210A42A8D8001C456D /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = Source/Constants.h; sourceTree = "<group>"; };
-		53ABE6220A42A8D8001C456D /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = Source/Constants.m; sourceTree = "<group>"; };
-		53ABE7C40A4303CC001C456D /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Entity.h; path = Source/Entity.h; sourceTree = "<group>"; };
-		53ABE7C50A4303CC001C456D /* Entity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Entity.m; path = Source/Entity.m; sourceTree = "<group>"; };
-		53ABE9670A431961001C456D /* PostgresEntityConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostgresEntityConverter.h; path = Source/PostgresEntityConverter.h; sourceTree = "<group>"; };
-		53ABE9680A431961001C456D /* PostgresEntityConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostgresEntityConverter.m; path = Source/PostgresEntityConverter.m; sourceTree = "<group>"; };
 		53B94D2E0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCForcedSizeToFitButtonCell.h; path = Source/MKCForcedSizeToFitButtonCell.h; sourceTree = "<group>"; };
 		53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCForcedSizeToFitButtonCell.m; path = Source/MKCForcedSizeToFitButtonCell.m; sourceTree = "<group>"; };
 		53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTenAssistant.icns; path = Resources/BaseTenAssistant.icns; sourceTree = "<group>"; };
@@ -183,10 +166,6 @@
 				53877B000E263AED0097C35F /* BXAImportController.m */,
 				53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */,
 				53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */,
-				53638FE90A3D927000618545 /* Controller.h */,
-				53638FEA0A3D927000618545 /* Controller.m */,
-				531517520AFA55F2003FB616 /* ImportController.h */,
-				531517530AFA55F2003FB616 /* ImportController.m */,
 			);
 			name = Controllers;
 			path = Source;
@@ -203,7 +182,6 @@
 		29B97314FDCFA39411CA2CEA /* SetupApplication */ = {
 			isa = PBXGroup;
 			children = (
-				5374EB260B0E137B000D353D /* Model Classes */,
 				531517560AFA55FB003FB616 /* View Classes */,
 				080E96DDFE201D6D7F000001 /* Controllers */,
 				531517570AFA5612003FB616 /* Interfaces */,
@@ -218,13 +196,10 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				53ABE6210A42A8D8001C456D /* Constants.h */,
-				53ABE6220A42A8D8001C456D /* Constants.m */,
 				5374E4B60B0D364E000D353D /* Additions.h */,
 				5374E4B70B0D364E000D353D /* Additions.m */,
 				2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				53ABE38D0A41F41F001C456D /* MomcHelper.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -292,25 +267,8 @@
 		531517570AFA5612003FB616 /* Interfaces */ = {
 			isa = PBXGroup;
 			children = (
-				53ABE9670A431961001C456D /* PostgresEntityConverter.h */,
-				53ABE9680A431961001C456D /* PostgresEntityConverter.m */,
-				534E2D240B8DE503008025DC /* PostgresVerbatimString.h */,
-				534E2D250B8DE504008025DC /* PostgresVerbatimString.m */,
 			);
 			name = Interfaces;
-			sourceTree = "<group>";
-		};
-		5374EB260B0E137B000D353D /* Model Classes */ = {
-			isa = PBXGroup;
-			children = (
-				53ABE7C40A4303CC001C456D /* Entity.h */,
-				53ABE7C50A4303CC001C456D /* Entity.m */,
-				537CA7110B1611C800898F1C /* Schema.h */,
-				537CA7120B1611C800898F1C /* Schema.m */,
-				53638FDC0A3D913A00618545 /* Table.h */,
-				53638FDD0A3D913A00618545 /* Table.m */,
-			);
-			name = "Model Classes";
 			sourceTree = "<group>";
 		};
 		5388DCD30E23AE22006CDBD8 /* Products */ = {
