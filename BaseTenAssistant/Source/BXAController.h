@@ -33,6 +33,7 @@
 @class MKCBackgroundView;
 @class MKCPolishedCornerView;
 @class BXAImportController;
+@class MKCStackView;
 
 
 @interface BXAController : NSObject 
@@ -46,7 +47,6 @@
 	IBOutlet NSDictionaryController* mEntitiesBySchema;
 	IBOutlet NSDictionaryController* mEntities;
 	IBOutlet NSDictionaryController* mAttributes;
-	IBOutlet NSArrayController* mMomcErrors;
 
 	IBOutlet NSWindow* mMainWindow;
 	IBOutlet NSTableView* mDBSchemaView;
@@ -75,12 +75,13 @@
     IBOutlet NSSecureTextField* mPasswordField;	
 	
 	IBOutlet NSPanel* mMomcErrorPanel;
+	IBOutlet MKCStackView* mMomcErrorView;
 		
 	BOOL mLastSelectedEntityWasView;
 }
 
 @property (readonly) BOOL hasBaseTenSchema;
-
+@property (readonly) NSWindow* mainWindow;
 
 - (void) process: (BOOL) newState entity: (BXEntityDescription *) entity;
 - (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute;
@@ -95,6 +96,7 @@
 - (IBAction) importDataModel: (id) sender;
 - (IBAction) dismissMomcErrorPanel: (id) sender;
 - (IBAction) clearLog: (id) sender;
+- (IBAction) displayLogWindow: (id) sender;
 @end
 
 

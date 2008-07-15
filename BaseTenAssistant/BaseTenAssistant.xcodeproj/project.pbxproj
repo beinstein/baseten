@@ -10,6 +10,7 @@
 		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
+		53425B650E2CD237005F6123 /* MKCStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53425B640E2CD237005F6123 /* MKCStackView.m */; };
 		536CB9C90B0D217000EBCB39 /* Log32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C30B0D217000EBCB39 /* Log32.png */; };
 		536CB9CA0B0D217000EBCB39 /* Inspector32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C40B0D217000EBCB39 /* Inspector32.png */; };
 		536CB9CB0B0D217000EBCB39 /* ImportModel32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C50B0D217000EBCB39 /* ImportModel32.png */; };
@@ -101,6 +102,8 @@
 		531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAlternativeDataCellColumn.m; path = Source/MKCAlternativeDataCellColumn.m; sourceTree = "<group>"; };
 		532F429B0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		532F429F0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Import.xib; sourceTree = "<group>"; };
+		53425B630E2CD237005F6123 /* MKCStackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCStackView.h; path = Source/MKCStackView.h; sourceTree = "<group>"; };
+		53425B640E2CD237005F6123 /* MKCStackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCStackView.m; path = Source/MKCStackView.m; sourceTree = "<group>"; };
 		534E2D240B8DE503008025DC /* PostgresVerbatimString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostgresVerbatimString.h; path = Source/PostgresVerbatimString.h; sourceTree = "<group>"; };
 		534E2D250B8DE504008025DC /* PostgresVerbatimString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostgresVerbatimString.m; path = Source/PostgresVerbatimString.m; sourceTree = "<group>"; };
 		53638FDC0A3D913A00618545 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Table.h; path = Source/Table.h; sourceTree = "<group>"; };
@@ -274,6 +277,8 @@
 				53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */,
 				53E029D30D7C49C8001AED9C /* MKCBackgroundView.h */,
 				53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */,
+				53425B630E2CD237005F6123 /* MKCStackView.h */,
+				53425B640E2CD237005F6123 /* MKCStackView.m */,
 				53EF33B30E23CC430027EA18 /* BXASchemaCell.h */,
 				53EF33B40E23CC430027EA18 /* BXASchemaCell.m */,
 				53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */,
@@ -442,6 +447,7 @@
 				53877B010E263AED0097C35F /* BXAImportController.m in Sources */,
 				53877E3F0E26A51B0097C35F /* BXAFieldCell.m in Sources */,
 				53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */,
+				53425B650E2CD237005F6123 /* MKCStackView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

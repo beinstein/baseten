@@ -37,6 +37,7 @@
 #import "MKCPolishedCornerView.h"
 #import "MKCForcedSizeToFitButtonCell.h"
 #import "MKCAlternativeDataCellColumn.h"
+#import "MKCStackView.h"
 
 #import <BaseTen/BXEntityDescriptionPrivate.h>
 #import <BaseTen/BXPGInterface.h>
@@ -316,6 +317,12 @@ __strong static BXAController* gController = nil;
 }
 
 
+- (NSWindow *) mainWindow
+{
+	return mMainWindow;
+}
+
+
 - (void) process: (BOOL) newState entity: (BXEntityDescription *) entity
 {	
 	if (![entity isView] || [[entity primaryKeyFields] count])
@@ -350,6 +357,10 @@ __strong static BXAController* gController = nil;
 						   [NSFont fontWithName: @"Monaco" size: 11.0], NSFontAttributeName,
 						   nil];
 	[[mLogView textStorage] appendAttributedString: [[[NSAttributedString alloc] initWithString: string attributes: attrs] autorelease]];
+
+	NSRange range = NSMakeRange ([[[mLogView textStorage] string] length], 0);
+    [mLogView scrollRangeToVisible: range];
+	
 }
 @end
 
@@ -381,7 +392,7 @@ __strong static BXAController* gController = nil;
 	
 	NSManagedObjectModel* model = [[NSManagedObjectModel alloc] initWithContentsOfURL: URL];
 	[mImportController setObjectModel: model];
-	[mImportController setMainWindow: mMainWindow];
+	[mImportController setController: self];
 	[mImportController showPanel];	
 }
 
@@ -414,15 +425,25 @@ __strong static BXAController* gController = nil;
 		const char* line = bytes;
 		const char* end = memchr (line, '\n', outputEnd - line);
 		
-		NSMutableArray* errors = [NSMutableArray array];
 		while (end && line < outputEnd && end < outputEnd)
 		{
 			NSString* lineString = [[NSString alloc] initWithBytes: line length: end - line encoding: NSUTF8StringEncoding];
-			[errors addObject: lineString];
 			line = end + 1;
 			end = memchr (line, '\n', outputEnd - line);
+			
+			
+			NSTextView* textView = [[NSTextView alloc] initWithFrame: NSZeroRect];
+			[[[textView textStorage] mutableString] setString: lineString];
+			//100000000 comes from the manual; it's the "allowed maximum size".
+			[[textView textContainer] setContainerSize: NSMakeSize (100000000.0, 100000000.0)];
+			[[textView textContainer] setWidthTracksTextView: YES];
+			[textView setFont: [NSFont systemFontOfSize: [NSFont smallSystemFontSize]]];
+			[textView setVerticallyResizable: YES];
+			[textView setEditable: NO];
+			[textView setDrawsBackground: NO];
+			[textView setTextContainerInset: NSMakeSize (10.0, 10.0)];
+			[mMomcErrorView addViewToStack: textView];
 		}
-		[mMomcErrors setContent: errors];
 		[NSApp beginSheet: mMomcErrorPanel modalForWindow: mMainWindow modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
 	}
 }
@@ -590,6 +611,7 @@ __strong static BXAController* gController = nil;
 - (IBAction) dismissMomcErrorPanel: (id) sender
 {
 	[mMomcErrorPanel orderOut: nil];
+	[mMomcErrorView removeAllViews];
 	[NSApp endSheet: mMomcErrorPanel];
 }
 
@@ -597,6 +619,12 @@ __strong static BXAController* gController = nil;
 - (IBAction) clearLog: (id) sender
 {
     [[[mLogView textStorage] mutableString] setString: @""];    
+}
+
+
+- (IBAction) displayLogWindow: (id) sender
+{
+	[mLogWindow makeKeyAndOrderFront: nil];
 }
 @end
 

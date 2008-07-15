@@ -27,11 +27,20 @@
 //
 
 #import "BXAImportController.h"
+#import "BXAController.h"
 #import "MKCPolishedHeaderView.h"
 #import "MKCPolishedCornerView.h"
 #import <BaseTen/PGTSHOM.h>
 
 static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
+
+
+struct ImportContextInfo 
+{
+	NSArray* statements;
+	BOOL modifyDatabase;
+};
+
 
 
 @interface NSEntityDescription (BXAImportControllerAdditions)
@@ -57,7 +66,7 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 
 
 @implementation BXAImportController
-@synthesize objectModel = mModel, schemaName = mSchemaName, databaseContext = mContext, mainWindow = mMainWindow;
+@synthesize objectModel = mModel, schemaName = mSchemaName, databaseContext = mContext, controller = mController;
 
 - (void) windowDidLoad
 {
@@ -99,19 +108,28 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 
 - (void) showPanel
 {
-	[NSApp beginSheet: [self window] modalForWindow: mMainWindow modalDelegate: self 
+	[NSApp beginSheet: [self window] modalForWindow: [mController mainWindow] modalDelegate: self 
 	   didEndSelector: @selector (importPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
 }
 
-- (void) continueImport: (NSArray *) statements
-{
-	NSLog (@"statements: %@", statements);
-}
 
-- (void) importErrorSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+- (void) continueImport: (NSArray *) statements modifyDatabase: (BOOL) modifyDatabase
 {
-	if (returnCode)
-		[self continueImport: (NSArray *) contextInfo];
+	if (modifyDatabase)
+	{
+		//FIXME: make me work.
+	}
+	else
+	{
+		[mController displayLogWindow: nil];
+		[mController logAppend: @"\n\n\n---------- Beginning dry run ----------\n\n"];
+		for (NSString* statement in statements)
+		{
+			[mController logAppend: statement];
+			[mController logAppend: @"\n"];
+		}
+		[mController logAppend: @"\n----------- Ending dry run ------------\n\n\n"];
+	}
 }
 
 
@@ -121,33 +139,49 @@ ShouldImport (id entity)
 	return ([entity shouldImportBXA]);
 }
 
+- (void) import: (BOOL) modifyDatabase usingSheet: (BOOL) useSheet
+{
+	if (! mEntityConverter)
+		mEntityConverter = [[BXPGEntityConverter alloc] init];
+	
+	NSArray* errors = nil;
+	NSArray* importedEntities = [[mEntities arrangedObjects] PGTSSelectFunction: &ShouldImport];
+	NSArray* statements = [mEntityConverter statementsForEntities: importedEntities schemaName: mSchemaName
+														  context: mContext errors: &errors];
+	
+	if (0 < [errors count])
+	{
+		[mImportErrors setContent: errors];
+		struct ImportContextInfo* ctx = NSAllocateCollectable (sizeof (struct ImportContextInfo), NSScannedOption);
+		ctx->statements = statements;
+		ctx->modifyDatabase = modifyDatabase;
+		
+		//Not sure if window is allowed to be nil, but running a modal session doesn't fit into the same abstraction pattern.
+		[NSApp beginSheet: mChangePanel modalForWindow: useSheet ? [mController mainWindow] : nil
+			modalDelegate: self didEndSelector: @selector (importErrorSheetDidEnd:returnCode:contextInfo:) 
+			  contextInfo: ctx];
+	}
+	else
+	{
+		[self continueImport: statements modifyDatabase: modifyDatabase];
+	}	
+}
+
+
+- (void) importErrorSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+	if (returnCode)
+	{
+		struct ImportContextInfo* ctx = (struct ImportContextInfo *) contextInfo;
+		[self continueImport: ctx->statements modifyDatabase: ctx->modifyDatabase];
+	}
+}
+
 
 - (void) importPanelDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
-	//FIXME: implement dry run.
-	
 	if (returnCode)
-	{
-		if (! mEntityConverter)
-			mEntityConverter = [[BXPGEntityConverter alloc] init];
-		
-		NSArray* errors = nil;
-		NSArray* importedEntities = [[mEntities arrangedObjects] PGTSSelectFunction: &ShouldImport];
-		NSArray* statements = [mEntityConverter statementsForEntities: importedEntities schemaName: mSchemaName
-															  context: mContext errors: &errors];
-		
-		if (0 < [errors count])
-		{
-			[mImportErrors setContent: errors];
-			[NSApp beginSheet: mChangePanel modalForWindow: mMainWindow
-				modalDelegate: self didEndSelector: @selector (importErrorSheetDidEnd:returnCode:contextInfo:) 
-				  contextInfo: statements];
-		}
-		else
-		{
-			[self continueImport: statements];
-		}	
-	}
+		[self import: YES usingSheet: YES];
 }
 @end
 	
@@ -164,6 +198,11 @@ ShouldImport (id entity)
 	NSWindow* panel = [self window];
 	[panel orderOut: nil];
 	[NSApp endSheet: panel returnCode: [sender tag]];
+}
+
+- (IBAction) dryRun: (id) sender
+{
+	[self import: NO usingSheet: NO];
 }
 
 - (IBAction) selectedConfiguration: (id) sender

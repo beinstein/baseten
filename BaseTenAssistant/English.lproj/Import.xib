@@ -8,8 +8,8 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="356"/>
-			<integer value="6"/>
+			<integer value="5"/>
+			<integer value="338"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -36,8 +36,8 @@
 				<object class="NSMutableString" key="NSViewClass">
 					<characters key="NS.bytes">View</characters>
 				</object>
-				<string key="NSWindowContentMaxSize">{800, 700}</string>
-				<string key="NSWindowContentMinSize">{400, 300}</string>
+				<string key="NSWindowContentMaxSize">{10000, 10000}</string>
+				<string key="NSWindowContentMinSize">{400, 350}</string>
 				<object class="NSView" key="NSWindowView" id="33757956">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -758,52 +758,15 @@
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
-				<string key="NSMinSize">{400, 322}</string>
-				<string key="NSMaxSize">{800, 722}</string>
-			</object>
-			<object class="NSArrayController" id="331441184">
-				<bool key="NSEditable">YES</bool>
-				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
-				<bool key="NSAvoidsEmptySelection">YES</bool>
-				<bool key="NSPreservesSelection">YES</bool>
-				<bool key="NSSelectsInsertedObjects">YES</bool>
-				<bool key="NSFilterRestrictsInsertion">YES</bool>
-				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
-			</object>
-			<object class="NSArrayController" id="568205250">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>name</string>
-					<string>properties</string>
-					<string>shouldImportBXA</string>
-				</object>
-				<bool key="NSEditable">YES</bool>
-				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
-				<bool key="NSAvoidsEmptySelection">YES</bool>
-				<bool key="NSPreservesSelection">YES</bool>
-				<bool key="NSSelectsInsertedObjects">YES</bool>
-				<bool key="NSFilterRestrictsInsertion">YES</bool>
-				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
-			</object>
-			<object class="NSArrayController" id="308958320">
-				<object class="NSMutableArray" key="NSDeclaredKeys">
-					<bool key="EncodedWithXMLCoder">YES</bool>
-					<string>name</string>
-				</object>
-				<bool key="NSEditable">YES</bool>
-				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
-				<bool key="NSAvoidsEmptySelection">YES</bool>
-				<bool key="NSPreservesSelection">YES</bool>
-				<bool key="NSSelectsInsertedObjects">YES</bool>
-				<bool key="NSFilterRestrictsInsertion">YES</bool>
-				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
+				<string key="NSMinSize">{400, 372}</string>
+				<string key="NSMaxSize">{10000, 10022}</string>
 			</object>
 			<object class="NSWindowTemplate" id="1010466151">
-				<int key="NSWindowStyleMask">15</int>
+				<int key="NSWindowStyleMask">9</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{196, 132}, {400, 350}}</string>
 				<int key="NSWTFlags">-1543503872</int>
-				<string key="NSWindowTitle">Window</string>
+				<string key="NSWindowTitle">Incompatibilities in Data Model</string>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{10000, 10000}</string>
@@ -816,13 +779,13 @@
 						<object class="NSTextField" id="707185576">
 							<reference key="NSNextResponder" ref="508583187"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 313}, {336, 17}}</string>
+							<string key="NSFrame">{{17, 313}, {359, 17}}</string>
 							<reference key="NSSuperview" ref="508583187"/>
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="505176219">
 								<int key="NSCellFlags">68288064</int>
 								<int key="NSCellFlags2">272630784</int>
-								<string key="NSContents">The following changes will be made to your schema:</string>
+								<string key="NSContents">The following changes were made to the data model:</string>
 								<reference key="NSSupport" ref="226208918"/>
 								<reference key="NSControlView" ref="707185576"/>
 								<reference key="NSBackgroundColor" ref="181014102"/>
@@ -1031,6 +994,43 @@
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMinSize">{400, 372}</string>
 				<string key="NSMaxSize">{3.40282e+38, 3.40282e+38}</string>
+			</object>
+			<object class="NSArrayController" id="331441184">
+				<bool key="NSEditable">YES</bool>
+				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
+				<bool key="NSAvoidsEmptySelection">YES</bool>
+				<bool key="NSPreservesSelection">YES</bool>
+				<bool key="NSSelectsInsertedObjects">YES</bool>
+				<bool key="NSFilterRestrictsInsertion">YES</bool>
+				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
+			</object>
+			<object class="NSArrayController" id="568205250">
+				<object class="NSMutableArray" key="NSDeclaredKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>name</string>
+					<string>properties</string>
+					<string>shouldImportBXA</string>
+				</object>
+				<bool key="NSEditable">YES</bool>
+				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
+				<bool key="NSAvoidsEmptySelection">YES</bool>
+				<bool key="NSPreservesSelection">YES</bool>
+				<bool key="NSSelectsInsertedObjects">YES</bool>
+				<bool key="NSFilterRestrictsInsertion">YES</bool>
+				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
+			</object>
+			<object class="NSArrayController" id="308958320">
+				<object class="NSMutableArray" key="NSDeclaredKeys">
+					<bool key="EncodedWithXMLCoder">YES</bool>
+					<string>name</string>
+				</object>
+				<bool key="NSEditable">YES</bool>
+				<object class="_NSManagedProxy" key="_NSManagedProxy"/>
+				<bool key="NSAvoidsEmptySelection">YES</bool>
+				<bool key="NSPreservesSelection">YES</bool>
+				<bool key="NSSelectsInsertedObjects">YES</bool>
+				<bool key="NSFilterRestrictsInsertion">YES</bool>
+				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
 			</object>
 			<object class="NSArrayController" id="106776372">
 				<object class="NSMutableArray" key="NSDeclaredKeys">
@@ -1247,52 +1247,12 @@
 					<int key="connectionID">366</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: arrangedObjects.localizedFailureReason</string>
-						<reference key="source" ref="553790801"/>
-						<reference key="destination" ref="106776372"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="553790801"/>
-							<reference key="NSDestination" ref="106776372"/>
-							<string key="NSLabel">value: arrangedObjects.localizedFailureReason</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">arrangedObjects.localizedFailureReason</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">368</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: selection.localizedRecoverySuggestion</string>
-						<reference key="source" ref="401339454"/>
-						<reference key="destination" ref="106776372"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="401339454"/>
-							<reference key="NSDestination" ref="106776372"/>
-							<string key="NSLabel">value: selection.localizedRecoverySuggestion</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">selection.localizedRecoverySuggestion</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">371</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
 						<string key="label">endImportPanel:</string>
 						<reference key="source" ref="1036962592"/>
 						<reference key="destination" ref="509506368"/>
 					</object>
 					<int key="connectionID">372</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">endImportPanel:</string>
-						<reference key="source" ref="1036962592"/>
-						<reference key="destination" ref="764371571"/>
-					</object>
-					<int key="connectionID">373</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBActionConnection" key="connection">
@@ -1317,6 +1277,50 @@
 						<reference key="destination" ref="699299059"/>
 					</object>
 					<int key="connectionID">376</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">dryRun:</string>
+						<reference key="source" ref="1036962592"/>
+						<reference key="destination" ref="764371571"/>
+					</object>
+					<int key="connectionID">377</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: arrangedObjects.localizedRecoverySuggestion</string>
+						<reference key="source" ref="553790801"/>
+						<reference key="destination" ref="106776372"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="553790801"/>
+							<reference key="NSDestination" ref="106776372"/>
+							<string key="NSLabel">value: arrangedObjects.localizedRecoverySuggestion</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">arrangedObjects.localizedRecoverySuggestion</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSConditionallySetsEditable</string>
+								<reference key="NS.object.0" ref="9"/>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">378</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: selection.localizedFailureReason</string>
+						<reference key="source" ref="401339454"/>
+						<reference key="destination" ref="106776372"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="401339454"/>
+							<reference key="NSDestination" ref="106776372"/>
+							<string key="NSLabel">value: selection.localizedFailureReason</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">selection.localizedFailureReason</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">379</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1981,9 +1985,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{302, 144}, {400, 350}}</string>
+					<string>{{267, 470}, {400, 350}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{302, 144}, {400, 350}}</string>
+					<string>{{267, 470}, {400, 350}}</string>
 					<integer value="0" id="8"/>
 					<reference ref="8"/>
 					<reference ref="9"/>
@@ -2048,7 +2052,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">376</int>
+			<int key="maxID">379</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2068,12 +2072,14 @@
 						<bool key="EncodedWithXMLCoder">YES</bool>
 						<object class="NSMutableArray" key="dict.sortedKeys">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>dryRun:</string>
 							<string>endErrorPanel:</string>
 							<string>endImportPanel:</string>
 							<string>selectedConfiguration:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
