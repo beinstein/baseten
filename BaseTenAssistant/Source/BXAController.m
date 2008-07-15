@@ -478,8 +478,11 @@ __strong static BXAController* gController = nil;
 	
 	NSError* error = nil;
 	BXPGInterface* interface = (id) [mContext databaseInterface];
+	
+	[self willChangeValueForKey: @"hasBaseTenSchema"];
 	if (! [[[interface transactionHandler] databaseDescription] checkBaseTenSchema: &error])
 		[NSApp presentError: error modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	[self didChangeValueForKey: @"hasBaseTenSchema"];
 }
 
 
