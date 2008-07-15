@@ -27,6 +27,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PGTSConnection.h"
+#import "BXPGCertificateVerificationDelegate.h"
 #import "BXPGTransactionHandler.h"
 
 

@@ -26,6 +26,7 @@
 // $Id$
 //
 
+#import "BXPGInterface.h"
 #import "BXPGAutocommitTransactionHandler.h"
 #import "BXPGAutocommitConnectionResetRecoveryAttempter.h"
 #import "BXPGReconnectionRecoveryAttempter.h"

@@ -29,7 +29,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <BaseTen/postgresql/libpq-fe.h>
-#import "PGTSCertificateVerificationDelegate.h"
+#import <BaseTen/PGTSCertificateVerificationDelegate.h>
 @class PGTSConnection;
 @class PGTSResultSet;
 @class PGTSConnector;

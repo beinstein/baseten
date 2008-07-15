@@ -27,13 +27,16 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTS.h"
-#import "BXPGInterface.h"
-#import "BXPGCertificateVerificationDelegate.h"
+#import <BaseTen/BXConstants.h>
+#import <BaseTen/PGTSConnection.h>
+#import <BaseTen/BXPGCertificateVerificationDelegate.h>
 
 
+@class PGTSConnection;
+@class BXEntityDescription;
 @class BXPGInterface;
 @class BXPGDatabaseDescription;
+@class BXPGCertificateVerificationDelegate;
 
 
 BX_EXPORT NSString* kBXPGUserInfoKey;

@@ -125,7 +125,7 @@ ImportError (NSString* message, NSString* reason)
 				NSString* messageFormat = @"Made relationship %@ in %@ cascade on delete.";
 				NSString* message = [NSString stringWithFormat: messageFormat, 
 									 [relationships [i] name], [[relationships [i] entity] name]];
-				NSString* reason = @"Other delete rules are not supported for many-to-many relationships.";
+				NSString* reason = @"Delete rules other than cascade on delete are not supported for many-to-many relationships.";
 				[errorMessages addObject: ImportError (message, reason)];
 			}
 		}
@@ -190,7 +190,7 @@ ImportError (NSString* message, NSString* reason)
 				NSString* messageFormat = @"Made delete rule for relationship %@ in %@ nullify.";
 				NSString* message = [NSString stringWithFormat: messageFormat, 
 									 [inverseRelationship name], [[inverseRelationship entity] name]];
-				NSString* explanation = @"Other delete rules are not supported on to-one side of a one-to-many relationship.";
+				NSString* explanation = @"Delete rules other than nullify are not supported on to-one side of a one-to-many relationship.";
 				[errorMessages addObject: ImportError (message, explanation)];
 			}
 		}

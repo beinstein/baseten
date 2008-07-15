@@ -26,6 +26,9 @@
 // $Id$
 //
 
+#import "PGTSConnection.h"
+#import "BXPGInterface.h"
+#import "BXPGCertificateVerificationDelegate.h"
 #import "BXPGManualCommitTransactionHandler.h"
 #import "BXPGManualCommitConnectionResetRecoveryAttempter.h"
 #import "BXPGReconnectionRecoveryAttempter.h"

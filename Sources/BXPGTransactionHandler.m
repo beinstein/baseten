@@ -26,6 +26,7 @@
 // $Id$
 //
 
+#import "PGTS.h"
 #import "PGTSAdditions.h"
 #import "PGTSFunctions.h"
 #import "PGTSHOM.h"
@@ -35,6 +36,7 @@
 #import "BXProbes.h"
 #import "BXLogger.h"
 
+#import "BXPGCertificateVerificationDelegate.h"
 #import "BXPGTransactionHandler.h"
 #import "BXPGAdditions.h"
 #import "BXPGConnectionResetRecoveryAttempter.h"
@@ -42,6 +44,8 @@
 #import "BXPGLockHandler.h"
 #import "BXPGClearLocksHandler.h"
 #import "BXPGDatabaseDescription.h"
+#import "BXPGInterface.h"
+#import "BXPGCertificateVerificationDelegate.h"
 
 #import "BXEntityDescriptionPrivate.h"
 

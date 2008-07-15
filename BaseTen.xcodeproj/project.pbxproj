@@ -130,10 +130,10 @@
 		5364BB7F0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB7D0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.m */; };
 		5364EF5C0E1B940A003D3DB6 /* BXLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364EF5B0E1B940A003D3DB6 /* BXLogger.m */; };
 		53666CD80E1CD8D20028DBEA /* PGTSTypeDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666C990E1CD8D20028DBEA /* PGTSTypeDescription.m */; };
-		53666CDA0E1CD8D20028DBEA /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9B0E1CD8D20028DBEA /* PGTS.h */; };
+		53666CDA0E1CD8D20028DBEA /* PGTS.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9B0E1CD8D20028DBEA /* PGTS.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666CDB0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9C0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h */; };
 		53666CDC0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666C9D0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m */; };
-		53666CDD0E1CD8D20028DBEA /* PGTSAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9E0E1CD8D20028DBEA /* PGTSAbstractDescription.h */; };
+		53666CDD0E1CD8D20028DBEA /* PGTSAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666C9E0E1CD8D20028DBEA /* PGTSAbstractDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666CDE0E1CD8D20028DBEA /* PGTSAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666C9F0E1CD8D20028DBEA /* PGTSAbstractDescription.m */; };
 		53666CDF0E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h */; };
 		53666CE00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA10E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m */; };
@@ -141,10 +141,10 @@
 		53666CE20E1CD8D20028DBEA /* PGTSACLItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA30E1CD8D20028DBEA /* PGTSACLItem.m */; };
 		53666CE30E1CD8D20028DBEA /* PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */; };
 		53666CE40E1CD8D20028DBEA /* PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */; };
-		53666CE50E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h */; };
+		53666CE50E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666CE60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CA70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m */; };
-		53666CE70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA80E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h */; };
-		53666CE90E1CD8D20028DBEA /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CAA0E1CD8D20028DBEA /* PGTSConnection.h */; };
+		53666CE70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CA80E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53666CE90E1CD8D20028DBEA /* PGTSConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CAA0E1CD8D20028DBEA /* PGTSConnection.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666CEA0E1CD8D20028DBEA /* PGTSConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53666CAB0E1CD8D20028DBEA /* PGTSConnection.mm */; };
 		53666CED0E1CD8D20028DBEA /* PGTSConnectionMonitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CAE0E1CD8D20028DBEA /* PGTSConnectionMonitor.h */; };
 		53666CEE0E1CD8D20028DBEA /* PGTSConnectionMonitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CAF0E1CD8D20028DBEA /* PGTSConnectionMonitor.m */; };
@@ -153,7 +153,7 @@
 		53666CF20E1CD8D20028DBEA /* PGTSConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB30E1CD8D20028DBEA /* PGTSConnector.m */; };
 		53666CF30E1CD8D20028DBEA /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB40E1CD8D20028DBEA /* PGTSConstants.h */; };
 		53666CF40E1CD8D20028DBEA /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB50E1CD8D20028DBEA /* PGTSConstants.m */; };
-		53666CF50E1CD8D20028DBEA /* PGTSDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB60E1CD8D20028DBEA /* PGTSDatabaseDescription.h */; };
+		53666CF50E1CD8D20028DBEA /* PGTSDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB60E1CD8D20028DBEA /* PGTSDatabaseDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666CF60E1CD8D20028DBEA /* PGTSDatabaseDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB70E1CD8D20028DBEA /* PGTSDatabaseDescription.m */; };
 		53666CF90E1CD8D20028DBEA /* PGTSFieldDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CBA0E1CD8D20028DBEA /* PGTSFieldDescription.h */; };
 		53666CFA0E1CD8D20028DBEA /* PGTSFieldDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CBB0E1CD8D20028DBEA /* PGTSFieldDescription.m */; };
@@ -214,7 +214,7 @@
 		537F04E50DDC855C00498B93 /* BXPGNotificationHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F04E10DDC855C00498B93 /* BXPGNotificationHandler.m */; };
 		537F04E80DDC954900498B93 /* BXPGClearLocksHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F04E60DDC954900498B93 /* BXPGClearLocksHandler.h */; };
 		537F04E90DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */; };
-		537F05130DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */; };
+		537F05130DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
 		538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538678D30DE31BA0000C9A78 /* IOKit.framework */; };
 		538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 538679870DE31C1D000C9A78 /* libstdc++.6.dylib */; };
@@ -242,7 +242,7 @@
 		538A83880E1D2ACF0025B3C8 /* stringutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82F80E1D1C1B0025B3C8 /* stringutils.c */; };
 		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539758530E1E86200042120A /* BXDataModelCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 539758510E1E86200042120A /* BXDataModelCompiler.m */; };
-		53B24CF40E223A14007AED76 /* BXPGDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF20E223A14007AED76 /* BXPGDatabaseDescription.h */; };
+		53B24CF40E223A14007AED76 /* BXPGDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF20E223A14007AED76 /* BXPGDatabaseDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B24CF50E223A14007AED76 /* BXPGDatabaseDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF30E223A14007AED76 /* BXPGDatabaseDescription.m */; };
 		53B24CFA0E223C8C007AED76 /* BXPGTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF80E223C8C007AED76 /* BXPGTableDescription.h */; };
 		53B24CFB0E223C8C007AED76 /* BXPGTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF90E223C8C007AED76 /* BXPGTableDescription.m */; };

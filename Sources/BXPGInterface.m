@@ -41,6 +41,7 @@
 #import "BXPGModificationHandler.h"
 #import "BXPGClearLocksHandler.h"
 #import "BXPGAdditions.h"
+#import "BXPGCertificateVerificationDelegate.h"
 #import "BXPGAutocommitTransactionHandler.h"
 #import "BXPGManualCommitTransactionHandler.h"
 #import "BXPGDatabaseDescription.h"
