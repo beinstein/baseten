@@ -30,8 +30,18 @@
 #import <stdio.h>
 
 @class PGTSConnection;
+@class PGTSResultSet;
 @class BXPGSQLScanner;
+@class BXPGSQLScriptReader;
 @protocol BXPGSQLScannerDelegate;
+
+
+@protocol BXPGSQLScriptReaderDelegate <NSObject>
+- (void) SQLScriptReaderSucceeded: (BXPGSQLScriptReader *) reader userInfo: (id) userInfo;
+- (void) SQLScriptReader: (BXPGSQLScriptReader *) reader failed: (PGTSResultSet *) res userInfo: (id) userInfo;
+- (void) SQLScriptReader: (BXPGSQLScriptReader *) reader advancedToPosition: (off_t) position userInfo: (id) userInfo;
+@end
+
 
 
 #define BXPGSQLScannerBufferSize 1024
@@ -39,12 +49,26 @@
 @interface BXPGSQLScriptReader : NSObject 
 {
 	char mBuffer [BXPGSQLScannerBufferSize];
+	off_t mFileSize;
+
 	FILE* mFile;
 	PGTSConnection* mConnection;
 	BXPGSQLScanner* mScanner;
+	id <BXPGSQLScriptReaderDelegate> mDelegate;
+	id mDelegateUserInfo;
+	
+	BOOL mCanceling;
+	BOOL mIgnoresErrors;
 }
 - (void) setConnection: (PGTSConnection *) connection;
-- (void) openFileAtURL: (NSURL *) fileURL;
+- (void) setDelegate: (id <BXPGSQLScriptReaderDelegate>) anObject;
+- (void) setDelegateUserInfo: (id) anObject;
+- (void) setIgnoresErrors: (BOOL) flag;
+
+- (BOOL) openFileAtURL: (NSURL *) fileURL;
+- (off_t) length;
 - (void) readAndExecuteAsynchronously;
+- (void) cancel;
+
 - (void) setScanner: (BXPGSQLScanner *) scanner;
 @end

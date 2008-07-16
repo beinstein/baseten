@@ -31,6 +31,8 @@
 #import "BXPGSQLScriptReader.h"
 #import "BXPGAdditions.h"
 
+#import <sys/stat.h>
+
 
 @interface BXPGSQLScriptReader (BXPGSQLScannerDelegate) <BXPGSQLScannerDelegate>
 @end
@@ -55,13 +57,31 @@
 	}
 }
 
-- (void) openFileAtURL: (NSURL *) fileURL
+- (BOOL) openFileAtURL: (NSURL *) fileURL
 {
-	if (! mFile)
+	BOOL retval = NO;
+	if (mFile)
 	{
-		const char* path = [[fileURL path] UTF8String];
-		mFile = fopen (path, "r");
+		fclose (mFile);
+		mFile = NULL;
 	}
+	
+	const char* path = [[fileURL path] UTF8String];
+	int fd = open (path, O_RDONLY);
+	struct stat statbuf = {};
+	if (-1 != fstat (fd, &statbuf))
+	{
+		mFileSize = statbuf.st_size;
+		mFile = fdopen (fd, "r");
+		if (mFile)
+			retval = YES;
+	}
+	return retval;
+}
+
+- (off_t) length
+{
+	return mFileSize;
 }
    
 - (void) readAndExecuteAsynchronously
@@ -78,17 +98,49 @@
 	[mScanner continueScanning];
 }
 
-- (void) receivedResult: (PGTSResultSet *) res
-{
-	if ([res querySucceeded])
-		[mScanner continueScanning];
-}
 
 - (void) scriptEnded
 {
+	mCanceling = NO;
 	if (mFile)
 		fclose (mFile);
 }
+
+
+- (void) performEndSelector: (BOOL) succeeded resultSet: (PGTSResultSet *) res
+{
+	SEL selector = @selector (SQLScriptReader:failed:userInfo:);
+	if (succeeded)
+		selector = @selector (SQLScriptReaderSucceeded:userInfo:);
+	
+	NSMethodSignature* sig = [(NSObject *) mDelegate methodSignatureForSelector: selector];
+	NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];
+	[invocation setTarget: mDelegate];
+	[invocation setSelector: selector];
+	[invocation setArgument: &self atIndex: 2];
+	
+	int next = 3;
+	if (! succeeded)
+	{
+		[invocation setArgument: &res atIndex: 3];
+		next++;
+	}
+	[invocation setArgument: &mDelegateUserInfo atIndex: next];
+	[invocation invoke];
+}
+
+
+- (void) receivedResult: (PGTSResultSet *) res
+{
+	if (! mCanceling && (mIgnoresErrors || [res querySucceeded]))
+		[mScanner continueScanning];
+	else
+	{
+		[self performEndSelector: NO resultSet: res];
+		[self scriptEnded];
+	}
+}
+
 
 - (void) dealloc
 {
@@ -96,6 +148,7 @@
 		fclose (mFile);
 	[mScanner release];
 	[mConnection release];
+	[mDelegateUserInfo release];
 	[super dealloc];
 }
 
@@ -105,6 +158,30 @@
 		fclose (mFile);
 	[super finalize];
 }
+
+- (void) setDelegate: (id <BXPGSQLScriptReaderDelegate>) anObject
+{
+	mDelegate = anObject;
+}
+
+- (void) setDelegateUserInfo: (id) anObject
+{
+	if (mDelegateUserInfo != anObject)
+	{
+		[mDelegateUserInfo release];
+		mDelegateUserInfo = [anObject retain];
+	}
+}
+
+- (void) cancel
+{
+	mCanceling = YES;
+}
+
+- (void) setIgnoresErrors: (BOOL) flag
+{
+	mIgnoresErrors = flag;
+}
 @end
 
 
@@ -112,8 +189,15 @@
 - (const char *) nextLineForScanner: (BXPGSQLScanner *) scanner
 {
 	const char* retval = fgets (mBuffer, BXPGSQLScannerBufferSize, mFile);
+
+	off_t pos = ftello (mFile);
+	[mDelegate SQLScriptReader: self advancedToPosition: pos userInfo: mDelegateUserInfo];
+
 	if (! retval)
+	{
+		[self performEndSelector: YES resultSet: nil];
 		[self scriptEnded];
+	}
 	return retval;
 }
 
