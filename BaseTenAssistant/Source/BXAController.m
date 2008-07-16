@@ -51,6 +51,14 @@
 
 
 static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
+static NSString* kBXAControllerErrorDomain = @"kBXAControllerErrorDomain";
+
+
+enum BXAControllerErrorCode
+{
+	kBXAControllerNoError = 0,
+	kBXAControllerErrorNoBaseTenSchema
+};
 
 
 //FIXME: come up with a way for the entities etc. to get an NSDocument or something if we want to be document based some day.
@@ -69,8 +77,36 @@ __strong static BXAController* gController = nil;
 	return [self isEnabled];
 }
 
+- (BOOL) validateEnabledForAssistant: (id *) ioValue error: (NSError **) outError
+{
+	BOOL retval = YES;
+	if (! [gController hasBaseTenSchema])
+	{
+		retval = NO;
+		if (ioValue)
+			*ioValue = [NSNumber numberWithBool: NO];
+		if (outError)
+		{
+			NSString* recoverySuggestion = @"BaseTen requires various functions and tables. They will be installed in a separate schema.";
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  @"Enabling a view or table requires the BaseTen schema", NSLocalizedDescriptionKey,
+									  @"Enabling a view or table requires the BaseTen schema", NSLocalizedFailureReasonErrorKey,
+									  recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
+									  [NSArray arrayWithObjects: @"Install", @"Don't install", nil], NSLocalizedRecoveryOptionsErrorKey,
+									  gController, NSRecoveryAttempterErrorKey,
+									  nil];
+			NSError* error = [NSError errorWithDomain: kBXAControllerErrorDomain 
+												 code: kBXAControllerErrorNoBaseTenSchema 
+											 userInfo: userInfo];
+			*outError = error;
+		}
+	}
+	return retval;
+}
+
 - (void) setEnabledForAssistant: (BOOL) aBool
 {
+	NSLog (@"setting enabling");
 	[gController process: aBool entity: self];
 }
 
@@ -216,9 +252,18 @@ __strong static BXAController* gController = nil;
 		[button setAction: actions [i]];
 		[button setAttributedTitle: attributedTitles [i]];
 		[button setImage: [NSImage imageNamed: imageNames [i]]];
-		if (0 == i)
-			[button bind: @"enabled" toObject: self withKeyPath: @"hasBaseTenSchema" options: nil];
 		
+		//Bindings
+		switch (i)
+		{
+			case 0:
+			{
+				[button bind: @"enabled" toObject: self withKeyPath: @"hasBaseTenSchema" options: nil];
+				break;
+			}
+		}
+		
+		//Position
 		switch (i)
 		{
 			case 2:
@@ -389,6 +434,7 @@ __strong static BXAController* gController = nil;
 {
     [NSApp endSheet: mProgressPanel];
     [mProgressPanel orderOut: nil];
+	[mProgressIndicator setIndeterminate: YES];
 }
 
 - (void) importModelAtURL: (NSURL *) URL
@@ -500,8 +546,6 @@ __strong static BXAController* gController = nil;
     id retval = nil;
 	if (NO == [self allowEnablingForRow: rowIndex])
 		retval = mInspectorButtonCell;
-	else
-		[currentCell setEnabled: [self hasBaseTenSchema]];
 		
     return retval;
 }
@@ -574,6 +618,113 @@ __strong static BXAController* gController = nil;
 			[self compileAndImportModelAtURL: URL];
 		}
     }
+}
+
+- (void) attemptRecoveryFromError: (NSError *) error 
+					  optionIndex: (NSUInteger) recoveryOptionIndex 
+						 delegate: (id) delegate 
+			   didRecoverSelector: (SEL) didRecoverSelector 
+					  contextInfo: (void *) contextInfo
+{
+	if ([error domain] != kBXAControllerErrorDomain)
+		[self doesNotRecognizeSelector: _cmd];
+	else
+	{
+		switch ([error code])
+		{
+			case kBXAControllerErrorNoBaseTenSchema:
+			{
+				NSMethodSignature* sig = [delegate methodSignatureForSelector: didRecoverSelector];
+				NSInvocation* recoveryInvocation = [NSInvocation invocationWithMethodSignature: sig];
+				[recoveryInvocation setSelector: didRecoverSelector];
+				[recoveryInvocation setTarget: delegate];
+				[recoveryInvocation setArgument: &contextInfo atIndex: 3];
+				
+				if (0 == recoveryOptionIndex)
+				{
+					if (! mReader)
+					{
+						mReader = [[BXPGSQLScriptReader alloc] init];
+						[mReader setConnection: [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection]];
+						[mReader setDelegate: self];
+						//FIXME: instead change the SQL script so that statements like CREATE LANGUAGE plpgsql don't produce errors (considering existence, not privileges).
+						[mReader setIgnoresErrors: YES];
+					}
+					
+					NSString* path = [[NSBundle mainBundle] pathForResource: @"BaseTenModifications" ofType: @"sql"];
+					if (path)
+					{
+						NSURL* url = [NSURL fileURLWithPath: path];
+						if ([mReader openFileAtURL: url])
+						{
+							[recoveryInvocation retainArguments];
+							[mReader setDelegateUserInfo: recoveryInvocation];
+							
+							[mProgressIndicator setIndeterminate: NO];
+							[mProgressIndicator setMinValue: 0.0];
+							[mProgressIndicator setMaxValue: [mReader length]];
+							
+							[self displayProgressPanel: @"Installing BaseTen schema…"];
+							[mReader readAndExecuteAsynchronously];
+						}
+						else
+						{
+							//FIXME: handle the error.
+						}
+					}
+					else
+					{
+						//FIXME: handle the error.
+					}
+				}
+				else
+				{
+					BOOL retval = NO;
+					[recoveryInvocation setArgument: &retval atIndex: 2];
+					[recoveryInvocation invoke];
+				}
+				
+				break;
+			}
+				
+			default:
+				[self doesNotRecognizeSelector: _cmd];
+				break;
+		}
+	}
+}
+
+static void
+InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
+{
+	[recoveryInvocation setArgument: &status atIndex: 2];
+	[recoveryInvocation invoke];
+}
+
+- (void) SQLScriptReaderSucceeded: (BXPGSQLScriptReader *) reader userInfo: (id) userInfo
+{
+	[mProgressIndicator setMaxValue: 0.0];
+	[mProgressIndicator setDoubleValue: 0.0];
+	[mProgressIndicator display];
+	[self hideProgressPanel];
+	
+	InvokeRecoveryInvocation (userInfo, YES);
+	[reader setDelegateUserInfo: nil];
+}
+
+- (void) SQLScriptReader: (BXPGSQLScriptReader *) reader failed: (PGTSResultSet *) res userInfo: (id) userInfo
+{
+	[self hideProgressPanel];
+	
+	InvokeRecoveryInvocation (userInfo, NO);
+	[reader setDelegateUserInfo: nil];
+	
+	[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+}
+
+- (void) SQLScriptReader: (BXPGSQLScriptReader *) reader advancedToPosition: (off_t) position userInfo: (id) userInfo
+{
+	[mProgressIndicator setDoubleValue: (double) position];
 }
 @end
 

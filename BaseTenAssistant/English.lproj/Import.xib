@@ -8,8 +8,8 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="337"/>
 			<integer value="5"/>
-			<integer value="338"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -36,8 +36,8 @@
 				<object class="NSMutableString" key="NSViewClass">
 					<characters key="NS.bytes">View</characters>
 				</object>
-				<string key="NSWindowContentMaxSize">{10000, 10000}</string>
-				<string key="NSWindowContentMinSize">{400, 350}</string>
+				<string key="NSWindowContentMaxSize">{800, 700}</string>
+				<string key="NSWindowContentMinSize">{400, 300}</string>
 				<object class="NSView" key="NSWindowView" id="33757956">
 					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
@@ -758,15 +758,15 @@
 					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
-				<string key="NSMinSize">{400, 372}</string>
-				<string key="NSMaxSize">{10000, 10022}</string>
+				<string key="NSMinSize">{400, 322}</string>
+				<string key="NSMaxSize">{800, 722}</string>
 			</object>
 			<object class="NSWindowTemplate" id="1010466151">
 				<int key="NSWindowStyleMask">9</int>
 				<int key="NSWindowBacking">2</int>
 				<string key="NSWindowRect">{{196, 132}, {400, 350}}</string>
 				<int key="NSWTFlags">-1543503872</int>
-				<string key="NSWindowTitle">Incompatibilities in Data Model</string>
+				<string key="NSWindowTitle"/>
 				<string key="NSWindowClass">NSPanel</string>
 				<nil key="NSViewClass"/>
 				<string key="NSWindowContentMaxSize">{10000, 10000}</string>

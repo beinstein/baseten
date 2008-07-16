@@ -29,6 +29,7 @@
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDataModelCompiler.h>
+#import <BaseTen/BXPGSQLScriptReader.h>
 
 @class MKCBackgroundView;
 @class MKCPolishedCornerView;
@@ -42,6 +43,7 @@
 	NSButtonCell* mInspectorButtonCell;
 	BXAImportController* mImportController;
 	BXDataModelCompiler* mCompiler;
+	BXPGSQLScriptReader* mReader;
 	
 	IBOutlet BXDatabaseContext* mContext;
 	IBOutlet NSDictionaryController* mEntitiesBySchema;
@@ -106,5 +108,5 @@
 @end
 
 
-@interface BXAController (Delegation) <BXDataModelCompilerDelegate>
+@interface BXAController (Delegation) <BXDataModelCompilerDelegate, BXPGSQLScriptReaderDelegate>
 @end
