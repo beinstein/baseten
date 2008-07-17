@@ -576,14 +576,11 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
     @synchronized (mRelationships)
     {
-        TSEnumerate (currentKey, e, [mRelationships keyEnumerator])
-            [mRelationships removeObjectForKey: currentKey];
-	
-        TSEnumerate (currentKey, e, [aDict keyEnumerator])
-        {
-            [mRelationships setObject: [aDict objectForKey: currentKey]
-                               forKey: currentKey];
-        }
+		[mRelationships removeAllObjects];
+		
+		//mRelationships is a map table.
+		TSEnumerate (currentRelName, e, [aDict keyEnumerator])
+			[mRelationships setObject: [aDict objectForKey: currentRelName] forKey: currentRelName];
     }
 }
 

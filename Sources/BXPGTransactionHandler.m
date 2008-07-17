@@ -265,11 +265,16 @@ SSLMode (enum BXSSLMode mode)
 		[mConnection setDelegate: self];
 		[mConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
 		[mConnection setLogsQueries: [mInterface logsQueries]];
-		
-		id desc = [[BXPGDatabaseDescription alloc] init];
-		[mConnection setDatabaseDescription: desc];
-		[desc release];
+		[self refreshDatabaseDescription];
 	}	
+}
+
+
+- (void) refreshDatabaseDescription
+{
+	id desc = [[BXPGDatabaseDescription alloc] init];
+	[mConnection setDatabaseDescription: desc];
+	[desc release];
 }
 
 

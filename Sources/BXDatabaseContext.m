@@ -1896,7 +1896,7 @@ bx_query_during_reconnect ()
 @implementation BXDatabaseContext (HelperMethods)
 - (NSDictionary *) entitiesBySchemaAndName: (NSError **) error
 {
-	//FIXME: cache these?
+	//FIXME: cache these? Then we need a reloading method.
 	//FIXME: error handling.
 	NSError* localError = nil;
 	return [mDatabaseInterface entitiesBySchemaAndName: &localError];
