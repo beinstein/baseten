@@ -901,8 +901,8 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	NSString* credentials = (0 < [password length] ? [NSString stringWithFormat: @"%@:%@", username, password] : username);
 	
 	NSString* host = [mHostCell objectValue];
-	id port = [mPortCell objectValue];
-	NSString* target = (port ? [NSString stringWithFormat: @"%@:%@", host, port] : host);
+	NSString* port = [mPortCell objectValue];
+	NSString* target = ([port length] ? [NSString stringWithFormat: @"%@:%@", host, port] : host);
 	
 	NSString* URIFormat = [NSString stringWithFormat: @"pgsql://%@@%@/%@", credentials, target, [mDBNameCell objectValue]];
 	NSURL* connectionURI = [NSURL URLWithString: URIFormat];
