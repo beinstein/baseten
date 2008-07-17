@@ -8,11 +8,11 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="712"/>
-			<integer value="827"/>
-			<integer value="629"/>
-			<integer value="558"/>
 			<integer value="469"/>
+			<integer value="712"/>
+			<integer value="558"/>
+			<integer value="629"/>
+			<integer value="827"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2797,12 +2797,20 @@
 							<string key="NSKeyPath">arrangedObjects.value.enabledForAssistantV</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValidatesImmediately</string>
-								<integer value="1" key="NS.object.0"/>
+								<reference key="NS.object.0" ref="9"/>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
 					<int key="connectionID">895</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">reload:</string>
+						<reference key="source" ref="1038163843"/>
+						<reference key="destination" ref="811910954"/>
+					</object>
+					<int key="connectionID">896</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -4786,7 +4794,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">895</int>
+			<int key="maxID">896</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4804,10 +4812,18 @@
 							<string>dismissMomcErrorPanel:</string>
 							<string>displayLogWindow:</string>
 							<string>importDataModel:</string>
+							<string>installSchema:</string>
+							<string>reload:</string>
+							<string>removeSchema:</string>
 							<string>terminate:</string>
+							<string>upgradeSchema:</string>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>

@@ -873,6 +873,50 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 
 @implementation BXAController (IBActions)
+- (IBAction) reload: (id) sender
+{
+	BOOL succeeded = YES;
+	NSError* error = nil;
+
+	[mProgressCancelButton setEnabled: NO];
+	[self displayProgressPanel: @"Reloading"];
+
+	NSModalSession session = [NSApp beginModalSessionForWindow: mMainWindow];
+
+	[[(BXPGInterface *) [mContext databaseInterface] transactionHandler] refreshDatabaseDescription];
+	NSDictionary* entities = [mContext entitiesBySchemaAndName: &error];
+	
+	[self setProgressMin: 0.0 max: (double) [entities count]];
+	for (NSArray* entityDict in [entities objectEnumerator])
+	{
+		for (BXEntityDescription* entity in [entityDict objectEnumerator])
+		{				
+			[self advanceProgress];
+			[entity setValidated: NO];
+			[mContext validateEntity: entity error: &error];
+			
+			if (error || NSRunContinuesResponse != [NSApp runModalSession: session])
+			{
+				succeeded = NO;
+				break;
+			}				
+		}
+	}
+	
+	[NSApp endModalSession: session];
+	[self hideProgressPanel];
+	[mProgressCancelButton setEnabled: YES];
+	
+	if (succeeded)
+		[mEntitiesBySchema setContent: entities];
+	else
+	{
+		if (error)
+			[NSApp presentError: error];
+		[self continueDisconnect];
+	}
+}
+
 - (IBAction) disconnect: (id) sender
 {
 	if ([self hasBaseTenSchema])

@@ -107,6 +107,7 @@ extern NSError* BXASchemaInstallError ();
 - (IBAction) dismissMomcErrorPanel: (id) sender;
 - (IBAction) clearLog: (id) sender;
 - (IBAction) displayLogWindow: (id) sender;
+- (IBAction) reload: (id) sender;
 
 - (IBAction) installSchema: (id) sender;
 - (IBAction) upgradeSchema: (id) sender;
