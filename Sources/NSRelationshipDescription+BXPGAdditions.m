@@ -156,13 +156,7 @@ ImportError (NSString* message, NSString* reason)
 			"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
 			"  ON UPDATE CASCADE ON DELETE CASCADE;";		
 			[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkeyName, idName, schemaName, entityName]];
-			[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, dstFkeyName, dstIdName, schemaName, dstEntityName]];
-			
-			NSString* enableFormat = 
-			@"SELECT baseten.prepareformodificationobserving (c.oid) "
-			"  FROM pg_class c, pg_namespace n "
-			"  WHERE c.relnamespace = n.oid AND n.nspname = '%@' AND c.relname = '%@';";
-			[retval addObject: [NSString stringWithFormat: enableFormat, schemaName, helperTableName]];
+			[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, dstFkeyName, dstIdName, schemaName, dstEntityName]];			
 		}
 	}
 	else
