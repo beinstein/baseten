@@ -46,8 +46,8 @@
 #import <BaseTen/BXPGTransactionHandler.h>
 #import <BaseTen/BXPGDatabaseDescription.h>
 
-
 #import <sys/socket.h>
+#import <RegexKit/RegexKit.h>
 
 
 static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
@@ -345,6 +345,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 				   context: kBXAControllerCtx];
 	
 	[mProgressCancelButton setTarget: self];
+	
+	NSString* regex = @"Compilation failed for data model at path";
+	mCompilationFailedRegex = [[RKRegex alloc] initWithRegexString: regex options: RKCompileNoOptions];
+	regex = @"/([^/]+.xcdatamodel[d]?.+)$";
+	mCompilationErrorRegex = [[RKRegex alloc] initWithRegexString: regex options: RKCompileNoOptions];
 }
 
 
@@ -586,9 +591,14 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 		while (end && line < outputEnd && end < outputEnd)
 		{
 			NSString* lineString = [[NSString alloc] initWithBytes: line length: end - line encoding: NSUTF8StringEncoding];
+			
 			line = end + 1;
 			end = memchr (line, '\n', outputEnd - line);
 			
+			if ([lineString isMatchedByRegex: mCompilationFailedRegex])
+				continue;
+			
+			[lineString getCapturesWithRegexAndReferences: mCompilationErrorRegex, @"${1}", &lineString, nil];
 			
 			NSTextView* textView = [[NSTextView alloc] initWithFrame: NSZeroRect];
 			[[[textView textStorage] mutableString] setString: lineString];
@@ -901,6 +911,21 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 - (IBAction) cancelSchemaInstall: (id) sender
 {
 	[mReader cancel];
+}
+
+- (IBAction) installSchema: (id) sender
+{
+	//FIXME: make me work.
+}
+
+- (IBAction) upgradeSchema: (id) sender
+{
+	//FIXME: make me work.
+}
+
+- (IBAction) removeSchema: (id) sender
+{
+	//FIXME: make me work.
 }
 @end
 

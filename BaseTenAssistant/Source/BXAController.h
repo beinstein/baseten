@@ -35,6 +35,7 @@
 @class MKCPolishedCornerView;
 @class BXAImportController;
 @class MKCStackView;
+@class RKRegex;
 
 
 extern NSError* BXASchemaInstallError ();
@@ -47,6 +48,9 @@ extern NSError* BXASchemaInstallError ();
 	BXAImportController* mImportController;
 	BXDataModelCompiler* mCompiler;
 	BXPGSQLScriptReader* mReader;
+	
+	RKRegex* mCompilationErrorRegex;
+	RKRegex* mCompilationFailedRegex;
 	
 	IBOutlet BXDatabaseContext* mContext;
 	IBOutlet NSDictionaryController* mEntitiesBySchema;
@@ -103,6 +107,10 @@ extern NSError* BXASchemaInstallError ();
 - (IBAction) dismissMomcErrorPanel: (id) sender;
 - (IBAction) clearLog: (id) sender;
 - (IBAction) displayLogWindow: (id) sender;
+
+- (IBAction) installSchema: (id) sender;
+- (IBAction) upgradeSchema: (id) sender;
+- (IBAction) removeSchema: (id) sender;
 @end
 
 
