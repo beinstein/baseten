@@ -455,13 +455,10 @@ bx_query_during_reconnect ()
  */
 - (void) disconnect
 {
-	if (NO == [self isConnected])
-	{
-		mDidDisconnect = YES;
-		[mDatabaseInterface disconnect];
-		[mDatabaseInterface release];
-		mDatabaseInterface = nil;
-	}
+	mDidDisconnect = YES;
+	[mDatabaseInterface disconnect];
+	[mDatabaseInterface release];
+	mDatabaseInterface = nil;
 }
 //@}
 
