@@ -98,13 +98,9 @@ SchemaInstallError ()
 - (BOOL) validateEnabledForAssistant: (id *) ioValue error: (NSError **) outError
 {
 	BOOL retval = YES;
-	if (! ([self isView] || [gController hasBaseTenSchema]))
+	if (! ([gController hasBaseTenSchema]))
 	{
 		retval = NO;
-
-		if (ioValue)
-			*ioValue = [NSNumber numberWithBool: NO];
-
 		if (outError)
 			*outError = SchemaInstallError ();
 	}
@@ -112,6 +108,34 @@ SchemaInstallError ()
 }
 
 - (void) setEnabledForAssistant: (BOOL) aBool
+{
+	NSLog (@"setting enabling");
+	[gController process: aBool entity: self];
+}
+
+- (BOOL) isEnabledForAssistantV
+{
+	return [self isEnabled];
+}
+
+- (BOOL) validateEnabledForAssistantV: (id *) ioValue error: (NSError **) outError
+{
+	BOOL retval = YES;
+	if ([self isView])
+	{
+		if (ioValue)
+			*ioValue = [NSNumber numberWithBool: NO];
+	}
+	else if (! [gController hasBaseTenSchema])
+	{
+		retval = NO;
+		if (outError)
+			*outError = SchemaInstallError ();
+	}
+	return retval;
+}
+
+- (void) setEnabledForAssistantV: (BOOL) aBool
 {
 	NSLog (@"setting enabling");
 	[gController process: aBool entity: self];

@@ -8,11 +8,11 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="629"/>
-			<integer value="469"/>
-			<integer value="827"/>
-			<integer value="558"/>
 			<integer value="712"/>
+			<integer value="827"/>
+			<integer value="629"/>
+			<integer value="558"/>
+			<integer value="469"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1452,6 +1452,7 @@
 					<string>value.allowsEnabling</string>
 					<string>canEnableForAssistant</string>
 					<string>value.canEnableForAssistant</string>
+					<string>value.enabledForAssistantV</string>
 				</object>
 				<bool key="NSEditable">YES</bool>
 				<bool key="NSAvoidsEmptySelection">YES</bool>
@@ -2720,26 +2721,6 @@
 					<int key="connectionID">866</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: arrangedObjects.value.enabledForAssistant</string>
-						<reference key="source" ref="601456524"/>
-						<reference key="destination" ref="80697434"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="601456524"/>
-							<reference key="NSDestination" ref="80697434"/>
-							<string key="NSLabel">value: arrangedObjects.value.enabledForAssistant</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">arrangedObjects.value.enabledForAssistant</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValidatesImmediately</string>
-								<reference key="NS.object.0" ref="9"/>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">875</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">mProgressCancelButton</string>
 						<reference key="source" ref="1038163843"/>
@@ -2776,7 +2757,7 @@
 							<string key="NSKeyPath">selection.value.enabledForAssistant</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValidatesImmediately</string>
-								<integer value="1" key="NS.object.0" id="5"/>
+								<reference key="NS.object.0" ref="9"/>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
@@ -2796,12 +2777,32 @@
 							<string key="NSKeyPath">arrangedObjects.value.primaryKeyForAssistant</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValidatesImmediately</string>
-								<reference key="NS.object.0" ref="5"/>
+								<reference key="NS.object.0" ref="9"/>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
 					<int key="connectionID">894</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: arrangedObjects.value.enabledForAssistantV</string>
+						<reference key="source" ref="601456524"/>
+						<reference key="destination" ref="80697434"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="601456524"/>
+							<reference key="NSDestination" ref="80697434"/>
+							<string key="NSLabel">value: arrangedObjects.value.enabledForAssistantV</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">arrangedObjects.value.enabledForAssistantV</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValidatesImmediately</string>
+								<integer value="1" key="NS.object.0"/>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">895</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -4785,7 +4786,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">894</int>
+			<int key="maxID">895</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
