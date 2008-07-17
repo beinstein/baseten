@@ -65,6 +65,24 @@ enum BXAControllerErrorCode
 __strong static BXAController* gController = nil;
 
 
+static NSError*
+SchemaInstallError ()
+{
+	NSString* recoverySuggestion = @"BaseTen requires various functions and tables. They will be installed in a separate schema.";
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedDescriptionKey,
+							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedFailureReasonErrorKey,
+							  recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
+							  [NSArray arrayWithObjects: @"Install", @"Don't install", nil], NSLocalizedRecoveryOptionsErrorKey,
+							  gController, NSRecoveryAttempterErrorKey,
+							  nil];
+	NSError* error = [NSError errorWithDomain: kBXAControllerErrorDomain 
+										 code: kBXAControllerErrorNoBaseTenSchema 
+									 userInfo: userInfo];
+	return error;	
+}
+
+
 
 @implementation BXEntityDescription (BXAControllerAdditions)
 - (BOOL) canEnableForAssistant
@@ -80,26 +98,15 @@ __strong static BXAController* gController = nil;
 - (BOOL) validateEnabledForAssistant: (id *) ioValue error: (NSError **) outError
 {
 	BOOL retval = YES;
-	if (! [gController hasBaseTenSchema])
+	if (! ([self isView] || [gController hasBaseTenSchema]))
 	{
 		retval = NO;
+
 		if (ioValue)
 			*ioValue = [NSNumber numberWithBool: NO];
+
 		if (outError)
-		{
-			NSString* recoverySuggestion = @"BaseTen requires various functions and tables. They will be installed in a separate schema.";
-			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									  @"Enabling a view or table requires the BaseTen schema", NSLocalizedDescriptionKey,
-									  @"Enabling a view or table requires the BaseTen schema", NSLocalizedFailureReasonErrorKey,
-									  recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
-									  [NSArray arrayWithObjects: @"Install", @"Don't install", nil], NSLocalizedRecoveryOptionsErrorKey,
-									  gController, NSRecoveryAttempterErrorKey,
-									  nil];
-			NSError* error = [NSError errorWithDomain: kBXAControllerErrorDomain 
-												 code: kBXAControllerErrorNoBaseTenSchema 
-											 userInfo: userInfo];
-			*outError = error;
-		}
+			*outError = SchemaInstallError ();
 	}
 	return retval;
 }
@@ -113,14 +120,6 @@ __strong static BXAController* gController = nil;
 + (NSSet *) keyPathsForValuesAffectingAllowsSettingPrimaryKey
 {
 	return [NSSet setWithObjects: @"isView", @"isEnabled", nil];
-}
-
-- (BOOL) allowsSettingPrimaryKey
-{
-	BOOL retval = NO;
-	if ([self isView] && ! [self isEnabled])
-		retval = YES;
-	return retval;
 }
 
 + (NSSet *) keyPathsForValuesAffectingAllowsEnabling
@@ -148,6 +147,22 @@ __strong static BXAController* gController = nil;
 {
 	NSLog (@"setPrimaryKey: %d", aBool);
 	[gController process: aBool attribute: self];
+}
+
+- (BOOL) validatePrimaryKeyForAssistant: (id *) ioValue error: (NSError **) outError
+{
+	BOOL retval = YES;
+	if (! [gController hasBaseTenSchema])
+	{
+		retval = NO;
+		
+		if (ioValue)
+			*ioValue = [NSNumber numberWithBool: NO];
+				
+		if (outError)
+			*outError = SchemaInstallError ();
+	}
+	return retval;
 }
 @end
 
@@ -190,12 +205,6 @@ __strong static BXAController* gController = nil;
 	}
 		
 	{
-#if 0
-		NSButtonCell* enabledButtonCell = [mTableEnabledColumn dataCell];
-		[enabledButtonCell setAction: @selector (processForBaseTen:)];
-		[enabledButtonCell setTarget: self];
-#endif
-		
 		mInspectorButtonCell = [[MKCForcedSizeToFitButtonCell alloc] initTextCell: @"Setup..."];
 		[mInspectorButtonCell setButtonType: NSMomentaryPushInButton];
 		[mInspectorButtonCell setBezelStyle: NSRoundedBezelStyle];
@@ -283,6 +292,11 @@ __strong static BXAController* gController = nil;
 {
 	gController = self;
 	mLastSelectedEntityWasView = YES;
+
+	mReader = [[BXPGSQLScriptReader alloc] init];
+	[mReader setDelegate: self];
+	//FIXME: instead change the SQL script so that statements like CREATE LANGUAGE plpgsql don't produce errors (considering existence, not privileges).
+	[mReader setIgnoresErrors: YES];	
 	
 	[[mContext class] setInterfaceClass: [BXAPGInterface class] forScheme: @"pgsql"];
 	
@@ -300,7 +314,9 @@ __strong static BXAController* gController = nil;
 	
 	[mEntities addObserver: self forKeyPath: @"selection" 
 				   options: NSKeyValueObservingOptionInitial
-				   context: kBXAControllerCtx];	
+				   context: kBXAControllerCtx];
+	
+	[mProgressCancelButton setTarget: self];
 }
 
 
@@ -461,6 +477,34 @@ __strong static BXAController* gController = nil;
 	[mCompiler setModelURL: URL];
 	[mCompiler compileDataModel];
 }
+
+- (void) installBaseTenSchema
+{
+	NSString* path = [[NSBundle mainBundle] pathForResource: @"BaseTenModifications" ofType: @"sql"];
+	if (path)
+	{
+		NSURL* url = [NSURL fileURLWithPath: path];
+		if ([mReader openFileAtURL: url])
+		{			
+			[mProgressIndicator setIndeterminate: NO];
+			[mProgressIndicator setMinValue: 0.0];
+			[mProgressIndicator setMaxValue: [mReader length]];
+			[mProgressCancelButton setAction: @selector (cancelSchemaInstall:)];
+			
+			[self displayProgressPanel: @"Installing BaseTen schema…"];
+			
+			[mReader readAndExecuteAsynchronously];
+		}
+		else
+		{
+			//FIXME: handle the error.
+		}
+	}
+	else
+	{
+		//FIXME: handle the error.
+	}
+}
 @end
 
 
@@ -524,6 +568,8 @@ __strong static BXAController* gController = nil;
 	
 	NSError* error = nil;
 	BXPGInterface* interface = (id) [mContext databaseInterface];
+	
+	[mReader setConnection: [[interface transactionHandler] connection]];
 	
 	[self willChangeValueForKey: @"hasBaseTenSchema"];
 	if (! [[[interface transactionHandler] databaseDescription] checkBaseTenSchema: &error])
@@ -639,48 +685,14 @@ __strong static BXAController* gController = nil;
 				[recoveryInvocation setSelector: didRecoverSelector];
 				[recoveryInvocation setTarget: delegate];
 				[recoveryInvocation setArgument: &contextInfo atIndex: 3];
-				
+				[mReader setDelegateUserInfo: recoveryInvocation];
+
 				if (0 == recoveryOptionIndex)
-				{
-					if (! mReader)
-					{
-						mReader = [[BXPGSQLScriptReader alloc] init];
-						[mReader setConnection: [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection]];
-						[mReader setDelegate: self];
-						//FIXME: instead change the SQL script so that statements like CREATE LANGUAGE plpgsql don't produce errors (considering existence, not privileges).
-						[mReader setIgnoresErrors: YES];
-					}
-					
-					NSString* path = [[NSBundle mainBundle] pathForResource: @"BaseTenModifications" ofType: @"sql"];
-					if (path)
-					{
-						NSURL* url = [NSURL fileURLWithPath: path];
-						if ([mReader openFileAtURL: url])
-						{
-							[recoveryInvocation retainArguments];
-							[mReader setDelegateUserInfo: recoveryInvocation];
-							
-							[mProgressIndicator setIndeterminate: NO];
-							[mProgressIndicator setMinValue: 0.0];
-							[mProgressIndicator setMaxValue: [mReader length]];
-							
-							[self displayProgressPanel: @"Installing BaseTen schema…"];
-							[mReader readAndExecuteAsynchronously];
-						}
-						else
-						{
-							//FIXME: handle the error.
-						}
-					}
-					else
-					{
-						//FIXME: handle the error.
-					}
-				}
+					[self installBaseTenSchema];					
 				else
 				{
-					BOOL retval = NO;
-					[recoveryInvocation setArgument: &retval atIndex: 2];
+					BOOL status = NO;
+					[recoveryInvocation setArgument: &status atIndex: 2];
 					[recoveryInvocation invoke];
 				}
 				
@@ -694,6 +706,40 @@ __strong static BXAController* gController = nil;
 	}
 }
 
+- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
+{
+	BOOL retval = NO;
+	if ([error domain] != kBXAControllerErrorDomain)
+		[self doesNotRecognizeSelector: _cmd];
+	else
+	{
+		switch ([error code])
+		{
+			case kBXAControllerErrorNoBaseTenSchema:
+			{
+				if (0 == recoveryOptionIndex)
+				{
+					NSMethodSignature* sig = [NSApp methodSignatureForSelector: @selector (stopModalWithCode:)];
+					NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];
+					[invocation setTarget: NSApp];
+					[invocation setSelector: @selector (stopModalWithCode:)];
+					[mReader setDelegateUserInfo: invocation];
+					
+					[self installBaseTenSchema];
+					retval = [NSApp runModalForWindow: mMainWindow];
+				}
+				break;
+			}
+			
+			default:
+				[self doesNotRecognizeSelector: _cmd];
+				break;
+		}
+	}
+	return retval;
+}
+
+//Works with any invocation as long as the first visible argument is the status.
 static void
 InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 {
@@ -719,7 +765,11 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	InvokeRecoveryInvocation (userInfo, NO);
 	[reader setDelegateUserInfo: nil];
 	
-	[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	if (res)
+	{
+		[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil 
+		 didPresentSelector: NULL contextInfo: NULL];
+	}
 }
 
 - (void) SQLScriptReader: (BXPGSQLScriptReader *) reader advancedToPosition: (off_t) position userInfo: (id) userInfo
@@ -762,6 +812,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
     [NSApp endSheet: mConnectPanel];
     [mConnectPanel orderOut: nil];
     
+	[mProgressCancelButton setAction: @selector (cancelConnecting:)];
     [self displayProgressPanel: @"Connecting..."];
 		
 	[mContext connect];
@@ -798,6 +849,17 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 - (IBAction) displayLogWindow: (id) sender
 {
 	[mLogWindow makeKeyAndOrderFront: nil];
+}
+
+
+- (IBAction) cancelConnecting: (id) sender
+{
+	[self continueDisconnect];
+}
+
+- (IBAction) cancelSchemaInstall: (id) sender
+{
+	[mReader cancel];
 }
 @end
 

@@ -61,6 +61,7 @@
 	IBOutlet NSPanel* mProgressPanel;
 	IBOutlet NSProgressIndicator* mProgressIndicator;
 	IBOutlet NSTextField* mProgressField;
+	IBOutlet NSButton* mProgressCancelButton;
 	
 	IBOutlet NSPanel* mInspectorWindow;
 	IBOutlet NSTableView* mAttributeTable;
