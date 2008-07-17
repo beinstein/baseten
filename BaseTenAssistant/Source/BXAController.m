@@ -83,6 +83,15 @@ SchemaInstallError ()
 }
 
 
+NSInvocation* MakeInvocation (id target, SEL selector)
+{
+	NSMethodSignature* sig = [target methodSignatureForSelector: selector];
+	NSInvocation* retval = [NSInvocation invocationWithMethodSignature: sig];
+	[retval setTarget: target];
+	[retval setSelector: selector];
+	return retval;
+}
+
 
 @implementation BXEntityDescription (BXAControllerAdditions)
 - (BOOL) canEnableForAssistant
@@ -289,11 +298,6 @@ SchemaInstallError ()
 		//Bindings
 		switch (i)
 		{
-			case 0:
-			{
-				[button bind: @"enabled" toObject: self withKeyPath: @"hasBaseTenSchema" options: nil];
-				break;
-			}
 		}
 		
 		//Position
@@ -502,7 +506,7 @@ SchemaInstallError ()
 	[mCompiler compileDataModel];
 }
 
-- (void) installBaseTenSchema
+- (void) installBaseTenSchema: (NSInvocation *) callback
 {
 	NSString* path = [[NSBundle mainBundle] pathForResource: @"BaseTenModifications" ofType: @"sql"];
 	if (path)
@@ -517,6 +521,7 @@ SchemaInstallError ()
 			
 			[self displayProgressPanel: @"Installing BaseTen schema…"];
 			
+			[mReader setDelegateUserInfo: callback];
 			[mReader readAndExecuteAsynchronously];
 		}
 		else
@@ -528,6 +533,18 @@ SchemaInstallError ()
 	{
 		//FIXME: handle the error.
 	}
+}
+
+- (void) continueImport
+{
+	NSOpenPanel* openPanel = [NSOpenPanel openPanel];
+	[openPanel setAllowsMultipleSelection: NO];
+	[openPanel setCanChooseDirectories: NO];
+	[openPanel setCanChooseFiles: YES];
+	[openPanel setResolvesAliases: YES];
+	NSArray* types = [NSArray arrayWithObjects: @"xcdatamodel", @"xcdatamodeld", @"mom", @"momd", nil];
+	[openPanel beginSheetForDirectory: nil file: nil types: types modalForWindow: mMainWindow modalDelegate: self 
+					   didEndSelector: @selector (importOpenPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];	
 }
 @end
 
@@ -704,15 +721,11 @@ SchemaInstallError ()
 		{
 			case kBXAControllerErrorNoBaseTenSchema:
 			{
-				NSMethodSignature* sig = [delegate methodSignatureForSelector: didRecoverSelector];
-				NSInvocation* recoveryInvocation = [NSInvocation invocationWithMethodSignature: sig];
-				[recoveryInvocation setSelector: didRecoverSelector];
-				[recoveryInvocation setTarget: delegate];
+				NSInvocation* recoveryInvocation = MakeInvocation (delegate, didRecoverSelector);
 				[recoveryInvocation setArgument: &contextInfo atIndex: 3];
-				[mReader setDelegateUserInfo: recoveryInvocation];
 
 				if (0 == recoveryOptionIndex)
-					[self installBaseTenSchema];					
+					[self installBaseTenSchema: recoveryInvocation];					
 				else
 				{
 					BOOL status = NO;
@@ -743,13 +756,7 @@ SchemaInstallError ()
 			{
 				if (0 == recoveryOptionIndex)
 				{
-					NSMethodSignature* sig = [NSApp methodSignatureForSelector: @selector (stopModalWithCode:)];
-					NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];
-					[invocation setTarget: NSApp];
-					[invocation setSelector: @selector (stopModalWithCode:)];
-					[mReader setDelegateUserInfo: invocation];
-					
-					[self installBaseTenSchema];
+					[self installBaseTenSchema: MakeInvocation (NSApp, @selector (stopModalWithCode:))];
 					retval = [NSApp runModalForWindow: mMainWindow];
 				}
 				break;
@@ -845,14 +852,9 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (IBAction) importDataModel: (id) sender
 {
-    NSOpenPanel* openPanel = [NSOpenPanel openPanel];
-    [openPanel setAllowsMultipleSelection: NO];
-    [openPanel setCanChooseDirectories: NO];
-    [openPanel setCanChooseFiles: YES];
-    [openPanel setResolvesAliases: YES];
-	NSArray* types = [NSArray arrayWithObjects: @"xcdatamodel", @"xcdatamodeld", @"mom", @"momd", nil];
-    [openPanel beginSheetForDirectory: nil file: nil types: types modalForWindow: mMainWindow modalDelegate: self 
-                       didEndSelector: @selector (importOpenPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+	//If we want some kind of a warning to be displayed if the user doesn't have the schema,
+	//it should be done here.
+	[self continueImport];
 }
 
 
