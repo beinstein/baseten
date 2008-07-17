@@ -31,6 +31,11 @@
 #import "MKCPolishedHeaderView.h"
 #import "MKCPolishedCornerView.h"
 #import <BaseTen/PGTSHOM.h>
+#import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/PGTSConnection.h>
+#import <BaseTen/PGTSResultSet.h>
+#import <BaseTen/BXPGInterface.h>
+#import <BaseTen/BXPGTransactionHandler.h>
 
 static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 
@@ -113,11 +118,48 @@ struct ImportContextInfo
 }
 
 
+- (void) enumerateImportStatements: (NSEnumerator *) statementEnumerator
+{
+	NSString* statement = [statementEnumerator nextObject];
+	if (statement)
+	{
+		[mController advanceProgress];
+		PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+		[connection sendQuery: statement delegate: self callback: @selector (receivedImportResult:) 
+			   parameterArray: nil userInfo: statementEnumerator];
+	}
+	else
+	{
+		[mController hideProgressPanel];
+		
+		//FIXME: enable imported tables.
+	}
+}
+
+
+- (void) receivedImportResult: (PGTSResultSet *) res
+{
+	if ([res querySucceeded])
+	{
+		NSEnumerator* statementEnumerator = (id) [res userInfo];
+		[self enumerateImportStatements: statementEnumerator];
+	}
+	else
+	{
+		[NSApp presentError: [res error] modalForWindow: [mController mainWindow]
+				   delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	}
+}
+
+
 - (void) continueImport: (NSArray *) statements modifyDatabase: (BOOL) modifyDatabase
 {
 	if (modifyDatabase)
 	{
-		//FIXME: make me work.
+		NSEnumerator* statementEnumerator = [statements objectEnumerator];
+		[mController setProgressMin: 0.0 max: (double) [statements count]];
+		[mController displayProgressPanel: @"Importing data model"];
+		[self enumerateImportStatements: statementEnumerator];
 	}
 	else
 	{

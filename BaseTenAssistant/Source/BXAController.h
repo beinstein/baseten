@@ -106,6 +106,9 @@
 @interface BXAController (ProgressPanel)
 - (void) displayProgressPanel: (NSString *) message;
 - (void) hideProgressPanel;
+- (void) setProgressMin: (double) min max: (double) max;
+- (void) setProgressValue: (double) value;
+- (void) advanceProgress;
 @end
 
 

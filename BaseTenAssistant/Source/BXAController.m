@@ -460,26 +460,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
     [mLogView scrollRangeToVisible: range];
 	
 }
-@end
-
-
-@implementation BXAController (ProgressPanel)
-- (void) displayProgressPanel: (NSString *) message
-{
-    [mProgressField setStringValue: message];
-    if (NO == [mProgressPanel isVisible])
-    {
-        [mProgressIndicator startAnimation: nil];
-        [NSApp beginSheet: mProgressPanel modalForWindow: mMainWindow modalDelegate: self didEndSelector: NULL contextInfo: NULL];
-    }
-}
-
-- (void) hideProgressPanel
-{
-    [NSApp endSheet: mProgressPanel];
-    [mProgressPanel orderOut: nil];
-	[mProgressIndicator setIndeterminate: YES];
-}
 
 - (void) importModelAtURL: (NSURL *) URL
 {
@@ -513,10 +493,8 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	{
 		NSURL* url = [NSURL fileURLWithPath: path];
 		if ([mReader openFileAtURL: url])
-		{			
-			[mProgressIndicator setIndeterminate: NO];
-			[mProgressIndicator setMinValue: 0.0];
-			[mProgressIndicator setMaxValue: [mReader length]];
+		{	
+			[self setProgressMin: 0.0 max: [mReader length]];
 			[mProgressCancelButton setAction: @selector (cancelSchemaInstall:)];
 			
 			[self displayProgressPanel: @"Installing BaseTen schema…"];
@@ -545,6 +523,46 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	NSArray* types = [NSArray arrayWithObjects: @"xcdatamodel", @"xcdatamodeld", @"mom", @"momd", nil];
 	[openPanel beginSheetForDirectory: nil file: nil types: types modalForWindow: mMainWindow modalDelegate: self 
 					   didEndSelector: @selector (importOpenPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];	
+}
+@end
+
+
+@implementation BXAController (ProgressPanel)
+- (void) setProgressMin: (double) min max: (double) max
+{
+	[mProgressIndicator setIndeterminate: NO];
+	[mProgressIndicator setMinValue: min];
+	[mProgressIndicator setMaxValue: max];
+	[mProgressIndicator setDoubleValue: min];
+}
+
+- (void) setProgressValue: (double) value
+{
+	[mProgressIndicator setDoubleValue: value];
+}
+
+- (void) advanceProgress
+{
+	[mProgressIndicator incrementBy: 1.0];
+}
+
+- (void) displayProgressPanel: (NSString *) message
+{
+    [mProgressField setStringValue: message];
+    if (NO == [mProgressPanel isVisible])
+    {
+        [mProgressIndicator startAnimation: nil];
+        [NSApp beginSheet: mProgressPanel modalForWindow: mMainWindow modalDelegate: self didEndSelector: NULL contextInfo: NULL];
+    }
+}
+
+- (void) hideProgressPanel
+{
+	[self setProgressMin: 0.0 max: 0.0];
+	[mProgressPanel displayIfNeeded];
+    [NSApp endSheet: mProgressPanel];
+    [mProgressPanel orderOut: nil];
+	[mProgressIndicator setIndeterminate: YES];
 }
 @end
 
@@ -780,9 +798,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (void) SQLScriptReaderSucceeded: (BXPGSQLScriptReader *) reader userInfo: (id) userInfo
 {
-	[mProgressIndicator setMaxValue: 0.0];
-	[mProgressIndicator setDoubleValue: 0.0];
-	[mProgressIndicator display];
 	[self hideProgressPanel];
 	
 	InvokeRecoveryInvocation (userInfo, YES);
@@ -805,7 +820,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (void) SQLScriptReader: (BXPGSQLScriptReader *) reader advancedToPosition: (off_t) position userInfo: (id) userInfo
 {
-	[mProgressIndicator setDoubleValue: (double) position];
+	[self setProgressValue: (double) position];
 }
 @end
 
