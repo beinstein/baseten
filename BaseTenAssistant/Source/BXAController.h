@@ -37,6 +37,9 @@
 @class MKCStackView;
 
 
+extern NSError* BXASchemaInstallError ();
+
+
 @interface BXAController : NSObject 
 {
 	MKCPolishedCornerView* mCornerView;

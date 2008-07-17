@@ -65,8 +65,8 @@ enum BXAControllerErrorCode
 __strong static BXAController* gController = nil;
 
 
-static NSError*
-SchemaInstallError ()
+NSError*
+BXASchemaInstallError ()
 {
 	NSString* recoverySuggestion = @"BaseTen requires various functions and tables. They will be installed in a separate schema.";
 	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -111,7 +111,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	{
 		retval = NO;
 		if (outError)
-			*outError = SchemaInstallError ();
+			*outError = BXASchemaInstallError ();
 	}
 	return retval;
 }
@@ -139,7 +139,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	{
 		retval = NO;
 		if (outError)
-			*outError = SchemaInstallError ();
+			*outError = BXASchemaInstallError ();
 	}
 	return retval;
 }
@@ -193,7 +193,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			*ioValue = [NSNumber numberWithBool: NO];
 				
 		if (outError)
-			*outError = SchemaInstallError ();
+			*outError = BXASchemaInstallError ();
 	}
 	return retval;
 }

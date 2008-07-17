@@ -36,16 +36,9 @@
 #import <BaseTen/PGTSResultSet.h>
 #import <BaseTen/BXPGInterface.h>
 #import <BaseTen/BXPGTransactionHandler.h>
+#import <BaseTen/BXPGEntityImporter.h>
 
 static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
-
-
-struct ImportContextInfo 
-{
-	__strong NSArray* statements;
-	BOOL modifyDatabase;
-};
-
 
 
 @interface NSEntityDescription (BXAImportControllerAdditions)
@@ -117,49 +110,51 @@ struct ImportContextInfo
 	   didEndSelector: @selector (importPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
 }
 
-
-- (void) enumerateImportStatements: (NSEnumerator *) statementEnumerator
+- (void) entityImporterAdvanced: (BXPGEntityImporter *) importer
 {
-	NSString* statement = [statementEnumerator nextObject];
-	if (statement)
-	{
-		[mController advanceProgress];
-		PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
-		[connection sendQuery: statement delegate: self callback: @selector (receivedImportResult:) 
-			   parameterArray: nil userInfo: statementEnumerator];
-	}
-	else
-	{
-		[mController hideProgressPanel];
-		
-		//FIXME: enable imported tables.
-	}
+	[mController advanceProgress];
 }
 
-
-- (void) receivedImportResult: (PGTSResultSet *) res
+- (void) continueEnabling
 {
-	if ([res querySucceeded])
+	NSError* error = nil;
+	[mEntityImporter enableEntities: &error];
+	if (error)
 	{
-		NSEnumerator* statementEnumerator = (id) [res userInfo];
-		[self enumerateImportStatements: statementEnumerator];
-	}
-	else
-	{
-		[NSApp presentError: [res error] modalForWindow: [mController mainWindow]
+		[NSApp presentError: error modalForWindow: [mController mainWindow] 
 				   delegate: nil didPresentSelector: NULL contextInfo: NULL];
 	}
 }
 
-
-- (void) continueImport: (NSArray *) statements modifyDatabase: (BOOL) modifyDatabase
+- (void) entityImporter: (BXPGEntityImporter *) importer finishedImporting: (BOOL) succeeded error: (NSError *) error
 {
+	[mController hideProgressPanel];
+
+	if (succeeded)
+	{
+		if ([mController hasBaseTenSchema])
+			[self continueEnabling];
+		else
+		{
+			[NSApp presentError: BXASchemaInstallError () modalForWindow: [mController mainWindow] 
+					   delegate: self didPresentSelector: @selector (schemaErrorEnded:contextInfo:) contextInfo: NULL];
+		}
+	}
+	else
+	{
+		[NSApp presentError: error modalForWindow: [mController mainWindow]
+				   delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	}
+}
+
+- (void) continueImport: (BOOL) modifyDatabase
+{
+	NSArray* statements = [mEntityImporter importStatements];
 	if (modifyDatabase)
 	{
-		NSEnumerator* statementEnumerator = [statements objectEnumerator];
 		[mController setProgressMin: 0.0 max: (double) [statements count]];
 		[mController displayProgressPanel: @"Importing data model"];
-		[self enumerateImportStatements: statementEnumerator];
+		[mEntityImporter importEntities];
 	}
 	else
 	{
@@ -174,7 +169,6 @@ struct ImportContextInfo
 	}
 }
 
-
 static int 
 ShouldImport (id entity)
 {
@@ -183,39 +177,47 @@ ShouldImport (id entity)
 
 - (void) import: (BOOL) modifyDatabase usingSheet: (BOOL) useSheet
 {
-	if (! mEntityConverter)
-		mEntityConverter = [[BXPGEntityConverter alloc] init];
+	NSArray* importedEntities = [[mEntities arrangedObjects] PGTSSelectFunction: &ShouldImport];
+
+	if (! mEntityImporter)
+	{
+		mEntityImporter = [[BXPGEntityImporter alloc] init];		
+		[mEntityImporter setDatabaseContext: mContext];
+		[mEntityImporter setDelegate: self];
+	}
+	[mEntityImporter setSchemaName: mSchemaName];
+	[mEntityImporter setEntities: importedEntities];
 	
 	NSArray* errors = nil;
-	NSArray* importedEntities = [[mEntities arrangedObjects] PGTSSelectFunction: &ShouldImport];
-	NSArray* statements = [mEntityConverter statementsForEntities: importedEntities schemaName: mSchemaName
-														  context: mContext errors: &errors];
+	[mEntityImporter importStatements: &errors];
 	
 	if (0 < [errors count])
 	{
 		[mImportErrors setContent: errors];
-		struct ImportContextInfo* ctx = NSAllocateCollectable (sizeof (struct ImportContextInfo), NSScannedOption);
-		ctx->statements = statements;
-		ctx->modifyDatabase = modifyDatabase;
-		
+
 		//Not sure if window is allowed to be nil, but running a modal session doesn't fit into the same abstraction pattern.
 		[NSApp beginSheet: mChangePanel modalForWindow: useSheet ? [mController mainWindow] : nil
 			modalDelegate: self didEndSelector: @selector (importErrorSheetDidEnd:returnCode:contextInfo:) 
-			  contextInfo: ctx];
+			  contextInfo: (void *)(modifyDatabase ? 1 : 0)];
 	}
 	else
 	{
-		[self continueImport: statements modifyDatabase: modifyDatabase];
+		[self continueImport: modifyDatabase];
 	}	
 }
 
+			
+- (void) schemaErrorEnded: (BOOL) didRecover contextInfo: (void *) contextInfo
+{
+	if (didRecover)
+		[self continueEnabling];
+}
 
 - (void) importErrorSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
 	if (returnCode)
 	{
-		struct ImportContextInfo* ctx = (struct ImportContextInfo *) contextInfo;
-		[self continueImport: ctx->statements modifyDatabase: ctx->modifyDatabase];
+		[self continueImport: (int) contextInfo];
 	}
 }
 

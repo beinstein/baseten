@@ -27,18 +27,18 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import <BaseTen/BXPGEntityConverter.h>
+#import <BaseTen/BXPGEntityImporter.h>
 @class MKCPolishedHeaderView;
 @class BXAController;
 
 
-@interface BXAImportController : NSWindowController 
+@interface BXAImportController : NSWindowController <BXPGEntityImporterDelegate>
 {
 	BXAController* mController;
 	BXDatabaseContext* mContext;
 	NSManagedObjectModel* mModel;
 	NSString* mSchemaName;
-	BXPGEntityConverter* mEntityConverter; //Currently we only support PostgreSQL.
+	BXPGEntityImporter* mEntityImporter; //Currently we only support PostgreSQL.
 	
 	IBOutlet NSArrayController* mConfigurations;
 	IBOutlet NSArrayController* mEntities;
