@@ -9,10 +9,9 @@
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="469"/>
-			<integer value="712"/>
 			<integer value="558"/>
+			<integer value="712"/>
 			<integer value="629"/>
-			<integer value="827"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1128,7 +1127,7 @@
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{425, 175}</string>
 				<object class="NSView" key="NSWindowView" id="957137145">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">260</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1228,7 +1227,6 @@
 						</object>
 					</object>
 					<string key="NSFrameSize">{425, 233}</string>
-					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMinSize">{425, 197}</string>
@@ -1453,6 +1451,7 @@
 					<string>canEnableForAssistant</string>
 					<string>value.canEnableForAssistant</string>
 					<string>value.enabledForAssistantV</string>
+					<string>value.canSetPrimaryKey</string>
 				</object>
 				<bool key="NSEditable">YES</bool>
 				<bool key="NSAvoidsEmptySelection">YES</bool>
@@ -2730,22 +2729,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: selection.value.isView</string>
-						<reference key="source" ref="475048999"/>
-						<reference key="destination" ref="80697434"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="475048999"/>
-							<reference key="NSDestination" ref="80697434"/>
-							<string key="NSLabel">enabled: selection.value.isView</string>
-							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">selection.value.isView</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">891</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">value: selection.value.enabledForAssistant</string>
 						<reference key="source" ref="811681282"/>
 						<reference key="destination" ref="80697434"/>
@@ -2811,6 +2794,38 @@
 						<reference key="destination" ref="811910954"/>
 					</object>
 					<int key="connectionID">896</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.value.canEnableForAssistant</string>
+						<reference key="source" ref="811681282"/>
+						<reference key="destination" ref="80697434"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="811681282"/>
+							<reference key="NSDestination" ref="80697434"/>
+							<string key="NSLabel">enabled: selection.value.canEnableForAssistant</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.value.canEnableForAssistant</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">899</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: selection.value.canSetPrimaryKey</string>
+						<reference key="source" ref="475048999"/>
+						<reference key="destination" ref="80697434"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="475048999"/>
+							<reference key="NSDestination" ref="80697434"/>
+							<string key="NSLabel">enabled: selection.value.canSetPrimaryKey</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">selection.value.canSetPrimaryKey</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">900</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -4794,7 +4809,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">896</int>
+			<int key="maxID">900</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -94,9 +94,24 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 
 @implementation BXEntityDescription (BXAControllerAdditions)
++ (NSSet *) keyPathsForValuesAffectingCanSetPrimaryKey
+{
+	return [NSSet setWithObjects: @"isEnabled", nil];
+}
+
+- (BOOL) canSetPrimaryKey
+{
+	return ([self isView] && ![self isEnabled]);
+}
+
++ (NSSet *) keyPathsForValuesAffectingCanEnableForAssistant
+{
+	return [NSSet setWithObject: @"primaryKeyFields"];
+}
+
 - (BOOL) canEnableForAssistant
 {
-	return ([self isView] || [gController hasBaseTenSchema]);
+	return (! [self isView] || 0 < [[self primaryKeyFields] count]);
 }
 
 - (BOOL) isEnabledForAssistant
@@ -875,31 +890,41 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 @implementation BXAController (IBActions)
 - (IBAction) reload: (id) sender
 {
-	BOOL succeeded = YES;
+	BOOL ok = YES;
 	NSError* error = nil;
 
 	[mProgressCancelButton setEnabled: NO];
 	[self displayProgressPanel: @"Reloading"];
-
-	NSModalSession session = [NSApp beginModalSessionForWindow: mMainWindow];
-
-	[[(BXPGInterface *) [mContext databaseInterface] transactionHandler] refreshDatabaseDescription];
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: &error];
 	
-	[self setProgressMin: 0.0 max: (double) [entities count]];
-	for (NSArray* entityDict in [entities objectEnumerator])
+	NSModalSession session = [NSApp beginModalSessionForWindow: mMainWindow];
+	
+	BXPGTransactionHandler* transactionHandler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
+	[transactionHandler refreshDatabaseDescription];
+	
+	[self willChangeValueForKey: @"hasBaseTenSchema"];
+	ok = [[transactionHandler databaseDescription] checkBaseTenSchema: &error];
+	[self didChangeValueForKey: @"hasBaseTenSchema"];
+
+	NSDictionary* entities = nil;
+	if (ok)
 	{
-		for (BXEntityDescription* entity in [entityDict objectEnumerator])
-		{				
-			[self advanceProgress];
-			[entity setValidated: NO];
-			[mContext validateEntity: entity error: &error];
-			
-			if (error || NSRunContinuesResponse != [NSApp runModalSession: session])
-			{
-				succeeded = NO;
-				break;
-			}				
+		entities = [mContext entitiesBySchemaAndName: &error];
+		
+		[self setProgressMin: 0.0 max: (double) [entities count]];
+		for (NSArray* entityDict in [entities objectEnumerator])
+		{
+			for (BXEntityDescription* entity in [entityDict objectEnumerator])
+			{				
+				[self advanceProgress];
+				[entity setValidated: NO];
+				[mContext validateEntity: entity error: &error];
+				
+				if (error || NSRunContinuesResponse != [NSApp runModalSession: session])
+				{
+					ok = NO;
+					break;
+				}				
+			}
 		}
 	}
 	
@@ -907,7 +932,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[self hideProgressPanel];
 	[mProgressCancelButton setEnabled: YES];
 	
-	if (succeeded)
+	if (ok)
 		[mEntitiesBySchema setContent: entities];
 	else
 	{
