@@ -387,6 +387,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) continueDisconnect
 {	
+	[mEntitiesBySchema setContent: nil];
 	[mContext disconnect];
 	[mStatusTextField setStringValue: @"Not connected."];
 	[mStatusTextField makeEtchedSmall: YES];
@@ -832,21 +833,64 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 {
 	[self setProgressValue: (double) position];
 }
+
+- (void) disconnectAfterRefresh: (PGTSResultSet *) res
+{
+	[self hideProgressPanel];
+	[mProgressCancelButton setEnabled: YES];
+	if ([res querySucceeded])
+		[self continueDisconnect];
+	else
+	{
+		[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil 
+		 didPresentSelector: NULL contextInfo: NULL];
+	}
+}
+
+- (void) continueTermination
+{
+	[NSApp terminate: nil];
+}
+
+- (void) terminateAfterRefresh: (PGTSResultSet *) res
+{
+	[self hideProgressPanel];
+	[self continueTermination];
+}
+
+- (void) refreshCaches: (BOOL) terminate
+{
+	SEL callback = @selector (disconnectAfterRefresh:);
+	if (terminate)
+		callback = @selector (terminateAfterRefresh:);
+	
+	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+	[mProgressCancelButton setEnabled: NO];
+	[self displayProgressPanel: @"Refreshing caches"];
+	[connection sendQuery: @"SELECT baseten.refreshcaches ();" delegate: self callback: callback];
+}
 @end
 
 
 @implementation BXAController (IBActions)
 - (IBAction) disconnect: (id) sender
 {
-	[self continueDisconnect];
+	if ([self hasBaseTenSchema])
+		[self refreshCaches: NO];
+	else
+		[self continueDisconnect];
 }
 
 
 - (IBAction) terminate: (id) sender
 {
-    [mConnectPanel orderOut: nil];
-    [self hideProgressPanel];	
-    [NSApp terminate: nil];
+	if ([self hasBaseTenSchema])
+		[self refreshCaches: YES];
+	else
+	{
+	    [mConnectPanel orderOut: nil];
+	    [NSApp terminate: nil];
+	}
 }
 
 

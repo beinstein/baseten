@@ -153,6 +153,7 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 	if (modifyDatabase)
 	{
 		[mController setProgressMin: 0.0 max: (double) [statements count]];
+		//FIXME: progress cancel?
 		[mController displayProgressPanel: @"Importing data model"];
 		[mEntityImporter importEntities];
 	}
