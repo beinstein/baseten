@@ -34,5 +34,6 @@
 - (NSArray *) BXPGRelationshipConstraintsWithColumns: (BOOL) createColumns 
 										 constraints: (BOOL) createConstraints
 											  schema: (NSString *) schemaName
+									enabledRelations: (NSMutableArray *) enabledRelations
 											  errors: (NSMutableArray *) errors;
 @end

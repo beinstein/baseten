@@ -189,6 +189,7 @@ NextIdentifier ()
     {
         retval = [PGTSResultSet resultWithPGresult: result connection: connection];
         [retval setIdentifier: mIdentifier];
+		[retval setUserInfo: mUserInfo];
         [mDelegate performSelector: mCallback withObject: retval];
     }
     else
@@ -216,7 +217,6 @@ NextIdentifier ()
         retval = [self receiveForConnection: connection] ?: retval;
         [connection processNotifications];
     }
-	[retval setUserInfo: mUserInfo];
     return retval;
 }
 

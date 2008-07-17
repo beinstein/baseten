@@ -127,6 +127,7 @@ ImportError (NSString* message, NSString* reason)
 - (NSArray *) statementsForEntities: (NSArray *) entityArray 
 						 schemaName: (NSString *) schemaName
 						 	context: (BXDatabaseContext *) context
+				   enabledRelations: (NSArray **) outArray
 							 errors: (NSArray **) outErrors
 {
 	Expect (entityArray);
@@ -137,6 +138,7 @@ ImportError (NSString* message, NSString* reason)
 	
 	NSMutableArray* errors = [NSMutableArray array];
 	NSMutableArray* retval = [NSMutableArray array];
+	NSMutableArray* enabledRelations = [NSMutableArray array];
 	PGTSConnection* connection = [[(BXPGInterface *) [context databaseInterface] transactionHandler] connection];
 	entityArray = [self sortedEntities: entityArray errors: errors];
 	
@@ -144,6 +146,7 @@ ImportError (NSString* message, NSString* reason)
 	{
 		[retval addObject: [currentEntity BXPGCreateStatementWithIDColumn: YES inSchema: schemaName errors: errors]];
 		[retval addObject: [currentEntity BXPGPrimaryKeyConstraintInSchema: schemaName]];
+		[enabledRelations addObject: [currentEntity name]];
 		
 		TSEnumerate (currentAttr, e, [[currentEntity attributesByName] objectEnumerator])
 		{
@@ -163,7 +166,9 @@ ImportError (NSString* message, NSString* reason)
 			if (! [handledRelationships containsObject: currentRel])
 			{
 				NSArray* constraints = [currentRel BXPGRelationshipConstraintsWithColumns: YES constraints: YES 
-																				   schema: schemaName errors: errors];
+																				   schema: schemaName 
+																		 enabledRelations: enabledRelations
+																				   errors: errors];
 				[retval addObjectsFromArray: constraints];
 				[handledRelationships addObject: currentRel];
 				if ([currentRel inverseRelationship])
@@ -174,6 +179,9 @@ ImportError (NSString* message, NSString* reason)
 	
 	if (outErrors)
 		*outErrors = errors;
+	
+	if (outArray)
+		*outArray = enabledRelations;
 	
 	return retval;
 }

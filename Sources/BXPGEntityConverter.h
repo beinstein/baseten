@@ -37,5 +37,6 @@
 - (NSArray *) statementsForEntities: (NSArray *) entityArray 
 						 schemaName: (NSString *) schemaName
 						 	context: (BXDatabaseContext *) context
+				   enabledRelations: (NSArray **) outArray
 							 errors: (NSArray **) outErrors;
 @end

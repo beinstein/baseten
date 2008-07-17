@@ -79,6 +79,7 @@ ImportError (NSString* message, NSString* reason)
 - (NSArray *) BXPGRelationshipConstraintsWithColumns: (BOOL) createColumns 
 										 constraints: (BOOL) createConstraints
 											  schema: (NSString *) schemaName
+									enabledRelations: (NSMutableArray *) enabledRelations
 											  errors: (NSMutableArray *) errorMessages
 {
 	Expect (schemaName);
@@ -136,6 +137,7 @@ ImportError (NSString* message, NSString* reason)
 			NSString* createFormat = @"CREATE TABLE \"%@\".\"%@\" (\"%@\" integer, \"%@\" integer);";
 			[retval addObject: [NSString stringWithFormat: dropFormat, schemaName, helperTableName]];
 			[retval addObject: [NSString stringWithFormat: createFormat, schemaName, helperTableName, idName, dstIdName]];
+			[enabledRelations addObject: helperTableName];
 		}
 		
 		if (createConstraints)
