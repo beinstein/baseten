@@ -84,7 +84,7 @@
 	return mFileSize;
 }
    
-- (void) readAndExecuteAsynchronously
+- (void) readAndExecute
 {
 	ExpectV (mFile);
 	ExpectV (mConnection);
@@ -96,6 +96,20 @@
 	}
 	
 	[mScanner continueScanning];
+}
+
+
+- (void) readAndExecuteAsynchronously
+{
+	mAsynchronous = YES;
+	[self readAndExecute];
+}
+
+
+- (void) readAndExecuteSynchronously
+{
+	mAsynchronous = NO;
+	[self readAndExecute];
 }
 
 
@@ -173,6 +187,11 @@
 	}
 }
 
+- (id) delegateUserInfo
+{
+	return mDelegateUserInfo;
+}
+
 - (void) cancel
 {
 	mCanceling = YES;
@@ -204,7 +223,18 @@
 - (void) scanner: (BXPGSQLScanner *) scanner scannedQuery: (NSString *) query complete: (BOOL) isComplete
 {
 	if (isComplete)
-		[mConnection sendQuery: query delegate: self callback: @selector (receivedResult:)];
+	{
+		if (mAsynchronous)
+			[mConnection sendQuery: query delegate: self callback: @selector (receivedResult:)];
+		else
+		{
+			//Mutual recursion is used quite a lot here. With large SQL files 
+			//tail recursion (sibling call) optimization might be needed.
+			
+			PGTSResultSet* res = [mConnection executeQuery: query];
+			[self receivedResult: res];
+		}
+	}
 }
 
 - (void) scanner: (BXPGSQLScanner *) scanner scannedCommand: (NSString *) command options: (NSString *) options

@@ -59,15 +59,18 @@
 	
 	BOOL mCanceling;
 	BOOL mIgnoresErrors;
+	BOOL mAsynchronous;
 }
 - (void) setConnection: (PGTSConnection *) connection;
 - (void) setDelegate: (id <BXPGSQLScriptReaderDelegate>) anObject;
 - (void) setDelegateUserInfo: (id) anObject;
+- (id) delegateUserInfo;
 - (void) setIgnoresErrors: (BOOL) flag;
 
 - (BOOL) openFileAtURL: (NSURL *) fileURL;
 - (off_t) length;
 - (void) readAndExecuteAsynchronously;
+- (void) readAndExecuteSynchronously;
 - (void) cancel;
 
 - (void) setScanner: (BXPGSQLScanner *) scanner;
