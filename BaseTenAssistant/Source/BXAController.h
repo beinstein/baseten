@@ -38,9 +38,6 @@
 @class RKRegex;
 
 
-extern NSError* BXASchemaInstallError ();
-
-
 @interface BXAController : NSObject 
 {
 	MKCPolishedCornerView* mCornerView;
@@ -98,6 +95,8 @@ extern NSError* BXASchemaInstallError ();
 - (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute;
 - (void) logAppend: (NSString *) string;
 - (void) finishedImporting;
+- (NSError *) schemaInstallError;
+- (BOOL) schemaInstallDenied;
 @end
 
 

@@ -243,8 +243,12 @@ ShouldImport (id entity)
 				if (shouldContinue)
 				{
 					if (! [mController hasBaseTenSchema])
+						shouldContinue = NO;
+					
+					if (! [mController schemaInstallDenied])
 					{
-						[NSApp presentError: BXASchemaInstallError () modalForWindow: [mController mainWindow] 
+						NSError* error = [mController schemaInstallError];
+						[NSApp presentError: error modalForWindow: [mController mainWindow] 
 								   delegate: self didPresentSelector: @selector (errorEnded:contextInfo:) contextInfo: NULL];
 						shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
 					}

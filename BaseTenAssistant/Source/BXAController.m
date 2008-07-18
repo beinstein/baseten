@@ -65,24 +65,6 @@ enum BXAControllerErrorCode
 __strong static BXAController* gController = nil;
 
 
-NSError*
-BXASchemaInstallError ()
-{
-	NSString* recoverySuggestion = @"BaseTen requires various functions and tables. They will be installed in a separate schema.";
-	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedDescriptionKey,
-							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedFailureReasonErrorKey,
-							  recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
-							  [NSArray arrayWithObjects: @"Install", @"Don't install", nil], NSLocalizedRecoveryOptionsErrorKey,
-							  gController, NSRecoveryAttempterErrorKey,
-							  nil];
-	NSError* error = [NSError errorWithDomain: kBXAControllerErrorDomain 
-										 code: kBXAControllerErrorNoBaseTenSchema 
-									 userInfo: userInfo];
-	return error;	
-}
-
-
 NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	NSMethodSignature* sig = [target methodSignatureForSelector: selector];
@@ -114,6 +96,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	return (! [self isView] || 0 < [[self primaryKeyFields] count]);
 }
 
++ (NSSet *) keyPathsForValuesAffectingEnabledForAssistant
+{
+	return [NSSet setWithObject: @"enabled"];
+}
+
 - (BOOL) isEnabledForAssistant
 {
 	return [self isEnabled];
@@ -126,7 +113,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	{
 		retval = NO;
 		if (outError)
-			*outError = BXASchemaInstallError ();
+			*outError = [gController schemaInstallError];
 	}
 	return retval;
 }
@@ -135,6 +122,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	NSLog (@"setting enabling");
 	[gController process: aBool entity: self];
+}
+
++ (NSSet *) keyPathsForValuesAffectingEnabledForAssistantV
+{
+	return [NSSet setWithObject: @"enabled"];
 }
 
 - (BOOL) isEnabledForAssistantV
@@ -154,7 +146,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	{
 		retval = NO;
 		if (outError)
-			*outError = BXASchemaInstallError ();
+			*outError = [gController schemaInstallError];
 	}
 	return retval;
 }
@@ -208,7 +200,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			*ioValue = [NSNumber numberWithBool: NO];
 				
 		if (outError)
-			*outError = BXASchemaInstallError ();
+			*outError = [gController schemaInstallError];
 	}
 	return retval;
 }
@@ -216,6 +208,28 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 
 @implementation BXAController
+- (NSError *) schemaInstallError
+{
+	NSError* error = nil;
+	NSString* recoverySuggestion = @"BaseTen requires various functions and tables. They will be installed in a separate schema.";
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedDescriptionKey,
+							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedFailureReasonErrorKey,
+							  recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
+							  [NSArray arrayWithObjects: @"Install", @"Don't install", nil], NSLocalizedRecoveryOptionsErrorKey,
+							  gController, NSRecoveryAttempterErrorKey,
+							  nil];
+	error = [NSError errorWithDomain: kBXAControllerErrorDomain 
+								code: kBXAControllerErrorNoBaseTenSchema 
+							userInfo: userInfo];
+	return error;	
+}
+
+- (BOOL) schemaInstallDenied
+{
+	return mDeniedSchemaInstall;
+}
+
 - (NSPredicate *) attributeFilterPredicate
 {
 	return [NSPredicate predicateWithFormat: @"value.isExcluded == false"];
@@ -471,7 +485,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 		[(BXPGInterface *) [mContext databaseInterface] process: newState entities: entityArray error: &localError];
 		if (localError)
 		{
-			[entity setIsEnabled: !newState];
+			[entity setEnabled: !newState];
 			[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
 		}
 	}
@@ -793,6 +807,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 				else
 				{
 					BOOL status = NO;
+					mDeniedSchemaInstall = YES;
 					[recoveryInvocation setArgument: &status atIndex: 2];
 					[recoveryInvocation invoke];
 				}
@@ -822,6 +837,10 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 				{
 					[self installBaseTenSchema: MakeInvocation (NSApp, @selector (stopModalWithCode:))];
 					retval = [NSApp runModalForWindow: mMainWindow];
+				}
+				else
+				{
+					mDeniedSchemaInstall = YES;
 				}
 				break;
 			}
@@ -1058,7 +1077,15 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (IBAction) removeSchema: (id) sender
 {
-	//FIXME: make me work.
+	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+	PGTSResultSet* res = [connection executeQuery: @"DROP SCHEMA baseten CASCADE;"];
+	if (! [res querySucceeded])
+		[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	else
+	{
+		for (id pair in [mEntities arrangedObjects])
+			[[pair value] setEnabled: NO];
+	}
 }
 @end
 
