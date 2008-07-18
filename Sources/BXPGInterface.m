@@ -1213,6 +1213,10 @@ error:
 			BXEntityDescription* entity = [mContext entityForTable: tableName
 														  inSchema: schemaName
 															 error: error];
+			
+			//FIXME: hackish; we should track all changes in PGTSTableDescriptions perhaps by using NSKVO.
+			[entity setIsEnabled: [currentTable isEnabled]];
+			
 			NSMutableDictionary* schema = [retval objectForKey: schemaName];
 			if (! schema)
 			{

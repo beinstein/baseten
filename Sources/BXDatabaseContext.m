@@ -264,6 +264,7 @@ bx_query_during_reconnect ()
 	[mConnectionSetupManager release];
     [mNotificationCenter release];
     [mEntities release];
+	[mEntitiesBySchema release];
     [mRelationships release];
     
     if (NULL != mKeychainPasswordItem)
@@ -1894,12 +1895,16 @@ bx_query_during_reconnect ()
 
 
 @implementation BXDatabaseContext (HelperMethods)
-- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error
+- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error
 {
-	//FIXME: cache these? Then we need a reloading method.
-	//FIXME: error handling.
-	NSError* localError = nil;
-	return [mDatabaseInterface entitiesBySchemaAndName: &localError];
+	if (reload || !mEntitiesBySchema)
+	{
+		NSError* localError = nil;
+		[mEntitiesBySchema release];
+		mEntitiesBySchema = [[mDatabaseInterface entitiesBySchemaAndName: &localError] retain];
+		BXHandleError (error, localError);
+	}
+	return mEntitiesBySchema;
 }
 
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
@@ -1934,6 +1939,16 @@ bx_query_during_reconnect ()
 }
 //@}
 
+- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName error: (NSError **) error
+{
+	return ([self matchingEntity: entity inSchema: schemaName error: error] ? YES : NO);
+}
+
+- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName error: (NSError **) error
+{
+	NSDictionary* entities = [self entitiesBySchemaAndName: NO error: error];
+	return [[entities objectForKey: schemaName] objectForKey: [entity name]];
+}
 @end
 
 

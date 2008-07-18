@@ -51,6 +51,7 @@
 @class BXDatabaseObject;
 @class BXEntityDescription;
 @class BXDatabaseObjectID;
+@class NSEntityDescription;
 
 
 @interface BXDatabaseContext : NSObject
@@ -67,6 +68,7 @@
     NSNotificationCenter*                   mNotificationCenter;
     NSMutableSet*                           mEntities;
     NSMutableSet*                           mRelationships;
+	NSMutableDictionary*					mEntitiesBySchema;
 	
 	/** An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;
@@ -176,7 +178,9 @@
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error;
-- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error;
+- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error;
+- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName error: (NSError **) error;
+- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName error: (NSError **) error;
 @end
 
 

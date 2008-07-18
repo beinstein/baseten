@@ -144,6 +144,15 @@ ImportError (NSString* message, NSString* reason)
 	
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
+		BXEntityDescription* match = [context matchingEntity: currentEntity inSchema: schemaName error: NULL];
+		if (match)
+		{
+			if ([match isView])
+				[retval addObject: [NSString stringWithFormat: @"DROP VIEW \"%@\".\"%@\";", schemaName, [match name]]];
+			else
+				[retval addObject: [NSString stringWithFormat: @"DROP TABLE \"%@\".\"%@\";", schemaName, [match name]]];
+		}
+		
 		[retval addObject: [currentEntity BXPGCreateStatementWithIDColumn: YES inSchema: schemaName errors: errors]];
 		[retval addObject: [currentEntity BXPGPrimaryKeyConstraintInSchema: schemaName]];
 		[enabledRelations addObject: [currentEntity name]];
