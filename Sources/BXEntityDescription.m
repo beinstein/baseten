@@ -716,7 +716,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 		mCapabilities &= ~aCapability;
 }
 
-- (void) setIsEnabled: (BOOL) flag
+- (void) setEnabled: (BOOL) flag
 {
 	if (flag)
 		mFlags |= kBXEntityIsEnabled;

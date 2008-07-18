@@ -830,7 +830,7 @@ bail:
 			
 			if ([table isEnabled])
 			{
-				[entity setIsEnabled: YES];
+				[entity setEnabled: YES];
 				[entity setHasCapability: kBXEntityCapabilityAutomaticUpdate to: YES];
 				[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
 			}
@@ -1215,7 +1215,7 @@ error:
 															 error: error];
 			
 			//FIXME: hackish; we should track all changes in PGTSTableDescriptions perhaps by using NSKVO.
-			[entity setIsEnabled: [currentTable isEnabled]];
+			[entity setEnabled: [currentTable isEnabled]];
 			
 			NSMutableDictionary* schema = [retval objectForKey: schemaName];
 			if (! schema)
@@ -1321,7 +1321,7 @@ error:
 		if ([res querySucceeded])
 		{
 			TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
-				[currentEntity setIsEnabled: shouldEnable];
+				[currentEntity setEnabled: shouldEnable];
 		}
 		else
 		{
