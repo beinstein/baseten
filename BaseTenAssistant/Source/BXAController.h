@@ -96,6 +96,7 @@ extern NSError* BXASchemaInstallError ();
 - (void) process: (BOOL) newState entity: (BXEntityDescription *) entity;
 - (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute;
 - (void) logAppend: (NSString *) string;
+- (void) finishedImporting;
 @end
 
 

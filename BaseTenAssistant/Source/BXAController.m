@@ -436,6 +436,26 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
+- (BOOL) checkBaseTenSchema: (NSError **) error
+{
+	NSError* localError = nil;
+	[self willChangeValueForKey: @"hasBaseTenSchema"];
+	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
+	BOOL retval = [db checkBaseTenSchema: &localError];
+	[self didChangeValueForKey: @"hasBaseTenSchema"];
+
+	if (! retval)
+	{
+		if (error)
+			*error = localError;
+		else
+			[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	}
+	
+	return retval;
+}
+
+
 - (NSWindow *) mainWindow
 {
 	return mMainWindow;
@@ -545,6 +565,12 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[openPanel beginSheetForDirectory: nil file: nil types: types modalForWindow: mMainWindow modalDelegate: self 
 					   didEndSelector: @selector (importOpenPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];	
 }
+
+- (void) finishedImporting
+{
+	NSDictionary* entities = [mContext entitiesBySchemaAndName: NULL];
+	[mEntitiesBySchema setContent: entities];
+}
 @end
 
 
@@ -651,15 +677,9 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	NSDictionary* entities = [mContext entitiesBySchemaAndName: NULL];
 	[mEntitiesBySchema setContent: entities];
 	
-	NSError* error = nil;
 	BXPGInterface* interface = (id) [mContext databaseInterface];
-	
 	[mReader setConnection: [[interface transactionHandler] connection]];
-	
-	[self willChangeValueForKey: @"hasBaseTenSchema"];
-	if (! [[[interface transactionHandler] databaseDescription] checkBaseTenSchema: &error])
-		[NSApp presentError: error modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
-	[self didChangeValueForKey: @"hasBaseTenSchema"];
+	[self checkBaseTenSchema: NULL];
 }
 
 
@@ -826,7 +846,9 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 {
 	[self hideProgressPanel];
 	
-	InvokeRecoveryInvocation (userInfo, YES);
+	BOOL status = [self checkBaseTenSchema: NULL];
+	
+	InvokeRecoveryInvocation (userInfo, status);
 	[reader setDelegateUserInfo: nil];
 }
 
@@ -901,9 +923,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	BXPGTransactionHandler* transactionHandler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
 	[transactionHandler refreshDatabaseDescription];
 	
-	[self willChangeValueForKey: @"hasBaseTenSchema"];
-	ok = [[transactionHandler databaseDescription] checkBaseTenSchema: &error];
-	[self didChangeValueForKey: @"hasBaseTenSchema"];
+	ok = [self checkBaseTenSchema: &error];
 
 	NSDictionary* entities = nil;
 	if (ok)

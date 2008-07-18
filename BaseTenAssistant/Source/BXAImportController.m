@@ -133,7 +133,10 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 	if (succeeded)
 	{
 		if ([mController hasBaseTenSchema])
+		{
 			[self continueEnabling];
+			[mController finishedImporting];
+		}
 		else
 		{
 			[NSApp presentError: BXASchemaInstallError () modalForWindow: [mController mainWindow] 
@@ -212,6 +215,7 @@ ShouldImport (id entity)
 {
 	if (didRecover)
 		[self continueEnabling];
+	[mController finishedImporting];
 }
 
 - (void) importErrorSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
