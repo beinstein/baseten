@@ -35,7 +35,7 @@
 #import "MKCCollections.h"
 
 
-static id gProperties = nil;
+__strong static id gProperties = nil;
 
 
 /**
@@ -161,7 +161,7 @@ static id gProperties = nil;
 	if (!tooLate)
 	{
 		tooLate = YES;
-		gProperties = [[MKCHashTable alloc] init];
+		gProperties = [[NSMutableSet alloc] init];
 	}
 }
 
@@ -203,7 +203,7 @@ static id gProperties = nil;
 		[self setEntity: anEntity];
 		//Check only since only our code is supposed to create new properties.
 		BXAssertLog ([[self class] registerProperty: self entity: mEntity], 
-					   @"Expected to have only single instance of property %@.", self);
+					 @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
 }

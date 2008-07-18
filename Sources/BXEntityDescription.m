@@ -507,6 +507,9 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
 	if (attributes != mAttributes)
 	{
+		TSEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
+			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
+		
 		[mAttributes release];
 		mAttributes = [attributes copy];
 	}
@@ -576,6 +579,9 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
     @synchronized (mRelationships)
     {
+		TSEnumerate (currentRel, e, [mRelationships objectEnumerator])
+			[[currentRel class] unregisterProperty: currentRel entity: self];
+
 		[mRelationships removeAllObjects];
 		
 		//mRelationships is a map table.
@@ -596,6 +602,7 @@ FilterPkeyAttributes (id attribute, void* arg)
         //FIXME: this is a bit bad but there seems to be an over-retain for BXEntityDescription somewhere.
         [self setValidated: NO];
         
+		[[aRelationship class] unregisterProperty: aRelationship entity: self];
         [mRelationships removeObjectForKey: [aRelationship name]];
     }
 }

@@ -2460,6 +2460,7 @@ bx_query_during_reconnect ()
 						[entity setValidated: YES];
 					else
 					{
+						[entity setRelationships: nil];
 						NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
 						if (nil == *error)
 						{
