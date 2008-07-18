@@ -396,7 +396,7 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
     {
         NSString* schemaName = [table schemaName];
         NSMutableDictionary* schema = [mSchemas objectForKey: schemaName];
-        if (! schema)
+        if (! schema || [NSNull null] == (id) schema)
         {
             schema = [NSMutableDictionary dictionary];
             [mSchemas setObject: schema forKey: schemaName];

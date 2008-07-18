@@ -140,7 +140,11 @@ ImportError (NSString* message, NSString* reason)
 	NSMutableArray* retval = [NSMutableArray array];
 	NSMutableArray* enabledRelations = [NSMutableArray array];
 	PGTSConnection* connection = [[(BXPGInterface *) [context databaseInterface] transactionHandler] connection];
+	PGTSDatabaseDescription* database = [connection databaseDescription];
 	entityArray = [self sortedEntities: entityArray errors: errors];
+	
+	if (! [database schemaExists: schemaName])
+		[retval addObject: [NSString stringWithFormat: @"CREATE SCHEMA \"%@\";", schemaName]];
 	
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
