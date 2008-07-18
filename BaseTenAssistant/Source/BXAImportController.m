@@ -39,6 +39,7 @@
 #import <BaseTen/BXPGEntityImporter.h>
 
 static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
+static NSString* kBXATextColorKey = @"kBXATextColorKey";
 
 
 @interface NSEntityDescription (BXAImportControllerAdditions)
@@ -48,6 +49,18 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 
 
 @implementation NSEntityDescription (BXAImportControllerAdditions)
+- (NSColor *) BXATextColor
+{
+	return ([[self userInfo] objectForKey: kBXATextColorKey] ?: [NSColor blackColor]);
+}
+
+- (void) setBXATextColor: (NSColor *) aColor
+{
+	NSMutableDictionary* userInfo = [[self userInfo] mutableCopy];
+	[userInfo setObject: aColor forKey: kBXATextColorKey];
+	[self setUserInfo: userInfo];
+}
+
 - (BOOL) shouldImportBXA
 {
 	return [[[self userInfo] objectForKey: kBXAShouldImportKey] boolValue];
@@ -66,9 +79,25 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 @implementation BXAImportController
 @synthesize objectModel = mModel, schemaName = mSchemaName, databaseContext = mContext, controller = mController;
 
+- (void) checkNameConflicts
+{
+	BOOL hasConflicts = NO;
+	NSString* schemaName = mSchemaName ?: @"public";
+	
+	for (NSEntityDescription* entity in [mEntities arrangedObjects])
+	{
+		if ([mContext entity: entity existsInSchema: schemaName error: NULL])
+		{
+			hasConflicts = YES;
+			[entity setBXATextColor: [NSColor redColor]];
+		}
+	}
+	mHasNameConflicts = hasConflicts;
+}
+
 - (void) windowDidLoad
 {
-    NSDictionary* lightColours = [MKCPolishedHeaderView lightColours];
+	NSDictionary* lightColours = [MKCPolishedHeaderView lightColours];
 	[mLeftHeaderView setColours: lightColours];
 	[mLeftHeaderView setDrawingMask: kMKCPolishDrawLeftAccent | kMKCPolishDrawBottomLine | 
 	 kMKCPolishDrawTopLine | kMKCPolishDrawSeparatorLines];
@@ -115,62 +144,17 @@ static NSString* kBXAShouldImportKey = @"kBXAShouldImportKey";
 	[mController advanceProgress];
 }
 
-- (void) continueEnabling
-{
-	NSError* error = nil;
-	[mEntityImporter enableEntities: &error];
-	if (error)
-	{
-		[NSApp presentError: error modalForWindow: [mController mainWindow] 
-				   delegate: nil didPresentSelector: NULL contextInfo: NULL];
-	}
-}
-
 - (void) entityImporter: (BXPGEntityImporter *) importer finishedImporting: (BOOL) succeeded error: (NSError *) error
 {
 	[mController hideProgressPanel];
 
-	if (succeeded)
-	{
-		if ([mController hasBaseTenSchema])
-		{
-			[self continueEnabling];
-			[mController finishedImporting];
-		}
-		else
-		{
-			[NSApp presentError: BXASchemaInstallError () modalForWindow: [mController mainWindow] 
-					   delegate: self didPresentSelector: @selector (schemaErrorEnded:contextInfo:) contextInfo: NULL];
-		}
-	}
-	else
+	if (! succeeded)
 	{
 		[NSApp presentError: error modalForWindow: [mController mainWindow]
 				   delegate: nil didPresentSelector: NULL contextInfo: NULL];
 	}
-}
-
-- (void) continueImport: (BOOL) modifyDatabase
-{
-	NSArray* statements = [mEntityImporter importStatements];
-	if (modifyDatabase)
-	{
-		[mController setProgressMin: 0.0 max: (double) [statements count]];
-		//FIXME: progress cancel?
-		[mController displayProgressPanel: @"Importing data model"];
-		[mEntityImporter importEntities];
-	}
-	else
-	{
-		[mController displayLogWindow: nil];
-		[mController logAppend: @"\n\n\n---------- Beginning dry run ----------\n\n"];
-		for (NSString* statement in statements)
-		{
-			[mController logAppend: statement];
-			[mController logAppend: @"\n"];
-		}
-		[mController logAppend: @"\n----------- Ending dry run ------------\n\n\n"];
-	}
+	
+	[NSApp stopModalWithCode: succeeded];	
 }
 
 static int 
@@ -181,6 +165,7 @@ ShouldImport (id entity)
 
 - (void) import: (BOOL) modifyDatabase usingSheet: (BOOL) useSheet
 {
+	BOOL shouldContinue = YES;
 	NSArray* importedEntities = [[mEntities arrangedObjects] PGTSSelectFunction: &ShouldImport];
 
 	if (! mEntityImporter)
@@ -193,39 +178,105 @@ ShouldImport (id entity)
 	[mEntityImporter setEntities: importedEntities];
 	
 	NSArray* errors = nil;
-	[mEntityImporter importStatements: &errors];
+	NSArray* statements = [mEntityImporter importStatements: &errors];
 	
 	if (0 < [errors count])
 	{
+		shouldContinue = NO;
 		[mImportErrors setContent: errors];
 
-		//Not sure if window is allowed to be nil, but running a modal session doesn't fit into the same abstraction pattern.
-		[NSApp beginSheet: mChangePanel modalForWindow: useSheet ? [mController mainWindow] : nil
-			modalDelegate: self didEndSelector: @selector (importErrorSheetDidEnd:returnCode:contextInfo:) 
-			  contextInfo: (void *)(modifyDatabase ? 1 : 0)];
+		if (useSheet)
+		{
+			[NSApp beginSheet: mChangePanel modalForWindow: [mController mainWindow]
+				modalDelegate: self didEndSelector: NULL contextInfo: NULL];
+			shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+		}
+		else
+		{
+			shouldContinue = [NSApp runModalForWindow: mChangePanel];
+			[mChangePanel orderOut: nil];
+		}
 	}
-	else
+	
+	if (shouldContinue)
 	{
-		[self continueImport: modifyDatabase];
-	}	
+		if (! modifyDatabase)
+		{
+			[mController displayLogWindow: nil];
+			[mController logAppend: @"\n\n\n---------- Beginning dry run ----------\n\n"];
+			for (NSString* statement in statements)
+			{
+				[mController logAppend: statement];
+				[mController logAppend: @"\n"];
+			}
+			[mController logAppend: @"\n----------- Ending dry run ------------\n\n\n"];
+		}
+		else
+		{
+			if (mHasNameConflicts)
+			{
+				shouldContinue = NO;
+				NSString* message = @"Entities exist in the database that have the same names as some of those selected for import. Would you like to replace the existing entities?";
+				NSAlert* alert = [NSAlert alertWithMessageText: @"Replace existing entities with matching names?"
+												 defaultButton: @"Replace" alternateButton: @"Cancel" otherButton: nil 
+									 informativeTextWithFormat: message];
+				[alert layout];
+				NSArray* buttons = [alert buttons];
+				[[buttons objectAtIndex: 0] setKeyEquivalent: @""];
+				[[buttons objectAtIndex: 1] setKeyEquivalent: @"\r"];
+				
+				[alert beginSheetModalForWindow: [mController mainWindow] modalDelegate: self 
+								 didEndSelector: @selector (nameConflictAlertDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+				shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+			}
+			
+			if (! shouldContinue)
+				[self showPanel];
+			else
+			{
+				[mController setProgressMin: 0.0 max: (double) [statements count]];
+				//FIXME: progress cancel?
+				[mController displayProgressPanel: @"Importing data model"];
+				[mEntityImporter importEntities];
+				
+				shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+				if (shouldContinue)
+				{
+					if (! [mController hasBaseTenSchema])
+					{
+						[NSApp presentError: BXASchemaInstallError () modalForWindow: [mController mainWindow] 
+								   delegate: self didPresentSelector: @selector (errorEnded:contextInfo:) contextInfo: NULL];
+						shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+					}
+					
+					if (shouldContinue)
+					{
+						NSError* error = nil;
+						[mEntityImporter enableEntities: &error];
+						if (error)
+						{
+							[NSApp presentError: error modalForWindow: [mController mainWindow] 
+									   delegate: nil didPresentSelector: NULL contextInfo: NULL];
+							[NSApp runModalForWindow: [mController mainWindow]];
+						}					
+					}
+				}
+				[mController finishedImporting];
+			}
+		}
+	}
 }
 
 			
-- (void) schemaErrorEnded: (BOOL) didRecover contextInfo: (void *) contextInfo
+- (void) errorEnded: (BOOL) didRecover contextInfo: (void *) contextInfo
 {
-	if (didRecover)
-		[self continueEnabling];
-	[mController finishedImporting];
+	[NSApp stopModalWithCode: didRecover];
 }
 
-- (void) importErrorSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+- (void) nameConflictAlertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) ctx
 {
-	if (returnCode)
-	{
-		[self continueImport: (int) contextInfo];
-	}
+	[NSApp stopModalWithCode: (NSAlertDefaultReturn == returnCode ? YES : NO)];
 }
-
 
 - (void) importPanelDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
@@ -236,6 +287,11 @@ ShouldImport (id entity)
 	
 	
 @implementation BXAImportController (IBActions)
+- (IBAction) endEditingForSchemaName: (id) sender
+{
+	[self checkNameConflicts];
+}
+
 - (IBAction) endErrorPanel: (id) sender
 {
 	[mChangePanel orderOut: nil];
@@ -267,5 +323,6 @@ ShouldImport (id entity)
 	}
 	
 	[mEntities setContent: content];
+	[self checkNameConflicts];
 }
 @end

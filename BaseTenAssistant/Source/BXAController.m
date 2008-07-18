@@ -568,7 +568,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) finishedImporting
 {
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: NULL];
+	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
 	[mEntitiesBySchema setContent: entities];
 }
 @end
@@ -674,7 +674,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	[self hideProgressPanel];
 	[mStatusTextField setObjectValue: [NSString stringWithFormat: @"Connected to %@.", [mContext databaseURI]]];
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: NULL];
+	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
 	[mEntitiesBySchema setContent: entities];
 	
 	BXPGInterface* interface = (id) [mContext databaseInterface];
@@ -928,7 +928,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	NSDictionary* entities = nil;
 	if (ok)
 	{
-		entities = [mContext entitiesBySchemaAndName: &error];
+		entities = [mContext entitiesBySchemaAndName: YES error: &error];
 		
 		[self setProgressMin: 0.0 max: (double) [entities count]];
 		for (NSArray* entityDict in [entities objectEnumerator])

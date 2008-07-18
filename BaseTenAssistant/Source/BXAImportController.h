@@ -52,6 +52,8 @@
 	
 	IBOutlet NSArrayController* mImportErrors;
 	IBOutlet NSPanel* mChangePanel;
+	
+	BOOL mHasNameConflicts;
 }
 @property (readwrite, retain) BXAController* controller;
 @property (readwrite, retain) NSManagedObjectModel* objectModel;
@@ -62,6 +64,7 @@
 
 
 @interface BXAImportController (IBActions)
+- (IBAction) endEditingForSchemaName: (id) sender;
 - (IBAction) selectedConfiguration: (id) sender;
 - (IBAction) endErrorPanel: (id) sender;
 - (IBAction) endImportPanel: (id) sender;

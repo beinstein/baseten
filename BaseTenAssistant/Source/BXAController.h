@@ -88,6 +88,7 @@ extern NSError* BXASchemaInstallError ();
 	IBOutlet MKCStackView* mMomcErrorView;
 		
 	BOOL mLastSelectedEntityWasView;
+	BOOL mDeniedSchemaInstall;
 }
 
 @property (readonly) BOOL hasBaseTenSchema;
