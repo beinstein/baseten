@@ -31,6 +31,7 @@
 		53BC458E0B19E9F00051A557 /* BaseTenAssistant.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */; };
 		53BCB27C0DF698350011E823 /* MKCPolishedHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */; };
 		53C4228B0B0E87C40008F4F2 /* MKCPolishedSeparatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */; };
+		53C80FEF0E31413300302B3F /* MKCEventPassingTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */; };
 		53D7BFEE0D6C787200290858 /* MKCImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */; };
 		53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */; };
 		53DAFF180B4F0DE700C000FE /* View16.tif in Resources */ = {isa = PBXBuildFile; fileRef = 53DAFF170B4F0DE700C000FE /* View16.tif */; };
@@ -161,6 +162,8 @@
 		53BCB27B0DF698350011E823 /* MKCPolishedHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCPolishedHeaderCell.h; path = Source/MKCPolishedHeaderCell.h; sourceTree = "<group>"; };
 		53C422880B0E87C40008F4F2 /* MKCPolishedSeparatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCPolishedSeparatorView.h; path = Source/MKCPolishedSeparatorView.h; sourceTree = "<group>"; };
 		53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedSeparatorView.m; path = Source/MKCPolishedSeparatorView.m; sourceTree = "<group>"; };
+		53C80FED0E31413300302B3F /* MKCEventPassingTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MKCEventPassingTextField.h; sourceTree = "<group>"; };
+		53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MKCEventPassingTextField.m; sourceTree = "<group>"; };
 		53D7BFEC0D6C787200290858 /* MKCImageAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCImageAndTextCell.h; path = Source/MKCImageAndTextCell.h; sourceTree = "<group>"; };
 		53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCImageAndTextCell.m; path = Source/MKCImageAndTextCell.m; sourceTree = "<group>"; };
 		53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAPGInterface.h; sourceTree = "<group>"; };
@@ -282,6 +285,8 @@
 				53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */,
 				53B94D2E0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.h */,
 				53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */,
+				53C80FED0E31413300302B3F /* MKCEventPassingTextField.h */,
+				53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */,
 				53D7BFEC0D6C787200290858 /* MKCImageAndTextCell.h */,
 				53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */,
 				53E029D30D7C49C8001AED9C /* MKCBackgroundView.h */,
@@ -458,6 +463,7 @@
 				53877E3F0E26A51B0097C35F /* BXAFieldCell.m in Sources */,
 				53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */,
 				53425B650E2CD237005F6123 /* MKCStackView.m in Sources */,
+				53C80FEF0E31413300302B3F /* MKCEventPassingTextField.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

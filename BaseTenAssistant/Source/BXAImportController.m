@@ -30,6 +30,8 @@
 #import "BXAController.h"
 #import "MKCPolishedHeaderView.h"
 #import "MKCPolishedCornerView.h"
+#import "MKCEventPassingTextField.h"
+#import "Additions.h"
 #import <BaseTen/PGTSHOM.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/PGTSConnection.h>
@@ -56,9 +58,13 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
 
 - (void) setBXATextColor: (NSColor *) aColor
 {
-	NSMutableDictionary* userInfo = [[self userInfo] mutableCopy];
-	[userInfo setObject: aColor forKey: kBXATextColorKey];
-	[self setUserInfo: userInfo];
+	NSColor* currentColor = [self BXATextColor];
+	if (![currentColor isEqual: aColor])
+	{
+		NSMutableDictionary* userInfo = [[self userInfo] mutableCopy];		
+		[userInfo setObject: aColor forKey: kBXATextColorKey];
+		[self setUserInfo: userInfo];
+	}
 }
 
 - (BOOL) shouldImportBXA
@@ -91,6 +97,10 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
 			hasConflicts = YES;
 			[entity setBXATextColor: [NSColor redColor]];
 		}
+		else
+		{
+			[entity setBXATextColor: [NSColor blackColor]];
+		}
 	}
 	mHasNameConflicts = hasConflicts;
 }
@@ -99,8 +109,7 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
 {
 	NSDictionary* lightColours = [MKCPolishedHeaderView lightColours];
 	[mLeftHeaderView setColours: lightColours];
-	[mLeftHeaderView setDrawingMask: kMKCPolishDrawLeftAccent | kMKCPolishDrawBottomLine | 
-	 kMKCPolishDrawTopLine | kMKCPolishDrawSeparatorLines];
+	[mLeftHeaderView setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopLine | kMKCPolishDrawSeparatorLines];
 	
 	[mRightHeaderView setColours: lightColours];
 	[mRightHeaderView setDrawingMask: kMKCPolishDrawLeftLine | kMKCPolishDrawTopLine | kMKCPolishDrawBottomLine];
@@ -123,6 +132,20 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
         NSColor* lightBackgroundColor = [NSColor colorWithDeviceWhite: 222.0 / 255.0 alpha: 1.0];
         [[self window] setBackgroundColor: lightBackgroundColor];
     }
+	
+	//The text "Tables" spans column borders, so we place it differently.
+	{
+		NSRect frame = [mLeftHeaderView frame];
+		frame.origin.x += 5.0;
+		NSTextField* textField = [[MKCEventPassingTextField alloc] initWithFrame: frame];
+		[textField setBordered: NO];
+		[textField setEditable: NO];
+		[textField setSelectable: NO];
+		[textField setDrawsBackground: NO];
+		[textField setStringValue: @"Tables"]; //FIXME: localization.
+		[textField makeEtchedSmall: NO];
+		[mLeftHeaderView addSubview: textField];
+	}
 	
 	NSMutableArray* configurations = [[mModel configurations] mutableCopy];
 	[configurations insertObject: @"Default Configuration" atIndex: 0]; //FIXME: localization.
@@ -237,20 +260,23 @@ ShouldImport (id entity)
 				[mController setProgressMin: 0.0 max: (double) [statements count]];
 				//FIXME: progress cancel?
 				[mController displayProgressPanel: @"Importing data model"];
+				[mController logAppend: @"\n\n\n---------- Beginning import -----------\n\n"];
 				[mEntityImporter importEntities];
 				
 				shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+				[mController logAppend: @"\n------------ Ending import ------------\n\n\n"];
 				if (shouldContinue)
 				{
 					if (! [mController hasBaseTenSchema])
-						shouldContinue = NO;
-					
-					if (! [mController schemaInstallDenied])
 					{
-						NSError* error = [mController schemaInstallError];
-						[NSApp presentError: error modalForWindow: [mController mainWindow] 
-								   delegate: self didPresentSelector: @selector (errorEnded:contextInfo:) contextInfo: NULL];
-						shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+						shouldContinue = NO;
+						if (! [mController schemaInstallDenied])
+						{
+							NSError* error = [mController schemaInstallError];
+							[NSApp presentError: error modalForWindow: [mController mainWindow] 
+									   delegate: self didPresentSelector: @selector (errorEnded:contextInfo:) contextInfo: NULL];
+							shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+						}
 					}
 					
 					if (shouldContinue)
