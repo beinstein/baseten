@@ -71,7 +71,11 @@
 - (void) process: (BOOL) shouldAdd primaryKeyFields: (NSArray *) attributeArray error: (NSError **) outError;
 - (void) process: (BOOL) shouldEnable entities: (NSArray *) entityArray error: (NSError **) outError;
 - (void) removePrimaryKeyForEntity: (BXEntityDescription *) viewEntity error: (NSError **) outError;
+
 - (BOOL) hasBaseTenSchema;
+- (NSNumber *) schemaVersion;
+- (NSNumber *) schemaCompatibilityVersion;
+- (NSNumber *) frameworkCompatibilityVersion;
 @end
 
 

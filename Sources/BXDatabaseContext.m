@@ -57,7 +57,6 @@
 #import "BXInvocationRecorder.h"
 #import "BXErrorHandlerDelegate.h"
 #import "BXLogger.h"
-            
 
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
 static BOOL gHaveAppKitFramework = NO;

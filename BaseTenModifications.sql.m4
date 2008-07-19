@@ -1,5 +1,5 @@
 --
--- BaseTenModifications.sql
+-- BaseTenModifications.sql.m4
 -- BaseTen
 --
 -- Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,6 +26,8 @@
 -- $Id$
 --
 
+define(`_bx_version_', `0.917')dnl
+define(`_bx_compat_version_', `0.14')dnl
 
 BEGIN;
 CREATE LANGUAGE plpgsql;
@@ -881,7 +883,7 @@ COMMIT; -- Schema and classes
 BEGIN; -- Functions
 
 CREATE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
-    SELECT 0.917::NUMERIC;
+    SELECT _bx_version_::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".Version () IS 'Schema version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".Version () FROM PUBLIC;
@@ -890,7 +892,7 @@ GRANT EXECUTE ON FUNCTION "baseten".Version () TO basetenread;
 
 
 CREATE FUNCTION "baseten".CompatibilityVersion () RETURNS NUMERIC AS $$
-    SELECT 0.14::NUMERIC;
+    SELECT _bx_compat_version_::NUMERIC;
 $$ IMMUTABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".CompatibilityVersion () IS 'Schema compatibility version';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".CompatibilityVersion () FROM PUBLIC;

@@ -59,6 +59,9 @@
 #import "BXAttributeDescriptionPrivate.h"
 
 
+#define BXPG_COMPAT_VERSION_DEC         [NSDecimalNumber decimalNumberWithMantissa: 14 exponent: -2 isNegative: NO]
+
+
 static NSString* kBXPGLockerKey = @"BXPGLockerKey";
 static NSString* kBXPGWhereClauseKey = @"BXPGWhereClauseKey";
 static NSString* kBXPGParametersKey = @"BXPGParametersKey";
@@ -1333,14 +1336,29 @@ bail:
 	;
 }
 
+- (BXPGTransactionHandler *) transactionHandler
+{
+	return mTransactionHandler;
+}
+
 - (BOOL) hasBaseTenSchema
 {
 	return [[mTransactionHandler databaseDescription] hasBaseTenSchema];
 }
 
-- (BXPGTransactionHandler *) transactionHandler
+- (NSNumber *) schemaVersion
 {
-	return mTransactionHandler;
+	return [[mTransactionHandler databaseDescription] schemaVersion];
+}
+
+- (NSNumber *) schemaCompatibilityVersion
+{
+	return [[mTransactionHandler databaseDescription] schemaCompatibilityVersion];
+}
+
+- (NSNumber *) frameworkCompatibilityVersion
+{
+	return BXPG_COMPAT_VERSION_DEC;
 }
 @end
 

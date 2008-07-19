@@ -39,6 +39,16 @@
 	return mHasBaseTenSchema;
 }
 
+- (NSNumber *) schemaVersion
+{
+	return mSchemaVersion;
+}
+
+- (NSNumber *) schemaCompatibilityVersion
+{
+	return mSchemaCompatibilityVersion;
+}
+
 - (BOOL) checkBaseTenSchema: (NSError **) outError
 {
 	ExpectR (outError, NO);
@@ -56,6 +66,40 @@
 	else
 	{
 		*outError = [res error];
+	}
+	return retval;
+}
+
+- (BOOL) checkSchemaVersions: (NSError **) outError
+{
+	ExpectR (outError, NO);
+	ExpectR (mConnection, NO);
+	BOOL retval = NO;
+
+	if (! mHasBaseTenSchema)
+		retval = YES;
+	else
+	{
+		NSString* query = 
+		@"SELECT baseten.version () AS version "
+		@" UNION ALL "
+		@" SELECT baseten.compatibilityversion () AS version";
+		PGTSResultSet* res = [mConnection executeQuery: query];
+		if ([res querySucceeded])
+		{
+			retval = YES;
+			[mSchemaVersion release];
+			[mSchemaCompatibilityVersion release];
+			
+			[res advanceRow];
+			mSchemaVersion = [[res valueForKey: @"version"] retain];
+			[res advanceRow];
+			mSchemaCompatibilityVersion = [[res valueForKey: @"version"] retain];
+		}
+		else
+		{
+			*outError = [res error];
+		}
 	}
 	return retval;
 }

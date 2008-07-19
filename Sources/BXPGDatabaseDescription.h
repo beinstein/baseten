@@ -32,8 +32,14 @@
 
 @interface BXPGDatabaseDescription : PGTSDatabaseDescription
 {
+	NSNumber* mSchemaVersion;
+	NSNumber* mSchemaCompatibilityVersion;
 	BOOL mHasBaseTenSchema;
 }
 - (BOOL) hasBaseTenSchema;
+- (NSNumber *) schemaVersion;
+- (NSNumber *) schemaCompatibilityVersion;
+
 - (BOOL) checkBaseTenSchema: (NSError **) outError;
+- (BOOL) checkSchemaVersions: (NSError **) outError;
 @end

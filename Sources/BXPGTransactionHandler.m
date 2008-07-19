@@ -323,7 +323,9 @@ SSLMode (enum BXSSLMode mode)
 - (void) handleSuccess
 {
 	NSError* localError = nil;
-	if ([(id) [mConnection databaseDescription] checkBaseTenSchema: &localError])
+	BXPGDatabaseDescription* db = (id) [mConnection databaseDescription];
+	
+	if ([db checkBaseTenSchema: &localError] && [db checkSchemaVersions: &localError])
 	{
 		mConnectionSucceeded = YES;
 		if (mAsync)
