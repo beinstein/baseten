@@ -63,7 +63,6 @@ enum MKCPolishDrawingMask {
                              kMKCPolishDrawLeftAccent | 
                              kMKCPolishDrawRightAccent | 
                              kMKCPolishDrawSeparatorLines),
-    kMKCPolishDrawingMaskInvalid = 1 << 31
 };
 
 

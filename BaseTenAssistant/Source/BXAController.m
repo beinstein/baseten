@@ -239,18 +239,22 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	//Table headers
 	{
+		NSMutableDictionary* colours = [[MKCPolishedHeaderView darkColours] mutableCopy];
+		[colours setObject: [colours objectForKey: kMKCEnabledColoursKey] forKey: kMKCSelectedColoursKey];
+		
 		NSRect headerRect = NSMakeRect (0.0, 0.0, 0.0, 23.0);
 		headerRect.size.width = [mDBTableView bounds].size.width;
-		MKCPolishedHeaderView* headerView = [[[MKCPolishedHeaderView alloc] initWithFrame: headerRect] autorelease];
-		[headerView setColours: [MKCPolishedHeaderView darkColours]];
+		MKCPolishedHeaderView* headerView = (id) [mDBTableView headerView];
+		[headerView setFrame: headerRect];
+		[headerView setColours: colours];
 		[headerView setDrawingMask: kMKCPolishDrawBottomLine | 
 		 kMKCPolishDrawLeftAccent | kMKCPolishDrawTopAccent | kMKCPolishDrawSeparatorLines];
-		[mDBTableView setHeaderView: headerView];
 		
-		headerView = [[[MKCPolishedHeaderView alloc] initWithFrame: headerRect] autorelease];
+		headerView = (id) [mDBSchemaView headerView];
 		headerRect.size.width = [mDBSchemaView bounds].size.width;
+		[headerView setColours: colours];
+		[headerView setFrame: headerRect];
 		[headerView setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopAccent];
-		[mDBSchemaView setHeaderView: headerView];
 	}
 	
 	//Table corners

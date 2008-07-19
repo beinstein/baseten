@@ -36,7 +36,6 @@
 {
     if ((self = [super initWithFrame: frame]))
     {
-        mDrawingMask = kMKCPolishDrawingMaskInvalid;
 		NSWindow* window = [self window];
 		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
 		[nc addObserver: self selector: @selector (stateChanged:) name: NSApplicationDidBecomeActiveNotification object: NSApp];
@@ -63,8 +62,6 @@
 {
     if (nil == mColours)
         [self setColours: [MKCPolishedHeaderView darkColours]];
-    if (kMKCPolishDrawingMaskInvalid == mDrawingMask)
-        [self setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopLine | kMKCPolishDrawTopAccent | kMKCPolishDrawRightLine];
 	
 	NSDictionary* enabledColours = nil;
 	if (MKCShouldDrawEnabled ([self window]))

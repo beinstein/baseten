@@ -200,7 +200,6 @@ MKCShouldDrawEnabled (NSWindow* window)
 
 - (void) awakeFromNib
 {
-	mDrawingMask = kMKCPolishDrawingMaskInvalid;		
 	NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial;
 	[[self tableView] addObserver: self forKeyPath: @"sortDescriptors" options: options context: kKVObservingContext];
 	
@@ -289,8 +288,6 @@ MKCShouldDrawEnabled (NSWindow* window)
 {
     if (nil == mColours)
         [self setColours: [[self class] darkColours]];
-    if (kMKCPolishDrawingMaskInvalid == mDrawingMask)
-        [self setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopLine | kMKCPolishDrawTopAccent];
     
     float height = [self bounds].size.height;
     NSAssert (height >= 3.0, @"This view may not be shorter than 3.0 units.");

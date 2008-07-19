@@ -8,9 +8,9 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
+			<integer value="456"/>
 			<integer value="629"/>
 			<integer value="712"/>
-			<integer value="469"/>
 			<integer value="558"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
@@ -4124,6 +4124,7 @@
 					<string>454.ImportedFromIB2</string>
 					<string>456.IBPluginDependency</string>
 					<string>457.IBPluginDependency</string>
+					<string>458.CustomClassName</string>
 					<string>458.IBPluginDependency</string>
 					<string>459.IBPluginDependency</string>
 					<string>460.IBPluginDependency</string>
@@ -4134,6 +4135,7 @@
 					<string>464.IBPluginDependency</string>
 					<string>465.IBPluginDependency</string>
 					<string>466.IBPluginDependency</string>
+					<string>467.CustomClassName</string>
 					<string>467.IBPluginDependency</string>
 					<string>468.IBPluginDependency</string>
 					<string>469.CustomClassName</string>
@@ -4459,6 +4461,7 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>MKCPolishedHeaderView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -4469,6 +4472,7 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>MKCPolishedHeaderView</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>MKCAlternativeDataCellColumn</string>
@@ -4967,6 +4971,14 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBUserSource</string>
 						<string key="minorKey"/>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">MKCPolishedHeaderView</string>
+					<string key="superclassName">NSTableHeaderView</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">Source/MKCPolishedHeaderView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
