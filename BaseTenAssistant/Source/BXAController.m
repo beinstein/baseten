@@ -739,7 +739,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
     switch ([menuItem tag])
     {
 		case 0:
-			return retval;
+			break;
 			
         case 1: //Disconnect, Reload
             if (! [mContext isConnected] || YES == [mProgressPanel isVisible])
