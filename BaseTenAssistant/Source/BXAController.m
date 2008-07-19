@@ -50,6 +50,10 @@
 #import <RegexKit/RegexKit.h>
 
 
+extern NSNumber* BXACopyBundledVersionNumber ();
+extern NSNumber* BXACopyBundledCompatibilityVersionNumber ();
+
+
 static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
 static NSString* kBXAControllerErrorDomain = @"kBXAControllerErrorDomain";
 
@@ -589,6 +593,18 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
 	[mEntitiesBySchema setContent: entities];
 }
+
+- (BOOL) canUpgradeSchema
+{
+	//FIXME: make me work.
+	return NO;
+}
+
+- (BOOL) canRemoveSchema
+{
+	return [[[(BXPGInterface *) [mContext databaseInterface] transactionHandler] 
+			 databaseDescription] hasBaseTenSchema];
+}
 @end
 
 
@@ -753,6 +769,14 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			
 		case 3: //Import
 			retval = [self hasBaseTenSchema];
+			break;
+			
+		case 4: //Remove schema
+			retval = [self canRemoveSchema];
+			break;
+			
+		case 5: //Upgrade schema
+			retval = [self canUpgradeSchema];
 			break;
 			
     }
@@ -1067,11 +1091,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 - (IBAction) cancelSchemaInstall: (id) sender
 {
 	[mReader cancel];
-}
-
-- (IBAction) installSchema: (id) sender
-{
-	//FIXME: make me work.
 }
 
 - (IBAction) upgradeSchema: (id) sender

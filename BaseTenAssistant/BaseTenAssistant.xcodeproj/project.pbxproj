@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */; };
+		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */; };
+		531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
 		53425B650E2CD237005F6123 /* MKCStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53425B640E2CD237005F6123 /* MKCStackView.m */; };
@@ -44,16 +45,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
-		53DD5AC90A78D47D00CD5924 /* PBXBuildRule */ = {
+		531C01780E32AF7900E43208 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.sql";
+			filePatterns = "*.m4";
 			fileType = pattern.proxy;
 			isEditable = 1;
 			outputFiles = (
-				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.sql",
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}",
 			);
-			script = "perl -p -e 's/PGTS_SCHEMA_NAME/BX/g' ${INPUT_FILE_PATH} > ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.sql\n";
+			script = "m4 ${INPUT_FILE_PATH} > ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}";
 		};
 /* End PBXBuildRule section */
 
@@ -127,7 +128,8 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Source/main.m; sourceTree = "<group>"; };
 		2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = SetupApplication_Prefix.pch; path = Source/SetupApplication_Prefix.pch; sourceTree = "<group>"; };
-		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql; path = ../BaseTenModifications.sql; sourceTree = SOURCE_ROOT; };
+		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql.m4; path = ../BaseTenModifications.sql.m4; sourceTree = SOURCE_ROOT; };
+		531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXACurrentVersion.m.m4; path = Source/BXACurrentVersion.m.m4; sourceTree = "<group>"; };
 		531DCAB70B52818E00200097 /* MKCAlternativeDataCellColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCAlternativeDataCellColumn.h; path = Source/MKCAlternativeDataCellColumn.h; sourceTree = "<group>"; };
 		531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAlternativeDataCellColumn.m; path = Source/MKCAlternativeDataCellColumn.m; sourceTree = "<group>"; };
 		532F429B0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -232,6 +234,7 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */,
 				5374E4B60B0D364E000D353D /* Additions.h */,
 				5374E4B70B0D364E000D353D /* Additions.m */,
 				2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */,
@@ -243,7 +246,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */,
+				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				532F429A0D69B70F009FEDCD /* MainMenu.xib */,
@@ -342,7 +345,7 @@
 				8D11072E0486CEB800E47090 /* Frameworks */,
 			);
 			buildRules = (
-				53DD5AC90A78D47D00CD5924 /* PBXBuildRule */,
+				531C01780E32AF7900E43208 /* PBXBuildRule */,
 			);
 			dependencies = (
 				5388DE670E23AE6C006CDBD8 /* PBXTargetDependency */,
@@ -424,7 +427,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql in Resources */,
+				2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				536CB9C90B0D217000EBCB39 /* Log32.png in Resources */,
 				536CB9CA0B0D217000EBCB39 /* Inspector32.png in Resources */,
@@ -464,6 +467,7 @@
 				53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */,
 				53425B650E2CD237005F6123 /* MKCStackView.m in Sources */,
 				53C80FEF0E31413300302B3F /* MKCEventPassingTextField.m in Sources */,
+				531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
