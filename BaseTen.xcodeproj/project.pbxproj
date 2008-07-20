@@ -240,6 +240,7 @@
 		538A83860E1D2ACD0025B3C8 /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82B90E1D15BB0025B3C8 /* print.c */; };
 		538A83870E1D2ACE0025B3C8 /* prompt.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A83050E1D1DD30025B3C8 /* prompt.c */; };
 		538A83880E1D2ACF0025B3C8 /* stringutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82F80E1D1C1B0025B3C8 /* stringutils.c */; };
+		5390DE590E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */; };
 		5395E7260E2F77DF006E8441 /* BXPGEntityImporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5395E7240E2F77DF006E8441 /* BXPGEntityImporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5395E7270E2F77DF006E8441 /* BXPGEntityImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5395E7250E2F77DF006E8441 /* BXPGEntityImporter.m */; };
 		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -256,16 +257,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
-		5354440F0D634A47002A6C47 /* PBXBuildRule */ = {
+		53F5B8170E32B97C000F527B /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.sql";
+			filePatterns = "*.m4	";
 			fileType = pattern.proxy;
 			isEditable = 1;
 			outputFiles = (
-				"$(DERIVED_FILES_DIR)/$(INPUT_FILE_BASE).sql",
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}",
 			);
-			script = "perl -p -e 's/PGTS_SCHEMA_NAME/BX/g' ${INPUT_FILE_NAME} > ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.sql";
+			script = "m4 ${INPUT_FILE_PATH} > ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}";
 		};
 /* End PBXBuildRule section */
 
@@ -521,6 +522,7 @@
 		538A83140E1D1EE00025B3C8 /* BXPGSQLScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLScanner.h; path = Sources/BXPGSQLScanner.h; sourceTree = "<group>"; };
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
 		538A83CC0E1D85420025B3C8 /* sql_parser_exports */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sql_parser_exports; sourceTree = "<group>"; };
+		5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXPGCurrentCompatVersion.m.m4; path = Sources/BXPGCurrentCompatVersion.m.m4; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
 		5395E7240E2F77DF006E8441 /* BXPGEntityImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGEntityImporter.h; path = Sources/BXPGEntityImporter.h; sourceTree = "<group>"; };
 		5395E7250E2F77DF006E8441 /* BXPGEntityImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGEntityImporter.m; path = Sources/BXPGEntityImporter.m; sourceTree = "<group>"; };
@@ -1011,6 +1013,7 @@
 				537F01710DDC58F100498B93 /* BXPGAdditions.m */,
 				53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */,
 				53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */,
+				5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */,
 				53B24CF70E223C70007AED76 /* Metadata subclasses */,
 				531A21AF0DE46860006C757A /* Notification Handlers */,
 				531A21B00DE4686E006C757A /* Transaction Handlers */,
@@ -1165,7 +1168,7 @@
 				5354440E0D634A47002A6C47 /* Set icon */,
 			);
 			buildRules = (
-				5354440F0D634A47002A6C47 /* PBXBuildRule */,
+				53F5B8170E32B97C000F527B /* PBXBuildRule */,
 			);
 			dependencies = (
 				5362E8710E1CE4A9005C7654 /* PBXTargetDependency */,
@@ -1307,6 +1310,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5390DE590E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 in Sources */,
 				535443EF0D634A47002A6C47 /* BXDatabaseContext.m in Sources */,
 				535443F00D634A47002A6C47 /* BXPGInterface.m in Sources */,
 				535443F10D634A47002A6C47 /* BXDatabaseObject.m in Sources */,

@@ -39,6 +39,9 @@
 @class PGTSQuery;
 
 
+extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
+
+
 @interface BXPGInterface : NSObject <BXInterface> 
 {
     BXDatabaseContext* mContext; //Weak

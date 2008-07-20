@@ -51,7 +51,6 @@
 
 
 extern NSNumber* BXACopyBundledVersionNumber ();
-extern NSNumber* BXACopyBundledCompatibilityVersionNumber ();
 
 
 static NSString* kBXAControllerCtx = @"kBXAControllerCtx";

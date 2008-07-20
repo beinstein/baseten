@@ -1,6 +1,6 @@
 //
-// BXACurrentVersion.m.m4
-// BaseTen Setup
+// BXPGCurrentCompatVersion.m.m4
+// BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
@@ -29,12 +29,12 @@
 #import <Foundation/Foundation.h>
 
 divert(-1)
-include(`../BaseTenModifications.sql.m4')
+include(`BaseTenModifications.sql.m4')
 divert(0)dnl
 
 NSNumber*
-BXACopyBundledVersionNumber ()
+BXPGCopyCurrentCompatibilityVersionNumber ()
 {
-    return [[NSNumber alloc] initWithString: @"_bx_version_"];
+    return [[NSNumber alloc] initWithString: @"_bx_compat_version_"];
 }
 
