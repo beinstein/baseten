@@ -59,9 +59,6 @@
 #import "BXAttributeDescriptionPrivate.h"
 
 
-#define BXPG_COMPAT_VERSION_DEC         [NSDecimalNumber decimalNumberWithMantissa: 14 exponent: -2 isNegative: NO]
-
-
 static NSString* kBXPGLockerKey = @"BXPGLockerKey";
 static NSString* kBXPGWhereClauseKey = @"BXPGWhereClauseKey";
 static NSString* kBXPGParametersKey = @"BXPGParametersKey";
@@ -330,6 +327,7 @@ bx_error_during_rollback (id self, NSError* error)
 	[mForeignKeys release];
 	[mTransactionHandler release];
 	[mLockedObjects release];
+	[mFrameworkCompatVersion release];
 	[super dealloc];
 }
 
@@ -1358,7 +1356,29 @@ bail:
 
 - (NSNumber *) frameworkCompatibilityVersion
 {
-	return BXPG_COMPAT_VERSION_DEC;
+	if (! mFrameworkCompatVersion)
+		mFrameworkCompatVersion = BXPGCopyCurrentCompatibilityVersionNumber ();
+	return mFrameworkCompatVersion;
+}
+
+- (BOOL) checkSchemaCompatibility: (NSError **) outError;
+{
+	ExpectR (outError, NO);
+	
+	BOOL retval = YES;
+	NSNumber* current = [self schemaCompatibilityVersion];
+	NSNumber* builtWith = [self frameworkCompatibilityVersion];
+	if (NSOrderedDescending == [current compare: builtWith])
+	{
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  @"The database version is newer than what this application is capable of handling", NSLocalizedFailureReasonErrorKey,
+								  @"Try upgrading your client application.", NSLocalizedRecoverySuggestionErrorKey,
+								  nil];
+		//FIXME: set domain and code.
+		NSError* error = [NSError errorWithDomain: @"" code: 1 userInfo: userInfo];
+		*outError = error;
+	}
+	return retval;
 }
 @end
 

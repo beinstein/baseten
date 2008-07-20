@@ -47,6 +47,7 @@ extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
     BXDatabaseContext* mContext; //Weak
 	NSMutableDictionary* mForeignKeys;
 	BXPGTransactionHandler* mTransactionHandler;
+	NSNumber* mFrameworkCompatVersion;
 	
 	NSMutableSet* mLockedObjects;
 	BOOL mLocking;
@@ -79,6 +80,7 @@ extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
 - (NSNumber *) schemaVersion;
 - (NSNumber *) schemaCompatibilityVersion;
 - (NSNumber *) frameworkCompatibilityVersion;
+- (BOOL) checkSchemaCompatibility: (NSError **) error;
 @end
 
 

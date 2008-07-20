@@ -37,4 +37,3 @@ BXPGCopyCurrentCompatibilityVersionNumber ()
 {
     return [[NSNumber alloc] initWithString: @"_bx_compat_version_"];
 }
-
