@@ -277,7 +277,6 @@
 	STAssertNil (error, [error localizedDescription]);
 	
 	FetchTestObject* object = [res objectAtIndex: 0];
-	MKCAssertFalse ([object isFaultKey: nil]);
 	MKCAssertFalse ([object isFaultKey: @"value"]);
 	
 	object->didTurnIntoFault = NO;
@@ -298,7 +297,6 @@
 	[object valueForKey: @"value"];
 	[context refreshObject: object mergeChanges: YES];
 	MKCAssertFalse (object->didTurnIntoFault);
-	MKCAssertFalse ([object isFaultKey: nil]);
 	MKCAssertFalse ([object isFaultKey: @"value"]);
 	
 	object->didTurnIntoFault = NO;
@@ -310,5 +308,4 @@
 		
 	[entity setDatabaseObjectClass: nil];
 }
-
 @end
