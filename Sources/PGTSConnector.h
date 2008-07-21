@@ -39,7 +39,7 @@
 
 @interface PGTSConnector : NSObject
 {
-	id <PGTSConnectorDelegate> mDelegate;
+	id <PGTSConnectorDelegate> mDelegate; //Weak
 	PostgresPollingStatusType (* mPollFunction)(PGconn *);
 	PGconn* mConnection;
 	FILE* mTraceFile;

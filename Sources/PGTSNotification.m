@@ -30,6 +30,11 @@
 
 
 @implementation PGTSNotification
+- (void) dealloc
+{
+	[mNotificationName release];
+	[super dealloc];
+}
 
 - (void) setNotificationName: (NSString *) aName
 {

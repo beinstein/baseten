@@ -54,6 +54,12 @@
 	return self;
 }
 
+- (void) dealloc
+{
+	[mName release];
+	[super dealloc];
+}
+
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
 	[encoder encodeObject: mName forKey: @"name"];

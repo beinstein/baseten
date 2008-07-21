@@ -751,7 +751,7 @@ bail:
 			mForeignKeys = [[NSMutableDictionary alloc] init];
 			while (([res advanceRow]))
 			{
-				BXForeignKey* key = [[BXForeignKey alloc] initWithName: [res valueForKey: @"name"]];
+				BXForeignKey* key = [[[BXForeignKey alloc] initWithName: [res valueForKey: @"name"]] autorelease];
 				
 				NSArray* srcFNames = [res valueForKey: @"srcfnames"];
 				NSArray* dstFNames = [res valueForKey: @"dstfnames"];
@@ -771,6 +771,7 @@ bail:
 					case kPGTSDeleteRuleNoAction:
 					case kPGTSDeleteRuleRestrict:
 						deleteRule = NSDenyDeleteRule;
+						break;
 						
 					case kPGTSDeleteRuleCascade:
 						deleteRule = NSCascadeDeleteRule;
@@ -787,7 +788,6 @@ bail:
 				[key setDeleteRule: deleteRule];
 				
 				[mForeignKeys setObject: key forKey: [res valueForKey: @"conoid"]];
-				[key release];
 			}
 		}
 	}

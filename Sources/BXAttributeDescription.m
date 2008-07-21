@@ -38,6 +38,11 @@
  * \ingroup Descriptions
  */
 @implementation BXAttributeDescription
+- (void) dealloc
+{
+	[mDatabaseTypeName release];
+	[super dealloc];
+}
 
 - (id) initWithCoder: (NSCoder *) decoder
 {

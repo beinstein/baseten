@@ -37,7 +37,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8 /* SQLParser.o */;
+			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
 			remoteInfo = "SQL Parser";
 		};
 		53D03BB80DE82987002D14C4 /* PBXContainerItemProxy */ = {

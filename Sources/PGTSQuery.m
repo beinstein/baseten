@@ -49,6 +49,12 @@
 
 
 @implementation PGTSAbstractParameterQuery
+- (void) dealloc
+{
+	[mParameters release];
+	[super dealloc];
+}
+
 - (NSArray *) parameters
 {
 	return mParameters;
@@ -71,6 +77,11 @@
 
 
 @implementation PGTSParameterQuery
+- (void) dealloc
+{
+	[mQuery release];
+	[super dealloc];
+}
 
 - (NSString *) query
 {

@@ -86,6 +86,12 @@ SSLMode (enum BXSSLMode mode)
 
 
 @implementation BXPGResultSetPlaceholder
+- (void) dealloc
+{
+	[mUserInfo release];
+	[super dealloc];
+}
+
 - (void) setUserInfo: (id) anObject
 {
 	if (mUserInfo != anObject)

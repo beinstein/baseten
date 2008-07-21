@@ -1540,9 +1540,10 @@ bx_query_during_reconnect ()
 					[self setCanConnect: YES];
 				
 				//Don't set the error if we were supposed to disconnect.
-				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
-																			 object: self 
-																		   userInfo: (mDidDisconnect ? nil : [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey])];
+				NSDictionary* userInfo = nil;
+				if (! mDidDisconnect && error)
+					userInfo = [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey];
+				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
 				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
