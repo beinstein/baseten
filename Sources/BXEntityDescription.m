@@ -38,6 +38,7 @@
 #import "BXConstantsPrivate.h"
 #import "BXLogger.h"
 #import "PGTSHOM.h"
+#import "BXWeakNotification.h"
 
 #import "MKCCollections.h"
 
@@ -90,6 +91,15 @@ static id gEntities;
 	{
 		[gEntities removeObjectForKey: [self entityKey]];
 	}
+	
+	@synchronized (mAttributes)
+	{
+		TSEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
+		{
+			[currentAttribute setEntity: nil];
+			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
+		}
+	}
     
     @synchronized (mRelationships)
     {
@@ -97,12 +107,14 @@ static id gEntities;
         {
             [currentRel setEntity: nil];
             [[currentRel inverseRelationship] setDestinationEntity: nil];
+			[[currentRel class] unregisterProperty: currentRel entity: self];
         }
     }
     
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-    [nc postNotificationName: kBXEntityDescriptionWillDeallocNotification
-                      object: self];
+	NSNotification* n = [BXWeakNotification notificationWithName: 
+						 kBXEntityDescriptionWillDeallocNotification object: self];
+	[nc postNotification: n];
     
 	[self dealloc2];
 	[super dealloc];
@@ -393,7 +405,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
 	if (! [self hasCapability: kBXEntityCapabilityRelationships])
 		[NSException raise: NSInvalidArgumentException format: @"Entity %@ can't access its relationships.", self];
-	return [mRelationships dictionaryRepresentation];
+	return [[mRelationships copy] autorelease];
 }
 
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability
@@ -472,11 +484,12 @@ FilterPkeyAttributes (id attribute, void* arg)
         mDatabaseObjectClass = [BXDatabaseObject class];
         mDatabaseURI = [anURI copy];
         mSchemaName = [sName copy];
-		mRelationships = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
-														valueType: kMKCCollectionTypeWeakObject];
+		mRelationships = [[NSMutableDictionary alloc] init];
+		
 		mObjectIDs = [[MKCHashTable alloc] init];
         mSuperEntities = [[MKCHashTable alloc] init];
         mSubEntities = [[MKCHashTable alloc] init];
+		
 		mValidationLock = [[NSLock alloc] init];
     }
     return self;
@@ -583,10 +596,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 			[[currentRel class] unregisterProperty: currentRel entity: self];
 
 		[mRelationships removeAllObjects];
-		
-		//mRelationships is a map table.
-		TSEnumerate (currentRelName, e, [aDict keyEnumerator])
-			[mRelationships setObject: [aDict objectForKey: currentRelName] forKey: currentRelName];
+		[mRelationships addEntriesFromDictionary: aDict];
     }
 }
 

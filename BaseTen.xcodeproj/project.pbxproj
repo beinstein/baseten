@@ -245,6 +245,8 @@
 		5395E7270E2F77DF006E8441 /* BXPGEntityImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5395E7250E2F77DF006E8441 /* BXPGEntityImporter.m */; };
 		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		539758530E1E86200042120A /* BXDataModelCompiler.m in Sources */ = {isa = PBXBuildFile; fileRef = 539758510E1E86200042120A /* BXDataModelCompiler.m */; };
+		53A59B250E34EB570026D7E1 /* BXWeakNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A59B230E34EB570026D7E1 /* BXWeakNotification.h */; };
+		53A59B260E34EB570026D7E1 /* BXWeakNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A59B240E34EB570026D7E1 /* BXWeakNotification.m */; };
 		53B24CF40E223A14007AED76 /* BXPGDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF20E223A14007AED76 /* BXPGDatabaseDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53B24CF50E223A14007AED76 /* BXPGDatabaseDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF30E223A14007AED76 /* BXPGDatabaseDescription.m */; };
 		53B24CFA0E223C8C007AED76 /* BXPGTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF80E223C8C007AED76 /* BXPGTableDescription.h */; };
@@ -534,6 +536,8 @@
 		539EDD740C46218B00B6E5EC /* BXAttributeDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAttributeDescription.m; path = Sources/BXAttributeDescription.m; sourceTree = "<group>"; };
 		539EDD800C46243100B6E5EC /* BXAttributeDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAttributeDescriptionPrivate.h; path = Sources/BXAttributeDescriptionPrivate.h; sourceTree = "<group>"; };
 		539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescriptionPrivate.h; path = Sources/BXEntityDescriptionPrivate.h; sourceTree = "<group>"; };
+		53A59B230E34EB570026D7E1 /* BXWeakNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXWeakNotification.h; sourceTree = "<group>"; };
+		53A59B240E34EB570026D7E1 /* BXWeakNotification.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXWeakNotification.m; sourceTree = "<group>"; };
 		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
 		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseTen.icns; sourceTree = "<group>"; };
 		53B24CF20E223A14007AED76 /* BXPGDatabaseDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGDatabaseDescription.h; path = Sources/BXPGDatabaseDescription.h; sourceTree = "<group>"; };
@@ -749,6 +753,8 @@
 				53666CC20E1CD8D20028DBEA /* PGTSHOM.h */,
 				53666CC30E1CD8D20028DBEA /* PGTSHOM.m */,
 				53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */,
+				53A59B230E34EB570026D7E1 /* BXWeakNotification.h */,
+				53A59B240E34EB570026D7E1 /* BXWeakNotification.m */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -769,7 +775,6 @@
 		53666D2E0E1CDDA70028DBEA /* Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				53666C990E1CD8D20028DBEA /* PGTSTypeDescription.m */,
 				53666C9C0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h */,
 				53666C9D0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m */,
 				53666C9E0E1CD8D20028DBEA /* PGTSAbstractDescription.h */,
@@ -793,6 +798,7 @@
 				53666CD50E1CD8D20028DBEA /* PGTSTableDescription.h */,
 				53666CD60E1CD8D20028DBEA /* PGTSTableDescription.m */,
 				53666CD70E1CD8D20028DBEA /* PGTSTypeDescription.h */,
+				53666C990E1CD8D20028DBEA /* PGTSTypeDescription.m */,
 			);
 			name = Metadata;
 			sourceTree = "<group>";
@@ -1151,6 +1157,7 @@
 				53877EEB0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h in Headers */,
 				53D9DDED0E2B4F310009D370 /* BXPGEntityConverter.h in Headers */,
 				5395E7260E2F77DF006E8441 /* BXPGEntityImporter.h in Headers */,
+				53A59B250E34EB570026D7E1 /* BXWeakNotification.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1397,6 +1404,7 @@
 				53877EEC0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m in Sources */,
 				53D9DDEC0E2B4F300009D370 /* BXPGEntityConverter.m in Sources */,
 				5395E7270E2F77DF006E8441 /* BXPGEntityImporter.m in Sources */,
+				53A59B260E34EB570026D7E1 /* BXWeakNotification.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
