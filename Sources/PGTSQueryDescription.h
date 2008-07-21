@@ -56,7 +56,7 @@
 @interface PGTSConcreteQueryDescription : PGTSQueryDescription
 {
 	SEL mCallback;
-	id mDelegate;
+	id mDelegate; //Weak
 	int mIdentifier;
 	PGTSQuery* mQuery;
 	id mUserInfo;

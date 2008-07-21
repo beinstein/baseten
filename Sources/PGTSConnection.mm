@@ -314,8 +314,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
     if (! mPGTypes)
     {
-        NSString* path = [[[NSBundle bundleForClass: [PGTSConnection class]] resourcePath]
-            stringByAppendingString: @"/datatypeassociations.plist"];
+		NSBundle* bundle = [NSBundle bundleForClass: [PGTSConnection class]];
+        NSString* path = [[bundle resourcePath] stringByAppendingString: @"/datatypeassociations.plist"];
         NSData* plist = [NSData dataWithContentsOfFile: path];
         BXAssertValueReturn (nil != plist, nil, @"datatypeassociations.plist was not found (looked from %@).", path);
         NSString* error = nil;

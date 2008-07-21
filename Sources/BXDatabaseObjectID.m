@@ -345,7 +345,7 @@ bail:
 
     NSURL* uri = [[self class] URIRepresentationForEntity: aDesc primaryKeyFields: pkeyFValues];
     BXAssertValueReturn (nil != uri, nil, @"Expected to have received an URI.");
-    return [[[self class] alloc] initWithEntity: aDesc objectURI: uri];
+    return [[[[self class] alloc] initWithEntity: aDesc objectURI: uri] autorelease];
 }
 
 /** 
