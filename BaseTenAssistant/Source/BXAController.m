@@ -140,7 +140,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 - (BOOL) validateEnabledForAssistantV: (id *) ioValue error: (NSError **) outError
 {
 	BOOL retval = YES;
-	if ([self isView])
+	if ([self isView] && 0 == [[self primaryKeyFields] count])
 	{
 		if (ioValue)
 			*ioValue = [NSNumber numberWithBool: NO];
