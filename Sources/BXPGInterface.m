@@ -818,6 +818,8 @@ bail:
 	{
 		if (! [entity isValidated])
 		{
+			[entity setValidated: YES];
+			
 			//If attributes exists, it only contains primary key fields but we haven't received them from the database.
 			NSMutableDictionary* attributes = ([[[entity attributesByName] mutableCopy] autorelease] ?: [NSMutableDictionary dictionary]);
 			

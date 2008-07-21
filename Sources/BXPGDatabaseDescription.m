@@ -115,16 +115,18 @@
 	if ([self hasBaseTenSchema])
 	{
 		queryString = 
-		@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname, baseten.isobservingcompatible (c.oid) AS isenabled "
-		" FROM pg_class c, pg_namespace n, pg_roles r "
-		" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";		
+		@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
+		"   c.relacl, c.relowner, c.relkind, r.rolname, baseten.isobservingcompatible (c.oid) AS isenabled "
+		"  FROM pg_class c, pg_namespace n, pg_roles r "
+		"  WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";		
 	}
 	else
 	{
 		queryString = 
-		@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relacl, c.relowner, c.relkind, r.rolname, false AS isenabled "
-		" FROM pg_class c, pg_namespace n, pg_roles r "
-		" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";		
+		@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
+		"   c.relacl, c.relowner, c.relkind, r.rolname, false AS isenabled "
+		"  FROM pg_class c, pg_namespace n, pg_roles r "
+		"  WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";		
 	}
 	return queryString;
 }
@@ -135,14 +137,14 @@
 	if ([self hasBaseTenSchema])
 	{
 		queryString = @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
-		" c.relacl, c.relowner, c.relkind, r.rolname, baseten.isobservingcompatible (c.oid) AS isenabled "
+		"  c.relacl, c.relowner, c.relkind, r.rolname, baseten.isobservingcompatible (c.oid) AS isenabled "
 		" FROM pg_class c, pg_namespace n, pg_roles r "
 		" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.oid = ANY ($1)";
 	}
 	else
 	{
 		queryString = @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
-		" c.relacl, c.relowner, c.relkind, r.rolname, false AS isenabled "
+		"  c.relacl, c.relowner, c.relkind, r.rolname, false AS isenabled "
 		" FROM pg_class c, pg_namespace n, pg_roles r "
 		" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.oid = ANY ($1)";
 	}

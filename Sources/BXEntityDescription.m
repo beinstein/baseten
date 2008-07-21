@@ -345,7 +345,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 /** Whether this entity is marked as a view or not. */
 - (BOOL) isView
 {
-    return mFlags & kBXEntityIsView ? YES : NO;
+    return (mFlags & kBXEntityIsView) ? YES : NO;
 }
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity
@@ -382,7 +382,7 @@ FilterPkeyAttributes (id attribute, void* arg)
  */
 - (BOOL) isValidated
 {
-	return mFlags & kBXEntityIsValidated ? YES : NO;
+	return (mFlags & kBXEntityIsValidated) ? YES : NO;
 }
 
 /**
@@ -403,7 +403,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 - (BOOL) isEnabled
 {
-	return mFlags & kBXEntityIsEnabled ? YES : NO;
+	return (mFlags & kBXEntityIsEnabled) ? YES : NO;
 }
 @end
 

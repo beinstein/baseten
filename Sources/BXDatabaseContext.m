@@ -1215,7 +1215,6 @@ bx_query_during_reconnect ()
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     returningFaults: (BOOL) returnFaults updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
 {
-	[NSException raise: NSInvalidArgumentException format: @"Entity %@ can't access its relationships.", self];
     return [self executeFetchForEntity: entity withPredicate: predicate
                        returningFaults: returnFaults excludingFields: nil
                          returnedClass: (shouldUpdate ? [BXArrayProxy class] : Nil) 
@@ -2464,28 +2463,19 @@ bx_query_during_reconnect ()
 		//Check again in case someone else had the lock.
 		if (! [entity isValidated])
 		{
-			//Even if an entity has already been validated, allow a database interface to do something with it.
 			[mDatabaseInterface validateEntity: entity error: error];
 			if (nil == *error)
 			{
-				if (! [entity isValidated])
+				if ([entity hasCapability: kBXEntityCapabilityRelationships])
 				{
-					if (! [entity hasCapability: kBXEntityCapabilityRelationships])
-						[entity setValidated: YES];
-					else
-					{
-						[entity setRelationships: nil];
-						NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
-						if (nil == *error)
-						{
-							[entity setRelationships: relationships];
-							[entity setValidated: YES];
-						}
-						
-						if ([entity isValidated])
-							[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
-					}			
-				}
+					[entity setRelationships: nil];
+					NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
+					if (nil == *error)
+						[entity setRelationships: relationships];
+					
+					if ([entity isValidated])
+						[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+				}			
 			}
 		}
 		
