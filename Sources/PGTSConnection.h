@@ -63,13 +63,13 @@
 	id mConnector;
     PGTSDatabaseDescription* mDatabase;
     NSMutableDictionary* mPGTypes;
-	id <PGTSCertificateVerificationDelegate> mCertificateVerificationDelegate;
+	id <PGTSCertificateVerificationDelegate> mCertificateVerificationDelegate; //Weak
     
     CFRunLoopRef mRunLoop;
     CFSocketRef mSocket;
     CFRunLoopSourceRef mSocketSource;
     
-    id mDelegate;
+    id mDelegate; //Weak
 	
 	BOOL mDidDisconnectOnSleep;
 	BOOL mProcessingNotifications;

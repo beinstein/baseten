@@ -634,12 +634,12 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (NSDictionary *) cachedValues
 {
-    id rval = nil;
+    id retval = nil;
     @synchronized (mValues)
     {
-        rval = [mValues copy];
+        retval = [mValues copy];
     }
-    return rval;
+    return [retval autorelease];
 }
 
 /**

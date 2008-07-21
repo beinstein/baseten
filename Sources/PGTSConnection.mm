@@ -136,6 +136,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	[mQueue release];
 	[self setConnector: nil];
     [mDatabase release];
+	[mPGTypes release];
     [self freeCFTypes];
 	[super dealloc];
 }
