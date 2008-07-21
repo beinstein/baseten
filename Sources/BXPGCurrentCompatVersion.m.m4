@@ -35,5 +35,5 @@ divert(0)dnl
 NSNumber*
 BXPGCopyCurrentCompatibilityVersionNumber ()
 {
-    return [[NSNumber alloc] initWithString: @"_bx_compat_version_"];
+    return [[NSDecimalNumber alloc] initWithString: @"_bx_compat_version_"];
 }
