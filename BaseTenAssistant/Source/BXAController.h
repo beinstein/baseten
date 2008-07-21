@@ -45,6 +45,7 @@
 	BXAImportController* mImportController;
 	BXDataModelCompiler* mCompiler;
 	BXPGSQLScriptReader* mReader;
+	NSNumber* mBundledSchemaVersionNumber;
 	
 	RKRegex* mCompilationErrorRegex;
 	RKRegex* mCompilationFailedRegex;

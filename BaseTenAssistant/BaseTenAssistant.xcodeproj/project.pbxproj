@@ -222,7 +222,6 @@
 			children = (
 				531517560AFA55FB003FB616 /* View Classes */,
 				080E96DDFE201D6D7F000001 /* Controllers */,
-				531517570AFA5612003FB616 /* Interfaces */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -304,13 +303,6 @@
 				53877E3E0E26A51B0097C35F /* BXAFieldCell.m */,
 			);
 			name = "View Classes";
-			sourceTree = "<group>";
-		};
-		531517570AFA5612003FB616 /* Interfaces */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Interfaces;
 			sourceTree = "<group>";
 		};
 		5388DCD30E23AE22006CDBD8 /* Products */ = {

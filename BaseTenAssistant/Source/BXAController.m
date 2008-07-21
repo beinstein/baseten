@@ -356,6 +356,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	gController = self;
 	mLastSelectedEntityWasView = YES;
+	mBundledSchemaVersionNumber = BXACopyBundledVersionNumber ();
 
 	mReader = [[BXPGSQLScriptReader alloc] init];
 	[mReader setDelegate: self];
@@ -575,6 +576,41 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	}
 }
 
+- (void) finishUpgrading: (BOOL) status
+{
+	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+
+	if (status)
+	{
+		PGTSResultSet* res = nil;
+		res = [connection executeQuery: @"INSERT INTO baseten.viewprimarykey SELECT * FROM baseten_viewprimarykey"];
+		if (! [res querySucceeded])
+			[NSApp presentError: [res error]];
+		else
+		{
+			res = [connection executeQuery: @"SELECT baseten.prepareformodificationobserving (oid) FROM baseten_enabledoids"];
+			if (! [res querySucceeded])
+				[NSApp presentError: [res error]];
+		}
+	}
+	
+	//Clean up.
+	[connection executeQuery: @"DROP TABLE baseten_viewprimarykey"];
+	[connection executeQuery: @"DROP TABLE baseten_enabledoids"];
+}
+
+- (void) upgradeBaseTenSchema
+{
+	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+	[connection executeQuery: @"CREATE TEMPORARY TABLE baseten_viewprimarykey AS SELECT * FROM baseten.viewprimarykey"];
+	NSString* query = 
+	@"CREATE TEMPORARY TABLE baseten_enabledoids AS "
+	@" SELECT oid FROM pg_class WHERE baseten.isobservingcompatible (oid) = true";
+	[connection executeQuery: query];
+	
+	[self installBaseTenSchema: MakeInvocation (self, @selector (finishUpgrading:))];
+}
+
 - (void) continueImport
 {
 	NSOpenPanel* openPanel = [NSOpenPanel openPanel];
@@ -595,8 +631,12 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (BOOL) canUpgradeSchema
 {
-	//FIXME: make me work.
-	return NO;
+	BOOL retval = NO;
+	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
+	NSNumber* currentVersion = [db schemaVersion];
+	if (currentVersion && NSOrderedDescending == [mBundledSchemaVersionNumber compare: currentVersion])
+		retval = YES;
+	return retval;
 }
 
 - (BOOL) canRemoveSchema
@@ -648,6 +688,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 
 @implementation BXAController (Delegation)
+- (void) alertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) ctx
+{
+	[NSApp stopModalWithCode: returnCode];
+}
+
 - (void) dataModelCompiler: (BXDataModelCompiler *) compiler finished: (int) exitStatus errorOutput: (NSFileHandle *) handle
 {
 	if (0 == exitStatus)
@@ -712,7 +757,22 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	
 	BXPGInterface* interface = (id) [mContext databaseInterface];
 	[mReader setConnection: [[interface transactionHandler] connection]];
-	[self checkBaseTenSchema: NULL];
+	
+	if ([self checkBaseTenSchema: NULL] && [self canUpgradeSchema])
+	{
+		NSString* message = @"The installed schema has older version than the one bundlend with this application. Would you like to upgrade the database?";
+		NSAlert* alert = [NSAlert alertWithMessageText: @"Upgrade BaseTen schema?" 
+										 defaultButton: @"Upgrade"
+									   alternateButton: @"Don't upgrade"
+										   otherButton: nil 
+							 informativeTextWithFormat: message];
+		[alert beginSheetModalForWindow: mMainWindow modalDelegate: self 
+						 didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+		NSInteger returnCode = [NSApp runModalForWindow: mMainWindow];
+		
+		if (NSAlertDefaultReturn == returnCode)
+			[self upgradeBaseTenSchema];
+	}
 }
 
 
@@ -884,8 +944,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 static void
 InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 {
-	[recoveryInvocation setArgument: &status atIndex: 2];
-	[recoveryInvocation invoke];
+	if (recoveryInvocation)
+	{
+		[recoveryInvocation setArgument: &status atIndex: 2];
+		[recoveryInvocation invoke];
+	}
 }
 
 - (void) SQLScriptReaderSucceeded: (BXPGSQLScriptReader *) reader userInfo: (id) userInfo
@@ -1094,7 +1157,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (IBAction) upgradeSchema: (id) sender
 {
-	//FIXME: make me work.
+	[self upgradeBaseTenSchema];
 }
 
 - (IBAction) removeSchema: (id) sender
