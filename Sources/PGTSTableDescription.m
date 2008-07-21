@@ -57,6 +57,9 @@ PrimaryKey (NSArray* uIndexes)
 {
 	[mFields release];
 	[mUniqueIndexes release];
+	[mForeignKeys release];
+	[mReferencingForeignKeys release];
+	[mRelationOidsBasedOn release];
 	[super dealloc];
 }
 
@@ -123,7 +126,6 @@ PrimaryKey (NSArray* uIndexes)
     [mFields release];
 	[mFieldIndexes release];
     [mUniqueIndexes release];
-    [mSchemaName release];
     [mForeignKeys release];
     [mReferencingForeignKeys release];
     [mRelationOidsBasedOn release];

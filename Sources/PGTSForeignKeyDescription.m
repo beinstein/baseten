@@ -38,6 +38,8 @@
 
 @implementation PGTSForeignKeyDescription
 
+//FIXME: dealloc is missing.
+
 - (NSArray *) sourceFields
 {
     return mSourceFields;

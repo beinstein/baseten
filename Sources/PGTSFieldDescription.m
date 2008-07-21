@@ -57,6 +57,12 @@
     return self;
 }
 
+- (void) dealloc
+{
+	[mDefaultValue release];
+	[super dealloc];
+}
+
 #if 0
 - (NSString *) description
 {
