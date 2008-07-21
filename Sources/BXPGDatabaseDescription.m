@@ -34,6 +34,13 @@
 
 
 @implementation BXPGDatabaseDescription
+- (void) dealloc
+{
+	[mSchemaVersion release];
+	[mSchemaCompatibilityVersion release];
+	[super dealloc];
+}
+
 - (BOOL) hasBaseTenSchema
 {
 	return mHasBaseTenSchema;

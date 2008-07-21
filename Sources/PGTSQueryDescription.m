@@ -109,6 +109,12 @@ NextIdentifier ()
 
 
 @implementation PGTSConcreteQueryDescription
+- (void) dealloc
+{
+	[mQuery release];
+	[mUserInfo release];
+	[super dealloc];
+}
 
 - (id) init
 {
