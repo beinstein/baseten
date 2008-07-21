@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BaseTen.h>
 #import <Security/Security.h>
-#import "PGTS.h"
+#import <BaseTen/PGTSCertificateVerificationDelegate.h>
 
 
 @protocol BXPGTrustHandler <NSObject>

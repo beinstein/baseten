@@ -39,6 +39,7 @@
 #import "NSEntityDescription+BXPGAdditions.h"
 #import "NSAttributeDescription+BXPGAdditions.h"
 #import "NSRelationshipDescription+BXPGAdditions.h"
+#import "PGTSDatabaseDescription.h"
 
 
 @implementation BXPGEntityConverter

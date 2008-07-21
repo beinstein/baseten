@@ -32,6 +32,7 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXPGTransactionHandler.h"
 #import "BXPGEntityConverter.h"
+#import "PGTSResultSet.h"
 
 
 @implementation BXPGEntityImporter

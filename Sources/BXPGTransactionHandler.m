@@ -215,7 +215,7 @@ SSLMode (enum BXSSLMode mode)
 			BXAssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
 			
 			NSMutableArray* quoted = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
-			[[pkeyFields PGTSVisit: self] qualifiedNameFor: nil into: quoted entity: entity connection: notifyConnection];
+			[[pkeyFields PGTSVisit: mInterface] qualifiedNameFor: nil into: quoted entity: entity connection: notifyConnection];
 			NSString* quotedNames = [quoted componentsJoinedByString: @", "];
 			NSString* entityName = [entity BXPGQualifiedName: notifyConnection];
 			
