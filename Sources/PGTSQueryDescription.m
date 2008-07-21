@@ -128,13 +128,6 @@ NextIdentifier ()
 	return self;
 }
 
-- (void) dealloc
-{
-	[mQuery release];
-	[mUserInfo release];
-	[super dealloc];
-}
-
 - (SEL) callback
 {
 	return mCallback;

@@ -47,7 +47,7 @@
 
 @interface PGTSIndexDescription : PGTSAbstractClassDescription <PGTSIndexDescription>
 {
-    PGTSTableDescription* mTable;
+    PGTSTableDescription* mTable; //Weak
     NSSet* mFields;
     BOOL mIsPrimaryKey;
     BOOL mIsUnique;

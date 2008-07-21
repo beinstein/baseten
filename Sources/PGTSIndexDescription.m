@@ -30,8 +30,13 @@
 #import "PGTSHOM.h"
 
 
-//FIXME: implement this.
 @implementation PGTSIndexDescriptionProxy
+- (void) dealloc
+{
+	[mFields release];
+	[super dealloc];
+}
+
 - (PGTSTableDescription *) table
 {
 	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSIndexDescriptionProxy table:] called." userInfo: nil] raise];

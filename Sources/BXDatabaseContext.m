@@ -1058,19 +1058,27 @@ bx_query_during_reconnect ()
     if (nil == retval && [self checkErrorHandling])
     {
         NSError* localError = nil;
+		[self connectIfNeeded: &localError];
+		if (localError)
+			goto error;
+		
+		[self validateEntity: [anID entity] error: &localError];
+		if (localError)
+			goto error;
+		
 		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
 										 withPredicate: [anID predicate] returningFaults: NO error: &localError];
-        if (nil == localError)
-        {
-            if (0 < [objects count])
-            {
-                retval = [objects objectAtIndex: 0];
-            }
-            else
-            {
-                localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
-            }
-        }
+		if (localError) goto error;
+		
+		if (0 < [objects count])
+			retval = [objects objectAtIndex: 0];
+		else
+		{
+			//FIXME: some human-readable error?
+			localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
+		}
+		
+	error:
         BXHandleError (error, localError);
     }
     return retval;

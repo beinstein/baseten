@@ -255,6 +255,7 @@ bail:
     if (ok)
     {
         NSDictionary* attributes = [mEntity attributesByName];
+		Expect (attributes);
         NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [pkeyFValues count]];
     
         TSEnumerate (currentKey, e, [pkeyFValues keyEnumerator])

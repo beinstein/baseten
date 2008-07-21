@@ -813,6 +813,7 @@ bail:
 {
 	ExpectR (entity, NO);
 	ExpectR (error, NO);
+	ExpectR (database, NO);
 	BXPGTableDescription* table = (id) [database table: [entity name] inSchema: [entity schemaName]];
 	if (table)
 	{
