@@ -398,7 +398,16 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	if (mLogsQueries)
 		[mDelegate PGTSConnection: self sentQueryString: query];
-	return PQexec (mConnection, query);
+	
+	PGresult* res = PQexec (mConnection, query);
+	if (PGTS_SEND_QUERY_ENABLED ())
+	{
+		char* query_s = strdup (query);
+		PGTS_SEND_QUERY (self, 1, query_s, NULL);
+		free (query_s);
+	}
+	
+	return res;
 }
 
 - (id <PGTSConnectionDelegate>) delegate

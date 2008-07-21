@@ -196,12 +196,7 @@ NextIdentifier ()
     {
         mFinished = YES;
 		
-		if (PGTS_FINISHED_QUERY_ENABLED ())
-		{
-			char* query_s = strdup ([[mQuery query] UTF8String]);
-			PGTS_FINISHED_QUERY (connection, query_s);
-			free (query_s);
-		}
+		//Finished query probe goes here if needed.
     }
     return retval;
 }
