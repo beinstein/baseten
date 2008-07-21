@@ -325,16 +325,24 @@ SSLMode (enum BXSSLMode mode)
 	NSError* localError = nil;
 	BXPGDatabaseDescription* db = (id) [mConnection databaseDescription];
 	
-	if ([db checkBaseTenSchema: &localError] && [db checkSchemaVersions: &localError])
+	if (! [db checkBaseTenSchema: &localError])
+		goto error;
+	
+	if (! [db checkSchemaVersions: &localError])
+		goto error;
+	
+	if (! [mInterface checkSchemaCompatibility: &localError])
+		goto error;
+	
+	mConnectionSucceeded = YES;
+	if (mAsync)
 	{
-		mConnectionSucceeded = YES;
-		if (mAsync)
-		{
-			[mInterface connectionSucceeded];
-		}
-		BXLogDebug (@"mConnection: %p", mConnection);
+		[mInterface connectionSucceeded];
 	}
-	else
+	BXLogDebug (@"mConnection: %p", mConnection);
+	return;
+	
+error:
 	{
 		if (mAsync)
 			*mSyncErrorPtr = localError;
