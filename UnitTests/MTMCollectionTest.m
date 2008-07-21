@@ -41,7 +41,6 @@
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context setAutocommits: NO];
-    [context setLogsQueries: NO];
     MKCAssertNotNil (context);
     
     mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
@@ -71,8 +70,6 @@
     //This time, use a many-to-many relationship.
 
     NSError* error = nil;
-    BOOL autocommits = [context autocommits];
-    [context setAutocommits: NO];
     MKCAssertTrue (NO == [context autocommits]);
 	
     //Execute a fetch
@@ -121,7 +118,6 @@
     MKCAssertTrue ([mock isEqualToSet: foreignObjects2]);
     
     [context rollback];
-    [context setAutocommits: autocommits];    
 }
 
 @end

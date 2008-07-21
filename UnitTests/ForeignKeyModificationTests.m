@@ -262,9 +262,8 @@
 - (void) testModOTM2
 {
     //FIXME: also write a view test?
-    BOOL autocommits = [context autocommits];
-    [context setAutocommits: NO];
-    
+	MKCAssertFalse ([context autocommits]);
+	
     NSError* error = nil;
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
     MKCAssertNotNil (predicate);
@@ -286,7 +285,6 @@
     
     collection = nil;
     [context rollback];
-    [context setAutocommits: autocommits];
 }
 
 - (void) testModOTO
