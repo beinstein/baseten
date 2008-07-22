@@ -57,6 +57,7 @@
 #import "BXInvocationRecorder.h"
 #import "BXErrorHandlerDelegate.h"
 #import "BXLogger.h"
+#import "BXProbes.h"
 
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
 static BOOL gHaveAppKitFramework = NO;
@@ -1369,7 +1370,22 @@ bx_query_during_reconnect ()
 	{
 	    //Always fetch all keys when firing a fault
 		NSArray* keys = [anObject keysIncludedInQuery: aKey];
+		
+		if (BASETEN_BEGIN_FETCH_ENABLED ())
+		{
+			BXEntityDescription* entity = [anObject entity];
+			char* schema_s = strdup ([[entity schemaName] UTF8String]);
+			char* table_s = strdup ([[entity name] UTF8String]);
+			BASETEN_BEGIN_FETCH (self, schema_s, table_s);
+			free (schema_s);
+			free (table_s);
+		}
+		
 	    retval = [mDatabaseInterface fireFault: anObject keys: keys error: &localError];
+		
+		if (BASETEN_END_FETCH_ENABLED ())
+			BASETEN_END_FETCH (1);
+		
 		if (YES == retval)
 			[anObject awakeFromFetchIfNeeded];
 	    BXHandleError (error, localError);
@@ -2039,10 +2055,24 @@ bx_query_during_reconnect ()
 				excludedFields = [entity attributes: excludedFields];
 				[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
 			}
+			
+			if (BASETEN_BEGIN_FETCH_ENABLED ())
+			{
+				char* schema_s = strdup ([[entity schemaName] UTF8String]);
+				char* table_s = strdup ([[entity name] UTF8String]);
+				BASETEN_BEGIN_FETCH (self, schema_s, table_s);
+				free (schema_s);
+				free (table_s);
+			}
+			
 			retval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
 											   returningFaults: returnFaults 
 														 class: [entity databaseObjectClass] 
 														 error: &localError];
+			
+			if (BASETEN_END_FETCH_ENABLED ())
+				BASETEN_END_FETCH ([retval count]);
+			
 			if (nil == localError)
 			{
 				[retval makeObjectsPerformSelector: @selector (awakeFromFetchIfNeeded)];
