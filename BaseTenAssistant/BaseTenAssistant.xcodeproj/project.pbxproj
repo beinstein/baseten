@@ -40,6 +40,8 @@
 		53EF32B90E23B7220027EA18 /* Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E4B70B0D364E000D353D /* Additions.m */; };
 		53EF33B50E23CC430027EA18 /* BXASchemaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF33B40E23CC430027EA18 /* BXASchemaCell.m */; };
 		53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF34500E23D83B0027EA18 /* BXAEntityCell.m */; };
+		53F7498F0E362E53003C2E55 /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
+		53F749990E362E69003C2E55 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53F749980E362E62003C2E55 /* BaseTenAppKit.framework */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
@@ -108,6 +110,13 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = "RegexKit Framework";
 		};
+		53F749970E362E62003C2E55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 535444870D634D9C002A6C47;
+			remoteInfo = "BaseTenAppKit + GC";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -117,6 +126,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				53F7498F0E362E53003C2E55 /* BaseTen.framework in Copy Frameworks */,
+				53F749990E362E69003C2E55 /* BaseTenAppKit.framework in Copy Frameworks */,
 				5395E8450E2F9FE8006E8441 /* RegexKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -177,6 +188,7 @@
 		53EF33B40E23CC430027EA18 /* BXASchemaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXASchemaCell.m; path = Source/BXASchemaCell.m; sourceTree = "<group>"; };
 		53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAEntityCell.h; path = Source/BXAEntityCell.h; sourceTree = "<group>"; };
 		53EF34500E23D83B0027EA18 /* BXAEntityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAEntityCell.m; path = Source/BXAEntityCell.m; sourceTree = "<group>"; };
+		53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = ../BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* BaseTen Assistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BaseTen Assistant.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -266,6 +278,7 @@
 			isa = PBXGroup;
 			children = (
 				5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */,
+				53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */,
 				5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */,
 				5388DE290E23AE48006CDBD8 /* Cocoa.framework */,
 			);
@@ -324,6 +337,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		53F749940E362E62003C2E55 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53F749980E362E62003C2E55 /* BaseTenAppKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -363,6 +384,10 @@
 				{
 					ProductGroup = 5388DCD30E23AE22006CDBD8 /* Products */;
 					ProjectRef = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
+				},
+				{
+					ProductGroup = 53F749940E362E62003C2E55 /* Products */;
+					ProjectRef = 53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */;
 				},
 				{
 					ProductGroup = 5395E8220E2F9F15006E8441 /* Products */;
@@ -410,6 +435,13 @@
 			fileType = archive.ar;
 			path = "libStack Protector.a";
 			remoteRef = 5395E8320E2F9F15006E8441 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53F749980E362E62003C2E55 /* BaseTenAppKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTenAppKit.framework;
+			remoteRef = 53F749970E362E62003C2E55 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

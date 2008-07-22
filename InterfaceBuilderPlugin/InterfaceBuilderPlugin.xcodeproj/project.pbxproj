@@ -23,6 +23,8 @@
 		53978F8D0CEC709200B93B3C /* BXArrayController.png in Resources */ = {isa = PBXBuildFile; fileRef = 53978F8A0CEC709200B93B3C /* BXArrayController.png */; };
 		53978F8E0CEC709200B93B3C /* BXDatabaseObject.png in Resources */ = {isa = PBXBuildFile; fileRef = 53978F8B0CEC709200B93B3C /* BXDatabaseObject.png */; };
 		53978F8F0CEC709200B93B3C /* Palette5.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53978F8C0CEC709200B93B3C /* Palette5.icns */; };
+		53F749640E362DFA003C2E55 /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5373CC8D0D65B9710084BD9D /* BaseTen.framework */; };
+		53F749680E362DFD003C2E55 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5373CC900D65B9710084BD9D /* BaseTenAppKit.framework */; };
 		8D1AC9700486D14A00FE50C9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD92D38A0106425D02CA0E72 /* Cocoa.framework */; };
 		8D1AC9800486D23B00FE50C9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8D1AC97F0486D23B00FE50C9 /* InfoPlist.strings */; };
 		C0D069560A49DF9100C95564 /* InterfaceBuilderKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0D069550A49DF9100C95564 /* InterfaceBuilderKit.framework */; };
@@ -61,7 +63,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8 /* SQLParser.o */;
+			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
 			remoteInfo = "SQL Parser";
 		};
 /* End PBXContainerItemProxy section */
@@ -73,6 +75,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				53F749640E362DFA003C2E55 /* BaseTen.framework in Copy Frameworks */,
+				53F749680E362DFD003C2E55 /* BaseTenAppKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;

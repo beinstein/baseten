@@ -1,5 +1,8 @@
 #!/bin/bash
 
+CP=/bin/cp
+RM=/bin/rm
+
 # Check that OBJROOT exists
 if [ ! -d "$OBJROOT" ]
 then
@@ -16,8 +19,8 @@ fi
 
 
 # Remove all previous BaseTen disk images
-rm -f BaseTen.dmg
-#rm -f BaseTen-master.sparseimage
+"$RM" -f BaseTen.dmg
+#"$RM" -f BaseTen-master.sparseimage
 
 if [ -d "/Volumes/BaseTen" ]
 then
@@ -36,26 +39,26 @@ then
 fi
 
 # Copy built BaseTen.framework and BaseTenAppKit.framework to new disk image
-rm -rf /Volumes/BaseTen/BaseTen.framework
-cp -pRP "$SYMROOT"/Release/BaseTen.framework /Volumes/BaseTen/.
+"$RM" -rf /Volumes/BaseTen/BaseTen.framework
+"$CP" -pRP "$SYMROOT"/Release/BaseTen.framework /Volumes/BaseTen/.
 
-rm -rf /Volumes/BaseTen/BaseTenAppKit.framework
-cp -pRP "$SYMROOT"/Release/BaseTenAppKit.framework /Volumes/BaseTen/.
+"$RM" -rf /Volumes/BaseTen/BaseTenAppKit.framework
+"$CP" -pRP "$SYMROOT"/Release/BaseTenAppKit.framework /Volumes/BaseTen/.
 
-rm -rf /Volumes/BaseTen/BaseTen\ Assistant.app
-cp -pRP "$SYMROOT"/Release/BaseTen\ Assistant.app /Volumes/BaseTen/.
+"$RM" -rf /Volumes/BaseTen/BaseTen\ Assistant.app
+"$CP" -pRP "$SYMROOT"/Release/BaseTen\ Assistant.app /Volumes/BaseTen/.
 
-rm -rf /Volumes/BaseTen/InterfaceBuilderPlugin.ibplugin
-cp -pRP "$SYMROOT"/Release/"BaseTen Plug-in.ibplugin" /Volumes/BaseTen/.
+"$RM" -rf /Volumes/BaseTen/InterfaceBuilderPlugin.ibplugin
+"$CP" -pRP "$SYMROOT"/Release/"BaseTen Plug-in.ibplugin" /Volumes/BaseTen/.
 
-rm -f /Volumes/BaseTen/Frameworks
+"$RM" -f /Volumes/BaseTen/Frameworks
 ln -s /Library/Frameworks /Volumes/BaseTen/Frameworks
 
 # Copy Finder .DS_Store data
-cp DMG_DS_Store /Volumes/BaseTen/.DS_Store
+"$CP" DMG_DS_Store /Volumes/BaseTen/.DS_Store
 
 # Copy volume icon and set it
-#cp DMG_VolumeIcon.icns /Volumes/BaseTen/.VolumeIcon.icns
+#"$CP" DMG_VolumeIcon.icns /Volumes/BaseTen/.VolumeIcon.icns
 #SetFile -a Ci /Volumes/BaseTen
 
 
@@ -77,5 +80,5 @@ hdiutil flatten BaseTen.dmg
 hdiutil verify BaseTen.dmg
 
 # Clean up
-rm -f BaseTen-temp.sparseimage
+"$RM" -f BaseTen-temp.sparseimage
 
