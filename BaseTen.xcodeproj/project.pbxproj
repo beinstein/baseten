@@ -1057,6 +1057,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				53666DAC0E1CE2180028DBEA /* postgresql in Headers */,
 				535443C50D634A47002A6C47 /* BaseTen.h in Headers */,
 				535443C60D634A47002A6C47 /* BXDatabaseContext.h in Headers */,
 				535443C70D634A47002A6C47 /* BXInterface.h in Headers */,
@@ -1146,7 +1147,6 @@
 				53666D6D0E1CDE3A0028DBEA /* MKCHashTable.h in Headers */,
 				53666D7E0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h in Headers */,
 				53666D800E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h in Headers */,
-				53666DAC0E1CE2180028DBEA /* postgresql in Headers */,
 				5328754A0E1E515500CC507E /* BXPGSQLScriptReader.h in Headers */,
 				539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */,
 				53B24CF40E223A14007AED76 /* BXPGDatabaseDescription.h in Headers */,
@@ -1278,7 +1278,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+            shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenFrameworkIcon.zip\" \"$I
+CON_FOLDER_PATH\"\n\"$PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5362E86B0E1CE46D005C7654 /* ShellScript */ = {
@@ -1490,6 +1491,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444210D634A98002A6C47 /* debug-gc.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
@@ -1502,6 +1508,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444230D634A98002A6C47 /* release-gc.xcconfig */;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL",
+				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
@@ -1558,10 +1569,11 @@
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/internal",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include/postgresql/server",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include/postgresql/internal",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server/libpq",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include/postgresql/internal",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/internal",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				KEEP_PRIVATE_EXTERNS = NO;
@@ -1578,15 +1590,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/internal",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include/postgresql/server",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/include/postgresql/internal",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server/libpq",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/internal",
 				);
 				INSTALL_PATH = /usr/local/lib;
 				KEEP_PRIVATE_EXTERNS = NO;

@@ -45,6 +45,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		5302CB5A0E360ACD00587EAD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
+			remoteInfo = "SQL Parser";
+		};
+		5302CB600E360B1200587EAD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
+		};
 		5354443D0D634CA4002A6C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */;
@@ -240,6 +254,7 @@
 			isa = PBXGroup;
 			children = (
 				5354443E0D634CA4002A6C47 /* BaseTen.framework */,
+				5302CB5B0E360ACD00587EAD /* SQLParser.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -285,6 +300,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				5302CB610E360B1200587EAD /* PBXTargetDependency */,
 			);
 			name = "BaseTenAppKit + GC";
 			productInstallPath = "$(HOME)/Library/Frameworks";
@@ -317,6 +333,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		5302CB5B0E360ACD00587EAD /* SQLParser.o */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.objfile";
+			path = SQLParser.o;
+			remoteRef = 5302CB5A0E360ACD00587EAD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		5354443E0D634CA4002A6C47 /* BaseTen.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -353,7 +376,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/../BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/../unzip.sh\" \"$PROJECT_DIR/../BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/../set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+            shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/../BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/../unzip.sh\" \"$PROJECT_DIR/../BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/../set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -380,6 +403,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5302CB610E360B1200587EAD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTen Framework + GC";
+			targetProxy = 5302CB600E360B1200587EAD /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
