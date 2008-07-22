@@ -35,6 +35,6 @@ divert(0)dnl
 NSNumber*
 BXACopyBundledVersionNumber ()
 {
-    return [[NSNumber alloc] initWithString: @"_bx_version_"];
+    return [[NSDecimalNumber alloc] initWithString: @"_bx_version_"];
 }
 
