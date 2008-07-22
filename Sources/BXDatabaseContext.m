@@ -1372,19 +1372,19 @@ bx_query_during_reconnect ()
 		NSArray* keys = [anObject keysIncludedInQuery: aKey];
 		
 		if (BASETEN_BEGIN_FETCH_ENABLED ())
-		{
-			BXEntityDescription* entity = [anObject entity];
-			char* schema_s = strdup ([[entity schemaName] UTF8String]);
-			char* table_s = strdup ([[entity name] UTF8String]);
-			BASETEN_BEGIN_FETCH (self, schema_s, table_s);
-			free (schema_s);
-			free (table_s);
-		}
+			BASETEN_BEGIN_FETCH ();
 		
 	    retval = [mDatabaseInterface fireFault: anObject keys: keys error: &localError];
 		
 		if (BASETEN_END_FETCH_ENABLED ())
-			BASETEN_END_FETCH (1);
+		{
+			BXEntityDescription* entity = [anObject entity];
+			char* schema_s = strdup ([[entity schemaName] UTF8String]);
+			char* table_s = strdup ([[entity name] UTF8String]);
+			BASETEN_END_FETCH (self, schema_s, table_s, 1);
+			free (schema_s);
+			free (table_s);
+		}
 		
 		if (YES == retval)
 			[anObject awakeFromFetchIfNeeded];
@@ -2057,21 +2057,21 @@ bx_query_during_reconnect ()
 			}
 			
 			if (BASETEN_BEGIN_FETCH_ENABLED ())
-			{
-				char* schema_s = strdup ([[entity schemaName] UTF8String]);
-				char* table_s = strdup ([[entity name] UTF8String]);
-				BASETEN_BEGIN_FETCH (self, schema_s, table_s);
-				free (schema_s);
-				free (table_s);
-			}
-			
+				BASETEN_BEGIN_FETCH ();
+							
 			retval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
 											   returningFaults: returnFaults 
 														 class: [entity databaseObjectClass] 
 														 error: &localError];
 			
 			if (BASETEN_END_FETCH_ENABLED ())
-				BASETEN_END_FETCH ([retval count]);
+			{
+				char* schema_s = strdup ([[entity schemaName] UTF8String]);
+				char* table_s = strdup ([[entity name] UTF8String]);
+				BASETEN_END_FETCH (self, schema_s, table_s, [retval count]);
+				free (schema_s);
+				free (table_s);
+			}
 			
 			if (nil == localError)
 			{

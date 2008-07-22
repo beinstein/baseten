@@ -29,8 +29,8 @@
 
 provider BaseTen
 {
-	probe begin_fetch (void* context, char* schema, char* table);
-	probe end_fetch (long count);
+	probe begin_fetch ();
+	probe end_fetch (void* context, char* schema, char* table, long count);
 
 	probe received_pg_notice (void* connection, char* message);
 
