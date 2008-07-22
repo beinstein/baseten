@@ -1313,14 +1313,15 @@ HAVE_DOT               = YES
 # DOTFONTPATH environment variable or by setting DOT_FONTPATH to the directory 
 # containing the font.
 
-DOT_FONTNAME           = Lucida Grande
+#DOT_FONTNAME           = Lucida Grande
+DOT_FONTNAME           = URWGroteskT-Bold
 
 # By default doxygen will tell dot to use the output directory to look for the 
 # FreeSans.ttf font (which doxygen will put there itself). If you specify a 
 # different font using DOT_FONTNAME you can set the path where dot 
 # can find it using this tag.
 
-DOT_FONTPATH           = /System/Library/Fonts
+#DOT_FONTPATH           = /System/Library/Fonts
 
 # If the CLASS_GRAPH and HAVE_DOT tags are set to YES then doxygen 
 # will generate a graph for each documented class showing the direct and 
