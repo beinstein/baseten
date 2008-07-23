@@ -29,6 +29,11 @@
 #import <Cocoa/Cocoa.h>
 
 
+extern NSString* kMKCEnabledColoursKey;
+extern NSString* kMKCDisabledColoursKey;
+extern NSString* kMKCSelectedColoursKey;
+
+
 extern NSString* kMKCGradientKey;
 extern NSString* kMKCTopAccentColourKey;
 extern NSString* kMKCLeftAccentColourKey;
@@ -50,6 +55,9 @@ enum MKCPolishDrawingMask {
     kMKCPolishDrawLeftAccent     = 1 << 8,
     kMKCPolishDrawRightAccent    = 1 << 9,
     kMKCPolishDrawSeparatorLines = 1 << 10,
+	
+	kMKCPolishNoLeftAccentForLeftmostColumn = 1 << 6,
+	
     MKCPolishDrawAllLines = (kMKCPolishDrawTopLine | 
                              kMKCPolishDrawBottomLine | 
                              kMKCPolishDrawLeftLine | 
@@ -58,19 +66,22 @@ enum MKCPolishDrawingMask {
                              kMKCPolishDrawLeftAccent | 
                              kMKCPolishDrawRightAccent | 
                              kMKCPolishDrawSeparatorLines),
-    kMKCPolishDrawingMaskInvalid = 1 << 31
 };
 
 
 void
 MKCDrawPolishInRect (NSRect rect, NSDictionary* colours, enum MKCPolishDrawingMask mask);
 
+BOOL
+MKCShouldDrawEnabled (NSWindow* window);
+
 
 @interface MKCPolishedHeaderView : NSTableHeaderView 
 {
-    id mHeaderFields;
     NSDictionary* mColours;
     enum MKCPolishDrawingMask mDrawingMask;
+	NSTableColumn* mColumnSortedBy;
+	BOOL mReversedOrder;
 }
 
 + (NSDictionary *) darkColours;

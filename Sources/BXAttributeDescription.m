@@ -32,15 +32,17 @@
 #import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
 
-#import <Log4Cocoa/Log4Cocoa.h>
-
-
 
 /**
  * An attribute description contains information about a column in a specific entity.
  * \ingroup Descriptions
  */
 @implementation BXAttributeDescription
+- (void) dealloc
+{
+	[mDatabaseTypeName release];
+	[super dealloc];
+}
 
 - (id) initWithCoder: (NSCoder *) decoder
 {
@@ -74,6 +76,20 @@
 	return (mFlags & kBXPropertyExcluded ? YES : NO);
 }
 
+- (NSString *) databaseTypeName
+{
+	return mDatabaseTypeName;
+}
+
+- (Class) attributeValueClass
+{
+	return mAttributeClass;
+}
+
+- (NSString *) attributeValueClassName
+{
+	return NSStringFromClass (mAttributeClass);
+}
 @end
 
 
@@ -99,6 +115,7 @@
 
 - (void) setPrimaryKey: (BOOL) aBool
 {
+	[mEntity willChangeValueForKey: @"primaryKeyFields"];
 	if (aBool)
 	{
 		mFlags |= kBXPropertyPrimaryKey;
@@ -108,6 +125,7 @@
 	{
 		mFlags &= ~kBXPropertyPrimaryKey;
 	}
+	[mEntity didChangeValueForKey: @"primaryKeyFields"];
 }
 
 - (void) setExcluded: (BOOL) aBool
@@ -126,4 +144,17 @@
 	return mName;
 }
 
+- (void) setAttributeValueClass: (Class) aClass
+{
+	mAttributeClass = aClass;
+}
+
+- (void) setDatabaseTypeName: (NSString *) typeName
+{
+	if (mDatabaseTypeName != typeName)
+	{
+		[mDatabaseTypeName release];
+		mDatabaseTypeName = [typeName retain];
+	}
+}
 @end

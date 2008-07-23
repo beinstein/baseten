@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
+#import <BaseTen/BXConstants.h>
 
 #ifndef IBAction
 #define IBAction void
@@ -50,6 +51,7 @@
 @class BXDatabaseObject;
 @class BXEntityDescription;
 @class BXDatabaseObjectID;
+@class NSEntityDescription;
 
 
 @interface BXDatabaseContext : NSObject
@@ -66,6 +68,7 @@
     NSNotificationCenter*                   mNotificationCenter;
     NSMutableSet*                           mEntities;
     NSMutableSet*                           mRelationships;
+	NSMutableDictionary*					mEntitiesBySchema;
 	
 	/** An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;
@@ -73,8 +76,9 @@
 	IBOutlet id								policyDelegate;
 	/** A delegate for error handling. \see NSObject(BXErrorHandlerDelegate) */
 	IBOutlet id								errorHandlerDelegate;
+	
+	enum BXConnectionErrorHandlingState		mConnectionErrorHandlingState;
 
-    BOOL									mLogsQueries;
     BOOL									mAutocommits;
     BOOL									mDeallocating;
 	BOOL									mDisplayingSheet;
@@ -84,6 +88,7 @@
 	BOOL									mCanConnect;
 	BOOL									mDidDisconnect;
 	BOOL									mConnectsOnAwake;
+	BOOL									mSendsLockQueries;
 }
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme;
@@ -100,14 +105,14 @@
 
 - (void) setAutocommits: (BOOL) aBool;
 - (BOOL) autocommits;
-
-- (BOOL) logsQueries;
-- (void) setLogsQueries: (BOOL) aBool;
+- (void) rollback;
+- (BOOL) save: (NSError **) error;
 
 - (void) connect;
 - (void) connectIfNeeded: (NSError **) error;
 - (void) disconnect; /* Only for ending asynchronous connection attempt */
 
+- (NSArray *) faultsWithIDs: (NSArray *) anArray;
 - (BXDatabaseObject *) registeredObjectWithID: (BXDatabaseObjectID *) objectID;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs;
 - (NSArray *) registeredObjectsWithIDs: (NSArray *) objectIDs nullObjects: (BOOL) returnNullObjects;
@@ -131,6 +136,9 @@
 - (void) setConnectsOnAwake: (BOOL) aBool;
 - (BOOL) connectsOnAwake;
 
+- (void) setSendsLockQueries: (BOOL) aBool;
+- (BOOL) sendsLockQueries;
+
 - (void) refreshObject: (BXDatabaseObject *) object mergeChanges: (BOOL) flag;
 
 - (NSNotificationCenter *) notificationCenter;
@@ -138,12 +146,8 @@
 
 
 @interface BXDatabaseContext (Queries)
-- (void) rollback;
-- (BOOL) save: (NSError **) error;
-
 - (id) objectWithID: (BXDatabaseObjectID *) anID error: (NSError **) error;
 - (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error;
-- (NSArray *) faultsWithIDs: (NSArray *) anArray;
 
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) 
                     predicate error: (NSError **) error;
@@ -164,6 +168,7 @@
 
 /* These methods should only be used for purposes which the ones above are not suited. */
 - (NSArray *) executeQuery: (NSString *) queryString error: (NSError **) error;
+- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error;
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error;
 @end
 
@@ -173,6 +178,9 @@
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error;
+- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error;
+- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName error: (NSError **) error;
+- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName error: (NSError **) error;
 @end
 
 

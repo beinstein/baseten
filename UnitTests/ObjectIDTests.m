@@ -116,7 +116,7 @@
 	STAssertNil (error, [error description]);
 	MKCAssertNotNil (objectArray);
 	
-	BXDatabaseObjectID* anId = [[objectArray objectAtIndex: 0] objectID];
+	BXDatabaseObjectID* anId = (id) [[objectArray objectAtIndex: 0] objectID];
 	MKCAssertNotNil (anId);
 	
 	[ctx connectIfNeeded: &error];

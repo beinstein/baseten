@@ -27,11 +27,11 @@
 //
 
 #import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/BXLogger.h>
 #import "BXNetServiceConnector.h"
 #import "BXConnectionPanel.h"
 #import "BXAuthenticationPanel.h"
 #import "BXDatabaseContextAdditions.h"
-#import "../Dependencies/PGTS/Framework/Contrib/Log4Cocoa/Log4Cocoa.h"
 
 
 /**
@@ -143,7 +143,7 @@
 {
 	if (NSOKButton == returnCode)
 	{
-		log4AssertVoidReturn (nil != databaseContext, @"Expected databaseContext not to be nil.");
+		BXAssertVoidReturn (nil != databaseContext, @"Expected databaseContext not to be nil.");
 		[databaseContext setConnectionSetupManager: self];
 		[databaseContext connect];
 	}

@@ -36,9 +36,11 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
 #import "BXConstantsPrivate.h"
+#import "BXLogger.h"
+#import "PGTSHOM.h"
+#import "BXWeakNotification.h"
 
-#import <MKCCollections/MKCCollections.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "MKCCollections.h"
 
 
 static id gEntities;
@@ -70,14 +72,14 @@ static id gEntities;
 
 - (id) init
 {
-	log4Error (@"This initializer should not have been called.");
+	BXLogError (@"This initializer should not have been called.");
     [self release];
     return nil;
 }
 
 - (id) initWithName: (NSString *) aName
 {
-	log4Error (@"This initializer should not have been called (name: %@).", aName);
+	BXLogError (@"This initializer should not have been called (name: %@).", aName);
     [self release];
     return nil;
 }
@@ -89,6 +91,15 @@ static id gEntities;
 	{
 		[gEntities removeObjectForKey: [self entityKey]];
 	}
+	
+	@synchronized (mAttributes)
+	{
+		TSEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
+		{
+			[currentAttribute setEntity: nil];
+			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
+		}
+	}
     
     @synchronized (mRelationships)
     {
@@ -96,12 +107,14 @@ static id gEntities;
         {
             [currentRel setEntity: nil];
             [[currentRel inverseRelationship] setDestinationEntity: nil];
+			[[currentRel class] unregisterProperty: currentRel entity: self];
         }
     }
     
     NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-    [nc postNotificationName: kBXEntityDescriptionWillDeallocNotification
-                      object: self];
+	NSNotification* n = [BXWeakNotification notificationWithName: 
+						 kBXEntityDescriptionWillDeallocNotification object: self];
+	[nc postNotification: n];
     
 	[self dealloc2];
 	[super dealloc];
@@ -116,26 +129,29 @@ static id gEntities;
  */
 - (void) dealloc2
 {
-	[mRelationships release];
-	mRelationships = nil;
-	
-	[mAttributes release];
-	mAttributes = nil;
-	
 	[mDatabaseURI release];
 	mDatabaseURI = nil;
 	
 	[mSchemaName release];
 	mSchemaName = nil;
-    
+
+	[mAttributes release];
+	mAttributes = nil;
+
+	[mValidationLock release];
+	mValidationLock = nil;
+
+	[mObjectIDs release];
+	mObjectIDs = nil;
+	
+	[mRelationships release];
+	mRelationships = nil;
+	    
     [mSuperEntities release];
     mSuperEntities = nil;
     
     [mSubEntities release];
     mSubEntities = nil;
-	
-	[mValidationLock release];
-	mValidationLock = nil;
 	
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
@@ -196,9 +212,9 @@ static id gEntities;
 		
 		BXEntityDescription* aDesc = (BXEntityDescription *) anObject;
         
-		log4AssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
+		BXAssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
 							   @"Properties should not be nil in -isEqual:.");
-		log4AssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
+		BXAssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
 							   @"Properties should not be nil in -isEqual:.");
 		
 		
@@ -277,7 +293,7 @@ bail:
 			BXAttributeDescription* attribute = nil;
 			if ([currentField isKindOfClass: [BXAttributeDescription class]])
 			{
-				log4AssertVoidReturn ([currentField entity] == self, 
+				BXAssertVoidReturn ([currentField entity] == self, 
 									  @"Expected to receive only attributes in which entity is self (self: %@ currentField: %@).",
 									  self, currentField);
 				attribute = currentField;
@@ -302,6 +318,16 @@ bail:
 	return [mObjectIDs allObjects];
 }
 
+static int
+FilterPkeyAttributes (id attribute, void* arg)
+{
+	int retval = 0;
+	long shouldBePkey = (long) arg;
+	if ([attribute isPrimaryKey] == shouldBePkey)
+		retval = 1;
+	return retval;
+}
+
 /**
  * Primary key fields for this entity.
  * The fields get determined automatically after database connection has been made.
@@ -310,11 +336,12 @@ bail:
  */
 - (NSArray *) primaryKeyFields
 {
-	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"YES == isPrimaryKey"];
-	NSArray* rval = [[[mAttributes allValues] filteredArrayUsingPredicate: predicate] 
-			sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)];
-	if (0 == [rval count]) rval = nil;
-	return rval;
+	return [mAttributes PGTSValueSelectFunction: &FilterPkeyAttributes argument: (void *) 1L] ?: nil;
+}
+	
++ (NSSet *) keyPathsForValuesAffectingFields
+{
+	return [NSSet setWithObject: @"primaryKeyFields"];
 }
 
 /** 
@@ -324,22 +351,18 @@ bail:
  */
 - (NSArray *) fields
 {
-	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"NO == isPrimaryKey"];
-	NSArray* rval = [[[mAttributes allValues] filteredArrayUsingPredicate: predicate] 
-			sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)];
-	if (0 == [rval count]) rval = nil;
-	return rval;
+	return [mAttributes PGTSValueSelectFunction: &FilterPkeyAttributes argument: (void *) 0L] ?: nil;
 }
 
 /** Whether this entity is marked as a view or not. */
 - (BOOL) isView
 {
-    return mFlags & kBXEntityIsView;
+    return (mFlags & kBXEntityIsView) ? YES : NO;
 }
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity
 {
-    log4AssertValueReturn ([anotherEntity isKindOfClass: [BXEntityDescription class]], NSOrderedSame, 
+    BXAssertValueReturn ([anotherEntity isKindOfClass: [BXEntityDescription class]], NSOrderedSame, 
 					 @"Entity descriptions can only be compared with other similar objects for now.");
     NSComparisonResult rval = NSOrderedSame;
     if (self != anotherEntity)
@@ -371,7 +394,7 @@ bail:
  */
 - (BOOL) isValidated
 {
-	return mFlags & kBXEntityIsValidated;
+	return (mFlags & kBXEntityIsValidated) ? YES : NO;
 }
 
 /**
@@ -380,7 +403,19 @@ bail:
  */
 - (NSDictionary *) relationshipsByName
 {
-	return [mRelationships dictionaryRepresentation];
+	if (! [self hasCapability: kBXEntityCapabilityRelationships])
+		[NSException raise: NSInvalidArgumentException format: @"Entity %@ can't access its relationships.", self];
+	return [[mRelationships copy] autorelease];
+}
+
+- (BOOL) hasCapability: (enum BXEntityCapability) aCapability
+{
+	return (mCapabilities & aCapability ? YES : NO);
+}
+
+- (BOOL) isEnabled
+{
+	return (mFlags & kBXEntityIsEnabled) ? YES : NO;
 }
 @end
 
@@ -441,19 +476,20 @@ bail:
  */
 - (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
 {
-	log4AssertValueReturn (nil != sName, nil, @"Expected sName not to be nil.");
-	log4AssertValueReturn (nil != anURI, nil, @"Expected anURI to be set.");
+	BXAssertValueReturn (nil != sName, nil, @"Expected sName not to be nil.");
+	BXAssertValueReturn (nil != anURI, nil, @"Expected anURI to be set.");
 	
     if ((self = [super initWithName: tName]))
     {
         mDatabaseObjectClass = [BXDatabaseObject class];
         mDatabaseURI = [anURI copy];
         mSchemaName = [sName copy];
-		mRelationships = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
-														valueType: kMKCCollectionTypeWeakObject];
+		mRelationships = [[NSMutableDictionary alloc] init];
+		
 		mObjectIDs = [[MKCHashTable alloc] init];
         mSuperEntities = [[MKCHashTable alloc] init];
         mSubEntities = [[MKCHashTable alloc] init];
+		
 		mValidationLock = [[NSLock alloc] init];
     }
     return self;
@@ -464,7 +500,7 @@ bail:
 {
 	@synchronized (mObjectIDs)
 	{
-		log4AssertVoidReturn ([anID entity] == self, 
+		BXAssertVoidReturn ([anID entity] == self, 
 							  @"Attempted to register an object ID the entity of which is other than self.\n"
 							  "\tanID:\t%@ \n\tself:\t%@", anID, self);
 		if (self == [anID entity])
@@ -484,6 +520,9 @@ bail:
 {
 	if (attributes != mAttributes)
 	{
+		TSEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
+			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
+		
 		[mAttributes release];
 		mAttributes = [attributes copy];
 	}
@@ -523,7 +562,7 @@ bail:
 		{
 			if ([currentField isKindOfClass: [NSString class]])
 				currentField = [mAttributes objectForKey: currentField];
-			log4AssertValueReturn ([currentField isKindOfClass: [BXAttributeDescription class]], nil, 
+			BXAssertValueReturn ([currentField isKindOfClass: [BXAttributeDescription class]], nil, 
 								   @"Expected to receive NSStrings or BXAttributeDescriptions (%@ was a %@).",
 								   currentField, [currentField class]);
 			
@@ -553,14 +592,11 @@ bail:
 {
     @synchronized (mRelationships)
     {
-        TSEnumerate (currentKey, e, [mRelationships keyEnumerator])
-            [mRelationships removeObjectForKey: currentKey];
-	
-        TSEnumerate (currentKey, e, [aDict keyEnumerator])
-        {
-            [mRelationships setObject: [aDict objectForKey: currentKey]
-                               forKey: currentKey];
-        }
+		TSEnumerate (currentRel, e, [mRelationships objectEnumerator])
+			[[currentRel class] unregisterProperty: currentRel entity: self];
+
+		[mRelationships removeAllObjects];
+		[mRelationships addEntriesFromDictionary: aDict];
     }
 }
 
@@ -576,19 +612,20 @@ bail:
         //FIXME: this is a bit bad but there seems to be an over-retain for BXEntityDescription somewhere.
         [self setValidated: NO];
         
+		[[aRelationship class] unregisterProperty: aRelationship entity: self];
         [mRelationships removeObjectForKey: [aRelationship name]];
     }
 }
 
 - (void) viewGetsUpdatedWith: (NSArray *) entities
 {
-	log4AssertVoidReturn ([self isView], @"Expected entity %@ to be a view.", self);
+	BXAssertVoidReturn ([self isView], @"Expected entity %@ to be a view.", self);
 	[self inherits: entities];
 }
 
 - (id) viewsUpdated
 {
-	log4AssertValueReturn ([self isView], nil, @"Expected entity %@ to be a view.", self);
+	BXAssertValueReturn ([self isView], nil, @"Expected entity %@ to be a view.", self);
 	return [self inheritedEntities];
 }
 
@@ -599,8 +636,8 @@ bail:
         //FIXME: We only implement cascading notifications from "root tables" to 
         //inheriting tables and not vice-versa.
         //FIXME: only single entity supported for now.
-        log4AssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
-        log4AssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
+        BXAssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
+        BXAssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
             [mSuperEntities addObject: currentEntity];
@@ -670,7 +707,7 @@ bail:
  */
 - (BOOL) getsChangedByTriggers
 {
-	return mFlags & kBXEntityGetsChangedByTriggers;
+	return mFlags & kBXEntityGetsChangedByTriggers ? YES : NO;
 }
 
 - (void) setGetsChangedByTriggers: (BOOL) flag
@@ -681,4 +718,19 @@ bail:
 		mFlags &= ~kBXEntityGetsChangedByTriggers;
 }
 
+- (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag
+{
+	if (flag)
+		mCapabilities |= aCapability;
+	else
+		mCapabilities &= ~aCapability;
+}
+
+- (void) setEnabled: (BOOL) flag
+{
+	if (flag)
+		mFlags |= kBXEntityIsEnabled;
+	else
+		mFlags &= ~kBXEntityIsEnabled;
+}
 @end

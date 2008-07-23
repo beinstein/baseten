@@ -30,111 +30,100 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import <openssl/x509.h>
-#import <PGTS/private/PGTSConnectionPrivate.h>
+
+
+static BOOL
+CertArrayCompare (CFArrayRef a1, CFArrayRef a2)
+{
+	BOOL retval = NO;
+	CFIndex count = CFArrayGetCount (a1);
+	if (CFArrayGetCount (a2) == count)
+	{
+		CSSM_DATA d1 = {};
+		CSSM_DATA d2 = {};
+		
+		for (CFIndex i = 0; i < count; i++)
+		{
+			SecCertificateRef c1 = (SecCertificateRef) CFArrayGetValueAtIndex (a1, i);
+			SecCertificateRef c2 = (SecCertificateRef) CFArrayGetValueAtIndex (a2, i);
+			
+			if (noErr != SecCertificateGetData (c1, &d1)) goto end;
+			if (noErr != SecCertificateGetData (c2, &d2)) goto end;
+			
+			if (d1.Length != d2.Length) goto end;
+			
+			if (0 != memcmp (d1.Data, d2.Data, d1.Length)) goto end;
+		}
+		
+		retval = YES;
+	}
+end:
+	return retval;
+}
 
 
 @implementation BXPGCertificateVerificationDelegate
 
 - (void) dealloc
 {
-	[self clearCaches];
+	BXSafeCFRelease (mCertificates);
 	[super dealloc];
 }
 
-- (void) clearCaches
+
+- (void) setHandler: (id <BXPGTrustHandler>) anObject
 {
-	if (NULL != mOpenSSLCertificates)
-	{
-		X509** chain = mOpenSSLCertificates;
-		while (*(chain++))
-			free (*chain);
-		free (mOpenSSLCertificates);
-		mOpenSSLCertificates = NULL;
-	}
-	[mConnectionString release];	
-	mConnectionString = nil;
+	mHandler = anObject;
 }
+
+
+- (void) setCertificates: (CFArrayRef) anArray
+{
+	if (mCertificates != anArray)
+	{
+		[(id) mCertificates release];
+		mCertificates = (CFArrayRef) [(id) anArray retain];
+	}
+}
+
 
 - (BOOL) PGTSAllowSSLForConnection: (PGTSConnection *) connection context: (void *) x509_ctx_ptr preverifyStatus: (int) preverifyStatus
 {
-	BOOL rval = NO;
-	X509_STORE_CTX* x509_ctx = (X509_STORE_CTX *) x509_ctx_ptr;
+	BOOL retval = NO;
+	CFArrayRef certificates = [self copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx_ptr];
 	
-	if (connection == mNotifyConnection || NULL != mOpenSSLCertificates || nil != mConnectionString)
+	//If we already have a certificate chain, the received chain has to match it.
+	//Otherwise, create a trust and evaluate it.
+	if (mCertificates)
 	{
-		if ([[connection connectionString] isEqualToString: mConnectionString] &&
-			0 == X509_cmp (*mOpenSSLCertificates, x509_ctx->cert))
+		if (CertArrayCompare (certificates, mCertificates))
+			retval = YES;
+		else
 		{
-			//If we have cached values, it means that the context has sent connectAsyncIfNeeded again and wants us to accept the certificate.
-			//Validation for notifyConnection has to succeed on the first try.
-			BOOL ok = YES;
-			X509** chain = mOpenSSLCertificates;
-			int i = 0, count = M_sk_num (x509_ctx->untrusted);
-			while (i < count)
-			{
-				chain++;
-				if (NULL == chain)
-				{
-					ok = NO;
-					break;
-				}
-				
-				ok = (0 == X509_cmp (*chain, (X509 *) M_sk_value (x509_ctx->untrusted, i)));
-				if (!ok)
-					break;
-				i++;
-			}
-			
-			if (ok && i == count && NULL == *(++chain))
-			{
-				//The certificates match; proceed with the connection.
-				rval = YES;
-			}
-		}	
+			//FIXME: create an error indicating that the certificates have changed.
+			retval = NO;
+		}
 	}
 	else
 	{
-		//First time through or synchronous.
-		SecTrustResultType result = kSecTrustResultInvalid;
-		SecTrustRef trust = [self copyTrustFromOpenSSLCertificates: x509_ctx];
-		OSStatus status = SecTrustEvaluate (trust, &result);
+		[self setCertificates: certificates];
 		
-		if (noErr == status && kSecTrustResultProceed == result)
-			rval = YES;
-		else if (NULL == mOpenSSLCertificates && nil == mConnectionString)
-		{
-			//Cache some connection info; the certificates go in a vector.
-			//This needs to be done anyway for notifyConnection.
-			mConnectionString = [[connection connectionString] copy];
-			
-			mOpenSSLCertificates = calloc (2 + (NULL == x509_ctx->untrusted ? 0 : sk_num (x509_ctx->untrusted)), sizeof (X509*));
-			X509** chain = mOpenSSLCertificates;
-			*chain = X509_dup (x509_ctx->cert);
-			for (int i = 0, count = M_sk_num (x509_ctx->untrusted); i < count; i++)
-			{
-				chain++;
-				*chain = X509_dup ((X509 *) M_sk_value (x509_ctx->untrusted, i));
-			}
-			
-			if (NO == [connection connectingAsync])
-			{
-				rval = [mContext handleInvalidTrust: trust result: result];
-				[mInterface setHasInvalidCertificate: !rval];
-			}
-			else
-			{				
-				//FIXME: This looks like a potential timing problem. Are we releasing trust before it has been passed to main thread?
-				struct trustResult trustResult = {trust, result};
-				CFRetain (trust);
-				NSValue* resultValue = [NSValue valueWithBytes: &trustResult objCType: @encode (struct trustResult)];				
-				[mContext performSelectorOnMainThread: @selector (handleInvalidTrustAsync:) withObject: resultValue waitUntilDone: NO];
-			}
-		}
+		SecTrustResultType result = kSecTrustResultInvalid;
+		SecTrustRef trust = [self copyTrustFromCertificates: certificates];
+		OSStatus status = SecTrustEvaluate (trust, &result);
 
+		if (noErr != status)
+			retval = NO;
+		else if (kSecTrustResultProceed == result)
+			retval = YES;
+		else
+			retval = [mHandler handleInvalidTrust: trust result: result];
+		
 		BXSafeCFRelease (trust);
 	}
 	
-	return rval;
+	BXSafeCFRelease (certificates);	
+	return retval;
 }
 
 @end

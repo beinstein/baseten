@@ -26,12 +26,12 @@
 // $Id$
 //
 
-#import <Log4Cocoa/Log4Cocoa.h>
 
 #import "BXOneToOneRelationshipDescription.h"
 #import "BXDatabaseObject.h"
 #import "BXForeignKey.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "BXLogger.h"
 
 
 @implementation BXOneToOneRelationshipDescription
@@ -45,7 +45,7 @@
 				databaseObject: (BXDatabaseObject *) databaseObject
 					 predicate: (NSPredicate **) predicatePtr
 {
-	log4AssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
+	BXAssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
 	BOOL retval = NO;
 	BXDatabaseObject* oldObject = [databaseObject primitiveValueForKey: [self name]];
 	if (nil != oldObject)
@@ -62,7 +62,7 @@
 				  predicate: (NSPredicate **) predicatePtr 
 					 values: (NSDictionary **) valuePtr
 {
-	log4AssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
+	BXAssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
 	BOOL retval = NO;
 	if (nil != target)
 	{

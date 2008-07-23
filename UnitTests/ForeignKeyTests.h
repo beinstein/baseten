@@ -27,10 +27,11 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import "TestLoader.h"
 @class BXDatabaseContext;
 
 
-@interface ForeignKeyTests : SenTestCase 
+@interface ForeignKeyTests : BXTestCase 
 {
     BXDatabaseContext* context;
     BXEntityDescription* test1;

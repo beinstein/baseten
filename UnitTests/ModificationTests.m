@@ -110,10 +110,11 @@
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %@", [object valueForKey: @"id"]];
 
     //First update just one object
+	id value1Attr = [[updatetest attributesByName] objectForKey: @"value1"];
     [context executeUpdateObject: nil
 						  entity: updatetest 
                        predicate: predicate
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertEqualObjects (number, [object valueForKey: @"value1"]);
@@ -124,7 +125,7 @@
     [context executeUpdateObject: nil
 						  entity: updatetest 
                        predicate: nil
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"value1"]
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     NSArray* values = [res valueForKey: @"value1"];
@@ -133,11 +134,12 @@
     
     //Then update an object's primary key
     number = [NSNumber numberWithInt: -1];
+	id idattr = [[updatetest attributesByName] objectForKey: @"id"];
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
     [context executeUpdateObject: object
 						  entity: updatetest
                        predicate: predicate
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: @"id"]
+                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: idattr]
                            error: &error];
     STAssertNil (error, [error localizedDescription]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
@@ -167,17 +169,17 @@
 
 - (void) testCreateAndDeleteWithArray
 {	
+	//Fetch a self-updating collection and expect its contents to change.
     NSError* error = nil;
     NSArray* array = nil;
     BXEntityDescription* entity = [[context entityForTable: @"test" error: nil] retain];
     array = [context executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
 					   updateAutomatically: YES error: &error];
-    
     STAssertNil (error, [error description]);
     MKCAssertNotNil (array);
     unsigned int count = [array count];
     
-    //Create an object into the array using another connection
+    //Create an object into the array using another connection.
     BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: 
         [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
     [context2 setAutocommits: NO];
@@ -187,24 +189,19 @@
     STAssertNil (error, [error description]);
     MKCAssertNotNil (object);
     
-    //Commit the modification so we can see some results
+    //Commit the modification so we can see some results.
     [context2 save: &error];
     STAssertNil (error, [error description]);
-    
-    //Wait for the notification
-    [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
+	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
     MKCAssertEquals ([array count], count + 1);
     
     [context2 executeDeleteObject: object error: &error];
     STAssertNil (error, [error description]);
     
-    //Again, commit
+    //Again, commit.
     [context2 save: &error];
-    STAssertNil (error, [error description]);
-    
-    //Wait for the notification
-    [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
-    
+    STAssertNil (error, [error description]);    
+	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
     MKCAssertEquals (count, [array count]);
 }
 

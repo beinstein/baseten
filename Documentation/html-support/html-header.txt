@@ -3,14 +3,12 @@
     <head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <title>BaseTen Reference Manual</title>
     <link href="documentation.css" rel="stylesheet" type="text/css">
-    <link href="tabs.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="http://www.karppinen.fi/baseten_htdocs/css/trac.css" type="text/css">
 </head>
 
 <body>
     <div id="logo-container">
         <a id="logo" href="index.html">
-            <img src="http://www.karppinen.fi/baseten_htdocs/trac_banner.png" width="236" height="73" alt="">
+            <img src="http://basetenframework.org/chrome/site/trac_banner.png" alt="">
         </a>
     </div>
-
+    <div class="container">

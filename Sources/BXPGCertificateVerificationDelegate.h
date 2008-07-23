@@ -27,23 +27,22 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <PGTS/PGTS.h>
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXPGInterface.h>
+#import <Security/Security.h>
+#import <BaseTen/PGTSCertificateVerificationDelegate.h>
+
+
+@protocol BXPGTrustHandler <NSObject>
+- (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
+- (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted;		 
+@end
 
 
 @interface BXPGCertificateVerificationDelegate : PGTSCertificateVerificationDelegate 
 {
-	@public
-	BXDatabaseContext* mContext;
-	BXPGInterface* mInterface;
-	PGTSConnection* mNotifyConnection;
-	
-	@protected
-	NSString* mConnectionString;
-	X509** mOpenSSLCertificates;
+	id <BXPGTrustHandler> mHandler; //Weak
+	CFArrayRef mCertificates;
 }
-
-- (void) clearCaches;
-
+- (void) setHandler: (id <BXPGTrustHandler>) anObject;
+- (void) setCertificates: (CFArrayRef) anArray;
 @end

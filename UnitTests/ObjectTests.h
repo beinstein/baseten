@@ -29,7 +29,7 @@
 #import <SenTestingKit/SenTestingKit.h>
 
 
-@interface ObjectTests : SenTestCase 
+@interface ObjectTests : BXTestCase 
 {
     id mContext;
     id mEntity;

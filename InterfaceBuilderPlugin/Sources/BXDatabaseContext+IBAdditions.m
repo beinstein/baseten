@@ -44,7 +44,7 @@
     [super ibPopulateKeyPaths: keyPaths];
     
     [[keyPaths objectForKey: IBAttributeKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
-        @"databaseURI", @"logsQueries", @"autocommits", @"connectsOnAwake", nil]];
+        @"databaseURI", @"autocommits", @"connectsOnAwake", nil]];
     [[keyPaths objectForKey: IBToOneRelationshipKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
         @"policyDelegate", @"modalWindow", nil]];
 }

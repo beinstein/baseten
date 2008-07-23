@@ -26,12 +26,29 @@
 // $Id$
 //
 
+/*
+ * Instructions for running the tests:
+ * 1. Build the test bundle.
+ * 2. Set a symbolic breakpoint to bx_test_failed if you want to stop on errors.
+ * 3. Run otest with like this: `otest -SenTest BXTestLoader your_custom_path/UnitTests.octest`.
+ */
+
 #import <Cocoa/Cocoa.h>
 #import <SenTestingKit/SenTestingKit.h>
 
-
-@interface TestLoader : SenTestCase 
+@interface BXTestLoader : SenTestCase 
 {
 }
 
+@end
+
+
+@interface SenTestCase (fjldks)
+- (void) logException:(NSException *) anException;
+@end
+
+
+@interface BXTestCase : SenTestCase
+{
+}
 @end

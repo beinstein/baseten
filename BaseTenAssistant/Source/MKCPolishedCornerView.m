@@ -36,29 +36,45 @@
 {
     if ((self = [super initWithFrame: frame]))
     {
-        mDrawingMask = kMKCPolishDrawingMaskInvalid;
+		NSWindow* window = [self window];
+		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+		[nc addObserver: self selector: @selector (stateChanged:) name: NSApplicationDidBecomeActiveNotification object: NSApp];
+		[nc addObserver: self selector: @selector (stateChanged:) name: NSApplicationDidResignActiveNotification object: NSApp];
+		[nc addObserver: self selector: @selector (stateChanged:) name: NSWindowDidBecomeKeyNotification object: window];
+		[nc addObserver: self selector: @selector (stateChanged:) name: NSWindowDidResignKeyNotification object: window];
     }
     return self;
 }
 
 - (void) dealloc
 {
+	[[NSNotificationCenter defaultCenter] removeObserver: self];
+    [mColours release];
     [super dealloc];
+}
+
+- (void) stateChanged: (NSNotification *) notification
+{
+	[self setNeedsDisplay: YES];
 }
 
 - (void) drawRect: (NSRect) rect
 {
     if (nil == mColours)
         [self setColours: [MKCPolishedHeaderView darkColours]];
-    if (kMKCPolishDrawingMaskInvalid == mDrawingMask)
-        [self setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopLine | kMKCPolishDrawTopAccent | kMKCPolishDrawRightLine];
+	
+	NSDictionary* enabledColours = nil;
+	if (MKCShouldDrawEnabled ([self window]))
+		enabledColours = [mColours objectForKey: kMKCEnabledColoursKey];
+	else
+		enabledColours = [mColours objectForKey: kMKCDisabledColoursKey];
 
     NSRect bounds = [self bounds];
     float height = bounds.size.height;
     NSRect polishRect = rect;
     polishRect.size.height = height;
     polishRect.origin.y = 0.0;
-    MKCDrawPolishInRect (polishRect, mColours, mDrawingMask);
+    MKCDrawPolishInRect (polishRect, enabledColours, mDrawingMask);
 
     //Lines at the end
     if (kMKCPolishDrawRightAccent & mDrawingMask)
@@ -71,7 +87,7 @@
         NSRect intersection = NSIntersectionRect (endRect, rect);
         if (NO == NSIsEmptyRect (intersection))
         {
-            [[mColours objectForKey: kMKCRightLineColourKey] set];
+            [[enabledColours objectForKey: kMKCRightLineColourKey] set];
             NSRectFill (intersection);
         }
     }
@@ -86,7 +102,7 @@
         NSRect intersection = NSIntersectionRect (endRect, rect);
         if (NO == NSIsEmptyRect (intersection))
         {
-            [[mColours objectForKey: kMKCRightLineColourKey] set];
+            [[enabledColours objectForKey: kMKCRightLineColourKey] set];
             NSRectFill (intersection);
         }
     }

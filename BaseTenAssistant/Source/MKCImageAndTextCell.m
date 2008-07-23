@@ -28,26 +28,8 @@
 
 #import "MKCImageAndTextCell.h"
 
-@interface NSObject (MKCImageAndTextCellAdditions)
-- (NSImage *) MKCImage;
-- (NSAttributedString *) MKCAttributedString;
-@end
-
-@implementation NSObject (MKCImageAndTextCellAdditions)
-- (NSImage *) MKCImage
-{
-	return nil;
-}
-
-- (NSAttributedString *) MKCAttributedString
-{
-	return nil;
-}
-@end
-
 
 @implementation MKCImageAndTextCell
-
 @synthesize image = mImage;
 
 - (id) init 
@@ -61,7 +43,6 @@
 
 - (void) dealloc
 {
-	[mImage autorelease]; //Does the synthesized method do [[mImage retain] autorelease]?
 	[super dealloc];
 }
 
@@ -70,7 +51,7 @@
 	NSRect retval = [super titleRectForBounds: bounds];
 	retval.origin.y += 2.0;
 	retval.size.height -= 2.0;
-	if (nil != mImage)
+	if (nil != [self image])
 	{
 		NSRect imageRect = [self imageRectForBounds: bounds];
 		CGFloat delta = 2 * (imageRect.origin.x - bounds.origin.x);
@@ -83,7 +64,7 @@
 
 - (NSRect) imageRectForBounds: (NSRect) bounds
 {
-	NSSize imageSize = [mImage size];
+	NSSize imageSize = [[self image] size];
 	CGFloat delta = MIN (bounds.size.width - imageSize.width, bounds.size.height - imageSize.height) / 2.0;
 	delta = MAX (1.5, delta);
 	
@@ -97,44 +78,14 @@
 {
 	NSRect titleFrame = [self titleRectForBounds: cellFrame];
 	[super drawWithFrame: titleFrame inView: controlView];
-	if (nil != mImage)
+	if (nil != [self image])
 	{
 		NSRect imageRect = [self imageRectForBounds: cellFrame];
 		NSPoint origin = imageRect.origin;
 		if ([controlView isFlipped])
 			origin.y += imageRect.size.height;
 		imageRect.origin = NSZeroPoint;
-		[mImage compositeToPoint: origin fromRect: imageRect operation: NSCompositeSourceOver];		
+		[[self image] compositeToPoint: origin fromRect: imageRect operation: NSCompositeSourceOver];		
 	}
 }
-
-- (void) setObjectValue: (id) anObject
-{
-	if (mRepresentedObject != anObject)
-	{
-		mRepresentedObject = [anObject retain];
-		[self setImage: [anObject MKCImage]];
-		[self setAttributedStringValue: [anObject MKCAttributedString]];
-	}
-}
-
-- (id) objectValue
-{
-	return mRepresentedObject;
-}
-
-- (void) setAttributedStringValue: (NSAttributedString *) aString
-{
-	NSAssert (nil == aString || [aString isKindOfClass: [NSAttributedString class]], @"Expected %@ to be an NSAttributedString.");
-	[super setObjectValue: aString];
-}
-
-- (NSAttributedString *) attributedStringValue
-{
-	id retval = [super objectValue];
-	if (! [retval isKindOfClass: [NSAttributedString class]])
-		retval = nil;
-	return retval;
-}
-
 @end

@@ -26,8 +26,6 @@
 // $Id$
 //
 
-#import <Log4Cocoa/Log4Cocoa.h>
-
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXEntityDescriptionPrivate.h"
@@ -38,6 +36,8 @@
 #import "BXDatabaseAdditions.h"
 #import "BXSetRelationProxy.h"
 #import "BXDatabaseObjectPrivate.h"
+#import "BXLogger.h"
+
 
 /**
  * A description for one-to-many relationships and a superclass for others.
@@ -82,7 +82,10 @@
  */
 - (BXRelationshipDescription *) inverseRelationship
 {
-	return [[mDestinationEntity relationshipsByName] objectForKey: mInverseName];
+	BXRelationshipDescription* retval = nil;
+	if ([mDestinationEntity hasCapability: kBXEntityCapabilityRelationships])
+		retval = [[mDestinationEntity relationshipsByName] objectForKey: mInverseName];
+	return retval;
 }
 
 /**
@@ -164,17 +167,17 @@
 
 - (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
 {
-	log4AssertValueReturn (NULL != error, nil , @"Expected error to be set.");
-	log4AssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
-	log4AssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil, 
+	BXAssertValueReturn (NULL != error, nil , @"Expected error to be set.");
+	BXAssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
+	BXAssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil, 
 						   @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
 
 	id retval = nil;
-	//Many-to-many relationships don't call super's implementation, so we can determine from this, if we are one-to-one.
-	if (! [self isToMany] || [self isInverse])
+	//Many-to-many relationships don't call super's implementation, so we can determine from this, if we are to-one.
+	if ([self isInverse])
 	{
 		BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: [self destinationEntity] fromObject: aDatabaseObject];
-		retval = [[aDatabaseObject databaseContext] registeredObjectWithID: objectID];
+		retval = (objectID ? [[aDatabaseObject databaseContext] objectWithID: objectID error: error] : [NSNull null]);
 	}
 	
 	if (! retval)
@@ -226,9 +229,9 @@
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error
 {
-	log4AssertVoidReturn (NULL != error, @"Expected error to be set.");
-	log4AssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
-	log4AssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
+	BXAssertVoidReturn (NULL != error, @"Expected error to be set.");
+	BXAssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
+	BXAssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
 						  @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
 	
 	//We always want to modify the foreign key's (or corresponding view's) entity, hence the branch here.
@@ -299,7 +302,7 @@
 				databaseObject: (BXDatabaseObject *) databaseObject
 					 predicate: (NSPredicate **) predicatePtr
 {
-	log4AssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
+	BXAssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
 	BOOL retval = NO;
 	
 	//Compare collection to cached values.
@@ -322,7 +325,7 @@
 				  predicate: (NSPredicate **) predicatePtr 
 					 values: (NSDictionary **) valuePtr
 {
-	log4AssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
+	BXAssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
 	BOOL retval = NO;
 	
 	//Compare collection to cached values.

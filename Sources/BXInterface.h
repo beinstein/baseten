@@ -37,15 +37,24 @@
 @class BXEntityDescription;
 
 
+struct BXTrustResult
+{
+	SecTrustRef trust;
+	SecTrustResultType result;
+};
+
+
 @interface BXDatabaseContext (DBInterfaces)
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
+- (void) connectionLost: (NSError *) error;
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectLockStatus) status;
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;
-- (void) handleInvalidTrustAsync: (NSValue *) value;
+- (void) handleInvalidCopiedTrustAsync: (NSValue *) value;
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
+- (NSError *) packQueryError: (NSError *) error;
 - (enum BXSSLMode) sslMode;
 @end
 
@@ -58,15 +67,6 @@
 @protocol BXInterface <NSObject>
 
 - (id) initWithContext: (BXDatabaseContext *) aContext;
-- (void) setDatabaseURI: (NSURL *) anURI;
-
-/** 
- * \internal
- * \name Capabilities 
- */
-//@{
-- (BOOL) messagesForViewModifications;
-//@}
 
 /** 
  * \internal
@@ -75,8 +75,8 @@
 //@{
 - (id) createObjectForEntity: (BXEntityDescription *) entity withFieldValues: (NSDictionary *) fieldValues
                        class: (Class) aClass error: (NSError **) error;
-- (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
-                           returningFaults: (BOOL) returnFaults class: (Class) aClass error: (NSError **) error;
+- (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
+					returningFaults: (BOOL) returnFaults class: (Class) aClass error: (NSError **) error;
 - (BOOL) fireFault: (BXDatabaseObject *) anObject keys: (NSArray *) keys error: (NSError **) error;
 - (NSArray *) executeUpdateWithDictionary: (NSDictionary *) aDict
                                  objectID: (BXDatabaseObjectID *) anID
@@ -110,15 +110,18 @@
  * \name Connecting to the database 
  */
 //@{
-- (void) connect: (NSError **) error;
-- (void) connectAsync: (NSError **) error;
+- (BOOL) connectSync: (NSError **) error;
+- (void) connectAsync;
 - (void) disconnect;
 //@}
 
 - (NSArray *) keyPathComponents: (NSString *) keyPath;
+#if 0
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;
+#endif
 
+- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error;
 - (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
 /**
@@ -136,6 +139,6 @@
 - (BOOL) establishSavepoint: (NSError **) error;
 //@}
 
-- (id) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
-- (void) rejectedTrust;
+- (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted;
+- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 @end

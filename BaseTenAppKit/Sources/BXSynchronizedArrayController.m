@@ -33,7 +33,7 @@
 #import <BaseTen/BXSetRelationProxy.h>
 #import <BaseTen/BXRelationshipDescriptionPrivate.h>
 #import <BaseTen/BXForeignKey.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+#import <BaseTen/BXLogger.h>
 #import "BXSynchronizedArrayController.h"
 #import "NSController+BXAppKitAdditions.h"
 #import "BXObjectStatusToColorTransformer.h"
@@ -316,7 +316,7 @@
 
 - (void) setBXContent: (id) anObject
 {
-    log4AssertLog (nil == mBXContent || [anObject isKindOfClass: [BXContainerProxy class]], 
+    BXAssertLog (nil == mBXContent || [anObject isKindOfClass: [BXContainerProxy class]], 
                    @"Expected anObject to be an instance of BXContainerProxy (was: %@).", 
                    [anObject class]);
 	if (mBXContent != anObject)
@@ -333,7 +333,7 @@
 
 - (id) createObject: (NSError **) outError
 {
-	log4AssertValueReturn (NULL != outError, nil, @"Expected outError not to be NULL.");
+	BXAssertValueReturn (NULL != outError, nil, @"Expected outError not to be NULL.");
 	NSDictionary* fieldValues = [self valuesForBoundRelationship];
 	mShouldAddToContent = (nil == fieldValues);
 	return [databaseContext createObjectForEntity: mEntityDescription

@@ -26,7 +26,6 @@
 // $Id$
 //
 
-#import <Log4Cocoa/Log4Cocoa.h>
 
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
@@ -35,15 +34,17 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXSetHelperTableRelationProxy.h"
 #import "BXForeignKey.h"
+#import "BXLogger.h"
 
 
 @implementation BXManyToManyRelationshipDescription
 
-- (void) dealloc
+/** Deallocation helper. */
+- (void) dealloc2
 {
 	[mDstForeignKey release];
 	[mHelperEntity release];
-	[super dealloc];
+	[super dealloc2];
 }
 
 - (NSString *) description
@@ -94,9 +95,9 @@
 
 - (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
 {
-	log4AssertValueReturn (NULL != error, nil , @"Expected error to be set.");
-	log4AssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
-	log4AssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil,
+	BXAssertValueReturn (NULL != error, nil , @"Expected error to be set.");
+	BXAssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
+	BXAssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil,
 						  @"Expected aDatabaseObject entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
 	
 	NSPredicate* helperSrcPredicate = [[self srcForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: aDatabaseObject];
@@ -123,9 +124,9 @@
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error
 {
-	log4AssertVoidReturn (NULL != error, @"Expected error to be set.");
-	log4AssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
-	log4AssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
+	BXAssertVoidReturn (NULL != error, @"Expected error to be set.");
+	BXAssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
+	BXAssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
 						  @"Expected aDatabaseObject entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
 	
 	NSString* name = [self name];

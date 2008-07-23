@@ -29,13 +29,6 @@
 #import <BaseTen/BaseTen.h>
 
 
-struct trustResult
-{
-	SecTrustRef trust;
-	SecTrustResultType result;
-};
-
-
 @interface BXDatabaseContext (PrivateMethods)
 /* Moved from the context. */
 - (BOOL) executeDeleteFromEntity: (BXEntityDescription *) anEntity withPredicate: (NSPredicate *) predicate 
@@ -78,7 +71,8 @@ struct trustResult
                      validateImmediately: (BOOL) validateImmediately error: (NSError **) error;
 - (void) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 - (void) iterateValidationQueue: (NSError **) error;
-- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error;
+- (BOOL) checkErrorHandling;
+- (void) setAllowReconnecting: (BOOL) shouldAllow;
 @end
 
 
@@ -109,4 +103,12 @@ struct trustResult
 
 @interface BXDatabaseContext (Callbacks)
 - (void) BXConnectionSetupManagerFinishedAttempt;
+@end
+
+
+@interface BXDatabaseContext (DefaultErrorHandler)
+- (void) BXDatabaseContext: (BXDatabaseContext *) context 
+				  hadError: (NSError *) error 
+			willBePassedOn: (BOOL) willBePassedOn;
+- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
 @end

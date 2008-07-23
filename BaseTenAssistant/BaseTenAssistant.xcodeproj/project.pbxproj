@@ -7,135 +7,130 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */; };
-		5300739C0B369406009A7A7A /* psql in Copy Executables */ = {isa = PBXBuildFile; fileRef = 530073980B3693F9009A7A7A /* psql */; };
-		531517550AFA55F2003FB616 /* ImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 531517530AFA55F2003FB616 /* ImportController.m */; };
+		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */; };
+		531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
-		532F42A20D69B70F009FEDCD /* Import.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429E0D69B70F009FEDCD /* Import.xib */; };
-		534E2D270B8DE504008025DC /* PostgresVerbatimString.m in Sources */ = {isa = PBXBuildFile; fileRef = 534E2D250B8DE504008025DC /* PostgresVerbatimString.m */; };
-		53638FDE0A3D913A00618545 /* Table.m in Sources */ = {isa = PBXBuildFile; fileRef = 53638FDD0A3D913A00618545 /* Table.m */; };
-		53638FEB0A3D927000618545 /* Controller.m in Sources */ = {isa = PBXBuildFile; fileRef = 53638FEA0A3D927000618545 /* Controller.m */; };
-		536560880D7D913300A93A17 /* libPGTSTiger.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 536560750D7D90F800A93A17 /* libPGTSTiger.a */; };
+		53425B650E2CD237005F6123 /* MKCStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53425B640E2CD237005F6123 /* MKCStackView.m */; };
 		536CB9C90B0D217000EBCB39 /* Log32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C30B0D217000EBCB39 /* Log32.png */; };
 		536CB9CA0B0D217000EBCB39 /* Inspector32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C40B0D217000EBCB39 /* Inspector32.png */; };
 		536CB9CB0B0D217000EBCB39 /* ImportModel32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C50B0D217000EBCB39 /* ImportModel32.png */; };
 		536CB9CC0B0D217000EBCB39 /* Entity16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C60B0D217000EBCB39 /* Entity16.png */; };
 		536CB9CD0B0D217000EBCB39 /* Schema16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C70B0D217000EBCB39 /* Schema16.png */; };
 		536CB9CE0B0D217000EBCB39 /* Table16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C80B0D217000EBCB39 /* Table16.png */; };
-		5374E4B90B0D364E000D353D /* Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E4B70B0D364E000D353D /* Additions.m */; };
+		536E603B0E263A8600098C4A /* Import.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429E0D69B70F009FEDCD /* Import.xib */; };
 		5374E69A0B0DC8A4000D353D /* MKCPolishedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E6980B0DC8A4000D353D /* MKCPolishedHeaderView.m */; };
 		5374E9450B0E001C000D353D /* MKCPolishedCornerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */; };
-		537CA69F0B1609C200898F1C /* MKCCenteredTextFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 537CA69D0B1609C200898F1C /* MKCCenteredTextFieldCell.m */; };
-		537CA7140B1611C800898F1C /* Schema.m in Sources */ = {isa = PBXBuildFile; fileRef = 537CA7120B1611C800898F1C /* Schema.m */; };
-		53A3656C0B78BBBC000BBA98 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53A3656B0B78BBBC000BBA98 /* Security.framework */; };
-		53ABE4170A421DFD001C456D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABE4150A421DFD001C456D /* AppKit.framework */; };
-		53ABE4180A421DFD001C456D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABE4160A421DFD001C456D /* Foundation.framework */; };
-		53ABE5390A421E05001C456D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABE4160A421DFD001C456D /* Foundation.framework */; };
-		53ABE53A0A421E09001C456D /* MomcHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ABE38D0A41F41F001C456D /* MomcHelper.m */; };
-		53ABE5410A421E44001C456D /* MomcHelper in Copy Executables */ = {isa = PBXBuildFile; fileRef = 53ABE4090A421DC1001C456D /* MomcHelper */; };
-		53ABE5670A421F3B001C456D /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53ABE5660A421F3B001C456D /* CoreData.framework */; };
-		53ABE6240A42A8D8001C456D /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ABE6220A42A8D8001C456D /* Constants.m */; };
-		53ABE6250A42A8D8001C456D /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ABE6220A42A8D8001C456D /* Constants.m */; };
-		53ABE7C70A4303CC001C456D /* Entity.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ABE7C50A4303CC001C456D /* Entity.m */; };
-		53ABE96A0A431961001C456D /* PostgresEntityConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 53ABE9680A431961001C456D /* PostgresEntityConverter.m */; };
+		53877B010E263AED0097C35F /* BXAImportController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877B000E263AED0097C35F /* BXAImportController.m */; };
+		53877E3F0E26A51B0097C35F /* BXAFieldCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E3E0E26A51B0097C35F /* BXAFieldCell.m */; };
+		5388DC660E23AC3F006CDBD8 /* BXAController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388DC650E23AC3F006CDBD8 /* BXAController.m */; };
+		5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
+		5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DE290E23AE48006CDBD8 /* Cocoa.framework */; };
+		5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5395E82F0E2F9F15006E8441 /* RegexKit.framework */; };
+		5395E8450E2F9FE8006E8441 /* RegexKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5395E82F0E2F9F15006E8441 /* RegexKit.framework */; };
 		53B94D310B53AD4A00733341 /* MKCForcedSizeToFitButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */; };
 		53BC458E0B19E9F00051A557 /* BaseTenAssistant.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */; };
+		53BCB27C0DF698350011E823 /* MKCPolishedHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */; };
 		53C4228B0B0E87C40008F4F2 /* MKCPolishedSeparatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */; };
-		53D0D0370B6F4FA500D2D101 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D0D0360B6F4FA500D2D101 /* libssl.dylib */; };
-		53D0D0390B6F4FB300D2D101 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D0D0380B6F4FB300D2D101 /* libcrypto.dylib */; };
+		53C80FEF0E31413300302B3F /* MKCEventPassingTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */; };
 		53D7BFEE0D6C787200290858 /* MKCImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */; };
+		53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */; };
 		53DAFF180B4F0DE700C000FE /* View16.tif in Resources */ = {isa = PBXBuildFile; fileRef = 53DAFF170B4F0DE700C000FE /* View16.tif */; };
 		53E029D50D7C49C8001AED9C /* MKCBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */; };
+		53EF32B90E23B7220027EA18 /* Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E4B70B0D364E000D353D /* Additions.m */; };
+		53EF33B50E23CC430027EA18 /* BXASchemaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF33B40E23CC430027EA18 /* BXASchemaCell.m */; };
+		53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF34500E23D83B0027EA18 /* BXAEntityCell.m */; };
+		53F7498F0E362E53003C2E55 /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
+		53F749990E362E69003C2E55 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53F749980E362E62003C2E55 /* BaseTenAppKit.framework */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
-		98B657250A77394B00373BDB /* datatypeassociations.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53031E2E0A3DE1AB004E5EB2 /* datatypeassociations.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
-		53DD5AC90A78D47D00CD5924 /* PBXBuildRule */ = {
+		531C01780E32AF7900E43208 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.sql";
+			filePatterns = "*.m4";
 			fileType = pattern.proxy;
 			isEditable = 1;
 			outputFiles = (
-				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.sql",
+				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}",
 			);
-			script = "perl -p -e 's/PGTS_SCHEMA_NAME/BX/g' ${INPUT_FILE_PATH} > ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}.sql\n";
+			script = "m4 ${INPUT_FILE_PATH} > ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}";
 		};
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
-		536560650D7D90EF00A93A17 /* PBXContainerItemProxy */ = {
+		5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 536392130A3DAA8800618545 /* Framework.xcodeproj */;
+			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 536580D20A36FDFB00CDEC90;
-			remoteInfo = "Static archive";
+			remoteGlobalIDString = 535444130D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
 		};
-		536560670D7D90EF00A93A17 /* PBXContainerItemProxy */ = {
+		5388DCDC0E23AE22006CDBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 536392130A3DAA8800618545 /* Framework.xcodeproj */;
+			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 538176830D633DC000A4CA72;
-			remoteInfo = "Static archive + GC";
+			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
+			remoteInfo = "SQL Parser";
 		};
-		536560720D7D90F800A93A17 /* PBXContainerItemProxy */ = {
+		5388DE660E23AE6C006CDBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53C9BE020A36FEBE00AAFE50;
-			remoteInfo = "Static archive";
-		};
-		536560740D7D90F800A93A17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 538176F50D63414100A4CA72;
-			remoteInfo = "Static archive + GC";
-		};
-		5365607A0D7D910100A93A17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 534343BA0D2D89800047974F /* MKCCollections.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53C4CDC30CF7553E00E09BC3;
-			remoteInfo = "Static library";
-		};
-		5365607C0D7D910100A93A17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 534343BA0D2D89800047974F /* MKCCollections.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 53F42F390D6332EA00C714CD;
-			remoteInfo = "Static library + GC";
-		};
-		536560860D7D912300A93A17 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */;
+			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 538176E00D63414100A4CA72;
-			remoteInfo = "Static archive + GC";
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
 		};
-		53ABE53F0A421E31001C456D /* PBXContainerItemProxy */ = {
+		5395E82E0E2F9F15006E8441 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = "RegexKit Framework";
+		};
+		5395E8300E2F9F15006E8441 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1264D77F0C7A95B60044B285;
+			remoteInfo = "Unit Tests";
+		};
+		5395E8320E2F9F15006E8441 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1210C8110D4F254C00A9E73B;
+			remoteInfo = "Stack Protector";
+		};
+		5395E8350E2F9F30006E8441 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 53ABE4080A421DC1001C456D;
-			remoteInfo = MomcHelper;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = "RegexKit Framework";
+		};
+		53F749970E362E62003C2E55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 535444870D634D9C002A6C47;
+			remoteInfo = "BaseTenAppKit + GC";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		530602B90A3F112C00C01351 /* Copy Executables */ = {
+		530602B90A3F112C00C01351 /* Copy Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolderSpec = 6;
+			dstSubfolderSpec = 10;
 			files = (
-				5300739C0B369406009A7A7A /* psql in Copy Executables */,
-				53ABE5410A421E44001C456D /* MomcHelper in Copy Executables */,
+				53F7498F0E362E53003C2E55 /* BaseTen.framework in Copy Frameworks */,
+				53F749990E362E69003C2E55 /* BaseTenAppKit.framework in Copy Frameworks */,
+				5395E8450E2F9FE8006E8441 /* RegexKit.framework in Copy Frameworks */,
 			);
-			name = "Copy Executables";
+			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -144,24 +139,14 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Source/main.m; sourceTree = "<group>"; };
 		2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = SetupApplication_Prefix.pch; path = Source/SetupApplication_Prefix.pch; sourceTree = "<group>"; };
-		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql; path = ../BaseTenModifications.sql; sourceTree = SOURCE_ROOT; };
-		530073980B3693F9009A7A7A /* psql */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = psql; sourceTree = BUILT_PRODUCTS_DIR; };
-		53031E2E0A3DE1AB004E5EB2 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.xml; name = datatypeassociations.plist; path = ../Dependencies/PGTS/Framework/datatypeassociations.plist; sourceTree = SOURCE_ROOT; };
-		531517520AFA55F2003FB616 /* ImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImportController.h; path = Source/ImportController.h; sourceTree = "<group>"; };
-		531517530AFA55F2003FB616 /* ImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ImportController.m; path = Source/ImportController.m; sourceTree = "<group>"; };
+		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql.m4; path = ../BaseTenModifications.sql.m4; sourceTree = SOURCE_ROOT; };
+		531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXACurrentVersion.m.m4; path = Source/BXACurrentVersion.m.m4; sourceTree = "<group>"; };
 		531DCAB70B52818E00200097 /* MKCAlternativeDataCellColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCAlternativeDataCellColumn.h; path = Source/MKCAlternativeDataCellColumn.h; sourceTree = "<group>"; };
 		531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAlternativeDataCellColumn.m; path = Source/MKCAlternativeDataCellColumn.m; sourceTree = "<group>"; };
 		532F429B0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		532F429F0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Import.xib; sourceTree = "<group>"; };
-		533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = PGTSTiger.xcodeproj; path = ../Dependencies/PGTS/TigerFramework/PGTSTiger.xcodeproj; sourceTree = SOURCE_ROOT; };
-		534343BA0D2D89800047974F /* MKCCollections.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MKCCollections.xcodeproj; path = ../Dependencies/MKCCollections/MKCCollections.xcodeproj; sourceTree = SOURCE_ROOT; };
-		534E2D240B8DE503008025DC /* PostgresVerbatimString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostgresVerbatimString.h; path = Source/PostgresVerbatimString.h; sourceTree = "<group>"; };
-		534E2D250B8DE504008025DC /* PostgresVerbatimString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostgresVerbatimString.m; path = Source/PostgresVerbatimString.m; sourceTree = "<group>"; };
-		53638FDC0A3D913A00618545 /* Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Table.h; path = Source/Table.h; sourceTree = "<group>"; };
-		53638FDD0A3D913A00618545 /* Table.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Table.m; path = Source/Table.m; sourceTree = "<group>"; };
-		53638FE90A3D927000618545 /* Controller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Controller.h; path = Source/Controller.h; sourceTree = "<group>"; };
-		53638FEA0A3D927000618545 /* Controller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Controller.m; path = Source/Controller.m; sourceTree = "<group>"; };
-		536392130A3DAA8800618545 /* Framework.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Framework.xcodeproj; path = ../Dependencies/PGTS/Framework/Framework.xcodeproj; sourceTree = SOURCE_ROOT; };
+		53425B630E2CD237005F6123 /* MKCStackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCStackView.h; path = Source/MKCStackView.h; sourceTree = "<group>"; };
+		53425B640E2CD237005F6123 /* MKCStackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCStackView.m; path = Source/MKCStackView.m; sourceTree = "<group>"; };
 		536CB9C30B0D217000EBCB39 /* Log32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Log32.png; path = Resources/Log32.png; sourceTree = "<group>"; };
 		536CB9C40B0D217000EBCB39 /* Inspector32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Inspector32.png; path = Resources/Inspector32.png; sourceTree = "<group>"; };
 		536CB9C50B0D217000EBCB39 /* ImportModel32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ImportModel32.png; path = Resources/ImportModel32.png; sourceTree = "<group>"; };
@@ -174,58 +159,48 @@
 		5374E6980B0DC8A4000D353D /* MKCPolishedHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedHeaderView.m; path = Source/MKCPolishedHeaderView.m; sourceTree = "<group>"; };
 		5374E9420B0E001C000D353D /* MKCPolishedCornerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCPolishedCornerView.h; path = Source/MKCPolishedCornerView.h; sourceTree = "<group>"; };
 		5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedCornerView.m; path = Source/MKCPolishedCornerView.m; sourceTree = "<group>"; };
-		537CA69C0B1609C200898F1C /* MKCCenteredTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCCenteredTextFieldCell.h; path = Source/MKCCenteredTextFieldCell.h; sourceTree = "<group>"; };
-		537CA69D0B1609C200898F1C /* MKCCenteredTextFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCCenteredTextFieldCell.m; path = Source/MKCCenteredTextFieldCell.m; sourceTree = "<group>"; };
-		537CA7110B1611C800898F1C /* Schema.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Schema.h; path = Source/Schema.h; sourceTree = "<group>"; };
-		537CA7120B1611C800898F1C /* Schema.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Schema.m; path = Source/Schema.m; sourceTree = "<group>"; };
-		53A3656B0B78BBBC000BBA98 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
-		53ABE38D0A41F41F001C456D /* MomcHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MomcHelper.m; path = Source/MomcHelper.m; sourceTree = "<group>"; };
-		53ABE4090A421DC1001C456D /* MomcHelper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MomcHelper; sourceTree = BUILT_PRODUCTS_DIR; };
-		53ABE4150A421DFD001C456D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		53ABE4160A421DFD001C456D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		53ABE5660A421F3B001C456D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
-		53ABE6210A42A8D8001C456D /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Constants.h; path = Source/Constants.h; sourceTree = "<group>"; };
-		53ABE6220A42A8D8001C456D /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Constants.m; path = Source/Constants.m; sourceTree = "<group>"; };
-		53ABE7C40A4303CC001C456D /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Entity.h; path = Source/Entity.h; sourceTree = "<group>"; };
-		53ABE7C50A4303CC001C456D /* Entity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = Entity.m; path = Source/Entity.m; sourceTree = "<group>"; };
-		53ABE9670A431961001C456D /* PostgresEntityConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PostgresEntityConverter.h; path = Source/PostgresEntityConverter.h; sourceTree = "<group>"; };
-		53ABE9680A431961001C456D /* PostgresEntityConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PostgresEntityConverter.m; path = Source/PostgresEntityConverter.m; sourceTree = "<group>"; };
+		53877AFF0E263AED0097C35F /* BXAImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAImportController.h; sourceTree = "<group>"; };
+		53877B000E263AED0097C35F /* BXAImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAImportController.m; sourceTree = "<group>"; };
+		53877E3D0E26A51B0097C35F /* BXAFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAFieldCell.h; path = Source/BXAFieldCell.h; sourceTree = "<group>"; };
+		53877E3E0E26A51B0097C35F /* BXAFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAFieldCell.m; path = Source/BXAFieldCell.m; sourceTree = "<group>"; };
+		5388DC640E23AC3F006CDBD8 /* BXAController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAController.h; sourceTree = "<group>"; };
+		5388DC650E23AC3F006CDBD8 /* BXAController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAController.m; sourceTree = "<group>"; };
+		5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
+		5388DE290E23AE48006CDBD8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RegexKit.xcodeproj; path = ../Contrib/RegexKit/RegexKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		53B94D2E0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCForcedSizeToFitButtonCell.h; path = Source/MKCForcedSizeToFitButtonCell.h; sourceTree = "<group>"; };
 		53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCForcedSizeToFitButtonCell.m; path = Source/MKCForcedSizeToFitButtonCell.m; sourceTree = "<group>"; };
 		53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTenAssistant.icns; path = Resources/BaseTenAssistant.icns; sourceTree = "<group>"; };
+		53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedHeaderCell.m; path = Source/MKCPolishedHeaderCell.m; sourceTree = "<group>"; };
+		53BCB27B0DF698350011E823 /* MKCPolishedHeaderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCPolishedHeaderCell.h; path = Source/MKCPolishedHeaderCell.h; sourceTree = "<group>"; };
 		53C422880B0E87C40008F4F2 /* MKCPolishedSeparatorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCPolishedSeparatorView.h; path = Source/MKCPolishedSeparatorView.h; sourceTree = "<group>"; };
 		53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedSeparatorView.m; path = Source/MKCPolishedSeparatorView.m; sourceTree = "<group>"; };
-		53D0D0360B6F4FA500D2D101 /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
-		53D0D0380B6F4FB300D2D101 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
+		53C80FED0E31413300302B3F /* MKCEventPassingTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCEventPassingTextField.h; path = Source/MKCEventPassingTextField.h; sourceTree = "<group>"; };
+		53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCEventPassingTextField.m; path = Source/MKCEventPassingTextField.m; sourceTree = "<group>"; };
 		53D7BFEC0D6C787200290858 /* MKCImageAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCImageAndTextCell.h; path = Source/MKCImageAndTextCell.h; sourceTree = "<group>"; };
 		53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCImageAndTextCell.m; path = Source/MKCImageAndTextCell.m; sourceTree = "<group>"; };
+		53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAPGInterface.h; sourceTree = "<group>"; };
+		53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAPGInterface.m; sourceTree = "<group>"; };
 		53DAFF170B4F0DE700C000FE /* View16.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = View16.tif; path = Resources/View16.tif; sourceTree = "<group>"; };
 		53E029D30D7C49C8001AED9C /* MKCBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCBackgroundView.h; path = Source/MKCBackgroundView.h; sourceTree = "<group>"; };
 		53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCBackgroundView.m; path = Source/MKCBackgroundView.m; sourceTree = "<group>"; };
+		53EF33B30E23CC430027EA18 /* BXASchemaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXASchemaCell.h; path = Source/BXASchemaCell.h; sourceTree = "<group>"; };
+		53EF33B40E23CC430027EA18 /* BXASchemaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXASchemaCell.m; path = Source/BXASchemaCell.m; sourceTree = "<group>"; };
+		53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAEntityCell.h; path = Source/BXAEntityCell.h; sourceTree = "<group>"; };
+		53EF34500E23D83B0027EA18 /* BXAEntityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAEntityCell.m; path = Source/BXAEntityCell.m; sourceTree = "<group>"; };
+		53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = ../BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* BaseTen Assistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BaseTen Assistant.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		53ABE4070A421DC1001C456D /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				53ABE5390A421E05001C456D /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D11072E0486CEB800E47090 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53ABE4170A421DFD001C456D /* AppKit.framework in Frameworks */,
-				53ABE4180A421DFD001C456D /* Foundation.framework in Frameworks */,
-				53ABE5670A421F3B001C456D /* CoreData.framework in Frameworks */,
-				53D0D0370B6F4FA500D2D101 /* libssl.dylib in Frameworks */,
-				53D0D0390B6F4FB300D2D101 /* libcrypto.dylib in Frameworks */,
-				53A3656C0B78BBBC000BBA98 /* Security.framework in Frameworks */,
-				536560880D7D913300A93A17 /* libPGTSTiger.a in Frameworks */,
+				5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */,
+				5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */,
+				5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,19 +210,21 @@
 		080E96DDFE201D6D7F000001 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				53638FE90A3D927000618545 /* Controller.h */,
-				53638FEA0A3D927000618545 /* Controller.m */,
-				531517520AFA55F2003FB616 /* ImportController.h */,
-				531517530AFA55F2003FB616 /* ImportController.m */,
+				5388DC640E23AC3F006CDBD8 /* BXAController.h */,
+				5388DC650E23AC3F006CDBD8 /* BXAController.m */,
+				53877AFF0E263AED0097C35F /* BXAImportController.h */,
+				53877B000E263AED0097C35F /* BXAImportController.m */,
+				53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */,
+				53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */,
 			);
 			name = Controllers;
+			path = Source;
 			sourceTree = "<group>";
 		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				8D1107320486CEB800E47090 /* BaseTen Assistant.app */,
-				53ABE4090A421DC1001C456D /* MomcHelper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -255,12 +232,9 @@
 		29B97314FDCFA39411CA2CEA /* SetupApplication */ = {
 			isa = PBXGroup;
 			children = (
-				5374EB260B0E137B000D353D /* Model Classes */,
 				531517560AFA55FB003FB616 /* View Classes */,
 				080E96DDFE201D6D7F000001 /* Controllers */,
-				531517570AFA5612003FB616 /* Interfaces */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
-				2B940FA50B1DD6D9004ACEB7 /* Executables */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -271,13 +245,11 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				53ABE6210A42A8D8001C456D /* Constants.h */,
-				53ABE6220A42A8D8001C456D /* Constants.m */,
+				531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */,
 				5374E4B60B0D364E000D353D /* Additions.h */,
 				5374E4B70B0D364E000D353D /* Additions.m */,
 				2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */,
 				29B97316FDCFA39411CA2CEA /* main.m */,
-				53ABE38D0A41F41F001C456D /* MomcHelper.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -285,8 +257,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql */,
-				53031E2E0A3DE1AB004E5EB2 /* datatypeassociations.plist */,
+				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				532F429A0D69B70F009FEDCD /* MainMenu.xib */,
@@ -306,25 +277,12 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				536392130A3DAA8800618545 /* Framework.xcodeproj */,
-				533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */,
-				534343BA0D2D89800047974F /* MKCCollections.xcodeproj */,
-				53ABE4150A421DFD001C456D /* AppKit.framework */,
-				53ABE4160A421DFD001C456D /* Foundation.framework */,
-				53ABE5660A421F3B001C456D /* CoreData.framework */,
-				53D0D0360B6F4FA500D2D101 /* libssl.dylib */,
-				53D0D0380B6F4FB300D2D101 /* libcrypto.dylib */,
-				53A3656B0B78BBBC000BBA98 /* Security.framework */,
+				5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */,
+				53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */,
+				5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */,
+				5388DE290E23AE48006CDBD8 /* Cocoa.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		2B940FA50B1DD6D9004ACEB7 /* Executables */ = {
-			isa = PBXGroup;
-			children = (
-				530073980B3693F9009A7A7A /* psql */,
-			);
-			name = Executables;
 			sourceTree = "<group>";
 		};
 		531517560AFA55FB003FB616 /* View Classes */ = {
@@ -338,104 +296,73 @@
 				5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */,
 				53C422880B0E87C40008F4F2 /* MKCPolishedSeparatorView.h */,
 				53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */,
-				537CA69C0B1609C200898F1C /* MKCCenteredTextFieldCell.h */,
-				537CA69D0B1609C200898F1C /* MKCCenteredTextFieldCell.m */,
+				53BCB27B0DF698350011E823 /* MKCPolishedHeaderCell.h */,
+				53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */,
 				53B94D2E0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.h */,
 				53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */,
+				53C80FED0E31413300302B3F /* MKCEventPassingTextField.h */,
+				53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */,
 				53D7BFEC0D6C787200290858 /* MKCImageAndTextCell.h */,
 				53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */,
 				53E029D30D7C49C8001AED9C /* MKCBackgroundView.h */,
 				53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */,
+				53425B630E2CD237005F6123 /* MKCStackView.h */,
+				53425B640E2CD237005F6123 /* MKCStackView.m */,
+				53EF33B30E23CC430027EA18 /* BXASchemaCell.h */,
+				53EF33B40E23CC430027EA18 /* BXASchemaCell.m */,
+				53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */,
+				53EF34500E23D83B0027EA18 /* BXAEntityCell.m */,
+				53877E3D0E26A51B0097C35F /* BXAFieldCell.h */,
+				53877E3E0E26A51B0097C35F /* BXAFieldCell.m */,
 			);
 			name = "View Classes";
 			sourceTree = "<group>";
 		};
-		531517570AFA5612003FB616 /* Interfaces */ = {
+		5388DCD30E23AE22006CDBD8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				53ABE9670A431961001C456D /* PostgresEntityConverter.h */,
-				53ABE9680A431961001C456D /* PostgresEntityConverter.m */,
-				534E2D240B8DE503008025DC /* PostgresVerbatimString.h */,
-				534E2D250B8DE504008025DC /* PostgresVerbatimString.m */,
-			);
-			name = Interfaces;
-			sourceTree = "<group>";
-		};
-		536560600D7D90EF00A93A17 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				536560660D7D90EF00A93A17 /* libPGTS.a */,
-				536560680D7D90EF00A93A17 /* libPGTS.a */,
+				5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */,
+				5388DCDD0E23AE22006CDBD8 /* SQLParser.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		5365606E0D7D90F800A93A17 /* Products */ = {
+		5395E8220E2F9F15006E8441 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				536560730D7D90F800A93A17 /* libPGTSTiger.a */,
-				536560750D7D90F800A93A17 /* libPGTSTiger.a */,
+				5395E82F0E2F9F15006E8441 /* RegexKit.framework */,
+				5395E8310E2F9F15006E8441 /* Unit Tests.octest */,
+				5395E8330E2F9F15006E8441 /* libStack Protector.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		536560760D7D910100A93A17 /* Products */ = {
+		53F749940E362E62003C2E55 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5365607B0D7D910100A93A17 /* libMKCCollections.a */,
-				5365607D0D7D910100A93A17 /* libMKCCollections.a */,
+				53F749980E362E62003C2E55 /* BaseTenAppKit.framework */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		5374EB260B0E137B000D353D /* Model Classes */ = {
-			isa = PBXGroup;
-			children = (
-				53ABE7C40A4303CC001C456D /* Entity.h */,
-				53ABE7C50A4303CC001C456D /* Entity.m */,
-				537CA7110B1611C800898F1C /* Schema.h */,
-				537CA7120B1611C800898F1C /* Schema.m */,
-				53638FDC0A3D913A00618545 /* Table.h */,
-				53638FDD0A3D913A00618545 /* Table.m */,
-			);
-			name = "Model Classes";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		53ABE4080A421DC1001C456D /* MomcHelper */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 53ABE4120A421DD8001C456D /* Build configuration list for PBXNativeTarget "MomcHelper" */;
-			buildPhases = (
-				53ABE4060A421DC1001C456D /* Sources */,
-				53ABE4070A421DC1001C456D /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = MomcHelper;
-			productName = MomcHelper;
-			productReference = 53ABE4090A421DC1001C456D /* MomcHelper */;
-			productType = "com.apple.product-type.tool";
-		};
 		8D1107260486CEB800E47090 /* Assistant */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Assistant" */;
 			buildPhases = (
-				2B6D85E20B1DD01E008DE4E2 /* Copy Per Project Build Dir Items */,
-				530602B90A3F112C00C01351 /* Copy Executables */,
+				530602B90A3F112C00C01351 /* Copy Frameworks */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 			);
 			buildRules = (
-				53DD5AC90A78D47D00CD5924 /* PBXBuildRule */,
+				531C01780E32AF7900E43208 /* PBXBuildRule */,
 			);
 			dependencies = (
-				53ABE5400A421E31001C456D /* PBXTargetDependency */,
-				536560870D7D912300A93A17 /* PBXTargetDependency */,
+				5388DE670E23AE6C006CDBD8 /* PBXTargetDependency */,
+				5395E8360E2F9F30006E8441 /* PBXTargetDependency */,
 			);
 			name = Assistant;
 			productInstallPath = "$(HOME)/Applications";
@@ -455,67 +382,66 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = 536560600D7D90EF00A93A17 /* Products */;
-					ProjectRef = 536392130A3DAA8800618545 /* Framework.xcodeproj */;
+					ProductGroup = 5388DCD30E23AE22006CDBD8 /* Products */;
+					ProjectRef = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
 				},
 				{
-					ProductGroup = 536560760D7D910100A93A17 /* Products */;
-					ProjectRef = 534343BA0D2D89800047974F /* MKCCollections.xcodeproj */;
+					ProductGroup = 53F749940E362E62003C2E55 /* Products */;
+					ProjectRef = 53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */;
 				},
 				{
-					ProductGroup = 5365606E0D7D90F800A93A17 /* Products */;
-					ProjectRef = 533FE1E80B5FC0A3006AB959 /* PGTSTiger.xcodeproj */;
+					ProductGroup = 5395E8220E2F9F15006E8441 /* Products */;
+					ProjectRef = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
 				},
 			);
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Assistant */,
-				53ABE4080A421DC1001C456D /* MomcHelper */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		536560660D7D90EF00A93A17 /* libPGTS.a */ = {
+		5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libPGTS.a;
-			remoteRef = 536560650D7D90EF00A93A17 /* PBXContainerItemProxy */;
+			fileType = wrapper.framework;
+			path = BaseTen.framework;
+			remoteRef = 5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		536560680D7D90EF00A93A17 /* libPGTS.a */ = {
+		5388DCDD0E23AE22006CDBD8 /* SQLParser.o */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libPGTS.a;
-			remoteRef = 536560670D7D90EF00A93A17 /* PBXContainerItemProxy */;
+			fileType = "compiled.mach-o.objfile";
+			path = SQLParser.o;
+			remoteRef = 5388DCDC0E23AE22006CDBD8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		536560730D7D90F800A93A17 /* libPGTSTiger.a */ = {
+		5395E82F0E2F9F15006E8441 /* RegexKit.framework */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libPGTSTiger.a;
-			remoteRef = 536560720D7D90F800A93A17 /* PBXContainerItemProxy */;
+			fileType = wrapper.framework;
+			path = RegexKit.framework;
+			remoteRef = 5395E82E0E2F9F15006E8441 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		536560750D7D90F800A93A17 /* libPGTSTiger.a */ = {
+		5395E8310E2F9F15006E8441 /* Unit Tests.octest */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libPGTSTiger.a;
-			remoteRef = 536560740D7D90F800A93A17 /* PBXContainerItemProxy */;
+			fileType = wrapper.cfbundle;
+			path = "Unit Tests.octest";
+			remoteRef = 5395E8300E2F9F15006E8441 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		5365607B0D7D910100A93A17 /* libMKCCollections.a */ = {
+		5395E8330E2F9F15006E8441 /* libStack Protector.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libMKCCollections.a;
-			remoteRef = 5365607A0D7D910100A93A17 /* PBXContainerItemProxy */;
+			path = "libStack Protector.a";
+			remoteRef = 5395E8320E2F9F15006E8441 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		5365607D0D7D910100A93A17 /* libMKCCollections.a */ = {
+		53F749980E362E62003C2E55 /* BaseTenAppKit.framework */ = {
 			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libMKCCollections.a;
-			remoteRef = 5365607C0D7D910100A93A17 /* PBXContainerItemProxy */;
+			fileType = wrapper.framework;
+			path = BaseTenAppKit.framework;
+			remoteRef = 53F749970E362E62003C2E55 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -525,9 +451,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql in Resources */,
+				2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
-				98B657250A77394B00373BDB /* datatypeassociations.plist in Resources */,
 				536CB9C90B0D217000EBCB39 /* Log32.png in Resources */,
 				536CB9CA0B0D217000EBCB39 /* Inspector32.png in Resources */,
 				536CB9CB0B0D217000EBCB39 /* ImportModel32.png in Resources */,
@@ -537,76 +462,51 @@
 				53BC458E0B19E9F00051A557 /* BaseTenAssistant.icns in Resources */,
 				53DAFF180B4F0DE700C000FE /* View16.tif in Resources */,
 				532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */,
-				532F42A20D69B70F009FEDCD /* Import.xib in Resources */,
+				536E603B0E263A8600098C4A /* Import.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		2B6D85E20B1DD01E008DE4E2 /* Copy Per Project Build Dir Items */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Per Project Build Dir Items";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nPSQL_BIN=\"$PROJECT_DIR/../Dependencies/PGTS/Framework/build/$CONFIGURATION/PGTS-PostgreSQL/universal/bin/psql\"\n\nif [ -e \"$PSQL_BIN\" ] && [ \"$PSQL_BIN\" -nt \"$BUILT_PRODUCTS_DIR/psql\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/psql\"\n\tcp -pfR \"$PSQL_BIN\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\nPGTS=\"$PROJECT_DIR/../Dependencies/PGTS/TigerFramework/build/$CONFIGURATION/PGTSTiger\"\n\nif [ -e \"$PGTS\" ] && [ \"$PGTS\" -nt \"$BUILT_PRODUCTS_DIR/PGTS\" ] \nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/PTGS\"\n\tcp -pfR \"$PGTS\" \"$BUILT_PRODUCTS_DIR\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		53ABE4060A421DC1001C456D /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				53ABE53A0A421E09001C456D /* MomcHelper.m in Sources */,
-				53ABE6250A42A8D8001C456D /* Constants.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8D11072C0486CEB800E47090 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
-				53638FDE0A3D913A00618545 /* Table.m in Sources */,
-				53638FEB0A3D927000618545 /* Controller.m in Sources */,
-				53ABE6240A42A8D8001C456D /* Constants.m in Sources */,
-				53ABE7C70A4303CC001C456D /* Entity.m in Sources */,
-				53ABE96A0A431961001C456D /* PostgresEntityConverter.m in Sources */,
-				531517550AFA55F2003FB616 /* ImportController.m in Sources */,
-				5374E4B90B0D364E000D353D /* Additions.m in Sources */,
 				5374E69A0B0DC8A4000D353D /* MKCPolishedHeaderView.m in Sources */,
 				5374E9450B0E001C000D353D /* MKCPolishedCornerView.m in Sources */,
 				53C4228B0B0E87C40008F4F2 /* MKCPolishedSeparatorView.m in Sources */,
-				537CA69F0B1609C200898F1C /* MKCCenteredTextFieldCell.m in Sources */,
-				537CA7140B1611C800898F1C /* Schema.m in Sources */,
 				531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */,
 				53B94D310B53AD4A00733341 /* MKCForcedSizeToFitButtonCell.m in Sources */,
-				534E2D270B8DE504008025DC /* PostgresVerbatimString.m in Sources */,
 				53D7BFEE0D6C787200290858 /* MKCImageAndTextCell.m in Sources */,
 				53E029D50D7C49C8001AED9C /* MKCBackgroundView.m in Sources */,
+				53BCB27C0DF698350011E823 /* MKCPolishedHeaderCell.m in Sources */,
+				5388DC660E23AC3F006CDBD8 /* BXAController.m in Sources */,
+				53EF32B90E23B7220027EA18 /* Additions.m in Sources */,
+				53EF33B50E23CC430027EA18 /* BXASchemaCell.m in Sources */,
+				53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */,
+				53877B010E263AED0097C35F /* BXAImportController.m in Sources */,
+				53877E3F0E26A51B0097C35F /* BXAFieldCell.m in Sources */,
+				53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */,
+				53425B650E2CD237005F6123 /* MKCStackView.m in Sources */,
+				53C80FEF0E31413300302B3F /* MKCEventPassingTextField.m in Sources */,
+				531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		536560870D7D912300A93A17 /* PBXTargetDependency */ = {
+		5388DE670E23AE6C006CDBD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "Static archive + GC";
-			targetProxy = 536560860D7D912300A93A17 /* PBXContainerItemProxy */;
+			name = "BaseTen Framework + GC";
+			targetProxy = 5388DE660E23AE6C006CDBD8 /* PBXContainerItemProxy */;
 		};
-		53ABE5400A421E31001C456D /* PBXTargetDependency */ = {
+		5395E8360E2F9F30006E8441 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 53ABE4080A421DC1001C456D /* MomcHelper */;
-			targetProxy = 53ABE53F0A421E31001C456D /* PBXContainerItemProxy */;
+			name = "RegexKit Framework";
+			targetProxy = 5395E8350E2F9F30006E8441 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -638,60 +538,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		53ABE4130A421DD8001C456D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = MomcHelper;
-				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = YES;
-			};
-			name = Debug;
-		};
-		53ABE4140A421DD8001C456D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INSTALL_PATH = "$(HOME)/bin";
-				OTHER_LDFLAGS = (
-					"-framework",
-					Foundation,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = MomcHelper;
-				WARNING_CFLAGS = "-Wall";
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -702,14 +548,13 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G4;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)",
-					"$(SRCROOT)/../Dependencies/PGTS/Framework/build/$(BUILD_STYLE)",
-					"$(SRCROOT)/../Dependencies/PGTS/TigerFramework/build/$(BUILD_STYLE)",
+					"$(SRCROOT)/../Dependencies/PGTS/build/$(BUILD_STYLE)",
 					"$(SRCROOT)/../Dependencies/MKCCollections/build/$(BUILD_STYLE)",
 					.,
 				);
@@ -747,8 +592,7 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)",
-					"$(SRCROOT)/../Dependencies/PGTS/Framework/build/$(BUILD_STYLE)",
-					"$(SRCROOT)/../Dependencies/PGTS/TigerFramework/build/$(BUILD_STYLE)",
+					"$(SRCROOT)/../Dependencies/PGTS/build/$(BUILD_STYLE)",
 					"$(SRCROOT)/../Dependencies/MKCCollections/build/$(BUILD_STYLE)",
 					.,
 				);
@@ -791,15 +635,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		53ABE4120A421DD8001C456D /* Build configuration list for PBXNativeTarget "MomcHelper" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				53ABE4130A421DD8001C456D /* Debug */,
-				53ABE4140A421DD8001C456D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Assistant" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

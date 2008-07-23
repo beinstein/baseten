@@ -61,8 +61,7 @@
 @end
 
 
-@implementation TestLoader
-
+@implementation BXTestLoader
 - (void) test
 {
 	NSArray* simpleTestClasses = [NSArray arrayWithObjects:
@@ -101,8 +100,30 @@
 		nil] objectEnumerator]];
 	
 	SenTestRun* run = [bxSuite run];
-    //SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [ForeignKeyModificationTests class]] run];
+    //SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [FetchTests class]] run];
 	STAssertTrue (0 == [run failureCount], @"Expected tests to succeed.");
 }
-	
+@end
+
+
+@implementation BXTestCase
+static void
+bx_test_failed (NSException* exception)
+{
+}
+
+- (void) logAndCallBXTestFailed: (NSException *) exception
+{
+	[self logException: exception];
+	bx_test_failed (exception);
+}
+
+- (id) initWithInvocation:(NSInvocation *) anInvocation
+{
+	if ((self = [super initWithInvocation: anInvocation]))
+	{
+		[self setFailureAction: @selector (logAndCallBXTestFailed:)];
+	}
+	return self;
+}
 @end

@@ -35,8 +35,7 @@
 #import "BXException.h"
 #import "BXDatabaseObject.h"
 #import "BXAttributeDescription.h"
-
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "BXLogger.h"
 
 
 @implementation NSURL (BXDatabaseAdditions)
@@ -75,6 +74,9 @@
 		if (nil == host) host = [self host];
 		if (nil == host) host = @"";
 		[URLString appendString: host];
+		
+		NSNumber* port = [self port];
+		if (port) [URLString appendFormat: @":%@", port];
 	
 		if (nil != dbName)
             dbName = [dbName BXURLEncodedString];
@@ -267,7 +269,7 @@ URLDecode (const char* bytes, size_t length, id sender)
                                        type: (NSPredicateOperatorType) type
 {
     unsigned int count = [properties count];
-	log4AssertValueReturn (count == [otherProperties count], nil, @"Expected given arrays' counts to match.");
+	BXAssertValueReturn (count == [otherProperties count], nil, @"Expected given arrays' counts to match.");
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: count];
     for (unsigned int i = 0; i < count; i++)
     {
@@ -364,8 +366,8 @@ URLDecode (const char* bytes, size_t length, id sender)
     NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithDictionary: [self userInfo]];
     [userInfo setObject: self forKey: kBXErrorKey];
     return [BXException exceptionWithName: kBXExceptionUnhandledError 
-                                            reason: [self localizedFailureReason]
-                                          userInfo: userInfo];
+								   reason: [self localizedFailureReason]
+								 userInfo: userInfo];
 }
 @end
 
@@ -553,7 +555,6 @@ URLDecode (const char* bytes, size_t length, id sender)
 
 - (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey
 {
-    
     enum BXModificationType retval = kBXNoModification;
     [[self objectForKey: aKey] getValue: &retval];
     return retval;
@@ -561,7 +562,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 @end
 
 
-@implementation NSObject (BXDatabaeAdditions)
+@implementation NSObject (BXDatabaseAdditions)
 - (BOOL) BXIsRelationshipProxy
 {
 	return NO;

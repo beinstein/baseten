@@ -34,8 +34,13 @@
 
 @interface BXAttributeDescription : BXPropertyDescription <NSCoding>
 {
+	Class mAttributeClass;
+	NSString* mDatabaseTypeName;
 }
 
+- (Class) attributeValueClass;
+- (NSString *) attributeValueClassName;
+- (NSString *) databaseTypeName;
 - (BOOL) isPrimaryKey;
 - (BOOL) isExcluded;
 

@@ -7,32 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530A43850A5C0E0100A4722B /* BaseTen.framework */; };
 		5317CEB20D1ACB0900A48792 /* UndoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B2C1390BE88608002B66B1 /* UndoTests.m */; };
 		5317CEB40D1ACB0B00A48792 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
 		5317CEB50D1ACB0C00A48792 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
 		5317CEB60D1ACB0D00A48792 /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
 		5317CEB70D1ACB0E00A48792 /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
 		5317CEB80D1ACB0E00A48792 /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
-		5317CEB90D1ACB0F00A48792 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
 		5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
 		5317CEBB0D1ACB1000A48792 /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
 		5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
 		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
+		53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
 		53C98A140CF0803A00D6A0A7 /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
+		53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538B40F50D634EA40009005B /* BaseTen.framework */; };
 		53F8E1DD0CBF7FF100C000C5 /* UnitTestAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A494840BD4D92F008E850E /* UnitTestAdditions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		530A43840A5C0E0100A4722B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 5368D60F0A3711C800D136DC;
-			remoteInfo = "BaseTen Static";
-		};
 		538B40F40D634EA40009005B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
@@ -40,12 +33,19 @@
 			remoteGlobalIDString = 535444130D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
-		53D059730CDB8F5800430536 /* PBXContainerItemProxy */ = {
+		53A59ACE0E34DFD20026D7E1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
+			remoteInfo = "SQL Parser";
+		};
+		53D03BB80DE82987002D14C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 5368D60E0A3711C800D136DC;
-			remoteInfo = "BaseTen Static";
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -54,7 +54,7 @@
 		530987C70B57B1C30010765D /* ObjectIDTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectIDTests.m; sourceTree = "<group>"; };
 		530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		530A438C0A5C0FD000A4722B /* UnitTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UnitTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
-		530A438E0A5C0FD000A4722B /* UnitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "UnitTests-Info.plist"; sourceTree = "<group>"; };
+		530A438E0A5C0FD000A4722B /* UnitTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "UnitTests-Info.plist"; sourceTree = "<group>"; };
 		530A439D0A5C114E00A4722B /* ConnectTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConnectTest.h; sourceTree = "<group>"; };
 		530A439E0A5C114E00A4722B /* ConnectTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConnectTest.m; sourceTree = "<group>"; };
 		53193E8D0BC51701009A77EC /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -94,9 +94,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				530A43980A5C0FE900A4722B /* BaseTen.framework in Frameworks */,
 				539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */,
 				53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */,
+				53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -122,8 +122,8 @@
 		530A435F0A5C0E0100A4722B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				530A43850A5C0E0100A4722B /* BaseTen.framework */,
 				538B40F50D634EA40009005B /* BaseTen.framework */,
+				53A59ACF0E34DFD20026D7E1 /* SQLParser.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -197,12 +197,11 @@
 				530A43870A5C0FD000A4722B /* Resources */,
 				530A43880A5C0FD000A4722B /* Sources */,
 				530A43890A5C0FD000A4722B /* Frameworks */,
-				530A438A0A5C0FD000A4722B /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				53D059740CDB8F5800430536 /* PBXTargetDependency */,
+				53D03BB90DE82987002D14C4 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -234,18 +233,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		530A43850A5C0E0100A4722B /* BaseTen.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = BaseTen.framework;
-			remoteRef = 530A43840A5C0E0100A4722B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		538B40F50D634EA40009005B /* BaseTen.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = BaseTen.framework;
 			remoteRef = 538B40F40D634EA40009005B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		53A59ACF0E34DFD20026D7E1 /* SQLParser.o */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.objfile";
+			path = SQLParser.o;
+			remoteRef = 53A59ACE0E34DFD20026D7E1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -259,22 +258,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		530A438A0A5C0FD000A4722B /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "# Run the unit tests in this test bundle.\n#export NSZombieEnabled=YES\n\"${SYSTEM_DEVELOPER_DIR}/Tools/otest\" -SenTest TestLoader \"build/${BUILD_STYLE}/UnitTests.octest\"\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		530A43880A5C0FD000A4722B /* Sources */ = {
@@ -290,20 +273,20 @@
 				5317CEB60D1ACB0D00A48792 /* MTMCollectionTest.m in Sources */,
 				5317CEB70D1ACB0E00A48792 /* ModificationTests.m in Sources */,
 				5317CEB80D1ACB0E00A48792 /* ForeignKeyTests.m in Sources */,
-				5317CEB90D1ACB0F00A48792 /* FetchTests.m in Sources */,
 				5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */,
 				5317CEBB0D1ACB1000A48792 /* CreateTests.m in Sources */,
 				5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */,
+				53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		53D059740CDB8F5800430536 /* PBXTargetDependency */ = {
+		53D03BB90DE82987002D14C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = "BaseTen Static";
-			targetProxy = 53D059730CDB8F5800430536 /* PBXContainerItemProxy */;
+			name = "BaseTen Framework + GC";
+			targetProxy = 53D03BB80DE82987002D14C4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -311,14 +294,14 @@
 		530A43550A5C0DC500A4722B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
 		530A43560A5C0DC500A4722B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Release;
 		};
@@ -348,6 +331,7 @@
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;
@@ -378,7 +362,7 @@
 				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../..\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				WARNING_CFLAGS = "-Wall";
 				WRAPPER_EXTENSION = octest;
 				ZERO_LINK = NO;

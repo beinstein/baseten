@@ -55,23 +55,8 @@
     return object;
 }
 
-- (void) testUndoWithAutocommit
-{
-    [self undoAutocommit: YES];
-}
-
-- (void) testUndo
-{
-    [self undoAutocommit: NO];
-}
-
 - (void) undoAutocommit: (BOOL) autocommit
 {
-    const unsigned int objectId = 5;
-    [context connectIfNeeded: nil];
-    NSUndoManager* undoManager = [context undoManager];
-    MKCAssertNotNil (undoManager);
-    
     if (autocommit)
     {
         [context setAutocommits: YES];
@@ -82,7 +67,12 @@
         MKCAssertFalse ([context autocommits]);
     }
     
+    const unsigned int objectId = 5;
+	[context connectIfNeeded: nil];
+    NSUndoManager* undoManager = [context undoManager];
     BXEntityDescription* updatetest = [context entityForTable: @"updatetest" error: nil];
+
+    MKCAssertNotNil (undoManager);
     MKCAssertNotNil (updatetest);
     
     BXDatabaseObject* object = [self objectWithId: objectId entity: updatetest];
@@ -95,38 +85,14 @@
     MKCAssertEqualObjects (fetchedValue, newValue);
     
     [undoManager undo];
-    MKCAssertEqualObjects ([object primitiveValueForKey: @"value1"], oldValue);
+	id currentValue = [object primitiveValueForKey: @"value1"];
+    MKCAssertEqualObjects (currentValue, oldValue);
     fetchedValue = [[self objectWithId: objectId entity: updatetest] primitiveValueForKey: @"value1"];
-    MKCAssertEqualObjects (fetchedValue, oldValue);
-    
-    if (autocommit)
-    {
-        [context setAutocommits: NO];
-        MKCAssertFalse ([context autocommits]);
-    }
-    else
-    {
-        [context rollback];
-    }
-}
-
-- (void) testUndoWithMTORelationship
-{
-    [self undoWithMTORelationshipAutocommit: NO];
-}
-
-- (void) testUndoWithMTORelationshipAndAutocommit
-{
-    [self undoWithMTORelationshipAutocommit: YES];
+    MKCAssertEqualObjects (fetchedValue, oldValue);    
 }
 
 - (void) undoWithMTORelationshipAutocommit: (BOOL) autocommit
-{
-    const unsigned int objectId = 1;
-    [context connectIfNeeded: nil];
-    NSUndoManager* undoManager = [context undoManager];
-    MKCAssertNotNil (undoManager);
-    
+{    
     if (YES == autocommit)
     {
         [context setAutocommits: YES];
@@ -137,8 +103,13 @@
         MKCAssertFalse ([context autocommits]);
     }
     
+	const unsigned int objectId = 1;
+    [context connectIfNeeded: nil];
+    NSUndoManager* undoManager = [context undoManager];
     BXEntityDescription* test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
     BXDatabaseObject* object = [self objectWithId: objectId entity: test1];
+
+    MKCAssertNotNil (undoManager);	
     MKCAssertNotNil (object);
     
     NSMutableSet* foreignObjects = [object primitiveValueForKey: @"test2"];
@@ -151,17 +122,27 @@
     
     [undoManager undo];
     MKCAssertTrue (2 == [foreignObjects count]);
-    MKCAssertEqualObjects (foreignObjects, foreignObjects2);
-    
-    if (autocommit)
-    {
-        [context setAutocommits: YES];
-        MKCAssertTrue ([context autocommits]);
-    }
-    else
-    {
-        MKCAssertFalse ([context autocommits]);
-    }
+    MKCAssertEqualObjects (foreignObjects, foreignObjects2);    
+}
+
+- (void) testUndoWithAutocommit
+{
+    [self undoAutocommit: YES];
+}
+
+- (void) testUndo
+{
+    [self undoAutocommit: NO];
+}
+
+- (void) testUndoWithMTORelationship
+{
+    [self undoWithMTORelationshipAutocommit: NO];
+}
+
+- (void) testUndoWithMTORelationshipAndAutocommit
+{
+    [self undoWithMTORelationshipAutocommit: YES];
 }
 
 @end

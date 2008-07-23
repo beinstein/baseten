@@ -26,13 +26,14 @@
 // $Id$
 //
 
-#import <MKCCollections/MKCCollections.h>
-#import <PGTS/PGTS.h>
-#import <PGTS/PGTSFunctions.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+#import <AppKit/AppKit.h>
 #import <stdlib.h>
 #import <string.h>
 #import <pthread.h>
+
+#import "MKCCollections.h"
+#import "PGTS.h"
+#import "PGTSFunctions.h"
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
@@ -55,7 +56,8 @@
 #import "BXConstantsPrivate.h"
 #import "BXInvocationRecorder.h"
 #import "BXErrorHandlerDelegate.h"
-            
+#import "BXLogger.h"
+#import "BXProbes.h"
 
 static NSMutableDictionary* gInterfaceClassSchemes = nil;
 static BOOL gHaveAppKitFramework = NO;
@@ -80,7 +82,7 @@ BXObjectIDsByEntity (NSArray *ids)
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
     TSEnumerate (objectID, e, [ids objectEnumerator])
     {
-        BXEntityDescription* entity = [objectID entity];
+        BXEntityDescription* entity = [(BXDatabaseObjectID *) objectID entity];
         NSMutableArray* array = [dict objectForKey: entity];
         if (nil == array)
         {
@@ -114,7 +116,7 @@ BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescrip
 												schema: NULL
 									  primaryKeyFields: &pkeyFields];
 			//FIXME: C function logging.
-			//log4AssertCLog (parsed, @"Expected object URI to be parseable.");
+			BXAssertVoidReturn (parsed, @"Expected object URI to be parseable.");
 			if (! parsed) break;
 			
             BXDatabaseObjectID* newID = [BXDatabaseObjectID IDWithEntity: currentEntity primaryKeyFields: pkeyFields];
@@ -122,7 +124,6 @@ BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescrip
             [newID release];
         }
         BXAddObjectIDsForInheritance2 (idsByEntity, currentEntity);
-        //Yay, tail recursion! Let's hope the compiler notices.
     }    
 }
 
@@ -133,12 +134,21 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
         BXAddObjectIDsForInheritance2 (idsByEntity, entity);
 }
 
+static void
+bx_query_during_reconnect ()
+{
+	NSLog (@"Tried to send a query during reconnection attempt. Break on bx_query_during_reconnect to inspect.");
+}
+
 
 /** 
  * The database context. 
  * A database context connects to a given database, sends queries and commands to it and
  * creates objects from rows in its tables. In order to function properly, it needs an URI formatted 
- * like pgsql://username:password\@hostname/database_name/. 
+ * like pgsql://username:password\@hostname/database_name/.
+ *
+ * Various methods of this class take an NSError parameter. If the parameter isn't set, the context
+ * will handle errors by throwing an exception. See #BXDatabaseContext:hadError:willBePassedOn:.
  *
  * \note This class is not thread-safe, i.e. 
  *		 if methods of a BXDatabaseContext instance will be called from 
@@ -161,9 +171,6 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
     }
 }
 
-/**
- * Returns NO.
- */
 + (BOOL) accessInstanceVariablesDirectly
 {
     return NO;
@@ -176,13 +183,13 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 + (BOOL) setInterfaceClass: (Class) aClass forScheme: (NSString *) scheme
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     if ([aClass conformsToProtocol: @protocol (BXInterface)])
     {
-        rval = YES;
+        retval = YES;
         [gInterfaceClassSchemes setValue: aClass forKey: scheme];
     }
-    return rval;
+    return retval;
 }
 
 + (Class) interfaceClassForScheme: (NSString *) scheme
@@ -190,6 +197,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
     return [gInterfaceClassSchemes valueForKey: scheme];
 }
 
+/** \name Creating a database context */
+//@{
 /**
  * A convenience method.
  * \param   uri     URI of the target database
@@ -223,24 +232,24 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
     {
         [self setDatabaseURI: uri];
         
-        char* logEnv = getenv ("BaseTenLogQueries");
-        mLogsQueries = (NULL != logEnv && strcmp ("YES", logEnv));
         mDeallocating = NO;
         mRetainRegisteredObjects = NO;
 		mCanConnect = YES;
 		mConnectsOnAwake = NO;
 		errorHandlerDelegate = self;
+		mSendsLockQueries = YES;
 		
 		mEntities = [[NSMutableSet alloc] init];
 		mRelationships = [[NSMutableSet alloc] init];
     }
     return self;
 }
+//@}
 
 - (void) dealloc
 {
     mDeallocating = YES;
-    [self rollback];
+    //[self rollback]; //FIXME: I don't think this is really needed.
     if (mRetainRegisteredObjects)
         [mObjects makeObjectsPerformSelector:@selector (release) withObject:nil];
     [mObjects makeObjectsPerformSelector: @selector (BXDatabaseContextWillDealloc) withObject: nil];
@@ -255,12 +264,13 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 	[mConnectionSetupManager release];
     [mNotificationCenter release];
     [mEntities release];
+	[mEntitiesBySchema release];
     [mRelationships release];
     
     if (NULL != mKeychainPasswordItem)
         CFRelease (mKeychainPasswordItem);
     
-    log4Debug (@"Deallocating BXDatabaseContext");
+    BXLogDebug (@"Deallocating BXDatabaseContext");
     [super dealloc];
 }
 
@@ -271,6 +281,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 	[super finalize];
 }
 
+/** \name Handling registered objects */
+//@{
 /**
  * Whether the receiver retains registered objects.
  */
@@ -293,7 +305,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
             [mObjects makeObjectsPerformSelector:@selector (release) withObject:nil];
     }
 }
+//@}
 
+/** \name Connecting and disconnecting */
+//@{
 /**
  * Set the database URI.
  * \param   uri     The database URI
@@ -314,6 +329,41 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 }
 
 /**
+ * Whether connection is attempted on -awakeFromNib.
+ */
+- (BOOL) connectsOnAwake
+{
+	return mConnectsOnAwake;
+}
+
+/**
+ * Set whether connection should be attempted on -awakeFromNib.
+ */
+- (void) setConnectsOnAwake: (BOOL) aBool
+{
+	mConnectsOnAwake = aBool;
+}
+
+/**
+ * Establishing a connection.
+ * Returns a boolean indicating whether connecting can be attempted using -connect:.
+ * Presently this method returns YES when connection attempt hasn't already been started and after
+ * the attempt has failed.
+ */
+- (BOOL) canConnect
+{
+	return mCanConnect;
+}
+
+/**
+ * Connection status.
+ */
+- (BOOL) isConnected
+{
+	return [[self databaseInterface] connected];
+}
+
+/**
  * Connect to the database.
  * This method returns after the connection has been made.
  */
@@ -327,7 +377,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
         {
 			[self setCanConnect: NO];
 			[self lazyInit];
-			[[self databaseInterface] connect: &localError];
+			[[self databaseInterface] connectSync: &localError];
 			
 			if (nil == localError)
 				[self connectedToDatabase: (nil == localError) async: NO error: &localError];
@@ -340,6 +390,31 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
         }
     }
     BXHandleError (error, localError);
+}
+
+/**
+ * Connect to the database.
+ * Hand over the connection setup to \c mConnectionSetupManager. In BaseTenAppKit 
+ * applications, a BXNetServiceConnector will be created automatically if 
+ * one doesn't exist.
+ */
+- (IBAction) connect: (id) sender
+{
+	if (NO == [[self databaseInterface] connected])
+	{
+		if (nil == mConnectionSetupManager && 0 != pthread_main_np () &&
+            [self respondsToSelector: @selector (copyDefaultConnectionSetupManager)])
+		{
+			mConnectionSetupManager = [self copyDefaultConnectionSetupManager];
+			[mConnectionSetupManager setDatabaseContext: self];
+			[mConnectionSetupManager setModalWindow: modalWindow];
+		}
+		if (nil != mConnectionSetupManager)
+		{
+			[mConnectionSetupManager connect: sender];
+			[self setCanConnect: NO];
+		}
+	}
 }
 
 /**
@@ -358,7 +433,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		if (NO == [self isConnected])
 		{
 			[self lazyInit];
-			[mDatabaseInterface connectAsync: &localError];
+			[mDatabaseInterface connectAsync];
 		}
 	}
 	
@@ -381,23 +456,15 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (void) disconnect
 {
-	if (NO == [self isConnected])
-	{
-		mDidDisconnect = YES;
-		[mDatabaseInterface disconnect];
-		[mDatabaseInterface release];
-		mDatabaseInterface = nil;
-	}
+	mDidDisconnect = YES;
+	[mDatabaseInterface disconnect];
+	[mDatabaseInterface release];
+	mDatabaseInterface = nil;
 }
+//@}
 
-/**
- * Connection status.
- */
-- (BOOL) isConnected
-{
-	return [[self databaseInterface] connected];
-}
-
+/** \name Transactions and undo */
+//@{
 /**
  * Set the query execution method.
  * In manual commit mode, savepoints are inserted after each query
@@ -405,14 +472,16 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  * Instead, other users get information about locked rows.
  * If the context gets deallocated during a transaction, a ROLLBACK
  * is sent to the database.
+ * \note If autocommit is enabled, sending lock queries will be turned off. It may be re-enabled afterwards, though.
  * \param   aBool   Whether or not to use autocommit.
  */
 - (void) setAutocommits: (BOOL) aBool
 {
-    [self willChangeValueForKey: @"autocommits"];
+	if ([mDatabaseInterface connected])
+		[NSException raise: NSInvalidArgumentException format: @"Commit mode cannot be set after connecting."];
     mAutocommits = aBool;
-    [mDatabaseInterface setAutocommits: aBool];
-    [self didChangeValueForKey: @"autocommits"];
+	if (mAutocommits)
+		[self setSendsLockQueries: NO];
 }
 
 /**
@@ -421,10 +490,208 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (BOOL) autocommits
 {
-    BOOL rval = mAutocommits;
-    if (nil != mDatabaseInterface)
-        rval = [mDatabaseInterface autocommits];
     return mAutocommits;
+}
+
+/**
+ * Set whether the context should try to lock rows before editing.
+ * BaseTen's controller subclasses notify the context in NSEditorRegistration's methods.
+ * This method controls whether the context pays attention to those messages.
+ * The context may still receive lock notifications from other contexts.
+ */
+- (void) setSendsLockQueries: (BOOL) aBool
+{
+	if ([mDatabaseInterface connected])
+		[NSException raise: NSInvalidArgumentException format: @"Lock mode cannot be set after connecting."];
+	mSendsLockQueries = aBool;
+}
+
+/**
+ * Whether the context tries to lock rows before editing.
+ */
+- (BOOL) sendsLockQueries
+{
+	return mSendsLockQueries;
+}
+
+/**
+ * The undo manager used by this context.
+ */
+- (NSUndoManager *) undoManager
+{
+    return mUndoManager;
+}
+
+/**
+ * Set the undo manager used by the context.
+ * Instead of creating an undo manager owned by the context, the undo invocations 
+ * can be sent to a window's undo manager, for example. The change is done only if there isn't an
+ * open undo group in the current undo manager.
+ * \param       aManager    The supplied undo manager
+ * \return                  Whether or not changing the undo manager was successful.
+ */
+- (BOOL) setUndoManager: (NSUndoManager *) aManager
+{
+    BOOL rval = NO;
+    if (aManager == mUndoManager)
+        rval = YES;
+    else if (0 == [mUndoManager groupingLevel])
+    {
+        rval = YES;
+		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
+		
+		[nc removeObserver: self name: NSUndoManagerWillCloseUndoGroupNotification object: mUndoManager];
+        [mUndoManager release];
+        mUndoManager = [aManager retain];
+		[mUndoGroupingLevels removeAllIndexes];
+		[nc addObserver: self selector: @selector (undoGroupWillClose:)
+				   name: NSUndoManagerWillCloseUndoGroupNotification object: mUndoManager];
+    }
+    return rval;
+}
+
+/**
+ * Rollback the transaction ina manual commit mode.
+ * Guaranteed to succeed.
+ */
+- (void) rollback
+{
+    if (NO == [mDatabaseInterface autocommits] && [mDatabaseInterface connected])
+    {
+        //First rollback, then fault and notify the listeners about modifications
+        [mDatabaseInterface rollback];
+		
+        //FIXME: order by entity either here or in addedObjects and deletedObjects methods
+        NSMutableArray* added = [NSMutableArray array];
+        NSMutableArray* deleted = [NSMutableArray array];
+        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
+        {
+			BXDatabaseObject* registeredObject = [self registeredObjectWithID: currentID];
+            switch ([(id) mModifiedObjectIDs BXModificationTypeForKey: currentID])
+            {
+                case kBXUpdateModification:
+                    [registeredObject removeFromCache: nil postingKVONotifications: YES];
+                    break;
+                case kBXInsertModification:
+                    [added addObject: currentID];
+                    break;
+                case kBXDeleteModification:
+                    [deleted addObject: currentID];
+                    break;
+                default:
+                    break;
+            }
+			
+			if (kBXObjectDeletePending == [registeredObject deletionStatus])
+			{
+				if (![registeredObject isInserted])
+					[registeredObject setDeleted: kBXObjectExists];
+				else
+				{
+					[registeredObject setDeleted: kBXObjectDeleted];
+					[registeredObject setCreatedInCurrentTransaction: NO];
+				}
+			}
+			
+			[registeredObject clearStatus];
+			[registeredObject setDeleted: kBXObjectExists];
+        }
+        [(id) mModifiedObjectIDs removeAllObjects];
+        //In case of rollback, the objects deleted during the last transaction 
+        //appear as inserted and vice-versa
+        //If we are deallocating, don't bother to send the notification.
+        if (NO == mDeallocating)
+        {
+            [self addedObjectsToDatabase: deleted];
+            [self deletedObjectsFromDatabase: added];
+        }
+		
+        [mUndoManager removeAllActions];
+    }    
+}
+
+/**
+ * Commit the current transaction in manual commit mode.
+ * Undo will be disabled after this.
+ * \return      A boolean indicating whether the commit was successful or not.
+ */
+- (BOOL) save: (NSError **) error
+{
+    BOOL retval = YES;
+    if ([self checkErrorHandling] && NO == [mDatabaseInterface autocommits])
+    {
+        NSError* localError = nil;
+        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
+		{
+			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
+			[currentObject setCreatedInCurrentTransaction: NO];
+			if ([currentObject isDeleted])
+				[currentObject setDeleted: kBXObjectDeleted];
+		}
+        [(id) mModifiedObjectIDs removeAllObjects];
+		
+        [mUndoManager removeAllActions];
+        retval = [mDatabaseInterface save: &localError];
+        BXHandleError (error, localError);
+    }
+    return retval;
+}
+
+/** 
+ * Commit the changes.
+ * \param sender Ignored.
+ * \throw A BXException named \c kBXFailedToExecuteQueryException if commit fails.
+ */
+- (IBAction) saveDocument: (id) sender
+{
+    NSError* error = nil;
+    [self save: &error];
+    if (nil != error)
+    {
+        [[error BXExceptionWithName: kBXFailedToExecuteQueryException] raise];
+    }
+}
+
+/**
+ * Rollback the changes.
+ * \param sender Ignored.
+ */
+- (IBAction) revertDocumentToSaved: (id) sender
+{
+    [self rollback];
+}
+//@}
+
+/** 
+ * \name Getting database objects without performing a fetch 
+ */
+//@{
+/**
+ * Objects with given IDs.
+ * If the objects do not exist yet, they get created.
+ * The database is not queried in any case. It is the user's responsibility to
+ * provide this method with valid IDs.
+ */
+- (NSArray *) faultsWithIDs: (NSArray *) anArray
+{
+    NSMutableArray* rval = nil;
+    unsigned int count = [anArray count];
+    if (0 < count)
+    {
+        rval = [NSMutableArray arrayWithCapacity: count];
+        TSEnumerate (currentID, e, [anArray objectEnumerator])
+        {
+            BXDatabaseObject* object = [self registeredObjectWithID: currentID];
+            if (nil == object)
+            {
+                BXEntityDescription* entity = [(BXDatabaseObjectID *) currentID entity];
+                object = [[[[entity databaseObjectClass] alloc] init] autorelease];
+                [object registerWithContext: self objectID: currentID];
+            }
+            [rval addObject: object];
+        }
+    }
+    return rval;
 }
 
 /**
@@ -472,74 +739,11 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
     }
     return rval;
 }
+//@}
 
-/**
- * Query logging to the standard output or the system console.
- * \return          A boolean indicating whether the queries 
- *                  get logged to the standard output or not.
- */
-- (BOOL) logsQueries
-{
-    BOOL rval = mLogsQueries;
-    if (nil != mDatabaseInterface)
-        rval =  [mDatabaseInterface logsQueries];
-    return rval;
-}
 
-/**
- * Enable or disable query logging.
- * \param   aBool       A boolean indicating whether query logging 
- *                      should be enabled or not.
- */
-- (void) setLogsQueries: (BOOL) aBool
-{
-    mLogsQueries = aBool;
-    if (nil != mDatabaseInterface)
-        [mDatabaseInterface setLogsQueries: aBool];
-}
-
-/**
- * The undo manager used by this context.
- */
-- (NSUndoManager *) undoManager
-{
-    return mUndoManager;
-}
-
-/**
- * Set the undo manager used by the context.
- * Instead of creating an undo manager owned by the context, the undo invocations 
- * can be sent to a window's undo manager, for example. The change is done only if there isn't an
- * open undo group in the current undo manager.
- * \param       aManager    The supplied undo manager
- * \return                  Whether or not changing the undo manager was successful.
- */
-- (BOOL) setUndoManager: (NSUndoManager *) aManager
-{
-    BOOL rval = NO;
-    if (aManager == mUndoManager)
-        rval = YES;
-    else if (0 == [mUndoManager groupingLevel])
-    {
-        rval = YES;
-		NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-		
-		[nc removeObserver: self name: NSUndoManagerWillCloseUndoGroupNotification object: mUndoManager];
-        [mUndoManager release];
-        mUndoManager = [aManager retain];
-		[mUndoGroupingLevels removeAllIndexes];
-		[nc addObserver: self selector: @selector (undoGroupWillClose:)
-				   name: NSUndoManagerWillCloseUndoGroupNotification object: mUndoManager];
-    }
-    return rval;
-}
-
-/** The NSWindow used with various sheets. */
-- (NSWindow *) modalWindow
-{
-	return modalWindow;
-}
-
+/** \name Delegates */
+//@{
 /** 
  * The policy delegate. 
  * \see NSObject(BXPolicyDelegate)
@@ -556,19 +760,6 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 - (id) errorHandlerDelegate
 {
 	return errorHandlerDelegate;
-}
-
-/**
- * Set the NSWindow used with various sheets.
- * If set to nil, application modal alerts will be used.
- */
-- (void) setModalWindow: (NSWindow *) aWindow
-{
-	if (aWindow != modalWindow)
-	{
-		[modalWindow release];
-		modalWindow = [aWindow retain];
-	}
 }
 
 /**
@@ -590,7 +781,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
 	errorHandlerDelegate = anObject;
 }
+//@}
 
+/** \name Using the Keychain */
+//@{
 /**
  * Whether the default keychain is searched for database passwords.
  */
@@ -637,7 +831,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 												 strlen (passwordData), passwordData, 
 												 &item);
 		[self setKeychainPasswordItem: item];
-}
+	}
 	
 	if (errSecDuplicateItem == status || (NULL == item && NULL != mKeychainPasswordItem))
 	{
@@ -651,34 +845,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 	
     free (passwordData);
 }
+//@}
 
-/**
- * Establishing a connection.
- * Returns a boolean indicating whether connecting can be attempted using -connect:.
- * Presently this method returns YES when connection attempt hasn't already been started and after
- * the attempt has failed.
- */
-- (BOOL) canConnect
-{
-	return mCanConnect;
-}
-
-/**
- * Set whether connection should be attempted on -awakeFromNib.
- */
-- (void) setConnectsOnAwake: (BOOL) aBool
-{
-	mConnectsOnAwake = aBool;
-}
-
-/**
- * Whether connection is attempted on -awakeFromNib.
- */
-- (BOOL) connectsOnAwake
-{
-	return mConnectsOnAwake;
-}
-
+/** \name Faulting database objects */
+//@{
 /**
  * Refresh or fault an object.
  * This method is provided for Core Data compatibility.
@@ -696,7 +866,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
     if (NO == flag)
         [object faultKey: nil];
 }
+//@}
 
+/** \name Receiving notifications */
+//@{
 /**
  * The notification center for this context.
  * Context-related notifications, such as connection notifications,
@@ -709,7 +882,29 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
     
     return mNotificationCenter;
 }
+//@}
 
+/** \name Error handling */
+//@{
+/** The NSWindow used with various sheets. */
+- (NSWindow *) modalWindow
+{
+	return modalWindow;
+}
+
+/**
+ * Set the NSWindow used with various sheets.
+ * If set to nil, application modal alerts will be used.
+ */
+- (void) setModalWindow: (NSWindow *) aWindow
+{
+	if (aWindow != modalWindow)
+	{
+		[modalWindow release];
+		modalWindow = [aWindow retain];
+	}
+}
+//@}
 @end
 
 
@@ -753,7 +948,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 	NSError* localError = nil;
 	int groupingLevel = [mUndoManager groupingLevel];
 
-	log4AssertLog (NULL != error, @"Expected error to be set.");
+	BXAssertLog (NULL != error, @"Expected error to be set.");
 
 	if ([mUndoManager isRedoing])
 		--groupingLevel;
@@ -769,7 +964,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		int lastLevel = [mUndoGroupingLevels lastIndex];
 		if (lastLevel != groupingLevel)
 		{
-			log4AssertValueReturn (NSNotFound == (unsigned) lastLevel || lastLevel < groupingLevel, NO, 
+			BXAssertValueReturn (NSNotFound == (unsigned) lastLevel || lastLevel < groupingLevel, NO, 
 								   @"Undo group level stack is corrupt.");
 			[mUndoGroupingLevels addIndex: groupingLevel];
 		}
@@ -850,14 +1045,94 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 @implementation BXDatabaseContext (Queries)
 
 /** 
- * \name Retrieving objects from the database.
- * These methods block until the result has been retrieved.\n
- * If the method execution fails and the \c error parameter is NULL, a BXException named 
- * \c kBXExceptionUnhandledError is thrown.\n
- * If the method execution fails and the \c error parameter is not NULL, the given 
- * \c error pointer is set to the corresponding NSError object.
+ * \name Retrieving objects from the database
+ * These methods block until the result has been retrieved.
  */
 //@{
+/**
+ * Fetch an object with a given ID.
+ * The database is queried only if the object isn't in cache.
+ */
+- (id) objectWithID: (BXDatabaseObjectID *) anID error: (NSError **) error
+{
+    id retval = [self registeredObjectWithID: anID];
+    if (nil == retval && [self checkErrorHandling])
+    {
+        NSError* localError = nil;
+		[self connectIfNeeded: &localError];
+		if (localError)
+			goto error;
+		
+		[self validateEntity: [anID entity] error: &localError];
+		if (localError)
+			goto error;
+		
+		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
+										 withPredicate: [anID predicate] returningFaults: NO error: &localError];
+		if (localError) goto error;
+		
+		if (0 < [objects count])
+			retval = [objects objectAtIndex: 0];
+		else
+		{
+			//FIXME: some human-readable error?
+			localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
+		}
+		
+	error:
+        BXHandleError (error, localError);
+    }
+    return retval;
+}
+
+/**
+ * Fetch objects with given IDs.
+ * The database is queried only if the object aren't in cache.
+ */
+- (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error
+{
+    NSMutableSet* rval = nil;
+    if (0 < [anArray count])
+    {
+        rval = [NSMutableSet setWithCapacity: [anArray count]];
+        NSMutableDictionary* entities = [NSMutableDictionary dictionary];
+        TSEnumerate (currentID, e, [anArray objectEnumerator])
+        {
+            id currentObject = [self registeredObjectWithID: currentID];
+            if (nil == currentObject)
+			{
+				BXEntityDescription* entity = [(BXDatabaseObjectID *) currentID entity];
+				NSMutableArray* predicates = [entities objectForKey: entity];
+				if (nil == predicates)
+				{
+					predicates = [NSMutableArray array];
+					[entities setObject: predicates forKey: entity];
+				}
+                [predicates addObject: [currentID predicate]];
+			}
+            else
+			{
+                [rval addObject: currentObject];
+			}
+        }
+        
+        if (0 < [entities count])
+        {
+            NSError* localError = nil;
+			TSEnumerate (currentEntity, e, [entities keyEnumerator])
+			{
+				NSPredicate* predicate = [NSCompoundPredicate orPredicateWithSubpredicates: [entities objectForKey: currentEntity]];
+				NSArray* fetched = [self executeFetchForEntity: currentEntity withPredicate: predicate error: &localError];
+				if (nil != localError)
+					break;
+				[rval addObjectsFromArray: fetched];
+			}
+            BXHandleError (error, localError);
+        }
+    }
+    return rval;
+}
+
 /**
  * Fetch objects from the database.
  * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:error: with \c returningFaults set to NO.
@@ -1002,8 +1277,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
                        error: (NSError **) error
 {
     NSError* localError = nil;
-    BXDatabaseObject* rval = nil;
-	if ([self checkDatabaseURI: &localError])
+    BXDatabaseObject* retval = nil;
+	if ([self checkErrorHandling] && [self checkDatabaseURI: &localError])
 	{
 		[self connectIfNeeded: &localError];
 		if (nil == localError)
@@ -1026,38 +1301,38 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 			}
 			
 			//First make the object
-			rval = [mDatabaseInterface createObjectForEntity: entity withFieldValues: fieldValues
+			retval = [mDatabaseInterface createObjectForEntity: entity withFieldValues: fieldValues
 													   class: [entity databaseObjectClass]
 													   error: &localError];
 			
 			//Then use the values received from the database with the redo invocation
-			if (nil != rval && nil == localError)
+			if (nil != retval && nil == localError)
 			{
                 //If registration fails, there should be a suitable object in memory.
-                if (NO == [rval registerWithContext: self entity: entity])
-                    rval = [self registeredObjectWithID: [rval objectID]];
-				BXDatabaseObjectID* objectID = [rval objectID];
+                if (NO == [retval registerWithContext: self entity: entity])
+                    retval = [self registeredObjectWithID: [retval objectID]];
+				BXDatabaseObjectID* objectID = [retval objectID];
 				
 				if (YES == [mDatabaseInterface autocommits])
 				{
 					if (! [entity getsChangedByTriggers])
 						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
-					[rval awakeFromInsertIfNeeded];
+					[retval awakeFromInsertIfNeeded];
 				}
 				else
 				{
-					[rval setCreatedInCurrentTransaction: YES];
+					[retval setCreatedInCurrentTransaction: YES];
 					BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 					if (nil == localError)
 					{
 						if (! [entity getsChangedByTriggers])
 							[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
-						[rval awakeFromInsertIfNeeded];
+						[retval awakeFromInsertIfNeeded];
 						
 						//For redo
 						BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
 						NSMutableDictionary* values = [NSMutableDictionary dictionary];
-						[values addEntriesFromDictionary: [rval cachedObjects]];
+						[values addEntriesFromDictionary: [retval cachedObjects]];
 						[[recorder recordWithPersistentTarget: self] createObjectForEntity: entity 
 																		   withFieldValues: values
 																					 error: NULL];
@@ -1083,20 +1358,43 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		}		
 	}
 	BXHandleError (error, localError);
-	return rval;
+	return retval;
 }
 //@}
 
 - (BOOL) fireFault: (BXDatabaseObject *) anObject key: (id) aKey error: (NSError **) error
 {
     NSError* localError = nil;
-    //Always fetch all keys when firing a fault
-	NSArray* keys = [anObject keysIncludedInQuery: aKey];
-    BOOL rval = [mDatabaseInterface fireFault: anObject keys: keys error: &localError];
-	if (YES == rval)
-		[anObject awakeFromFetchIfNeeded];
-    BXHandleError (error, localError);
-    return rval;
+	BOOL retval = NO;
+	if ([self checkErrorHandling])
+	{
+	    //Always fetch all keys when firing a fault
+		NSArray* keys = [anObject keysIncludedInQuery: aKey];
+		
+		if (BASETEN_BEGIN_FETCH_ENABLED ())
+			BASETEN_BEGIN_FETCH ();
+		
+	    retval = [mDatabaseInterface fireFault: anObject keys: keys error: &localError];
+		
+		if (BASETEN_END_FETCH_ENABLED ())
+		{
+			BXEntityDescription* entity = [anObject entity];
+			char* schema_s = strdup ([[entity schemaName] UTF8String]);
+			char* table_s = strdup ([[entity name] UTF8String]);
+			BASETEN_END_FETCH (self, schema_s, table_s, 1);
+			free (schema_s);
+			free (table_s);
+		}
+		
+		if (YES == retval)
+			[anObject awakeFromFetchIfNeeded];
+	    BXHandleError (error, localError);
+	}
+	else
+	{
+		retval = YES;
+	}
+    return retval;
 }
 
 /** \name Deleting database objects */
@@ -1117,198 +1415,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 }
 //@}
 
-/**
- * Rollback the transaction ina manual commit mode.
- * Guaranteed to succeed.
- */
-- (void) rollback
-{
-    if (NO == [mDatabaseInterface autocommits] && [mDatabaseInterface connected])
-    {
-        //First rollback, then fault and notify the listeners about modifications
-        [mDatabaseInterface rollback];
-
-        //FIXME: order by entity either here or in addedObjects and deletedObjects methods
-        NSMutableArray* added = [NSMutableArray array];
-        NSMutableArray* deleted = [NSMutableArray array];
-        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
-        {
-			BXDatabaseObject* registeredObject = [self registeredObjectWithID: currentID];
-            switch ([(id) mModifiedObjectIDs BXModificationTypeForKey: currentID])
-            {
-                case kBXUpdateModification:
-                    [registeredObject removeFromCache: nil postingKVONotifications: YES];
-                    break;
-                case kBXInsertModification:
-                    [added addObject: currentID];
-                    break;
-                case kBXDeleteModification:
-                    [deleted addObject: currentID];
-                    break;
-                default:
-                    break;
-            }
-			
-			if (kBXObjectDeletePending == [registeredObject deletionStatus])
-			{
-				if (![registeredObject isInserted])
-					[registeredObject setDeleted: kBXObjectExists];
-				else
-				{
-					[registeredObject setDeleted: kBXObjectDeleted];
-					[registeredObject setCreatedInCurrentTransaction: NO];
-				}
-			}
-			
-			[registeredObject clearStatus];
-			[registeredObject setDeleted: kBXObjectExists];
-        }
-        [(id) mModifiedObjectIDs removeAllObjects];
-        //In case of rollback, the objects deleted during the last transaction 
-        //appear as inserted and vice-versa
-        //If we are deallocating, don't bother to send the notification.
-        if (NO == mDeallocating)
-        {
-            [self addedObjectsToDatabase: deleted];
-            [self deletedObjectsFromDatabase: added];
-        }
-
-        [mUndoManager removeAllActions];
-    }    
-}
-
-/**
- * Commit the current transaction in manual commit mode.
- * Undo will be disabled after this.
- * \return      A boolean indicating whether the commit was successful or not.
- */
-- (BOOL) save: (NSError **) error
-{
-    BOOL rval = YES;
-    if (NO == [mDatabaseInterface autocommits])
-    {
-        NSError* localError = nil;
-        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
-		{
-			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
-			[currentObject setCreatedInCurrentTransaction: NO];
-			if ([currentObject isDeleted])
-				[currentObject setDeleted: kBXObjectDeleted];
-		}
-        [(id) mModifiedObjectIDs removeAllObjects];
-
-        [mUndoManager removeAllActions];
-        rval = [mDatabaseInterface save: &localError];
-        BXHandleError (error, localError);
-    }
-    return rval;
-}
-
-/**
- * Fetch an object with a given ID.
- * The database is queried only if the object isn't in cache.
- */
-- (id) objectWithID: (BXDatabaseObjectID *) anID error: (NSError **) error
-{
-    id rval = [self registeredObjectWithID: anID];
-    if (nil == rval)
-    {
-        NSError* localError = nil;
-		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
-										 withPredicate: [anID predicate] returningFaults: NO error: &localError];
-        if (nil == localError)
-        {
-            if (0 < [objects count])
-            {
-                rval = [objects objectAtIndex: 0];
-            }
-            else
-            {
-                localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
-            }
-        }
-        BXHandleError (error, localError);
-    }
-    return rval;
-}
-
-
-/**
- * Objects with given IDs.
- * If the objects do not exist yet, they get created.
- * The database is not queried in any case. It is the user's responsibility to
- * provide this method with valid IDs.
- */
-- (NSArray *) faultsWithIDs: (NSArray *) anArray
-{
-    NSMutableArray* rval = nil;
-    unsigned int count = [anArray count];
-    if (0 < count)
-    {
-        rval = [NSMutableArray arrayWithCapacity: count];
-        TSEnumerate (currentID, e, [anArray objectEnumerator])
-        {
-            BXDatabaseObject* object = [self registeredObjectWithID: currentID];
-            if (nil == object)
-            {
-                BXEntityDescription* entity = [currentID entity];
-                object = [[[[entity databaseObjectClass] alloc] init] autorelease];
-                [object registerWithContext: self objectID: currentID];
-            }
-            [rval addObject: object];
-        }
-    }
-    return rval;
-}
-
-/**
- * Fetch objects with given IDs.
- * The database is queried only if the object aren't in cache.
- */
-- (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error
-{
-    NSMutableSet* rval = nil;
-    if (0 < [anArray count])
-    {
-        rval = [NSMutableSet setWithCapacity: [anArray count]];
-        NSMutableDictionary* entities = [NSMutableDictionary dictionary];
-        TSEnumerate (currentID, e, [anArray objectEnumerator])
-        {
-            id currentObject = [self registeredObjectWithID: currentID];
-            if (nil == currentObject)
-			{
-				BXEntityDescription* entity = [currentID entity];
-				NSMutableArray* predicates = [entities objectForKey: entity];
-				if (nil == predicates)
-				{
-					predicates = [NSMutableArray array];
-					[entities setObject: predicates forKey: entity];
-				}
-                [predicates addObject: [currentID predicate]];
-			}
-            else
-			{
-                [rval addObject: currentObject];
-			}
-        }
-        
-        if (0 < [entities count])
-        {
-            NSError* localError = nil;
-			TSEnumerate (currentEntity, e, [entities keyEnumerator])
-			{
-				NSPredicate* predicate = [NSCompoundPredicate orPredicateWithSubpredicates: [entities objectForKey: currentEntity]];
-				NSArray* fetched = [self executeFetchForEntity: currentEntity withPredicate: predicate error: &localError];
-				if (nil != localError)
-					break;
-				[rval addObjectsFromArray: fetched];
-			}
-            BXHandleError (error, localError);
-        }
-    }
-    return rval;
-}
-
+/** \name Executing arbitrary queries */
+//@{
 /**
  * Execute a query directly.
  * This method should only be used when fetching objects and modifying 
@@ -1321,6 +1429,27 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 }
 
 /**
+ * Execute a query directly.
+ * This method should only be used when fetching objects and modifying 
+ * them is cumbersome or doesn't accomplish the task altogether.
+ * \param parameters An NSArray of objects that are passed as replacements for $1, $2 etc. in the query.
+ * \return An NSArray of NSDictionaries that correspond to each row.
+ */
+- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
+{
+	NSError* localError = nil;
+	id retval = nil;
+	if ([self checkErrorHandling])
+	{
+		[self connectIfNeeded: &localError];
+    	if (nil == localError)
+			retval = [mDatabaseInterface executeQuery: queryString parameters: parameters error: &localError];
+		BXHandleError (error, localError);
+	}
+	return retval;
+}
+
+/**
  * Execute a command directly.
  * This method should only be used when fetching objects and modifying 
  * them is cumbersome or doesn't accomplish the task altogether.
@@ -1329,22 +1458,48 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error
 {
 	NSError* localError = nil;
-	unsigned long long rval = 0;
-	[self connectIfNeeded: &localError];
-    if (nil == localError)
-		rval = [mDatabaseInterface executeCommand: commandString error: &localError];
-	BXHandleError (error, localError);
-	return rval;
+	unsigned long long retval = 0;
+	if ([self checkErrorHandling])
+	{
+		[self connectIfNeeded: &localError];
+		if (nil == localError)
+			retval = [mDatabaseInterface executeCommand: commandString error: &localError];
+		BXHandleError (error, localError);
+	}
+	return retval;
 }
-
+//@}
 @end
 
 
 @implementation BXDatabaseContext (DBInterfaces)
 
+- (NSError *) packQueryError: (NSError *) error
+{
+	NSString* title = BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet");
+	NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+									 title, NSLocalizedDescriptionKey,
+									 self, kBXDatabaseContextKey,
+									 nil];
+	if (error) 
+	{
+		[userInfo setObject: error forKey: NSUnderlyingErrorKey];
+		if ([error localizedFailureReason])
+			[userInfo setObject: [error localizedFailureReason] forKey: NSLocalizedFailureReasonErrorKey];
+		if ([error localizedRecoverySuggestion])
+			[userInfo setObject: [error localizedRecoverySuggestion] forKey: NSLocalizedRecoverySuggestionErrorKey];
+	}
+	return [NSError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];	
+}
+
+- (void) connectionLost: (NSError *) error
+{
+	[errorHandlerDelegate BXDatabaseContext: self lostConnection: error];
+}
+
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 {
-	log4AssertLog (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
+	BXAssertLog (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
 	
 	if (NO == connected)
 	{
@@ -1401,9 +1556,10 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 					[self setCanConnect: YES];
 				
 				//Don't set the error if we were supposed to disconnect.
-				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
-																			 object: self 
-																		   userInfo: (mDidDisconnect ? nil : [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey])];
+				NSDictionary* userInfo = nil;
+				if (! mDidDisconnect && error)
+					userInfo = [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey];
+				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
 				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
@@ -1445,6 +1601,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		}
 		[[self notificationCenter] postNotification: notification];
 	}
+	[self setConnectionSetupManager: nil];
 }
 
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
@@ -1697,25 +1854,25 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result
 {
-	BOOL rval = NO;
+	BOOL retval = NO;
 	enum BXCertificatePolicy policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
 	switch (policy)
 	{			
 		case kBXCertificatePolicyAllow:
 		case kBXCertificatePolicyUndefined:
-			rval = YES;
+			retval = YES;
 			break;
 			
 		case kBXCertificatePolicyDeny:
 		default:
 			break;
 	}
-	return rval;
+	return retval;
 }
 
-- (void) handleInvalidTrustAsync: (NSValue *) value
+- (void) handleInvalidCopiedTrustAsync: (NSValue *) value
 {
-	struct trustResult trustResult;
+	struct BXTrustResult trustResult = {};
 	[value getValue: &trustResult];
 	SecTrustRef trust = trustResult.trust;
 	SecTrustResultType result = trustResult.result;
@@ -1761,6 +1918,17 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 
 @implementation BXDatabaseContext (HelperMethods)
+- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error
+{
+	if (reload || !mEntitiesBySchema)
+	{
+		NSError* localError = nil;
+		[mEntitiesBySchema release];
+		mEntitiesBySchema = [[mDatabaseInterface entitiesBySchemaAndName: &localError] retain];
+		BXHandleError (error, localError);
+	}
+	return mEntitiesBySchema;
+}
 
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
 {
@@ -1794,6 +1962,16 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 }
 //@}
 
+- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName error: (NSError **) error
+{
+	return ([self matchingEntity: entity inSchema: schemaName error: error] ? YES : NO);
+}
+
+- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName error: (NSError **) error
+{
+	NSDictionary* entities = [self entitiesBySchemaAndName: NO error: error];
+	return [[entities objectForKey: schemaName] objectForKey: [entity name]];
+}
 @end
 
 
@@ -1802,7 +1980,6 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
     [encoder encodeObject: mDatabaseURI forKey: @"databaseURI"];
-    [encoder encodeBool: mLogsQueries forKey: @"logsQueries"];
     [encoder encodeBool: mAutocommits forKey: @"autocommits"];
 	[encoder encodeBool: mConnectsOnAwake forKey: @"connectsOnAwake"];
 }
@@ -1812,7 +1989,6 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 	if (([self init]))
     {
         [self setDatabaseURI: [decoder decodeObjectForKey: @"databaseURI"]];
-        [self setLogsQueries: [decoder decodeBoolForKey: @"logsQueries"]];
         [self setAutocommits: [decoder decodeBoolForKey: @"autocommits"]];
 		[self setConnectsOnAwake: [decoder decodeBoolForKey: @"connectsOnAwake"]];
     }
@@ -1822,77 +1998,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 @end
 
 
-@implementation BXDatabaseContext (IBActions)
-/**
- * \name IBActions
- * Methods for replacing some functionality provided by NSDocument.
- */
-//@{
-/** 
- * Commit the changes.
- * \param sender Ignored.
- * \throw A BXException named \c kBXFailedToExecuteQueryException if commit fails.
- */
-- (IBAction) saveDocument: (id) sender
-{
-    NSError* error = nil;
-    [self save: &error];
-    if (nil != error)
-    {
-        [[error BXExceptionWithName: kBXFailedToExecuteQueryException] raise];
-    }
-}
-
-/**
- * Rollback the changes.
- * \param sender Ignored.
- */
-- (IBAction) revertDocumentToSaved: (id) sender
-{
-    [self rollback];
-}
-
-/**
- * Connect to the database.
- * Hand over the connection setup to \c mConnectionSetupManager. In BaseTenAppKit 
- * applications, a BXNetServiceConnector will be created automatically if 
- * one doesn't exist.
- */
-- (IBAction) connect: (id) sender
-{
-	if (NO == [[self databaseInterface] connected])
-	{
-		if (nil == mConnectionSetupManager && 0 != pthread_main_np () &&
-            [self respondsToSelector: @selector (copyDefaultConnectionSetupManager)])
-		{
-			mConnectionSetupManager = [self copyDefaultConnectionSetupManager];
-			[mConnectionSetupManager setDatabaseContext: self];
-			[mConnectionSetupManager setModalWindow: modalWindow];
-		}
-		if (nil != mConnectionSetupManager)
-		{
-			[mConnectionSetupManager connect: sender];
-			[self setCanConnect: NO];
-		}
-	}
-}
-//@}
-@end
-
-
 @implementation BXDatabaseContext (PrivateMethods)
-
-- (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
-{
-	NSError* localError = nil;
-	id retval = nil;
-	[self connectIfNeeded: &localError];
-    if (nil == localError)
-		retval = [mDatabaseInterface executeQuery: queryString parameters: parameters error: &localError];
-	BXHandleError (error, localError);
-	return retval;
-}
-
 /** 
  * \internal
  * Delete multiple objects at the same time. 
@@ -1912,7 +2018,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 - (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectLockStatus) status
              sender: (id <BXObjectAsynchronousLocking>) sender
 {
-    [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];    
+	if (mSendsLockQueries && [self checkErrorHandling]) [mDatabaseInterface lockObject: object key: key lockType: status sender: sender];    
 }
 
 /**
@@ -1921,7 +2027,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
  */
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey
 {
-    [mDatabaseInterface unlockObject: anObject key: aKey];
+    if (mSendsLockQueries && [self checkErrorHandling]) [mDatabaseInterface unlockObject: anObject key: aKey];
 }
 
 /**
@@ -1938,39 +2044,56 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
                        error: (NSError **) error
 {
     NSError* localError = nil;
-    id rval = nil;
-	[self connectIfNeeded: &localError];
-	if (nil == localError)
+    id retval = nil;
+	if ([self checkErrorHandling])
 	{
-		if (nil != excludedFields)
-		{
-			excludedFields = [entity attributes: excludedFields];
-			[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
-		}
-		rval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
-										 returningFaults: returnFaults 
-												   class: [entity databaseObjectClass] 
-												   error: &localError];
+		[self connectIfNeeded: &localError];
 		if (nil == localError)
 		{
-			[rval makeObjectsPerformSelector: @selector (awakeFromFetchIfNeeded)];
-			
-			if (Nil != returnedClass)
+			if (nil != excludedFields)
 			{
-				rval = [[[returnedClass alloc] BXInitWithArray: rval] autorelease];
-				[rval setDatabaseContext: self];
-				[(BXContainerProxy *) rval setEntity: entity];
-				[rval setFilterPredicate: predicate];
+				excludedFields = [entity attributes: excludedFields];
+				[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
 			}
-			else if (0 == [rval count])
+			
+			if (BASETEN_BEGIN_FETCH_ENABLED ())
+				BASETEN_BEGIN_FETCH ();
+							
+			retval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
+											   returningFaults: returnFaults 
+														 class: [entity databaseObjectClass] 
+														 error: &localError];
+			
+			if (BASETEN_END_FETCH_ENABLED ())
 			{
-				//If an automatically updating container wasn't desired, we could also return nil.
-				rval = nil;
+				char* schema_s = strdup ([[entity schemaName] UTF8String]);
+				char* table_s = strdup ([[entity name] UTF8String]);
+				BASETEN_END_FETCH (self, schema_s, table_s, [retval count]);
+				free (schema_s);
+				free (table_s);
+			}
+			
+			if (nil == localError)
+			{
+				[retval makeObjectsPerformSelector: @selector (awakeFromFetchIfNeeded)];
+				
+				if (Nil != returnedClass)
+				{
+					retval = [[[returnedClass alloc] BXInitWithArray: retval] autorelease];
+					[retval setDatabaseContext: self];
+					[(BXContainerProxy *) retval setEntity: entity];
+					[retval setFilterPredicate: predicate];
+				}
+				else if (0 == [retval count])
+				{
+					//If an automatically updating container wasn't desired, we could also return nil.
+					retval = nil;
+				}
 			}
 		}
+		BXHandleError (error, localError);
 	}
-    BXHandleError (error, localError);
-    return rval;    
+	return retval;    
 }
 
 //FIXME: do the following methods set modification types correctly in undo & redo, or do they get set in callbacks?
@@ -1986,16 +2109,16 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
                    withDictionary: (NSDictionary *) aDict 
                             error: (NSError **) error
 {
-	log4AssertValueReturn ((anObject || anEntity) && aDict, nil, @"Expected to be called with parameters.");
+	BXAssertValueReturn ((anObject || anEntity) && aDict, nil, @"Expected to be called with parameters.");
     NSError* localError = nil;
 	NSArray* objectIDs = nil;
-	if ([self checkDatabaseURI: &localError])
+	if ([self checkErrorHandling] && [self checkDatabaseURI: &localError])
 	{
         NSArray* primaryKeyFields = [[[anObject objectID] entity] primaryKeyFields];
         if (nil == primaryKeyFields)
             primaryKeyFields = [anEntity primaryKeyFields];
-        BOOL updatedPkey = (nil != [[primaryKeyFields valueForKey: @"name"] firstObjectCommonWithArray: [aDict allKeys]]);
-        log4AssertValueReturn (!updatedPkey || anObject, nil, 
+        BOOL updatedPkey = (nil != [primaryKeyFields firstObjectCommonWithArray: [aDict allKeys]]);
+        BXAssertValueReturn (!updatedPkey || anObject, nil, 
                                @"Expected anObject to be known in case its pkey should be modified.");
 
 		NSDictionary* oldPkey = nil;
@@ -2085,7 +2208,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
     NSError* localError = nil;
 	NSArray* objectIDs = nil;
-	if ([self checkDatabaseURI: &localError])
+	if ([self checkErrorHandling] && [self checkDatabaseURI: &localError])
 	{
 		objectIDs = [mDatabaseInterface executeDeleteObjectWithID: [anObject objectID] entity: entity 
 														predicate: predicate error: &localError];
@@ -2115,7 +2238,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 					[[recorder recordWithPersistentTarget: self] executeDeleteObject: anObject entity: entity 
 																		   predicate: predicate error: NULL];
 					
-					//Undo manager does things in reverse order
+					//Undo manager does things in reverse order.
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager beginUndoGrouping];
 
@@ -2150,7 +2273,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 - (BOOL) checkDatabaseURI: (NSError **) error
 {
 	BOOL rval = YES;
-	log4AssertLog (NULL != error, @"Expected error not to be null.");
+	BXAssertLog (NULL != error, @"Expected error not to be null.");
 	if (nil == mDatabaseURI)
 	{
 		rval = NO;
@@ -2173,12 +2296,9 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
 	if (nil == mDatabaseInterface)
 	{
-		[self willChangeValueForKey: @"autocommits"];
 		mDatabaseInterface = [[[[self class] interfaceClassForScheme: 
             [mDatabaseURI scheme]] alloc] initWithContext: self];
 		[mDatabaseInterface setAutocommits: mAutocommits];
-		[self didChangeValueForKey: @"autocommits"];
-		[mDatabaseInterface setLogsQueries: mLogsQueries];
 	}
 	return mDatabaseInterface;
 }
@@ -2201,9 +2321,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
 	
 	if (YES == mUsesKeychain && NULL == mKeychainPasswordItem)
-        [self fetchPasswordFromKeychain];
-	    
-    [mDatabaseInterface setDatabaseURI: mDatabaseURI];
+        [self fetchPasswordFromKeychain];	    
 }
 
 + (void) loadedAppKitFramework
@@ -2247,7 +2365,11 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 - (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject
 {
-	mConnectionSetupManager = anObject;
+	if (mConnectionSetupManager != anObject)
+	{
+		[mConnectionSetupManager release];
+		mConnectionSetupManager = [anObject retain];
+	}
 }
 
 - (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject
@@ -2303,8 +2425,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
     if ([self checkDatabaseURI: &localError])
     {
         retval = [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
-                                                       table: tableName
-                                                    inSchema: schemaName];
+													  table: tableName
+												   inSchema: schemaName];
 		[mEntities addObject: retval];
         
         if (! [retval isValidated])
@@ -2336,14 +2458,14 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 
 - (void) iterateValidationQueue: (NSError **) error
 {
-    log4AssertVoidReturn (NULL != error, @"Expected error to be set.");
+    BXAssertVoidReturn (NULL != error, @"Expected error to be set.");
     while (0 < [mLazilyValidatedEntities count])
     {
         NSSet* entities = [[mLazilyValidatedEntities copy] autorelease];
         [mLazilyValidatedEntities removeAllObjects];
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
-            [self validateEntity: currentEntity error: error];
+            [self validateEntity: currentEntity error: error]; //FIXME: possible bottleneck.
             if (nil != *error)
             {
                 //Remember the remaining objects.
@@ -2372,7 +2494,7 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
 	//This should be safe even with multiple threads.
 
-	log4AssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
+	BXAssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
 	if (! [entity isValidated])
 	{
 		NSLock* lock = [entity validationLock];
@@ -2380,22 +2502,19 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 		//Check again in case someone else had the lock.
 		if (! [entity isValidated])
 		{
-			//Even if an entity has already been validated, allow a database interface to do something with it.
 			[mDatabaseInterface validateEntity: entity error: error];
 			if (nil == *error)
 			{
-				if (! [entity isValidated])
+				if ([entity hasCapability: kBXEntityCapabilityRelationships])
 				{
+					[entity setRelationships: nil];
 					NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
 					if (nil == *error)
-					{
 						[entity setRelationships: relationships];
-						[entity setValidated: YES];
-					}
-				}
-			
-				if ([entity isValidated])
-					[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+					
+					if ([entity isValidated])
+						[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+				}			
 			}
 		}
 		
@@ -2421,6 +2540,30 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 	return retval;
 }
 
+- (BOOL) checkErrorHandling
+{
+	BOOL retval = YES;
+	switch (mConnectionErrorHandlingState) 
+	{
+		case kBXConnectionErrorResolving:
+			bx_query_during_reconnect ();
+			//Fall through.
+			
+		case kBXConnectionErrorNoReconnect:
+			retval = NO;
+			break;
+			
+		case kBXConnectionErrorNone:
+		default:
+			break;
+	}
+	return retval;
+}
+
+- (void) setAllowReconnecting: (BOOL) shouldAllow
+{
+	mConnectionErrorHandlingState = (shouldAllow ? kBXConnectionErrorNone : kBXConnectionErrorNoReconnect);
+}
 @end
 
 
@@ -2523,7 +2666,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     SecItemAttr attributes [] = {kSecModDateItemAttr, kSecNegativeItemAttr};
     SecExternalFormat formats [] = {kSecFormatUnknown, kSecFormatUnknown};
     unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
-	log4AssertValueReturn (count == sizeof (formats) / sizeof (SecExternalFormat), NULL,
+	BXAssertValueReturn (count == sizeof (formats) / sizeof (SecExternalFormat), NULL,
 						   @"Expected arrays to have an equal number of items.");
     SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
     
@@ -2557,7 +2700,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
         SecExternalFormat formats [] = {kSecFormatUnknown};
         unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
 		unsigned int formatCount = sizeof (formats) / sizeof (SecExternalFormat);
-        log4AssertValueReturn (count == formatCount, NO,
+        BXAssertValueReturn (count == formatCount, NO,
 							   @"Expected arrays to have an equal number of items (attributes: %u formats: %u).", count, formatCount);
         SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
         
@@ -2620,22 +2763,28 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 
 
 @implementation BXDatabaseContext (DefaultErrorHandler)
-/**
- * The default error handler. 
- * Various methods in BXDatabaseContext have an NSError** parameter. In addition,
- * the context has an errorHandlerDelegate outlet. If no error handler has been 
- * set, the database context will handle errors itself. 
- * 
- * When the NSError** parameter has been supplied to the methods, no action 
- * will be taken and the error is assumed to have been handled. If the parameter
- * is NULL and an error occurs, a BXException named \c kBXExceptionUnhandledError
- * will be thrown.
- */
 - (void) BXDatabaseContext: (BXDatabaseContext *) context 
 				  hadError: (NSError *) error 
 			willBePassedOn: (BOOL) willBePassedOn;
 {
 	if (! willBePassedOn)
 		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
+}
+
+- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error
+{
+	if (gHaveAppKitFramework)
+	{
+		mConnectionErrorHandlingState = kBXConnectionErrorResolving;
+		//FIXME: do something about this; not just logging.
+		if ([NSApp presentError: error])
+			NSLog (@"Reconnected.");
+		else
+			NSLog (@"Failed to reconnect.");
+	}
+	else
+	{
+		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
+	}
 }
 @end

@@ -31,7 +31,8 @@
 @interface NSObject (MKCAlternativeDataCellColumnAdditions)
 - (id) MKCTableView: (NSTableView *) tableView 
   dataCellForColumn: (MKCAlternativeDataCellColumn *) aColumn
-                row: (int) rowIndex;
+                row: (int) rowIndex
+			current: (NSCell *) aCell;
 @end
 
 
@@ -39,17 +40,18 @@
 
 - (id) dataCellForRow: (int) rowIndex
 {
-    id rval = nil;
+    id retval = nil;
     if (-1 == rowIndex)
-        rval = [super dataCell];
+        retval = [super dataCell];
     else
     {
         id tableView = [self tableView];
-        rval = [[tableView delegate] MKCTableView: tableView dataCellForColumn: self row: rowIndex];
-        if (nil == rval)
-            rval = [super dataCellForRow: rowIndex];
+		NSCell* currentCell = [super dataCellForRow: rowIndex];
+        retval = [[tableView delegate] MKCTableView: tableView dataCellForColumn: self row: rowIndex current: currentCell];
+        if (nil == retval)
+            retval = currentCell;
     }
-    return rval;
+    return retval;
 }
 
 @end

@@ -1,6 +1,0 @@
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(SRCROOT)/../Dependencies/TSDataTypes/build/$(BUILD_STYLE) $(SRCROOT)/../Framework/build/$(BUILD_STYLE) $(SRCROOT)/../Framework/Contrib/Log4Cocoa/build/$(BUILD_STYLE) .
-LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(SRCROOT)/../Dependencies/TSDataTypes/build/$(BUILD_STYLE) $(SDKROOT_$(arch))/usr/lib $(SRCROOT)/../Framework/build/$(BUILD_STYLE) $(SRCROOT)/../Framework/Contrib/Log4Cocoa/build/$(BUILD_STYLE)
-FRAMEWORK_SEARCH_PATHS = $(SDKROOT_$(arch))/System/Library/Frameworks $(BUILT_PRODUCTS_DIR)
-INFOPLIST_FILE = Info.plist
-GCC_PREFIX_HEADER = Sources/PGTSTiger_Prefix.pch
-PRODUCT_NAME = PGTSTiger

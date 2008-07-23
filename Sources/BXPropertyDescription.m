@@ -30,12 +30,12 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
+#import "BXLogger.h"
 
-#import <MKCCollections/MKCCollections.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+#import "MKCCollections.h"
 
 
-static id gProperties;
+__strong static id gProperties = nil;
 
 
 /**
@@ -47,7 +47,7 @@ static id gProperties;
 /** \note Override dealloc2 in subclasses instead! */
 - (void) dealloc
 {
-	[[self class] unregisterProperty: self];
+	[[self class] unregisterProperty: self entity: mEntity];
 	[self dealloc2];
 	[super dealloc];
 }
@@ -89,7 +89,7 @@ static id gProperties;
 	{
 		[self setEntity: [decoder decodeObjectForKey: @"entity"]];
 		[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
-		log4AssertLog ([[self class] registerProperty: self], 
+		BXAssertLog ([[self class] registerProperty: self entity: mEntity], 
 					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
@@ -127,12 +127,12 @@ static id gProperties;
 - (NSString *) description
 {
     //return [NSString stringWithFormat: @"<%@ (%p) name: %@ entity: %@>", [self class], self, name, mEntity];
-    return [NSString stringWithFormat: @"%@.%@.%@", [mEntity schemaName], [mEntity name], mName];
+	return [self qualifiedName];
 }
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXPropertyDescription *) anotherObject
 {
-    log4AssertValueReturn ([anotherObject isKindOfClass: [BXPropertyDescription class]], NSOrderedSame,
+    BXAssertValueReturn ([anotherObject isKindOfClass: [BXPropertyDescription class]], NSOrderedSame,
 						   @"Property descriptions can only be compared with other similar objects for now.");
     NSComparisonResult rval = NSOrderedSame;
     if (self != anotherObject)
@@ -161,13 +161,14 @@ static id gProperties;
 	if (!tooLate)
 	{
 		tooLate = YES;
-		gProperties = [[MKCHashTable alloc] init];
+		gProperties = [[NSMutableSet alloc] init];
 	}
 }
 
-+ (BOOL) registerProperty: (id) aProperty
++ (BOOL) registerProperty: (id) aProperty entity: (BXEntityDescription *) entity
 {
 	BOOL retval = NO;
+
 	@synchronized (gProperties)
 	{
 		if (! [gProperties containsObject: aProperty])
@@ -176,11 +177,15 @@ static id gProperties;
 			[gProperties addObject: aProperty];
 		}
 	}
+
+	BXLogDebug (@"Called registerProperty: %@ entity: %@", [aProperty qualifiedName], entity);
+
 	return retval;
 }
 
-+ (void) unregisterProperty: (id) aProperty
++ (void) unregisterProperty: (id) aProperty entity: (BXEntityDescription *) entity
 {
+	BXLogDebug (@"Called unregisterProperty: %@ entity: %@", [aProperty qualifiedName], entity);
 	@synchronized (gProperties)
 	{
 		[gProperties removeObject: aProperty];
@@ -197,15 +202,15 @@ static id gProperties;
     {
 		[self setEntity: anEntity];
 		//Check only since only our code is supposed to create new properties.
-		log4AssertLog ([[self class] registerProperty: self], 
-					   @"Expected to have only single instance of property %@.", self);
+		BXAssertLog ([[self class] registerProperty: self entity: mEntity], 
+					 @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
 }
 
 - (id) initWithName: (NSString *) name
 {
-	log4Error (@"This initializer should not have been called (name: %@).", name);
+	BXLogError (@"This initializer should not have been called (name: %@).", name);
     [self release];
     return nil;
 }
@@ -223,4 +228,8 @@ static id gProperties;
 		mFlags &= ~kBXPropertyOptional;
 }
 
+- (NSString *) qualifiedName
+{
+	return [NSString stringWithFormat: @"%@.%@.%@", [mEntity schemaName], [mEntity name], mName];
+}
 @end

@@ -27,125 +27,78 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXInterface.h>
-#import <BaseTen/BXEntityDescription.h>
-#import <BaseTen/BXAttributeDescription.h>
-#import <BaseTen/BXDatabaseObject.h>
+#import <BaseTen/BaseTen.h>
 
-@protocol BXObjectAsynchronousLocking;
-@protocol PGTSConnectionDelegate;
-@protocol PGTSResultRowProtocol;
+
+@class BXPGTransactionHandler;
+@class BXPGNotificationHandler;
+@class BXPGDatabaseDescription;
 @class PGTSConnection;
-@class PGTSModificationNotifier;
-@class PGTSLockNotifier;
-@class PGTSTableInfo;
-@class PGTSResultSet;
-@class BXDatabaseContext;
-@class BXDatabaseObjectID;
-@class BXPGCertificateVerificationDelegate;
+@class PGTSTableDescription;
+@class PGTSFieldDescription;
+@class PGTSQuery;
 
-enum BXPGQueryState
+
+extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
+
+
+@interface BXPGInterface : NSObject <BXInterface> 
 {
-    kBXPGQueryIdle = 0,
-    kBXPGQueryBegun,
-    kBXPGQueryLock,
-};
-
-
-@interface NSString (BXPGInterfaceAdditions)
-- (NSArray *) BXPGKeyPathComponents;
-@end
-
-
-@interface BXEntityDescription (BXPGInterfaceAdditions)
-- (NSString *) PGTSQualifiedName: (PGTSConnection *) connection;
-@end
-
-
-@interface BXAttributeDescription (BXPGInterfaceAdditions)
-- (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context;
-- (NSString *) PGTSEscapedName: (PGTSConnection *) connection;
-@end
-
-
-@interface BXDatabaseObject (BXPGInterfaceAdditions) <PGTSResultRowProtocol>
-@end
-
-
-@interface BXPGInterface : NSObject <BXInterface, PGTSConnectionDelegate> 
-{
-    BXDatabaseContext* context; //Weak
-    NSURL* databaseURI;
-    PGTSConnection* connection;
-    PGTSConnection* notifyConnection;
-    PGTSModificationNotifier* mChangeNotifier;
-	PGTSModificationNotifier* mExternalChangeNotifier;
-    PGTSLockNotifier* lockNotifier;
- 	BXPGCertificateVerificationDelegate* cvDelegate;
+    BXDatabaseContext* mContext; //Weak
 	NSMutableDictionary* mForeignKeys;
-    NSMutableSet* mObservedEntities;
-   
-    enum BXPGQueryState state; /** What kind of query has been sent recently? */
-    id <BXObjectAsynchronousLocking> locker;
-    NSString* lockedKey;
-    BXDatabaseObjectID* lockedObjectID;
+	BXPGTransactionHandler* mTransactionHandler;
+	NSNumber* mFrameworkCompatVersion;
 	
-	BOOL autocommits;
-    BOOL logsQueries;
-    BOOL clearedLocks;	
-	volatile BOOL invalidCertificate;
+	NSMutableSet* mLockedObjects;
+	BOOL mLocking;
 }
 
-- (NSMutableArray *) executeFetchForEntity: (BXEntityDescription *) entity 
-                             withPredicate: (NSPredicate *) predicate 
-                           returningFaults: (BOOL) returnFaults 
-                                     class: (Class) aClass
-								 forUpdate: (BOOL) forUpdate
-                                     error: (NSError **) error;
+- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error;
+- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity 
+							   inDatabase: (BXPGDatabaseDescription *) database 
+									error: (NSError **) error;
+
+- (BXDatabaseContext *) databaseContext;
+- (BOOL) fetchForeignKeys: (NSError **) outError;
+- (void) setTransactionHandler: (BXPGTransactionHandler *) handler;
+- (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
+					returningFaults: (BOOL) returnFaults class: (Class) aClass forUpdate: (BOOL) forUpdate error: (NSError **) error;
+- (NSArray *) observedOids;
+- (NSString *) insertQuery: (BXEntityDescription *) entity insertedAttrs: (NSArray *) insertedAttrs error: (NSError **) error;
+
+- (NSString *) viewDefaultValue: (BXAttributeDescription *) attr error: (NSError **) error;
+- (NSString *) recursiveDefaultValue: (NSString *) name entity: (BXEntityDescription *) entity error: (NSError **) error;
+
+- (BXPGTransactionHandler *) transactionHandler;
+
+//Some of the methods needed by BaseTen Assistant.
+- (void) process: (BOOL) shouldAdd primaryKeyFields: (NSArray *) attributeArray error: (NSError **) outError;
+- (void) process: (BOOL) shouldEnable entities: (NSArray *) entityArray error: (NSError **) outError;
+- (void) removePrimaryKeyForEntity: (BXEntityDescription *) viewEntity error: (NSError **) outError;
+
+- (BOOL) hasBaseTenSchema;
+- (NSNumber *) schemaVersion;
+- (NSNumber *) schemaCompatibilityVersion;
+- (NSNumber *) frameworkCompatibilityVersion;
+- (BOOL) checkSchemaCompatibility: (NSError **) error;
 @end
 
 
-@interface BXPGInterface (Helpers)
-- (PGTSModificationNotifier *) changeNotifierForEntity: (BXEntityDescription *) entity;
-- (void) checkSuperEntities: (BXEntityDescription *) entity;
-- (NSMutableArray *) objectIDsFromResult: (PGTSResultSet *) res 
-								  entity: (BXEntityDescription *) entity;
-- (BOOL) observeIfNeeded: (BXEntityDescription *) entity error: (NSError **) error;
-- (void) lockAndNotifyForEntity: (BXEntityDescription *) entity 
-                    whereClause: (NSString *) whereClause
-                     parameters: (NSArray *) parameters
-                     willDelete: (BOOL) willDelete;
+@interface BXPGInterface (ConnectionDelegate)
+- (void) connectionSucceeded;
+- (void) connectionFailed: (NSError *) error;
+- (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error;
 
-- (void) packError: (NSError **) error exception: (NSException *) exception;
-- (void) packPGError: (NSError **) error exception: (PGTSException *) exception;
-
-- (NSDictionary *) lastModificationForEntity: (BXEntityDescription *) entity;
-- (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey;
-- (NSArray *) notificationObjectIDs: (NSNotification *) notification relidKey: (NSString *) relidKey
-                             status: (enum BXObjectLockStatus *) status;
-
-- (BXEntityDescription *) entityForTable: (PGTSTableInfo *) table error: (NSError **) error;
-
-- (void) prepareConnection: (enum BXSSLMode) mode;
-- (void) checkConnectionStatusAndAutocommit: (NSError **) error;
-- (BOOL) checkConnectionStatus: (PGTSConnection *) conn error: (NSError **) error;
-
-- (void) fetchForeignKeys;
+- (FILE *) traceFile;
+- (BOOL) logsQueries;
+- (void) connection: (PGTSConnection *) connection sentQueryString: (const char *) queryString;
+- (void) connection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query;
 @end
 
 
-@interface BXPGInterface (Accessors)
-- (void) setLocker: (id <BXObjectAsynchronousLocking>) anObject;
-- (void) setLockedKey: (NSString *) aKey;
-- (void) setLockedObjectID: (BXDatabaseObjectID *) lockedObjectID;
-- (void) setHasInvalidCertificate: (BOOL) aBool;
-@end
-
-
-@interface BXPGInterface (Transactions)
-- (void) beginIfNeeded;
-- (void) beginSubtransactionIfNeeded;
-- (void) internalRollback;
-- (void) endSubtransactionIfNeeded;
-- (void) internalCommit;
+@interface BXPGInterface (Visitor)
+- (void) addAttributeFor: (PGTSFieldDescription *) field into: (NSMutableDictionary *) attrs 
+				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey;
+- (void) qualifiedNameFor: (PGTSFieldDescription *) field into: (NSMutableArray *) array 
+				   entity: (BXEntityDescription *) entity connection: (PGTSConnection *) connection;
 @end

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>setAutocommit</key>
+				<string>id</string>
+				<key>setConnectOnAwake</key>
+				<string>id</string>
+				<key>setLogQueries</key>
+				<string>id</string>
+				<key>setURLFromTextField</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>BXDatabaseContextInspector</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>autocommitsButton</key>
+				<string>NSButtonCell</string>
+				<key>connectsOnAwakeButton</key>
+				<string>NSButtonCell</string>
+				<key>databaseURIField</key>
+				<string>NSTextField</string>
+				<key>logsQueriesButton</key>
+				<string>NSButtonCell</string>
+				<key>window</key>
+				<string>NSWindow</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>IBInspector</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

@@ -86,7 +86,7 @@
     MKCAssertEqualObjects (oldValue, [viewObject valueForKey: @"value"]);
     
     [object setValue: value forKey: @"value"];
-    [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2]];
+    [[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
     MKCAssertTrue ([viewObject isFaultKey: nil]);
     MKCAssertEqualObjects ([viewObject valueForKey: @"value"], value);
     

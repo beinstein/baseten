@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXAbstractDescription.h>
+#import <BaseTen/BXConstants.h>
 
 
 @class BXDatabaseContext;
@@ -37,7 +38,7 @@
 enum BXEntityFlag
 {
 	kBXEntityNoFlag					= 0,
-	//kBXEntityHasAllRelationships	= 1 << 0, //Not needed
+	kBXEntityIsEnabled				= 1 << 0, //BaseTen enabling
 	kBXEntityIsValidated			= 1 << 1,
 	kBXEntityIsView					= 1 << 2,
 	kBXEntityGetsChangedByTriggers	= 1 << 3  //Testing for now
@@ -56,6 +57,7 @@ enum BXEntityFlag
     id                      mSuperEntities;
     id                      mSubEntities;
     enum BXEntityFlag       mFlags;
+	enum BXEntityCapability mCapabilities;
 }
 
 - (void) dealloc2;
@@ -74,4 +76,6 @@ enum BXEntityFlag
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
 - (BOOL) isValidated;
 - (NSDictionary *) relationshipsByName;
+- (BOOL) hasCapability: (enum BXEntityCapability) aCapability;
+- (BOOL) isEnabled;
 @end

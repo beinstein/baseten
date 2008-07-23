@@ -27,10 +27,12 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import "TestLoader.h"
 @class BXDatabaseContext;
 @class BXEntityDescription;
 
-@interface MTOCollectionTest : SenTestCase 
+
+@interface MTOCollectionTest : BXTestCase 
 {
     BXDatabaseContext* context;
     BXEntityDescription* mtocollectiontest1;

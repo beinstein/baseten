@@ -29,7 +29,7 @@
 #import <objc/objc.h>
 #import <string.h>
 #import <ctype.h>
-#import <Log4Cocoa/Log4Cocoa.h>
+
 #import <sys/types.h>
 #import <unistd.h>
 
@@ -48,6 +48,7 @@
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXErrorHandlerDelegate.h"
+#import "BXLogger.h"
 
 
 static NSString* 
@@ -170,7 +171,7 @@ ParseSelector (SEL aSelector, NSString** key)
     BOOL rval = NO;
     if (YES == [anObject isKindOfClass: [BXDatabaseObject class]])
     {
-        log4AssertValueReturn (nil != mObjectID, NO, @"isEqual: invoked when mObjectID is nil.");
+        BXAssertValueReturn (nil != mObjectID, NO, @"isEqual: invoked when mObjectID is nil.");
         if (mContext == [anObject databaseContext] && [mObjectID isEqual: [anObject objectID]])
             rval = YES;
     }
@@ -242,7 +243,7 @@ ParseSelector (SEL aSelector, NSString** key)
 		//Already deleted.
 		//FIXME: set outError.
 	}
-	else
+	else if ([[self entity] hasCapability: kBXEntityCapabilityRelationships])
 	{
 		retval = YES;
 		TSEnumerate (currentRel, e, [[[self entity] relationshipsByName] objectEnumerator])
@@ -328,7 +329,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	if (0 < [cachedValues count])
 	{
 		BXEntityDescription* entity = [[self objectID] entity];
-		log4AssertValueReturn ([entity isValidated], nil, @"Expected entity %@ to have been validated earlier.", entity);
+		BXAssertValueReturn ([entity isValidated], nil, @"Expected entity %@ to have been validated earlier.", entity);
 		rval = [NSMutableDictionary dictionaryWithCapacity: [cachedValues count]];
 		
 		TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
@@ -423,7 +424,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	id retval = nil;
 	
 	enum BXDatabaseObjectKeyType keyType = [self keyType: aKey];
-	log4AssertLog (kBXDatabaseObjectUnknownKey != keyType, @"Expected key type to be known.");
+	BXAssertLog (kBXDatabaseObjectUnknownKey != keyType, @"Expected key type to be known.");
 	switch (keyType)
 	{
         case kBXDatabaseObjectPrimaryKey:
@@ -433,8 +434,9 @@ ParseSelector (SEL aSelector, NSString** key)
 			
 			if (nil == retval)
 			{
-				log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-				if ([mContext fireFault: self key: aKey error: &error])
+				BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+				NSDictionary* attrs = [[self entity] attributesByName];
+				if ([mContext fireFault: self key: [attrs objectForKey: aKey] error: &error])
 					retval = [self cachedValueForKey: aKey];
 			}
 			break;
@@ -446,7 +448,7 @@ ParseSelector (SEL aSelector, NSString** key)
 			
 			if (nil == retval)
 			{
-				log4AssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+				BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
 				BXRelationshipDescription* rel = [[[self entity] relationshipsByName] objectForKey: aKey];
 				if (nil != rel)
 				{
@@ -466,7 +468,7 @@ ParseSelector (SEL aSelector, NSString** key)
 			
 		case kBXDatabaseObjectNoKeyType:
 		default:
-			log4AssertValueReturn (NO, nil, @"keyType had a strange value (%d).", keyType);
+			BXAssertValueReturn (NO, nil, @"keyType had a strange value (%d).", keyType);
 			break;
 	}
 	
@@ -490,7 +492,7 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) setPrimitiveValue: (id) aVal forKey: (NSString *) aKey
 {
-    log4AssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
+    BXAssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
     NSError* error = nil;
     
     //We only need the non-cached value when autocommitting.
@@ -511,8 +513,10 @@ ParseSelector (SEL aSelector, NSString** key)
 				if (nil == aVal)
 					aVal = [NSNull null];
 
+				BXEntityDescription* entity = [mObjectID entity];
+				BXAttributeDescription* attr = [[entity attributesByName] objectForKey: aKey];
 				[mContext executeUpdateObject: self entity: nil predicate: nil
-							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: aKey]
+							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: attr]
 										error: &error];
                 break;
 			}
@@ -532,7 +536,7 @@ ParseSelector (SEL aSelector, NSString** key)
 			case kBXDatabaseObjectNoKeyType:
 			default:
 			{
-				log4AssertLog (NO, @"keyType had a strange value (%d).", keyType);
+				BXAssertLog (NO, @"keyType had a strange value (%d).", keyType);
 				break;
 			}
         }
@@ -558,9 +562,19 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (void) setPrimitiveValuesForKeysWithDictionary: (NSDictionary *) aDict
 {
-    log4AssertVoidReturn (nil != mContext, @"Expected to have a database context.");
+    BXAssertVoidReturn (nil != mContext, @"Expected to have a database context.");
     NSError* error = nil;
-    if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: aDict error: &error])
+	
+	//Replace string keys with attributes.
+	NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity: [aDict count]];
+	NSDictionary* attributes = [[self entity] attributesByName];
+	TSEnumerate (currentKey, e, [aDict keyEnumerator])
+	{
+		id attr = [attributes objectForKey: currentKey];
+		[dict setObject: [aDict objectForKey: currentKey] forKey: attr];
+	}
+	
+    if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: dict error: &error])
 		[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
 }
 
@@ -620,12 +634,12 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (NSDictionary *) cachedValues
 {
-    id rval = nil;
+    id retval = nil;
     @synchronized (mValues)
     {
-        rval = [mValues copy];
+        retval = [mValues copy];
     }
-    return rval;
+    return [retval autorelease];
 }
 
 /**
@@ -769,8 +783,8 @@ ParseSelector (SEL aSelector, NSString** key)
 - (BOOL) registerWithContext: (BXDatabaseContext *) ctx entity: (BXEntityDescription *) entity
 {
     BOOL retval = NO;
-    log4AssertValueReturn (nil != ctx, NO, @"Expected ctx not to be nil.");
-    log4AssertValueReturn ((nil == mContext && nil != entity) || (ctx == mContext && nil == entity),
+    BXAssertValueReturn (nil != ctx, NO, @"Expected ctx not to be nil.");
+    BXAssertValueReturn ((nil == mContext && nil != entity) || (ctx == mContext && nil == entity),
                            NO, @"Attempted to re-register: %@ ctx: %@ entity: %@", self, ctx, entity);
     if (nil == entity)
         entity = [mObjectID entity];
@@ -801,9 +815,9 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (BOOL) registerWithContext: (BXDatabaseContext *) ctx objectID: (BXDatabaseObjectID *) anID
 {
-    log4AssertValueReturn (nil != ctx,  NO, @"Expected ctx not to be nil.");
-    log4AssertValueReturn (nil != anID, NO, @"Expected anID not to be nil.");
-    log4AssertValueReturn (nil == mContext || ctx == mContext, 
+    BXAssertValueReturn (nil != ctx,  NO, @"Expected ctx not to be nil.");
+    BXAssertValueReturn (nil != anID, NO, @"Expected anID not to be nil.");
+    BXAssertValueReturn (nil == mContext || ctx == mContext, 
                            NO, @"Attempted to re-register: %@ ctx: %@", self, ctx);
     BOOL retval = NO;
 
@@ -924,8 +938,8 @@ ParseSelector (SEL aSelector, NSString** key)
 {
 	BOOL rval = YES;
 	BXEntityDescription* entity = [mObjectID entity];
-	log4AssertValueReturn (NULL != ioValue, NO, @"Expected ioValue not to be NULL.");
-	log4AssertValueReturn ([entity isValidated], NO, @"Expected entity %@ to have been validated earlier.", entity);
+	BXAssertValueReturn (NULL != ioValue, NO, @"Expected ioValue not to be NULL.");
+	BXAssertValueReturn ([entity isValidated], NO, @"Expected entity %@ to have been validated earlier.", entity);
 	id value = *ioValue;
 	BXAttributeDescription* attribute = [[entity attributesByName] objectForKey: key];
 	if (NO == [attribute isOptional] && (nil == value || [NSNull null] == value))
@@ -1001,7 +1015,7 @@ ParseSelector (SEL aSelector, NSString** key)
 - (NSArray *) keysIncludedInQuery: (id) aKey
 {
 	BXEntityDescription* entity = [[self objectID] entity];
-	log4AssertValueReturn ([entity isValidated], nil, @"Expected entity %@ to have been validated earlier.", entity);
+	BXAssertValueReturn ([entity isValidated], nil, @"Expected entity %@ to have been validated earlier.", entity);
 
 	NSArray* rval = nil;
 	BOOL shouldContinue = NO;
@@ -1050,7 +1064,8 @@ ParseSelector (SEL aSelector, NSString** key)
 		else
 			retval = kBXDatabaseObjectKnownKey;
 	}
-	else if ([[entity relationshipsByName] objectForKey: aKey])
+	else if ([[self entity] hasCapability: kBXEntityCapabilityRelationships] && 
+			 [[entity relationshipsByName] objectForKey: aKey])
 	{
 		retval = kBXDatabaseObjectForeignKey;
 	}
