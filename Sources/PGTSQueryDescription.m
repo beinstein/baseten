@@ -202,7 +202,8 @@ NextIdentifier ()
     {
         mFinished = YES;
 		
-		//Finished query probe goes here if needed.
+		if (PGTS_FINISH_QUERY_ENABLED ())
+			PGTS_FINISH_QUERY ();
     }
     return retval;
 }
