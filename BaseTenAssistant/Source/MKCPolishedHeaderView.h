@@ -55,6 +55,9 @@ enum MKCPolishDrawingMask {
     kMKCPolishDrawLeftAccent     = 1 << 8,
     kMKCPolishDrawRightAccent    = 1 << 9,
     kMKCPolishDrawSeparatorLines = 1 << 10,
+	
+	kMKCPolishNoLeftAccentForLeftmostColumn = 1 << 6,
+	
     MKCPolishDrawAllLines = (kMKCPolishDrawTopLine | 
                              kMKCPolishDrawBottomLine | 
                              kMKCPolishDrawLeftLine | 

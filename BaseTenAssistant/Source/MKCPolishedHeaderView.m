@@ -378,8 +378,11 @@ MKCShouldDrawEnabled (NSWindow* window)
         
         if (kMKCPolishDrawLeftAccent & mDrawingMask)
         {
-            [[colours objectForKey: kMKCLeftAccentColourKey] set];
-            NSRectFill (NSMakeRect (columnHeaderRect.origin.x, 1.0, 1.0, height - 2.0));
+			if (0 != i || ! kMKCPolishNoLeftAccentForLeftmostColumn & mDrawingMask)
+			{
+	            [[colours objectForKey: kMKCLeftAccentColourKey] set];
+	            NSRectFill (NSMakeRect (columnHeaderRect.origin.x, 1.0, 1.0, height - 2.0));
+			}
         }
         
         NSRect intersection = NSIntersectionRect (columnHeaderRect, rect);

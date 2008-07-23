@@ -177,7 +177,7 @@
 		53666D0E0E1CD8D20028DBEA /* PGTSResultSetPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CCF0E1CD8D20028DBEA /* PGTSResultSetPrivate.h */; };
 		53666D0F0E1CD8D20028DBEA /* PGTSRoleDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD00E1CD8D20028DBEA /* PGTSRoleDescription.h */; };
 		53666D100E1CD8D20028DBEA /* PGTSRoleDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CD10E1CD8D20028DBEA /* PGTSRoleDescription.m */; };
-		53666D110E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */; };
+		53666D110E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666D120E1CD8D20028DBEA /* PGTSSchemaDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD30E1CD8D20028DBEA /* PGTSSchemaDescription.h */; };
 		53666D130E1CD8D20028DBEA /* PGTSSchemaDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CD40E1CD8D20028DBEA /* PGTSSchemaDescription.m */; };
 		53666D140E1CD8D20028DBEA /* PGTSTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD50E1CD8D20028DBEA /* PGTSTableDescription.h */; };
