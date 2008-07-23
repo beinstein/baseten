@@ -32,8 +32,8 @@
 #import "BXAuthenticationPanel.h"
 
 
-static NSNib* gAuthenticationViewNib = nil;
-static NSArray* gManuallyNotifiedKeys = nil;
+__strong static NSNib* gAuthenticationViewNib = nil;
+__strong static NSArray* gManuallyNotifiedKeys = nil;
 
 const float kSizeDiff = 25.0;
 

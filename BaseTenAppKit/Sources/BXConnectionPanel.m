@@ -30,7 +30,7 @@
 #import "BXAppKitAdditions.h"
 
 
-static NSArray* gManuallyNotifiedKeys = nil;
+__strong static NSArray* gManuallyNotifiedKeys = nil;
 
 
 @implementation BXConnectionPanel

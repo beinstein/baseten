@@ -31,8 +31,8 @@
 #import <BaseTen/BXDatabaseAdditions.h>
 
 
-static NSNib* gConnectionViewNib = nil;
-static NSArray* gManuallyNotifiedKeys = nil;
+__strong static NSNib* gConnectionViewNib = nil;
+__strong static NSArray* gManuallyNotifiedKeys = nil;
 
 
 @implementation BXConnectionViewManager
