@@ -67,12 +67,6 @@ static NSArray* gManuallyNotifiedKeys = nil;
     return self;
 }
 
-- (void) finalize
-{
-	[mNetServiceBrowser stop];
-	[super finalize];
-}
-
 - (void) dealloc
 {
 	[[mDatabaseContext notificationCenter] removeObserver: self];
@@ -325,7 +319,7 @@ static NSArray* gManuallyNotifiedKeys = nil;
 - (IBAction) cancelConnecting: (id) sender
 {
 	[self setConnecting: NO];
-    
+    [mNetServiceBrowser stop];
     [mDelegate BXCancelConnecting];
 }
 
