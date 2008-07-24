@@ -417,6 +417,91 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
 	return (mFlags & kBXEntityIsEnabled) ? YES : NO;
 }
+
+- (void) viewGetsUpdatedWith: (NSArray *) entities
+{
+	BXAssertVoidReturn ([self isView], @"Expected entity %@ to be a view.", self);
+	[self inherits: entities];
+}
+
+- (id) viewsUpdated
+{
+	BXAssertValueReturn ([self isView], nil, @"Expected entity %@ to be a view.", self);
+	return [self inheritedEntities];
+}
+
+- (void) inherits: (NSArray *) entities
+{
+    @synchronized (mSuperEntities)
+    {
+        //FIXME: We only implement cascading notifications from "root tables" to 
+        //inheriting tables and not vice-versa.
+        //FIXME: only single entity supported for now.
+        BXAssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
+        BXAssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
+        TSEnumerate (currentEntity, e, [entities objectEnumerator])
+        {
+            [mSuperEntities addObject: currentEntity];
+            [currentEntity addSubEntity: self];
+            [[NSNotificationCenter defaultCenter] addObserver: self
+                                                     selector: @selector (superEntityWillDealloc:)
+                                                         name: kBXEntityDescriptionWillDeallocNotification
+                                                       object: currentEntity];
+        }
+    }
+}
+
+- (void) addSubEntity: (BXEntityDescription *) entity
+{
+    @synchronized (mSubEntities)
+    {
+        //FIXME: We only implement cascading notifications from "root tables" to 
+        //inheriting tables and not vice-versa.
+        [mSubEntities addObject: entity];
+        [[NSNotificationCenter defaultCenter] addObserver: self
+                                                 selector: @selector (subEntityWillDealloc:)
+                                                     name: kBXEntityDescriptionWillDeallocNotification
+                                                   object: entity];        
+    }
+}
+
+- (id) inheritedEntities
+{
+    id retval = nil;
+    @synchronized (mSuperEntities)
+    {
+        retval = [mSuperEntities allObjects];
+    }
+    return retval;
+}
+
+- (id) subEntities
+{
+    id retval = nil;
+    @synchronized (mSubEntities)
+    {
+        retval = [mSubEntities allObjects];
+    }
+    return retval;
+}
+
+/**
+ * \internal
+ * Whether this entity gets changed by triggers, rules etc.
+ * If the entity gets changed only directly, some queries may possibly be optimized.
+ */
+- (BOOL) getsChangedByTriggers
+{
+	return mFlags & kBXEntityGetsChangedByTriggers ? YES : NO;
+}
+
+- (void) setGetsChangedByTriggers: (BOOL) flag
+{
+	if (flag)
+		mFlags |= kBXEntityGetsChangedByTriggers;
+	else
+		mFlags &= ~kBXEntityGetsChangedByTriggers;
+}
 @end
 
 
@@ -617,73 +702,6 @@ FilterPkeyAttributes (id attribute, void* arg)
     }
 }
 
-- (void) viewGetsUpdatedWith: (NSArray *) entities
-{
-	BXAssertVoidReturn ([self isView], @"Expected entity %@ to be a view.", self);
-	[self inherits: entities];
-}
-
-- (id) viewsUpdated
-{
-	BXAssertValueReturn ([self isView], nil, @"Expected entity %@ to be a view.", self);
-	return [self inheritedEntities];
-}
-
-- (void) inherits: (NSArray *) entities
-{
-    @synchronized (mSuperEntities)
-    {
-        //FIXME: We only implement cascading notifications from "root tables" to 
-        //inheriting tables and not vice-versa.
-        //FIXME: only single entity supported for now.
-        BXAssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
-        BXAssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
-        TSEnumerate (currentEntity, e, [entities objectEnumerator])
-        {
-            [mSuperEntities addObject: currentEntity];
-            [currentEntity addSubEntity: self];
-            [[NSNotificationCenter defaultCenter] addObserver: self
-                                                     selector: @selector (superEntityWillDealloc:)
-                                                         name: kBXEntityDescriptionWillDeallocNotification
-                                                       object: currentEntity];
-        }
-    }
-}
-
-- (void) addSubEntity: (BXEntityDescription *) entity
-{
-    @synchronized (mSubEntities)
-    {
-        //FIXME: We only implement cascading notifications from "root tables" to 
-        //inheriting tables and not vice-versa.
-        [mSubEntities addObject: entity];
-        [[NSNotificationCenter defaultCenter] addObserver: self
-                                                 selector: @selector (subEntityWillDealloc:)
-                                                     name: kBXEntityDescriptionWillDeallocNotification
-                                                   object: entity];        
-    }
-}
-
-- (id) inheritedEntities
-{
-    id retval = nil;
-    @synchronized (mSuperEntities)
-    {
-        retval = [mSuperEntities allObjects];
-    }
-    return retval;
-}
-
-- (id) subEntities
-{
-    id retval = nil;
-    @synchronized (mSubEntities)
-    {
-        retval = [mSubEntities allObjects];
-    }
-    return retval;
-}
-
 - (void) superEntityWillDealloc: (NSNotification *) n
 {
     @synchronized (mSuperEntities)
@@ -698,24 +716,6 @@ FilterPkeyAttributes (id attribute, void* arg)
     {
         [mSubEntities removeObject: [n object]];
     }
-}
-
-/**
- * \internal
- * Whether this entity gets changed by triggers, rules etc.
- * If the entity gets changed only directly, some queries may possibly be optimized.
- */
-- (BOOL) getsChangedByTriggers
-{
-	return mFlags & kBXEntityGetsChangedByTriggers ? YES : NO;
-}
-
-- (void) setGetsChangedByTriggers: (BOOL) flag
-{
-	if (flag)
-		mFlags |= kBXEntityGetsChangedByTriggers;
-	else
-		mFlags &= ~kBXEntityGetsChangedByTriggers;
 }
 
 - (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag

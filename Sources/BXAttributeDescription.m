@@ -76,16 +76,19 @@
 	return (mFlags & kBXPropertyExcluded ? YES : NO);
 }
 
+/** Name of the attribute's database type. */
 - (NSString *) databaseTypeName
 {
 	return mDatabaseTypeName;
 }
 
+/** Class of fetched objects. */
 - (Class) attributeValueClass
 {
 	return mAttributeClass;
 }
 
+/** Class name of fetched values. */
 - (NSString *) attributeValueClassName
 {
 	return NSStringFromClass (mAttributeClass);

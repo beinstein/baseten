@@ -596,6 +596,8 @@ ParseSelector (SEL aSelector, NSString** key)
  * \param   aKey    An NSString. May be nil, in which case the object
  *                  is considered a fault if value for any of its keys is
  *                  not cached.
+ * \note The database's internal fields, which are excluded by default,
+ *       will be considered when determining whether an object is a fault.
  * \return  0 if the corresponding value is in cache, 1 if not, 
  *          -1 if the key is unknown.
  */

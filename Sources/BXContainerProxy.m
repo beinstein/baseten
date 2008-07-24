@@ -262,6 +262,7 @@
 
 @implementation BXContainerProxy (Accessors)
 
+/** The container's context. */
 - (BXDatabaseContext *) context
 {
     return mContext; 
@@ -276,6 +277,7 @@
     }
 }
 
+/** The container's filter predicate. */
 - (NSPredicate *) filterPredicate;
 {
     return mFilterPredicate;
@@ -312,21 +314,32 @@
     }
 }
 
+/** The container's owner. */
 - (id) owner
 {
 	return mOwner;
 }
 
+/** 
+ * Set the cotainer's owner.
+ * NSKeyValueObserving notifications will be posted to the owner.
+ * \note The owner is not retained.
+ */
 - (void) setOwner: (id) anObject
 {
     mOwner = anObject;
 }
 
+/** The owner's key for the container. */
 - (NSString *) key
 {
     return mKey;
 }
 
+/** 
+ * Set the owner's key for the container.
+ * NSKeyValueObserving notifications will be posted using this key.
+ */
 - (void) setKey: (NSString *) aString
 {
     if (mKey != aString)

@@ -78,4 +78,13 @@ enum BXEntityFlag
 - (NSDictionary *) relationshipsByName;
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability;
 - (BOOL) isEnabled;
+
+- (void) inherits: (NSArray *) entities;
+- (void) addSubEntity: (BXEntityDescription *) entity;
+- (id) inheritedEntities;
+- (id) subEntities;
+- (void) viewGetsUpdatedWith: (NSArray *) entities;
+- (id) viewsUpdated;
+- (BOOL) getsChangedByTriggers;
+- (void) setGetsChangedByTriggers: (BOOL) flag;
 @end

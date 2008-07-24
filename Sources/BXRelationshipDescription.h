@@ -34,8 +34,6 @@
 
 @interface BXRelationshipDescription : BXPropertyDescription <NSMutableCopying>
 {
-	//FIXME: If entity objects are made non-persistent, 
-	//this field should be nullified when the corresponding entity gets dealloced.
     BXEntityDescription* mDestinationEntity; //Weak
 
 	BXForeignKey* mForeignKey;

@@ -51,13 +51,4 @@
 - (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
 - (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag;
 - (void) setEnabled: (BOOL) flag;
-
-- (void) inherits: (NSArray *) entities;
-- (void) addSubEntity: (BXEntityDescription *) entity;
-- (id) inheritedEntities;
-- (id) subEntities;
-- (void) viewGetsUpdatedWith: (NSArray *) entities;
-- (id) viewsUpdated;
-- (BOOL) getsChangedByTriggers;
-- (void) setGetsChangedByTriggers: (BOOL) flag;
 @end

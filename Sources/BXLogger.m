@@ -30,7 +30,7 @@
 #import "BXLogger.h"
 #import <dlfcn.h>
 
-enum BXLogLevel BXLogLevel = kBXLogLevelWarning;
+volatile enum BXLogLevel BXLogLevel = kBXLogLevelWarning;
 
 
 void BXSetLogLevel (enum BXLogLevel level)

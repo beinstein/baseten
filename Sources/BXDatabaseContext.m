@@ -1918,18 +1918,6 @@ bx_query_during_reconnect ()
 
 
 @implementation BXDatabaseContext (HelperMethods)
-- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error
-{
-	if (reload || !mEntitiesBySchema)
-	{
-		NSError* localError = nil;
-		[mEntitiesBySchema release];
-		mEntitiesBySchema = [[mDatabaseInterface entitiesBySchemaAndName: &localError] retain];
-		BXHandleError (error, localError);
-	}
-	return mEntitiesBySchema;
-}
-
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
 {
     return [self objectIDsForEntity: anEntity predicate: nil error: error];
@@ -1959,6 +1947,26 @@ bx_query_during_reconnect ()
     return [self entityForTable: tableName
                        inSchema: nil
                           error: error];
+}
+
+/**
+ * All entities found in the database.
+ * Entities in private and metadata schemata won't be included.
+ * \param reload Whether the entity list should be reloaded.
+ * \return An NSDicionary with NSStrings corresponding to schema names as keys and NSDictionarys as objects. 
+ *         Each of them will have NSStrings corresponding to relation names as keys and BXEntityDescriptions
+ *         as objects.
+ */
+- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error
+{
+	if (reload || !mEntitiesBySchema)
+	{
+		NSError* localError = nil;
+		[mEntitiesBySchema release];
+		mEntitiesBySchema = [[mDatabaseInterface entitiesBySchemaAndName: &localError] retain];
+		BXHandleError (error, localError);
+	}
+	return mEntitiesBySchema;
 }
 //@}
 
