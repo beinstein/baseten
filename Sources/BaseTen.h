@@ -154,7 +154,66 @@
  *
  *
  * \section gettingStarted Getting started
- * FIXME: write me.
+ * 
+ * Typically accessing a database consists roughly of the following steps:
+ * <ul>
+ *     <li>Creating an instance of BXDatabaseContext</li>
+ *     <li>Connecting to a database</li>
+ *     <li>Getting an entity description from the context</li>
+ *     <li>Possibly creating an NSPredicate for reducing the number of fetched objects</li>
+ *     <li>Performing a fetch using the entity and the predicate</li>
+ *     <li>Handling the results</li>
+ * </ul>
+ * Here is a small walkthrough.
+ *
+ *
+ * \subsection databaseContextCreation Creating a database context
+ *
+ * The designated initializer of BXDatabaseContext is <tt>-initWithDatabaseURI:</tt>. <tt>-init</tt> is also
+ * available but the context does require an URI before connecting.
+ *
+ * BXDatabaseContext requires the URIs to be formatted as follows:
+ * <tt>pgsql://username:password@host/database_name</tt>. Currently, as PostgreSQL is the only supported 
+ * database, only <tt>pgsql://</tt> URIs are allowed. All parameters are required except for the password,
+ * the need for which depends on the database configuration.
+ *
+ * Various methods in BXDatabaseContext take a double pointer to an NSError object as a parameter. if the 
+ * called method fails, the NSError will be set on return. If the parameter is NULL, the default error
+ * handler raises a BXException. The error handler may be set using <tt>-setErrorHandlerDelegate:</tt>.
+ *
+ *
+ * \subsection connectingToDatabase Connecting to a database
+ *
+ * Connection to the database may be made synchronously using the method
+ * <tt>- (void) connectIfNeeded: (NSError **) error</tt>. Applications that use an NSRunLoop also have the
+ * option to use <tt>- (void) connect</tt>. The method returns immediately. When the connection attempt has
+ * finished, either a \c kBXConnectionSuccessfulNotification or a \c kBXConnectionFailedNotification will
+ * be posted to the context's notification center (accessed with <tt>-notificationCenter</tt>).
+ *
+ * In AppKit applications, the easiest way to connect to the database is to use
+ * <tt>- (IBAction) connect: (id) sender</tt>. In addition to attempting the connection asynchronously,
+ * it also presents a number of panels to the user, if some required information is missing from the URI. 
+ * The panels allow the user to specify their username, password and the database host making URIs
+ * like <tt>pgsql:///database_name</tt> allowed. Additionally a \c kBXConnectionSetupAlertDidEndNotification
+ * will be posted when the user dismisses an alert panel, which is presented on failure.
+ *
+ * 
+ * \subsection entityAndPredicate Getting a BXEntityDescription and an NSPredicate
+ *
+ * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
+ * entity description, BXDatabaseContext has two methods: <tt>-entityForTable:error:</tt> and 
+ * <tt>-entityForTable:inSchema:error:</tt>. Entity descriptions may be accessed before making a
+ * connection in which case the database context will check their existence on connect.
+ *
+ * NSPredicates are created by various Cocoa objects and may be passed directly to BXDatabaseContext.
+ * One way to create ad-hoc predicates is by using <tt>-[NSPredicate predicateWithFormat]</tt>.
+ *
+ *
+ * \subsection performingFetch Performing a fetch using the entity and the predicate
+ *
+ * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
+ * be used to fetch objects from the database. The method takes a BXEntityDescription and an NSPredicate and
+ * performs a fetch synchronously. The fetched objects are returned in an NSArray.
  *
  *
  *
@@ -211,7 +270,126 @@
  *
  * \subsection accessingRelationships Accessing relationships
  *
- * FIXME write this.
+ * BaseTen supports the same types of relationships as Core Data: one-to-one, one-to-many and many-to-many.
+ *
+ * One-to-many is the simplest type of these three: a foreign key in one table referring another will be 
+ * interpreted as such. Both of the tables need to be BaseTen enabled and BaseTen's cache tables need to be
+ * up-to-date (see the BaseTen Assistant for details). Calling a database object's <tt>-valueForKey:</tt> or 
+ * <tt>-primitiveValueForKey:</tt> on the to-one side with the name of the foreign key constraint will 
+ * return the object on the other side of the reference. On the to-many side, -valueForKey: retrieves a 
+ * collection of objects that reference the table in a foreign key. They key used is the other table's name.
+ *
+ * Consider the following example:
+ * <pre>CREATE TABLE person (
+ *    id SERIAL PRIMARY KEY,
+ *    firstname VARCHAR (255),
+ *    surname VARCHAR (255)
+ *);
+ *
+ *CREATE TABLE email (
+ *    id SERIAL PRIMARY KEY,
+ *    address VARCHAR (255),
+ *    person_id INTEGER CONSTRAINT person REFERENCES person (id)
+ *);</pre>
+ *
+ * Lets say we have two objects: \em aPerson and \em anEmail which have been fetched from the person and email
+ * tables, respectively. <tt>[aPerson valueForKey: @"email"]</tt> will now return a collection of \em email objects. 
+ * <tt>[anEmail valueForKey: @"person"]</tt> will return a single \em person object.
+ *
+ * If we modify the previous example, we get a one-to-one relationship: 
+ * <pre>ALTER TABLE email ADD UNIQUE (person_id);</pre> 
+ * Now both <tt>[aPerson valueForKey: @"email"]</tt> 
+ * and <tt>[anEmail valueForKey: @"person"]</tt> will return a single object from the corresponding table.
+ *
+ * Many-to-many relationships are modeled with helper tables. The helper table needs to have columns to contain 
+ * both tables' primary keys. It needs to be BaseTen enabled as well.
+ *
+ * Another example: 
+ *<pre>CREATE TABLE person (
+ *    id SERIAL PRIMARY KEY,
+ *    firstname VARCHAR (255),
+ *    surname VARCHAR (255)
+ *);
+ *
+ *CREATE TABLE title (
+ *    id SERIAL PRIMARY KEY,
+ *    name VARCHAR (255)
+ *);
+ *
+ *CREATE TABLE person_title_rel (
+ *    person_id INTEGER REFERENCES person (id),
+ *    title_id INTEGER REFERENCES title (id),
+ *    PRIMARY KEY (person_id, title_id)
+ *);</pre>
+ *
+ * Lets say \em aPerson has been fetched from the person table and \em aTitle from the title table. 
+ * In this case, <tt>[aPerson valueForKey: @"title"]</tt> will return a collection of title objects 
+ * and <tt>[aTitle valueForKey: @"person"]</tt> a collection of person objects. Any two foreign keys 
+ * in one table will be interpreted as a many-to-many relationship, if they also form the table's 
+ * primary key. Objects from the helper table may be retrieved as with one-to-many relationships: 
+ * <tt>[aPerson valueForKey: @"person_title_rel"]</tt>.
+ * 
+ *
+ * \subsubsection relationshipNamingConflicts Naming conflicts
+ *
+ * Referencing relationships with target table names works as long as there are only one foreign key in
+ * a given table referencing another. As the number increases, relationships obviously cannot be 
+ * referenced using the target table name in every case. The following table describes alternative
+ * names for relationships in specific cases.
+ *
+ * <table>
+ *     <caption>Relationship names</caption>
+ *     <tr>
+ *         <th><strong>Relationship type</strong></th>
+ *         <th><strong>Target relation kind</strong></th>
+ *         <th><strong>Available names</strong></th>
+ *     </tr>
+ *     <tr>
+ *         <td rowspan="2">One-to-many (inverse, from the foreign key's side)</td>
+ *         <td>Table</td>
+ *         <td>Target table's name, foreign key's name</td>
+ *     </tr>
+ *     <tr>
+ *         <td>View</td>
+ *         <td>Target view's name</td>
+ *     </tr>
+ *     <tr>
+ *         <td rowspan="2">One-to-many (from the referenced side)</td>
+ *         <td>Table</td>
+ *         <td>Target table's name, <em>schema_table_foreignkey</em></td>
+ *     </tr>
+ *     <tr>
+ *         <td>View</td>
+ *         <td>Target view's name</td>
+ *     </tr>
+ *     <tr>
+ *         <td rowspan="2">One-to-one (from the foreign key's side)</td>
+ *         <td>Table</td>
+ *         <td>Target table's name, foreign key's name</td>
+ *     </tr>
+ *     <tr>
+ *         <td>View</td>
+ *         <td>Target view's name</td>
+ *     </tr>
+ *     <tr>
+ *         <td rowspan="2">One-to-one (from the referenced side)</td>
+ *         <td>Table</td>
+ *         <td>Target table's name, <em>schema_table_foreignkey</em></td>
+ *     </tr>
+ *     <tr>
+ *         <td>View</td>
+ *         <td>Target view's name</td>
+ *     </tr>
+ *     <tr>
+ *         <td rowspan="2">Many-to-many</td>
+ *         <td>Table</td>
+ *         <td>Target table's name, name of the foreign key that references the target table</td>
+ *     </tr>
+ *     <tr>
+ *         <td>View</td>
+ *         <td>Target view's name</td>
+ *     </tr>
+ * </table>
  *
  *
  *
@@ -254,7 +432,7 @@
  *     <tt>LC_ALL=en_US.UTF-8 /usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</tt>
  * \li Launch the PostgreSQL server itself:\n
  *     <tt>
- *        /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data\n
+ *        /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data \\\n
  *         -l /usr/local/pgsql/data/pg.log start
  *     </tt>
  * \li Create a superuser account for yourself. This way, you don't have to sudo to mysql to create new databases and users.\n
