@@ -42,6 +42,7 @@
 
 
 /** 
+ * \internal
  * Abstract base class for database class objects.
  */
 @implementation PGTSAbstractClassDescription

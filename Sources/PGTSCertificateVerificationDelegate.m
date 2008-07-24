@@ -35,6 +35,7 @@
 __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = nil;
 
 /**
+ * \internal
  * Default implementation for verifying OpenSSL X.509 certificates.
  * This class is thread-safe.
  */

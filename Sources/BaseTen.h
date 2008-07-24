@@ -158,29 +158,6 @@
  *
  *
  *
- * \section changeTracking Tracking database changes
- *
- * BXDatabaseObject conforms to NSKeyValueObserving and uses self-updating collections for storing 
- * related objects; changes in them may thus be tracked with KVO. 
- * 
- * BXSynchronizedArrayController's contents will be updated automatically. BXDatabaseContext's fetch 
- * methods also have the option to return a self-updating array instead of an 
- * ordinary one. In this case, the collection's owner has to be specified for KVO notifications to be posted.
- * See the collection classes' documentation for details.
- *
- * Another, a more low-level means of tracking changes is observing NSNotifications. Notifications on 
- * entity changes will be posted to the relevant context's notification center. The notification object
- * will be a BXEntityDescription which corresponds to the table where the change happened. The names 
- * of the notifications are:
- * \li \c kBXInsertNotification on database \c INSERT
- * \li \c kBXUpdateNotification on database \c UPDATE
- * \li \c kBXDeleteNotification on database \c DELETE
- *
- * At the time the notifications are posted, database objects and self-updating collections will 
- * already have been updated.
- *
- *
- *
  * \section usingAppKitClasses Using the controller subclasses provided with the framework
  *
  * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
@@ -191,6 +168,7 @@
  *
  *
  * \subsection BXSynchronizedArrayControllerIB Using BXSyncronizedArrayController from Interface Builder
+ *
  * <ol>
  *     <li>Load the BaseTen plug-in or palette.</li>
  *     <li>Create a new nib file.</li>
@@ -214,6 +192,49 @@
  *     <li>Bind the Cocoa views to the controller.</li> 
  *     <li>Test the interface. The views should be populated using the database.</li>
  * </ol>
+ *
+ *
+ *
+ * \section accessingValues Accessing object values
+ *
+ * BXDatabaseObjects implement NSKeyValueCoding and object values may thus be accessed with 
+ * <tt>-valueForKey:</tt> and <tt>-setValue:forKey:</tt>. The key will be the column name. As with 
+ * NSManagedObject, methods like <tt>-<key></tt> and <tt>-set<Key>:</tt> are also automatically available.
+ *
+ * Column values are converted to Foundation objects based on the column type. The type conversion is
+ * defined in the file <em>datatypeassociations.plist</em>. Currently, there is no way to affect the type conversion,
+ * and modifying the file is not recommended. Instead, custom getters may be written for preprocessing
+ * fetched objects. To support this, the column values may also be accessed using 
+ * <tt>-primitiveValueForKey:</tt>. Similarly <tt>-setPrimitiveValue:forKey:</tt> may be used to set a column 
+ * value.
+ *
+ *
+ * \subsection accessingRelationships Accessing relationships
+ *
+ * FIXME write this.
+ *
+ *
+ *
+ * \section changeTracking Tracking database changes
+ *
+ * BXDatabaseObject conforms to NSKeyValueObserving and uses self-updating collections for storing 
+ * related objects; changes in them may thus be tracked with KVO. 
+ * 
+ * BXSynchronizedArrayController's contents will be updated automatically. BXDatabaseContext's fetch 
+ * methods also have the option to return a self-updating array instead of an 
+ * ordinary one. In this case, the collection's owner has to be specified for KVO notifications to be posted.
+ * See the collection classes' documentation for details.
+ *
+ * Another, a more low-level means of tracking changes is observing NSNotifications. Notifications on 
+ * entity changes will be posted to the relevant context's notification center. The notification object
+ * will be a BXEntityDescription which corresponds to the table where the change happened. The names 
+ * of the notifications are:
+ * \li \c kBXInsertNotification on database \c INSERT
+ * \li \c kBXUpdateNotification on database \c UPDATE
+ * \li \c kBXDeleteNotification on database \c DELETE
+ *
+ * At the time the notifications are posted, database objects and self-updating collections will 
+ * already have been updated.
  *
  *
  *

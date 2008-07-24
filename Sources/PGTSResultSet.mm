@@ -162,6 +162,7 @@ ErrorUserInfoKey (char fieldCode)
 
 
 /** 
+ * \internal
  * Result set for a query.
  * A result set contains rows that may be iterated by the user.
  */

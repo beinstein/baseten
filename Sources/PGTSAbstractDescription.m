@@ -153,6 +153,7 @@ id PGTSNilReturn (id anObject);
 
 
 /** 
+ * \internal
  * Abstract base class
  */
 @implementation PGTSAbstractDescription

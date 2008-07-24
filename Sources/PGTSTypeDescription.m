@@ -34,6 +34,7 @@
 
 
 /** 
+ * \internal
  * Data type in a database.
  */
 @implementation PGTSTypeDescription

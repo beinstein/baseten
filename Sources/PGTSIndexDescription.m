@@ -57,6 +57,7 @@
 
 
 /** 
+ * \internal
  * Table index
  */
 @implementation PGTSIndexDescription
