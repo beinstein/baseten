@@ -78,10 +78,8 @@
  * after each relevant modification to the database. 
  */
 
-
 /**
- * \mainpage Using BaseTen framework
- * \section introduction Introduction
+ * \page generalUsage Using BaseTen framework
  *
  * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
  * has been designed with familiar, Core Data -like semantics and APIs. With this 1.0 Release Candidate 
@@ -97,9 +95,18 @@
  * \li A BaseTen-aware NSArrayController subclass automates locking and change propagation
  * \li Fetches are specified with NSPredicates (the relevant portions of which are evaluated on the database)
  *
- *
- *
- * \section overview Overview of BaseTen
+ * <h2>Documentation topics</h2>
+ * \li \subpage overview
+ * \li \subpage gettingStarted
+ * \li \subpage usingAppKitClasses
+ * \li \subpage accessingValues
+ * \li \subpage changeTracking
+ * \li \subpage postgreSQLInstallation
+ * \li \subpage limitations
+ */
+
+/**
+ * \page overview Overview of BaseTen
  *
  * BaseTen aims to provide a Core Data -like API for handling a database. A database connection is managed
  * by an instance of BXDatabaseContext, which also fetches rows from the database. Rows are represented
@@ -150,10 +157,10 @@
  *
  * PostgreSQL allows INSERT and UPDATE queries to target views if rules have been created to handle them.
  * In this case, the view contents may be modified also by using BaseTen.
- *
- *
- *
- * \section gettingStarted Getting started
+ */
+
+/**
+ * \page gettingStarted Getting started
  * 
  * Typically accessing a database consists roughly of the following steps:
  * <ul>
@@ -214,10 +221,10 @@
  * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
  * be used to fetch objects from the database. The method takes a BXEntityDescription and an NSPredicate and
  * performs a fetch synchronously. The fetched objects are returned in an NSArray.
- *
- *
- *
- * \section usingAppKitClasses Using the controller subclasses provided with the framework
+ */
+
+/**
+ * \page usingAppKitClasses Using the controller subclasses provided with the framework
  *
  * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
  * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
@@ -251,10 +258,10 @@
  *     <li>Bind the Cocoa views to the controller.</li> 
  *     <li>Test the interface. The views should be populated using the database.</li>
  * </ol>
- *
- *
- *
- * \section accessingValues Accessing object values
+ */
+
+/**
+ * \page accessingValues Accessing object values
  *
  * BXDatabaseObjects implement NSKeyValueCoding and object values may thus be accessed with 
  * <tt>-valueForKey:</tt> and <tt>-setValue:forKey:</tt>. The key will be the column name. As with 
@@ -390,10 +397,10 @@
  *         <td>Target view's name</td>
  *     </tr>
  * </table>
- *
- *
- *
- * \section changeTracking Tracking database changes
+ */
+
+/**
+ * \page changeTracking Tracking database changes
  *
  * BXDatabaseObject conforms to NSKeyValueObserving and uses self-updating collections for storing 
  * related objects; changes in them may thus be tracked with KVO. 
@@ -413,10 +420,10 @@
  *
  * At the time the notifications are posted, database objects and self-updating collections will 
  * already have been updated.
- *
- *
- *
- * \section postgreSQLInstallation PostgreSQL installation
+ */
+
+/**
+ * \page postgreSQLInstallation PostgreSQL installation
  *
  * Here's a brief tutorial on PostgreSQL installation.
  * \li Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.
@@ -442,10 +449,10 @@
  *        exit\n
  *        /usr/local/pgsql/bin/createdb <your-short-user-name>
  *     </tt>
- *
- *
- *
- * \section limitations Limitations in current version
+ */
+
+/** 
+ * \page limitations Limitations in current version
  * 
  * These are some of the most severe limitations in the current version.
  * \li Renaming tables after having them prepared for modification observing will not work.
