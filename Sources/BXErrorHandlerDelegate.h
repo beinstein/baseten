@@ -32,7 +32,7 @@
 
 /**
  * A protocol for an error handler delegate.
- * \ingroup BaseTen
+ * \ingroup baseten
  */
 @interface NSObject (BXErrorHandlerDelegate)
 /**

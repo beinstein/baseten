@@ -32,7 +32,7 @@
 /**
  * A protocol for an SSL connection delegate.
  * In the future the delegate might have influence on other policies.
- * \ingroup BaseTen
+ * \ingroup baseten
  */
 @interface NSObject (BXPolicyDelegate)
 /**

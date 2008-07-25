@@ -79,7 +79,7 @@ enum BXLogLevel
 };
 
 //Do not use outside this file in case we decide to change the implementation.
-BX_EXPORT enum BXLogLevel BXLogLevel;
+BX_EXPORT volatile enum BXLogLevel BXLogLevel;
 
 
 BX_EXPORT void BXSetLogLevel (enum BXLogLevel level);

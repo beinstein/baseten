@@ -51,7 +51,7 @@
 
 /**
  * Some methods used by BaseTen in BXArrayController.
- * \ingroup BaseTenAppKit
+ * \ingroup baseten_appkit
  */
 @implementation NSController (BXCocoaAdditions)
 

@@ -36,7 +36,7 @@
 
 /**
  * A generic self-updating container proxy.
- * \ingroup AutoContainers
+ * \ingroup auto_containers
  */
 @implementation BXContainerProxy
 

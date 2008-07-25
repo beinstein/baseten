@@ -34,7 +34,7 @@
 /**
  * A proxy for retrieving database object status.
  * \see ValueTransformers
- * \ingroup BaseTen
+ * \ingroup baseten
  */
 @implementation BXObjectStatusInfo
 

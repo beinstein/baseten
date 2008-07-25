@@ -127,7 +127,7 @@ ParseSelector (SEL aSelector, NSString** key)
  * worker threads need access to the object's contents but the contents have been 
  * fetched earlier.
  *
- * \ingroup BaseTen
+ * \ingroup baseten
  */
 @implementation BXDatabaseObject
 

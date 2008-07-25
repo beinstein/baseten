@@ -34,7 +34,7 @@
 
 /**
  * An NSCountedSet-style self-updating container proxy.
- * \ingroup AutoContainers
+ * \ingroup auto_containers
  */
 @implementation BXSetProxy
 

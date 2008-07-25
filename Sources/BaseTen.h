@@ -58,28 +58,28 @@
 
 
 /**
- * \defgroup BaseTen BaseTen
+ * \defgroup baseten BaseTen
  * BaseTen is linked to Foundation, Security and IOKit frameworks and 
  * libcrypto, libssl and libstdc++ dynamic libraries. In addition, it is weakly linked to AppKit framework.
  * Therefore it can be used to develop applications that don't require the graphical user interface.
  */
 
 /**
- * \defgroup Descriptions Descriptions
- * \ingroup BaseTen
+ * \defgroup descriptions Descriptions
+ * \ingroup baseten
  * Database introspection.
  */
 
 /**
- * \defgroup AutoContainers Self-updating collections
- * \ingroup BaseTen
+ * \defgroup auto_containers Self-updating collections
+ * \ingroup baseten
  * Collections updated by the database context.
  * The context will change the collection's contents according to its filter predicate 
  * after each relevant modification to the database. 
  */
 
 /**
- * \page generalUsage Using BaseTen framework
+ * \page general_usage Using BaseTen framework
  *
  * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
  * has been designed with familiar, Core Data -like semantics and APIs. With this 1.0 Release Candidate 
@@ -97,11 +97,11 @@
  *
  * <h2>Documentation topics</h2>
  * \li \subpage overview
- * \li \subpage gettingStarted
- * \li \subpage usingAppKitClasses
- * \li \subpage accessingValues
- * \li \subpage changeTracking
- * \li \subpage postgreSQLInstallation
+ * \li \subpage getting_started
+ * \li \subpage using_appkit_classes
+ * \li \subpage accessing_values
+ * \li \subpage tracking_changes
+ * \li \subpage postgresql_installation
  * \li \subpage limitations
  */
 
@@ -141,7 +141,7 @@
  * migration might be using SQL.
  *
  *
- * \subsection sqlViews SQL views
+ * \subsection sql_views SQL views
  *
  * Contents of SQL views may be manipulated using database objects provided that some conditions are met.
  * Unlike tables, views don't have primary keys but BaseTen still needs to be able to reference individual 
@@ -160,7 +160,7 @@
  */
 
 /**
- * \page gettingStarted Getting started
+ * \page getting_started Getting started
  * 
  * Typically accessing a database consists roughly of the following steps:
  * <ul>
@@ -174,13 +174,13 @@
  * Here is a small walkthrough.
  *
  *
- * \subsection databaseContextCreation Creating a database context
+ * \subsection creating_a_database_context Creating a database context
  *
  * The designated initializer of BXDatabaseContext is <tt>-initWithDatabaseURI:</tt>. <tt>-init</tt> is also
  * available but the context does require an URI before connecting.
  *
  * BXDatabaseContext requires the URIs to be formatted as follows:
- * <tt>pgsql://username:password@host/database_name</tt>. Currently, as PostgreSQL is the only supported 
+ * <tt>pgsql://username:password\@host/database_name</tt>. Currently, as PostgreSQL is the only supported 
  * database, only <tt>pgsql://</tt> URIs are allowed. All parameters are required except for the password,
  * the need for which depends on the database configuration.
  *
@@ -189,7 +189,7 @@
  * handler raises a BXException. The error handler may be set using <tt>-setErrorHandlerDelegate:</tt>.
  *
  *
- * \subsection connectingToDatabase Connecting to a database
+ * \subsection connecting_to_a_database Connecting to a database
  *
  * Connection to the database may be made synchronously using the method
  * <tt>- (void) connectIfNeeded: (NSError **) error</tt>. Applications that use an NSRunLoop also have the
@@ -205,7 +205,7 @@
  * will be posted when the user dismisses an alert panel, which is presented on failure.
  *
  * 
- * \subsection entityAndPredicate Getting a BXEntityDescription and an NSPredicate
+ * \subsection getting_an_entity_and_a_predicate Getting a BXEntityDescription and an NSPredicate
  *
  * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
  * entity description, BXDatabaseContext has two methods: <tt>-entityForTable:error:</tt> and 
@@ -216,7 +216,7 @@
  * One way to create ad-hoc predicates is by using <tt>-[NSPredicate predicateWithFormat]</tt>.
  *
  *
- * \subsection performingFetch Performing a fetch using the entity and the predicate
+ * \subsection performing_a_fetch Performing a fetch using the entity and the predicate
  *
  * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
  * be used to fetch objects from the database. The method takes a BXEntityDescription and an NSPredicate and
@@ -224,7 +224,7 @@
  */
 
 /**
- * \page usingAppKitClasses Using the controller subclasses provided with the framework
+ * \page using_appkit_classes Using the controller subclasses provided with the framework
  *
  * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
  * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
@@ -233,7 +233,7 @@
  * controller subclasses.
  *
  *
- * \subsection BXSynchronizedArrayControllerIB Using BXSyncronizedArrayController from Interface Builder
+ * \subsection using_bxsynchronizedarraycontroller Using BXSyncronizedArrayController from Interface Builder
  *
  * <ol>
  *     <li>Load the BaseTen plug-in or palette.</li>
@@ -261,11 +261,11 @@
  */
 
 /**
- * \page accessingValues Accessing object values
+ * \page accessing_values Accessing object values
  *
  * BXDatabaseObjects implement NSKeyValueCoding and object values may thus be accessed with 
  * <tt>-valueForKey:</tt> and <tt>-setValue:forKey:</tt>. The key will be the column name. As with 
- * NSManagedObject, methods like <tt>-<key></tt> and <tt>-set<Key>:</tt> are also automatically available.
+ * NSManagedObject, methods like <tt>-&lt;key&gt;</tt> and <tt>-set&lt;Key&gt;:</tt> are also automatically available.
  *
  * Column values are converted to Foundation objects based on the column type. The type conversion is
  * defined in the file <em>datatypeassociations.plist</em>. Currently, there is no way to affect the type conversion,
@@ -275,7 +275,7 @@
  * value.
  *
  *
- * \subsection accessingRelationships Accessing relationships
+ * \subsection accessing_relationships Accessing relationships
  *
  * BaseTen supports the same types of relationships as Core Data: one-to-one, one-to-many and many-to-many.
  *
@@ -337,7 +337,7 @@
  * <tt>[aPerson valueForKey: @"person_title_rel"]</tt>.
  * 
  *
- * \subsubsection relationshipNamingConflicts Naming conflicts
+ * \subsubsection relationship_naming_conflicts Naming conflicts
  *
  * Referencing relationships with target table names works as long as there are only one foreign key in
  * a given table referencing another. As the number increases, relationships obviously cannot be 
@@ -400,7 +400,7 @@
  */
 
 /**
- * \page changeTracking Tracking database changes
+ * \page tracking_changes Tracking database changes
  *
  * BXDatabaseObject conforms to NSKeyValueObserving and uses self-updating collections for storing 
  * related objects; changes in them may thus be tracked with KVO. 
@@ -423,7 +423,7 @@
  */
 
 /**
- * \page postgreSQLInstallation PostgreSQL installation
+ * \page postgresql_installation PostgreSQL installation
  *
  * Here's a brief tutorial on PostgreSQL installation.
  * \li Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.

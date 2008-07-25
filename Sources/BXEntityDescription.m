@@ -55,7 +55,7 @@ static id gEntities;
  * \note This class is not thread-safe, i.e. 
  *       if methods of an BXEntityDescription instance will be called from 
  *       different threads the result is undefined.
- * \ingroup Descriptions
+ * \ingroup descriptions
  */
 @implementation BXEntityDescription
 

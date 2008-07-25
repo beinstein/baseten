@@ -35,7 +35,7 @@
 
 /**
  * An attribute description contains information about a column in a specific entity.
- * \ingroup Descriptions
+ * \ingroup descriptions
  */
 @implementation BXAttributeDescription
 - (void) dealloc

@@ -40,7 +40,7 @@ __strong static id gProperties = nil;
 
 /**
  * A superclass for various description classes.
- * \ingroup Descriptions
+ * \ingroup descriptions
  */
 @implementation BXPropertyDescription
 

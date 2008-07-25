@@ -33,7 +33,7 @@
 
 /**
  * An NSArray or NSMutableArray-style self-updating container proxy.
- * \ingroup AutoContainers
+ * \ingroup auto_containers
  */
 @implementation BXArrayProxy
 

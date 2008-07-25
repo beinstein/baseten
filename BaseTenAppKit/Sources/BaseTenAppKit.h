@@ -32,7 +32,7 @@
 #import <BaseTenAppKit/BXAuthenticationPanel.h>
 
 /**
- * \defgroup BaseTenAppKit BaseTenAppKit
+ * \defgroup baseten_appkit BaseTenAppKit
  * BaseTenAppKit is a separate framework with AppKit bindings.
  * It contains a subclass of NSArrayController, namely 
  * BXArrayController, generic connection panels for use with
@@ -40,7 +40,7 @@
  */
 
 /**
- * \defgroup ValueTransformers Value Transformers
+ * \defgroup balue_transformers Value Transformers
  * Transform database objects' status to various information.
  * BXDatabaseObject has BXDatabaseObject#statusInfo method which
  * returns a proxy for retrieving object's status. The status may
@@ -49,5 +49,5 @@
  * like arrayController.arrangedObjects.statusInfo.some_key_name
  * and the value transformer may then be set to
  * BXObjectStatusToEditableTransformer.
- * \ingroup BaseTenAppKit
+ * \ingroup baseten_appkit
  */

@@ -33,7 +33,7 @@
 /**
  * Transforms an object status to a colour.
  * Presently, grey corresponds to a locked object and red to a deleted object.
- * \ingroup ValueTransformers
+ * \ingroup value_transformers
  */
 @implementation BXObjectStatusToColorTransformer
 

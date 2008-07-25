@@ -153,7 +153,7 @@ bx_query_during_reconnect ()
  * \note This class is not thread-safe, i.e. 
  *		 if methods of a BXDatabaseContext instance will be called from 
  *		 different threads the result is undefined and deadlocks are possible.
- * \ingroup BaseTen
+ * \ingroup baseten
  */
 @implementation BXDatabaseContext
 

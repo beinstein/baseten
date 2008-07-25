@@ -39,7 +39,7 @@
  * Determines connection information from the database URI
  * and then presents dialogs for the missing information.
  * \note Presently one is created automatically in BXDatabaseContext::connect:.
- * \ingroup BaseTenAppKit
+ * \ingroup baseten_appkit
  */
 @implementation BXNetServiceConnector 
 

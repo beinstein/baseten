@@ -32,7 +32,7 @@
 /**
  * Transforms and object's status into a boolean indicating, whether it's editable or not.
  * If object has been edited or deleted in another transaction, it won't be editable.
- * \ingroup ValueTransformers
+ * \ingroup value_transformers
  */
 @implementation BXObjectStatusToEditableTransformer
 

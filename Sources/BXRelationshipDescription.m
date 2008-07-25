@@ -43,7 +43,7 @@
  * A description for one-to-many relationships and a superclass for others.
  * Relationships between entities are defined with foreign keys in the database.
  * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
- * \ingroup Descriptions
+ * \ingroup descriptions
  */
 @implementation BXRelationshipDescription
 

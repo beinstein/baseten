@@ -79,7 +79,7 @@
 
 /**
  * An NSCountedSet-style self-updating container proxy for relationships.
- * \ingroup AutoContainers
+ * \ingroup auto_containers
  */
 @implementation BXSetRelationProxy
 - (id) BXInitWithArray: (NSMutableArray *) anArray

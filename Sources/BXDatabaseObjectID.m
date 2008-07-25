@@ -46,7 +46,7 @@
  * This class is not thread-safe, i.e. 
  * if methods of a BXDatabaseObjectID instance will be called from 
  * different threads the result is undefined.
- * \ingroup BaseTen
+ * \ingroup baseten
  */
 @implementation BXDatabaseObjectID
 
