@@ -55,22 +55,25 @@
 #import "BXConnectionSetupManagerProtocol.h"
 #import "BXConstantsPrivate.h"
 #import "BXInvocationRecorder.h"
-#import "BXErrorHandlerDelegate.h"
 #import "BXLogger.h"
 #import "BXProbes.h"
+#import "BXDelegateProxy.h"
+#import "BXDatabaseContextDelegateDefaultImplementation.h"
 
-static NSMutableDictionary* gInterfaceClassSchemes = nil;
+
+__strong static NSMutableDictionary* gInterfaceClassSchemes = nil;
 static BOOL gHaveAppKitFramework = NO;
 
-#define BXHandleError( ERROR, LOCAL_ERROR ) BXHandleError2( self, errorHandlerDelegate, ERROR, LOCAL_ERROR )
+
+#define BXHandleError( ERROR, LOCAL_ERROR ) BXHandleError2( self, mDelegateProxy, ERROR, LOCAL_ERROR )
 
 static void
-BXHandleError2 (id ctx, id errorHandler, NSError **error, NSError *localError)
+BXHandleError2 (id ctx, id <BXDatabaseContextDelegate> delegateProxy, NSError **error, NSError *localError)
 {
     if (nil != localError)
     {
         BOOL haveError = (NULL != error);
-        [errorHandler BXDatabaseContext: ctx hadError: localError willBePassedOn: haveError];
+        [delegateProxy BXDatabaseContext: ctx hadError: localError willBePassedOn: haveError];
         if (haveError)
             *error = localError;
     }
@@ -148,7 +151,8 @@ bx_query_during_reconnect ()
  * like pgsql://username:password\@hostname/database_name/.
  *
  * Various methods of this class take an NSError parameter. If the parameter isn't set, the context
- * will handle errors by throwing an exception. See #BXDatabaseContext:hadError:willBePassedOn:.
+ * will handle errors by throwing a BXException named kBXFailedToExecuteQueryException. 
+ * See NSObject(BXErrorHandlerDelegate)::BXDatabaseContext:hadError:willBePassedOn:().
  *
  * \note This class is not thread-safe, i.e. 
  *		 if methods of a BXDatabaseContext instance will be called from 
@@ -236,11 +240,12 @@ bx_query_during_reconnect ()
         mRetainRegisteredObjects = NO;
 		mCanConnect = YES;
 		mConnectsOnAwake = NO;
-		errorHandlerDelegate = self;
 		mSendsLockQueries = YES;
 		
 		mEntities = [[NSMutableSet alloc] init];
 		mRelationships = [[NSMutableSet alloc] init];
+		mDelegateProxy = [[BXDelegateProxy alloc] initWithDelegateDefaultImplementation:
+						  [[[BXDatabaseContextDelegateDefaultImplementation alloc] init] autorelease]];
     }
     return self;
 }
@@ -266,6 +271,7 @@ bx_query_during_reconnect ()
     [mEntities release];
 	[mEntitiesBySchema release];
     [mRelationships release];
+	[mDelegateProxy release];
     
     if (NULL != mKeychainPasswordItem)
         CFRelease (mKeychainPasswordItem);
@@ -363,33 +369,42 @@ bx_query_during_reconnect ()
 	return [[self databaseInterface] connected];
 }
 
+- (BOOL) connectIfNeeded: (NSError **) error
+{
+	return [self connectIfNeeded: error];
+}
+
 /**
  * Connect to the database.
  * This method returns after the connection has been made.
  */
-- (void) connectIfNeeded: (NSError **) error
+- (BOOL) connectSync: (NSError **) error
 {
+	BOOL retval = NO;
     NSError* localError = nil;
 	mDidDisconnect = NO;
-    if ([self checkDatabaseURI: &localError])
-    {
-        if (NO == [self isConnected])
-        {
-			[self setCanConnect: NO];
-			[self lazyInit];
-			[[self databaseInterface] connectSync: &localError];
-			
-			if (nil == localError)
-				[self connectedToDatabase: (nil == localError) async: NO error: &localError];
-			
-			if (nil != localError)
-			{
-				[mDatabaseInterface release];
-				mDatabaseInterface = nil;
-			}
-        }
-    }
+	if ([self isConnected])
+		retval = YES;
+	else if ([self checkDatabaseURI: &localError])
+	{
+		[self setCanConnect: NO];
+		[self lazyInit];
+		[[self databaseInterface] connectSync: &localError];
+		
+		if (nil == localError)
+		{
+			retval = YES;
+			[self connectedToDatabase: YES async: NO error: &localError];
+		}
+		
+		if (nil != localError)
+		{
+			[mDatabaseInterface release];
+			mDatabaseInterface = nil;
+		}
+	}
     BXHandleError (error, localError);
+	return retval;
 }
 
 /**
@@ -424,7 +439,7 @@ bx_query_during_reconnect ()
  * \c kBXConnectionFailedNotification will be posted to the context's
  * notification center.
  */
-- (void) connect
+- (void) connectAsync
 {
 	NSError* localError = nil;
 	mDidDisconnect = NO;
@@ -447,6 +462,7 @@ bx_query_during_reconnect ()
         NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
                                                                      object: self
                                                                    userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
+		[mDelegateProxy BXDatabaseContextFailedToConnect: notification];
         [[self notificationCenter] postNotification: notification];
 	}	
 }
@@ -742,46 +758,24 @@ bx_query_during_reconnect ()
 //@}
 
 
-/** \name Delegates */
-//@{
 /** 
- * The policy delegate. 
- * \see NSObject(BXPolicyDelegate)
+ * The delegate. 
  */
-- (id) policyDelegate
+- (id <BXDatabaseContextDelegate>) delegate
 {
-	return policyDelegate;
+	return delegate;
 }
 
 /**
- * The error handler delegate.
- * \see NSObject(BXErrorHandlerDelegate)
- */ 
-- (id) errorHandlerDelegate
-{
-	return errorHandlerDelegate;
-}
-
-/**
- * Set the policy delegate.
+ * Set the delegate.
  * The delegate object will not be retained.
  * \see NSObject(BXPolicyDelegate)
  */
-- (void) setPolicyDelegate: (id) anObject
+- (void) setDelegate: (id <BXDatabaseContextDelegate>) anObject;
 {
-	policyDelegate = anObject;
+	delegate = anObject;
+	[(BXDelegateProxy *) mDelegateProxy setDelegateForBXDelegateProxy: delegate];
 }
-
-/**
- * Set the error handler delegate.
- * The delegate object will not be retained.
- * \see NSObject(BXErrorHandlerDelegate)
- */
-- (void) setErrorHandlerDelegate: (id) anObject
-{
-	errorHandlerDelegate = anObject;
-}
-//@}
 
 /** \name Using the Keychain */
 //@{
@@ -931,7 +925,7 @@ bx_query_during_reconnect ()
 		NSError* localError = nil;
 		[mDatabaseInterface establishSavepoint: &localError];
 		if (nil != localError)
-			[errorHandlerDelegate BXDatabaseContext: self hadError: localError willBePassedOn: NO];
+			[mDelegateProxy BXDatabaseContext: self hadError: localError willBePassedOn: NO];
 		[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 	}
 }
@@ -992,7 +986,7 @@ bx_query_during_reconnect ()
     [mDatabaseInterface rollbackToLastSavepoint: &error];
 	//FIXME: in which case does the query fail? Should we be prepared for that?
 	if (nil != error)
-		[errorHandlerDelegate BXDatabaseContext: self hadError: error willBePassedOn: NO];
+		[mDelegateProxy BXDatabaseContext: self hadError: error willBePassedOn: NO];
 }
 
 #if 0
@@ -1059,8 +1053,7 @@ bx_query_during_reconnect ()
     if (nil == retval && [self checkErrorHandling])
     {
         NSError* localError = nil;
-		[self connectIfNeeded: &localError];
-		if (localError)
+		if (! [self connectSync: &localError])
 			goto error;
 		
 		[self validateEntity: [anID entity] error: &localError];
@@ -1141,8 +1134,6 @@ bx_query_during_reconnect ()
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time.
  */
@@ -1163,8 +1154,6 @@ bx_query_during_reconnect ()
  *                              be returned or not.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time.
  */
@@ -1191,8 +1180,6 @@ bx_query_during_reconnect ()
  *                              that should be excluded. May be nil.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time.
  */
@@ -1216,8 +1203,6 @@ bx_query_during_reconnect ()
  *                              should be updated by the context or not.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time, or an automatically updating NSArray proxy.
  */
@@ -1241,8 +1226,6 @@ bx_query_during_reconnect ()
  *                              should be updated by the context or not.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *                              and the query failed.
  * \return                      An NSArray that reflects the state of the database at query 
  *                              execution time, or an automatically updating NSArray proxy.
  */
@@ -1269,8 +1252,6 @@ bx_query_during_reconnect ()
  * \param       error            If an error occurs, this pointer is set to an NSError instance.
  *                               May be NULL.
  * \return                       A subclass of BXDatabaseObject or nil, if an error has occured.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *              and a database object couldn't be created.
  */
 - (id) createObjectForEntity: (BXEntityDescription *) entity 
              withFieldValues: (NSDictionary *) givenFieldValues 
@@ -1280,8 +1261,7 @@ bx_query_during_reconnect ()
     BXDatabaseObject* retval = nil;
 	if ([self checkErrorHandling] && [self checkDatabaseURI: &localError])
 	{
-		[self connectIfNeeded: &localError];
-		if (nil == localError)
+		if ([self connectSync: &localError])
 		{
 			//The interface wants only attribute descriptions as keys
 			NSMutableDictionary* fieldValues = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
@@ -1406,8 +1386,6 @@ bx_query_during_reconnect ()
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
  * \return                      A boolean indicating whether the deletion was successful or not.
- * \throw       BXException named \c kBXExceptionUnhandledError if \c error is NULL 
- *                              and a database object couldn't be deleted.
  */
 - (BOOL) executeDeleteObject: (BXDatabaseObject *) anObject error: (NSError **) error
 {
@@ -1432,7 +1410,10 @@ bx_query_during_reconnect ()
  * Execute a query directly.
  * This method should only be used when fetching objects and modifying 
  * them is cumbersome or doesn't accomplish the task altogether.
+ * \param queryString The SQL query.
  * \param parameters An NSArray of objects that are passed as replacements for $1, $2 etc. in the query.
+ * \param       error           If an error occurs, this pointer is set to an NSError instance.
+ *                              May be NULL.
  * \return An NSArray of NSDictionaries that correspond to each row.
  */
 - (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
@@ -1441,8 +1422,7 @@ bx_query_during_reconnect ()
 	id retval = nil;
 	if ([self checkErrorHandling])
 	{
-		[self connectIfNeeded: &localError];
-    	if (nil == localError)
+		if ([self connectSync: &localError])
 			retval = [mDatabaseInterface executeQuery: queryString parameters: parameters error: &localError];
 		BXHandleError (error, localError);
 	}
@@ -1461,8 +1441,7 @@ bx_query_during_reconnect ()
 	unsigned long long retval = 0;
 	if ([self checkErrorHandling])
 	{
-		[self connectIfNeeded: &localError];
-		if (nil == localError)
+		if ([self connectSync: &localError])
 			retval = [mDatabaseInterface executeCommand: commandString error: &localError];
 		BXHandleError (error, localError);
 	}
@@ -1494,7 +1473,7 @@ bx_query_during_reconnect ()
 
 - (void) connectionLost: (NSError *) error
 {
-	[errorHandlerDelegate BXDatabaseContext: self lostConnection: error];
+	[mDelegateProxy BXDatabaseContext: self lostConnection: error];
 }
 
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
@@ -1532,7 +1511,7 @@ bx_query_during_reconnect ()
 			if (!mRetryingConnection && (authenticationFailed || certificateVerifyFailed))
 			{
 				mRetryingConnection = YES;
-				[self connect];
+				[self connectAsync];
 			}
 			else
 			{
@@ -1560,6 +1539,7 @@ bx_query_during_reconnect ()
 				if (! mDidDisconnect && error)
 					userInfo = [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey];
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
+				[mDelegateProxy BXDatabaseContextFailedToConnect: notification];
 				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
@@ -1588,7 +1568,8 @@ bx_query_during_reconnect ()
 		{
 			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification
 														 object: self 
-													   userInfo: nil];			
+													   userInfo: nil];
+			[mDelegateProxy BXDatabaseContextFailedToConnect: notification];
 		}
 		else
 		{
@@ -1598,6 +1579,7 @@ bx_query_during_reconnect ()
 			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 														 object: self
 													   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
+			[mDelegateProxy BXDatabaseContextConnectionSucceeded: notification];
 		}
 		[[self notificationCenter] postNotification: notification];
 	}
@@ -1855,7 +1837,7 @@ bx_query_during_reconnect ()
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result
 {
 	BOOL retval = NO;
-	enum BXCertificatePolicy policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
+	enum BXCertificatePolicy policy = [mDelegateProxy BXDatabaseContext: self handleInvalidTrust: trust result: result];
 	switch (policy)
 	{			
 		case kBXCertificatePolicyAllow:
@@ -1877,16 +1859,11 @@ bx_query_during_reconnect ()
 	SecTrustRef trust = trustResult.trust;
 	SecTrustResultType result = trustResult.result;
 	
-	enum BXCertificatePolicy policy = kBXCertificatePolicyUndefined;
-	if ([policyDelegate respondsToSelector: @selector (BXDatabaseContext:handleInvalidTrust:result:)])
-		policy = [policyDelegate BXDatabaseContext: self handleInvalidTrust: trust result: result];
-	if (gHaveAppKitFramework && kBXCertificatePolicyUndefined == policy)
-		policy = kBXCertificatePolicyDisplayTrustPanel;
-	
+	enum BXCertificatePolicy policy = [mDelegateProxy BXDatabaseContext: self handleInvalidTrust: trust result: result];	
 	switch (policy)
 	{			
 		case kBXCertificatePolicyAllow:
-			[self connect];
+			[self connectAsync];
 			break;
 			
 		case kBXCertificatePolicyDisplayTrustPanel:
@@ -1910,9 +1887,9 @@ bx_query_during_reconnect ()
 - (enum BXSSLMode) sslMode
 {
 	enum BXSSLMode mode = kBXSSLModeDisable;
-	if (NO == mRetryingConnection && [policyDelegate respondsToSelector: @selector (BXSSLModeForDatabaseContext:)])
-		mode = [policyDelegate BXSSLModeForDatabaseContext: self];
-	return (kBXSSLModeUndefined == mode ? kBXSSLModePrefer : mode);
+	if (NO == mRetryingConnection)
+		mode = [mDelegateProxy BXSSLModeForDatabaseContext: self];
+	return mode;
 }
 @end
 
@@ -1953,6 +1930,8 @@ bx_query_during_reconnect ()
  * All entities found in the database.
  * Entities in private and metadata schemata won't be included.
  * \param reload Whether the entity list should be reloaded.
+ * \param       error           If an error occurs, this pointer is set to an NSError instance.
+ *                              May be NULL.
  * \return An NSDicionary with NSStrings corresponding to schema names as keys and NSDictionarys as objects. 
  *         Each of them will have NSStrings corresponding to relation names as keys and BXEntityDescriptions
  *         as objects.
@@ -2007,6 +1986,11 @@ bx_query_during_reconnect ()
 
 
 @implementation BXDatabaseContext (PrivateMethods)
+- (id <BXDatabaseContextDelegate>) internalDelegate
+{
+	return mDelegateProxy;
+}
+
 /** 
  * \internal
  * Delete multiple objects at the same time. 
@@ -2055,8 +2039,7 @@ bx_query_during_reconnect ()
     id retval = nil;
 	if ([self checkErrorHandling])
 	{
-		[self connectIfNeeded: &localError];
-		if (nil == localError)
+		if ([self connectSync: &localError])
 		{
 			if (nil != excludedFields)
 			{
@@ -2441,8 +2424,7 @@ bx_query_during_reconnect ()
         {
             if (validateImmediately)
             {
-                [self connectIfNeeded: &localError];
-                if (nil == localError)
+				if ([self connectSync: &localError])
                     [self validateEntity: retval error: &localError];
                 [self iterateValidationQueue: &localError];
             }
@@ -2490,8 +2472,7 @@ bx_query_during_reconnect ()
 	id relationships = nil;
 	if ([self checkDatabaseURI: &localError])
 	{		
-		[self connectIfNeeded: &localError];
-		if (nil == error)
+		if ([self connectSync: &localError])
 			relationships = [mDatabaseInterface relationshipsForEntity: anEntity error: &localError];
 		BXHandleError (NULL, localError);
 	}
@@ -2766,33 +2747,5 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 {
 	if (NO == [self isConnected])
 		[self setCanConnect: YES];
-}
-@end
-
-
-@implementation BXDatabaseContext (DefaultErrorHandler)
-- (void) BXDatabaseContext: (BXDatabaseContext *) context 
-				  hadError: (NSError *) error 
-			willBePassedOn: (BOOL) willBePassedOn;
-{
-	if (! willBePassedOn)
-		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
-}
-
-- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error
-{
-	if (gHaveAppKitFramework)
-	{
-		mConnectionErrorHandlingState = kBXConnectionErrorResolving;
-		//FIXME: do something about this; not just logging.
-		if ([NSApp presentError: error])
-			NSLog (@"Reconnected.");
-		else
-			NSLog (@"Failed to reconnect.");
-	}
-	else
-	{
-		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
-	}
 }
 @end

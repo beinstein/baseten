@@ -1,5 +1,5 @@
 //
-// BXPolicyDelegate.h
+// BXDatabaseContextDelegateProtocol.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,15 +26,49 @@
 // $Id$
 //
 
-#import <BaseTen/BXConstants.h>
+#import <Foundation/Foundation.h>
 #import <Security/Security.h>
+#import <BaseTen/BXConstants.h>
+
+
+@class BXDatabaseContext;
+
+
+@protocol BXDatabaseContextDelegate <NSObject>
+
+//Optional section of the protocol either as an interface or @optional.
+#if __MAC_OS_X_VERSION_10_5 <= __MAC_OS_X_VERSION_MAX_ALLOWED
+@optional
+#else
+@end
+@interface NSObject (BXDatabaseContextDelegate)
+#endif
+
+- (void) BXDatabaseContextConnectionSucceeded: (NSNotification *) notification;
+- (void) BXDatabaseContextFailedToConnect: (NSNotification *) notification;
+- (void) BXDatabaseContextConnectionFailureAlertDismissed: (NSNotification *) notification;
 
 /**
- * A protocol for an SSL connection delegate.
- * In the future the delegate might have influence on other policies.
- * \ingroup baseten
+ * Handle an error.
+ * Various methods in BXDatabaseContext have an NSError** parameter. In addition,
+ * the context has an errorHandlerDelegate outlet. If no error handler has been 
+ * set, the database context will handle errors itself. 
+ * 
+ * When the NSError** parameter has been supplied to the methods, no action 
+ * will be taken and the error is assumed to have been handled. If the parameter
+ * is NULL and an error occurs, a BXException named \c kBXExceptionUnhandledError
+ * will be thrown.
+ *
+ * \param context			The database context from which the error originated.
+ * \param anError			The error.
+ * \param willBePassedOn	Whether the calling method's NSError** parameter was set or not.
  */
-@interface NSObject (BXPolicyDelegate)
+- (void) BXDatabaseContext: (BXDatabaseContext *) context 
+				  hadError: (NSError *) anError 
+			willBePassedOn: (BOOL) willBePassedOn;
+
+- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
+
 /**
  * Policy for invalid trust.
  * The server certificate will be verified using the system keychain. On failure this 
@@ -48,6 +82,7 @@
 - (enum BXCertificatePolicy) BXDatabaseContext: (BXDatabaseContext *) ctx 
                             handleInvalidTrust: (SecTrustRef) trust 
                                         result: (SecTrustResultType) result;
+
 /**
  * Secure connection mode for the context.
  * The mode may be one of require, disable and prefer. In prefer mode,
@@ -56,5 +91,5 @@
  * will be tried.
  */
 - (enum BXSSLMode) BXSSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
-@end
 
+@end

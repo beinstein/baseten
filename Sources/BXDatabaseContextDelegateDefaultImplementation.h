@@ -1,5 +1,5 @@
 //
-// BXErrorHandlerDelegate.h
+// BXDatabaseContextDelegateDefaultImplementation.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,31 +27,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <BaseTen/BXDatabaseContextDelegateProtocol.h>
 
-@class BXDatabaseContext;
 
-/**
- * A protocol for an error handler delegate.
- * \ingroup baseten
- */
-@interface NSObject (BXErrorHandlerDelegate)
-/**
- * Handle an error.
- * Various methods in BXDatabaseContext have an NSError** parameter. In addition,
- * the context has an errorHandlerDelegate outlet. If no error handler has been 
- * set, the database context will handle errors itself. 
- * 
- * When the NSError** parameter has been supplied to the methods, no action 
- * will be taken and the error is assumed to have been handled. If the parameter
- * is NULL and an error occurs, a BXException named \c kBXExceptionUnhandledError
- * will be thrown.
- *
- * \param context			The database context from which the error originated.
- * \param anError			The error.
- * \param willBePassedOn	Whether the calling method's NSError** parameter was set or not.
- */
-- (void) BXDatabaseContext: (BXDatabaseContext *) context 
-				  hadError: (NSError *) anError 
-			willBePassedOn: (BOOL) willBePassedOn;
+@interface BXDatabaseContextDelegateDefaultImplementation : NSObject <BXDatabaseContextDelegate>
+{
+}
+
 @end
-

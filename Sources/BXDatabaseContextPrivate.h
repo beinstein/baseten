@@ -42,6 +42,7 @@
 
 /* Really internal. */
 + (void) loadedAppKitFramework;
+- (id <BXDatabaseContextDelegate>) internalDelegate;
 - (id) executeFetchForEntity: (BXEntityDescription *) entity 
                withPredicate: (NSPredicate *) predicate 
              returningFaults: (BOOL) returnFaults 
@@ -103,12 +104,4 @@
 
 @interface BXDatabaseContext (Callbacks)
 - (void) BXConnectionSetupManagerFinishedAttempt;
-@end
-
-
-@interface BXDatabaseContext (DefaultErrorHandler)
-- (void) BXDatabaseContext: (BXDatabaseContext *) context 
-				  hadError: (NSError *) error 
-			willBePassedOn: (BOOL) willBePassedOn;
-- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
 @end

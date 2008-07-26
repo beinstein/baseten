@@ -47,7 +47,6 @@
 #import "BXObjectStatusInfo.h"
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
-#import "BXErrorHandlerDelegate.h"
 #import "BXLogger.h"
 
 
@@ -473,7 +472,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	}
 	
 	if (nil != error)
-		[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
+		[[mContext internalDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
 	else
 	{
 		if (nil == retval)
@@ -549,7 +548,7 @@ ParseSelector (SEL aSelector, NSString** key)
         }
         else
         {
-			[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
+			[[mContext internalDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
         }
     }
 }
@@ -575,7 +574,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	}
 	
     if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: dict error: &error])
-		[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
+		[[mContext internalDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
 }
 
 /** 

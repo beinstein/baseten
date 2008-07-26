@@ -34,7 +34,6 @@
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXDatabaseContextPrivate.h"
-#import "BXErrorHandlerDelegate.h"
 
 
 //Sadly, this is needed to receive the set proxy and to get a method signature.
@@ -174,7 +173,7 @@
         NSError* localError = nil;
         [mRelationship setTarget: realContainer forObject: mOwner error: &localError];
         if (nil != localError)
-			[[mContext errorHandlerDelegate] BXDatabaseContext: mContext hadError: localError willBePassedOn: NO];
+			[[mContext internalDelegate] BXDatabaseContext: mContext hadError: localError willBePassedOn: NO];
         
         //Switch back.
         mContainer = realContainer;

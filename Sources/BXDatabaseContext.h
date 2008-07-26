@@ -29,6 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
 #import <BaseTen/BXConstants.h>
+#import <BaseTen/BXDatabaseContextDelegateProtocol.h>
 
 #ifndef IBAction
 #define IBAction void
@@ -69,13 +70,11 @@
     NSMutableSet*                           mEntities;
     NSMutableSet*                           mRelationships;
 	NSMutableDictionary*					mEntitiesBySchema;
+	id <BXDatabaseContextDelegate>			mDelegateProxy;
 	
 	/** An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;
-	/** A delegate for policies. Currently used with SSL connections. \see NSObject(BXPolicyDelegate) */
-	IBOutlet id								policyDelegate;
-	/** A delegate for error handling. \see NSObject(BXErrorHandlerDelegate) */
-	IBOutlet id								errorHandlerDelegate;
+	IBOutlet id	<BXDatabaseContextDelegate>	delegate;
 	
 	enum BXConnectionErrorHandlingState		mConnectionErrorHandlingState;
 
@@ -108,9 +107,11 @@
 - (void) rollback;
 - (BOOL) save: (NSError **) error;
 
-- (void) connect;
-- (void) connectIfNeeded: (NSError **) error;
-- (void) disconnect; /* Only for ending asynchronous connection attempt */
+- (BOOL) connectSync: (NSError **) error;
+- (void) connectAsync;
+- (void) disconnect;
+
+- (BOOL) connectIfNeeded: (NSError **) error;
 
 - (NSArray *) faultsWithIDs: (NSArray *) anArray;
 - (BXDatabaseObject *) registeredObjectWithID: (BXDatabaseObjectID *) objectID;
@@ -121,11 +122,9 @@
 - (BOOL) setUndoManager: (NSUndoManager *) aManager;
 
 - (NSWindow *) modalWindow;
-- (id) policyDelegate;
-- (id) errorHandlerDelegate;
 - (void) setModalWindow: (NSWindow *) aWindow;
-- (void) setPolicyDelegate: (id) anObject;
-- (void) setErrorHandlerDelegate: (id) anObject;
+- (id <BXDatabaseContextDelegate>) delegate;
+- (void) setDelegate: (id <BXDatabaseContextDelegate>) anObject;
 
 - (BOOL) usesKeychain;
 - (void) setUsesKeychain: (BOOL) usesKeychain;

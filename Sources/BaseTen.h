@@ -34,6 +34,7 @@
 
 
 #import <BaseTen/BXDatabaseContext.h>
+#import <BaseTen/BXDatabaseContextDelegateProtocol.h>
 #import <BaseTen/BXConstants.h>
 #import <BaseTen/BXDatabaseObject.h>
 #import <BaseTen/BXInterface.h>

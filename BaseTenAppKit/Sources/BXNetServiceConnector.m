@@ -112,7 +112,7 @@
         else
         {
             [databaseContext setConnectionSetupManager: self];
-            [databaseContext connect];
+            [databaseContext connectAsync];
         }
     }
     else
@@ -145,7 +145,7 @@
 	{
 		BXAssertVoidReturn (nil != databaseContext, @"Expected databaseContext not to be nil.");
 		[databaseContext setConnectionSetupManager: self];
-		[databaseContext connect];
+		[databaseContext connectAsync];
 	}
     else
     {
@@ -210,7 +210,10 @@
 - (void) connectionSetupAlertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
 	//FIXME: userinfo?
-	[[databaseContext notificationCenter] postNotificationName: kBXConnectionSetupAlertDidEndNotification object: databaseContext];
+	NSNotification* notification = [NSNotification notificationWithName: kBXConnectionSetupAlertDidEndNotification
+																 object: databaseContext];
+	[[databaseContext internalDelegate] BXDatabaseContextConnectionFailureAlertDismissed: notification];
+	[[databaseContext notificationCenter] postNotification: notification];
 }
 
 - (void) setDatabaseContext: (BXDatabaseContext *) aContext

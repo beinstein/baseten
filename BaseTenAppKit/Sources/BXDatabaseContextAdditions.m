@@ -30,6 +30,7 @@
 #import "BXNetServiceConnector.h"
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/BXDelegateProxy.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 
 
@@ -37,6 +38,8 @@
 
 - (void) awakeFromNib
 {
+	[(BXDelegateProxy *) mDelegateProxy setDelegateForBXDelegateProxy: delegate];
+	
 	if (mConnectsOnAwake)
 	{
 		[modalWindow makeKeyAndOrderFront: nil];
@@ -71,7 +74,7 @@
 	[mDatabaseInterface handledTrust: (SecTrustRef) trust accepted: accepted];
 	
 	if (accepted)
-		[self connect];
+		[self connectAsync];
 	else
 	{
 		[self setCanConnect: YES];
@@ -80,6 +83,7 @@
 		NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
 																	 object: self 
 																   userInfo: nil];
+		[mDelegateProxy BXDatabaseContextFailedToConnect: notification];
 		[[self notificationCenter] postNotification: notification];
 	}
 }
