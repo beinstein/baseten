@@ -459,10 +459,9 @@ bx_query_during_reconnect ()
 		[mDatabaseInterface release];
 		mDatabaseInterface = nil;
 		
-        NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
-                                                                     object: self
-                                                                   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
-		[mDelegateProxy BXDatabaseContextFailedToConnect: notification];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey];
+        NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
+		[mDelegateProxy BXDatabaseContext: self failedToConnect: localError];
         [[self notificationCenter] postNotification: notification];
 	}	
 }
@@ -1539,7 +1538,7 @@ bx_query_during_reconnect ()
 				if (! mDidDisconnect && error)
 					userInfo = [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey];
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
-				[mDelegateProxy BXDatabaseContextFailedToConnect: notification];
+				[mDelegateProxy BXDatabaseContext: self failedToConnect: *error];
 				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
@@ -1566,20 +1565,17 @@ bx_query_during_reconnect ()
 		NSNotification* notification = nil;
 		if (nil == localError)
 		{
-			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification
-														 object: self 
-													   userInfo: nil];
-			[mDelegateProxy BXDatabaseContextFailedToConnect: notification];
+			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification object: self userInfo: nil];
+			[mDelegateProxy BXDatabaseContextConnectionSucceeded: self];
 		}
 		else
 		{
 			if (NULL != error)
 				*error = localError;
 			[mDatabaseInterface disconnect];
-			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification
-														 object: self
-													   userInfo: [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey]];
-			[mDelegateProxy BXDatabaseContextConnectionSucceeded: notification];
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey];
+			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
+			[mDelegateProxy BXDatabaseContext: self failedToConnect: localError];
 		}
 		[[self notificationCenter] postNotification: notification];
 	}

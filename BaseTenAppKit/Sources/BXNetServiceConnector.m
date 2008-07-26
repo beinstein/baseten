@@ -210,9 +210,8 @@
 - (void) connectionSetupAlertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) contextInfo
 {
 	//FIXME: userinfo?
-	NSNotification* notification = [NSNotification notificationWithName: kBXConnectionSetupAlertDidEndNotification
-																 object: databaseContext];
-	[[databaseContext internalDelegate] BXDatabaseContextConnectionFailureAlertDismissed: notification];
+	NSNotification* notification = [NSNotification notificationWithName: kBXConnectionSetupAlertDidEndNotification object: databaseContext];
+	[[databaseContext internalDelegate] BXDatabaseContextConnectionFailureAlertDismissed: databaseContext];
 	[[databaseContext notificationCenter] postNotification: notification];
 }
 

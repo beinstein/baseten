@@ -44,9 +44,9 @@
 @interface NSObject (BXDatabaseContextDelegate)
 #endif
 
-- (void) BXDatabaseContextConnectionSucceeded: (NSNotification *) notification;
-- (void) BXDatabaseContextFailedToConnect: (NSNotification *) notification;
-- (void) BXDatabaseContextConnectionFailureAlertDismissed: (NSNotification *) notification;
+- (void) BXDatabaseContextConnectionSucceeded: (BXDatabaseContext *) ctx;
+- (void) BXDatabaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error;
+- (void) BXDatabaseContextConnectionFailureAlertDismissed: (BXDatabaseContext *) ctx;
 
 /**
  * Handle an error.
