@@ -57,7 +57,6 @@
  *
  */
 
-
 /**
  * \defgroup baseten BaseTen
  * BaseTen is linked to Foundation, Security and IOKit frameworks and 
@@ -99,15 +98,18 @@
  * <h2>Documentation topics</h2>
  * \li \subpage overview
  * \li \subpage getting_started
- * \li \subpage using_appkit_classes
  * \li \subpage accessing_values
  * \li \subpage tracking_changes
+ * \li \subpage using_appkit_classes
  * \li \subpage postgresql_installation
  * \li \subpage limitations
  */
 
 /**
  * \page overview Overview of BaseTen
+ *
+ * \image html "../BaseTen-object-relationships.png" "Relationships between BaseTen's objects"
+ * \image latex "../BaseTen-object-relationships.eps" "Relationships between BaseTen's objects" width=\textwidth
  *
  * BaseTen aims to provide a Core Data -like API for handling a database. A database connection is managed
  * by an instance of BXDatabaseContext, which also fetches rows from the database. Rows are represented
@@ -162,7 +164,7 @@
 
 /**
  * \page getting_started Getting started
- * 
+ *
  * Typically accessing a database consists roughly of the following steps:
  * <ul>
  *     <li>Creating an instance of BXDatabaseContext</li>
@@ -172,7 +174,55 @@
  *     <li>Performing a fetch using the entity and the predicate</li>
  *     <li>Handling the results</li>
  * </ul>
- * Here is a small walkthrough.
+ * Here is a small walkthrough and sample code.
+ *
+ * \latexonly
+ * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, caption=A simple command line tool that uses BaseTen]
+ * #import <Foundation/Foundation.h>
+ * #import <BaseTen/BaseTen.h>
+ *
+ * int main (int argc, char** argv)
+ * {
+ *     NSURL* databaseURI = [NSURL URLWithString: @"pgsql://username@localhost/database"];
+ *     BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
+ * 
+ *     [ctx connectSync: NULL];
+ *     BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
+ *     NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];
+ *
+ *     for (BXDatabaseObject* object in result)
+ *     {
+ *         NSLog (@"Object ID: %@ column: %@", 
+ *                [[object objectID] URIRepresentation], [object valueForKey: @"column"]);
+ *     }
+ *
+ *     return 0;
+ * }
+ * \end{lstlisting} 
+ * \endlatexonly
+ * \htmlonly
+ * <pre> #import <Foundation/Foundation.h>
+ * #import <BaseTen/BaseTen.h>
+ *
+ * int main (int argc, char** argv)
+ * {
+ *     NSURL* databaseURI = [NSURL URLWithString: @"pgsql://username@localhost/database"];
+ *     BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
+ * 
+ *     [ctx connectSync: NULL];
+ *     BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
+ *     NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];
+ *
+ *     for (BXDatabaseObject* object in result)
+ *     {
+ *         NSLog (@"Object ID: %@ column: %@", 
+ *                [[object objectID] URIRepresentation], [object valueForKey: @"column"]);
+ *     }
+ *
+ *     return 0;
+ * }</pre>
+ * \endhtmlonly
  *
  *
  * \subsection creating_a_database_context Creating a database context
@@ -192,21 +242,43 @@
  *
  * \subsection connecting_to_a_database Connecting to a database
  *
+ * \latexonly 
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Connecting to a database]
+ * [ctx connectSync: NULL];
+ * \end{lstlisting}
+ * \endlatexonly
+ * \htmlonly
+ * <pre>[ctx connectSync: NULL];</pre>
+ * \endhtmlonly
+ *
+ *
  * Connection to the database may be made synchronously using the method
- * <tt>- (void) connectIfNeeded: (NSError **) error</tt>. Applications that use an NSRunLoop also have the
- * option to use <tt>- (void) connect</tt>. The method returns immediately. When the connection attempt has
- * finished, either a \c kBXConnectionSuccessfulNotification or a \c kBXConnectionFailedNotification will
+ * <tt>- (void) connectAsync: (NSError **) error</tt>. Applications that use an NSRunLoop also have the
+ * option to use <tt>- (void) connectSync</tt>. The method returns immediately. When the connection attempt has
+ * finished, either a \em kBXConnectionSuccessfulNotification or a \em kBXConnectionFailedNotification will
  * be posted to the context's notification center (accessed with <tt>-notificationCenter</tt>).
  *
  * In AppKit applications, the easiest way to connect to the database is to use
  * <tt>- (IBAction) connect: (id) sender</tt>. In addition to attempting the connection asynchronously,
  * it also presents a number of panels to the user, if some required information is missing from the URI. 
  * The panels allow the user to specify their username, password and the database host making URIs
- * like <tt>pgsql:///database_name</tt> allowed. Additionally a \c kBXConnectionSetupAlertDidEndNotification
+ * like <tt>pgsql:///database_name</tt> allowed. Additionally a \em kBXConnectionSetupAlertDidEndNotification
  * will be posted when the user dismisses an alert panel, which is presented on failure.
+ *
+ * Since \em NULL is passed in place of an NSError double pointer, a BXException will be thrown on error.
+ * See BXDatabaseContext's documentation for details on error handling.
  *
  * 
  * \subsection getting_an_entity_and_a_predicate Getting a BXEntityDescription and an NSPredicate
+ *
+ * \latexonly
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Getting a BXEntityDescription]
+ * BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
+ * \end{lstlisting}
+ * \endlatexonly
+ * \htmlonly
+ * <pre>BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];</pre>
+ * \endhtmlonly
  *
  * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
  * entity description, BXDatabaseContext has two methods: <tt>-entityForTable:error:</tt> and 
@@ -215,50 +287,46 @@
  *
  * NSPredicates are created by various Cocoa objects and may be passed directly to BXDatabaseContext.
  * One way to create ad-hoc predicates is by using <tt>-[NSPredicate predicateWithFormat]</tt>.
+ * In this example, we fetch all the objects instead of filtering them, though.
  *
  *
  * \subsection performing_a_fetch Performing a fetch using the entity and the predicate
  *
+ * \latexonly
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Performing a fetch]
+ * NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];
+ * \end{lstlisting}
+ * \endlatexonly
+ * \htmlonly 
+ * <pre>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</pre>
+ * \latexonly \caption{Getting a BXEntityDescription} \end{table} \endlatexonly
+ *
  * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
  * be used to fetch objects from the database. The method takes a BXEntityDescription and an NSPredicate and
  * performs a fetch synchronously. The fetched objects are returned in an NSArray.
- */
-
-/**
- * \page using_appkit_classes Using the controller subclasses provided with the framework
- *
- * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
- * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
- * some NSController subclasses have been provided with the framework. For now, the only directly usable one is 
- * BXSynchronizedArrayController. Additionally, there is BXController and additions to NSController for creating
- * controller subclasses.
  *
  *
- * \subsection using_bxsynchronizedarraycontroller Using BXSyncronizedArrayController from Interface Builder
+ * \subsection handling_the_results Handling the results
  *
- * <ol>
- *     <li>Load the BaseTen plug-in or palette.</li>
- *     <li>Create a new nib file.</li>
- *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
- *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a valid database URI. 
- *         <ul>
- *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
- *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
- *                 should be used to commit and rollback. Undo may be used between commits.</li>
- *         </ul>
- *     </li>
- *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a table name into the field.
- *         <ul>
- *             <li>The schema field may be left empty, in which case <tt>public</tt> will be used.</li>
- *             <li>Please note that the table needs to be enabled for change observing. This can be 
- *                 done using the Setup Application.</li>
- *         </ul>
- *     </li>
- *     <li>Bind the Cocoa views to the controller.</li> 
- *     <li>Test the interface. The views should be populated using the database.</li>
- * </ol>
+ * \latexonly
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Handling fetch results]
+ * for (BXDatabaseObject* object in result)
+ * {
+ *    NSLog (@"Object ID: %@ column: %@", 
+ *           [[object objectID] URIRepresentation], [object valueForKey: @"column"]);
+ * } 
+ * \end{lstlisting}
+ * \endlatexonly
+ * \htmlonly 
+ * <pre>for (BXDatabaseObject* object in result)
+ *{
+ *    NSLog (@"Object ID: %@ column: %@", 
+ *           [[object objectID] URIRepresentation], [object valueForKey: @"column"]);
+ *}</pre>
+ * \endhtmlonly 
+ *
+ * Since BXDatabaseObject conforms to \em NSKeyValueObserving, methods <tt>-valueForKey:</tt> and 
+ * <tt>-setValue:forKey:</tt> are available. See \ref accessing_values for details.
  */
 
 /**
@@ -421,6 +489,43 @@
  *
  * At the time the notifications are posted, database objects and self-updating collections will 
  * already have been updated.
+ */
+
+/**
+ * \page using_appkit_classes Using the controller subclasses provided with the framework
+ *
+ * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
+ * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
+ * some NSController subclasses have been provided with the framework. For now, the only directly usable one is 
+ * BXSynchronizedArrayController. Additionally, there is BXController and additions to NSController for creating
+ * controller subclasses.
+ *
+ *
+ * \subsection using_bxsynchronizedarraycontroller Using BXSyncronizedArrayController from Interface Builder
+ *
+ * <ol>
+ *     <li>Load the BaseTen plug-in or palette.</li>
+ *     <li>Create a new nib file.</li>
+ *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
+ *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
+ *     <li>Enter a valid database URI. 
+ *         <ul>
+ *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
+ *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
+ *                 should be used to commit and rollback. Undo may be used between commits.</li>
+ *         </ul>
+ *     </li>
+ *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
+ *     <li>Enter a table name into the field.
+ *         <ul>
+ *             <li>The schema field may be left empty, in which case <tt>public</tt> will be used.</li>
+ *             <li>Please note that the table needs to be enabled for change observing. This can be 
+ *                 done using the Setup Application.</li>
+ *         </ul>
+ *     </li>
+ *     <li>Bind the Cocoa views to the controller.</li> 
+ *     <li>Test the interface. The views should be populated using the database.</li>
+ * </ol>
  */
 
 /**

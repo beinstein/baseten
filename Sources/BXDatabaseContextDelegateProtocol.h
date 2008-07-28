@@ -34,18 +34,45 @@
 @class BXDatabaseContext;
 
 
+/**
+ * The protocol the database context's delegate needs to implement.
+ * \note Most of the protocol is declared optional.
+ */
 @protocol BXDatabaseContextDelegate <NSObject>
 
 //Optional section of the protocol either as an interface or @optional.
+/** \cond */
 #if __MAC_OS_X_VERSION_10_5 <= __MAC_OS_X_VERSION_MAX_ALLOWED
+/** \endcond */ 
 @optional
+/** \cond */
 #else
 @end
 @interface NSObject (BXDatabaseContextDelegate)
 #endif
+/** \endcond */ 
 
+/**
+ * Callback for a successful connection.
+ * Called after a successful asynchronous connection attempt.
+ * \param ctx The database context that initiated the connection.
+ */
 - (void) BXDatabaseContextConnectionSucceeded: (BXDatabaseContext *) ctx;
+
+/**
+ * Callback for a failed connection.
+ * Called after a failed asynchronous connection attempt.
+ * \param ctx The database context that initiated the connection.
+ * \param error The connection error.
+ */
 - (void) BXDatabaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error;
+
+/**
+ * Callback for a failed connection.
+ * When BaseTenAppKit is linked, BXDatabaseContext automatically displays an alert panel.
+ * This method will be called after the user has dismissed the panel.
+ * \param ctx The database context that initiated the connection.
+ */
 - (void) BXDatabaseContextConnectionFailureAlertDismissed: (BXDatabaseContext *) ctx;
 
 /**
