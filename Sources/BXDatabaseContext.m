@@ -152,7 +152,7 @@ bx_query_during_reconnect ()
  *
  * Various methods of this class take an NSError parameter. If the parameter isn't set, the context
  * will handle errors by throwing a BXException named kBXFailedToExecuteQueryException. 
- * See NSObject(BXErrorHandlerDelegate)::BXDatabaseContext:hadError:willBePassedOn:().
+ * See #databaseContext:hadError:willBePassedOn:.
  *
  * \note This class is not thread-safe, i.e. 
  *		 if methods of a BXDatabaseContext instance will be called from 
