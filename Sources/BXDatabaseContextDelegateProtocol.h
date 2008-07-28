@@ -57,7 +57,7 @@
  * Called after a successful asynchronous connection attempt.
  * \param ctx The database context that initiated the connection.
  */
-- (void) BXDatabaseContextConnectionSucceeded: (BXDatabaseContext *) ctx;
+- (void) databaseContextConnectionSucceeded: (BXDatabaseContext *) ctx;
 
 /**
  * Callback for a failed connection.
@@ -65,7 +65,7 @@
  * \param ctx The database context that initiated the connection.
  * \param error The connection error.
  */
-- (void) BXDatabaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error;
+- (void) databaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error;
 
 /**
  * Callback for a failed connection.
@@ -73,7 +73,7 @@
  * This method will be called after the user has dismissed the panel.
  * \param ctx The database context that initiated the connection.
  */
-- (void) BXDatabaseContextConnectionFailureAlertDismissed: (BXDatabaseContext *) ctx;
+- (void) databaseContextConnectionFailureAlertDismissed: (BXDatabaseContext *) ctx;
 
 /**
  * Handle an error.
@@ -90,11 +90,11 @@
  * \param anError			The error.
  * \param willBePassedOn	Whether the calling method's NSError** parameter was set or not.
  */
-- (void) BXDatabaseContext: (BXDatabaseContext *) context 
-				  hadError: (NSError *) anError 
-			willBePassedOn: (BOOL) willBePassedOn;
+- (void) databaseContext: (BXDatabaseContext *) context 
+				hadError: (NSError *) anError 
+		  willBePassedOn: (BOOL) willBePassedOn;
 
-- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
+- (void) databaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
 
 /**
  * Policy for invalid trust.
@@ -106,9 +106,9 @@
  * \param trust   A trust created from the certificate
  * \param result  Initial verification result
  */
-- (enum BXCertificatePolicy) BXDatabaseContext: (BXDatabaseContext *) ctx 
-                            handleInvalidTrust: (SecTrustRef) trust 
-                                        result: (SecTrustResultType) result;
+- (enum BXCertificatePolicy) databaseContext: (BXDatabaseContext *) ctx 
+						  handleInvalidTrust: (SecTrustRef) trust 
+									  result: (SecTrustResultType) result;
 
 /**
  * Secure connection mode for the context.
@@ -117,6 +117,6 @@
  * than a certificate verification problem, an insecure connection
  * will be tried.
  */
-- (enum BXSSLMode) BXSSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
+- (enum BXSSLMode) SSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
 
 @end

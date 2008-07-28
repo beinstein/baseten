@@ -33,15 +33,15 @@
 
 
 @implementation BXDatabaseContextDelegateDefaultImplementation
-- (void) BXDatabaseContext: (BXDatabaseContext *) context 
-				  hadError: (NSError *) error 
-			willBePassedOn: (BOOL) willBePassedOn
+- (void) databaseContext: (BXDatabaseContext *) context 
+				hadError: (NSError *) error 
+		  willBePassedOn: (BOOL) willBePassedOn
 {
 	if (! willBePassedOn)
 		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
 }
 
-- (void) BXDatabaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error
+- (void) databaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error
 {
 	if (NULL != NSApp)
 	{
@@ -55,9 +55,9 @@
 	@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
 }
 
-- (enum BXCertificatePolicy) BXDatabaseContext: (BXDatabaseContext *) ctx 
-                            handleInvalidTrust: (SecTrustRef) trust 
-                                        result: (SecTrustResultType) result
+- (enum BXCertificatePolicy) databaseContext: (BXDatabaseContext *) ctx 
+						  handleInvalidTrust: (SecTrustRef) trust 
+									  result: (SecTrustResultType) result
 {
 	enum BXCertificatePolicy policy = kBXCertificatePolicyDeny;
 	if (NULL != NSApp)
@@ -65,7 +65,7 @@
 	return policy;
 }
 
-- (enum BXSSLMode) BXSSLModeForDatabaseContext: (BXDatabaseContext *) ctx
+- (enum BXSSLMode) SSLModeForDatabaseContext: (BXDatabaseContext *) ctx
 {
 	return kBXSSLModePrefer;
 }

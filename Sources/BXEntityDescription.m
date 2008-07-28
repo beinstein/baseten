@@ -84,7 +84,10 @@ static id gEntities;
     return nil;
 }
 
-/** \note Override -dealloc2 in subclasses instead! */
+/** 
+ * \internal
+ * \note Override -dealloc2 in subclasses instead! 
+ */
 - (void) dealloc
 {
 	@synchronized (gEntities)
@@ -121,6 +124,7 @@ static id gEntities;
 }
 
 /** 
+ * \internal
  * Deallocation helper. 
  * Subclasses should override this instead of dealloc and then call 
  * super's implementation of dealloc2. This is because BXEntityDescriptions 

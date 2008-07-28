@@ -73,7 +73,7 @@ BXHandleError2 (id ctx, id <BXDatabaseContextDelegate> delegateProxy, NSError **
     if (nil != localError)
     {
         BOOL haveError = (NULL != error);
-        [delegateProxy BXDatabaseContext: ctx hadError: localError willBePassedOn: haveError];
+        [delegateProxy databaseContext: ctx hadError: localError willBePassedOn: haveError];
         if (haveError)
             *error = localError;
     }
@@ -461,7 +461,7 @@ bx_query_during_reconnect ()
 		
 		NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey];
         NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
-		[mDelegateProxy BXDatabaseContext: self failedToConnect: localError];
+		[mDelegateProxy databaseContext: self failedToConnect: localError];
         [[self notificationCenter] postNotification: notification];
 	}	
 }
@@ -924,7 +924,7 @@ bx_query_during_reconnect ()
 		NSError* localError = nil;
 		[mDatabaseInterface establishSavepoint: &localError];
 		if (nil != localError)
-			[mDelegateProxy BXDatabaseContext: self hadError: localError willBePassedOn: NO];
+			[mDelegateProxy databaseContext: self hadError: localError willBePassedOn: NO];
 		[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 	}
 }
@@ -985,7 +985,7 @@ bx_query_during_reconnect ()
     [mDatabaseInterface rollbackToLastSavepoint: &error];
 	//FIXME: in which case does the query fail? Should we be prepared for that?
 	if (nil != error)
-		[mDelegateProxy BXDatabaseContext: self hadError: error willBePassedOn: NO];
+		[mDelegateProxy databaseContext: self hadError: error willBePassedOn: NO];
 }
 
 #if 0
@@ -1472,7 +1472,7 @@ bx_query_during_reconnect ()
 
 - (void) connectionLost: (NSError *) error
 {
-	[mDelegateProxy BXDatabaseContext: self lostConnection: error];
+	[mDelegateProxy databaseContext: self lostConnection: error];
 }
 
 - (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
@@ -1538,7 +1538,7 @@ bx_query_during_reconnect ()
 				if (! mDidDisconnect && error)
 					userInfo = [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey];
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
-				[mDelegateProxy BXDatabaseContext: self failedToConnect: *error];
+				[mDelegateProxy databaseContext: self failedToConnect: *error];
 				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
@@ -1566,7 +1566,7 @@ bx_query_during_reconnect ()
 		if (nil == localError)
 		{
 			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification object: self userInfo: nil];
-			[mDelegateProxy BXDatabaseContextConnectionSucceeded: self];
+			[mDelegateProxy databaseContextConnectionSucceeded: self];
 		}
 		else
 		{
@@ -1575,7 +1575,7 @@ bx_query_during_reconnect ()
 			[mDatabaseInterface disconnect];
 			NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey];
 			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
-			[mDelegateProxy BXDatabaseContext: self failedToConnect: localError];
+			[mDelegateProxy databaseContext: self failedToConnect: localError];
 		}
 		[[self notificationCenter] postNotification: notification];
 	}
@@ -1833,7 +1833,7 @@ bx_query_during_reconnect ()
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result
 {
 	BOOL retval = NO;
-	enum BXCertificatePolicy policy = [mDelegateProxy BXDatabaseContext: self handleInvalidTrust: trust result: result];
+	enum BXCertificatePolicy policy = [mDelegateProxy databaseContext: self handleInvalidTrust: trust result: result];
 	switch (policy)
 	{			
 		case kBXCertificatePolicyAllow:
@@ -1855,7 +1855,7 @@ bx_query_during_reconnect ()
 	SecTrustRef trust = trustResult.trust;
 	SecTrustResultType result = trustResult.result;
 	
-	enum BXCertificatePolicy policy = [mDelegateProxy BXDatabaseContext: self handleInvalidTrust: trust result: result];	
+	enum BXCertificatePolicy policy = [mDelegateProxy databaseContext: self handleInvalidTrust: trust result: result];	
 	switch (policy)
 	{			
 		case kBXCertificatePolicyAllow:
@@ -1884,7 +1884,7 @@ bx_query_during_reconnect ()
 {
 	enum BXSSLMode mode = kBXSSLModeDisable;
 	if (NO == mRetryingConnection)
-		mode = [mDelegateProxy BXSSLModeForDatabaseContext: self];
+		mode = [mDelegateProxy SSLModeForDatabaseContext: self];
 	return mode;
 }
 @end

@@ -174,7 +174,7 @@
  *     <li>Performing a fetch using the entity and the predicate</li>
  *     <li>Handling the results</li>
  * </ul>
- * Here is a small walkthrough and sample code.
+ * Here is a small walkthrough with sample code.
  *
  * \latexonly
  * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
@@ -533,8 +533,8 @@
  *
  * Here's a brief tutorial on PostgreSQL installation.
  * \li Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.
- * \li Uncompress, configure, make, [sudo] make install. No special options are required, so 
- *     \c <tt>./configure && make && sudo make install</tt> is enough.
+ * \li Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so
+ *     <tt>./configure --with-bonjour --with-openssl && make && sudo make install</tt> gives the expected results.
  * \li It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.\n
  * \li Make <tt>mysql</tt> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
  *     <tt>

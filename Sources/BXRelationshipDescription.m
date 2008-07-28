@@ -53,7 +53,10 @@
     [super dealloc];
 }
 
-/** Deallocation helper. */
+/** 
+ * \internal
+ * Deallocation helper. 
+ */
 - (void) dealloc2
 {
 	[mForeignKey release];

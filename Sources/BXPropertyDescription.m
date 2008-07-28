@@ -44,7 +44,10 @@ __strong static id gProperties = nil;
  */
 @implementation BXPropertyDescription
 
-/** \note Override dealloc2 in subclasses instead! */
+/** 
+ * \internal
+ * \note Override dealloc2 in subclasses instead! 
+ */
 - (void) dealloc
 {
 	[[self class] unregisterProperty: self entity: mEntity];
@@ -53,6 +56,7 @@ __strong static id gProperties = nil;
 }
 
 /**
+ * \internal
  * Deallocation helper. 
  * Subclasses should override this instead of dealloc and then call 
  * super's implementation of dealloc2. This is because BXPropertyDescriptions 

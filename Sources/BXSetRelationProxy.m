@@ -173,7 +173,7 @@
         NSError* localError = nil;
         [mRelationship setTarget: realContainer forObject: mOwner error: &localError];
         if (nil != localError)
-			[[mContext internalDelegate] BXDatabaseContext: mContext hadError: localError willBePassedOn: NO];
+			[[mContext internalDelegate] databaseContext: mContext hadError: localError willBePassedOn: NO];
         
         //Switch back.
         mContainer = realContainer;

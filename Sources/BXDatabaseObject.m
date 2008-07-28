@@ -472,7 +472,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	}
 	
 	if (nil != error)
-		[[mContext internalDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
+		[[mContext internalDelegate] databaseContext: mContext hadError: error willBePassedOn: NO];
 	else
 	{
 		if (nil == retval)
@@ -548,7 +548,7 @@ ParseSelector (SEL aSelector, NSString** key)
         }
         else
         {
-			[[mContext internalDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
+			[[mContext internalDelegate] databaseContext: mContext hadError: error willBePassedOn: NO];
         }
     }
 }
@@ -574,7 +574,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	}
 	
     if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: dict error: &error])
-		[[mContext internalDelegate] BXDatabaseContext: mContext hadError: error willBePassedOn: NO];
+		[[mContext internalDelegate] databaseContext: mContext hadError: error willBePassedOn: NO];
 }
 
 /** 

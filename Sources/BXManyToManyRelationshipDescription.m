@@ -39,7 +39,10 @@
 
 @implementation BXManyToManyRelationshipDescription
 
-/** Deallocation helper. */
+/** 
+ * \internal
+ * Deallocation helper. 
+ */
 - (void) dealloc2
 {
 	[mDstForeignKey release];
