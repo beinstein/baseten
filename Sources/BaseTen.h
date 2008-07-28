@@ -108,8 +108,8 @@
 /**
  * \page overview Overview of BaseTen
  *
- * \image html "../BaseTen-object-relationships.png" "Relationships between BaseTen's objects"
- * \image latex "../BaseTen-object-relationships.eps" "Relationships between BaseTen's objects" width=\textwidth
+ * \image html BaseTen-object-relationships.png "Relationships between BaseTen's objects"
+ * \image latex BaseTen-object-relationships.eps "Relationships between BaseTen's objects" width=\textwidth
  *
  * BaseTen aims to provide a Core Data -like API for handling a database. A database connection is managed
  * by an instance of BXDatabaseContext, which also fetches rows from the database. Rows are represented
