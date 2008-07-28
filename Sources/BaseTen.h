@@ -109,7 +109,7 @@
  * \page overview Overview of BaseTen
  *
  * \image html BaseTen-object-relationships.png "Relationships between BaseTen's objects"
- * \image latex BaseTen-object-relationships.eps "Relationships between BaseTen's objects" width=\textwidth
+ * \image latex BaseTen-object-relationships.pdf "Relationships between BaseTen's objects" width=\textwidth
  *
  * BaseTen aims to provide a Core Data -like API for handling a database. A database connection is managed
  * by an instance of BXDatabaseContext, which also fetches rows from the database. Rows are represented
@@ -130,7 +130,7 @@
  * copes with this situation by updating objects' contents as soon as other database clients commit their
  * changes.
  *
- * Instead of constantly polling the database for changes, BaseTen listes for PostgreSQL notifications.
+ * Instead of constantly polling the database for changes, BaseTen listens for PostgreSQL notifications.
  * It then queries the database about the notification type and faults the relevant objects. For this to
  * work, certain tables, views and functions need to be created in the database. The easiest way to do this
  * is to connect to the database with BaseTen Assistant. Using it, relations may be enabled for use with 
@@ -160,6 +160,26 @@
  *
  * PostgreSQL allows INSERT and UPDATE queries to target views if rules have been created to handle them.
  * In this case, the view contents may be modified also by using BaseTen.
+ *
+ *
+ * \subsection baseten_enabling More detail on enabling relations
+ *
+ * Some tables are created in BaseTen schema to track changes in other relations. The tables and relations
+ * correspond to each other based on their names. The BaseTen tables store values for the actual relations' 
+ * primary keys. Thus, there will be two restrictions on table handling:
+ * \li Renaming tables after having them enabled will not work.
+ *     Should tables need to be renamed, first disable the table, then rename it and finally prepare it again.
+ * \li Changing tables' primary keys after having them enabled will not work. Use the method 
+ *     described above.
+ *
+ * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
+ * The functions are baseten.prepareformodificationobserving and baseten.cancelmodificationobserving and 
+ * they take an oid as an argument.
+ *
+ * Views' primary keys are stored in baseten.viewprimarykey. The table has three columns: nspname, relname 
+ * and attname, which correspond to the view's schema name, the view's name and each primary key column's 
+ * name respectively. They also make up the table's primary key. In addition to using BaseTen Assistant, it
+ * is possible to determine a view's primary key by inserting rows into the table.
  */
 
 /**
@@ -561,10 +581,6 @@
  * \page limitations Limitations in current version
  * 
  * These are some of the most severe limitations in the current version.
- * \li Renaming tables after having them prepared for modification observing will not work.
- *     Should tables need to be renamed, first cancel modification observing, then rename the table and finally prepare it again.
- * \li Changing tables' primary keys after having them prepared for modification observing will not work. Use the method 
- *     described above.
  * \li Practically all public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
  *     Furthermore, all queries must be performed from the thread in which the context made a database connection. This could change
  *     in the future, so it is best to create and handle a context only in one thread.
