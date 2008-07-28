@@ -534,7 +534,7 @@
  * Here's a brief tutorial on PostgreSQL installation.
  * \li Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.
  * \li Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so
- *     <tt>./configure --with-bonjour --with-openssl && make && sudo make install</tt> gives the expected results.
+ *     <tt>./configure --with-bonjour --with-openssl && make && sudo make install</tt> probably gives the expected results.
  * \li It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.\n
  * \li Make <tt>mysql</tt> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
  *     <tt>
@@ -542,7 +542,7 @@
  *         sudo -u mysql -s
  *     </tt>
  * \li Initialize the PostgreSQL database folder. We'll use en_US.UTF-8 as the default locale:\n
- *     <tt>LC_ALL=en_US.UTF-8 /usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data</tt>
+ *     <tt>LC_ALL=en_US.UTF-8 /usr/local/pgsql/bin/initdb -D \\\n /usr/local/pgsql/data</tt>
  * \li Launch the PostgreSQL server itself:\n
  *     <tt>
  *        /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data \\\n
