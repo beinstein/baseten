@@ -94,6 +94,7 @@ NSString* const kPGTSParameterIndexKey = @"kPGTSParameterIndexKey";
 NSString* const kPGTSExpressionParametersVerbatimKey = @"kPGTSExpressionParametersVerbatimKey";
 
 NSString* const kPGTSErrorDomain                  = @"kPGTSErrorDomain";
+NSString* const kPGTSConnectionErrorDomain        = @"kPGTSConnectionErrorDomain";
 
 NSString* const kPGTSErrorSeverity                = @"kPGTSErrorSeverity";
 NSString* const kPGTSErrorSQLState                = @"kPGTSErrorSQLState";
@@ -108,6 +109,7 @@ NSString* const kPGTSErrorStatementPosition       = @"kPGTSErrorStatementPositio
 NSString* const kPGTSErrorInternalPosition        = @"kPGTSErrorInternalPosition";
 NSString* const kPGTSErrorSourceLine              = @"kPGTSErrorSourceLine";
 NSString* const kPGTSErrorMessage				  = @"kPGTSErrorMessage";
+NSString* const kPGTSSSLAttemptedKey			  = @"kPGTSSSLAttemptedKey";
 
 
 /** Declared in PGTSConnectionDelegate.h */

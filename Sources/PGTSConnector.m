@@ -70,6 +70,11 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
     return self;
 }
 
+- (BOOL) SSLSetUp
+{
+	return mSSLSetUp;
+}
+
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject
 {
 	mDelegate = anObject;
@@ -280,10 +285,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 			BXLogInfo (@"Unable to get connection socket from libpq.");
 		else
 		{
-#ifdef USE_SSL
-			BOOL sslSetUp = NO;
-#endif
-			
 			//Polling loop
 			while (1)
 			{
@@ -295,9 +296,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 				
 				BXLogDebug (@"Polling status: %d connection status: %d", pollingStatus, PQstatus (mConnection));
 #ifdef USE_SSL
-				if (NO == sslSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
+				if (NO == mSSLSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
 				{
-					sslSetUp = YES;
+					mSSLSetUp = YES;
 					SSL* ssl = PQgetssl (mConnection);
 					BXAssertValueReturn (NULL != ssl, NO, @"Expected ssl struct not to be NULL.");
 					SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);

@@ -27,6 +27,9 @@
 //
 
 #import <CoreFoundation/CoreFoundation.h>
+#import <AppKit/AppKit.h>
+#import "postgresql/libpq-fe.h"
+
 #import "PGTSConnection.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSConnector.h"
@@ -41,7 +44,7 @@
 #import "PGTSNotification.h"
 #import "PGTSProbes.h"
 #import "BXLogger.h"
-#import <AppKit/AppKit.h>
+#import "libpq_additions.h"
 
 
 @interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
@@ -341,6 +344,27 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	return [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
 }
 
+- (NSError *) connectionError
+{
+	//This becomes unavailable after the delegate method call because the connector gets set to nil.
+	enum PGTSConnectionError code = kPGTSConnectionErrorNone;
+	BOOL SSLAttempted = [mConnector SSLSetUp];
+	const char* SSLMode = pq_ssl_mode (mConnection);
+	
+	if (! SSLAttempted && 0 == strcmp ("require", SSLMode))
+		code = kPGTSConnectionErrorSSLUnavailable;
+	else if (PQconnectionNeedsPassword (mConnection))
+		code = kPGTSConnectionErrorPasswordRequired;
+	else if (PQconnectionUsedPassword (mConnection))
+		code = kPGTSConnectionErrorInvalidPassword;
+	else
+		code = kPGTSConnectionErrorUnknown;
+	
+	NSError* retval = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: nil];
+	return retval;
+	return nil;
+}
+
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate
 {
 	return mCertificateVerificationDelegate;
@@ -431,7 +455,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 @implementation PGTSConnection (PGTSConnectorDelegate)
 - (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded
 {
-	[self setConnector: nil];
 	mConnection = connection;
 	if (succeeded)
 	{
@@ -473,6 +496,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
         [mDelegate PGTSConnectionFailed: self];
 	}
+	[self setConnector: nil];
 }
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate

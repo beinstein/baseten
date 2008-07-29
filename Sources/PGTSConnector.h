@@ -43,6 +43,7 @@
 	PostgresPollingStatusType (* mPollFunction)(PGconn *);
 	PGconn* mConnection;
 	FILE* mTraceFile;
+	BOOL mSSLSetUp;
 }
 - (BOOL) connect: (const char *) connectionString;
 - (void) cancel;
@@ -51,6 +52,8 @@
 
 - (BOOL) start: (const char *) connectionString;
 - (void) setTraceFile: (FILE *) stream;
+
+- (BOOL) SSLSetUp; //Was SSL tried during connection?
 @end
 
 
@@ -59,7 +62,6 @@
 	CFRunLoopRef mRunLoop;
 	CFSocketRef mSocket;
 	CFRunLoopSourceRef mSocketSource;
-	BOOL mSSLSetUp;
 }
 - (void) socketReady;
 - (void) finishedConnecting: (BOOL) succeeded;

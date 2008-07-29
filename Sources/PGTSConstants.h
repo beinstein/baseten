@@ -114,9 +114,11 @@ PGTS_EXPORT NSString* const kPGTSErrorStatementPosition;
 PGTS_EXPORT NSString* const kPGTSErrorInternalPosition;
 PGTS_EXPORT NSString* const kPGTSErrorSourceLine;
 PGTS_EXPORT NSString* const kPGTSErrorMessage;
+PGTS_EXPORT NSString* const kPGTSSSLAttemptedKey;
     
 
 PGTS_EXPORT NSString* const kPGTSErrorDomain;
+PGTS_EXPORT NSString* const kPGTSConnectionErrorDomain;
 enum PGTSErrors
 {
     kPGTSUnsuccessfulQueryError = 1

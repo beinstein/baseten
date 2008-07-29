@@ -55,6 +55,15 @@
 @end
 
 
+enum PGTSConnectionError
+{
+	kPGTSConnectionErrorNone = 0,
+	kPGTSConnectionErrorUnknown,
+	kPGTSConnectionErrorSSLUnavailable,
+	kPGTSConnectionErrorPasswordRequired,
+	kPGTSConnectionErrorInvalidPassword
+};
+
 
 @interface PGTSConnection : NSObject
 {
@@ -87,6 +96,7 @@
 - (PGTSDatabaseDescription *) databaseDescription;
 - (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc;
 - (id) deserializationDictionary;
+- (NSError *) connectionError;
 - (NSString *) errorString;
 - (ConnStatusType) connectionStatus;
 - (PGTransactionStatusType) transactionStatus;

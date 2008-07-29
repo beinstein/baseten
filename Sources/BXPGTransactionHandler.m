@@ -296,7 +296,9 @@ SSLMode (enum BXSSLMode mode)
 							  errorMessage, kBXErrorMessageKey,
 							  errorDescription, NSLocalizedDescriptionKey,
 							  nil];
-	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionFailed userInfo: userInfo];
+	NSInteger code = kBXErrorConnectionFailed;
+	
+	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
 
 	if (mAsync)
 		[mInterface connectionFailed: error];

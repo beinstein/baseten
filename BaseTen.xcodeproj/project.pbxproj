@@ -240,6 +240,8 @@
 		538A83870E1D2ACE0025B3C8 /* prompt.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A83050E1D1DD30025B3C8 /* prompt.c */; };
 		538A83880E1D2ACF0025B3C8 /* stringutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82F80E1D1C1B0025B3C8 /* stringutils.c */; };
 		5390DE590E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */; };
+		53915F9E0E3FD22D0098B419 /* libpq_additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53915F9C0E3FD22D0098B419 /* libpq_additions.h */; };
+		53915F9F0E3FD22D0098B419 /* libpq_additions.c in Sources */ = {isa = PBXBuildFile; fileRef = 53915F9D0E3FD22D0098B419 /* libpq_additions.c */; };
 		5395E7260E2F77DF006E8441 /* BXPGEntityImporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5395E7240E2F77DF006E8441 /* BXPGEntityImporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5395E7270E2F77DF006E8441 /* BXPGEntityImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5395E7250E2F77DF006E8441 /* BXPGEntityImporter.m */; };
 		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -528,6 +530,8 @@
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
 		538A83CC0E1D85420025B3C8 /* sql_parser_exports */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sql_parser_exports; sourceTree = "<group>"; };
 		5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXPGCurrentCompatVersion.m.m4; path = Sources/BXPGCurrentCompatVersion.m.m4; sourceTree = "<group>"; };
+		53915F9C0E3FD22D0098B419 /* libpq_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libpq_additions.h; path = Sources/libpq_additions.h; sourceTree = "<group>"; };
+		53915F9D0E3FD22D0098B419 /* libpq_additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libpq_additions.c; path = Sources/libpq_additions.c; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
 		5395E7240E2F77DF006E8441 /* BXPGEntityImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGEntityImporter.h; path = Sources/BXPGEntityImporter.h; sourceTree = "<group>"; };
 		5395E7250E2F77DF006E8441 /* BXPGEntityImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGEntityImporter.m; path = Sources/BXPGEntityImporter.m; sourceTree = "<group>"; };
@@ -888,6 +892,8 @@
 				53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */,
 				53666CC00E1CD8D20028DBEA /* PGTSFunctions.h */,
 				53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */,
+				53915F9C0E3FD22D0098B419 /* libpq_additions.h */,
+				53915F9D0E3FD22D0098B419 /* libpq_additions.c */,
 			);
 			name = Other;
 			sourceTree = "<group>";
@@ -1177,6 +1183,7 @@
 				539ACEC80E3B3FF7006602B5 /* BXDelegateProxy.h in Headers */,
 				539ACFE20E3B44BB006602B5 /* BXDatabaseContextDelegateProtocol.h in Headers */,
 				539AD0270E3B4C3F006602B5 /* BXDatabaseContextDelegateDefaultImplementation.h in Headers */,
+				53915F9E0E3FD22D0098B419 /* libpq_additions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1425,6 +1432,7 @@
 				53A59B260E34EB570026D7E1 /* BXWeakNotification.m in Sources */,
 				539ACEC90E3B3FF7006602B5 /* BXDelegateProxy.m in Sources */,
 				539AD0280E3B4C3F006602B5 /* BXDatabaseContextDelegateDefaultImplementation.m in Sources */,
+				53915F9F0E3FD22D0098B419 /* libpq_additions.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1514,6 +1522,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1531,6 +1541,8 @@
 				HEADER_SEARCH_PATHS = (
 					"$(BUILT_PRODUCTS_DIR)",
 					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
+					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
