@@ -211,7 +211,7 @@
 {
 	//FIXME: userinfo?
 	NSNotification* notification = [NSNotification notificationWithName: kBXConnectionSetupAlertDidEndNotification object: databaseContext];
-	[[databaseContext internalDelegate] BXDatabaseContextConnectionFailureAlertDismissed: databaseContext];
+	[[databaseContext internalDelegate] databaseContextConnectionFailureAlertDismissed: databaseContext];
 	[[databaseContext notificationCenter] postNotification: notification];
 }
 

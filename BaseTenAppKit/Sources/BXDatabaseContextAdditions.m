@@ -81,7 +81,7 @@
 		
 		//FIXME: Create an NSError and set it in userInfo to kBXErrorKey.
 		NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: nil];
-		[mDelegateProxy BXDatabaseContext: self failedToConnect: nil];
+		[mDelegateProxy databaseContext: self failedToConnect: nil];
 		[[self notificationCenter] postNotification: notification];
 	}
 }
