@@ -183,6 +183,9 @@
  * \em relname and \em attname, which correspond to the view's schema name, the view's name and each primary 
  * key column's name respectively. They also make up the table's primary key. In addition to using 
  * BaseTen Assistant, it is possible to determine a view's primary key by inserting rows into the table.
+ *
+ * Relationships that involve views are stored in automatically-generated tables. These may be refreshed view
+ * the SQL function <em>baseten.refreshcaches</em>. BaseTen Assistant does this automatically.
  */
 
 /**
