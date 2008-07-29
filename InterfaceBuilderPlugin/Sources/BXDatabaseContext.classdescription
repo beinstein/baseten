@@ -8,7 +8,7 @@
 	<string>NSObject</string>
 	<key>Outlets</key>
 	<dict>
-		<key>policyDelegate</key>
+		<key>delegate</key>
 		<string>id</string>
 		<key>modalWindow</key>
 		<string>NSWindow</string>
