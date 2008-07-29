@@ -203,6 +203,7 @@
 		53666D7F0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */; };
 		53666D800E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */; };
 		53666DAC0E1CE2180028DBEA /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 53666DAB0E1CE2180028DBEA /* postgresql */; settings = {ATTRIBUTES = (Private, ); }; };
+		537920580E3F519000423965 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2F7E79907B2D74100F64583 /* CoreData.framework */; };
 		537F01620DDC580500498B93 /* BXPGLockHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01600DDC580500498B93 /* BXPGLockHandler.h */; };
 		537F01630DDC580500498B93 /* BXPGLockHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 537F01610DDC580500498B93 /* BXPGLockHandler.mm */; };
 		537F016A0DDC580E00498B93 /* BXPGModificationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F01660DDC580E00498B93 /* BXPGModificationHandler.h */; };
@@ -227,7 +228,6 @@
 		53877EEC0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877EEA0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m */; };
 		538A82C50E1D16DB0025B3C8 /* psqlscan.l in Sources */ = {isa = PBXBuildFile; fileRef = 538A80BB0E1D0FA00025B3C8 /* psqlscan.l */; };
 		538A82C80E1D172A0025B3C8 /* SQLParser.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 538A82C10E1D16AC0025B3C8 /* SQLParser.o */; };
-		538A830B0E1D1E150025B3C8 /* debug-gc.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 535444210D634A98002A6C47 /* debug-gc.xcconfig */; };
 		538A83160E1D1EE00025B3C8 /* BXPGSQLScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */; };
 		538A832A0E1D1FCE0025B3C8 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82DA0E1D19920025B3C8 /* common.c */; };
 		538A832C0E1D20090025B3C8 /* variables.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82B60E1D151D0025B3C8 /* variables.c */; };
@@ -586,6 +586,7 @@
 				538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */,
 				538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */,
 				538A82C80E1D172A0025B3C8 /* SQLParser.o in Frameworks */,
+				537920580E3F519000423965 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -632,8 +633,8 @@
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				531266E40B68F9CA00637EDA /* Security.framework */,
-				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				538678D30DE31BA0000C9A78 /* IOKit.framework */,
+				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
 				53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */,
 			);
@@ -1277,7 +1278,6 @@
 			files = (
 				535443EC0D634A47002A6C47 /* datatypeassociations.plist in Resources */,
 				535443ED0D634A47002A6C47 /* BaseTen.icns in Resources */,
-				538A830B0E1D1E150025B3C8 /* debug-gc.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

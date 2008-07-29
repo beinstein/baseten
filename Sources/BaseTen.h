@@ -115,7 +115,8 @@
  *
  * BaseTen aims to provide a Core Data -like API for handling a database. A database connection is managed
  * by an instance of BXDatabaseContext, which also fetches rows from the database. Rows are represented
- * by instances of BXDatabaseObjects. Objects are identified by BXDatabaseObjectIDs, that are created using
+ * by instances of BXDatabaseObject. Objects are identified by 
+ * \link BXDatabaseObjectID BXDatabaseObjectIDs\endlink, that are created using
  * tables' primary keys. Foreign keys are interpreted as relationships between objects.
  *
  * Like some other object-relational mappers, BaseTen fetches the data model from the database. 
@@ -127,10 +128,10 @@
  * instances of BXEntityDescription and NSPredicate. This pattern should match most use cases. It is also
  * possible to fetch rows as NSDictionaries by specifying an SQL query.
  *
- * Unlike in the typical use case of Core Data, multiple users might be connected to the database being 
+ * Unlike the typical use case of Core Data, multiple users might be connected to the database being 
  * accessed using BaseTen. Thus, data manipulated with database objects could change at any time. BaseTen
  * copes with this situation by updating objects' contents as soon as other database clients commit their
- * changes.
+ * changes. The other clients needen't use BaseTen.
  *
  * Instead of constantly polling the database for changes, BaseTen listens for PostgreSQL notifications.
  * It then queries the database about the notification type and faults the relevant objects. For this to
@@ -153,7 +154,7 @@
  * rows. If a view has a group of columns that can act as a primary key, the columns may be marked as a 
  * primary key with the assistant, after which the view may be enabled.
  *
- * Views also lack foreign keys. Despite of this entities that correspond to views may have relationships
+ * Views also lack foreign keys. Despite this entities that correspond to views may have relationships
  * provided that a certain condition is met: the view needs to have the column or columns of an underlying
  * table that form a foreign key, and the columns' names need to match. In this case, relationships will 
  * be created between the view and the target table as well as the view and all the views that are based
@@ -161,7 +162,7 @@
  * view hierarchy.
  *
  * PostgreSQL allows INSERT and UPDATE queries to target views if rules have been created to handle them.
- * In this case, the view contents may be modified also by using BaseTen.
+ * In this case, the view contents may be modified also with BaseTen.
  *
  *
  * \subsection baseten_enabling More detail on enabling relations
@@ -175,13 +176,13 @@
  *     described above.
  *
  * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
- * The functions are baseten.prepareformodificationobserving and baseten.cancelmodificationobserving and 
- * they take an oid as an argument.
+ * The functions are <em>baseten.prepareformodificationobserving</em> and <em>baseten.cancelmodificationobserving</em>
+ * and they take an oid as an argument.
  *
- * Views' primary keys are stored in baseten.viewprimarykey. The table has three columns: nspname, relname 
- * and attname, which correspond to the view's schema name, the view's name and each primary key column's 
- * name respectively. They also make up the table's primary key. In addition to using BaseTen Assistant, it
- * is possible to determine a view's primary key by inserting rows into the table.
+ * Views' primary keys are stored in <em>baseten.viewprimarykey</em>. The table has three columns: \em nspname, 
+ * \em relname and \em attname, which correspond to the view's schema name, the view's name and each primary 
+ * key column's name respectively. They also make up the table's primary key. In addition to using 
+ * BaseTen Assistant, it is possible to determine a view's primary key by inserting rows into the table.
  */
 
 /**
@@ -252,14 +253,14 @@
  * The designated initializer of BXDatabaseContext is <tt>-initWithDatabaseURI:</tt>. <tt>-init</tt> is also
  * available but the context does require an URI before connecting.
  *
- * BXDatabaseContext requires the URIs to be formatted as follows:
+ * BXDatabaseContext requires the URI to be formatted as follows:
  * <tt>pgsql://username:password\@host/database_name</tt>. Currently, as PostgreSQL is the only supported 
  * database, only <tt>pgsql://</tt> URIs are allowed. All parameters are required except for the password,
  * the need for which depends on the database configuration.
  *
  * Various methods in BXDatabaseContext take a double pointer to an NSError object as a parameter. if the 
  * called method fails, the NSError will be set on return. If the parameter is NULL, the default error
- * handler raises a BXException. The error handler may be set using <tt>-setErrorHandlerDelegate:</tt>.
+ * handler raises a BXException. BXDatabaseContext's delegate may change this behaviour.
  *
  *
  * \subsection connecting_to_a_database Connecting to a database
@@ -275,13 +276,13 @@
  *
  *
  * Connection to the database may be made synchronously using the method
- * <tt>- (void) connectAsync: (NSError **) error</tt>. Applications that use an NSRunLoop also have the
- * option to use <tt>- (void) connectSync</tt>. The method returns immediately. When the connection attempt has
+ * <tt>-connectAsync:</tt>. Applications that use an NSRunLoop also have the
+ * option to use <tt>-connectSync</tt>. The method returns immediately. When the connection attempt has
  * finished, either a \em kBXConnectionSuccessfulNotification or a \em kBXConnectionFailedNotification will
  * be posted to the context's notification center (accessed with <tt>-notificationCenter</tt>).
  *
- * In AppKit applications, the easiest way to connect to the database is to use
- * <tt>- (IBAction) connect: (id) sender</tt>. In addition to attempting the connection asynchronously,
+ * In AppKit applications, the easiest way to connect to the database is to use the IBAction
+ * <tt>-connect:</tt>. In addition to attempting the connection asynchronously,
  * it also presents a number of panels to the user, if some required information is missing from the URI. 
  * The panels allow the user to specify their username, password and the database host making URIs
  * like <tt>pgsql:///database_name</tt> allowed. Additionally a \em kBXConnectionSetupAlertDidEndNotification
