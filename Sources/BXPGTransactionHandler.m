@@ -287,19 +287,8 @@ SSLMode (enum BXSSLMode mode)
 - (void) handleConnectionErrorFor: (PGTSConnection *) failedConnection
 {
 	ExpectV (mAsync || mSyncErrorPtr);
-	
-	NSString* errorMessage = [failedConnection errorString];
-	NSString* errorDescription = BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet");
-	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  errorMessage, NSLocalizedFailureReasonErrorKey,
-							  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
-							  errorMessage, kBXErrorMessageKey,
-							  errorDescription, NSLocalizedDescriptionKey,
-							  nil];
-	NSInteger code = kBXErrorConnectionFailed;
-	
-	NSError* error = [NSError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
 
+	NSError* error = [failedConnection connectionError];
 	if (mAsync)
 		[mInterface connectionFailed: error];
 	else

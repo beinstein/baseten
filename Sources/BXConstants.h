@@ -67,7 +67,8 @@ BX_EXPORT NSString* const kBXErrorDomain;
 BX_EXPORT NSString* const kBXErrorMessageKey;
 enum BXError
 {
-    kBXErrorUnsuccessfulQuery = 1,
+	kBXErrorNone = 0,
+    kBXErrorUnsuccessfulQuery,
     kBXErrorConnectionFailed,
     kBXErrorNoPrimaryKey,
     kBXErrorNoTableForEntity,
@@ -79,7 +80,8 @@ enum BXError
 	kBXErrorAuthenticationFailed,
 	kBXErrorNullConstraintNotSatisfied,
 	kBXErrorSSLError,
-	kBXErrorConnectionLost
+	kBXErrorConnectionLost,
+	kBXErrorUnknown
 };
 
 enum BXModificationType

@@ -44,6 +44,7 @@
 #import "PGTSNotification.h"
 #import "PGTSProbes.h"
 #import "BXLogger.h"
+#import "BXDatabaseAdditions.h"
 #import "libpq_additions.h"
 
 
@@ -359,10 +360,20 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		code = kPGTSConnectionErrorInvalidPassword;
 	else
 		code = kPGTSConnectionErrorUnknown;
+		
+	NSString* errorMessage = [self errorString];
+	NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"databaseError", nil, 
+															  [NSBundle bundleForClass: [self class]], 
+															  @"Database Error", @"Title for a sheet");
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  errorTitle, NSLocalizedFailureReasonErrorKey,
+							  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
+							  errorMessage, kBXErrorMessageKey,
+							  errorMessage, NSLocalizedDescriptionKey,
+							  nil];
 	
-	NSError* retval = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: nil];
+	NSError* retval = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
 	return retval;
-	return nil;
 }
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate

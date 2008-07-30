@@ -26,23 +26,27 @@
 // $Id$
 //
 
+
+@class BXDatabaseObjectID;
+@class BXAttributeDescription;
+@class BXEntityDescription;
+@class BXDatabaseContext;
+
+
 #undef TSEnumerate
 #define TSEnumerate( LOOP_VAR, ENUMERATOR_VAR, ENUMERATION )  \
 for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
      nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
 
 #define BXLocalizedString( KEY, VALUE, COMMENT ) \
-    ((void *) NSLocalizedStringWithDefaultValue( KEY, nil, [NSBundle bundleForClass:[BXDatabaseContext class]], VALUE, COMMENT ) ?: [NSNull null])
+    ((id) NSLocalizedStringWithDefaultValue( KEY, nil, [NSBundle bundleForClass:[BXDatabaseContext class]], VALUE, COMMENT ) ?: [NSNull null])
 
 #define BXSafeObj( OBJECT )  ( (void *) OBJECT ?: [NSNull null] )
 
 #define BXSafeCFRelease( CF_VAL ) ( NULL != CF_VAL ? CFRelease( CF_VAL ) : NULL )
 
-@class BXDatabaseObjectID;
-@class BXAttributeDescription;
-@class BXEntityDescription;
+#import <BaseTen/BXConstants.h>
 
-enum BXModificationType;
 
 @interface NSURL (BXDatabaseAdditions)
 - (unsigned int) BXHash;

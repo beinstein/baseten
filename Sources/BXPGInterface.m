@@ -1394,7 +1394,26 @@ bail:
 
 - (void) connectionFailed: (NSError *) error
 {
-	[mContext connectedToDatabase: NO async: YES error: &error];
+	NSInteger code = kBXErrorUnknown;	
+	switch ([error code]) 
+	{
+		case kPGTSConnectionErrorSSLUnavailable:
+			code = kBXErrorSSLError;
+			break;
+			
+		case kPGTSConnectionErrorPasswordRequired:
+		case kPGTSConnectionErrorInvalidPassword:
+			code = kBXErrorAuthenticationFailed;
+			break;
+			
+		case kPGTSConnectionErrorUnknown:
+		default:
+			break;
+	}
+	
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObject: error forKey: NSUnderlyingErrorKey];
+	NSError* newError = [NSError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
+	[mContext connectedToDatabase: NO async: YES error: &newError];
 }
 
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error
