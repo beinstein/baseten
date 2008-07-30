@@ -354,42 +354,57 @@ ParseSelector (SEL aSelector, NSString** key)
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
 {
-    NSMethodSignature* rval = [super methodSignatureForSelector: aSelector];
-    if (nil == rval)
+	//Subclasses get broken if this is replaced with -[super methodSignatureForSelector:].
+    NSMethodSignature* retval = [NSObject instanceMethodSignatureForSelector: aSelector];
+    if (! retval)
     {
         switch (ParseSelector (aSelector, NULL))
         {
             case 2:
-                rval = [super methodSignatureForSelector: @selector (setPrimitiveValue:forKey:)];
+                retval = [super methodSignatureForSelector: @selector (setPrimitiveValue:forKey:)];
                 break;
             case 1:
-                rval = [super methodSignatureForSelector: @selector (primitiveValueForKey:)];
+                retval = [super methodSignatureForSelector: @selector (primitiveValueForKey:)];
                 break;
             case 0:
             default:
                 break;
         }
     }
-    return rval;
+    return retval;
 }
 
 - (void) forwardInvocation: (NSInvocation *) invocation
 {
     NSString* key = nil;
-    switch (ParseSelector ([invocation selector], &key))
-    {
-        case 2:
-            [invocation setSelector: @selector (setPrimitiveValue:forKey:)];
-            [invocation setArgument: &key atIndex: 3];
-            break;
-        case 1:
-            [invocation setSelector: @selector (primitiveValueForKey:)];
-            [invocation setArgument: &key atIndex: 2];
-            break;
-        case 0:
-        default:
-            break;
-    }
+	NSMethodSignature* sig = [invocation methodSignature];
+	NSUInteger argCount = [sig numberOfArguments];
+	
+	//Argument count has already been influenced by -methodSignatureForSelector:.
+	switch (argCount) 
+	{
+		case 4:
+			//Possibly setter.
+			if (2 == ParseSelector ([invocation selector], &key))
+			{
+				//Argument 2 is already the value.
+				[invocation setSelector: @selector (setPrimitiveValue:forKey:)];
+				[invocation setArgument: &key atIndex: 3];
+			}
+			break;
+			
+		case 3:
+			//Possibly getter.
+			if (1 == ParseSelector ([invocation selector], &key))
+			{
+				[invocation setSelector: @selector (primitiveValueForKey:)];
+				[invocation setArgument: &key atIndex: 2];
+			}
+			break;
+			
+		default:
+			break;
+	}	
     [invocation invokeWithTarget: self];
 }
 
