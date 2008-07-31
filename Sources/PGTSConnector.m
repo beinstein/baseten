@@ -29,8 +29,10 @@
 
 #import "PGTSConnector.h"
 #import "PGTSConnection.h"
+#import "PGTSConstants.h"
 #import "PGTSCertificateVerificationDelegateProtocol.h"
 #import "BXLogger.h"
+#import "libpq_additions.h"
 #import <sys/select.h>
 
 #ifdef USE_SSL
@@ -103,6 +105,35 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 - (void) setTraceFile: (FILE *) stream
 {
 	mTraceFile = stream;
+}
+
+- (NSError *) error
+{
+	enum PGTSConnectionError code = kPGTSConnectionErrorNone;
+	const char* SSLMode = pq_ssl_mode (mConnection);
+	
+	if (! mNegotiationStarted)
+		code = kPGTSConnectionErrorUnknown;
+	else if (! mSSLSetUp && 0 == strcmp ("require", SSLMode))
+		code = kPGTSConnectionErrorSSLUnavailable;
+	else if (PQconnectionNeedsPassword (mConnection))
+		code = kPGTSConnectionErrorPasswordRequired;
+	else if (PQconnectionUsedPassword (mConnection))
+		code = kPGTSConnectionErrorInvalidPassword;
+	else
+		code = kPGTSConnectionErrorUnknown;
+	
+	NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
+															  @"Connection error", @"Title for a sheet.");
+	NSString* errorMessage = [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  errorTitle, NSLocalizedDescriptionKey,
+							  errorTitle, NSLocalizedFailureReasonErrorKey,
+							  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
+							  nil];
+	
+	NSError* retval = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
+	return retval;	
 }
 @end
 
@@ -222,40 +253,47 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (BOOL) connect: (const char *) conninfo
 {
 	BOOL retval = NO;	
-	if ((mConnection = PQconnectStart (conninfo)) && CONNECTION_BAD != PQstatus (mConnection))
+	mNegotiationStarted = NO;
+	if ((mConnection = PQconnectStart (conninfo)))
 	{
-		int bsdSocket = PQsocket (mConnection);
-		if (0 <= bsdSocket)
-		{
-			if (mTraceFile)
-				PQtrace (mConnection, mTraceFile);
-			
-			CFSocketContext context = {0, self, NULL, NULL, NULL};
-			CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
-			mSocket = CFSocketCreateWithNative (NULL, bsdSocket, callbacks, &SocketReady, &context);
-			CFOptionFlags flags = ~kCFSocketAutomaticallyReenableReadCallBack &
-								  ~kCFSocketAutomaticallyReenableWriteCallBack &
-								  ~kCFSocketCloseOnInvalidate &
-								  CFSocketGetSocketFlags (mSocket);
-			CFSocketSetSocketFlags (mSocket, flags);
-			mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
-			
-			BXAssertLog (mSocket, @"Expected source to have been created.");
-			BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
-			BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
-			BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
-			
-			CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
-			CFStringRef mode = kCFRunLoopCommonModes;
-			CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
-			CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
-			CFRunLoopAddSource (runloop, mSocketSource, mode);
-            
-            retval = YES;
-		}
+		if (CONNECTION_BAD == PQstatus (mConnection))
+			[self finishedConnecting: NO];
 		else
 		{
-			[self finishedConnecting: NO];
+			mNegotiationStarted = YES;
+			int bsdSocket = PQsocket (mConnection);
+			if (0 <= bsdSocket)
+			{
+				if (mTraceFile)
+					PQtrace (mConnection, mTraceFile);
+				
+				CFSocketContext context = {0, self, NULL, NULL, NULL};
+				CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
+				mSocket = CFSocketCreateWithNative (NULL, bsdSocket, callbacks, &SocketReady, &context);
+				CFOptionFlags flags = ~kCFSocketAutomaticallyReenableReadCallBack &
+				~kCFSocketAutomaticallyReenableWriteCallBack &
+				~kCFSocketCloseOnInvalidate &
+				CFSocketGetSocketFlags (mSocket);
+				CFSocketSetSocketFlags (mSocket, flags);
+				mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
+				
+				BXAssertLog (mSocket, @"Expected source to have been created.");
+				BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
+				BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
+				BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
+				
+				CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
+				CFStringRef mode = kCFRunLoopCommonModes;
+				CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
+				CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
+				CFRunLoopAddSource (runloop, mSocketSource, mode);
+				
+				retval = YES;
+			}
+			else
+			{
+				[self finishedConnecting: NO];
+			}
 		}
 	}
 	return retval;
@@ -268,8 +306,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (BOOL) connect: (const char *) conninfo
 {
     BOOL retval = NO;
+	mNegotiationStarted = NO;
 	if ([self start: conninfo] && CONNECTION_BAD != PQstatus (mConnection))
 	{
+		mNegotiationStarted = YES;
 		fd_set mask = {};
 		struct timeval timeout = {.tv_sec = 15, .tv_usec = 0};
 		PostgresPollingStatusType pollingStatus = PGRES_POLLING_WRITING; //Start with this

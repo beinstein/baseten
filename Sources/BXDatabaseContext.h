@@ -71,6 +71,7 @@
     NSMutableSet*                           mRelationships;
 	NSMutableDictionary*					mEntitiesBySchema;
 	id <BXDatabaseContextDelegate>			mDelegateProxy;
+	NSError*								mLastConnectionError;
 	
 	/** An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;

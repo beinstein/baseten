@@ -74,6 +74,7 @@
 - (void) iterateValidationQueue: (NSError **) error;
 - (BOOL) checkErrorHandling;
 - (void) setAllowReconnecting: (BOOL) shouldAllow;
+- (void) setLastConnectionError: (NSError *) anError;
 @end
 
 

@@ -44,7 +44,9 @@
 	PGconn* mConnection;
 	FILE* mTraceFile;
 	BOOL mSSLSetUp;
+	BOOL mNegotiationStarted;
 }
+- (NSError *) error;
 - (BOOL) connect: (const char *) connectionString;
 - (void) cancel;
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
@@ -52,8 +54,6 @@
 
 - (BOOL) start: (const char *) connectionString;
 - (void) setTraceFile: (FILE *) stream;
-
-- (BOOL) SSLSetUp; //Was SSL tried during connection?
 @end
 
 

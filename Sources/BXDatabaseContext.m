@@ -272,6 +272,7 @@ bx_query_during_reconnect ()
 	[mEntitiesBySchema release];
     [mRelationships release];
 	[mDelegateProxy release];
+	[mLastConnectionError release];
     
     if (NULL != mKeychainPasswordItem)
         CFRelease (mKeychainPasswordItem);
@@ -1481,20 +1482,14 @@ bx_query_during_reconnect ()
 	
 	if (NO == connected)
 	{
+		[self setLastConnectionError: *error];
 		if (NO == mDisplayingSheet)
 		{
-			NSString* domain = nil;
-			int code = 0;
-			if (NULL != error)
-			{
-				domain = [*error domain];
-				code = [*error code];
-			}
 			BOOL authenticationFailed = NO;
 			BOOL certificateVerifyFailed = NO;
-			if ([domain isEqualToString: kBXErrorDomain])
+			if ([[mLastConnectionError domain] isEqualToString: kBXErrorDomain])
 			{
-				switch (code)
+				switch ([mLastConnectionError code])
 				{
 					case kBXErrorAuthenticationFailed:
 						authenticationFailed = YES;
@@ -1507,7 +1502,7 @@ bx_query_during_reconnect ()
 				}
 			}
 			
-			if (!mRetryingConnection && (authenticationFailed || certificateVerifyFailed))
+			if (authenticationFailed || certificateVerifyFailed)
 			{
 				mRetryingConnection = YES;
 				[self connectAsync];
@@ -1527,24 +1522,22 @@ bx_query_during_reconnect ()
 #endif
                 }
                 
-				mRetryingConnection = NO;
-				
 				//If we have a connection setup manager, it will call a method when it's finished.
 				if (nil == mConnectionSetupManager)
 					[self setCanConnect: YES];
 				
 				//Don't set the error if we were supposed to disconnect.
 				NSDictionary* userInfo = nil;
-				if (! mDidDisconnect && error)
-					userInfo = [NSDictionary dictionaryWithObject: *error forKey: kBXErrorKey];
+				if (! mDidDisconnect && mLastConnectionError)
+					userInfo = [NSDictionary dictionaryWithObject: mLastConnectionError forKey: kBXErrorKey];
 				NSNotification* notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
-				[mDelegateProxy databaseContext: self failedToConnect: *error];
+				[mDelegateProxy databaseContext: self failedToConnect: mLastConnectionError];
 				[[self notificationCenter] postNotification: notification];
 				
 				//Strip password from the URI
                 //FIXME: should we remove the username as well?
 				NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: @""];
-				[self setDatabaseURIInternal: newURI];				
+				[self setDatabaseURIInternal: newURI];
 			}
 		}
 	}
@@ -1561,7 +1554,6 @@ bx_query_during_reconnect ()
             [currentEntity setDatabaseURI: mDatabaseURI];
         [self iterateValidationQueue: &localError];
 		
-		mRetryingConnection = NO;
 		NSNotification* notification = nil;
 		if (nil == localError)
 		{
@@ -1579,6 +1571,7 @@ bx_query_during_reconnect ()
 		}
 		[[self notificationCenter] postNotification: notification];
 	}
+	[self setLastConnectionError: nil];
 	[self setConnectionSetupManager: nil];
 }
 
@@ -1882,9 +1875,15 @@ bx_query_during_reconnect ()
 
 - (enum BXSSLMode) sslMode
 {
-	enum BXSSLMode mode = kBXSSLModeDisable;
-	if (NO == mRetryingConnection)
-		mode = [mDelegateProxy SSLModeForDatabaseContext: self];
+	enum BXSSLMode mode = [mDelegateProxy SSLModeForDatabaseContext: self];
+	if ([kBXErrorDomain isEqualToString: [mLastConnectionError domain]])
+	{
+		if (kBXSSLModePrefer == mode &&
+			[mLastConnectionError code] == kBXErrorSSLError)
+		{
+			mode = kBXSSLModeDisable;
+		}
+	}
 	return mode;
 }
 @end
@@ -2548,6 +2547,15 @@ bx_query_during_reconnect ()
 - (void) setAllowReconnecting: (BOOL) shouldAllow
 {
 	mConnectionErrorHandlingState = (shouldAllow ? kBXConnectionErrorNone : kBXConnectionErrorNoReconnect);
+}
+
+- (void) setLastConnectionError: (NSError *) anError
+{
+	if (mLastConnectionError != anError)
+	{
+		[mLastConnectionError release];
+		mLastConnectionError = [anError retain];
+	}
 }
 @end
 

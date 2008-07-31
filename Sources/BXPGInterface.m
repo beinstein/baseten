@@ -1398,7 +1398,7 @@ bail:
 	switch ([error code]) 
 	{
 		case kPGTSConnectionErrorSSLUnavailable:
-			code = kBXErrorSSLError;
+			code = kBXErrorSSLError; //FIXME: this is too ambiguous. Differentiate between "SSL unavailable" and "other SSL error."
 			break;
 			
 		case kPGTSConnectionErrorPasswordRequired:
@@ -1411,7 +1411,8 @@ bail:
 			break;
 	}
 	
-	NSDictionary* userInfo = [NSDictionary dictionaryWithObject: error forKey: NSUnderlyingErrorKey];
+	NSMutableDictionary* userInfo = [[[error userInfo] mutableCopy] autorelease];
+	[userInfo setObject: error forKey: NSUnderlyingErrorKey];
 	NSError* newError = [NSError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
 	[mContext connectedToDatabase: NO async: YES error: &newError];
 }

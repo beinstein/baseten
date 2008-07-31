@@ -45,7 +45,6 @@
 #import "PGTSProbes.h"
 #import "BXLogger.h"
 #import "BXDatabaseAdditions.h"
-#import "libpq_additions.h"
 
 
 @interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
@@ -348,32 +347,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (NSError *) connectionError
 {
 	//This becomes unavailable after the delegate method call because the connector gets set to nil.
-	enum PGTSConnectionError code = kPGTSConnectionErrorNone;
-	BOOL SSLAttempted = [mConnector SSLSetUp];
-	const char* SSLMode = pq_ssl_mode (mConnection);
-	
-	if (! SSLAttempted && 0 == strcmp ("require", SSLMode))
-		code = kPGTSConnectionErrorSSLUnavailable;
-	else if (PQconnectionNeedsPassword (mConnection))
-		code = kPGTSConnectionErrorPasswordRequired;
-	else if (PQconnectionUsedPassword (mConnection))
-		code = kPGTSConnectionErrorInvalidPassword;
-	else
-		code = kPGTSConnectionErrorUnknown;
-		
-	NSString* errorMessage = [self errorString];
-	NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"databaseError", nil, 
-															  [NSBundle bundleForClass: [self class]], 
-															  @"Database Error", @"Title for a sheet");
-	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  errorTitle, NSLocalizedFailureReasonErrorKey,
-							  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
-							  errorMessage, kBXErrorMessageKey,
-							  errorMessage, NSLocalizedDescriptionKey,
-							  nil];
-	
-	NSError* retval = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
-	return retval;
+	return [mConnector error];
 }
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate

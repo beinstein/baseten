@@ -32,6 +32,17 @@
 
 @implementation BXPanel
 
+- (id) initWithContentRect: (NSRect) contentRect styleMask: (unsigned int) styleMask
+                   backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
+{
+    if ((self = [super initWithContentRect: contentRect styleMask: styleMask 
+                                   backing: bufferingType defer: deferCreation]))
+    {
+		[self setHidesOnDeactivate: NO];
+	}
+	return self;
+}
+		
 - (void) dealloc
 {
     [mDidEndInvocation release];
