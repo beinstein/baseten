@@ -251,6 +251,8 @@ SSLMode (enum BXSSLMode mode)
 	enum BXSSLMode sslMode = [ctx sslMode];
 	[connectionDict setValue: SSLMode (sslMode) forKey: kPGTSSSLModeKey];
 	
+	[connectionDict setValue: @"10" forKey: kPGTSConnectTimeoutKey];
+	
 	return [connectionDict PGTSConnectionString];
 }
 
