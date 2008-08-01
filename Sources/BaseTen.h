@@ -37,13 +37,11 @@
 #import <BaseTen/BXDatabaseContextDelegateProtocol.h>
 #import <BaseTen/BXConstants.h>
 #import <BaseTen/BXDatabaseObject.h>
-#import <BaseTen/BXInterface.h>
 #import <BaseTen/BXEntityDescription.h>
 #import <BaseTen/BXAttributeDescription.h>
 #import <BaseTen/BXDatabaseObjectID.h>
-#import <BaseTen/BXException.h>
-#import <BaseTen/BXPolicyDelegate.h>
 #import <BaseTen/BXRelationshipDescription.h>
+#import <BaseTen/BXException.h>
 
 /*
  * Helpful breakpoints:

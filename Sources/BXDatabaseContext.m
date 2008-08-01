@@ -769,7 +769,6 @@ bx_query_during_reconnect ()
 /**
  * Set the delegate.
  * The delegate object will not be retained.
- * \see NSObject(BXPolicyDelegate)
  */
 - (void) setDelegate: (id <BXDatabaseContextDelegate>) anObject;
 {
