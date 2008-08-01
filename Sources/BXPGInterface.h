@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXInterface.h>
 
 
 @class BXPGTransactionHandler;

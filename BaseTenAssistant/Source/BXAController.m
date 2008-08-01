@@ -1113,7 +1113,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[mProgressCancelButton setAction: @selector (cancelConnecting:)];
     [self displayProgressPanel: @"Connecting..."];
 		
-	[mContext connect];
+	[mContext connectAsync];
 }
 
 

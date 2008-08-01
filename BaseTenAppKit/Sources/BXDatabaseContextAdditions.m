@@ -31,6 +31,7 @@
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXDelegateProxy.h>
+#import <BaseTen/BXInterface.h>
 #import <SecurityInterface/SFCertificateTrustPanel.h>
 
 
