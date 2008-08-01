@@ -26,6 +26,8 @@
 			dependencies = (
 				532876C90E1E778600CC507E /* PBXTargetDependency */,
 				537385760DD9FBB7006F965A /* PBXTargetDependency */,
+				5308940B0E43498A0063C5E7 /* PBXTargetDependency */,
+				530894190E4349B80063C5E7 /* PBXTargetDependency */,
 				53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */,
 			);
 			name = "BaseTen + GC";
@@ -278,6 +280,27 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		5308940A0E43498A0063C5E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535444570D634D9C002A6C47 /* BaseTenAppKit + GC */;
+			remoteInfo = "BaseTenAppKit + GC";
+		};
+		530894160E4349A50063C5E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D1AC9740486D14A00FE50C9 /* BaseTen.ibplugin */;
+			remoteInfo = InterfaceBuilderPlugin;
+		};
+		530894180E4349B80063C5E7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1AC9600486D14A00FE50C9 /* InterfaceBuilderPlugin */;
+			remoteInfo = InterfaceBuilderPlugin;
+		};
 		532876C80E1E778600CC507E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -298,13 +321,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 5362E86C0E1CE46D005C7654;
 			remoteInfo = PostgreSQL;
-		};
-		5373852E0DD9FAC1006F965A /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8D1AC9740486D14A00FE50C9;
-			remoteInfo = BaseTenPalette;
 		};
 		537385750DD9FBB7006F965A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -349,6 +365,7 @@
 		530132E109D460230037C485 /* BXPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGInterface.h; path = Sources/BXPGInterface.h; sourceTree = "<group>"; };
 		530132E209D460230037C485 /* BXPGInterface.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; includeInIndex = 1; name = BXPGInterface.m; path = Sources/BXPGInterface.m; sourceTree = "<group>"; };
 		53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseAdditions.m; path = Sources/BXDatabaseAdditions.m; sourceTree = "<group>"; };
+		5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = InterfaceBuilderPlugin.xcodeproj; path = InterfaceBuilderPlugin/InterfaceBuilderPlugin.xcodeproj; sourceTree = "<group>"; };
 		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
 		531266E40B68F9CA00637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
 		531A214E0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGConnectionResetRecoveryAttempter.h; path = Sources/BXPGConnectionResetRecoveryAttempter.h; sourceTree = "<group>"; };
@@ -572,7 +589,6 @@
 		53E11A250A791A8D00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
 		53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXLogger.h; path = Sources/BXLogger.h; sourceTree = "<group>"; };
 		53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = "<group>"; };
-		53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenPalette.xcodeproj; path = InterfaceBuilderPalette/BaseTenPalette.xcodeproj; sourceTree = "<group>"; };
 		53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectPrivate.h; path = Sources/BXDatabaseObjectPrivate.h; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
@@ -640,7 +656,7 @@
 				538678D30DE31BA0000C9A78 /* IOKit.framework */,
 				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
-				53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */,
+				5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -687,6 +703,14 @@
 				537E983E0AAF539E00542F9C /* Automatically-updating containers */,
 			);
 			name = BaseTen;
+			sourceTree = "<group>";
+		};
+		5308940E0E4349A50063C5E7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				530894170E4349A50063C5E7 /* BaseTen.ibplugin */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 		531A21AF0DE46860006C757A /* Notification Handlers */ = {
@@ -896,14 +920,6 @@
 				53915F9D0E3FD22D0098B419 /* libpq_additions.c */,
 			);
 			name = Other;
-			sourceTree = "<group>";
-		};
-		5373852B0DD9FAC1006F965A /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5373852F0DD9FAC1006F965A /* BaseTenPalette.palette */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		537E983E0AAF539E00542F9C /* Automatically-updating containers */ = {
@@ -1246,8 +1262,8 @@
 					ProjectRef = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
 				},
 				{
-					ProductGroup = 5373852B0DD9FAC1006F965A /* Products */;
-					ProjectRef = 53EFE9E60BA96452008666B7 /* BaseTenPalette.xcodeproj */;
+					ProductGroup = 5308940E0E4349A50063C5E7 /* Products */;
+					ProjectRef = 5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */;
 				},
 			);
 			projectRoot = "";
@@ -1262,18 +1278,18 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		530894170E4349A50063C5E7 /* BaseTen.ibplugin */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = BaseTen.ibplugin;
+			remoteRef = 530894160E4349A50063C5E7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		535444950D634DA9002A6C47 /* BaseTenAppKit.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
 			path = BaseTenAppKit.framework;
 			remoteRef = 535444940D634DA9002A6C47 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5373852F0DD9FAC1006F965A /* BaseTenPalette.palette */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = BaseTenPalette.palette;
-			remoteRef = 5373852E0DD9FAC1006F965A /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1458,6 +1474,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		5308940B0E43498A0063C5E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTenAppKit + GC";
+			targetProxy = 5308940A0E43498A0063C5E7 /* PBXContainerItemProxy */;
+		};
+		530894190E4349B80063C5E7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = InterfaceBuilderPlugin;
+			targetProxy = 530894180E4349B80063C5E7 /* PBXContainerItemProxy */;
+		};
 		532876C90E1E778600CC507E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;

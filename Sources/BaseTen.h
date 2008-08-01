@@ -77,7 +77,7 @@
  */
 
 /**
- * \page general_usage Using BaseTen framework
+ * \mainpage Introduction
  *
  * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
  * has been designed with familiar, Core Data -like semantics and APIs. With this 1.0 Release Candidate 
@@ -92,16 +92,20 @@
  * \li Autocommit and manual save/rollback modes, both with NSUndoManager integration
  * \li A BaseTen-aware NSArrayController subclass automates locking and change propagation
  * \li Fetches are specified with NSPredicates (the relevant portions of which are evaluated on the database)
+ */
+
+/**
+ * \page general_usage Using BaseTen framework
  *
- * <h2>Documentation topics</h2>
  * \li \subpage overview
  * \li \subpage getting_started
  * \li \subpage accessing_values
  * \li \subpage tracking_changes
  * \li \subpage using_appkit_classes
  * \li \subpage postgresql_installation
+ * \li \subpage building_baseten
  * \li \subpage limitations
- */
+ */ 
 
 /**
  * \page overview Overview of BaseTen
@@ -109,7 +113,7 @@
  * \image html BaseTen-object-relationships.png "Relationships between BaseTen's objects"
  * \image html BaseTen-class-hierarchy.png "BaseTen class hierarchy"
  * \image latex BaseTen-object-relationships.pdf "Relationships between BaseTen's objects" width=\textwidth
- * \image latex BaseTen-class-hierarchy.pdf "BaseTen class hierarchy" width=\textwidth
+ * \image latex BaseTen-class-hierarchy.pdf "BaseTen class hierarchy" width=\textwidth 
  *
  * BaseTen aims to provide a Core Data -like API for handling a database. A database connection is managed
  * by an instance of BXDatabaseContext, which also fetches rows from the database. Rows are represented
@@ -143,7 +147,6 @@
  * Another option is to create a data model using Xcode's data modeler and import it using BaseTen Assistant.
  * Currently, migration models aren't understood by the assistant, though, so the easiest way to do model
  * migration might be using SQL.
- *
  *
  * \subsection sql_views SQL views
  *
@@ -556,29 +559,52 @@
  * \page postgresql_installation PostgreSQL installation
  *
  * Here's a brief tutorial on PostgreSQL installation.
- * \li Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.
- * \li Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so
- *     <tt>./configure --with-bonjour --with-openssl && make && sudo make install</tt> probably gives the expected results.
- * \li It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.\n
- * \li Make <tt>mysql</tt> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
- *     <tt>
- *         sudo chown -R mysql:mysql /usr/local/pgsql\n
- *         sudo -u mysql -s
- *     </tt>
- * \li Initialize the PostgreSQL database folder. We'll use en_US.UTF-8 as the default locale:\n
- *     <tt>LC_ALL=en_US.UTF-8 /usr/local/pgsql/bin/initdb -D \\\n /usr/local/pgsql/data</tt>
- * \li Launch the PostgreSQL server itself:\n
- *     <tt>
- *        /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data \\\n
- *         -l /usr/local/pgsql/data/pg.log start
- *     </tt>
- * \li Create a superuser account for yourself. This way, you don't have to sudo to mysql to create new databases and users.\n
- *     <tt>/usr/local/pgsql/bin/createuser <your-short-user-name></tt>
- * \li Exit the <tt>mysql</tt> sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
- *     <tt>
- *        exit\n
- *        /usr/local/pgsql/bin/createdb <your-short-user-name>
- *     </tt>
+ * <ol>
+ *     <li>Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.</li>
+ *     <li>Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so <tt>./configure --with-bonjour --with-openssl && make && sudo make install</tt> probably gives the expected results.</li>
+ *     <li>It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.</li>
+ *     <li>Make <tt>mysql</tt> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
+ *         <tt>
+ *             sudo chown -R mysql:mysql /usr/local/pgsql\n
+ *             sudo -u mysql -s
+ *         </tt>
+ *     </li>
+ *     <li>Initialize the PostgreSQL database folder. We'll use en_US.UTF-8 as the default locale:\n<tt>LC_ALL=en_US.UTF-8 /usr/local/pgsql/bin/initdb -D \\\n /usr/local/pgsql/data</tt></li>
+ *     <li>Launch the PostgreSQL server itself:\n
+ *         <tt>
+ *             /usr/local/pgsql/bin/pg_ctl -D /usr/local/pgsql/data \\\n
+ *             -l /usr/local/pgsql/data/pg.log start
+ *         </tt>
+ *     <li>Create a superuser account for yourself. This way, you don't have to sudo to mysql to create new databases and users.\n
+ *         <tt>/usr/local/pgsql/bin/createuser <your-short-user-name></tt>
+ *     </li>
+ *     <li>Exit the <tt>mysql</tt> sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
+ *         <tt>
+ *             exit\n
+ *             /usr/local/pgsql/bin/createdb <your-short-user-name>
+ *         </tt>
+ *     </li>
+ * </ol>
+ */
+
+/**
+ * \page building_baseten Building BaseTen
+ *
+ * BaseTen has several subprojects, namely BaseTenAppKit and a plug-in for Interface Builder 3. The default target in 
+ * BaseTen.xcodeproj, BaseTen + GC, builds them as well; the plug-in and the AppKit framework will appear in the 
+ * subprojects' build folders, which are set to the default folder. The built files will probably be either in 
+ * \em build folders in the subprojects' folders or in the user-specified build folder. The documentation will be
+ * in the \em Documentation folder.
+ *
+ *
+ * \subsection Building for the release DMG
+ *
+ * The files needed to build the release disk image are in the SVN repository as well. To create the DMG, follow these steps:
+ * <ol>
+ *     <li>From the checked-out directory, <tt>cd ReleaseDMG</tt>.</li>
+ *     <li>The default location for the built files is <em>~/Build/BaseTen-dmg-build</em>. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
+ *     <li>Do <tt>./create_release_dmg.sh</tt>.</li>
+ * </ol>
  */
 
 /** 

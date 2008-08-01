@@ -49,7 +49,7 @@ fi
 "$CP" -pRP "$SYMROOT"/Release/BaseTen\ Assistant.app /Volumes/BaseTen/.
 
 "$RM" -rf /Volumes/BaseTen/InterfaceBuilderPlugin.ibplugin
-"$CP" -pRP "$SYMROOT"/Release/"BaseTen Plug-in.ibplugin" /Volumes/BaseTen/.
+"$CP" -pRP "$SYMROOT"/Release/"BaseTen.ibplugin" /Volumes/BaseTen/.
 
 "$RM" -f /Volumes/BaseTen/Frameworks
 ln -s /Library/Frameworks /Volumes/BaseTen/Frameworks
