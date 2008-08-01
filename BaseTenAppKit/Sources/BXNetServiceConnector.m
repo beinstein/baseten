@@ -51,6 +51,13 @@
 	[super dealloc];
 }
 
+- (void) finalize
+{
+	[mPanel end];
+	[mAuthenticationPanel end];
+	[super finalize];
+}
+
 - (void) awakeFromNib
 {
     [self setDatabaseContext: databaseContext];

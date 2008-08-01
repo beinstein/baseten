@@ -1570,9 +1570,9 @@ bx_query_during_reconnect ()
 			[mDelegateProxy databaseContext: self failedToConnect: localError];
 		}
 		[[self notificationCenter] postNotification: notification];
+		[self setConnectionSetupManager: nil];
 	}
 	[self setLastConnectionError: nil];
-	[self setConnectionSetupManager: nil];
 }
 
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
@@ -2751,5 +2751,6 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 {
 	if (NO == [self isConnected])
 		[self setCanConnect: YES];
+	[self setConnectionSetupManager: nil];
 }
 @end
