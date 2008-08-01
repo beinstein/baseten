@@ -1,29 +1,85 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                cancelConnecting = id; 
-                connect = id; 
-                showBonjourList = id; 
-                showHostnameView = id; 
-            }; 
-            CLASS = BXConnectionViewManager; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                mBonjourArrayController = NSArrayController; 
-                mBonjourCancelButton = NSButton; 
-                mBonjourList = NSTableView; 
-                mBonjourListProgressIndicator = NSProgressIndicator; 
-                mBonjourListView = NSView; 
-                mByHostnameProgressIndicator = NSProgressIndicator; 
-                mByHostnameView = NSView; 
-                mDelegate = id; 
-                mHostnameCancelButton = NSButtonCell; 
-                mHostnameField = NSTextField; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>cancelConnecting</key>
+				<string>id</string>
+				<key>connect</key>
+				<string>id</string>
+				<key>showBonjourList</key>
+				<string>id</string>
+				<key>showHostnameView</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>BXConnectionViewManager</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>mBonjourArrayController</key>
+				<string>NSArrayController</string>
+				<key>mBonjourCancelButton</key>
+				<string>NSButton</string>
+				<key>mBonjourList</key>
+				<string>NSTableView</string>
+				<key>mBonjourListProgressIndicator</key>
+				<string>NSProgressIndicator</string>
+				<key>mBonjourListView</key>
+				<string>NSView</string>
+				<key>mByHostnameProgressIndicator</key>
+				<string>NSProgressIndicator</string>
+				<key>mByHostnameView</key>
+				<string>NSView</string>
+				<key>mDelegate</key>
+				<string>id</string>
+				<key>mHostnameCancelButton</key>
+				<string>NSButtonCell</string>
+				<key>mHostnameField</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSObjectController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSController</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSController</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

@@ -42,8 +42,8 @@
     if ((self = [super BXInitWithArray: anArray]))
     {
         mContainer = [anArray retain];
-        mNonMutatingClass = [NSArray class];
-        mIsMutable = NO;
+        mNonMutatingClass = [NSArray class]; 
+        mIsMutable = YES; //To allow sorting.
     }
     return self;
 }
