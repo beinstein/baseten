@@ -372,7 +372,7 @@ bx_query_during_reconnect ()
 
 - (BOOL) connectIfNeeded: (NSError **) error
 {
-	return [self connectIfNeeded: error];
+	return [self connectSync: error];
 }
 
 /**

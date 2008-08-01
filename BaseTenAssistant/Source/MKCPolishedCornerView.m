@@ -32,6 +32,11 @@
 
 @implementation MKCPolishedCornerView
 
+- (void) stateChanged: (NSNotification *) notification
+{
+	[self setNeedsDisplay: YES];
+}
+
 - (id) initWithFrame: (NSRect) frame
 {
     if ((self = [super initWithFrame: frame]))
@@ -51,11 +56,6 @@
 	[[NSNotificationCenter defaultCenter] removeObserver: self];
     [mColours release];
     [super dealloc];
-}
-
-- (void) stateChanged: (NSNotification *) notification
-{
-	[self setNeedsDisplay: YES];
 }
 
 - (void) drawRect: (NSRect) rect

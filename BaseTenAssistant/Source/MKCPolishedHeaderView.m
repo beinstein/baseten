@@ -198,6 +198,11 @@ MKCShouldDrawEnabled (NSWindow* window)
     }
 }
 
+- (void) stateChanged: (NSNotification *) notification
+{
+	[self setNeedsDisplay: YES];
+}
+
 - (void) awakeFromNib
 {
 	NSKeyValueObservingOptions options = NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial;
@@ -217,11 +222,6 @@ MKCShouldDrawEnabled (NSWindow* window)
 	[[self tableView] removeObserver: self forKeyPath: @"sortDescriptors"];
     [mColours release];
     [super dealloc];
-}
-
-- (void) stateChanged: (NSNotification *) notification
-{
-	[self setNeedsDisplay: YES];
 }
 
 - (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object change: (NSDictionary *) change context: (void *) context

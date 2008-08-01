@@ -51,8 +51,10 @@
 		else
 			NSLog (@"Failed to reconnect.");
 	}
-	
-	@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
+	else
+	{
+		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
+	}
 }
 
 - (enum BXCertificatePolicy) databaseContext: (BXDatabaseContext *) ctx 
