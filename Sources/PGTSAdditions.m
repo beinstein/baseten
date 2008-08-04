@@ -113,7 +113,7 @@
 		char* escapedParameter = (char *) calloc (1 + 2 * length, sizeof (char));
 		PQescapeStringConn (pgConn, escapedParameter, charParameter, length, NULL);
 		const char* clientEncoding = PQparameterStatus (pgConn, "client_encoding");
-		BXAssertValueReturn (0 == strcmp ("UNICODE", clientEncoding), nil,
+		BXAssertValueReturn (clientEncoding && 0 == strcmp ("UNICODE", clientEncoding), nil,
 							 @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
 		retval = [[[NSString alloc] initWithBytesNoCopy: escapedParameter length: strlen (escapedParameter)
 											   encoding: NSUTF8StringEncoding freeWhenDone: YES] autorelease];

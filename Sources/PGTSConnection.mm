@@ -346,7 +346,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (NSError *) connectionError
 {
-	//This becomes unavailable after the delegate method call because the connector gets set to nil.
 	return [mConnector error];
 }
 
@@ -475,13 +474,14 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
         if (0 < [mQueue count])
             [self sendNextQuery];
         [mDelegate PGTSConnectionEstablished: self];
+		[self setConnector: nil];
 	}
 	else
 	{
 		[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
         [mDelegate PGTSConnectionFailed: self];
+		//Retain the connector for error handling.
 	}
-	[self setConnector: nil];
 }
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate

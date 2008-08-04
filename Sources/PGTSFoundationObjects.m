@@ -72,7 +72,7 @@
     else
     {
         const char* clientEncoding = PQparameterStatus ([connection pgConnection], "client_encoding");
-		BXAssertValueReturn (0 == strcmp ("UNICODE", clientEncoding), NULL,
+		BXAssertValueReturn (clientEncoding && 0 == strcmp ("UNICODE", clientEncoding), NULL,
 							 @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
     }
     const char* retval = [self UTF8String];
