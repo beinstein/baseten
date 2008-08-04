@@ -30,6 +30,7 @@
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
 #import "BXException.h"
 #import "BXDatabaseAdditions.h"
+#import "BXLogger.h"
 
 
 @implementation BXDatabaseContextDelegateDefaultImplementation
@@ -39,6 +40,15 @@
 {
 	if (! willBePassedOn)
 		@throw [error BXExceptionWithName: kBXExceptionUnhandledError];
+}
+
+- (void) databaseContext: (BXDatabaseContext *) context
+	hadReconnectionError: (NSError *) error
+{
+	if (NULL != NSApp)
+		[NSApp presentError: error];
+	else
+		BXLogError (@"Error while trying to reconnect: %@ (userInfo: %@).", error, [error userInfo]);
 }
 
 - (void) databaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error

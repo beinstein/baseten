@@ -616,6 +616,6 @@
  *     Insertion of larger data sets (thousands of objects) takes considerable amount of time and 
  *     may cause 'out of shared memory' errors if executed without the autocommit flag.
  *     Fetching large data sets should be fast enough.  
- * \li Currently, migration models aren't understood by the assistant, though, so the easiest way to do model
+ * \li Currently, migration models aren't understood by the assistant, so the easiest way to do model
  *	   migration might be using SQL.
  */

@@ -41,7 +41,7 @@
 		retval = (! localError);
 	}
 	
-	[self allowConnecting: retval];
+	//[self allowConnecting: !retval];
 	return retval;
 }
 

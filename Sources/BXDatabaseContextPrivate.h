@@ -98,7 +98,6 @@
 - (NSArray *) keychainItems;
 - (SecKeychainItemRef) newestKeychainItem;
 - (BOOL) fetchPasswordFromKeychain;
-- (void) clearKeychainPasswordItem;
 - (void) setKeychainPasswordItem: (SecKeychainItemRef) anItem;
 @end
 

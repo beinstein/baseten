@@ -206,9 +206,7 @@
         }
     }
     else
-    {
-        [databaseContext clearKeychainPasswordItem];
-        
+    {        
         [mPanel end];
         [self setPanel: nil];
     }

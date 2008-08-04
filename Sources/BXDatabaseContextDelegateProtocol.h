@@ -96,6 +96,9 @@
 
 - (void) databaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
 
+- (void) databaseContext: (BXDatabaseContext *) context
+	hadReconnectionError: (NSError *) error;
+
 /**
  * Policy for invalid trust.
  * The server certificate will be verified using the system keychain. On failure this 

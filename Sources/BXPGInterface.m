@@ -338,6 +338,32 @@ bx_error_during_rollback (id self, NSError* error)
 }
 
 
+- (NSError *) connectionErrorForContext: (NSError *) error
+{
+	NSInteger code = kBXErrorUnknown;	
+	switch ([error code]) 
+	{
+		case kPGTSConnectionErrorSSLUnavailable:
+			code = kBXErrorSSLError; //FIXME: this is too ambiguous. Differentiate between "SSL unavailable" and "other SSL error."
+			break;
+			
+		case kPGTSConnectionErrorPasswordRequired:
+		case kPGTSConnectionErrorInvalidPassword:
+			code = kBXErrorAuthenticationFailed;
+			break;
+			
+		case kPGTSConnectionErrorUnknown:
+		default:
+			break;
+	}
+	
+	NSMutableDictionary* userInfo = [[[error userInfo] mutableCopy] autorelease];
+	[userInfo setObject: error forKey: NSUnderlyingErrorKey];
+	NSError* newError = [NSError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
+	return newError;
+}
+
+
 - (NSArray *) executeQuery: (NSString *) queryString parameters: (NSArray *) parameters error: (NSError **) error
 {
 	Expect (queryString);
@@ -958,23 +984,30 @@ bail:
 
 - (void) prepareForConnecting
 {
-	Class transactionHandlerClass = Nil;
-	if ([mContext autocommits])
-		transactionHandlerClass = [BXPGAutocommitTransactionHandler class];
-	else
-		transactionHandlerClass = [BXPGManualCommitTransactionHandler class];
-	BXPGTransactionHandler* handler = [[transactionHandlerClass alloc] init];
-	[handler setInterface: self];
-	
-	[self setTransactionHandler: handler];
-	[handler release];
+	if (! mTransactionHandler)
+	{
+		Class transactionHandlerClass = Nil;
+		if ([mContext autocommits])
+			transactionHandlerClass = [BXPGAutocommitTransactionHandler class];
+		else
+			transactionHandlerClass = [BXPGManualCommitTransactionHandler class];
+		BXPGTransactionHandler* handler = [[transactionHandlerClass alloc] init];
+		[handler setInterface: self];
+		
+		mTransactionHandler = handler;
+	}
 }
 
 
 - (BOOL) connectSync: (NSError **) error
 {
+	ExpectR (error, NO);
+	
 	[self prepareForConnecting];
-	return [mTransactionHandler connectSync: error];
+	BOOL retval = [mTransactionHandler connectSync: error];
+	if (error && *error)
+		*error = [self connectionErrorForContext: *error];
+	return retval;
 }
 
 
@@ -1394,26 +1427,7 @@ bail:
 
 - (void) connectionFailed: (NSError *) error
 {
-	NSInteger code = kBXErrorUnknown;	
-	switch ([error code]) 
-	{
-		case kPGTSConnectionErrorSSLUnavailable:
-			code = kBXErrorSSLError; //FIXME: this is too ambiguous. Differentiate between "SSL unavailable" and "other SSL error."
-			break;
-			
-		case kPGTSConnectionErrorPasswordRequired:
-		case kPGTSConnectionErrorInvalidPassword:
-			code = kBXErrorAuthenticationFailed;
-			break;
-			
-		case kPGTSConnectionErrorUnknown:
-		default:
-			break;
-	}
-	
-	NSMutableDictionary* userInfo = [[[error userInfo] mutableCopy] autorelease];
-	[userInfo setObject: error forKey: NSUnderlyingErrorKey];
-	NSError* newError = [NSError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
+	NSError* newError = [self connectionErrorForContext: error];
 	[mContext connectedToDatabase: NO async: YES error: &newError];
 }
 

@@ -392,11 +392,8 @@ bx_query_during_reconnect ()
 		[self lazyInit];
 		[[self databaseInterface] connectSync: &localError];
 		
-		if (nil == localError)
-		{
-			retval = YES;
-			[self connectedToDatabase: YES async: NO error: &localError];
-		}
+		retval = (nil == localError);
+		[self connectedToDatabase: retval async: NO error: &localError];
 		
 		if (nil != localError)
 		{
@@ -1501,10 +1498,15 @@ bx_query_during_reconnect ()
 				}
 			}
 			
-			if (authenticationFailed || certificateVerifyFailed)
+			if (certificateVerifyFailed)
 			{
-				mRetryingConnection = YES;
-				[self connectAsync];
+				if (async)
+					[self connectAsync];
+				else if ([self connectSync: error])
+				{
+					if (error)
+						*error = nil;
+				}
 			}
 			else
 			{
@@ -1557,7 +1559,8 @@ bx_query_during_reconnect ()
 		if (nil == localError)
 		{
 			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification object: self userInfo: nil];
-			[mDelegateProxy databaseContextConnectionSucceeded: self];
+			if (async)
+				[mDelegateProxy databaseContextConnectionSucceeded: self];
 		}
 		else
 		{
@@ -1572,6 +1575,7 @@ bx_query_during_reconnect ()
 		[self setConnectionSetupManager: nil];
 	}
 	[self setLastConnectionError: nil];
+	[self setKeychainPasswordItem: NULL];
 }
 
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
@@ -2305,7 +2309,7 @@ bx_query_during_reconnect ()
 	if (nil == mUndoGroupingLevels)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
 	
-	if (YES == mUsesKeychain && NULL == mKeychainPasswordItem)
+	if (YES == mUsesKeychain)
         [self fetchPasswordFromKeychain];	    
 }
 
@@ -2723,11 +2727,6 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     return rval;
 }
 
-- (void) clearKeychainPasswordItem
-{
-    [self setKeychainPasswordItem: NULL];
-}
-
 - (void) setKeychainPasswordItem: (SecKeychainItemRef) anItem
 {
     if (anItem != mKeychainPasswordItem)
@@ -2751,5 +2750,6 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 	if (NO == [self isConnected])
 		[self setCanConnect: YES];
 	[self setConnectionSetupManager: nil];
+	[self setKeychainPasswordItem: NULL];
 }
 @end
