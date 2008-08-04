@@ -22,6 +22,9 @@ do
     exit_on_error
 done
 
+make -C ../Documentation/latex
+exit_on_error
+
 
 echo
 

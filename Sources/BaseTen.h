@@ -123,8 +123,7 @@
  *
  * Like some other object-relational mappers, BaseTen fetches the data model from the database. 
  * There are classes available for database introspection: BXEntityDescription, BXAttributeDescription, 
- * BXRelationshipDescription and its subclasses. Currently, the database contents aren't validated 
- * against a developer-supplied data model. 
+ * BXRelationshipDescription and its subclasses.
  *
  * Database objects are retrieved using an instance of BXDatabaseContext. The rows are specified using 
  * instances of BXEntityDescription and NSPredicate. This pattern should match most use cases. It is also
@@ -133,7 +132,7 @@
  * Unlike the typical use case of Core Data, multiple users might be connected to the database being 
  * accessed using BaseTen. Thus, data manipulated with database objects could change at any time. BaseTen
  * copes with this situation by updating objects' contents as soon as other database clients commit their
- * changes. The other clients needen't use BaseTen.
+ * changes. The other clients needn't use BaseTen.
  *
  * Instead of constantly polling the database for changes, BaseTen listens for PostgreSQL notifications.
  * It then queries the database about the notification type and faults the relevant objects. For this to
@@ -145,8 +144,6 @@
  *
  * Since BaseTen relies on database introspection, SQL may be used to define the database schema.
  * Another option is to create a data model using Xcode's data modeler and import it using BaseTen Assistant.
- * Currently, migration models aren't understood by the assistant, though, so the easiest way to do model
- * migration might be using SQL.
  *
  * \subsection sql_views SQL views
  *
@@ -280,9 +277,9 @@
  *
  *
  * Connection to the database may be made synchronously using the method
- * <tt>-connectAsync:</tt>. Applications that use an NSRunLoop also have the
- * option to use <tt>-connectSync</tt>. The method returns immediately. When the connection attempt has
- * finished, either a \em kBXConnectionSuccessfulNotification or a \em kBXConnectionFailedNotification will
+ * <tt>-connectSync:</tt>. Applications that use an NSRunLoop also have the
+ * option to use <tt>-connectAsync</tt>. The method returns immediately. When the connection attempt has
+ * finished, the context's delegate will be called and notifications will
  * be posted to the context's notification center (accessed with <tt>-notificationCenter</tt>).
  *
  * In AppKit applications, the easiest way to connect to the database is to use the IBAction
@@ -603,7 +600,7 @@
  * <ol>
  *     <li>From the checked-out directory, <tt>cd ReleaseDMG</tt>.</li>
  *     <li>The default location for the built files is <em>~/Build/BaseTen-dmg-build</em>. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
- *     <li>Do <tt>./create_release_dmg.sh</tt>.</li>
+ *     <li>Do <tt>./create_release_dmg.sh</tt>.</li> The build DMG will appear in the ReleaseDMG folder.
  * </ol>
  */
 
@@ -619,4 +616,6 @@
  *     Insertion of larger data sets (thousands of objects) takes considerable amount of time and 
  *     may cause 'out of shared memory' errors if executed without the autocommit flag.
  *     Fetching large data sets should be fast enough.  
+ * \li Currently, migration models aren't understood by the assistant, though, so the easiest way to do model
+ *	   migration might be using SQL.
  */
