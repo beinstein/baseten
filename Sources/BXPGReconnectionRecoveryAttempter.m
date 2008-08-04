@@ -35,8 +35,7 @@
 - (BOOL) doAttemptRecoveryFromError: (NSError *) error outError: (NSError **) outError
 {
 	ExpectR (outError, NO);
-	[[[mHandler interface] databaseContext] connectIfNeeded: outError];
-	return (! *outError);
+	return [[[mHandler interface] databaseContext] connectSync: outError];
 }
 
 

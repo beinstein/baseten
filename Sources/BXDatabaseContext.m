@@ -390,9 +390,8 @@ bx_query_during_reconnect ()
 	{
 		[self setCanConnect: NO];
 		[self lazyInit];
-		[[self databaseInterface] connectSync: &localError];
+		retval = [[self databaseInterface] connectSync: &localError];
 		
-		retval = (nil == localError);
 		[self connectedToDatabase: retval async: NO error: &localError];
 		
 		if (nil != localError)
