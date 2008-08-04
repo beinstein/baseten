@@ -29,6 +29,7 @@
 #import "PGTSFunctions.h"
 #import "PGTSAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
+#import "BXLogger.h"
 
 
 @interface NSObject (PGTSTigerAdditions)
@@ -39,7 +40,7 @@
 static NSString*
 AddParameter (id parameter, NSMutableDictionary* context)
 {
-    NSCAssert (nil != context, @"Expected context not to be nil");
+	BXAssertValueReturn (nil != context, nil, @"Expected context not to be nil");
     NSString* retval = nil;
 	if (nil == parameter)
 		parameter = [NSNull null];
@@ -72,8 +73,9 @@ AddParameter (id parameter, NSMutableDictionary* context)
 		
 		//Return the index used in the query.
 		int count = index + 1;
-		NSCAssert4 ([parameters count] == count, @"Expected count to be %d, was %d.\n\tparameter:\t%@ \n\tcontext:\t%@", 
-					[parameters count], count, parameter, context);
+		BXAssertValueReturn ([parameters count] == count, nil,
+							 @"Expected count to be %d, was %d.\n\tparameter:\t%@ \n\tcontext:\t%@", 
+							 [parameters count], count, parameter, context);
 		retval = [NSString stringWithFormat: @"$%d", count];
 	}
 	return retval;

@@ -35,6 +35,7 @@
 #import "PGTSTypeDescription.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSFoundationObjects.h"
+#import "BXLogger.h"
 
 
 @implementation NSString (PGTSAdditions)
@@ -103,7 +104,7 @@
 
 - (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection
 {
-	NSString* rval = nil;
+	NSString* retval = nil;
 	int length = 0;
 	char* charParameter = [self PGTSParameterLength: &length connection: connection];
 	if (NULL != charParameter)
@@ -112,11 +113,12 @@
 		char* escapedParameter = (char *) calloc (1 + 2 * length, sizeof (char));
 		PQescapeStringConn (pgConn, escapedParameter, charParameter, length, NULL);
 		const char* clientEncoding = PQparameterStatus (pgConn, "client_encoding");
-		NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
-		rval = [[[NSString alloc] initWithBytesNoCopy: escapedParameter length: strlen (escapedParameter)
-											 encoding: NSUTF8StringEncoding freeWhenDone: YES] autorelease];
+		BXAssertValueReturn (0 == strcmp ("UNICODE", clientEncoding), nil,
+							 @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
+		retval = [[[NSString alloc] initWithBytesNoCopy: escapedParameter length: strlen (escapedParameter)
+											   encoding: NSUTF8StringEncoding freeWhenDone: YES] autorelease];
 	}
-	return rval;
+	return retval;
 }
 @end
 

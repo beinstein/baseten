@@ -28,26 +28,24 @@
 
 #import "BXPGTransactionHandler.h"
 #import "BXPGAutocommitConnectionResetRecoveryAttempter.h"
+#import "BXLogger.h"
 
 
 @implementation BXPGAutocommitConnectionResetRecoveryAttempter
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
+- (BOOL) doAttemptRecoveryFromError: (NSError *) error outError: (NSError **) outError
 {
-	BOOL retval = NO;
-	if (0 == recoveryOptionIndex)
-		retval = [[mHandler connection] resetSync];
-	
-	[self allowConnecting: retval];
+	ExpectR (outError, NO);
+	PGTSConnection* connection = [mHandler connection];
+	BOOL retval = [connection resetSync];
+	if (! retval)
+		*outError = [connection connectionError];
+
 	return retval;
 }
 
 
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
+- (void) doAttemptRecoveryFromError: (NSError *) error
 {
-	NSInvocation* i = [self recoveryInvocation: delegate selector: didRecoverSelector contextInfo: contextInfo];
-	[self setRecoveryInvocation: i];
-	
 	PGTSConnection* connection = [mHandler connection];
 	[connection setDelegate: self];
 	[connection resetAsync];
@@ -56,20 +54,17 @@
 
 - (void) PGTSConnectionFailed: (PGTSConnection *) connection
 {
-	[self allowConnecting: NO];
-	[mRecoveryInvocation invoke];
 	[connection setDelegate: mHandler];
+	NSError* error = [connection connectionError];
 	[connection disconnect];
+	[self attemptedRecovery: NO error: error];
 }
 
 
 - (void) PGTSConnectionEstablished: (PGTSConnection *) connection
 {
-	BOOL status = YES;
-	[self allowConnecting: YES];
-	[mRecoveryInvocation setArgument: &status atIndex: 2];
-	[mRecoveryInvocation invoke];
 	[connection setDelegate: mHandler];
+	[self attemptedRecovery: YES error: nil];
 	
 	//FIXME: check modification tables?
 }

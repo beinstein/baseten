@@ -142,6 +142,8 @@
 - (void) refreshObject: (BXDatabaseObject *) object mergeChanges: (BOOL) flag;
 
 - (NSNotificationCenter *) notificationCenter;
+
+- (void) setAllowReconnecting: (BOOL) shouldAllow;
 @end
 
 

@@ -47,6 +47,12 @@
 - (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
 						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo;
 - (void) allowConnecting: (BOOL) allow;
+
+//Used with the synchronous method.
+- (BOOL) doAttemptRecoveryFromError: (NSError *) error outError: (NSError **) error;
+//Used with the asynchronous method.
+- (void) doAttemptRecoveryFromError: (NSError *) error;
+- (void) attemptedRecovery: (BOOL) succeeded error: (NSError *) newError;
 @end
 
 

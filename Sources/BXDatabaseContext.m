@@ -895,6 +895,11 @@ bx_query_during_reconnect ()
 	}
 }
 //@}
+
+- (void) setAllowReconnecting: (BOOL) shouldAllow
+{
+	mConnectionErrorHandlingState = (shouldAllow ? kBXConnectionErrorNone : kBXConnectionErrorNoReconnect);
+}
 @end
 
 
@@ -2545,11 +2550,6 @@ bx_query_during_reconnect ()
 			break;
 	}
 	return retval;
-}
-
-- (void) setAllowReconnecting: (BOOL) shouldAllow
-{
-	mConnectionErrorHandlingState = (shouldAllow ? kBXConnectionErrorNone : kBXConnectionErrorNoReconnect);
 }
 
 - (void) setLastConnectionError: (NSError *) anError

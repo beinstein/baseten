@@ -29,6 +29,7 @@
 #import "BXPGTransactionHandler.h"
 #import "BXPGConnectionResetRecoveryAttempter.h"
 #import "BXDatabaseContextPrivate.h"
+#import "BXDatabaseContextDelegateProtocol.h"
 #import "BXProbes.h"
 
 
@@ -42,15 +43,38 @@
 
 - (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
 {
-	[self doesNotRecognizeSelector: _cmd];
-	return NO;
+	NSError* localError = nil;
+	BOOL retval = NO;
+	[self allowConnecting: NO];
+	if (0 == recoveryOptionIndex)
+	{
+		[self doAttemptRecoveryFromError: error outError: &localError];
+		if (localError)
+		{
+			BXDatabaseContext* ctx = [[mHandler interface] databaseContext];
+			[[ctx internalDelegate] databaseContext: ctx hadReconnectionError: localError];
+		}
+		else
+		{
+			retval = YES;
+			[self allowConnecting: YES];
+		}
+	}
+	return retval;
 }
 
 
 - (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
 						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
 {
-	[self doesNotRecognizeSelector: _cmd];
+	NSInvocation* i = [self recoveryInvocation: delegate selector: didRecoverSelector contextInfo: contextInfo];
+	[self setRecoveryInvocation: i];
+	[self allowConnecting: NO];
+
+	if (0 == recoveryOptionIndex)
+		[self doAttemptRecoveryFromError: error];
+	else
+		[self attemptedRecovery: NO error: nil];
 }
 
 
@@ -82,6 +106,34 @@
 - (void) allowConnecting: (BOOL) allow
 {
 	[[[mHandler interface] databaseContext] setAllowReconnecting: allow];
+}
+
+
+- (BOOL) doAttemptRecoveryFromError: (NSError *) error outError: (NSError **) outError
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NO;
+}
+
+
+- (void) doAttemptRecoveryFromError: (NSError *) error
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (void) attemptedRecovery: (BOOL) succeeded error: (NSError *) newError
+{
+	[mRecoveryInvocation setArgument: &succeeded atIndex: 2];
+	[mRecoveryInvocation invoke];
+	
+	[self allowConnecting: succeeded];
+	
+	if (newError)
+	{
+		BXDatabaseContext* ctx = [[mHandler interface] databaseContext];
+		[[ctx internalDelegate] databaseContext: ctx hadReconnectionError: newError];
+	}
 }
 @end
 

@@ -72,12 +72,13 @@
     else
     {
         const char* clientEncoding = PQparameterStatus ([connection pgConnection], "client_encoding");
-        NSCAssert1 (0 == strcmp ("UNICODE", clientEncoding), @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
+		BXAssertValueReturn (0 == strcmp ("UNICODE", clientEncoding), NULL,
+							 @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
     }
-    const char* rval = [self UTF8String];
+    const char* retval = [self UTF8String];
     if (NULL != length)
-        *length = strlen (rval);
-    return (char *) rval;
+        *length = strlen (retval);
+    return (char *) retval;
 }
 @end
 

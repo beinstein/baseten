@@ -29,20 +29,48 @@
 #import "BXPGTransactionHandler.h"
 #import "BXPGManualCommitConnectionResetRecoveryAttempter.h"
 #import "BXPGManualCommitTransactionHandler.h"
+#import "BXLogger.h"
 
 
 @implementation BXPGManualCommitConnectionResetRecoveryAttempter
-- (BOOL) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex
+- (void) dealloc
 {
-	if (0 == recoveryOptionIndex)
-	{
-		[[mHandler connection] resetSync];
-		[[(id) mHandler notifyConnection] resetSync];
-		//-finishedConnecting gets executed here.
-	}
+	[mSyncError release];
+	[super dealloc];
+}
+
+- (BOOL) doAttemptRecoveryFromError: (NSError *) error outError: (NSError **) outError
+{
+	ExpectR (outError, NO);
+	PGTSConnection* connection = [mHandler connection];
+	PGTSConnection* notifyConnection = [(id) mHandler notifyConnection];
 	
-	[self allowConnecting: mSucceeded];
+	[connection setDelegate: self];
+	[notifyConnection setDelegate: self];
+
+	[connection resetSync];
+	[notifyConnection resetSync];
+	
+	//-finishedConnecting gets executed here.	
+	
+	if (! mSucceeded)
+		*outError = mSyncError;
+	
 	return mSucceeded;
+}
+
+
+- (void) doAttemptRecoveryFromError: (NSError *) error
+{
+	mCounter = 2;
+	mIsAsync = YES;
+	
+	PGTSConnection* connection = [mHandler connection];
+	PGTSConnection* notifyConnection = [(id) mHandler notifyConnection];
+	[connection setDelegate: self];
+	[notifyConnection setDelegate: self];
+	[connection resetAsync];
+	[notifyConnection resetAsync];
 }
 
 
@@ -55,8 +83,15 @@
 	ConnStatusType s2 = [notifyConnection connectionStatus];
 	mSucceeded = (CONNECTION_OK == s1 && CONNECTION_OK == s2);
 	
+	NSError* error1 = nil;
+	NSError* error2 = nil;
+	
 	if (! mSucceeded)
 	{
+		error1 = [connection connectionError];
+		error2 = [notifyConnection connectionError];
+		mSyncError = [(error1 ?: error2) retain];
+		
 		[connection disconnect];
 		[notifyConnection disconnect];
 	}
@@ -68,9 +103,7 @@
 	
 	if (mIsAsync)
 	{
-		[self allowConnecting: mSucceeded];
-		[mRecoveryInvocation setArgument: &mSucceeded atIndex: 2];
-		[mRecoveryInvocation invoke];
+		[self attemptedRecovery: mSucceeded error: mSyncError];
 		//FIXME: check modification tables?
 		//FIXME: clear mHandlingConnectionLoss.
 	}
@@ -83,24 +116,6 @@
 	mCounter--;
 	if (! mCounter)
 		[self finishedConnecting];
-}
-
-
-- (void) attemptRecoveryFromError: (NSError *) error optionIndex: (NSUInteger) recoveryOptionIndex 
-						 delegate: (id) delegate didRecoverSelector: (SEL) didRecoverSelector contextInfo: (void *) contextInfo
-{
-	mCounter = 2;
-	mIsAsync = YES;
-	
-	NSInvocation* i = [self recoveryInvocation: delegate selector: didRecoverSelector contextInfo: contextInfo];
-	[self setRecoveryInvocation: i];
-	
-	PGTSConnection* connection = [mHandler connection];
-	PGTSConnection* notifyConnection = [(id) mHandler notifyConnection];
-	[connection setDelegate: self];
-	[notifyConnection setDelegate: self];
-	[connection resetAsync];
-	[notifyConnection resetAsync];
 }
 
 

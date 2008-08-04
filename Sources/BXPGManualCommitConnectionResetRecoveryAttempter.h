@@ -31,6 +31,7 @@
 
 @interface BXPGManualCommitConnectionResetRecoveryAttempter : BXPGConnectionRecoveryAttempter
 {
+	NSError* mSyncError;
 	int mCounter;
 	BOOL mIsAsync;
 	BOOL mSucceeded;

@@ -27,6 +27,7 @@
 //
 
 #import <AppKit/AppKit.h>
+#import "BXDatabaseContext.h"
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
 #import "BXException.h"
 #import "BXDatabaseAdditions.h"
@@ -59,7 +60,10 @@
 		if ([NSApp presentError: error])
 			NSLog (@"Reconnected.");
 		else
+		{
 			NSLog (@"Failed to reconnect.");
+			[context setAllowReconnecting: NO];
+		}
 	}
 	else
 	{
