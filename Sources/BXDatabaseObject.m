@@ -437,64 +437,70 @@ ParseSelector (SEL aSelector, NSString** key)
 	NSError* error = nil;
 	id retval = nil;
 	
-	enum BXDatabaseObjectKeyType keyType = [self keyType: aKey];
-	BXAssertLog (kBXDatabaseObjectUnknownKey != keyType, @"Expected key type to be known.");
-	switch (keyType)
-	{
-        case kBXDatabaseObjectPrimaryKey:
-		case kBXDatabaseObjectKnownKey:
-		{
-			retval = [self cachedValueForKey: aKey];
-			
-			if (nil == retval)
-			{
-				BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-				NSDictionary* attrs = [[self entity] attributesByName];
-				if ([mContext fireFault: self key: [attrs objectForKey: aKey] error: &error])
-					retval = [self cachedValueForKey: aKey];
-			}
-			break;
-		}
-			
-		case kBXDatabaseObjectForeignKey:
-		{
-			retval = [self cachedValueForKey: aKey];
-			
-			if (nil == retval)
-			{
-				BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-				BXRelationshipDescription* rel = [[[self entity] relationshipsByName] objectForKey: aKey];
-				if (nil != rel)
-				{
-					retval = [rel targetForObject: self error: &error];
-					if (nil == error)
-					{
-						//Caching the result might cause a retain cycle.
-						[self setCachedValue: retval forKey: aKey];
-					}
-				}									
-			}
-			break;
-		}
-			
-		case kBXDatabaseObjectUnknownKey:
-			break;
-			
-		case kBXDatabaseObjectNoKeyType:
-		default:
-			BXAssertValueReturn (NO, nil, @"keyType had a strange value (%d).", keyType);
-			break;
-	}
-	
-	if (nil != error)
-		[[mContext internalDelegate] databaseContext: mContext hadError: error willBePassedOn: NO];
+	//If we have an error condition, return anything we have in cache.
+	if (! [mContext checkErrorHandling])
+		retval = [self cachedValueForKey: aKey];
 	else
 	{
-		if (nil == retval)
-			retval = [self valueForUndefinedKey2: aKey];
-		if ([NSNull null] == retval)
-			retval = nil;
-	}		
+		enum BXDatabaseObjectKeyType keyType = [self keyType: aKey];
+		BXAssertLog (kBXDatabaseObjectUnknownKey != keyType, @"Expected key type to be known.");
+		switch (keyType)
+		{
+			case kBXDatabaseObjectPrimaryKey:
+			case kBXDatabaseObjectKnownKey:
+			{
+				retval = [self cachedValueForKey: aKey];
+				
+				if (nil == retval)
+				{
+					BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+					NSDictionary* attrs = [[self entity] attributesByName];
+					if ([mContext fireFault: self key: [attrs objectForKey: aKey] error: &error])
+						retval = [self cachedValueForKey: aKey];
+				}
+				break;
+			}
+				
+			case kBXDatabaseObjectForeignKey:
+			{
+				retval = [self cachedValueForKey: aKey];
+				
+				if (nil == retval)
+				{
+					BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+					BXRelationshipDescription* rel = [[[self entity] relationshipsByName] objectForKey: aKey];
+					if (nil != rel)
+					{
+						retval = [rel targetForObject: self error: &error];
+						if (nil == error)
+						{
+							//Caching the result might cause a retain cycle.
+							[self setCachedValue: retval forKey: aKey];
+						}
+					}									
+				}
+				break;
+			}
+				
+			case kBXDatabaseObjectUnknownKey:
+				break;
+				
+			case kBXDatabaseObjectNoKeyType:
+			default:
+				BXAssertValueReturn (NO, nil, @"keyType had a strange value (%d).", keyType);
+				break;
+		}
+		
+		if (nil != error)
+			[[mContext internalDelegate] databaseContext: mContext hadError: error willBePassedOn: NO];
+		else
+		{
+			if (nil == retval)
+				retval = [self valueForUndefinedKey2: aKey];
+			if ([NSNull null] == retval)
+				retval = nil;
+		}
+	}
     
     return [[retval retain] autorelease];
 }
