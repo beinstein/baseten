@@ -391,10 +391,9 @@ bx_query_during_reconnect ()
 		[self setCanConnect: NO];
 		[self lazyInit];
 		retval = [[self databaseInterface] connectSync: &localError];
+		retval = [self connectedToDatabase: retval async: NO error: &localError];
 		
-		[self connectedToDatabase: retval async: NO error: &localError];
-		
-		if (nil != localError)
+		if (! retval)
 		{
 			[mDatabaseInterface release];
 			mDatabaseInterface = nil;
@@ -1476,9 +1475,11 @@ bx_query_during_reconnect ()
 	[mDelegateProxy databaseContext: self lostConnection: error];
 }
 
-- (void) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
+//FIXME: We do too many things in this method. It should be refactored.
+- (BOOL) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 {
 	BXAssertLog (NULL != error || (YES == async && YES == connected), @"Expected error to be set.");
+	BOOL retval = connected;
 	
 	if (NO == connected)
 	{
@@ -1508,6 +1509,7 @@ bx_query_during_reconnect ()
 					[self connectAsync];
 				else if ([self connectSync: error])
 				{
+					retval = YES;
 					if (error)
 						*error = nil;
 				}
@@ -1580,6 +1582,7 @@ bx_query_during_reconnect ()
 	}
 	[self setLastConnectionError: nil];
 	[self setKeychainPasswordItem: NULL];
+	return retval;
 }
 
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
