@@ -556,6 +556,8 @@
 					"$(SRCROOT)/../Dependencies/MKCCollections/build/$(BUILD_STYLE)",
 					.,
 				);
+				IBC_PLUGINS = BaseTen;
+				IBC_PLUGIN_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR) ../InterfaceBuilderPlugin/build/$(BUILD_STYLE)";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -567,7 +569,10 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "BaseTen Assistant";
-				WARNING_CFLAGS = "-Wall";
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wundeclared-selector",
+				);
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
@@ -594,6 +599,8 @@
 					"$(SRCROOT)/../Dependencies/MKCCollections/build/$(BUILD_STYLE)",
 					.,
 				);
+				IBC_PLUGINS = BaseTen;
+				IBC_PLUGIN_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR) ../InterfaceBuilderPlugin/build/$(BUILD_STYLE)";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -605,7 +612,10 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "BaseTen Assistant";
-				WARNING_CFLAGS = "-Wall";
+				WARNING_CFLAGS = (
+					"-Wall",
+					"-Wundeclared-selector",
+				);
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
