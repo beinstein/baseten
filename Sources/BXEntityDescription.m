@@ -253,7 +253,11 @@ bail:
  * Set the class for this entity.
  * Objects fetched using this entity will be instances of
  * the given class, which needs to be a subclass of BXDatabaseObject.
- * \param       cls         The object class.
+ * \param   cls     The object class.
+ * \note	If objects have been fetched from this entity before setting
+ *          a class, those objects might be returned by subsequent
+ *          fetches. It is best to set the class before connecting to the
+ *          database.
  */
 - (void) setDatabaseObjectClass: (Class) cls
 {

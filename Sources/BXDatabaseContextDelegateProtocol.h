@@ -94,8 +94,34 @@
 				hadError: (NSError *) anError 
 		  willBePassedOn: (BOOL) willBePassedOn;
 
+/**
+ * Handle connection loss.
+ * Called when a database connection is lost either unintentionally or by system sleep.
+ * In both cases a recovery attempter will be included with the error.
+ *
+ * By default in AppKit applications the error will be presented to the user as an 
+ * application modal alert panel. If they choose not to reconnect or the attempt fails 
+ * for some reason, the context will be set to return \em nil for all non-cached object 
+ * values.
+ *
+ * Foundation applications will throw a BXException named kBXExceptionUnhandledError.
+ * 
+ * \note -databaseContext:hadError:willBePassedOn: won't be called for this error.
+ */
 - (void) databaseContext: (BXDatabaseContext *) context lostConnection: (NSError *) error;
 
+/**
+ * Handle failure during connection loss recovery.
+ * Called after recovery was attempted after a database connection had been lost but
+ * the attempt failed.
+ *
+ * By default in AppKit applications the error will be presented to the user as an
+ * application modal alert panel.
+ *
+ * Foundation applications will log the error.
+ *
+ * \note -databaseContext:hadError:willBePassedOn: won't be called for this error.
+ */
 - (void) databaseContext: (BXDatabaseContext *) context
 	hadReconnectionError: (NSError *) error;
 
