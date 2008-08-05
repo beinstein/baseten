@@ -541,7 +541,10 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)",
+					"../build/$(BUILD_STYLE)",
+				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -550,23 +553,11 @@
 				GCC_MODEL_TUNING = G4;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"$(SRCROOT)/../Dependencies/PGTS/build/$(BUILD_STYLE)",
-					"$(SRCROOT)/../Dependencies/MKCCollections/build/$(BUILD_STYLE)",
-					.,
-				);
 				IBC_PLUGINS = BaseTen;
 				IBC_PLUGIN_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR) ../InterfaceBuilderPlugin/build/$(BUILD_STYLE)";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"$(SRCROOT)/../Dependencies/BaseTen/Dependencies/PGTS/TigerFramework/build/$(BUILD_STYLE)",
-					"$(SRCROOT)/../Dependencies/BaseTen/Dependencies/MKCCollections/build/$(BUILD_STYLE)",
-					"$(SDKROOT_$(arch))/usr/lib",
-					.,
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "BaseTen Assistant";
 				WARNING_CFLAGS = (
@@ -586,30 +577,21 @@
 					i386,
 				);
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(BUILT_PRODUCTS_DIR)",
+					"../build/$(BUILD_STYLE)",
+				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_ENABLE_OBJC_GC = supported;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"$(SRCROOT)/../Dependencies/PGTS/build/$(BUILD_STYLE)",
-					"$(SRCROOT)/../Dependencies/MKCCollections/build/$(BUILD_STYLE)",
-					.,
-				);
 				IBC_PLUGINS = BaseTen;
 				IBC_PLUGIN_SEARCH_PATHS = "$(BUILT_PRODUCTS_DIR) ../InterfaceBuilderPlugin/build/$(BUILD_STYLE)";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"$(SRCROOT)/../Dependencies/BaseTen/Dependencies/PGTS/TigerFramework/build/$(BUILD_STYLE)",
-					"$(SRCROOT)/../Dependencies/BaseTen/Dependencies/MKCCollections/build/$(BUILD_STYLE)",
-					"$(SDKROOT_$(arch))/usr/lib",
-					.,
-				);
+				LIBRARY_SEARCH_PATHS = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "BaseTen Assistant";
 				WARNING_CFLAGS = (

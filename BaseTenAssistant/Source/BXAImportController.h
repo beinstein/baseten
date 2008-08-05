@@ -60,6 +60,10 @@
 @property (readwrite, retain) NSString* schemaName;
 @property (readwrite, retain) BXDatabaseContext* databaseContext;
 - (void) showPanel;
+
+- (void) errorEnded: (BOOL) didRecover contextInfo: (void *) contextInfo;
+- (void) nameConflictAlertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) ctx;
+- (void) importPanelDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo;
 @end
 
 

@@ -98,6 +98,7 @@
 - (void) finishedImporting;
 - (NSError *) schemaInstallError;
 - (BOOL) schemaInstallDenied;
+- (void) upgradeBaseTenSchema;
 @end
 
 
@@ -113,6 +114,7 @@
 
 - (IBAction) upgradeSchema: (id) sender;
 - (IBAction) removeSchema: (id) sender;
+- (IBAction) cancelSchemaInstall: (id) sender;
 @end
 
 
@@ -126,4 +128,6 @@
 
 
 @interface BXAController (Delegation) <BXDataModelCompilerDelegate, BXPGSQLScriptReaderDelegate>
+- (void) alertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) ctx;
+- (void) importOpenPanelDidEnd: (NSOpenPanel *) panel returnCode: (int) returnCode contextInfo: (void *) contextInfo;
 @end

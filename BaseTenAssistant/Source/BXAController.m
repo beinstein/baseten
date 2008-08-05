@@ -210,6 +210,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 @end
 
 
+
 @implementation BXAController
 - (NSError *) schemaInstallError
 {
@@ -352,6 +353,71 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
+- (BOOL) checkBaseTenSchema: (NSError **) error
+{
+	NSError* localError = nil;
+	[self willChangeValueForKey: @"hasBaseTenSchema"];
+	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
+	BOOL retval = [db checkBaseTenSchema: &localError];
+	[self didChangeValueForKey: @"hasBaseTenSchema"];
+	
+	if (! retval)
+	{
+		if (error)
+			*error = localError;
+		else
+			[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	}
+	
+	return retval;
+}
+
+
+- (BOOL) canUpgradeSchema
+{
+	BOOL retval = NO;
+	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
+	NSNumber* currentVersion = [db schemaVersion];
+	if (currentVersion && NSOrderedDescending == [mBundledSchemaVersionNumber compare: currentVersion])
+		retval = YES;
+	return retval;
+}
+
+
+- (void) connected: (NSNotification *) n
+{
+	[self hideProgressPanel];
+	[mStatusTextField setObjectValue: [NSString stringWithFormat: @"Connected to %@.", [mContext databaseURI]]];
+	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
+	[mEntitiesBySchema setContent: entities];
+	
+	BXPGInterface* interface = (id) [mContext databaseInterface];
+	[mReader setConnection: [[interface transactionHandler] connection]];
+	
+	if ([self checkBaseTenSchema: NULL] && [self canUpgradeSchema])
+	{
+		NSString* message = @"The installed schema has older version than the one bundlend with this application. Would you like to upgrade the database?";
+		NSAlert* alert = [NSAlert alertWithMessageText: @"Upgrade BaseTen schema?" 
+										 defaultButton: @"Upgrade"
+									   alternateButton: @"Don't upgrade"
+										   otherButton: nil 
+							 informativeTextWithFormat: message];
+		[alert beginSheetModalForWindow: mMainWindow modalDelegate: self 
+						 didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+		NSInteger returnCode = [NSApp runModalForWindow: mMainWindow];
+		
+		if (NSAlertDefaultReturn == returnCode)
+			[self upgradeBaseTenSchema];
+	}
+}
+
+
+- (void) failedToConnect: (NSNotification *) n
+{
+	[self hideProgressPanel];
+}
+
+
 - (void) awakeFromNib
 {
 	gController = self;
@@ -455,26 +521,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	return [[[(BXPGInterface *) [mContext databaseInterface] transactionHandler] 
 			 databaseDescription] hasBaseTenSchema];
-}
-
-
-- (BOOL) checkBaseTenSchema: (NSError **) error
-{
-	NSError* localError = nil;
-	[self willChangeValueForKey: @"hasBaseTenSchema"];
-	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
-	BOOL retval = [db checkBaseTenSchema: &localError];
-	[self didChangeValueForKey: @"hasBaseTenSchema"];
-
-	if (! retval)
-	{
-		if (error)
-			*error = localError;
-		else
-			[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
-	}
-	
-	return retval;
 }
 
 
@@ -629,16 +675,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[mEntitiesBySchema setContent: entities];
 }
 
-- (BOOL) canUpgradeSchema
-{
-	BOOL retval = NO;
-	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
-	NSNumber* currentVersion = [db schemaVersion];
-	if (currentVersion && NSOrderedDescending == [mBundledSchemaVersionNumber compare: currentVersion])
-		retval = YES;
-	return retval;
-}
-
 - (BOOL) canRemoveSchema
 {
 	return [[[(BXPGInterface *) [mContext databaseInterface] transactionHandler] 
@@ -790,7 +826,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
     id retval = nil;
 	if (NO == [self allowEnablingForRow: rowIndex])
 		retval = mInspectorButtonCell;
-		
+	
     return retval;
 }
 
@@ -888,7 +924,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			{
 				NSInvocation* recoveryInvocation = MakeInvocation (delegate, didRecoverSelector);
 				[recoveryInvocation setArgument: &contextInfo atIndex: 3];
-
+				
 				if (0 == recoveryOptionIndex)
 					[self installBaseTenSchema: recoveryInvocation];					
 				else
@@ -931,7 +967,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 				}
 				break;
 			}
-			
+				
 			default:
 				[self doesNotRecognizeSelector: _cmd];
 				break;
@@ -1092,6 +1128,12 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 }
 
 
+- (IBAction) cancelConnecting: (id) sender
+{
+	[self continueDisconnect];
+}
+
+
 - (IBAction) connect: (id) sender
 {	
 	NSString* username = [mUserNameCell objectValue];
@@ -1144,11 +1186,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[mLogWindow makeKeyAndOrderFront: nil];
 }
 
-
-- (IBAction) cancelConnecting: (id) sender
-{
-	[self continueDisconnect];
-}
 
 - (IBAction) cancelSchemaInstall: (id) sender
 {
