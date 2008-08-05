@@ -545,7 +545,7 @@
 		538A83100E1D1E5F0025B3C8 /* keywords.c */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.c; name = keywords.c; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/backend/parser/keywords.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		538A83140E1D1EE00025B3C8 /* BXPGSQLScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLScanner.h; path = Sources/BXPGSQLScanner.h; sourceTree = "<group>"; };
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
-		538A83CC0E1D85420025B3C8 /* sql_parser_exports */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sql_parser_exports; sourceTree = "<group>"; };
+		538A83CC0E1D85420025B3C8 /* sql_parser.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = sql_parser.exp; sourceTree = "<group>"; };
 		5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXPGCurrentCompatVersion.m.m4; path = Sources/BXPGCurrentCompatVersion.m.m4; sourceTree = "<group>"; };
 		53915F9C0E3FD22D0098B419 /* libpq_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libpq_additions.h; path = Sources/libpq_additions.h; sourceTree = "<group>"; };
 		53915F9D0E3FD22D0098B419 /* libpq_additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libpq_additions.c; path = Sources/libpq_additions.c; sourceTree = "<group>"; };
@@ -970,7 +970,7 @@
 				538A83050E1D1DD30025B3C8 /* prompt.c */,
 				538A82F80E1D1C1B0025B3C8 /* stringutils.c */,
 				538A82B60E1D151D0025B3C8 /* variables.c */,
-				538A83CC0E1D85420025B3C8 /* sql_parser_exports */,
+				538A83CC0E1D85420025B3C8 /* sql_parser.exp */,
 			);
 			name = "From PostgreSQL";
 			sourceTree = "<group>";
