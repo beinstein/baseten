@@ -1348,7 +1348,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -z \"$DOXYGEN\" ]\nthen\n\tDOXYGEN=`which doxygen`\n\tif [ -z \"$DOXYGEN\" ]\n\tthen\n\t\tif [ -x \"/usr/local/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/usr/local/bin/doxygen\"\n\t\telif [ -x \"/opt/local/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/opt/local/bin/doxygen\"\n\t\telif [ -x \"/sw/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/sw/bin/doxygen\"\n\t\tfi\n\tfi\nfi\n\nif [ -x \"$DOXYGEN\" ]\nthen\n\tcd \"$SRCROOT\"\n\t\"$DOXYGEN\"\n\tcd Documentation/html\n\tmake\n\topen *.docset\nelse\n\techo \"warning: didn't find doxygen; documentation not created.\"\nfi\nexit 0";
+			shellScript = "if [ -z \"$DOXYGEN\" ]\nthen\n\tDOXYGEN=`which doxygen`\n\tif [ -z \"$DOXYGEN\" ]\n\tthen\n\t\tif [ -x \"/usr/local/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/usr/local/bin/doxygen\"\n\t\telif [ -x \"/opt/local/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/opt/local/bin/doxygen\"\n\t\telif [ -x \"/sw/bin/doxygen\" ]\n\t\tthen\n\t\t\tDOXYGEN=\"/sw/bin/doxygen\"\t\t\n\t\t## Patch by Tim Bedford 2008-08-04\n\t\telse\n\t\t\tDOXYGENAPP=mdfind \"kMDItemFSName == 'Doxygen.app'\"\n\t\t\tif [ DOXYGENAPP ]\n\t\t\tthen\n\t\t\t\tDOXYGEN=\"$DOXYGENAPP/Contents/Resources/doxygen\"\n\t\t\tfi\n\t\tfi\n\t\t## End patch\n\tfi\nfi\n\nif [ -x \"$DOXYGEN\" ]\nthen\n\tcd \"$SRCROOT\"\n\t\"$DOXYGEN\"\n\tcd Documentation/html\n\tmake\n\topen *.docset\nelse\n\techo \"warning: didn't find doxygen; documentation not created.\"\nfi\nexit 0";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
