@@ -217,7 +217,6 @@ ShouldImport (id entity)
 		else
 		{
 			shouldContinue = [NSApp runModalForWindow: mChangePanel];
-			[mChangePanel orderOut: nil];
 		}
 	}
 	
@@ -325,7 +324,8 @@ ShouldImport (id entity)
 - (IBAction) endErrorPanel: (id) sender
 {
 	[mChangePanel orderOut: nil];
-	[NSApp endSheet: mChangePanel returnCode: [sender tag]];
+	[NSApp endSheet: mChangePanel];
+	[NSApp stopModalWithCode: [sender tag]];
 }
 
 - (IBAction) endImportPanel: (id) sender
