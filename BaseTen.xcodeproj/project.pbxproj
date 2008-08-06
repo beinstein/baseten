@@ -1319,7 +1319,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR/unzip.sh\" \"$PROJECT_DIR/BaseTenFrameworkIcon.zip\" \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR/set_icon.sh\" \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\n";
+			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenFrameworkIcon\"\n\n\"$PROJECT_DIR\"/unzip.sh \"$PROJECT_DIR\"/BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\"\n\"$PROJECT_DIR\"/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5362E86B0E1CE46D005C7654 /* ShellScript */ = {
