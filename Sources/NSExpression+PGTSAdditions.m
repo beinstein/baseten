@@ -48,7 +48,7 @@ AddParameter (id parameter, NSMutableDictionary* context)
 	if (YES == [[context objectForKey: kPGTSExpressionParametersVerbatimKey] boolValue])
 	{
 		PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-		retval = [NSString stringWithFormat: @"'%@'", [parameter PGTSEscapedObjectParameter: connection]];
+		retval = [NSString stringWithFormat: @"\"%@\"", [parameter PGTSEscapedObjectParameter: connection]]; //Patch by Tim Bedford 2008-08-06.
 	}
 	else
 	{
