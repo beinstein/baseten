@@ -74,6 +74,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 - (BXPGInterface *) interface;
 - (void) setInterface: (BXPGInterface *) interface;
 - (BOOL) isAsync;
+- (BOOL) isSSLInUse;
 
 - (void) connectAsync;
 - (BOOL) connectSync: (NSError **) outError;

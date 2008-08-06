@@ -144,6 +144,7 @@
 - (NSNotificationCenter *) notificationCenter;
 
 - (void) setAllowReconnecting: (BOOL) shouldAllow;
+- (BOOL) isSSLInUse;
 @end
 
 

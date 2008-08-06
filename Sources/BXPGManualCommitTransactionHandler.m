@@ -57,6 +57,12 @@
 }
 
 
+- (BOOL) isSSLInUse
+{
+	return ([super isSSLInUse] && [mNotifyConnection SSLStruct] ? YES : NO);
+}
+
+
 - (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
 		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
 {

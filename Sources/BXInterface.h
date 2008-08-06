@@ -141,4 +141,5 @@ struct BXTrustResult
 
 - (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted;
 - (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
+- (BOOL) isSSLInUse;
 @end

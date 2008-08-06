@@ -30,6 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/postgresql/libpq-fe.h>
 #import <BaseTen/PGTSCertificateVerificationDelegate.h>
+#import <openssl/ssl.h>
 @class PGTSConnection;
 @class PGTSResultSet;
 @class PGTSConnector;
@@ -102,6 +103,7 @@ enum PGTSConnectionError
 - (PGTransactionStatusType) transactionStatus;
 - (PGconn *) pgConnection;
 - (int) backendPID;
+- (SSL *) SSLStruct;
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;

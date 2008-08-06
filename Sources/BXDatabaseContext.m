@@ -898,6 +898,11 @@ bx_query_during_reconnect ()
 {
 	mConnectionErrorHandlingState = (shouldAllow ? kBXConnectionErrorNone : kBXConnectionErrorNoReconnect);
 }
+
+- (BOOL) isSSLInUse
+{
+	return [mDatabaseInterface isSSLInUse];
+}
 @end
 
 

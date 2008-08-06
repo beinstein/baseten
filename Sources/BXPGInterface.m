@@ -338,6 +338,12 @@ bx_error_during_rollback (id self, NSError* error)
 }
 
 
+- (BOOL) isSSLInUse
+{
+	return [mTransactionHandler isSSLInUse];
+}
+
+
 - (NSError *) connectionErrorForContext: (NSError *) error
 {
 	NSInteger code = kBXErrorUnknown;	

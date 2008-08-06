@@ -188,6 +188,11 @@ SSLMode (enum BXSSLMode mode)
 	return mAsync;
 }
 
+- (BOOL) isSSLInUse
+{
+	return ([mConnection SSLStruct] ? YES : NO);
+}
+
 - (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
 		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
 {

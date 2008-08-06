@@ -433,6 +433,11 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	mLogsQueries = flag;
 }
+
+- (SSL *) SSLStruct
+{
+	return (SSL *) PQgetssl (mConnection);
+}
 @end
 
 
@@ -578,5 +583,4 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 	[self sendOrEnqueueQuery: desc];
 	return retval;
 }
-
 @end
