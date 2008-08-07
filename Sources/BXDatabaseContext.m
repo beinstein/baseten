@@ -2479,7 +2479,8 @@ bx_query_during_reconnect ()
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
 			i--;
-			[[self internalDelegate] databaseContext: self validatingEntity: currentEntity entitiesLeft: i];
+			[[self internalDelegate] databaseContext: self validatingEntity: currentEntity 
+										entitiesLeft: i + [mLazilyValidatedEntities count]];
             if (! [self validateEntity: currentEntity error: error]) //FIXME: possible bottleneck.
             {
                 //Remember the remaining objects.
