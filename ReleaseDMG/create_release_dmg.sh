@@ -22,8 +22,11 @@ do
     exit_on_error
 done
 
-make -C ../Documentation/latex
-exit_on_error
+if [ ! "$1" = "--without-latex" ]
+then
+    make -C ../Documentation/latex
+    exit_on_error
+fi
 
 
 echo
