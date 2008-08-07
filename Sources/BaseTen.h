@@ -145,7 +145,12 @@
  * Since BaseTen relies on database introspection, SQL may be used to define the database schema.
  * Another option is to create a data model using Xcode's data modeler and import it using BaseTen Assistant.
  *
- * \subsection sql_views SQL views
+ * \see \subpage sql_views
+ * \see \subpage baseten_enabling
+ */
+
+/**
+ * \page sql_views SQL views
  *
  * Contents of SQL views may be manipulated using database objects provided that some conditions are met.
  * Unlike tables, views don't have primary keys but BaseTen still needs to be able to reference individual 
@@ -161,9 +166,10 @@
  *
  * PostgreSQL allows INSERT and UPDATE queries to target views if rules have been created to handle them.
  * In this case, the view contents may be modified also with BaseTen.
- *
- *
- * \subsection baseten_enabling More detail on enabling relations
+ */
+
+/**
+ * \page baseten_enabling More detail on enabling relations
  *
  * Some tables are created in BaseTen schema to track changes in other relations. The tables and relations
  * correspond to each other based on their names. The BaseTen tables store values for the actual relations' 
@@ -191,12 +197,12 @@
  *
  * Typically accessing a database consists roughly of the following steps:
  * <ul>
- *     <li>Creating an instance of BXDatabaseContext</li>
- *     <li>Connecting to a database</li>
- *     <li>Getting an entity description from the context</li>
- *     <li>Possibly creating an NSPredicate for reducing the number of fetched objects</li>
- *     <li>Performing a fetch using the entity and the predicate</li>
- *     <li>Handling the results</li>
+ *     <li>\subpage creating_a_database_context "Creating an instance of BXDatabaseContext"</li>
+ *     <li>\subpage connecting_to_a_database "Connecting to a database"</li>
+ *     <li>\subpage getting_an_entity_and_a_predicate "Getting an entity description from the context"</li>
+ *     <li>\subpage getting_an_entity_and_a_predicate "Possibly creating an NSPredicate for reducing the number of fetched objects"</li>
+ *     <li>\subpage performing_a_fetch "Performing a fetch using the entity and the predicate"</li>
+ *     <li>\subpage handling_the_results "Handling the results"</li>
  * </ul>
  * Here is a small walkthrough with sample code.
  *
@@ -247,9 +253,10 @@
  *     return 0;
  * }</pre>
  * \endhtmlonly
- *
- *
- * \subsection creating_a_database_context Creating a database context
+ */
+ 
+/**
+ * \page creating_a_database_context Creating a database context
  *
  * The designated initializer of BXDatabaseContext is <tt>-initWithDatabaseURI:</tt>. <tt>-init</tt> is also
  * available but the context does require an URI before connecting.
@@ -262,9 +269,10 @@
  * Various methods in BXDatabaseContext take a double pointer to an NSError object as a parameter. if the 
  * called method fails, the NSError will be set on return. If the parameter is NULL, the default error
  * handler raises a BXException. BXDatabaseContext's delegate may change this behaviour.
- *
- *
- * \subsection connecting_to_a_database Connecting to a database
+ */
+
+/**
+ * \page connecting_to_a_database Connecting to a database
  *
  * \latexonly 
  * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Connecting to a database]
@@ -291,9 +299,10 @@
  *
  * Since \em NULL is passed in place of an NSError double pointer, a BXException will be thrown on error.
  * See BXDatabaseContext's documentation for details on error handling.
- *
- * 
- * \subsection getting_an_entity_and_a_predicate Getting a BXEntityDescription and an NSPredicate
+ */
+
+/** 
+ * \page getting_an_entity_and_a_predicate Getting a BXEntityDescription and an NSPredicate
  *
  * \latexonly
  * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Getting a BXEntityDescription]
@@ -312,9 +321,10 @@
  * NSPredicates are created by various Cocoa objects and may be passed directly to BXDatabaseContext.
  * One way to create ad-hoc predicates is by using <tt>-[NSPredicate predicateWithFormat]</tt>.
  * In this example, we fetch all the objects instead of filtering them, though.
- *
- *
- * \subsection performing_a_fetch Performing a fetch using the entity and the predicate
+ */
+
+/**
+ * \page performing_a_fetch Performing a fetch using the entity and the predicate
  *
  * \latexonly
  * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Performing a fetch]
@@ -328,9 +338,10 @@
  * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
  * be used to fetch objects from the database. The method takes a BXEntityDescription and an NSPredicate and
  * performs a fetch synchronously. The fetched objects are returned in an NSArray.
- *
- *
- * \subsection handling_the_results Handling the results
+ */
+
+/**
+ * \page handling_the_results Handling the results
  *
  * \latexonly
  * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Handling fetch results]
@@ -588,7 +599,7 @@
  * \page building_baseten Building BaseTen
  *
  * BaseTen has several subprojects, namely BaseTenAppKit and a plug-in for Interface Builder 3. The default target in 
- * BaseTen.xcodeproj, BaseTen + GC, builds them as well; the plug-in and the AppKit framework will appear in the 
+ * BaseTen.xcodeproj, <em>BaseTen + GC</em>, builds them as well; the plug-in and the AppKit framework will appear in the 
  * subprojects' build folders, which are set to the default folder. The built files will probably be either in 
  * \em build folders in the subprojects' folders or in the user-specified build folder. The documentation will be
  * in the \em Documentation folder.
@@ -596,7 +607,8 @@
  *
  * \subsection Building for the release DMG
  *
- * The files needed to build the release disk image are in the SVN repository as well. To create the DMG, follow these steps:
+ * The files needed to build the release disk image are in the SVN repository as well. Doxygen and LateX are needed during 
+ * the process. To create the DMG, follow these steps:
  * <ol>
  *     <li>From the checked-out directory, <tt>cd ReleaseDMG</tt>.</li>
  *     <li>The default location for the built files is <em>~/Build/BaseTen-dmg-build</em>. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
