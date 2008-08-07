@@ -77,35 +77,45 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
  */ 
 - (BOOL) PGTSAllowSSLForConnection: (PGTSConnection *) connection context: (void *) x509_ctx preverifyStatus: (int) preverifyStatus
 {
-	BOOL rval = NO;
+	BOOL retval = NO;
 	SecTrustResultType result = kSecTrustResultInvalid;	
-	CFArrayRef certificates = [self copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx];
-	SecTrustRef trust = [self copyTrustFromCertificates: certificates];
+	CFArrayRef certificates = NULL;
+	SecTrustRef trust = NULL;
+	
+	certificates = [self copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx];
+	if (! certificates)
+		goto error;
+	
+	trust = [self copyTrustFromCertificates: certificates];
+	if (! trust)
+		goto error;
+	
 	OSStatus status = SecTrustEvaluate (trust, &result);
 	if (noErr == status && kSecTrustResultProceed == result)
-		rval = YES;
+		retval = YES;
 
+error:
 	SafeCFRelease (certificates);
-	SafeCFRelease (trust);
-	return rval;
+	SafeCFRelease (trust);	
+	return retval;
 }
 
 - (CSSM_CERT_TYPE) x509Version: (X509 *) x509Cert
 {
-	CSSM_CERT_TYPE rval = CSSM_CERT_X_509v3;
+	CSSM_CERT_TYPE retval = CSSM_CERT_X_509v3;
 	switch (X509_get_version (x509Cert))
 	{
 		case 1:
-			rval = CSSM_CERT_X_509v1;
+			retval = CSSM_CERT_X_509v1;
 			break;
 		case 2:
-			rval = CSSM_CERT_X_509v2;
+			retval = CSSM_CERT_X_509v2;
 			break;
 		case 3:
 		default:
 			break;
 	}
-	return rval;
+	return retval;
 }
 
 /**
@@ -117,9 +127,16 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 - (SecTrustRef) copyTrustFromCertificates: (CFArrayRef) certificates
 {
 	SecTrustRef trust = NULL;
-	OSStatus status = SecTrustCreateWithCertificates (certificates, [self policies], &trust);
-	if (noErr != status)
-		trust = NULL;
+	NSArray* policies = [self policies];
+	if (0 < [policies count])
+	{
+		OSStatus status = SecTrustCreateWithCertificates (certificates, policies, &trust);
+		if (noErr != status)
+		{
+			SafeCFRelease (trust);
+			trust = NULL;
+		}
+	}
 	return trust;
 }
 
@@ -129,23 +146,38 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
  */
 - (CFArrayRef) copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx
 {
+	CFMutableArrayRef certs = NULL;
 	BIO* bioOutput = BIO_new (BIO_s_mem ());
 	
-	int count = M_sk_num (x509_ctx->untrusted);
-	CFMutableArrayRef certs = (CFMutableArrayRef) [[NSMutableArray alloc] initWithCapacity: count + 1];
-	SecCertificateRef serverCert = [self copyCertificateFromX509: x509_ctx->cert bioOutput: bioOutput];
-	CFArrayAppendValue (certs, serverCert);
-	SafeCFRelease (serverCert);
-	
-	for (int i = 0; i < count; i++)
+	if (bioOutput)
 	{
-		SecCertificateRef chainCert = [self copyCertificateFromX509: (X509 *) M_sk_value (x509_ctx->untrusted, i)
-														  bioOutput: bioOutput];
-		CFArrayAppendValue (certs, chainCert);
-		SafeCFRelease (chainCert);
+		int count = M_sk_num (x509_ctx->untrusted);
+		SecCertificateRef serverCert = [self copyCertificateFromX509: x509_ctx->cert bioOutput: bioOutput];
+		if (serverCert)
+		{
+			certs = (CFMutableArrayRef) [[NSMutableArray alloc] initWithCapacity: count + 1];
+			CFArrayAppendValue (certs, serverCert);
+			SafeCFRelease (serverCert);
+			
+			for (int i = 0; i < count; i++)
+			{
+				SecCertificateRef chainCert = [self copyCertificateFromX509: (X509 *) M_sk_value (x509_ctx->untrusted, i)
+																  bioOutput: bioOutput];
+				if (chainCert)
+				{
+					CFArrayAppendValue (certs, chainCert);
+					CFRelease (chainCert);
+				}
+				else
+				{
+					SafeCFRelease (certs);
+					certs = NULL;
+					break;
+				}
+			}
+		}
+		BIO_free (bioOutput);
 	}
-	
-	BIO_free (bioOutput);
 	return certs;
 }
 
@@ -156,21 +188,29 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 - (SecCertificateRef) copyCertificateFromX509: (X509 *) opensslCert bioOutput: (BIO *) bioOutput
 {
 	SecCertificateRef cert = NULL;
-	BIO_reset (bioOutput);
-	if (i2d_X509_bio (bioOutput, opensslCert))
+	
+	if (bioOutput && opensslCert)
 	{
-		BUF_MEM* bioBuffer = NULL;
-		BIO_get_mem_ptr (bioOutput, &bioBuffer);
-		CSSM_DATA* cssmCert = alloca (sizeof (CSSM_DATA));
-		cssmCert->Data = (uint8 *) bioBuffer->data;
-		cssmCert->Length = bioBuffer->length;
-		
-		OSStatus status = SecCertificateCreateFromData (cssmCert, [self x509Version: opensslCert], CSSM_CERT_ENCODING_DER, &cert);
-		status = noErr;
+		BIO_reset (bioOutput);
+		if (i2d_X509_bio (bioOutput, opensslCert))
+		{
+			BUF_MEM* bioBuffer = NULL;
+			BIO_get_mem_ptr (bioOutput, &bioBuffer);
+			CSSM_DATA* cssmCert = alloca (sizeof (CSSM_DATA));
+			cssmCert->Data = (uint8 *) bioBuffer->data;
+			cssmCert->Length = bioBuffer->length;
+			
+			OSStatus status = SecCertificateCreateFromData (cssmCert, [self x509Version: opensslCert], CSSM_CERT_ENCODING_DER, &cert);
+			if (noErr != status)
+			{
+				SafeCFRelease (cert);
+				cert = NULL;
+			}
+		}
 	}
 	return cert;
 }
-	
+
 /**
  * Get search policies.
  * To find search policies, we need to create
@@ -191,10 +231,18 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 			SecPolicySearchRef criteria = NULL;
 			SecPolicyRef policy = NULL;
 			status = SecPolicySearchCreate (CSSM_CERT_X_509v3, currentOidPtr, NULL, &criteria);
+			if (noErr != status)
+			{
+				SafeCFRelease (criteria);
+				[mPolicies removeAllObjects];
+				break;
+			}
+			
+			//SecPolicySearchCopyNext should only return noErr or errSecPolicyNotFound.
 			while (noErr == SecPolicySearchCopyNext (criteria, &policy))
 			{
 				CFArrayAppendValue ((CFMutableArrayRef) mPolicies, policy);
-				SafeCFRelease (policy);
+				CFRelease (policy);
 			}
 			SafeCFRelease (criteria);
 			i++;
