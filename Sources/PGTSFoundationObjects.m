@@ -41,7 +41,7 @@
 @implementation NSObject (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    NSLog (@"Warning: returning a nil from NSObject's implementation.");
+    BXLogWarning (@"Returning a nil from NSObject's implementation.");
     return nil;
 }
 

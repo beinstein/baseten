@@ -70,10 +70,11 @@
 - (void) setCanConnect: (BOOL) aBool;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName 
                      validateImmediately: (BOOL) validateImmediately error: (NSError **) error;
-- (void) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
+- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 - (void) iterateValidationQueue: (NSError **) error;
 - (BOOL) checkErrorHandling;
 - (void) setLastConnectionError: (NSError *) anError;
+- (NSSet *) entities;
 @end
 
 

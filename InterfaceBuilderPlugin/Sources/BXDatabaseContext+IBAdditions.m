@@ -79,12 +79,11 @@
 		}
 		else if ([givenURI isKindOfClass: [NSString class]])
 		{
-		    if (0 != [givenURI length])
+		    if (0 < [givenURI length])
 				newURI = [NSURL URLWithString: givenURI];
 			else
 			{
 				succeeded = YES;
-				*ioValue = nil;
 				goto bail;
 			}
 		}

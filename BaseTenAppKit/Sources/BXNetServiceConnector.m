@@ -103,6 +103,7 @@
 - (void) connectionPanelDidEnd: (BXConnectionPanel *) panel returnCode: (int) returnCode 
 				   contextInfo: (void *) contextInfo
 {
+	[[databaseContext internalDelegate] databaseContextGotDatabaseURI: databaseContext];
 	[self continueFromDatabaseSelection: panel returnCode: returnCode];
 }
 

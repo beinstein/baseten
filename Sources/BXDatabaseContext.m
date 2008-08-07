@@ -140,7 +140,8 @@ BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 static void
 bx_query_during_reconnect ()
 {
-	NSLog (@"Tried to send a query during reconnection attempt. Break on bx_query_during_reconnect to inspect.");
+	BXLogError (@"Tried to send a query during reconnection attempt.");
+	BXLogInfo (@"Break on bx_query_during_reconnect to inspect.");
 }
 
 
@@ -318,6 +319,7 @@ bx_query_during_reconnect ()
 //@{
 /**
  * Set the database URI.
+ * Also clears the context's strong references to entity descriptions received from it.
  * \param   uri     The database URI
  * \throw   NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
@@ -325,6 +327,7 @@ bx_query_during_reconnect ()
 {
 	[self setDatabaseURIInternal: uri];
 	[self setKeychainPasswordItem: NULL];
+	[mEntities removeAllObjects];
 }
 
 /**
@@ -1060,8 +1063,7 @@ bx_query_during_reconnect ()
 		if (! [self connectSync: &localError])
 			goto error;
 		
-		[self validateEntity: [anID entity] error: &localError];
-		if (localError)
+		if (! [self validateEntity: [anID entity] error: &localError])
 			goto error;
 		
 		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
@@ -1919,7 +1921,11 @@ bx_query_during_reconnect ()
  * \name Getting entity descriptions
  */
 //@{
-/** Entity for a table in the given schema */
+/** 
+ * Entity for a table in the given schema. 
+ * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
+ *       the database name before entities may be received.
+ */
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error
 {
     return [self entityForTable: tableName
@@ -1928,7 +1934,11 @@ bx_query_during_reconnect ()
                           error: error];
 }
 
-/** Entity for a table in the default schema */
+/** 
+ * Entity for a table in the default schema 
+ * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
+ *       the database name before entities may be received.
+ */
 - (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error
 {
     return [self entityForTable: tableName
@@ -2436,7 +2446,9 @@ bx_query_during_reconnect ()
             {
 				if ([self connectSync: &localError])
                     [self validateEntity: retval error: &localError];
-                [self iterateValidationQueue: &localError];
+				
+				if (! localError)
+	                [self iterateValidationQueue: &localError];
             }
             else
             {
@@ -2463,10 +2475,12 @@ bx_query_during_reconnect ()
     {
         NSSet* entities = [[mLazilyValidatedEntities copy] autorelease];
         [mLazilyValidatedEntities removeAllObjects];
+		NSUInteger i = [entities count];
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
         {
-            [self validateEntity: currentEntity error: error]; //FIXME: possible bottleneck.
-            if (nil != *error)
+			i--;
+			[[self internalDelegate] databaseContext: self validatingEntity: currentEntity entitiesLeft: i];
+            if (! [self validateEntity: currentEntity error: error]) //FIXME: possible bottleneck.
             {
                 //Remember the remaining objects.
                 [mLazilyValidatedEntities addObjectsFromArray: [e allObjects]];
@@ -2489,36 +2503,42 @@ bx_query_during_reconnect ()
 	return relationships;
 }
 
-- (void) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
+- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
 {
 	//This should be safe even with multiple threads.
 
-	BXAssertVoidReturn (NULL != error, @"Expected error not to be NULL.");
-	if (! [entity isValidated])
+	ExpectR (error, NO);
+	BOOL retval = NO;
+	if ([entity isValidated])
+		retval = YES;
+	else
 	{
 		NSLock* lock = [entity validationLock];
 		[lock lock];
 		//Check again in case someone else had the lock.
 		if (! [entity isValidated])
 		{
-			[mDatabaseInterface validateEntity: entity error: error];
-			if (nil == *error)
+			if ([mDatabaseInterface validateEntity: entity error: error])
 			{
-				if ([entity hasCapability: kBXEntityCapabilityRelationships])
+				if (! [entity hasCapability: kBXEntityCapabilityRelationships])
+					retval = YES;
+				else
 				{
 					[entity setRelationships: nil];
 					NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
-					if (nil == *error)
+					if (! *error)
+					{
+						retval = YES;
 						[entity setRelationships: relationships];
-					
-					if ([entity isValidated])
 						[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
+					}
 				}			
 			}
 		}
 		
 		[lock unlock];
 	}
+	return retval;
 }
 
 - (BOOL) checkURIScheme: (NSURL *) url error: (NSError **) error
@@ -2566,6 +2586,11 @@ bx_query_during_reconnect ()
 		[mLastConnectionError release];
 		mLastConnectionError = [anError retain];
 	}
+}
+
+- (NSSet *) entities
+{
+	return mEntities;
 }
 @end
 

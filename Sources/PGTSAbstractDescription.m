@@ -30,6 +30,7 @@
 #import "PGTSConstants.h"
 #import "PGTSConnection.h"
 #import "PGTSHOM.h"
+#import "BXLogger.h"
 
 
 extern inline
@@ -172,7 +173,7 @@ id PGTSNilReturn (id anObject);
 
 - (Class) proxyClass
 {
-	NSLog (@"-proxyClass not implemented in %@", [self class]);
+	BXLogError (@"-proxyClass not implemented in %@", [self class]);
 	return Nil;
 }
 

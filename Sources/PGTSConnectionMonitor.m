@@ -29,6 +29,7 @@
 #import "PGTSConnectionMonitor.h"
 #import "PGTSAdditions.h"
 #import "PGTSProbes.h"
+#import "BXLogger.h"
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <IOKit/IOMessage.h>
 #import <AppKit/AppKit.h>
@@ -144,7 +145,7 @@ WorkspaceWillSleep (void* refCon, io_service_t service, natural_t messageType, v
 		if (mIOPowerSession)
 			CFRunLoopAddSource (CFRunLoopGetCurrent(), IONotificationPortGetRunLoopSource (ioNotificationPort), kCFRunLoopCommonModes);
 		else
-			NSLog (@"Failed to register for system sleep."); //FIXME: use Log4Cocoa.
+			BXLogError (@"Failed to register for system sleep.");
 	}
 	return self;
 }

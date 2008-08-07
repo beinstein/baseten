@@ -32,6 +32,7 @@
 
 
 @class BXDatabaseContext;
+@class BXEntityDescription;
 
 
 /**
@@ -148,4 +149,6 @@
  */
 - (enum BXSSLMode) SSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
 
+- (void) databaseContext: (BXDatabaseContext *) ctx validatingEntity: (BXEntityDescription *) entity entitiesLeft: (NSUInteger) count;
+- (void) databaseContextGotDatabaseURI: (BXDatabaseContext *) ctx;
 @end

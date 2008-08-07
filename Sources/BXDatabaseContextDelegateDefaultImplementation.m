@@ -58,10 +58,10 @@
 	{
 		//FIXME: do something about this; not just logging.
 		if ([NSApp presentError: error])
-			NSLog (@"Reconnected.");
+			BXLogInfo (@"Reconnected.");
 		else
 		{
-			NSLog (@"Failed to reconnect.");
+			BXLogInfo (@"Failed to reconnect.");
 			[context setAllowReconnecting: NO];
 		}
 	}
