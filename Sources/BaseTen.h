@@ -92,6 +92,8 @@
  * \li Autocommit and manual save/rollback modes, both with NSUndoManager integration
  * \li A BaseTen-aware NSArrayController subclass automates locking and change propagation
  * \li Fetches are specified with NSPredicates (the relevant portions of which are evaluated on the database)
+ * 
+ * \sa \ref general_usage
  */
 
 /**
