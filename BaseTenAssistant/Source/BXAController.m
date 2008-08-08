@@ -384,40 +384,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
-- (void) connected: (NSNotification *) n
-{
-	[self hideProgressPanel];
-	[mStatusTextField setObjectValue: [NSString stringWithFormat: @"Connected to %@.", [mContext databaseURI]]];
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
-	[mEntitiesBySchema setContent: entities];
-	
-	BXPGInterface* interface = (id) [mContext databaseInterface];
-	[mReader setConnection: [[interface transactionHandler] connection]];
-	
-	if ([self checkBaseTenSchema: NULL] && [self canUpgradeSchema])
-	{
-		NSString* message = @"The installed schema has older version than the one bundlend with this application. Would you like to upgrade the database?";
-		NSAlert* alert = [NSAlert alertWithMessageText: @"Upgrade BaseTen schema?" 
-										 defaultButton: @"Upgrade"
-									   alternateButton: @"Don't upgrade"
-										   otherButton: nil 
-							 informativeTextWithFormat: message];
-		[alert beginSheetModalForWindow: mMainWindow modalDelegate: self 
-						 didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) contextInfo: NULL];
-		NSInteger returnCode = [NSApp runModalForWindow: mMainWindow];
-		
-		if (NSAlertDefaultReturn == returnCode)
-			[self upgradeBaseTenSchema];
-	}
-}
-
-
-- (void) failedToConnect: (NSNotification *) n
-{
-	[self hideProgressPanel];
-}
-
-
 - (void) awakeFromNib
 {
 	gController = self;
@@ -438,11 +404,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[self setupTableViews];
 	
 	[mProgressIndicator setUsesThreadedAnimation: YES];
-	
-	NSNotificationCenter* nc = [mContext notificationCenter];
-	[nc addObserver: self selector: @selector (connected:) name: kBXConnectionSuccessfulNotification object: nil];
-	[nc addObserver: self selector: @selector (failedToConnect:) name: kBXConnectionFailedNotification object: nil];
-	
+		
 	[mEntities addObserver: self forKeyPath: @"selection" 
 				   options: NSKeyValueObservingOptionInitial
 				   context: kBXAControllerCtx];
@@ -784,7 +746,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
-- (void) connected: (NSNotification *) n
+- (void) databaseContextConnectionSucceeded: (BXDatabaseContext *) ctx
 {
 	[self hideProgressPanel];
 	[mStatusTextField setObjectValue: [NSString stringWithFormat: @"Connected to %@.", [mContext databaseURI]]];
@@ -812,9 +774,17 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
-- (void) failedToConnect: (NSNotification *) n
+- (void) databaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error;
 {
 	[self hideProgressPanel];
+	
+	NSAlert* alert = [NSAlert alertWithError: error];
+	[alert beginSheetModalForWindow: mMainWindow modalDelegate: self 
+					 didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+	[NSApp runModalForWindow: mMainWindow];
+	
+	[NSApp beginSheet: mConnectPanel modalForWindow: mMainWindow modalDelegate: self 
+	   didEndSelector: NULL contextInfo: NULL];	
 }
 
 
