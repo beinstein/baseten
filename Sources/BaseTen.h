@@ -630,7 +630,7 @@
  * \li Practically all public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
  *     Furthermore, all queries must be performed from the thread in which the context made a database connection. This could change
  *     in the future, so it is best to create and handle a context only in one thread.
- * \li NSCoding has not been implemented for BXDatabaseObject.
+ * \li Any serialization mechanism has not been implemented for BXDatabaseObject.
  * \li BaseTen is currently suitable for inserting small data sets into the database. 
  *     Insertion of larger data sets (thousands of objects) takes considerable amount of time and 
  *     may cause 'out of shared memory' errors if executed without the autocommit flag.
