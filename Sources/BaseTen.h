@@ -607,12 +607,17 @@
  *
  * \subsection Building for the release DMG
  *
- * The files needed to build the release disk image are in the SVN repository as well. Doxygen and LateX are needed during 
+ * The files needed to build the release disk image are in the SVN repository as well. Doxygen is needed during 
  * the process. To create the DMG, follow these steps:
  * <ol>
  *     <li>From the checked-out directory, <tt>cd ReleaseDMG</tt>.</li>
  *     <li>The default location for the built files is <em>~/Build/BaseTen-dmg-build</em>. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
- *     <li>Do <tt>./create_release_dmg.sh</tt>.</li> The build DMG will appear in the ReleaseDMG folder.
+ *     <li>
+ *         Do <tt>./create_release_dmg.sh</tt>. The build DMG will appear in the ReleaseDMG folder.
+ *         <ul>
+ *             <li>If you don't have LaTeX installed, do <tt>./create_release_dmg.sh --without-latex</tt> instead. The PDF manual won't be included on the DMG, though.</li>
+ *         </ul>
+ *     </li>
  * </ol>
  */
 
