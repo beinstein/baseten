@@ -81,7 +81,8 @@ enum BXError
 	kBXErrorNullConstraintNotSatisfied,
 	kBXErrorSSLError,
 	kBXErrorConnectionLost,
-	kBXErrorUnknown
+	kBXErrorUnknown,
+	kBXErrorIncompleteDatabaseURI
 };
 
 enum BXModificationType

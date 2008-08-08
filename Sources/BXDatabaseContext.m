@@ -2433,7 +2433,23 @@ bx_query_during_reconnect ()
 {
     NSError* localError = nil;
     BXEntityDescription* retval = nil;
-    if ([self checkDatabaseURI: &localError])
+    if (! [self checkDatabaseURI: &localError])
+		goto error;
+	
+	if (! ([mDatabaseURI host] && [mDatabaseURI path]))
+	{
+		NSString* reason = BXLocalizedString (@"incompleteURI", @"A host name and a database name are needed in the database URI.", @"Error description");
+		NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  title, NSLocalizedDescriptionKey,
+								  title, NSLocalizedFailureReasonErrorKey, 
+								  reason, NSLocalizedRecoverySuggestionErrorKey, 
+								  self, kBXDatabaseContextKey,
+								  nil];
+		localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorIncompleteDatabaseURI userInfo: userInfo];
+		goto error;
+	}
+	
     {
         retval = [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
 													  table: tableName
@@ -2461,6 +2477,7 @@ bx_query_during_reconnect ()
         }
     }
     
+error:
     BXHandleError (error, localError);
     if (nil != localError)
         retval = nil;
