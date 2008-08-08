@@ -2292,7 +2292,7 @@ bx_query_during_reconnect ()
 		NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
 		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 			title, NSLocalizedDescriptionKey,
-			reason, NSLocalizedFailureReasonErrorKey, 
+			title, NSLocalizedFailureReasonErrorKey, 
 			reason, NSLocalizedRecoverySuggestionErrorKey, 
 			self, kBXDatabaseContextKey,
 			nil];
