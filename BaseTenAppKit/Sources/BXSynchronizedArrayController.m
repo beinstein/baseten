@@ -314,9 +314,22 @@
 		[self fetch: nil];
 }
 
+//Patch by henning & #macdev 2008-01-30
+static BOOL 
+IsKindOfClass (id self, Class class) 
+{	
+	if (self == nil) 
+		return NO; 
+	else if ([self class] == class) 
+		return YES; 
+	else 
+		return IsKindOfClass ([self superclass], class);
+}
+//End patch
+
 - (void) setBXContent: (id) anObject
 {
-    BXAssertLog (nil == mBXContent || [anObject isKindOfClass: [BXContainerProxy class]], 
+    BXAssertLog (nil == mBXContent || IsKindOfClass (anObject, [BXContainerProxy class]),
                    @"Expected anObject to be an instance of BXContainerProxy (was: %@).", 
                    [anObject class]);
 	if (mBXContent != anObject)
