@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#include "libpq_additions.h"
+#import "libpq_additions.h"
 #import "postgresql/postgresql/internal/libpq-int.h"
 
 const char* 

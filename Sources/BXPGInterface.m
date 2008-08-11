@@ -530,7 +530,9 @@ error:
 	NSString* updateQuery = UpdateQuery (connection, entity, setClause, fromClause, whereClause);
 	PGTSResultSet* res = [connection executeQuery: updateQuery parameterArray: parameters];
 	
-	if ([res querySucceeded])
+	if (! [res querySucceeded])
+		*error = [res error];
+	else
 	{
 		[mTransactionHandler markLocked: entity whereClause: whereClause parameters: parameters willDelete: NO];
 		[mTransactionHandler checkSuperEntities: entity];
