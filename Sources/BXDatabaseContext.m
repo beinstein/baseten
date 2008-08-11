@@ -1979,6 +1979,12 @@ bx_query_during_reconnect ()
 	NSDictionary* entities = [self entitiesBySchemaAndName: NO error: error];
 	return [[entities objectForKey: schemaName] objectForKey: [entity name]];
 }
+
+- (BOOL) canGiveEntities
+{
+	NSError* localError = nil;
+	return ([self checkDatabaseURI: &localError] && [mDatabaseURI host] && [mDatabaseURI path]);
+}
 @end
 
 

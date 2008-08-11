@@ -94,23 +94,15 @@
 
 - (void) awakeFromNib
 {
-    NSError* error = nil;
-	[databaseContext retain];
+	{
+		BXDatabaseContext* ctx = databaseContext;
+		databaseContext = nil;
+		[self setDatabaseContext: ctx];
+	}
 	
-    if (nil == mEntityDescription && nil != mTableName)
-        [self setEntityDescription: [databaseContext entityForTable: mTableName inSchema: mSchemaName error: &error]];
-	    
-    if (nil != error)
-        [self BXHandleError: error];
-    else
-    {
-        //Set the custom class name.
-        if (nil != mDBObjectClassName)
-            [mEntityDescription setDatabaseObjectClass: NSClassFromString (mDBObjectClassName)];    
-        
-        NSWindow* aWindow = [self BXWindow];
-        [databaseContext setUndoManager: [aWindow undoManager]];        
-    }
+	NSWindow* aWindow = [self BXWindow];
+	[databaseContext setUndoManager: [aWindow undoManager]];        
+
     [super awakeFromNib];
 }
 
@@ -155,6 +147,31 @@
     return databaseContext;
 }
 
+- (void) prepareEntity
+{
+	NSError* error = nil;
+	BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
+																	inSchema: [self schemaName]
+																	   error: &error];
+	if (nil != error)
+		[self BXHandleError: error];
+	else
+	{
+		[entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];                
+		[self setEntityDescription: entityDescription];
+	}	
+}
+
+- (void) gotDatabaseURI: (NSNotification *) notification
+{
+	BXDatabaseContext* ctx = [notification object];
+	[[ctx notificationCenter] removeObserver: self name: kBXGotDatabaseURINotification object: ctx];
+	if (ctx == databaseContext) //Just to make sure.
+	{
+		[self prepareEntity];
+	}
+}
+
 /**
  * Set the database context.
  * \internal
@@ -167,6 +184,7 @@
 		NSNotificationCenter* nc = [ctx notificationCenter];
 		//databaseContext may be nil here since we don't observe multiple contexts.
 		[nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
+		[nc removeObserver: self name: kBXGotDatabaseURINotification object: databaseContext];
 		
         [databaseContext release];
         databaseContext = ctx;
@@ -179,20 +197,10 @@
 				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
             
             //Also set the entity description, since the database URI has changed.
-			if (nil != [self tableName])
-			{
-				NSError* error = nil;
-				BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
-																				inSchema: [self schemaName]
-																				   error: &error];
-				if (nil != error)
-					[self BXHandleError: error];
-				else
-				{
-					[entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];                
-					[self setEntityDescription: entityDescription];
-				}
-			}
+			if (nil != [self tableName] && [databaseContext canGiveEntities])
+				[self prepareEntity];
+			else
+				[nc addObserver: self selector: @selector (gotDatabaseURI:) name: kBXGotDatabaseURINotification object: databaseContext];
 		}
     }
 }
@@ -310,7 +318,10 @@
 
 - (void) endConnecting: (NSNotification *) notification
 {
-	if (YES == mFetchesOnConnect)
+	if (! mEntityDescription)
+		[self prepareEntity];
+	
+	if (mFetchesOnConnect)
 		[self fetch: nil];
 }
 

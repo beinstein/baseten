@@ -104,6 +104,9 @@
 				   contextInfo: (void *) contextInfo
 {
 	[[databaseContext internalDelegate] databaseContextGotDatabaseURI: databaseContext];
+	NSNotificationCenter* nc = [databaseContext notificationCenter];
+	[nc postNotificationName: kBXGotDatabaseURINotification object: databaseContext];
+	
 	[self continueFromDatabaseSelection: panel returnCode: returnCode];
 }
 

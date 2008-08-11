@@ -177,6 +177,7 @@
 
 
 @interface BXDatabaseContext (HelperMethods)
+- (BOOL) canGiveEntities;
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;

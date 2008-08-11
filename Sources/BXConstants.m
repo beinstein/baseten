@@ -48,6 +48,7 @@ NSString* const kBXPrimaryKeyFieldsKey = @"kBXPrimaryKeyFieldsKey";
 NSString* const kBXConnectionSuccessfulNotification = @"kBXConnectionSuccessfulNotification";
 NSString* const kBXConnectionFailedNotification = @"kBXConnectionFailedNotification";
 NSString* const kBXConnectionSetupAlertDidEndNotification = @"kBXConnectionSetupAlertDidEndNotification";
+NSString* const kBXGotDatabaseURINotification = @"kBXGotDatabaseURINotification";
 NSString* const kBXAttributeKey = @"kBXAttributeKey";
 
 NSString* const kBXInsertNotification = @"kBXInsertNotification";

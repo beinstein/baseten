@@ -61,6 +61,7 @@ BX_EXPORT NSString* const kBXPrimaryKeyFieldsKey;
 BX_EXPORT NSString* const kBXConnectionSuccessfulNotification;
 BX_EXPORT NSString* const kBXConnectionFailedNotification;
 BX_EXPORT NSString* const kBXConnectionSetupAlertDidEndNotification;
+BX_EXPORT NSString* const kBXGotDatabaseURINotification;
 BX_EXPORT NSString* const kBXAttributeKey;
 
 BX_EXPORT NSString* const kBXErrorDomain;
