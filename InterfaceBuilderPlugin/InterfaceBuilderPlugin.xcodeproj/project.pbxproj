@@ -31,6 +31,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		530F49060E51D53F0033EE04 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53DC77960E51B6580015691A /* libBaseTen.a */;
+			remoteInfo = "BaseTen for iPhone";
+		};
 		5373CC8C0D65B9710084BD9D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53978FCC0CEC764300B93B3C /* BaseTen.xcodeproj */;
@@ -198,6 +205,7 @@
 			children = (
 				5373CC8D0D65B9710084BD9D /* BaseTen.framework */,
 				5388DC950E23ACF5006CDBD8 /* SQLParser.o */,
+				530F49070E51D53F0033EE04 /* libBaseTen.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -283,6 +291,13 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
+		530F49070E51D53F0033EE04 /* libBaseTen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBaseTen.a;
+			remoteRef = 530F49060E51D53F0033EE04 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		5373CC8D0D65B9710084BD9D /* BaseTen.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;

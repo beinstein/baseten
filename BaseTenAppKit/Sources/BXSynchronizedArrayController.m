@@ -34,6 +34,7 @@
 #import <BaseTen/BXRelationshipDescriptionPrivate.h>
 #import <BaseTen/BXForeignKey.h>
 #import <BaseTen/BXLogger.h>
+#import <BaseTen/PGTSHOM.h>
 #import "BXSynchronizedArrayController.h"
 #import "NSController+BXAppKitAdditions.h"
 #import "BXObjectStatusToColorTransformer.h"
@@ -74,6 +75,7 @@
 		
 		[self exposeBinding: @"databaseContext"];
 		[self exposeBinding: @"modalWindow"];
+		[self exposeBinding: @"selectedObjects"];
         
 		[BXDatabaseContext loadedAppKitFramework];
 	}
@@ -391,6 +393,17 @@ IsKindOfClass (id self, Class class)
 	}
 }
 
+
+//FIXME: perhaps this should be changed to use the 10.4-compatible API?
++ (NSSet *) keyPathsForValuesAffectingSelectedObjectIDs
+{
+	return [NSSet setWithObject: @"selectedObjects"];
+}
+
+- (NSArray *) selectedObjectIDs
+{
+	return (id) [[[self selectedObjects] PGTSCollect] objectID];
+}
 @end
 
 
