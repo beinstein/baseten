@@ -29,6 +29,7 @@
 
 #import "BXAController.h"
 #import "BXAImportController.h"
+#import "BXAGetInfoWindowController.h" //Patch by Tim Bedford 2008-08-11
 #import "BXAPGInterface.h"
 #import "Additions.h"
 
@@ -47,6 +48,10 @@
 #import <BaseTen/BXPGDatabaseDescription.h>
 
 #import <sys/socket.h>
+//Patch by Tim Bedford 2008-08-11
+#import <netinet/in.h>
+#import <arpa/inet.h>
+//End patch
 #import <RegexKit/RegexKit.h>
 
 
@@ -60,7 +65,12 @@ static NSString* kBXAControllerErrorDomain = @"kBXAControllerErrorDomain";
 enum BXAControllerErrorCode
 {
 	kBXAControllerNoError = 0,
-	kBXAControllerErrorNoBaseTenSchema
+	kBXAControllerErrorNoBaseTenSchema,
+	//Patch by Tim Bedford 2008-08-11
+	kBXAControllerErrorNoBaseTenSchemaDefinition,
+	kBXAControllerErrorCouldNotInstallBaseTenSchema,
+	kBXAControllerErrorCouldNotConnect
+	//End patch
 };
 
 
@@ -212,15 +222,31 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 
 @implementation BXAController
+
+//Patch by Tim Bedford 2008-08-11
+- (id) init
+{
+	if(![super init])
+		return nil;
+	
+	mServiceBrowser = [[NSNetServiceBrowser alloc] init];
+	[mServiceBrowser setDelegate:self];
+	
+	return self;
+}
+//End patch
+
 - (NSError *) schemaInstallError
 {
 	NSError* error = nil;
-	NSString* recoverySuggestion = @"BaseTen requires various functions and tables. They will be installed in a separate schema.";
+	NSString* recoverySuggestion = NSLocalizedString(@"schemaInstallRecoverySuggestion", @"Recovery suggestion"); 	//Patch by Tim Bedford 2008-08-11
 	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedDescriptionKey,
-							  @"Enabling a view or table requires the BaseTen schema", NSLocalizedFailureReasonErrorKey,
+							  //Patch by Tim Bedford 2008-08-11
+							  NSLocalizedString(@"schemaInstallErrorDescription", @""), NSLocalizedDescriptionKey,
+							  NSLocalizedString(@"schemaInstallErrorReason", @""), NSLocalizedFailureReasonErrorKey,
 							  recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
-							  [NSArray arrayWithObjects: @"Install", @"Don't install", nil], NSLocalizedRecoveryOptionsErrorKey,
+							  [NSArray arrayWithObjects: NSLocalizedString(@"Install", @"Button label"), NSLocalizedString(@"Don't Install", @"Button label"), nil], NSLocalizedRecoveryOptionsErrorKey,
+							  //End patch
 							  gController, NSRecoveryAttempterErrorKey,
 							  nil];
 	error = [NSError errorWithDomain: kBXAControllerErrorDomain 
@@ -286,73 +312,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	}
 }
 
-- (void) setupToolbar
-{
-	[mToolbar setBackgroundColor: [NSColor colorWithCalibratedRed: 214.0 / 255.0 green: 221.0 / 255.0 blue: 229.0 / 255.0 alpha: 1.0]];
-	NSMutableParagraphStyle* paragraphStyle = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy] autorelease];
-	[paragraphStyle setAlignment: NSCenterTextAlignment];
-	NSDictionary* attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-								paragraphStyle, NSParagraphStyleAttributeName,
-								[NSFont systemFontOfSize: [NSFont smallSystemFontSize]], NSFontAttributeName,
-								nil];
-	
-	const int count = 3; //Remember to set this when changing the arrays below.
-	id targets [] = {self, mInspectorWindow, mLogWindow};
-	SEL actions [] = {@selector (importDataModel:), @selector (MKCToggle:), @selector (MKCToggle:)};
-	NSString* labels [] = {@"Import Data Model", @"Inspector", @"Log"};
-	NSString* imageNames [] = {@"ImportModel32", @"Inspector32", @"Log32"};
-	NSAttributedString* attributedTitles [count];
-	CGFloat widths [count];
-	
-	//Calculate text dimensions
-	CGFloat height = 0.0;
-	for (int i = 0; i < count; i++)
-	{
-		attributedTitles [i] = [[[NSAttributedString alloc] initWithString: labels [i] attributes: attributes] autorelease];
-		NSSize size = [attributedTitles [i] size];
-		widths [i] = MAX (size.width, 32.0) + 5.0; //5.0 px padding to make text fit
-		height = MAX (height, size.height);
-	}
-	height += 33.0; //Image maximum height
-	CGFloat xPosition = 12.0; //Left margin
-	
-	for (int i = 0; i < count; i++)
-	{
-		NSButton* button = [[NSButton alloc] init];
-		[mToolbar addSubview: button];
-		[button release];
-		
-		[button setButtonType: NSMomentaryPushInButton];
-		[button setBezelStyle: NSShadowlessSquareBezelStyle];
-		[button setBordered: NO];
-		[button setImagePosition: NSImageAbove];
-		[[button cell] setHighlightsBy: NSPushInCellMask];
-		[button setTarget: targets [i]];
-		[button setAction: actions [i]];
-		[button setAttributedTitle: attributedTitles [i]];
-		[button setImage: [NSImage imageNamed: imageNames [i]]];
-		
-		//Bindings
-		switch (i)
-		{
-		}
-		
-		//Position
-		switch (i)
-		{
-			case 2:
-				[button setFrame: NSMakeRect ([mToolbar bounds].size.width - (widths [i] + 10.0), 3.0, widths [i], height)];
-				[button setAutoresizingMask: NSViewMinXMargin];
-				break;
-			default:
-				[button setFrame: NSMakeRect (xPosition, 3.0, widths [i], height)];
-				break;
-		}
-		xPosition += widths [i] + 13.0;
-	}	
-}
-
-
 - (BOOL) checkBaseTenSchema: (NSError **) error
 {
 	NSError* localError = nil;
@@ -384,11 +343,31 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
+//Patch by Tim Bedford 2008-08-11
+- (BOOL) canImportDataModel
+{
+	return [mContext isConnected];
+}
+
+- (BOOL) canExportLog
+{
+	// Can't export an empty log
+	return ([[mLogView textStorage] length] > 0);
+}
+
 - (void) awakeFromNib
 {
 	gController = self;
 	mLastSelectedEntityWasView = YES;
 	mBundledSchemaVersionNumber = BXACopyBundledVersionNumber ();
+
+	//Patch by Tim Bedford 2008-08-11
+	[mMainWindow setExcludedFromWindowsMenu:YES];
+	
+	// Bind the InspectorPanelController to the current entity selection
+	BXAInspectorPanelController* inspector = [BXAInspectorPanelController inspectorPanelController];
+	[inspector bindEntityToObject:mEntities withKeyPath:@"selection.value"];
+	//End patch
 
 	mReader = [[BXPGSQLScriptReader alloc] init];
 	[mReader setDelegate: self];
@@ -399,12 +378,16 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	
 	//Make main window's bottom edge lighter
 	[mMainWindow setContentBorderThickness: 24.0 forEdge: NSMinYEdge];
+	[mStatusTextField makeEtchedSmall:YES]; //Patch by Tim Bedford 2008-08-12
 
-	[self setupToolbar];
 	[self setupTableViews];
 	
 	[mProgressIndicator setUsesThreadedAnimation: YES];
-		
+	
+	NSNotificationCenter* nc = [mContext notificationCenter];
+	[nc addObserver: self selector: @selector (connected:) name: kBXConnectionSuccessfulNotification object: nil];
+	[nc addObserver: self selector: @selector (failedToConnect:) name: kBXConnectionFailedNotification object: nil];
+	
 	[mEntities addObserver: self forKeyPath: @"selection" 
 				   options: NSKeyValueObservingOptionInitial
 				   context: kBXAControllerCtx];
@@ -449,16 +432,36 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	}
 }
 
+//Patch by Tim Bedford 2008-08-11
+- (void) displayConnectPanel
+{
+	mServices = [[NSMutableArray alloc] init];
+	[mServiceBrowser searchForServicesOfType:@"_postgresql._tcp" inDomain:@"local."];
+	
+	[NSApp beginSheet: mConnectPanel modalForWindow: mMainWindow modalDelegate: self 
+	   didEndSelector: NULL contextInfo: NULL];
+}
 
-- (void) continueDisconnect
-{	
+- (void) hideConnectPanel
+{
+	[mServices release], mServices = nil;
+	mSearching = NO;
+	[mServiceBrowser stop];
+	
+	[NSApp endSheet: mConnectPanel];
+	[mConnectPanel orderOut: nil];
+}
+
+- (void) finishDisconnect
+{
+	//End patch
 	[mEntitiesBySchema setContent: nil];
 	[mContext disconnect];
-	[mStatusTextField setStringValue: @"Not connected."];
+	[mStatusTextField setStringValue: NSLocalizedString(@"Not connected", @"Database status message")]; //Patch by Tim Bedford 2008-08-11
 	[mStatusTextField makeEtchedSmall: YES];
 	[self hideProgressPanel];
-	[NSApp beginSheet: mConnectPanel modalForWindow: mMainWindow modalDelegate: self 
-	   didEndSelector: NULL contextInfo: NULL];	
+	
+	[self displayConnectPanel]; //Patch by Tim Bedford 2008-08-11
 }
 
 
@@ -521,7 +524,13 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) logAppend: (NSString *) string
 {
+	//Patch by Tim Bedford 2008-08-11
+	NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+	[paragraphStyle setHeadIndent:(CGFloat)32.0];
+	//End patch
+	
 	NSDictionary* attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+						   paragraphStyle, NSParagraphStyleAttributeName, //Patch by Tim Bedford 2008-08-11
 						   [NSColor colorWithDeviceRed: 233.0 / 255.0 green: 185.0 / 255.0 blue: 89.0 / 255.0 alpha: 1.0], NSForegroundColorAttributeName,
 						   [NSFont fontWithName: @"Monaco" size: 11.0], NSFontAttributeName,
 						   nil];
@@ -531,6 +540,21 @@ NSInvocation* MakeInvocation (id target, SEL selector)
     [mLogView scrollRangeToVisible: range];
 	
 }
+
+//Patch by Tim Bedford 2008-08-11
+- (void) finishExportLogWithURL: (NSURL *) URL
+{
+	NSData* data = [[[mLogView textStorage] string] dataUsingEncoding:NSUTF8StringEncoding];
+	NSError* error;
+	BOOL successful = [data writeToURL:URL options:0 error:&error];
+	
+	if(!successful)
+	{
+		NSAlert* alert = [NSAlert alertWithError:error];
+		[alert runModal];
+	}
+}
+//End patch
 
 - (void) importModelAtURL: (NSURL *) URL
 {
@@ -557,8 +581,9 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[mCompiler compileDataModel];
 }
 
-- (void) installBaseTenSchema: (NSInvocation *) callback
+- (void) installBaseTenSchema: (NSInvocation *) callback error:(NSError **)error //Patch by Tim Bedford 2008-08-11
 {
+	NSError *outError = nil; //Patch by Tim Bedford 2008-08-11
 	NSString* path = [[NSBundle mainBundle] pathForResource: @"BaseTenModifications" ofType: @"sql"];
 	if (path)
 	{
@@ -568,20 +593,22 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			[self setProgressMin: 0.0 max: [mReader length]];
 			[mProgressCancelButton setAction: @selector (cancelSchemaInstall:)];
 			
-			[self displayProgressPanel: @"Installing BaseTen schema…"];
+			[self displayProgressPanel: NSLocalizedString(@"Installing BaseTen schema…", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
 			
 			[mReader setDelegateUserInfo: callback];
 			[mReader readAndExecuteAsynchronously];
 		}
 		else
 		{
-			//FIXME: handle the error.
+			outError = [NSError errorWithDomain:kBXAControllerErrorDomain code:kBXAControllerErrorCouldNotInstallBaseTenSchema userInfo:nil]; //Patch by Tim Bedford 2008-08-11
 		}
 	}
 	else
 	{
-		//FIXME: handle the error.
+		outError = [NSError errorWithDomain:kBXAControllerErrorDomain code:kBXAControllerErrorNoBaseTenSchemaDefinition userInfo:nil]; //Patch by Tim Bedford 2008-08-11
 	}
+	
+	*error = outError; //Patch by Tim Bedford 2008-08-11
 }
 
 - (void) finishUpgrading: (BOOL) status
@@ -611,12 +638,16 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
 	[connection executeQuery: @"CREATE TEMPORARY TABLE baseten_viewprimarykey AS SELECT * FROM baseten.viewprimarykey"];
+	NSError* error; //Patch by Tim Bedford 2008-08-11
 	NSString* query = 
 	@"CREATE TEMPORARY TABLE baseten_enabledoids AS "
 	@" SELECT oid FROM pg_class WHERE baseten.isobservingcompatible (oid) = true";
 	[connection executeQuery: query];
 	
-	[self installBaseTenSchema: MakeInvocation (self, @selector (finishUpgrading:))];
+	//Patch by Tim Bedford 2008-08-11
+	[self installBaseTenSchema: MakeInvocation (self, @selector (finishUpgrading:)) error:&error];
+	//FIXME: handle the error.
+	//End patch
 }
 
 - (void) continueImport
@@ -682,6 +713,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
     [mProgressPanel orderOut: nil];
 	[mProgressIndicator setIndeterminate: YES];
 }
+
 @end
 
 
@@ -749,8 +781,14 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 - (void) databaseContextConnectionSucceeded: (BXDatabaseContext *) ctx
 {
 	[self hideProgressPanel];
-	[mStatusTextField setObjectValue: [NSString stringWithFormat: @"Connected to %@.", [mContext databaseURI]]];
+	//Patch by Tim Bedford 2008-08-11
+	[mStatusTextField setObjectValue: [NSString stringWithFormat: NSLocalizedString(@"ConnectedToFormat", @"Database status message format"),
+									  [mContext databaseURI]]];
+	[mStatusTextField makeEtchedSmall:YES];
+	[self displayProgressPanel:NSLocalizedString(@"Reading data model", @"Progress panel message")];
+	//End patch
 	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
+	[self hideProgressPanel]; //Patch by Tim Bedford 2008-08-11
 	[mEntitiesBySchema setContent: entities];
 	
 	BXPGInterface* interface = (id) [mContext databaseInterface];
@@ -758,10 +796,12 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	
 	if ([self checkBaseTenSchema: NULL] && [self canUpgradeSchema])
 	{
-		NSString* message = @"The installed schema has older version than the one bundlend with this application. Would you like to upgrade the database?";
-		NSAlert* alert = [NSAlert alertWithMessageText: @"Upgrade BaseTen schema?" 
-										 defaultButton: @"Upgrade"
-									   alternateButton: @"Don't upgrade"
+		//Patch by Tim Bedford 2008-08-11
+		NSString* message = NSLocalizedString(@"schemaUpgradeMessage", @"Alert message");
+		NSAlert* alert = [NSAlert alertWithMessageText: NSLocalizedString(@"Upgrade BaseTen schema?", "Alert message") 
+										 defaultButton: NSLocalizedString(@"Upgrade", @"Default button label")
+									   alternateButton: NSLocalizedString(@"Don't Upgrade", @"Button label")
+						  //End patch
 										   otherButton: nil 
 							 informativeTextWithFormat: message];
 		[alert beginSheetModalForWindow: mMainWindow modalDelegate: self 
@@ -774,17 +814,24 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
-- (void) databaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error;
+- (void) databaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error
 {
 	[self hideProgressPanel];
 	
+	//Patch by Tim Bedford 2008-08-11
+	// Display error
+	NSDictionary* errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							   NSLocalizedString(@"CouldntConnectDescription", @""), NSLocalizedDescriptionKey,
+							   NSLocalizedString(@"CouldntConnectRecoverySuggestion", @""), NSLocalizedRecoverySuggestionErrorKey, nil];
+	NSError* error = [NSError errorWithDomain: kBXAControllerErrorDomain code: kBXAControllerErrorCouldNotConnect userInfo: errorInfo];
 	NSAlert* alert = [NSAlert alertWithError: error];
-	[alert beginSheetModalForWindow: mMainWindow modalDelegate: self 
-					 didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) contextInfo: NULL];
+
+	[alert beginSheetModalForWindow: mMainWindow modalDelegate: self didEndSelector: @selector(alertDidEnd:returnCode:contextInfo:) contextInfo: nil];
 	[NSApp runModalForWindow: mMainWindow];
-	
-	[NSApp beginSheet: mConnectPanel modalForWindow: mMainWindow modalDelegate: self 
-	   didEndSelector: NULL contextInfo: NULL];	
+
+	// Reopen connection sheet
+	[self displayConnectPanel];
+	//End patch
 }
 
 
@@ -816,45 +863,79 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (BOOL) validateMenuItem: (NSMenuItem *) menuItem
 {
-    BOOL retval = YES;
-    switch ([menuItem tag])
-    {
-		case 0:
-			break;
-			
-        case 1: //Disconnect, Reload
-            if (! [mContext isConnected] || YES == [mProgressPanel isVisible])
-            {
-                retval = NO;
-                break;
-            }
-			
-		case 2: //Quit
-			break;
-			
-		case 3: //Import
-			retval = [self hasBaseTenSchema];
-			break;
-			
-		case 4: //Remove schema
-			retval = [self canRemoveSchema];
-			break;
-			
-		case 5: //Upgrade schema
-			retval = [self canUpgradeSchema];
-			break;
-			
-    }
-	if (nil != [mMainWindow attachedSheet])
-		retval = NO;
+	//Patch by Tim Bedford 2008-08-11
+	SEL action = [menuItem action];
+    BOOL retval;
 	
+	if([mMainWindow attachedSheet] == nil)
+	{
+		retval = YES; // YES by default
+		if(action == @selector(upgradeSchema:))
+			retval = [self canUpgradeSchema];
+		else if(action == @selector(removeSchema:))
+			retval = [self canRemoveSchema];
+		else if(action == @selector(exportLog:))
+			retval = [self canExportLog];
+		else if(action == @selector(importDataModel:))
+			retval = [self canImportDataModel];
+		else if(action == @selector(disconnect:) || action == @selector(reload:))
+			retval = ([mContext isConnected] && ![mProgressPanel isVisible]);
+		else if(action == @selector(getInfo:))
+			retval = ([[mEntities selectedObjects] count] > 0);
+		else if(action == @selector(toggleMainWindow:))
+		{
+			if([mMainWindow isVisible])
+				[menuItem setTitle:NSLocalizedString(@"Hide Main Window", @"MenuItem title")];
+			else
+				[menuItem setTitle:NSLocalizedString(@"Show Main Window", @"MenuItem title")];
+		}
+		else if(action == @selector(toggleInspector:))
+		{
+			if([[BXAGetInfoWindowController inspectorPanelController] isWindowVisible])
+				[menuItem setTitle:NSLocalizedString(@"Hide Inspector", @"MenuItem title")];
+			else
+				[menuItem setTitle:NSLocalizedString(@"Show Inspector", @"MenuItem title")];
+		}
+	}
+	else
+	{
+		retval = NO; // NO by default when a sheet is displayed
+		if(action == @selector(chooseBonjourService:))
+			retval = YES;
+		else if(action == @selector(terminate:) && [mMainWindow attachedSheet] == (NSWindow*)mConnectPanel)
+			retval = YES; // Enable quit if the connect panel up because a quit button is available on the dialogue
+	}
+	//End patch
     return retval;
 }
+
+
+//Patch by Tim Bedford 2008-08-11
+-(BOOL)validateToolbarItem:(NSToolbarItem *)toolbarItem
+{
+	SEL action = [toolbarItem action];
+	BOOL retval = YES;
+	
+	if(action == @selector(importDataModel:))
+		retval = [self canImportDataModel];
+	else if(action == @selector(getInfo:))
+		retval = ([[mEntities selectedObjects] count] > 0);
+	else if(action == @selector(exportLog:))
+		retval = [self canExportLog];
+	
+	return retval;
+}
+//End patch
 
 
 - (void) applicationDidFinishLaunching: (NSNotification *) aNotification
 {
 	[mMainWindow makeKeyAndOrderFront: nil];
+	
+	//Patch by Tim Bedford 2008-08-11
+	// This seems a bit strange, but by sending a disconnect message the status text is set to "Not connected"
+	// it then automatically displays the connect panel
+	//End patch
 	[self disconnect: nil];
 }
 
@@ -892,11 +973,17 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 		{
 			case kBXAControllerErrorNoBaseTenSchema:
 			{
+				NSError* installError; //Patch by Tim Bedford 2008-08-11
 				NSInvocation* recoveryInvocation = MakeInvocation (delegate, didRecoverSelector);
 				[recoveryInvocation setArgument: &contextInfo atIndex: 3];
 				
 				if (0 == recoveryOptionIndex)
-					[self installBaseTenSchema: recoveryInvocation];					
+				{
+					//Patch by Tim Bedford 2008-08-11
+					[self installBaseTenSchema: recoveryInvocation error:&installError];
+					//FIXME: handle the error.
+					//End patch
+				}
 				else
 				{
 					BOOL status = NO;
@@ -928,8 +1015,18 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			{
 				if (0 == recoveryOptionIndex)
 				{
-					[self installBaseTenSchema: MakeInvocation (NSApp, @selector (stopModalWithCode:))];
-					retval = [NSApp runModalForWindow: mMainWindow];
+					//Patch by Tim Bedford 2008-08-11
+					NSError* installError;
+					[self installBaseTenSchema: MakeInvocation (NSApp, @selector (stopModalWithCode:)) error:&installError];
+					if(!installError)
+					{
+						retval = [NSApp runModalForWindow: mMainWindow];
+					}
+					else
+					{
+						//FIXME: handle the error.
+					}
+					//End patch
 				}
 				else
 				{
@@ -991,7 +1088,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[self hideProgressPanel];
 	[mProgressCancelButton setEnabled: YES];
 	if ([res querySucceeded])
-		[self continueDisconnect];
+		[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
 	else
 	{
 		[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil 
@@ -999,15 +1096,25 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	}
 }
 
-- (void) continueTermination
+//Patch by Tim Bedford 2008-08-11
+- (void) finishTermination
 {
+	[mServiceBrowser stop];
+	
+	if([mMainWindow attachedSheet] == mConnectPanel)
+	{
+		[NSApp endSheet:mConnectPanel];
+		[mConnectPanel orderOut: nil];
+	}
+	
 	[NSApp terminate: nil];
 }
+//End patch
 
 - (void) terminateAfterRefresh: (PGTSResultSet *) res
 {
 	[self hideProgressPanel];
-	[self continueTermination];
+	[self finishTermination]; //Patch by Tim Bedford 2008-08-11
 }
 
 - (void) refreshCaches: (BOOL) terminate
@@ -1018,10 +1125,221 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	
 	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
 	[mProgressCancelButton setEnabled: NO];
-	[self displayProgressPanel: @"Refreshing caches"];
+	[self displayProgressPanel: NSLocalizedString(@"Refreshing caches", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
 	[connection sendQuery: @"SELECT baseten.refreshcaches ();" delegate: self callback: callback];
 }
 @end
+
+
+//Patch by Tim Bedford 2008-08-11
+@implementation BXAController (NSSplitViewDelegate)
+
+- (float)splitView:(NSSplitView *)splitView constrainMinCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index
+{
+	return proposedCoordinate + 128.0f;
+}
+
+- (float)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index
+{
+	return proposedCoordinate - 128.0f;
+}
+
+- (void)splitView:(NSSplitView*)sender resizeSubviewsWithOldSize:(NSSize)oldSize
+{
+	// Force the width of the left subview to remain constant when the splitview is resized
+	NSRect newFrame = [sender frame]; // get the new size of the whole splitView
+	NSView *left = [[sender subviews] objectAtIndex:0];
+	NSRect leftFrame = [left frame];
+	NSView *right = [[sender subviews] objectAtIndex:1];
+	NSRect rightFrame = [right frame];
+	
+	CGFloat dividerThickness = [sender dividerThickness];
+	
+	leftFrame.size.height = newFrame.size.height;
+	
+	rightFrame.size.width = newFrame.size.width - leftFrame.size.width - dividerThickness;
+	rightFrame.size.height = newFrame.size.height;
+	rightFrame.origin.x = leftFrame.size.width + dividerThickness;
+	
+	[left setFrame:leftFrame];
+	[right setFrame:rightFrame];
+}
+
+@end
+
+
+@implementation BXAController (NSSavePanelDelegate)
+
+- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+{
+	[sheet orderOut:self];
+	
+	if(returnCode == NSOKButton)
+	{
+		[self finishExportLogWithURL:[sheet URL]];
+	}
+}
+
+@end
+
+
+@implementation BXAController (NetServiceMethods)
+
+- (void)applyNetService:(NSNetService*)netService
+{
+	struct sockaddr* socketAddress;
+	
+	for(int index = 0; index < [[netService addresses] count]; index++)
+	{
+		socketAddress = (struct sockaddr*)[[[netService addresses] objectAtIndex:index] bytes];
+		
+		// Only continue if this is an IPv4 address
+		if(socketAddress && socketAddress->sa_family == AF_INET)
+		{
+			char buffer[256];
+			uint16_t port;
+			
+			if(inet_ntop(AF_INET, &((struct sockaddr_in*)socketAddress)->sin_addr, buffer, sizeof(buffer)))
+			{
+				port = ntohs(((struct sockaddr_in*)socketAddress)->sin_port);
+				
+				[mHostCell setStringValue:[NSString stringWithCString:buffer encoding:NSUTF8StringEncoding]];
+				[mPortCell setIntValue:port];
+				
+				break;
+			}
+		}
+	}
+}
+
+// UI update code
+- (void)updateBonjourUI
+{
+	// Also update any UI that lists available services
+	NSMenu* menu = [mBonjourPopUpButton menu];
+	NSMenuItem* menuItem = nil;
+	NSInteger count = [[menu itemArray] count];
+	
+	// Remove any current menu items (except the first one which is used for the popup button label)
+	
+	while(--count > 0)
+	{
+		[menu removeItemAtIndex:count];
+	}
+	
+	if([mServices count])
+	{
+		// Add a menu item for each PostgreSQL service found
+		count = 0;
+		for(NSNetService* netService in mServices)
+		{
+			menuItem = [[NSMenuItem alloc] initWithTitle:[netService name] action:@selector(chooseBonjourService:) keyEquivalent:@""];
+			[menuItem setTag:count];
+			[menuItem setTarget:self];
+			
+			[menu addItem:menuItem];
+			count++;
+		}
+	}
+	else
+	{
+		// Add a disabled menu item indicating that no services were found
+		[menu addItemWithTitle:NSLocalizedString(@"No services found", @"Service popup menu") action:nil keyEquivalent:@""];
+	}
+}
+
+// Error handling code
+- (void)handleNetServiceBrowserError:(NSNumber *)error
+{
+    NSLog(@"An error occurred. Error code = %d", [error intValue]);
+}
+
+- (void)handleNetServiceError:(NSNumber *)error withService:(NSNetService *)service
+{
+	NSLog(@"An error occurred with service %@.%@.%@, error code = %@",
+		  [service name], [service type], [service domain], error);
+}
+
+@end
+
+
+@implementation BXAController (NetServiceBrowserDelegate)
+
+- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser
+{
+    mSearching = YES;
+    [self updateBonjourUI];
+}
+
+// Sent when browsing stops
+- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser
+{
+    mSearching = NO;
+    [self updateBonjourUI];
+}
+
+// Sent if browsing fails
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+			 didNotSearch:(NSDictionary *)errorDict
+{
+    mSearching = NO;
+    [self handleNetServiceBrowserError:[errorDict objectForKey:NSNetServicesErrorCode]];
+}
+
+// Sent when a service appears
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+		   didFindService:(NSNetService *)aNetService
+			   moreComing:(BOOL)moreComing
+{
+    [mServices addObject:aNetService];
+	[aNetService setDelegate:self];
+	
+    if(!moreComing)
+    {
+        [self updateBonjourUI];
+    }
+}
+
+// Sent when a service disappears
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+		 didRemoveService:(NSNetService *)aNetService
+			   moreComing:(BOOL)moreComing
+{
+    [mServices removeObject:aNetService];
+	
+    if(!moreComing)
+    {
+        [self updateBonjourUI];
+    }
+}
+
+@end
+
+
+@implementation BXAController (NSNetServiceDelegate)
+
+- (void)resolveNetServiceAtIndex:(NSInteger)index
+{
+	NSNetService* netService = (NSNetService*)[mServices objectAtIndex:index];
+	[netService resolveWithTimeout:5];
+}
+
+- (void)netServiceDidResolveAddress:(NSNetService *)netService
+{
+	// We only resolve services when they are chosen by the user, so apply the service
+	// as soon as it is resolved.
+	[self applyNetService:netService];
+}
+
+- (void)netService:(NSNetService *)netService
+	 didNotResolve:(NSDictionary *)errorDict
+{
+	[self handleNetServiceError:[errorDict objectForKey:NSNetServicesErrorCode] withService:netService];
+}
+
+@end
+//End patch
+
 
 
 @implementation BXAController (IBActions)
@@ -1031,7 +1349,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	NSError* error = nil;
 
 	[mProgressCancelButton setEnabled: NO];
-	[self displayProgressPanel: @"Reloading"];
+	[self displayProgressPanel: NSLocalizedString(@"Reloading", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
 	
 	NSModalSession session = [NSApp beginModalSessionForWindow: mMainWindow];
 	
@@ -1073,7 +1391,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	{
 		if (error)
 			[NSApp presentError: error];
-		[self continueDisconnect];
+		[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
 	}
 }
 
@@ -1082,26 +1400,41 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	if ([self hasBaseTenSchema])
 		[self refreshCaches: NO];
 	else
-		[self continueDisconnect];
+		[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
 }
 
 
 - (IBAction) terminate: (id) sender
 {
 	if ([self hasBaseTenSchema])
-		[self refreshCaches: YES];
+		[self refreshCaches: YES]; // The YES refers to terminate after refresh. Method name could be a bit more descriptive //Patch by Tim Bedford 2008-08-11
 	else
 	{
-	    [mConnectPanel orderOut: nil];
-	    [NSApp terminate: nil];
+		[self finishTermination]; //Patch by Tim Bedford 2008-08-11
 	}
 }
 
 
 - (IBAction) cancelConnecting: (id) sender
 {
-	[self continueDisconnect];
+	[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
 }
+
+
+//Patch by Tim Bedford 2008-08-11
+- (IBAction) chooseBonjourService: (id) sender
+{
+	NSInteger index = [sender tag];
+	if(index >= 0 && index < [mServices count])
+	{
+		NSNetService* netService = (NSNetService*)[mServices objectAtIndex:index];
+		if([[netService addresses] count] == 0)
+			[self resolveNetServiceAtIndex:index];
+		else
+			[self applyNetService:netService];
+	}
+}
+//End patch
 
 
 - (IBAction) connect: (id) sender
@@ -1111,19 +1444,18 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	NSString* credentials = (0 < [password length] ? [NSString stringWithFormat: @"%@:%@", username, password] : username);
 	
 	NSString* host = [mHostCell objectValue];
-	NSString* port = [mPortCell objectValue];
-	NSString* target = ([port length] ? [NSString stringWithFormat: @"%@:%@", host, port] : host);
+	NSNumber* port = [mPortCell objectValue];
+	NSString* target = ((port != nil) ? [NSString stringWithFormat: @"%@:%@", host, [port stringValue]] : host); //Patch by Tim Bedford 2008-08-11
 	
 	NSString* URIFormat = [NSString stringWithFormat: @"pgsql://%@@%@/%@", credentials, target, [mDBNameCell objectValue]];
 	NSURL* connectionURI = [NSURL URLWithString: URIFormat];
 	[mContext setDatabaseURI: connectionURI];
 	[(id) [mContext databaseInterface] setController: self];
 	
-    [NSApp endSheet: mConnectPanel];
-    [mConnectPanel orderOut: nil];
+	[self hideConnectPanel]; //Patch by Tim Bedford 2008-08-11
     
 	[mProgressCancelButton setAction: @selector (cancelConnecting:)];
-    [self displayProgressPanel: @"Connecting..."];
+    [self displayProgressPanel: NSLocalizedString(@"Connecting…", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
 		
 	[mContext connectAsync];
 }
@@ -1143,6 +1475,72 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[mMomcErrorView removeAllViews];
 	[NSApp endSheet: mMomcErrorPanel];
 }
+
+
+//Patch by Tim Bedford 2008-08-11
+- (IBAction) getInfo: (id) sender
+{
+	NSArray* selectedObjects = [mEntities selectedObjects];
+	
+	if([selectedObjects count] == 1)
+	{
+		BXEntityDescription* entity = (BXEntityDescription *)[[selectedObjects objectAtIndex:0] value];
+		
+		// Check if there is an info window for this entity already
+		for(NSWindow* window in [NSApp windows])
+		{
+			NSWindowController* windowController = [window windowController];
+			if([windowController isKindOfClass:[BXAGetInfoWindowController class]])
+			{
+				if([(BXAGetInfoWindowController *)windowController entity] == entity)
+				{
+					[window makeKeyAndOrderFront:self];
+					return;
+				}
+			}
+		}
+		
+		// Otherwise create a new one
+		BXAGetInfoWindowController* getInfo = [BXAGetInfoWindowController getInfoWindowController];
+		[getInfo setEntity:entity];
+		[getInfo showWindow:self];
+	}
+}
+
+- (IBAction) toggleMainWindow: (id) sender
+{
+	[mMainWindow MKCToggle: sender];
+}
+
+- (IBAction) toggleInspector: (id) sender
+{
+	BXAInspectorPanelController* inspector = [BXAInspectorPanelController inspectorPanelController];
+	
+	if([inspector isWindowVisible])
+		[inspector closeWindow:self];
+	else
+		[inspector showWindow:self];
+}
+
+- (IBAction) exportLog: (id) sender
+{
+	NSSavePanel* savePanel = [NSSavePanel savePanel];
+	
+	[savePanel setTitle:NSLocalizedString(@"Export Log", @"Save panel title")];
+	[savePanel setPrompt:NSLocalizedString(@"Export", @"Export button label")];
+	[savePanel setRequiredFileType:@"sql"];
+	[savePanel setCanSelectHiddenExtension:YES];
+	
+	if(![mLogWindow isVisible])
+		[mLogWindow makeKeyAndOrderFront:self];
+	[savePanel beginSheetForDirectory:nil
+								 file:NSLocalizedString(@"LogExportDefaultName", @"Default log filename")
+					   modalForWindow:mLogWindow
+						modalDelegate:self
+					   didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
+						  contextInfo:nil];
+}
+//End patch
 
 
 - (IBAction) clearLog: (id) sender
@@ -1179,6 +1577,19 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 			[[pair value] setEnabled: NO];
 	}
 }
+
+//Patch by Tim Bedford 2008-08-12
+- (IBAction) openHelp: (id) sender
+{
+	// We use the sender's tag to form the help anchor. Anchors in the help book are in the form bxahelp###
+	NSString *bookName = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleHelpBookName"];
+	NSHelpManager* helpManager = [NSHelpManager sharedHelpManager];
+	NSString* anchor = [NSString stringWithFormat:@"bxahelp%d", [sender tag]]; 
+	
+	[helpManager openHelpAnchor:anchor inBook:bookName];
+}
+//End patch
+
 @end
 
 

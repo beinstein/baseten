@@ -142,13 +142,13 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
 		[textField setEditable: NO];
 		[textField setSelectable: NO];
 		[textField setDrawsBackground: NO];
-		[textField setStringValue: @"Tables"]; //FIXME: localization.
+		[textField setStringValue: NSLocalizedString(@"Tables", @"TableView header label")]; //Patch by Tim Bedford 2008-08-11
 		[textField makeEtchedSmall: NO];
 		[mLeftHeaderView addSubview: textField];
 	}
 	
 	NSMutableArray* configurations = [[mModel configurations] mutableCopy];
-	[configurations insertObject: @"Default Configuration" atIndex: 0]; //FIXME: localization.
+	[configurations insertObject: NSLocalizedString(@"Default Configuration", @"Configurations menu item") atIndex: 0]; //Patch by Tim Bedford 2008-08-11
 	[self willChangeValueForKey: @"entitiesForSelectedConfiguration"];
 	[mConfigurations setContent: configurations];		
 	[self didChangeValueForKey: @"entitiesForSelectedConfiguration"];
@@ -225,22 +225,26 @@ ShouldImport (id entity)
 		if (! modifyDatabase)
 		{
 			[mController displayLogWindow: nil];
-			[mController logAppend: @"\n\n\n---------- Beginning dry run ----------\n\n"];
+			[mController logAppend: NSLocalizedString(@"beginDryRun", @"Log separator")]; //Patch by Tim Bedford 2008-08-11
 			for (NSString* statement in statements)
 			{
 				[mController logAppend: statement];
 				[mController logAppend: @"\n"];
 			}
-			[mController logAppend: @"\n----------- Ending dry run ------------\n\n\n"];
+			[mController logAppend: NSLocalizedString(@"endDryRun", @"Log separator")]; //Patch by Tim Bedford 2008-08-11
 		}
 		else
 		{
 			if (mHasNameConflicts)
 			{
 				shouldContinue = NO;
-				NSString* message = @"Entities exist in the database that have the same names as some of those selected for import. Would you like to replace the existing entities?";
-				NSAlert* alert = [NSAlert alertWithMessageText: @"Replace existing entities with matching names?"
-												 defaultButton: @"Replace" alternateButton: @"Cancel" otherButton: nil 
+				//Patch by Tim Bedford 2008-08-11
+				NSString* message = NSLocalizedString(@"nameConflictMessage", @"Alert message");
+				NSAlert* alert = [NSAlert alertWithMessageText: NSLocalizedString(@"Replace existing entities with matching names?", @"Alert message")
+												 defaultButton: NSLocalizedString(@"Replace", @"Default button label")
+											   alternateButton: NSLocalizedString(@"Cancel", @"Button label")
+												   otherButton: nil 
+								  //End patch
 									 informativeTextWithFormat: message];
 				[alert layout];
 				NSArray* buttons = [alert buttons];
@@ -258,12 +262,14 @@ ShouldImport (id entity)
 			{
 				[mController setProgressMin: 0.0 max: (double) [statements count]];
 				//FIXME: progress cancel?
-				[mController displayProgressPanel: @"Importing data model"];
-				[mController logAppend: @"\n\n\n---------- Beginning import -----------\n\n"];
+				//Patch by Tim Bedford 2008-08-11
+				[mController displayProgressPanel: NSLocalizedString(@"Importing data model", @"Progress panel message")];
+				[mController logAppend: NSLocalizedString(@"beginImport", @"Log separator")];
+				//End patch
 				[mEntityImporter importEntities];
 				
 				shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
-				[mController logAppend: @"\n------------ Ending import ------------\n\n\n"];
+				[mController logAppend: NSLocalizedString(@"endImport", @"Log separator")]; //Patch by Tim Bedford 2008-08-11
 				if (shouldContinue)
 				{
 					if (! [mController hasBaseTenSchema])
@@ -313,8 +319,23 @@ ShouldImport (id entity)
 		[self import: YES usingSheet: YES];
 }
 @end
-	
-	
+
+
+//Patch by Tim Bedford 2008-08-11
+@implementation BXAImportController (NSSplitViewDelegate)
+- (float)splitView:(NSSplitView *)splitView constrainMinCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index
+{
+	return proposedCoordinate + 128.0f;
+}
+
+- (float)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index
+{
+	return proposedCoordinate - 128.0f;
+}
+@end
+//End patch
+
+
 @implementation BXAImportController (IBActions)
 - (IBAction) endEditingForSchemaName: (id) sender
 {
@@ -332,7 +353,7 @@ ShouldImport (id entity)
 {
 	NSWindow* panel = [self window];
 	[panel orderOut: nil];
-	[NSApp endSheet: panel returnCode: [sender tag]];
+	[NSApp endSheet:panel returnCode:[sender tag]];
 }
 
 - (IBAction) dryRun: (id) sender
@@ -355,4 +376,34 @@ ShouldImport (id entity)
 	[mEntities setContent: content];
 	[self checkNameConflicts];
 }
+
+//Patch by Tim Bedford 2008-08-11
+- (IBAction) checkAllEntities: (id) sender
+{	
+	for(NSEntityDescription *entityDescription in [mEntities content])
+	{
+		[entityDescription setShouldImportBXA:YES];
+	}
+}
+
+- (IBAction) checkNoEntities: (id) sender
+{
+	for(NSEntityDescription *entityDescription in [mEntities content])
+	{
+		[entityDescription setShouldImportBXA:NO];
+	}
+}
+//End patch
+
+//Patch by Tim Bedford 2008-08-12
+- (IBAction) openHelp: (id) sender
+{
+	// We use the sender's tag to form the help anchor. Anchors in the help book are in the form bxahelp###
+	NSString *bookName = [[NSBundle mainBundle] objectForInfoDictionaryKey: @"CFBundleHelpBookName"];
+	NSHelpManager* helpManager = [NSHelpManager sharedHelpManager];
+	NSString* anchor = [NSString stringWithFormat:@"bxahelp%d", [sender tag]]; 
+	
+	[helpManager openHelpAnchor:anchor inBook:bookName];
+}
+//End patch
 @end

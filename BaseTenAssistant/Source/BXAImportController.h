@@ -66,6 +66,12 @@
 - (void) importPanelDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo;
 @end
 
+//Patch by Tim Bedford 2008-08-11
+@interface BXAImportController (NSSplitViewDelegate)
+- (float)splitView:(NSSplitView *)splitView constrainMinCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index;
+- (float)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index;
+@end
+//End patch
 
 @interface BXAImportController (IBActions)
 - (IBAction) endEditingForSchemaName: (id) sender;
@@ -73,4 +79,9 @@
 - (IBAction) endErrorPanel: (id) sender;
 - (IBAction) endImportPanel: (id) sender;
 - (IBAction) dryRun: (id) sender;
+//Patch by Tim Bedford 2008-08-11
+- (IBAction) checkAllEntities: (id) sender;
+- (IBAction) checkNoEntities: (id) sender;
+//End patch
+- (IBAction) openHelp: (id) sender; //Patch by Tim Bedford 2008-08-12
 @end

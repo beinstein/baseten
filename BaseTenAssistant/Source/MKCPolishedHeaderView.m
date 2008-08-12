@@ -103,8 +103,14 @@ MKCShouldDrawEnabled (NSWindow* window)
 
 + (NSDictionary *) darkColours
 {
-    NSGradient* gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceRed: 191.0 / 255.0 green: 194.0 / 255.0 blue: 191.0 / 255.0 alpha: 1.0]
-                                                      endingColor: [NSColor colorWithDeviceRed: 167.0 / 255.0 green: 148.0 / 255.0 blue: 148.0 / 255.0 alpha: 1.0]] autorelease];
+	//Patch by Tim Bedford 2008-08-11
+    //NSGradient* gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceRed: 191.0 / 255.0 green: 194.0 / 255.0 blue: 191.0 / 255.0 alpha: 1.0]
+    //                                                  endingColor: [NSColor colorWithDeviceRed: 167.0 / 255.0 green: 148.0 / 255.0 blue: 148.0 / 255.0 alpha: 1.0]] autorelease];
+
+	NSGradient* gradient = [[[NSGradient alloc] initWithStartingColor: [NSColor colorWithDeviceRed: 191.0 / 255.0 green: 194.0 / 255.0 blue: 191.0 / 255.0 alpha: 1.0]
+														  endingColor: [NSColor colorWithDeviceRed: 148.0 / 255.0 green: 148.0 / 255.0 blue: 148.0 / 255.0 alpha: 1.0]] autorelease];
+	//End patch
+
 	NSDictionary* enabled = [NSDictionary dictionaryWithObjectsAndKeys:
 							 gradient, kMKCGradientKey,
 							 [NSColor colorWithDeviceWhite: 62.0  / 255.0 alpha: 1.0], kMKCBottomLineColourKey,
@@ -398,7 +404,7 @@ MKCShouldDrawEnabled (NSWindow* window)
 				NSString* title = [headerCell stringValue];
 				headerCell = [[[MKCPolishedHeaderCell alloc] initTextCell: title] autorelease];
 				[column setHeaderCell: headerCell];
-				[headerCell makeEtchedSmall: NO];
+				[headerCell makeEtchedSmall: YES]; //Patch by Tim Bedford 2008-08-11
 			}
 			
 			if (column == mColumnSortedBy)

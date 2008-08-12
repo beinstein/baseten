@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<title>If you can’t connect to PostgreSQL</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+		<meta name="topicid" content="201"/>
+		<meta name="keywords" content="connect"/>
+		<!-- do not translate --><meta name="keywords" content="PostgreSQL"/><!-- end do not translate -->
+		<meta name="pagetype" content="Task"/>
+		<meta name="project" content="BaseTen Assistant Help"/>
+		<meta name="release" content="First Release"/>
+		<link href="../stylesheets/task_numbered.css" rel="stylesheet" type="text/css"/>
+	</head>
+	
+	<body id="apple-pd">
+		<!--top navigation area-->
+		<div id="navbox">
+			<a name="bxahelp201"></a>
+			<div id="navleftbox">
+				<a class="navlink_left" href="help:anchor='access' bookID=BaseTen Assistant Help">Home</a>
+			</div>
+			<div id="navrightbox">
+				<a class="navlink_right" href="help:anchor='xall' bookID=BaseTen Assistant Help">Index</a>
+			</div>
+		</div>
+		<!--closes top navigation area-->
+		
+		<!--page head-->
+		<div id="headerbox">
+			<div id="iconbox">
+				<img id="iconimg" src="../media/app-icon32.png" alt="BaseTen Assistant Help Icon" height="32" width="32"/>
+			</div>
+			<div id="pagetitle">
+				<h1>If you can’t connect to PostgreSQL</h1>
+			</div>
+		</div>
+		<!--closes page head-->
+		
+		<div id="introbox">
+			<div class="introprimtext">
+				<p class="introprimtextlongtext">
+					There are a number of things that can prevent BaseTen Assistant from connecting to your
+					PostgreSQL database. This check list assumes you have administrator access to the database
+					server and host.
+				</p>
+			</div><!--closes introprimtext-->
+		</div> <!--closes introbox -->
+		
+		<div id="taskbox">
+			<!--taskbox border top row-->
+			<div class="border_top">
+				<div class="border_topleft"></div>
+				<div class="border_topright"></div>
+			</div>
+			<!--closes taskbox border top row-->
+			
+			<!--taskbox border left-->
+			<div class="border_left">
+			<!--taskbox border right-->
+			<div class="border_right">
+			
+			<!--taskbox content-->
+			<div class="content">
+				<h2>Check list:</h2>
+				<div class="taskprimtext">
+					<div class="taskprimbullet">
+						<img src="../media/step-1.gif" alt="Step 1" class="bullet1"/>
+					</div>
+					<div class="taskprimcontent">
+						<p class="taskprimtextlongtext">
+							The connection details may not be correct. Check that you have a valid user name and
+							password, and that they have been granted access to the database.
+						</p>
+					</div><!--closes taskprimcontent-->
+					<div class="taskauxlist">
+						<div class="taskauxlink">
+							<div class="taskauxlinktext">
+								<a href="http://www.postgresql.org/docs/8.3/static/sql-grant.html" class="weblink" >See PostgreSQL 8.3 documentation on GRANT</a>
+							</div>
+						</div>
+					</div><!--closes taskauxlist-->
+				</div><!-- closes taskprimtext -->
+				<div class="taskprimtext">
+					<div class="taskprimbullet">
+						<img src="../media/step-2.gif" alt="Step 2" class="bullet2"/>
+					</div>
+					<div class="taskprimcontent">
+						<p class="taskprimtextlongtext">
+							Check that the database server is accessible. If you used Bonjour to locate the database,
+							or the database is on this machine you can skip this step.
+							Use the Network Utility, or the Terminal to ping the database host to verify.
+						</p>
+					</div><!--closes taskprimcontent-->
+					<div class="taskauxlist">
+						<table>
+							<tbody>
+								<tr>
+									<td><a href="help:runscript=BaseTen Assistant Help/scripts/opnbndsig.scpt string='com.apple.NetworkUtility'"><img src="../media/network-utility32.gif" height="32" width="32" /></a></td>
+									<td><a href="help:runscript=BaseTen Assistant Help/scripts/opnbndsig.scpt string='com.apple.NetworkUtility'">Launch Network Utility</a></td>
+								</tr>
+								<tr>
+									<td><a href="help:runscript=BaseTen Assistant Help/scripts/opnbndsig.scpt string='com.apple.Terminal'"><img src="../media/terminal32.gif" height="32" width="32" /></a></td>
+									<td><a href="help:runscript=BaseTen Assistant Help/scripts/opnbndsig.scpt string='com.apple.Terminal'">Launch Terminal</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div><!--closes taskauxlist-->
+				</div><!-- closes taskprimtext -->
+				<div class="taskprimtext">
+					<div class="taskprimbullet">
+						<img src="../media/step-3.gif" alt="Step 3" class="bullet3"/>
+					</div>
+					<div class="taskprimcontent">
+						<p class="taskprimtextlongtext">
+							Check that firewall on the database host allows access.
+						</p>
+					</div><!--closes taskprimcontent-->
+					<div class="taskauxlist">
+						<div class="taskauxlink">
+							<div class="taskauxlinktext">
+								<a href="help:anchor='mh18503' bookID=Mac Help" >See “Setting firewall access for services and applications” in Mac Help</a>
+							</div>
+						</div>
+						<table>
+							<tbody>
+								<tr>
+									<td><a href="help:runscript=BaseTen Assistant Help/scripts/OpnPrefsBndID.scpt string='com.apple.preference.security,Firewall'"><img src="../media/security32.gif" height="32" width="32" /></a></td>
+									<td><a href="help:runscript=BaseTen Assistant Help/scripts/OpnPrefsBndID.scpt string='com.apple.preference.security,Firewall'">Launch Security Preferences</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div><!--closes taskauxlist-->
+				</div><!-- closes taskprimtext -->
+				<div class="taskprimtext">
+					<div class="taskprimbullet">
+						<img src="../media/step-4.gif" alt="Step 4" class="bullet4"/>
+					</div>
+					<div class="taskprimcontent">
+						<p class="taskprimtextlongtext">
+							Check that PostgreSQL’s Host Based Authentication is configured to allow access to the database from your machine
+							and your user account.
+						</p>
+					</div><!--closes taskprimcontent-->
+					<div class="taskauxlist">
+						<div class="taskauxlink">
+							<div class="taskauxlinktext">
+								<a href="http://www.postgresql.org/docs/current/static/client-authentication.html" class="weblink" >See PostgreSQL 8.3 documentation on Client Authentication</a>
+							</div>
+						</div>
+					</div><!--closes taskauxlist-->
+				</div><!-- closes taskprimtext -->
+			</div><!--closes taskbox content-->
+			</div><!--closes taskbox border right-->
+			</div><!--closes taskbox border left-->
+			<!--taskbox border bottom row-->
+			<div class="border_bottom">
+				<div class="border_bottomleft"></div>
+				<div class="border_bottomright"></div>
+			</div><!--closes taskbox border bottom row-->
+		</div><!--closes taskbox -->
+	</body>
+</html>

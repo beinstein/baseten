@@ -80,7 +80,14 @@
     IBOutlet id mPortCell;
     IBOutlet id mDBNameCell;
     IBOutlet id mUserNameCell;
-    IBOutlet NSSecureTextField* mPasswordField;	
+    IBOutlet NSSecureTextField* mPasswordField;
+	//Patch by Tim Bedford 2008-08-11
+	IBOutlet NSPopUpButton* mBonjourPopUpButton;
+    
+	NSNetServiceBrowser* mServiceBrowser;
+    NSMutableArray* mServices; // Keeps track of available services
+    BOOL mSearching; // Keeps track of Bonjour search status
+	//End patch
 	
 	IBOutlet NSPanel* mMomcErrorPanel;
 	IBOutlet MKCStackView* mMomcErrorView;
@@ -91,6 +98,11 @@
 
 @property (readonly) BOOL hasBaseTenSchema;
 @property (readonly) NSWindow* mainWindow;
+
+//Patch by Tim Bedford 2008-08-11
+- (id) init;
+- (void) dealloc;
+//End patch
 
 - (void) process: (BOOL) newState entity: (BXEntityDescription *) entity;
 - (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute;
@@ -105,16 +117,23 @@
 @interface BXAController (IBActions)
 - (IBAction) disconnect: (id) sender;
 - (IBAction) terminate: (id) sender;
+- (IBAction) chooseBonjourService: (id) sender; //Patch by Tim Bedford 2008-08-11
 - (IBAction) connect: (id) sender;
 - (IBAction) importDataModel: (id) sender;
 - (IBAction) dismissMomcErrorPanel: (id) sender;
+- (IBAction) exportLog: (id) sender; //Patch by Tim Bedford 2008-08-11
 - (IBAction) clearLog: (id) sender;
 - (IBAction) displayLogWindow: (id) sender;
 - (IBAction) reload: (id) sender;
+- (IBAction) getInfo: (id) sender; //Patch by Tim Bedford 2008-08-11
+- (IBAction) toggleMainWindow: (id) sender; //Patch by Tim Bedford 2008-08-11
+- (IBAction) toggleInspector: (id) sender; //Patch by Tim Bedford 2008-08-11
 
 - (IBAction) upgradeSchema: (id) sender;
 - (IBAction) removeSchema: (id) sender;
 - (IBAction) cancelSchemaInstall: (id) sender;
+
+- (IBAction) openHelp: (id) sender; //Patch by Tim Bedford 2008-08-12
 @end
 
 
@@ -131,3 +150,43 @@
 - (void) alertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) ctx;
 - (void) importOpenPanelDidEnd: (NSOpenPanel *) panel returnCode: (int) returnCode contextInfo: (void *) contextInfo;
 @end
+
+//Patch by Tim Bedford 2008-08-11
+@interface BXAController (NSSplitViewDelegate)
+- (float)splitView:(NSSplitView *)splitView constrainMinCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index;
+- (float)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(float)proposedCoordinate ofSubviewAt:(int)index;
+- (void)splitView:(NSSplitView*)sender resizeSubviewsWithOldSize:(NSSize)oldSize;
+@end
+
+@interface BXAController (NetServiceMethods)
+- (void)applyNetService:(NSNetService*)netService;
+- (void)updateBonjourUI;
+- (void)handleNetServiceBrowserError:(NSNumber *)error;
+- (void)handleNetServiceError:(NSNumber *)error withService:(NSNetService *)service;
+@end
+
+@interface BXAController (NSSavePanelDelegate)
+- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+@end
+
+@interface BXAController (NetServiceBrowserDelegate)
+- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser;
+- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser;
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+			 didNotSearch:(NSDictionary *)errorDict;
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+		   didFindService:(NSNetService *)aNetService
+			   moreComing:(BOOL)moreComing;
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+		 didRemoveService:(NSNetService *)aNetService
+			   moreComing:(BOOL)moreComing;
+@end
+
+
+@interface BXAController (NSNetServiceDelegate)
+- (void)resolveNetServiceAtIndex:(NSInteger)index;
+- (void)netServiceDidResolveAddress:(NSNetService *)netService;
+- (void)netService:(NSNetService *)netService
+	 didNotResolve:(NSDictionary *)errorDict;
+@end
+//End patch

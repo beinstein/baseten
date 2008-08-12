@@ -58,14 +58,20 @@
     NSRect topRect2 = NSMakeRect (0.0, 1.0, 1.0, 21.0);
     if (NSIntersectsRect (rect, topRect2))
     {
-        [[NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0] set];
+		//Patch by Tim Bedford 2008-08-11
+        //[[NSColor colorWithDeviceWhite: 127.0 / 255.0 alpha: 1.0] set];
+		[[NSColor colorWithCatalogName:@"Developer" colorName:@"controlColor"] set];
+		//End patch
         NSRectFill (topRect2);
     }
     
     NSRect topRect3 = NSMakeRect (0.0, 22.0, 1.0, 1.0);
     if (NSIntersectsRect (rect, topRect3))
     {
-        [[NSColor colorWithDeviceWhite: 62.0 / 255.0 alpha: 1.0] set];
+		//Patch by Tim Bedford 2008-08-11
+        //[[NSColor colorWithDeviceWhite: 62.0 / 255.0 alpha: 1.0] set];
+		[[NSColor colorWithCatalogName:@"Developer" colorName:@"windowFrameColor"] set];
+		//End patch
         NSRectFill (topRect3);
     }
     
@@ -73,7 +79,10 @@
     intersection = NSIntersectionRect (rect, bottomRect);
     if (NO == NSIsEmptyRect (intersection))
     {
-        [[NSColor colorWithDeviceWhite: 178.0 / 255.0 alpha: 1.0] set];
+		//Patch by Tim Bedford 2008-08-11
+        //[[NSColor colorWithDeviceWhite: 178.0 / 255.0 alpha: 1.0] set];
+		[[NSColor colorWithCatalogName:@"Developer" colorName:@"controlShadowColor"] set];
+		//End patch
         NSRectFill (intersection);
     }
 }

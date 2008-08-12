@@ -7,13 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		220DCE2B0E4B081100E688DC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 220DCE2A0E4B081100E688DC /* Localizable.strings */; };
+		227A5C2A0E4BB4CD0009CC08 /* ClearLog32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C290E4BB4CD0009CC08 /* ClearLog32.tiff */; };
+		227A5C2C0E4BB4D30009CC08 /* Export32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C2B0E4BB4D30009CC08 /* Export32.tiff */; };
+		227A5C2E0E4BB4DC0009CC08 /* Log32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C2D0E4BB4DC0009CC08 /* Log32.tiff */; };
+		227A5C300E4BB4E20009CC08 /* Inspector32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C2F0E4BB4E20009CC08 /* Inspector32.tiff */; };
+		227A5C320E4BB4EA0009CC08 /* GetInfo32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C310E4BB4EA0009CC08 /* GetInfo32.tiff */; };
+		227A5C350E4BB4FA0009CC08 /* Reload32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C340E4BB4FA0009CC08 /* Reload32.tiff */; };
+		227A5CB90E4BBCBB0009CC08 /* Help32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5CB80E4BBCBB0009CC08 /* Help32.tiff */; };
+		227A5CD40E4BBEA90009CC08 /* GetInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */; };
+		227A5CE40E4BC2EB0009CC08 /* BXAGetInfoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */; };
+		227A5F4C0E4C5B9D0009CC08 /* BXAInspectorPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */; };
+		227A5F4F0E4C5E300009CC08 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */; };
 		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */; };
 		531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
 		53425B650E2CD237005F6123 /* MKCStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53425B640E2CD237005F6123 /* MKCStackView.m */; };
-		536CB9C90B0D217000EBCB39 /* Log32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C30B0D217000EBCB39 /* Log32.png */; };
-		536CB9CA0B0D217000EBCB39 /* Inspector32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C40B0D217000EBCB39 /* Inspector32.png */; };
 		536CB9CB0B0D217000EBCB39 /* ImportModel32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C50B0D217000EBCB39 /* ImportModel32.png */; };
 		536CB9CC0B0D217000EBCB39 /* Entity16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C60B0D217000EBCB39 /* Entity16.png */; };
 		536CB9CD0B0D217000EBCB39 /* Schema16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C70B0D217000EBCB39 /* Schema16.png */; };
@@ -73,6 +83,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 8D1AC9600486D14A00FE50C9;
 			remoteInfo = InterfaceBuilderPlugin;
+		};
+		531282020E51EA9100207E91 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 53DC77960E51B6580015691A /* libBaseTen.a */;
+			remoteInfo = "BaseTen for iPhone";
 		};
 		5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -149,6 +166,20 @@
 
 /* Begin PBXFileReference section */
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		220DCE280E4B080900E688DC /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		227A5C290E4BB4CD0009CC08 /* ClearLog32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = ClearLog32.tiff; path = Resources/ClearLog32.tiff; sourceTree = "<group>"; };
+		227A5C2B0E4BB4D30009CC08 /* Export32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Export32.tiff; path = Resources/Export32.tiff; sourceTree = "<group>"; };
+		227A5C2D0E4BB4DC0009CC08 /* Log32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Log32.tiff; path = Resources/Log32.tiff; sourceTree = "<group>"; };
+		227A5C2F0E4BB4E20009CC08 /* Inspector32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Inspector32.tiff; path = Resources/Inspector32.tiff; sourceTree = "<group>"; };
+		227A5C310E4BB4EA0009CC08 /* GetInfo32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = GetInfo32.tiff; path = Resources/GetInfo32.tiff; sourceTree = "<group>"; };
+		227A5C340E4BB4FA0009CC08 /* Reload32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reload32.tiff; path = Resources/Reload32.tiff; sourceTree = "<group>"; };
+		227A5CB80E4BBCBB0009CC08 /* Help32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Help32.tiff; path = Resources/Help32.tiff; sourceTree = "<group>"; };
+		227A5CD10E4BBEA50009CC08 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/GetInfoWindow.xib; sourceTree = "<group>"; };
+		227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAGetInfoWindowController.h; sourceTree = "<group>"; };
+		227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAGetInfoWindowController.m; sourceTree = "<group>"; };
+		227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BXAInspectorPanelController.h; sourceTree = "<group>"; };
+		227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BXAInspectorPanelController.m; sourceTree = "<group>"; };
+		227A5F4E0E4C5E300009CC08 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorPanel.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Source/main.m; sourceTree = "<group>"; };
 		2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = SetupApplication_Prefix.pch; path = Source/SetupApplication_Prefix.pch; sourceTree = "<group>"; };
 		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql.m4; path = ../BaseTenModifications.sql.m4; sourceTree = SOURCE_ROOT; };
@@ -160,8 +191,6 @@
 		532F429F0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Import.xib; sourceTree = "<group>"; };
 		53425B630E2CD237005F6123 /* MKCStackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCStackView.h; path = Source/MKCStackView.h; sourceTree = "<group>"; };
 		53425B640E2CD237005F6123 /* MKCStackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCStackView.m; path = Source/MKCStackView.m; sourceTree = "<group>"; };
-		536CB9C30B0D217000EBCB39 /* Log32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Log32.png; path = Resources/Log32.png; sourceTree = "<group>"; };
-		536CB9C40B0D217000EBCB39 /* Inspector32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Inspector32.png; path = Resources/Inspector32.png; sourceTree = "<group>"; };
 		536CB9C50B0D217000EBCB39 /* ImportModel32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ImportModel32.png; path = Resources/ImportModel32.png; sourceTree = "<group>"; };
 		536CB9C60B0D217000EBCB39 /* Entity16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Entity16.png; path = Resources/Entity16.png; sourceTree = "<group>"; };
 		536CB9C70B0D217000EBCB39 /* Schema16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Schema16.png; path = Resources/Schema16.png; sourceTree = "<group>"; };
@@ -202,7 +231,7 @@
 		53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAEntityCell.h; path = Source/BXAEntityCell.h; sourceTree = "<group>"; };
 		53EF34500E23D83B0027EA18 /* BXAEntityCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAEntityCell.m; path = Source/BXAEntityCell.m; sourceTree = "<group>"; };
 		53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = ../BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
-		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; explicitFileType = text.plist.xml; fileEncoding = 4; path = Info.plist; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* BaseTen Assistant.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BaseTen Assistant.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -229,6 +258,10 @@
 				53877B000E263AED0097C35F /* BXAImportController.m */,
 				53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */,
 				53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */,
+				227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */,
+				227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */,
+				227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */,
+				227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */,
 			);
 			name = Controllers;
 			path = Source;
@@ -240,6 +273,26 @@
 				8D1107320486CEB800E47090 /* BaseTen Assistant.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		227A5CD50E4BBEBF0009CC08 /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */,
+				227A5C290E4BB4CD0009CC08 /* ClearLog32.tiff */,
+				227A5C2B0E4BB4D30009CC08 /* Export32.tiff */,
+				227A5C310E4BB4EA0009CC08 /* GetInfo32.tiff */,
+				227A5CB80E4BBCBB0009CC08 /* Help32.tiff */,
+				227A5C2D0E4BB4DC0009CC08 /* Log32.tiff */,
+				536CB9C50B0D217000EBCB39 /* ImportModel32.png */,
+				227A5C2F0E4BB4E20009CC08 /* Inspector32.tiff */,
+				227A5C340E4BB4FA0009CC08 /* Reload32.tiff */,
+				536CB9C60B0D217000EBCB39 /* Entity16.png */,
+				536CB9C70B0D217000EBCB39 /* Schema16.png */,
+				536CB9C80B0D217000EBCB39 /* Table16.png */,
+				53DAFF170B4F0DE700C000FE /* View16.tif */,
+			);
+			name = Icons;
 			sourceTree = "<group>";
 		};
 		29B97314FDCFA39411CA2CEA /* SetupApplication */ = {
@@ -270,19 +323,15 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				227A5CD50E4BBEBF0009CC08 /* Icons */,
 				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */,
+				227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */,
+				532F429E0D69B70F009FEDCD /* Import.xib */,
+				227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */,
+				532F429A0D69B70F009FEDCD /* MainMenu.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
-				532F429A0D69B70F009FEDCD /* MainMenu.xib */,
-				532F429E0D69B70F009FEDCD /* Import.xib */,
-				53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */,
-				536CB9C30B0D217000EBCB39 /* Log32.png */,
-				536CB9C40B0D217000EBCB39 /* Inspector32.png */,
-				536CB9C50B0D217000EBCB39 /* ImportModel32.png */,
-				536CB9C60B0D217000EBCB39 /* Entity16.png */,
-				536CB9C70B0D217000EBCB39 /* Schema16.png */,
-				536CB9C80B0D217000EBCB39 /* Table16.png */,
-				53DAFF170B4F0DE700C000FE /* View16.tif */,
+				220DCE2A0E4B081100E688DC /* Localizable.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -345,6 +394,7 @@
 			children = (
 				5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */,
 				5388DCDD0E23AE22006CDBD8 /* SQLParser.o */,
+				531282030E51EA9100207E91 /* libBaseTen.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -437,6 +487,13 @@
 			remoteRef = 530D557F0E489F0A006BDEB2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
+		531282030E51EA9100207E91 /* libBaseTen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBaseTen.a;
+			remoteRef = 531282020E51EA9100207E91 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
 		5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */ = {
 			isa = PBXReferenceProxy;
 			fileType = wrapper.framework;
@@ -488,8 +545,6 @@
 			files = (
 				2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */,
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
-				536CB9C90B0D217000EBCB39 /* Log32.png in Resources */,
-				536CB9CA0B0D217000EBCB39 /* Inspector32.png in Resources */,
 				536CB9CB0B0D217000EBCB39 /* ImportModel32.png in Resources */,
 				536CB9CC0B0D217000EBCB39 /* Entity16.png in Resources */,
 				536CB9CD0B0D217000EBCB39 /* Schema16.png in Resources */,
@@ -498,6 +553,16 @@
 				53DAFF180B4F0DE700C000FE /* View16.tif in Resources */,
 				532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */,
 				536E603B0E263A8600098C4A /* Import.xib in Resources */,
+				220DCE2B0E4B081100E688DC /* Localizable.strings in Resources */,
+				227A5C2A0E4BB4CD0009CC08 /* ClearLog32.tiff in Resources */,
+				227A5C2C0E4BB4D30009CC08 /* Export32.tiff in Resources */,
+				227A5C2E0E4BB4DC0009CC08 /* Log32.tiff in Resources */,
+				227A5C300E4BB4E20009CC08 /* Inspector32.tiff in Resources */,
+				227A5C320E4BB4EA0009CC08 /* GetInfo32.tiff in Resources */,
+				227A5C350E4BB4FA0009CC08 /* Reload32.tiff in Resources */,
+				227A5CB90E4BBCBB0009CC08 /* Help32.tiff in Resources */,
+				227A5CD40E4BBEA90009CC08 /* GetInfoWindow.xib in Resources */,
+				227A5F4F0E4C5E300009CC08 /* InspectorPanel.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -545,6 +610,8 @@
 				53425B650E2CD237005F6123 /* MKCStackView.m in Sources */,
 				53C80FEF0E31413300302B3F /* MKCEventPassingTextField.m in Sources */,
 				531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */,
+				227A5CE40E4BC2EB0009CC08 /* BXAGetInfoWindowController.m in Sources */,
+				227A5F4C0E4C5B9D0009CC08 /* BXAInspectorPanelController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -575,6 +642,30 @@
 				089C165DFE840E0CC02AAC07 /* English */,
 			);
 			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		220DCE2A0E4B081100E688DC /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				220DCE280E4B080900E688DC /* English */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				227A5CD10E4BBEA50009CC08 /* English */,
+			);
+			name = GetInfoWindow.xib;
+			sourceTree = "<group>";
+		};
+		227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				227A5F4E0E4C5E300009CC08 /* English */,
+			);
+			name = InspectorPanel.xib;
 			sourceTree = "<group>";
 		};
 		532F429A0D69B70F009FEDCD /* MainMenu.xib */ = {
