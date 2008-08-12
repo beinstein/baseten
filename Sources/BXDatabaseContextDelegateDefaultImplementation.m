@@ -26,7 +26,10 @@
 // $Id$
 //
 
+#if (TARGET_OS_MAC)
 #import <AppKit/AppKit.h>
+#endif
+
 #import "BXDatabaseContext.h"
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
 #import "BXException.h"

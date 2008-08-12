@@ -65,6 +65,7 @@
 	NSMutableSet*							mLazilyValidatedEntities;
 	NSMutableIndexSet*						mUndoGroupingLevels;
 	BXHiddenId <BXConnectionSetupManager>	mConnectionSetupManager;
+	
     SecKeychainItemRef                      mKeychainPasswordItem;
     NSNotificationCenter*                   mNotificationCenter;
     NSMutableSet*                           mEntities;
