@@ -88,7 +88,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 53DC77960E51B6580015691A /* libBaseTen.a */;
+			remoteGlobalIDString = 53DC77960E51B6580015691A;
 			remoteInfo = "BaseTen for iPhone";
 		};
 		5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */ = {

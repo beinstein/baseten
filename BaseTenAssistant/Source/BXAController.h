@@ -99,11 +99,8 @@
 @property (readonly) BOOL hasBaseTenSchema;
 @property (readonly) NSWindow* mainWindow;
 
-//Patch by Tim Bedford 2008-08-11
-- (id) init;
-- (void) dealloc;
-//End patch
 
+- (id) init; //Patch by Tim Bedford 2008-08-11
 - (void) process: (BOOL) newState entity: (BXEntityDescription *) entity;
 - (void) process: (BOOL) newState attribute: (BXAttributeDescription *) attribute;
 - (void) logAppend: (NSString *) string;

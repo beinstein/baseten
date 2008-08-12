@@ -382,12 +382,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 	[self setupTableViews];
 	
-	[mProgressIndicator setUsesThreadedAnimation: YES];
-	
-	NSNotificationCenter* nc = [mContext notificationCenter];
-	[nc addObserver: self selector: @selector (connected:) name: kBXConnectionSuccessfulNotification object: nil];
-	[nc addObserver: self selector: @selector (failedToConnect:) name: kBXConnectionFailedNotification object: nil];
-	
+	[mProgressIndicator setUsesThreadedAnimation: YES];	
 	[mEntities addObserver: self forKeyPath: @"selection" 
 				   options: NSKeyValueObservingOptionInitial
 				   context: kBXAControllerCtx];
@@ -814,7 +809,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
-- (void) databaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) error
+- (void) databaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) dbError
 {
 	[self hideProgressPanel];
 	
