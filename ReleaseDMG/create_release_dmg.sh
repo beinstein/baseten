@@ -11,6 +11,13 @@ function exit_on_error
     fi
 }
 
+echo "Using developer tools at path:"
+xcode-select -print-path
+exit_on_error
+
+echo "Xcode version:"
+xcodebuild -version
+exit_on_error
 
 for x in \
     ../BaseTen.xcodeproj \

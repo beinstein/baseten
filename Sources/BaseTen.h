@@ -33,13 +33,13 @@
 #endif
 
 
+#import <BaseTen/BXConstants.h>
 #import <BaseTen/BXDatabaseContext.h>
 #import <BaseTen/BXDatabaseContextDelegateProtocol.h>
-#import <BaseTen/BXConstants.h>
 #import <BaseTen/BXDatabaseObject.h>
+#import <BaseTen/BXDatabaseObjectID.h>
 #import <BaseTen/BXEntityDescription.h>
 #import <BaseTen/BXAttributeDescription.h>
-#import <BaseTen/BXDatabaseObjectID.h>
 #import <BaseTen/BXRelationshipDescription.h>
 #import <BaseTen/BXException.h>
 
