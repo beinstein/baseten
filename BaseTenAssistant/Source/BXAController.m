@@ -290,7 +290,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	//Table corners
 	{
 		NSRect cornerRect = NSMakeRect (0.0, 0.0, 15.0, 23.0);
-		MKCPolishedCornerView* otherCornerView = [[[MKCPolishedCornerView alloc] initWithFrame: cornerRect] autorelease];
+		MKCPolishedCornerView* otherCornerView = [[MKCPolishedCornerView alloc] initWithFrame: cornerRect];
 		[otherCornerView setDrawingMask: kMKCPolishDrawBottomLine | kMKCPolishDrawTopAccent];
 		[mDBTableView setCornerView: otherCornerView];
 		
@@ -375,6 +375,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[mReader setIgnoresErrors: YES];	
 	
 	[[mContext class] setInterfaceClass: [BXAPGInterface class] forScheme: @"pgsql"];
+	[mContext setDelegate: self];
 	
 	//Make main window's bottom edge lighter
 	[mMainWindow setContentBorderThickness: 24.0 forEdge: NSMinYEdge];
@@ -429,17 +430,16 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 //Patch by Tim Bedford 2008-08-11
 - (void) displayConnectPanel
-{
+{	
 	mServices = [[NSMutableArray alloc] init];
-	[mServiceBrowser searchForServicesOfType:@"_postgresql._tcp" inDomain:@"local."];
-	
+	[mServiceBrowser searchForServicesOfType:@"_postgresql._tcp" inDomain:@"local."];	
 	[NSApp beginSheet: mConnectPanel modalForWindow: mMainWindow modalDelegate: self 
 	   didEndSelector: NULL contextInfo: NULL];
 }
 
 - (void) hideConnectPanel
 {
-	[mServices release], mServices = nil;
+	mServices = nil;
 	mSearching = NO;
 	[mServiceBrowser stop];
 	
@@ -529,7 +529,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 						   [NSColor colorWithDeviceRed: 233.0 / 255.0 green: 185.0 / 255.0 blue: 89.0 / 255.0 alpha: 1.0], NSForegroundColorAttributeName,
 						   [NSFont fontWithName: @"Monaco" size: 11.0], NSFontAttributeName,
 						   nil];
-	[[mLogView textStorage] appendAttributedString: [[[NSAttributedString alloc] initWithString: string attributes: attrs] autorelease]];
+	[[mLogView textStorage] appendAttributedString: [[NSAttributedString alloc] initWithString: string attributes: attrs]];
 
 	NSRange range = NSMakeRange ([[[mLogView textStorage] string] length], 0);
     [mLogView scrollRangeToVisible: range];
@@ -775,15 +775,18 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) databaseContextConnectionSucceeded: (BXDatabaseContext *) ctx
 {
-	[self hideProgressPanel];
+	[self setProgressMin: 0.0 max: 0.0];
+	[mProgressIndicator setIndeterminate: YES];
+	
 	//Patch by Tim Bedford 2008-08-11
 	[mStatusTextField setObjectValue: [NSString stringWithFormat: NSLocalizedString(@"ConnectedToFormat", @"Database status message format"),
 									  [mContext databaseURI]]];
 	[mStatusTextField makeEtchedSmall:YES];
 	[self displayProgressPanel:NSLocalizedString(@"Reading data model", @"Progress panel message")];
+	[self hideProgressPanel];
 	//End patch
+
 	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
-	[self hideProgressPanel]; //Patch by Tim Bedford 2008-08-11
 	[mEntitiesBySchema setContent: entities];
 	
 	BXPGInterface* interface = (id) [mContext databaseInterface];
@@ -1258,6 +1261,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 @end
 
 
+#if 0
 @implementation BXAController (NetServiceBrowserDelegate)
 
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser
@@ -1334,7 +1338,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 @end
 //End patch
-
+#endif
 
 
 @implementation BXAController (IBActions)

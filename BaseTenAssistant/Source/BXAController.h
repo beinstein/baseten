@@ -143,7 +143,7 @@
 @end
 
 
-@interface BXAController (Delegation) <BXDataModelCompilerDelegate, BXPGSQLScriptReaderDelegate>
+@interface BXAController (Delegation) <BXDatabaseContextDelegate, BXDataModelCompilerDelegate, BXPGSQLScriptReaderDelegate>
 - (void) alertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) ctx;
 - (void) importOpenPanelDidEnd: (NSOpenPanel *) panel returnCode: (int) returnCode contextInfo: (void *) contextInfo;
 @end
