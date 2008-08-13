@@ -325,21 +325,6 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return [self PGTSCollectReturning: [NSMutableSet class]];
 }
 
-- (id) PGTSCollectReturning: (Class) aClass
-{
-	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
-}
-
-- (id) PGTSDo
-{
-	return HOMTrampoline (self, @selector (PGTSDo:userInfo:), nil);
-}
-
-- (id) PGTSVisit: (id) visitor
-{
-	return VisitorTrampoline (self, visitor, @selector (PGTSVisit:userInfo:), nil);
-}
-
 - (id) PGTSSelectFunction: (int (*)(id)) fptr
 {
 	id retval = [NSMutableSet setWithCapacity: [self count]];
@@ -366,6 +351,21 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 - (void) PGTSVisit: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	Visit (invocation, [self objectEnumerator]);
+}
+
+- (id) PGTSCollectReturning: (Class) aClass
+{
+	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
+}
+
+- (id) PGTSDo
+{
+	return HOMTrampoline (self, @selector (PGTSDo:userInfo:), nil);
+}
+
+- (id) PGTSVisit: (id) visitor
+{
+	return VisitorTrampoline (self, visitor, @selector (PGTSVisit:userInfo:), nil);
 }
 @end
 
@@ -437,20 +437,6 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), nil);
 }
 
-- (id) PGTSKeyCollect
-{
-	id retval = nil;
-	if (0 < [self count])
-	{
-		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
-		[recorder setCallback: @selector (PGTSKeyCollect:userInfo:)];
-		[recorder setCollection: self];
-		[recorder setTarget: [[self allKeys] PGTSAny]];
-		retval = [recorder record];
-	}
-	return retval;
-}
-
 - (id) PGTSDo
 {
 	return HOMTrampoline (self, @selector (PGTSDo:userInfo:), nil);
@@ -503,5 +489,19 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	id retval = [NSMutableArray arrayWithCapacity: [self count]];
 	return SelectFunction2 (self, retval, fptr, arg);
+}
+
+- (id) PGTSKeyCollect
+{
+	id retval = nil;
+	if (0 < [self count])
+	{
+		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
+		[recorder setCallback: @selector (PGTSKeyCollect:userInfo:)];
+		[recorder setCollection: self];
+		[recorder setTarget: [[self allKeys] PGTSAny]];
+		retval = [recorder record];
+	}
+	return retval;
 }
 @end
