@@ -26,6 +26,10 @@
 // $Id$
 //
 
+
+#import <Foundation/Foundation.h>
+
+
 #ifndef BX_EXPORT
 #ifdef __cplusplus
 #define BX_EXPORT extern "C"

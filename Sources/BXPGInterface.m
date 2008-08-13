@@ -531,7 +531,10 @@ error:
 	PGTSResultSet* res = [connection executeQuery: updateQuery parameterArray: parameters];
 	
 	if (! [res querySucceeded])
+	{
 		*error = [res error];
+		goto error;
+	}
 	else
 	{
 		[mTransactionHandler markLocked: entity whereClause: whereClause parameters: parameters willDelete: NO];
