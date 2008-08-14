@@ -600,9 +600,11 @@
 /**
  * \page building_baseten Building BaseTen
  *
+ * For a successful build, Xcode 3.1 and Mac OS X 10.5 SDK are required.
+ *
  * BaseTen has several subprojects, namely BaseTenAppKit and a plug-in for Interface Builder 3. The default target in 
  * BaseTen.xcodeproj, <em>BaseTen + GC</em>, builds them as well; the plug-in and the AppKit framework will appear in the 
- * subprojects' build folders, which are set to the default folder. The built files will probably be either in 
+ * subprojects' build folders, which are set to the default folder. The built files will be either in 
  * \em build folders in the subprojects' folders or in the user-specified build folder. The documentation will be
  * in the \em Documentation folder.
  *
