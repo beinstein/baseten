@@ -7,15 +7,15 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		5362E86C0E1CE46D005C7654 /* PostgreSQL */ = {
+		5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = 5362E8C80E1CE4E8005C7654 /* Build configuration list for PBXAggregateTarget "PostgreSQL" */;
+			buildConfigurationList = 5362E8C80E1CE4E8005C7654 /* Build configuration list for PBXAggregateTarget "PostgreSQL-universal" */;
 			buildPhases = (
 				5362E86B0E1CE46D005C7654 /* ShellScript */,
 			);
 			dependencies = (
 			);
-			name = PostgreSQL;
+			name = "PostgreSQL-universal";
 			productName = PostgreSQL;
 		};
 		537385720DD9FBAE006F965A /* BaseTen + GC */ = {
@@ -32,6 +32,17 @@
 			);
 			name = "BaseTen + GC";
 			productName = "BaseTen + GC";
+		};
+		537934A50E54B71B0006EC54 /* PostgreSQL-arm */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 537934AB0E54B73A0006EC54 /* Build configuration list for PBXAggregateTarget "PostgreSQL-arm" */;
+			buildPhases = (
+				537934A40E54B71B0006EC54 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "PostgreSQL-arm";
+			productName = "PostgreSQL-arm";
 		};
 		53BD79F70E092ABC009CAFE6 /* Documentation */ = {
 			isa = PBXAggregateTarget;
@@ -1325,10 +1336,11 @@
 			targets = (
 				537385720DD9FBAE006F965A /* BaseTen + GC */,
 				535443BB0D634A47002A6C47 /* BaseTen Framework + GC */,
-				53BD79F70E092ABC009CAFE6 /* Documentation */,
-				5362E86C0E1CE46D005C7654 /* PostgreSQL */,
-				538A82C00E1D16AC0025B3C8 /* SQL Parser */,
 				534EE22E0E53213300B079B0 /* BaseTen for iPhone */,
+				53BD79F70E092ABC009CAFE6 /* Documentation */,
+				538A82C00E1D16AC0025B3C8 /* SQL Parser */,
+				5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */,
+				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
 			);
 		};
 /* End PBXProject section */
@@ -1390,6 +1402,19 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh ppc\nsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh i386\nsource \"$PROJECT_DIR\"/PostgreSQL/create-universal-binaries.sh";
+		};
+		537934A40E54B71B0006EC54 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh arm";
 		};
 		53BD79F60E092ABC009CAFE6 /* Run doxygen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1554,12 +1579,12 @@
 		};
 		532876C90E1E778600CC507E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
+			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */;
 			targetProxy = 532876C80E1E778600CC507E /* PBXContainerItemProxy */;
 		};
 		5362E8710E1CE4A9005C7654 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
+			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */;
 			targetProxy = 5362E8700E1CE4A9005C7654 /* PBXContainerItemProxy */;
 		};
 		537385760DD9FBB7006F965A /* PBXTargetDependency */ = {
@@ -1574,7 +1599,7 @@
 		};
 		5397580E0E1E7B790042120A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL */;
+			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */;
 			targetProxy = 5397580D0E1E7B790042120A /* PBXContainerItemProxy */;
 		};
 		53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */ = {
@@ -1687,6 +1712,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = PostgreSQL;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Debug;
 		};
@@ -1694,6 +1720,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = PostgreSQL;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
 			name = Release;
 		};
@@ -1714,6 +1741,29 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = "BaseTen + GC";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		537934A60E54B71C0006EC54 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "PostgreSQL-arm";
+				SDKROOT = iphoneos2.0;
+			};
+			name = Debug;
+		};
+		537934A70E54B71C0006EC54 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "PostgreSQL-arm";
+				SDKROOT = iphoneos2.0;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1831,7 +1881,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5362E8C80E1CE4E8005C7654 /* Build configuration list for PBXAggregateTarget "PostgreSQL" */ = {
+		5362E8C80E1CE4E8005C7654 /* Build configuration list for PBXAggregateTarget "PostgreSQL-universal" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5362E86D0E1CE46D005C7654 /* Debug */,
@@ -1845,6 +1895,15 @@
 			buildConfigurations = (
 				537385730DD9FBAE006F965A /* Debug */,
 				537385740DD9FBAE006F965A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		537934AB0E54B73A0006EC54 /* Build configuration list for PBXAggregateTarget "PostgreSQL-arm" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				537934A60E54B71C0006EC54 /* Debug */,
+				537934A70E54B71C0006EC54 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
