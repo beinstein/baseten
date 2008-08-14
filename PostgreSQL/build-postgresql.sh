@@ -30,19 +30,19 @@ function build
 	
 	## ( architecture-name configure-host cc cflags cppflags ldflags )
 
-	my_target="$1"
-	my_host="$2"
+	my_arch="$1"
+	my_target="$2"
 	export CC="$3"
 	export CFLAGS="$4"
 	export CPPFLAGS="$5"
 	export LDFLAGS="$6"
 	
-	echo "Target:   ${my_target}"
-	echo "Host:     ${my_host}"
-	echo "CC:       ${CC}"
-	echo "CFLAGS:   ${CFLAGS}"
-	echo "CPPFLAGS: ${CPPFLAGS}"
-	echo "LDFLAGS:  ${LDFLAGS}"
+	echo "Architecture: ${my_arch}"
+	echo "Target:       ${my_target}"
+	echo "CC:           ${CC}"
+	echo "CFLAGS:       ${CFLAGS}"
+	echo "CPPFLAGS:     ${CPPFLAGS}"
+	echo "LDFLAGS:      ${LDFLAGS}"
 	sleep 1
 
     pushd "$postgresql_root"
@@ -54,18 +54,18 @@ function build
 		my_debug="--enable-debug"
 	fi
 	
-	echo "Configure options: --host $my_host --disable-shared \
+	echo "Configure options: --host $my_target --disable-shared \
 	--without-zlib --without-readline --with-openssl $my_debug\ 
-	--prefix=$my_build_dir/$my_target"
-	./configure --host "$my_host" --disable-shared \
+	--prefix=$my_build_dir/$my_arch"
+	./configure --host "$my_target" --disable-shared \
 	--without-zlib --without-readline --with-openssl "$my_debug"\
-	--prefix="$my_build_dir"/"$my_target" 2>&1
+	--prefix="$my_build_dir"/"$my_arch" 2>&1
 	exit_on_error
 	
     make clean 2>&1
 	exit_on_error
 	
-    mkdir -p ../"$my_target"
+    mkdir -p ../"$my_arch"
 	exit_on_error
 	
 	## Required targets, see src/backend/Makefile: Make symlinks...
@@ -91,7 +91,7 @@ function build
 	if [ ! -d "$my_build_dir"/universal/include ]
 	then
 		mkdir -p "$my_build_dir"/universal
-		cp -R "$my_target"/include "$my_build_dir"/universal/include
+		cp -R "$my_arch"/include "$my_build_dir"/universal/include
 		mkdir -p "$my_build_dir"/universal/include/machine
 		
 		pushd "$my_build_dir"/universal/include/
@@ -100,8 +100,8 @@ function build
 		popd
 	fi
 	
-	mkdir -p "$my_build_dir"/universal/include/machine/"$my_target"
-	mv "$my_target"/include/pg_config.h "$my_build_dir"/universal/include/machine/"$my_target"/
+	mkdir -p "$my_build_dir"/universal/include/machine/"$my_arch"
+	mv "$my_arch"/include/pg_config.h "$my_build_dir"/universal/include/machine/"$my_arch"/
 	
 	popd
 }

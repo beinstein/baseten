@@ -1390,7 +1390,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh ppc\nsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh i386\nsource \"$PROJECT_DIR\"/PostgreSQL/create-universal-binaries.sh";
-			showEnvVarsInLog = 0;
 		};
 		53BD79F60E092ABC009CAFE6 /* Run doxygen */ = {
 			isa = PBXShellScriptBuildPhase;
