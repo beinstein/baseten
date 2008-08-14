@@ -27,6 +27,7 @@
 //
 
 #import <stdlib.h>
+#import <stdint.h>
 
 typedef uint64_t uint64;
 
