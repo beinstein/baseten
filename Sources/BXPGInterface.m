@@ -160,7 +160,7 @@ FromClause (id self, PGTSConnection* connection, NSPredicate* predicate, BXEntit
 	NSMutableSet* entitySet = [NSMutableSet setWithSet: [predicate BXEntitySet]];
 	BXAssertValueReturn (nil != entitySet, nil, @"Expected to receive an entity set (predicate: %@).", predicate);
 	if (additionalEntity) [entitySet addObject: additionalEntity];
-	//FIXME: a better way to exclude the corrent table for update would be to change BXEntitySet (above) so that in case of an update, it wouldn't return the target entity, unless a self-join was intended.
+	//FIXME: a better way to exclude the current table for update would be to change BXEntitySet (above) so that in case of an update, it wouldn't return the target entity, unless a self-join was intended.
 	if (excludedEntity) [entitySet removeObject: excludedEntity]; 
 	
 	if (0 < [entitySet count])
