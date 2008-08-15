@@ -27,8 +27,6 @@ function build
 	unset CPPFLAGS
 	unset CXXFLAGS
 	unset LDFLAGS
-	
-	## ( architecture-name configure-host cc cflags cppflags ldflags )
 
 	my_arch="$1"
 	my_target="$2"
@@ -36,6 +34,8 @@ function build
 	export CFLAGS="$4"
 	export CPPFLAGS="$5"
 	export LDFLAGS="$6"
+	my_includes="$7"
+	my_libraries="$8"
 	
 	echo "Architecture: ${my_arch}"
 	echo "Target:       ${my_target}"
@@ -54,12 +54,27 @@ function build
 		my_debug="--enable-debug"
 	fi
 	
+	if [ -n "$my_includes" ]
+	then
+		my_includes="--with-includes=${my_includes}"
+	fi
+	
+	if [ -n "$my_libraries" ]
+	then
+		my_libraries="--with-libraries=${my_libraries}"
+	fi
+	
+	
 	echo "Configure options: --host $my_target --target $my_target --disable-shared \
 	--without-zlib --without-readline --with-openssl $my_debug\ 
-	--prefix=$my_build_dir/$my_arch"
+	--prefix=$my_build_dir/$my_arch \
+	$my_includes \
+	$my_libraries"
 	./configure --host $my_target --target "$my_target" --disable-shared \
 	--without-zlib --without-readline --with-openssl "$my_debug"\
-	--prefix="$my_build_dir"/"$my_arch" 2>&1
+	--prefix="$my_build_dir"/"$my_arch" \
+	"$my_includes" \
+	"$my_libraries" 2>&1
 	exit_on_error
 	
     make clean 2>&1
@@ -114,7 +129,7 @@ then
 	pushd "$SRCROOT"/Contrib/PostgreSQL
 	extract
 	
-	## ( architecture-name configure-host cc cflags cppflags ldflags )
+	## ( architecture-name configure-host cc cflags cppflags ldflags additional_options )
 	if [ "ppc" = "$my_architecture" ]
 	then
 		opts=(
@@ -124,6 +139,8 @@ then
 			"-arch ppc"
 			"-arch ppc -mmacosx-version-min=10.4 -isysroot ${SDKROOT}"
 			"-Wl,-syslibroot,${SDKROOT} -mmacosx-version-min=10.4"
+			""
+			""
 		)
 	elif [ "i386" = "$my_architecture" ]
 	then
@@ -134,6 +151,8 @@ then
 			"-arch i386"
 			"-arch i386 -mmacosx-version-min=10.4 -isysroot ${SDKROOT}"
 			"-Wl,-syslibroot,${SDKROOT} -mmacosx-version-min=10.4"
+			""
+			""
 		)
 	elif [ "arm" = "$my_architecture" ]
 	then
@@ -144,6 +163,8 @@ then
 			"-arch armv6 -mthumb"
 			"-arch armv6 -isysroot ${SDKROOT}"
 			"-Wl,-syslibroot,${SDKROOT}"
+			"${my_build_dir}/openssl/include" 
+			"${my_build_dir}/openssl"
 		)
 	else
 		echo "Error: unsupported architecture: ${my_architecture}."

@@ -1,6 +1,7 @@
 . "$SRCROOT"/PostgreSQL/defines.sh
 openssl_source_file=openssl-0.9.8h.tar.gz
-openssl_root="$my_build_dir"/openssl-0.9.8h
+openssl_dir=openssl-0.9.8h
+openssl_root="$my_build_dir"/"$openssl_dir"
 
 
 function extract
@@ -18,6 +19,10 @@ function extract
 		exit_on_error
 		patch -p1 -d "$openssl_root" < "$SRCROOT"/PostgreSQL/openssl.patch
 		exit_on_error
+		
+		pushd "$my_build_dir"
+		ln -s "$openssl_dir" openssl
+		popd
 	fi
 }
 
