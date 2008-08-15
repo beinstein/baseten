@@ -172,7 +172,7 @@ then
 	fi
 	
 	build "${opts[@]}"
-
 	popd
+	"$postgresql_root"/configure --version | head -n 1 > "$my_build_dir"/VERSION
 fi
 return 0

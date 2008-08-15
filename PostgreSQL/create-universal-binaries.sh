@@ -13,7 +13,7 @@ then
 			"$my_build_dir"/i386/"$file" \
 			"$my_build_dir"/ppc/"$file"
 	done
+	
 	cp -R "$my_build_dir"/universal/include "$my_build_dir"/postgresql
-	"$postgresql_root"/configure --version | head -n 1 > "$my_build_dir"/VERSION
 fi
 return 0
