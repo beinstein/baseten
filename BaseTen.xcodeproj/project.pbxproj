@@ -354,6 +354,13 @@
 			remoteGlobalIDString = 535443BB0D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
+		537934C20E54BDDD0006EC54 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 537934A50E54B71B0006EC54;
+			remoteInfo = "PostgreSQL-arm";
+		};
 		538A82CA0E1D176D0025B3C8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1266,6 +1273,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				537934C30E54BDDD0006EC54 /* PBXTargetDependency */,
 			);
 			name = "BaseTen for iPhone";
 			productName = "BaseTen for iPhone";
@@ -1337,10 +1345,10 @@
 				537385720DD9FBAE006F965A /* BaseTen + GC */,
 				535443BB0D634A47002A6C47 /* BaseTen Framework + GC */,
 				534EE22E0E53213300B079B0 /* BaseTen for iPhone */,
-				53BD79F70E092ABC009CAFE6 /* Documentation */,
 				538A82C00E1D16AC0025B3C8 /* SQL Parser */,
 				5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */,
 				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
+				53BD79F70E092ABC009CAFE6 /* Documentation */,
 			);
 		};
 /* End PBXProject section */
@@ -1414,7 +1422,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh arm";
+			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-openssl.sh\nsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh arm";
 		};
 		53BD79F60E092ABC009CAFE6 /* Run doxygen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1591,6 +1599,11 @@
 			isa = PBXTargetDependency;
 			target = 535443BB0D634A47002A6C47 /* BaseTen Framework + GC */;
 			targetProxy = 537385750DD9FBB7006F965A /* PBXContainerItemProxy */;
+		};
+		537934C30E54BDDD0006EC54 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 537934A50E54B71B0006EC54 /* PostgreSQL-arm */;
+			targetProxy = 537934C20E54BDDD0006EC54 /* PBXContainerItemProxy */;
 		};
 		538A82CB0E1D176D0025B3C8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

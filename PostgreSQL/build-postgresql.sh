@@ -14,7 +14,7 @@ function extract
         fi
         gnutar -jxf "$postgresql_source_file" -C "$my_build_dir"
         ln -s "postgresql-${version}" "$my_build_dir"/postgresql-src
-        patch -p1 -d "$postgresql_root" < "$SRCROOT"/libpq.patch
+        patch -p1 -d "$postgresql_root" < "$SRCROOT"/PostgreSQL/libpq.patch
     fi
 }
 
@@ -54,10 +54,10 @@ function build
 		my_debug="--enable-debug"
 	fi
 	
-	echo "Configure options: --target $my_target --disable-shared \
+	echo "Configure options: --host $my_target --target $my_target --disable-shared \
 	--without-zlib --without-readline --with-openssl $my_debug\ 
 	--prefix=$my_build_dir/$my_arch"
-	./configure --target "$my_target" --disable-shared \
+	./configure --host $my_target --target "$my_target" --disable-shared \
 	--without-zlib --without-readline --with-openssl "$my_debug"\
 	--prefix="$my_build_dir"/"$my_arch" 2>&1
 	exit_on_error
