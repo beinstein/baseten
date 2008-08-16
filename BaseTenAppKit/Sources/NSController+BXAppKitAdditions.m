@@ -99,8 +99,6 @@
 {
     if (NO == lockAcquired)
     {
-		//FIXME: not sure, which one to use.
-        //[[self BXWindow] endEditingFor: nil];
 		[self discardEditing];
 		
         [self BXHandleError: dbError];
