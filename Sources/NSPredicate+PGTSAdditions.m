@@ -58,6 +58,18 @@ RequireClass (id object, Class aClass)
 @end
 
 
+@implementation NSExpression (NSPredicate_PGTSAdditions)
+- (BOOL) PGTSIsCollection
+{
+	BOOL retval = NO;
+	if ([self expressionType] == NSConstantValueExpressionType)
+		retval = [[self constantValue] PGTSIsCollection];
+	return retval;
+}
+@end
+
+
+
 @implementation NSArray (NSPredicate_PGTSAdditions)
 - (BOOL) PGTSIsCollection
 {
@@ -200,10 +212,11 @@ RequireClass (id object, Class aClass)
 				//Fall through.
 			}
 #endif
-				
+			
+			//NSInPredicateOperatorType may be used not only with collections but also with strings.
 			case NSInPredicateOperatorType:
 			{
-				if ([rval PGTSIsCollection])
+				if ([[self rightExpression] PGTSIsCollection])
 				{
 					type = NSEqualToPredicateOperatorType;
 					modifier = NSAnyPredicateModifier;
@@ -304,7 +317,7 @@ RequireClass (id object, Class aClass)
 		
 		if (NSDirectPredicateModifier != modifier)
 		{
-			NSAssert1 ([rval PGTSIsCollection], @"Expected %@ to be a collection.", rval);
+			NSAssert1 ([[self rightExpression] PGTSIsCollection], @"Expected %@ to be a collection.", rval);
 			switch (modifier)
 			{
 				case NSAllPredicateModifier:
@@ -319,7 +332,8 @@ RequireClass (id object, Class aClass)
 			}
 		}	
 		
-		retval = [NSString stringWithFormat: @"(%@ %@ %@)", lval, operator, rval];
+		//Unfortunately we need to surround the values with parentheses or else ANY = and ALL = will fail.
+		retval = [NSString stringWithFormat: @"((%@) %@ (%@))", lval, operator, rval];
 	}
     return retval;
 }
