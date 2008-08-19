@@ -182,6 +182,10 @@ AddRelationship (BXRelationshipDescription* rel, NSMutableDictionary* ctx)
         case NSFunctionExpressionType:
 #if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
 		case NSAggregateExpressionType:
+		case NSSubqueryExpressionType:
+		case NSUnionSetExpressionType:
+		case NSIntersectSetExpressionType:
+		case NSMinusSetExpressionType:
 #endif
             
         default:
