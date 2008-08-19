@@ -62,7 +62,6 @@ MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 	switch (type) 
 	{
 		case NSCustomSelectorPredicateOperatorType:
-		case NSBetweenPredicateOperatorType:
 			//We don't understand the predicate.
 			goto end;
 			break;
@@ -76,8 +75,36 @@ MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 	if (! (lhs && rhs))
 		goto end;
 	
-	id lval = [lhs PGTSValueWithObject: anObject context: context];
-	id rval = [rhs PGTSValueWithObject: anObject context: context];
+	//Get lval and rval; some predicate operators require special handling.
+	id lval = nil;
+	id rval = nil;
+	switch (type) 
+	{
+#if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
+		case NSBetweenPredicateOperatorType:
+			lval = [lhs PGTSValueWithObject: anObject context: context];
+			if (NSAggregateExpressionType == [rhs expressionType])
+			{
+				NSArray* collection = [rhs collection];
+				if (2 == [collection count])
+				{
+					//Fortunately, the collection is guaranteed to contain expressions.
+					id v1 = [collection objectAtIndex: 0];
+					id v2 = [collection objectAtIndex: 1];
+					v1 = [v1 PGTSValueWithObject: anObject context: context];
+					v2 = [v2 PGTSValueWithObject: anObject context: context];
+					rval = [NSString stringWithFormat: @"%@ AND %@", v1, v2];
+				}
+			}
+			break;
+#endif
+			
+		default:
+			lval = [lhs PGTSValueWithObject: anObject context: context];
+			rval = [rhs PGTSValueWithObject: anObject context: context];
+			break;
+	}
+	
 	if (! (lval && rval))
 		goto end;
 	
@@ -87,7 +114,7 @@ MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 
 	NSComparisonPredicateModifier modifier = [self comparisonPredicateModifier];
 
-	//Preprocess some types.
+	//Preprocess some other types.
 	switch (type) 
 	{
 #if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
@@ -161,15 +188,12 @@ MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 			operator = @"~~";
 			break;
 			
-		case NSBeginsWithPredicateOperatorType:
-		case NSEndsWithPredicateOperatorType:
-		case NSInPredicateOperatorType:
-		case NSCustomSelectorPredicateOperatorType:
-			break;
-			
 #if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
 		case NSBetweenPredicateOperatorType:
+			operator = @"BETWEEN";
+			break;
 #endif
+			
 		default:
 			[NSException raise: NSInvalidArgumentException format: @"Unsupported predicate operator: %d.", type];
 			break;
