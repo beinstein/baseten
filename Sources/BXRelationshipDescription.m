@@ -130,6 +130,10 @@
 	return retval;
 }
 
+- (enum BXPropertyKind) propertyKind
+{
+	return kBXPropertyKindRelationship;
+}
 @end
 
 

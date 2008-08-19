@@ -56,6 +56,22 @@
 {
     return NO;
 }
+
+- (BOOL) PGTSIsCollection
+{
+	return NO;
+}
+@end
+
+
+@implementation NSExpression (PGTSFoundationObjects)
+- (BOOL) PGTSIsCollection
+{
+	BOOL retval = NO;
+	if ([self expressionType] == NSConstantValueExpressionType)
+		retval = [[self constantValue] PGTSIsCollection];
+	return retval;
+}
 @end
 
 
@@ -334,6 +350,10 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     return retval;
 }
 
+- (BOOL) PGTSIsCollection
+{
+	return YES;
+}
 @end
 
 
@@ -522,5 +542,14 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     return [NSNumber numberWithLongLong: strtoll (value, NULL, 10)];
+}
+@end
+
+
+//FIXME: NSSet doesn't implement -PGTSParameterLength:connection:.
+@implementation NSSet (PGTSFoundationObjects)
+- (BOOL) PGTSIsCollection
+{
+	return YES;
 }
 @end

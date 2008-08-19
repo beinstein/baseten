@@ -1,5 +1,5 @@
 //
-// BXPGLockHandler.h
+// BXPGTableNotificationHandler.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,14 +26,40 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
+#import "BXPGTableNotificationHandler.h"
 #import "BXPGAdditions.h"
-#import "BXPGTableNotificationHandler.h";
+#import "BXLogger.h"
 
 
-@interface BXPGLockHandler : BXPGTableNotificationHandler
+@implementation BXPGTableNotificationHandler
+- (void) dealloc
 {
-	NSString* mLockFunctionName;
+	[mEntity release];
+	[mTableName release];
+	[super dealloc];
 }
-- (NSString *) lockFunctionName;
+
+- (void) prepare
+{
+	[super prepare];
+	ExpectV (mLastCheck);
+}
+
+- (void) setTableName: (NSString *) aName
+{
+	if (mTableName != aName)
+	{
+		[mTableName release];
+		mTableName = [aName retain];
+	}
+}
+
+- (void) setEntity: (BXEntityDescription *) entity
+{
+	if (mEntity != entity)
+	{
+		[mEntity release];
+		mEntity = [entity retain];
+	}
+}
 @end

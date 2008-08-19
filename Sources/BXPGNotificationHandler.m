@@ -72,37 +72,3 @@
 	ExpectV (mConnection);
 }
 @end
-
-
-@implementation BXPGTableNotificationHandler
-- (void) dealloc
-{
-	[mEntity release];
-	[mTableName release];
-	[super dealloc];
-}
-
-- (void) prepare
-{
-	[super prepare];
-	ExpectV (mLastCheck);
-}
-
-- (void) setTableName: (NSString *) aName
-{
-	if (mTableName != aName)
-	{
-		[mTableName release];
-		mTableName = [aName retain];
-	}
-}
-
-- (void) setEntity: (BXEntityDescription *) entity
-{
-	if (mEntity != entity)
-	{
-		[mEntity release];
-		mEntity = [entity retain];
-	}
-}
-@end

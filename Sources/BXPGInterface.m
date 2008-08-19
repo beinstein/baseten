@@ -477,7 +477,10 @@ error:
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
-	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+								connection, kPGTSConnectionKey,
+								entity, kBXEntityDescriptionKey,
+								nil];
 	NSString* queryFormat = SelectQueryFormat (connection, forUpdate);
 	NSString* returnedFields = ReturnedFields (connection, entity);
 	NSString* fromClause = FromClause (self, connection, predicate, entity, nil);
@@ -522,7 +525,10 @@ error:
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 
 	PGTSConnection* connection = [mTransactionHandler connection];
-	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+								connection, kPGTSConnectionKey,
+								entity, kBXEntityDescriptionKey,
+								nil];
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
 	NSMutableArray* parameters = [ctx objectForKey: kPGTSParametersKey] ?: [NSMutableArray array];
 	NSString* fromClause = FromClause (self, connection, predicate, nil, entity);
@@ -575,7 +581,10 @@ error:
 	NSPredicate* predicate = [[anObject objectID] predicate];
 
 	NSString* fromClause = FromClause (self, connection, predicate, [anObject entity], nil);
-	NSMutableDictionary* ctx = [NSMutableDictionary dictionary];
+	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+								connection, kPGTSConnectionKey,
+								[anObject entity], kBXEntityDescriptionKey,
+								nil];
 	[ctx setObject: connection forKey: kPGTSConnectionKey];
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
 	NSString* queryFormat = SelectQueryFormat (connection, NO);
@@ -618,7 +627,10 @@ error:
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
-	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+								connection, kPGTSConnectionKey,
+								entity, kBXEntityDescriptionKey,
+								nil];
 	NSString* whereClause = WhereClause (connection, predicate, ctx);
 	NSString* fromClause = [entity BXPGQualifiedName: connection];
 	NSString* returnedFields = ReturnedFields (connection, entity);
@@ -925,7 +937,10 @@ bail:
 		BXEntityDescription* entity = [objectID entity];
 
 		PGTSConnection* connection = [mTransactionHandler connection];
-		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: connection forKey: kPGTSConnectionKey];
+		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
+									connection, kPGTSConnectionKey,
+									entity, kBXEntityDescriptionKey,
+									nil];
 		NSString* whereClause = [[objectID predicate] PGTSWhereClauseWithContext: ctx];
 		NSString* fromClause = [entity BXPGQualifiedName: connection];
 		NSString* queryFormat = @"SELECT null FROM ONLY %@ WHERE %@ FOR UPDATE NOWAIT";

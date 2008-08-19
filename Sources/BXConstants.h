@@ -57,16 +57,16 @@ BX_EXPORT NSString* const kBXEntityDescriptionKey;
 BX_EXPORT NSString* const kBXContextKey;
 BX_EXPORT NSString* const kBXErrorKey;
 BX_EXPORT NSString* const kBXObjectKey;
-BX_EXPORT NSString* const kBXEntityDescriptionKey;
 BX_EXPORT NSString* const kBXObjectLockStatusKey;
 BX_EXPORT NSString* const kBXObjectIDKey;
-BX_EXPORT NSString* const kBXEntityDescriptionKey;
 BX_EXPORT NSString* const kBXPrimaryKeyFieldsKey;
 BX_EXPORT NSString* const kBXConnectionSuccessfulNotification;
 BX_EXPORT NSString* const kBXConnectionFailedNotification;
 BX_EXPORT NSString* const kBXConnectionSetupAlertDidEndNotification;
 BX_EXPORT NSString* const kBXGotDatabaseURINotification;
 BX_EXPORT NSString* const kBXAttributeKey;
+BX_EXPORT NSString* const kBXUnknownPredicatesKey;
+BX_EXPORT NSString* const kBXRelationshipsKey;
 
 BX_EXPORT NSString* const kBXErrorDomain;
 BX_EXPORT NSString* const kBXErrorMessageKey;

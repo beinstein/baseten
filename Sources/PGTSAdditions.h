@@ -75,7 +75,6 @@ struct ObjectCompare <NSString *>
 @end
 
 
-
 @interface NSMutableData (PGTSPrivateAdditions)
 - (void) PGTSAppendCString: (const char *) string;
 @end

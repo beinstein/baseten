@@ -93,6 +93,11 @@
 {
 	return NSStringFromClass (mAttributeClass);
 }
+
+- (enum BXPropertyKind) propertyKind
+{
+	return kBXPropertyKindAttribute;
+}
 @end
 
 

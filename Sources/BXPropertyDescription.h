@@ -40,6 +40,13 @@ enum BXPropertyFlag
 	kBXPropertyExcluded		= 1 << 2
 };
 
+enum BXPropertyKind
+{
+	kBXPropertyNoKind = 0,
+	kBXPropertyKindAttribute,
+	kBXPropertyKindRelationship
+};
+
 
 @interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSMutableCopying, NSCoding>
 {
@@ -50,5 +57,5 @@ enum BXPropertyFlag
 - (void) dealloc2;
 - (BXEntityDescription *) entity;
 - (BOOL) isOptional;
-
+- (enum BXPropertyKind) propertyKind;
 @end

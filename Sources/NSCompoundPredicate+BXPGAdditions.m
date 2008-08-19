@@ -1,5 +1,5 @@
 //
-// NSPredicate+PGTSAdditions.m
+// NSCompoundPredicate+BXPGAdditions.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,14 +27,12 @@
 //
 
 #import "NSPredicate+PGTSAdditions.h"
-#import "NSExpression+PGTSAdditions.h"
+#import "NSCompoundPredicate+BXPGAdditions.h"
+#import "PGTSFunctions.h"
 #import "BXLogger.h"
 
-#import "PGTSFunctions.h"
-#import "PGTSConstants.h"
 
-
-@implementation NSPredicate (PGTSAdditions)
+@implementation NSCompoundPredicate (BXPGAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
 {
 	return [self PGTSExpressionWithObject: nil context: context];
@@ -42,14 +40,42 @@
 
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
+    BXAssertValueReturn (nil != [context objectForKey: kPGTSConnectionKey], nil, 
+						 @"Did you remember to set connection to %@ in context?", kPGTSConnectionKey);
     NSString* retval = nil;
-    Class tpClass = NSClassFromString (@"NSTruePredicate");
-    Class fpClass = NSClassFromString (@"NSFalsePredicate");
-    if (nil != tpClass && [self isKindOfClass: tpClass])
-        retval = @"(true)";
-    else if (nil != fpClass && [self isKindOfClass: fpClass])
-        retval = @"(false)";
-	//Otherwise we return nil since this method gets overridden anyway.
+    NSArray* subpredicates = [self subpredicates];
+    NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [subpredicates count]];
+    TSEnumerate (currentPredicate, e, [subpredicates objectEnumerator])
+	{
+		NSString* expression = [currentPredicate PGTSExpressionWithObject: anObject context: context];
+		if (expression)
+			[parts addObject: expression];
+	}
+    
+    NSString* glue = nil;
+    NSCompoundPredicateType type = [self compoundPredicateType];
+	if (0 < [parts count])
+	{
+		if (NSNotPredicateType == type)
+			retval = [NSString stringWithFormat: @"(NOT %@)", [parts objectAtIndex: 0]];
+		else
+		{
+			switch (type)
+			{
+				case NSAndPredicateType:
+					glue = @" AND ";
+					break;
+				case NSOrPredicateType:
+					glue = @" OR ";
+					break;
+				default:
+					[NSException raise: NSInvalidArgumentException 
+								format: @"Unexpected compound predicate type: %d.", type];
+					break;
+			}
+			retval = [NSString stringWithFormat: @"(%@)", [parts componentsJoinedByString: glue]];
+		}
+    }
     return retval;
 }
 @end

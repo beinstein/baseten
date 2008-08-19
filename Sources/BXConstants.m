@@ -50,6 +50,8 @@ NSString* const kBXConnectionFailedNotification = @"kBXConnectionFailedNotificat
 NSString* const kBXConnectionSetupAlertDidEndNotification = @"kBXConnectionSetupAlertDidEndNotification";
 NSString* const kBXGotDatabaseURINotification = @"kBXGotDatabaseURINotification";
 NSString* const kBXAttributeKey = @"kBXAttributeKey";
+NSString* const kBXUnknownPredicatesKey = @"kBXUnknownPredicatesKey";
+NSString* const kBXRelationshipsKey = @"kBXRelationshipsKey";
 
 NSString* const kBXInsertNotification = @"kBXInsertNotification";
 NSString* const kBXInsertEarlyNotification = @"kBXInsertEarlyNotification";

@@ -154,6 +154,10 @@ __strong static id gProperties = nil;
 	return (mFlags & kBXPropertyOptional ? YES : NO);
 }
 
+- (enum BXPropertyKind) propertyKind
+{
+	return kBXPropertyNoKind;
+}
 @end
 
 

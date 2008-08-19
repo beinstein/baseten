@@ -2,7 +2,7 @@
 // NSExpression+PGTSAdditions.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -30,11 +30,10 @@
 #import "PGTSAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
 #import "BXLogger.h"
-
-
-@interface NSObject (PGTSTigerAdditions)
-- (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context;
-@end
+#import "BXEntityDescription.h"
+#import "BXKeyPathParser.h"
+#import "BXPropertyDescription.h"
+#import "BXPGAdditions.h"
 
 
 static NSString*
@@ -82,47 +81,30 @@ AddParameter (id parameter, NSMutableDictionary* context)
 }
 
 
-static NSString*
-EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
+static void
+AddRelationship (BXRelationshipDescription* rel, NSMutableDictionary* ctx)
 {
-	NSMutableString* retval = [NSMutableString string];
-	TSEnumerate (currentComponent, e, [[keyPath componentsSeparatedByString: @"."] objectEnumerator])
+	NSMutableSet* relationships = [ctx objectForKey: kBXRelationshipsKey];
+	if (! relationships)
 	{
-		[retval appendString: [currentComponent PGTSEscapedName: connection]];
-		[retval appendString: @"."];
+		relationships = [NSMutableSet set];
+		[ctx setObject: relationships forKey: kBXRelationshipsKey];
 	}
-	unsigned int length = [retval length];
-	if (0 < length)
-	{
-		NSRange lastCharacterRange = NSMakeRange (length - 1, 1);
-		[retval deleteCharactersInRange: lastCharacterRange];
-	}
-	return retval;
+	[relationships addObject: rel];
 }
+
+
+@interface NSObject (PGTSConstantExpressionValue)
+- (id) PGTSConstantExpressionValue: (NSMutableDictionary *) ctx;
+@end
+
 
 
 @implementation NSExpression (PGTSAdditions)
-
-#if 0
-+ (NSDictionary *) PGTSFunctionNameConversionDictionary
-{
-    static BOOL tooLate = NO;
-    static NSMutableDictionary* conversionDictionary = nil;
-    if (NO == tooLate)
-    {
-        conversionDictionary = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-            @"char_length",     @"length",
-            @"lower",           @"lowercaseString", 
-            @"upper",           @"uppercaseString",
-            nil];
-    }
-    return conversionDictionary;    
-}
-#endif
-
 - (id) PGTSValueWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
     id retval = nil;
+	NSString* keyPath = nil;
 	NSExpressionType type = [self expressionType];
     switch (type)
     {
@@ -136,66 +118,76 @@ EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
             }
             //Otherwise continue.
         }
-            
+
         case NSEvaluatedObjectExpressionType:
         case NSVariableExpressionType:
 		{
-            //default behaviour unless the expression evaluates into a key path expression.
+            //Default behaviour unless the expression evaluates into a key path expression.
 			id evaluated = [self expressionValueWithObject: anObject context: context];
-			if ([evaluated isKindOfClass: [NSExpression class]] && [evaluated expressionType] == NSKeyPathExpressionType)
-			{
-                //Simple dividing into components for now.
-				PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-				retval = EscapedKeyPath ([evaluated keyPath], connection);
-                break;
-			}
-			else
+			if (! ([evaluated isKindOfClass: [NSExpression class]] && 
+				   [evaluated expressionType] == NSKeyPathExpressionType))
 			{
 				retval = AddParameter (evaluated, context);
 				break;
 			}
+			else
+			{
+				keyPath = [evaluated keyPath];
+				//Otherwise continue.
+			}
 		}
-            
+			
         case NSKeyPathExpressionType:
         {
 			PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-			retval = EscapedKeyPath ([self keyPath], connection);
+			BXEntityDescription* entity = [context objectForKey: kBXEntityDescriptionKey];
+			
+			if (! keyPath)
+				keyPath = [self keyPath];
+			NSArray* components = BXKeyPathComponents (keyPath);
+			NSMutableSet* entities = [NSMutableSet setWithCapacity: [components count]];
+			id property = nil;
+			
+			TSEnumerate (currentKey, e, [components objectEnumerator])
+			{
+				if ((property = [[entity attributesByName] objectForKey: currentKey]))
+				{
+					entity = [property entity];
+					[entities addObject: entity];
+					
+					//If the key path continues, the predicate may not be evaluated on the database.
+					if (0 < [e allObjects])
+						goto end;
+				}
+				else if ((property = [[entity relationshipsByName] objectForKey: currentKey]))
+				{
+					entity = [property entity];
+					[entities addObject: entity];
+					AddRelationship (property, context);
+				}
+				else
+				{
+					goto end;
+				}
+			}
+			
+			//If the key path ends in an object reference, the predicate may not be evaluated on the database.
+			if (kBXPropertyKindAttribute != [property propertyKind])
+				goto end;
+			
+			retval = [property BXPGQualifiedName: connection];
             break;
-            
-            //FIXME: this is for functions, which we don't support.
-#if 0
-            NSString* format = @"%@ (%@)";
-            
-            //The first object is always the parameter
-            NSEnumerator* e = [components objectEnumerator];
-            
-            NSString* parameter = [[anObject keyPath] PGTSEscapedString: connection];
-            NSDictionary* conversionDict = [[self class] PGTSFunctionNameConversionDictionary];
-            TSEnumerate (currentFunction, e, [components objectEnumerator])
-            {
-                NSString* pgFunctionName = [conversionDict objectForKey: currentFunction];
-                if (nil != pgFunctionName)
-                    currentFunction = pgFunctionName;
-                
-                parameter = [NSString stringWithFormat: format, currentFunction, parameter];
-            }
-            
-            retval = parameter;
-            break;
-#endif
         }
          
         case NSFunctionExpressionType:
-			//FIXME: make this work.
 #if MAC_OS_X_VERSION_10_5 <= MAC_OS_X_VERSION_MAX_ALLOWED
 		case NSAggregateExpressionType:
-			//FIXME: make this work.
 #endif
             
         default:
-			[NSException raise: NSInvalidArgumentException format: @"Unsupported expression type: %d.", type];
             break;
     }
+end:
     return retval;
 }
 
@@ -221,5 +213,4 @@ EscapedKeyPath (NSString* keyPath, PGTSConnection* connection)
 	
 	return [objectValue PGTSParameterLength: length connection: connection];
 }
-
 @end

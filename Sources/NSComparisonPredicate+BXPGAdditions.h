@@ -1,11 +1,11 @@
 //
-// BXPGLockHandler.h
+// NSComparisonPredicate+BXPGAdditions.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://basetenframework.org/licensing/ or by contacting
+// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -27,13 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "BXPGAdditions.h"
-#import "BXPGTableNotificationHandler.h";
 
 
-@interface BXPGLockHandler : BXPGTableNotificationHandler
-{
-	NSString* mLockFunctionName;
-}
-- (NSString *) lockFunctionName;
+@interface NSComparisonPredicate (BXPGAdditions)
 @end
