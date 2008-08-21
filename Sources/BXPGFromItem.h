@@ -1,8 +1,8 @@
 //
-// NSExpression+PGTSAdditions.h
+// BXPGFromItem.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,13 +27,24 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <BaseTen/BaseTen.h>
 
-#if defined (PREDICATE_VISITOR)
-@interface NSExpression (BXAdditions)
-- (void) BXVisit: (id <BXPredicateVisitor>) visitor;
+
+enum BXPGFromItemType
+{
+	kBXPGFromItemNoType = 0,
+	kBXPGFromItemRelation,
+	kBXPGFromItemLeftJoin
+};
+
+
+@interface BXPGFromItem : NSObject 
+{
+	NSString* mAlias;
+	BXEntityDescription* mEntity;
+	enum BXPGFromItemType mType;
+}
+- (void) setAlias: (NSString *) aString;
+- (void) setEntity: (BXEntityDescription *) anEntity;
+- (void) setType: (enum BXPGFromItemType) aType;
 @end
-#else
-@interface NSExpression (PGTSAdditions)
-- (id) PGTSValueWithObject: (id) anObject context: (NSMutableDictionary *) context;
-@end
-#endif

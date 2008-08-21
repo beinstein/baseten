@@ -28,8 +28,13 @@
 
 #import <Foundation/Foundation.h>
 
-
+#if defined (PREDICATE_VISITOR)
+@interface NSExpression (BXAdditions)
+- (void) BXVisit: (id <BXPredicateVisitor>) visitor;
+@end
+#else
 @interface NSPredicate (PGTSAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context;
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context;
 @end
+#endif

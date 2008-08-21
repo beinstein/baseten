@@ -34,6 +34,14 @@
 #import "BXConstants.h"
 
 
+#if defined (PREDICATE_VISITOR)
+@implementation NSComparisonPredicate (BXAdditions)
+- (void) BXVisit: (id <BXPredicateVisitor>) visitor
+{
+	[visitor visitComparisonPredicate: self];
+}
+@end
+#else
 static void
 MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 {
@@ -88,7 +96,7 @@ MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 				NSArray* collection = [rhs collection];
 				if (2 == [collection count])
 				{
-					//Fortunately, the collection is guaranteed to contain expressions.
+					//Fortunately, the collection is guaranteed to contain only expressions.
 					id v1 = [collection objectAtIndex: 0];
 					id v2 = [collection objectAtIndex: 1];
 					v1 = [v1 PGTSValueWithObject: anObject context: context];
@@ -247,3 +255,4 @@ end:
 	return retval;
 }
 @end
+#endif

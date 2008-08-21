@@ -36,6 +36,60 @@
 #import "BXPGAdditions.h"
 
 
+#if defined (PREDICATE_VISITOR)
+@implementation NSExpression (BXAdditions)
+- (void) BXVisit: (id <BXPredicateVisitor>) visitor
+{
+	NSExpressionType type = [self expressionType];
+	switch (type)
+	{
+		case NSConstantValueExpressionType:
+			[visitor visitConstantValueExpression: self];
+			break;
+			
+		case NSEvaluatedObjectExpressionType:
+			[visitor visitEvaluatedObjectExpression: self];
+			break;
+			
+		case NSVariableExpressionType:
+			[visitor visitVariableExpression: self];
+			break;
+			
+		case NSKeyPathExpressionType:
+			[visitor visitKeyPathExpression: self];
+			break;
+			
+		case NSFunctionExpressionType:
+			[visitor visitFunctionExpression: self];
+			break;
+			
+		case NSAggregateExpressionType:
+			[visitor visitAggregateExpression: self];
+			break;
+			
+		case NSSubqueryExpressionType:
+			[visitor visitSubqueryExpression: self];
+			break;
+			
+		case NSUnionSetExpressionType:
+			[visitor visitUnionSetExpression: self];
+			break;
+			
+		case NSIntersectSetExpressionType:
+			[visitor visitIntersectSetExpression: self];
+			break;
+			
+		case NSMinusSetExpressionType:
+			[visitor visitMinusSetExpression: self];
+			break;
+			
+		default:
+			[visitor visitUnknownExpression: self];
+			break;
+	}
+}
+@end
+#else
 static NSString*
 AddParameter (id parameter, NSMutableDictionary* context)
 {
@@ -218,3 +272,4 @@ end:
 	return [objectValue PGTSParameterLength: length connection: connection];
 }
 @end
+#endif

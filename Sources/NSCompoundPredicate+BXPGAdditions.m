@@ -32,6 +32,31 @@
 #import "BXLogger.h"
 
 
+#if defined (PREDICATE_VISITOR)
+@implementation NSCompoundPredicate (BXAdditions)
+- (void) BXVisit: (id <BXPredicateVisitor>) visitor
+{
+	switch ([self compoundPredicateType])
+	{
+		case NSNotPredicateType:
+			[visitor visitNotPredicate: self];
+			break;
+			
+		case NSAndPredicateType:
+			[visitor visitAndPredicate: self];
+			break;
+			
+		case NSOrPredicateType:
+			[visitor visitOrPredicate: self];
+			break;
+			
+		default:
+			[visitor visitUnknownPredicate: self];
+			break;
+	}
+}
+@end
+#else
 @implementation NSCompoundPredicate (BXPGAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
 {
@@ -79,3 +104,4 @@
     return retval;
 }
 @end
+#endif

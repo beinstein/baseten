@@ -34,6 +34,21 @@
 #import "PGTSConstants.h"
 
 
+#if defined (PREDICATE_VISITOR)
+@implementation NSPredicate (BXAdditions)
+- (void) BXVisit: (id <BXPredicateVisitor>) visitor
+{
+    Class tpClass = NSClassFromString (@"NSTruePredicate");
+    Class fpClass = NSClassFromString (@"NSFalsePredicate");
+    if (nil != tpClass && [self isKindOfClass: tpClass])
+		[visitor visitTruePredicate: self];
+    else if (nil != fpClass && [self isKindOfClass: fpClass])
+		[visitor visitFalsePredicate: self];
+	else
+		[visitor visitUnknownPredicate: self];
+}
+@end
+#else
 @implementation NSPredicate (PGTSAdditions)
 - (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
 {
@@ -53,3 +68,4 @@
     return retval;
 }
 @end
+#endif
