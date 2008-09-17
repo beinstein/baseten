@@ -65,7 +65,6 @@
 
 - (IBAction) connect: (id) sender
 {	
-    [databaseContext setUsesKeychain: YES];
 	if (nil != [[databaseContext databaseURI] host])
 	{
 		[self continueFromDatabaseSelection: nil returnCode: NSOKButton];
@@ -114,17 +113,18 @@
 {
 	if (NSOKButton == returnCode)
 	{
-        if (NO == [databaseContext usesKeychain] || 
-            NO == [databaseContext fetchPasswordFromKeychain])
-        {
-            [panel end];
-            [self displayAuthenticationPanel];
-        }
-        else
-        {
-            [databaseContext setConnectionSetupManager: self];
-            [databaseContext connectAsync];
-        }
+        if ([databaseContext usesKeychain])
+            [databaseContext fetchPasswordFromKeychain];
+		
+		if (0 < [[[databaseContext databaseURI] user] length])
+		{
+			[databaseContext setConnectionSetupManager: self];
+			[databaseContext connectAsync];
+		}
+		else
+		{
+			[self displayAuthenticationPanel];
+		}
     }
     else
     {
