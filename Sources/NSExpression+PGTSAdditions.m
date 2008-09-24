@@ -210,7 +210,7 @@ AddRelationship (BXRelationshipDescription* rel, NSMutableDictionary* ctx)
 					[entities addObject: entity];
 					
 					//If the key path continues, the predicate may not be evaluated on the database.
-					if (0 < [e allObjects])
+					if (0 < [[e allObjects] count])
 						goto end;
 				}
 				else if ((property = [[entity relationshipsByName] objectForKey: currentKey]))
