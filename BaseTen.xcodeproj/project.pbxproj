@@ -58,6 +58,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5307205A0E92645E00582754 /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */; };
 		531A21500DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A214E0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h */; };
 		531A21510DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A214F0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m */; };
 		531A21560DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A21540DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h */; };
@@ -68,8 +69,6 @@
 		5328754B0E1E515500CC507E /* BXPGSQLScriptReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 532875490E1E515500CC507E /* BXPGSQLScriptReader.m */; };
 		5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */; };
 		5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */; };
-		53526E0A0E5D70EB00B67550 /* BXPredicateVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 53526E080E5D70EB00B67550 /* BXPredicateVisitor.h */; };
-		53526E0B0E5D70EB00B67550 /* BXPredicateVisitor.m in Sources */ = {isa = PBXBuildFile; fileRef = 53526E090E5D70EB00B67550 /* BXPredicateVisitor.m */; };
 		53526E0E0E5D909B00B67550 /* BXPGFromItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 539A84DA0E5B3AFF00A2625C /* BXPGFromItem.h */; };
 		53526E0F0E5D909B00B67550 /* BXPGFromItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 539A84DB0E5B3AFF00A2625C /* BXPGFromItem.m */; };
 		53526E100E5D90A000B67550 /* NSExpression+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */; };
@@ -78,7 +77,6 @@
 		53526E130E5D90A200B67550 /* NSComparisonPredicate+BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 539A83600E5AD85D00A2625C /* NSComparisonPredicate+BXPGAdditions.h */; };
 		53526E140E5D90A300B67550 /* NSCompoundPredicate+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 539A835D0E5AD80B00A2625C /* NSCompoundPredicate+BXPGAdditions.m */; };
 		53526E150E5D90A400B67550 /* NSCompoundPredicate+BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 539A835C0E5AD80B00A2625C /* NSCompoundPredicate+BXPGAdditions.h */; };
-		53526E160E5D90A400B67550 /* NSPredicate+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */; };
 		53526E170E5D90A500B67550 /* NSPredicate+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666D790E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m */; };
 		535443C50D634A47002A6C47 /* BaseTen.h in Headers */ = {isa = PBXBuildFile; fileRef = 530ADD8309ED21EF004A13C3 /* BaseTen.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535443C60D634A47002A6C47 /* BXDatabaseContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301300B09D437030037C485 /* BXDatabaseContext.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1331,12 +1329,11 @@
 				53915F9E0E3FD22D0098B419 /* libpq_additions.h in Headers */,
 				53680C0E0E59922C00A53B26 /* BXKeyPathParser.h in Headers */,
 				539A84260E5B053A00A2625C /* BXPGTableNotificationHandler.h in Headers */,
-				53526E0A0E5D70EB00B67550 /* BXPredicateVisitor.h in Headers */,
 				53526E0E0E5D909B00B67550 /* BXPGFromItem.h in Headers */,
 				53526E110E5D90A100B67550 /* NSExpression+PGTSAdditions.h in Headers */,
 				53526E130E5D90A200B67550 /* NSComparisonPredicate+BXPGAdditions.h in Headers */,
 				53526E150E5D90A400B67550 /* NSCompoundPredicate+BXPGAdditions.h in Headers */,
-				53526E160E5D90A400B67550 /* NSPredicate+PGTSAdditions.h in Headers */,
+				5307205A0E92645E00582754 /* NSPredicate+PGTSAdditions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1656,7 +1653,6 @@
 				53915F9F0E3FD22D0098B419 /* libpq_additions.c in Sources */,
 				53680C0F0E59922C00A53B26 /* BXKeyPathParser.m in Sources */,
 				539A84270E5B053A00A2625C /* BXPGTableNotificationHandler.m in Sources */,
-				53526E0B0E5D70EB00B67550 /* BXPredicateVisitor.m in Sources */,
 				53526E0F0E5D909B00B67550 /* BXPGFromItem.m in Sources */,
 				53526E100E5D90A000B67550 /* NSExpression+PGTSAdditions.m in Sources */,
 				53526E120E5D90A100B67550 /* NSComparisonPredicate+BXPGAdditions.m in Sources */,
