@@ -355,16 +355,17 @@ ParseSelector (SEL aSelector, NSString** key)
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
 {
 	//Subclasses get broken if this is replaced with -[super methodSignatureForSelector:].
-    NSMethodSignature* retval = [NSObject instanceMethodSignatureForSelector: aSelector];
-    if (! retval)
+	Class cls = [self class];
+    NSMethodSignature* retval = [cls instanceMethodSignatureForSelector: aSelector];
+    if (! (retval && [self respondsToSelector: aSelector]))
     {
         switch (ParseSelector (aSelector, NULL))
         {
             case 2:
-                retval = [super methodSignatureForSelector: @selector (setPrimitiveValue:forKey:)];
+                retval = [cls instanceMethodSignatureForSelector: @selector (setPrimitiveValue:forKey:)];
                 break;
             case 1:
-                retval = [super methodSignatureForSelector: @selector (primitiveValueForKey:)];
+                retval = [cls instanceMethodSignatureForSelector: @selector (primitiveValueForKey:)];
                 break;
             case 0:
             default:
@@ -404,8 +405,12 @@ ParseSelector (SEL aSelector, NSString** key)
 			
 		default:
 			break;
-	}	
-    [invocation invokeWithTarget: self];
+	}
+	
+	if ([self respondsToSelector: [invocation selector]])
+	    [invocation invokeWithTarget: self];
+	else
+		[self doesNotRecognizeSelector: [invocation selector]];
 }
 
 /**
