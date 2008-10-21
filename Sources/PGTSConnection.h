@@ -28,9 +28,10 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
+#import <SystemConfiguration/SCNetworkReachability.h>
+#import <openssl/ssl.h>
 #import <BaseTen/postgresql/libpq-fe.h>
 #import <BaseTen/PGTSCertificateVerificationDelegate.h>
-#import <openssl/ssl.h>
 @class PGTSConnection;
 @class PGTSResultSet;
 @class PGTSConnector;
@@ -78,6 +79,8 @@ enum PGTSConnectionError
     CFRunLoopRef mRunLoop;
     CFSocketRef mSocket;
     CFRunLoopSourceRef mSocketSource;
+	
+	SCNetworkReachabilityRef mReachability;
     
     id mDelegate; //Weak
 	
@@ -104,6 +107,7 @@ enum PGTSConnectionError
 - (PGconn *) pgConnection;
 - (int) backendPID;
 - (SSL *) SSLStruct;
+- (CFSocketRef) socket;
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;

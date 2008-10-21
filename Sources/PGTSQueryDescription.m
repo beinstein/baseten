@@ -186,7 +186,7 @@ NextIdentifier ()
 }
 
 - (PGTSResultSet *) receiveForConnection: (PGTSConnection *) connection
-{
+{	
     PGTSResultSet* retval = nil;
     PGconn* pgConn = [connection pgConnection];
     PGresult* result = PQgetResult (pgConn);

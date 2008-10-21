@@ -335,6 +335,7 @@
 		53D673020E55CDE700D8A5F8 /* BXPGTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF90E223C8C007AED76 /* BXPGTableDescription.m */; };
 		53D6731A0E55CE0C00D8A5F8 /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
 		53D673360E55CE5E00D8A5F8 /* libpq_additions.c in Sources */ = {isa = PBXBuildFile; fileRef = 53915F9D0E3FD22D0098B419 /* libpq_additions.c */; };
+		53D69A880EAE072A00C4C22D /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53D69A870EAE072A00C4C22D /* SystemConfiguration.framework */; };
 		53D9DDEC0E2B4F300009D370 /* BXPGEntityConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 539758B10E1EB24C0042120A /* BXPGEntityConverter.m */; };
 		53D9DDED0E2B4F310009D370 /* BXPGEntityConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758B00E1EB24C0042120A /* BXPGEntityConverter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53E068260DEAE02A0004363D /* BXProbes.d in Sources */ = {isa = PBXBuildFile; fileRef = 53E068240DEAE02A0004363D /* BXProbes.d */; };
@@ -762,6 +763,7 @@
 		53CE950D0E658CE400063193 /* BXPGExpressionValueType.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = BXPGExpressionValueType.mm; path = Sources/BXPGExpressionValueType.mm; sourceTree = "<group>"; };
 		53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGCertificateVerificationDelegate.h; path = Sources/BXPGCertificateVerificationDelegate.h; sourceTree = "<group>"; };
 		53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGCertificateVerificationDelegate.m; path = Sources/BXPGCertificateVerificationDelegate.m; sourceTree = "<group>"; };
+		53D69A870EAE072A00C4C22D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		53DBE8010B666C3B00C3D20A /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53DBE8120B666C7900C3D20A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
 		53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectKeyPathExpression.h; path = Sources/BXObjectKeyPathExpression.h; sourceTree = "<group>"; };
@@ -795,6 +797,7 @@
 				538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */,
 				538A82C80E1D172A0025B3C8 /* SQLParser.o in Frameworks */,
 				537920580E3F519000423965 /* CoreData.framework in Frameworks */,
+				53D69A880EAE072A00C4C22D /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -843,6 +846,7 @@
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
 				531266E40B68F9CA00637EDA /* Security.framework */,
 				538678D30DE31BA0000C9A78 /* IOKit.framework */,
+				53D69A870EAE072A00C4C22D /* SystemConfiguration.framework */,
 				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
 				5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */,

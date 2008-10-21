@@ -74,6 +74,17 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 }
 
 
+static void
+NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags flags, void *self )
+{
+	//Testing for now.
+	if (kSCNetworkFlagsReachable & flags)
+		NSLog (@"Target is reachable.");
+	else
+		NSLog (@"Target is NOT reachable.");
+}
+
+
 + (void) initialize
 {
 	static BOOL tooLate = NO;
@@ -111,6 +122,13 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (void) freeCFTypes
 {
 	//Don't release the connection. Delegate will handle it.
+
+	if (mReachability)
+	{
+		CFRelease (mReachability);
+		mReachability = NULL;
+	}
+	
 	if (mSocketSource)
 	{
 		CFRunLoopSourceInvalidate (mSocketSource);
@@ -123,7 +141,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		CFSocketInvalidate (mSocket);
 		CFRelease (mSocket);
 		mSocket = NULL;
-	}
+	}	
 	
 	if (mRunLoop)
 	{
@@ -438,6 +456,35 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	return (SSL *) PQgetssl (mConnection);
 }
+
+- (CFSocketRef) socket
+{
+	return mSocket;
+}
+
+- (void) beginTrackingNetworkStatusIn: (CFRunLoopRef) runloop mode: (CFStringRef) mode
+{
+	//Create the reachability object with socket addresses.
+	{
+		CFDataRef addressData = CFSocketCopyAddress (mSocket);
+		CFDataRef peerAddressData = CFSocketCopyPeerAddress (mSocket);
+		struct sockaddr* address = (struct sockaddr *) CFDataGetBytePtr (addressData);
+		struct sockaddr* peerAddress = (struct sockaddr *) CFDataGetBytePtr (peerAddressData);
+		mReachability = SCNetworkReachabilityCreateWithAddressPair (NULL, address, peerAddress);
+		CFRelease (addressData);
+		CFRelease (peerAddressData);
+	}
+	
+	{
+		SCNetworkReachabilityContext ctx = {0, self, NULL, NULL, NULL};
+		SCNetworkReachabilitySetCallback (mReachability, &NetworkStatusChanged, &ctx);
+		if (! SCNetworkReachabilityScheduleWithRunLoop (mReachability, runloop, mode))
+		{
+			CFRelease (mReachability);
+			mReachability = NULL;
+		}
+	}
+}
 @end
 
 
@@ -475,7 +522,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
         CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
         CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
         CFRunLoopAddSource (runloop, mSocketSource, mode);
-        
+		
+		[self beginTrackingNetworkStatusIn: runloop mode: mode];
+		        
         if (0 < [mQueue count])
             [self sendNextQuery];
         [mDelegate PGTSConnectionEstablished: self];
