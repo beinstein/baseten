@@ -41,6 +41,9 @@
     BXRelationshipDescription* mRelationship;
 }
 
+- (void) fetchedForRelationship: (BXRelationshipDescription *) relationship 
+						  owner: (BXDatabaseObject *) databaseObject
+							key: (NSString *) key;
 - (BXRelationshipDescription *) relationship;
 - (void) setRelationship: (BXRelationshipDescription *) relationship;
 - (BOOL) BXIsRelationshipProxy;

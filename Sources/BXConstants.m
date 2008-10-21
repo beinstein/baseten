@@ -52,6 +52,7 @@ NSString* const kBXGotDatabaseURINotification = @"kBXGotDatabaseURINotification"
 NSString* const kBXAttributeKey = @"kBXAttributeKey";
 NSString* const kBXUnknownPredicatesKey = @"kBXUnknownPredicatesKey";
 NSString* const kBXRelationshipsKey = @"kBXRelationshipsKey";
+NSString* const kBXPredicateKey = @"kBXPredicateKey";
 
 NSString* const kBXInsertNotification = @"kBXInsertNotification";
 NSString* const kBXInsertEarlyNotification = @"kBXInsertEarlyNotification";

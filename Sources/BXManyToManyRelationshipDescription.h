@@ -29,6 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXRelationshipDescription.h>
 
+@class BXDatabaseObject;
 
 @interface BXManyToManyRelationshipDescription : BXRelationshipDescription 
 {
@@ -40,6 +41,7 @@
 - (BXForeignKey *) dstForeignKey;
 - (void) setSrcForeignKey: (BXForeignKey *) aKey;
 - (void) setDstForeignKey: (BXForeignKey *) aKey;
+- (BXEntityDescription *) helperEntity;
 - (void) setHelperEntity: (BXEntityDescription *) anEntity;
-
+- (NSPredicate *) filterPredicateFor: (BXDatabaseObject *) object;
 @end

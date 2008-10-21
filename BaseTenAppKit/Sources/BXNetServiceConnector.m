@@ -51,13 +51,6 @@
 	[super dealloc];
 }
 
-- (void) finalize
-{
-	[mPanel end];
-	[mAuthenticationPanel end];
-	[super finalize];
-}
-
 - (void) awakeFromNib
 {
     [self setDatabaseContext: databaseContext];
@@ -101,11 +94,7 @@
 
 - (void) connectionPanelDidEnd: (BXConnectionPanel *) panel returnCode: (int) returnCode 
 				   contextInfo: (void *) contextInfo
-{
-	[[databaseContext internalDelegate] databaseContextGotDatabaseURI: databaseContext];
-	NSNotificationCenter* nc = [databaseContext notificationCenter];
-	[nc postNotificationName: kBXGotDatabaseURINotification object: databaseContext];
-	
+{	
 	[self continueFromDatabaseSelection: panel returnCode: returnCode];
 }
 

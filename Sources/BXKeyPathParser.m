@@ -34,7 +34,7 @@
 
 struct component_retval_st
 {
-	NSString* cr_component;
+	__strong NSString* cr_component;
 	unichar* cr_position;
 };
 
@@ -54,9 +54,10 @@ KeyPathComponent (unichar* stringPtr, unichar* buffer, NSUInteger length)
 	unichar stack [kStackDepth] = {};
 	short i = 0;
 	unichar* bufferPtr = buffer;
+	BOOL gotSeparator = NO;
 	
 	//We accept all characters other than .'"\ in key path components.
-	while (length > 0)
+	while (0 < length)
 	{
 		current = *stringPtr;
 		switch (stack [i])
@@ -67,6 +68,9 @@ KeyPathComponent (unichar* stringPtr, unichar* buffer, NSUInteger length)
 				{
 					case '.':
 					{
+						stringPtr++;
+						length--;
+						gotSeparator = YES;
 						goto end;
 						break;
 					}
@@ -145,7 +149,7 @@ KeyPathComponent (unichar* stringPtr, unichar* buffer, NSUInteger length)
 	}
 	
 end:
-	if (buffer == bufferPtr)
+	if (buffer == bufferPtr || (gotSeparator && ! length))
 		[NSException raise: NSInvalidArgumentException format: @"Component with zero length."];
 	
 	NSString* component = [NSString stringWithCharacters: buffer length: bufferPtr - buffer];
@@ -166,11 +170,12 @@ BXKeyPathComponents (NSString* keyPath)
 	NSMutableArray* retval = [NSMutableArray array];
 		
 	NSInteger length = [keyPath length];
-	unichar* stringPtr = malloc (length * sizeof (unichar));
 	unichar* buffer = malloc (length * sizeof (unichar));
-	[keyPath getCharacters: stringPtr];
+	unichar* source = malloc (length * sizeof (unichar));
+	unichar* stringPtr = source;
+	[keyPath getCharacters: source];
 	
-	while (length > 0)
+	while (0 < length)
 	{
 		struct component_retval_st cst = KeyPathComponent (stringPtr, buffer, length);
 		length -= (cst.cr_position - stringPtr);
@@ -183,8 +188,8 @@ BXKeyPathComponents (NSString* keyPath)
 	if (buffer)
 		free (buffer);
 	
-	if (stringPtr)
-		free (stringPtr);
+	if (source)
+		free (source);
 	
 	if (! [retval count])
 		retval = nil;

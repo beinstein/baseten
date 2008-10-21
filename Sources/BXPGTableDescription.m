@@ -56,7 +56,7 @@
 			[self setUniqueIndexes: [NSArray array]];
 		else
 		{
-			PGTSIndexDescription* index = [[PGTSIndexDescription alloc] init];
+			PGTSIndexDescription* index = [[[PGTSIndexDescription alloc] init] autorelease];
 			NSMutableSet* indexFields = [NSMutableSet set];
 			TSEnumerate (currentFieldIndex, e, [[res valueForKey: @"attnum"] objectEnumerator])
 			[indexFields addObject: [self fieldAtIndex: [currentFieldIndex intValue]]];
@@ -64,7 +64,6 @@
 			[index setFields: indexFields];
 			[index setTable: self];
 			[self setUniqueIndexes: [NSArray arrayWithObject: index]];
-			[index release];
 		}
 	}
 }

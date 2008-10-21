@@ -71,21 +71,22 @@
 }
 
 
-- (BOOL) savepointAsync: (BOOL) async delegate: (id) delegate callback: (SEL) callback 
-			   userInfo: (id) userInfo outError: (NSError **) outError;
+- (void) savepointFor: (id) delegate callback: (SEL) callback userInfo: (id) userInfo
 {
+    NSDictionary* newUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                 NSStringFromSelector (callback), kBXPGCallbackSelectorStringKey,
+                                 delegate, kBXPGDelegateKey,
+                                 userInfo, kBXPGUserInfoKey,
+                                 nil];
+    [self beginIfNeededFor: self callback: @selector (begunTransaction:) userInfo: newUserInfo];
+}
+
+
+- (BOOL) savepointIfNeeded: (NSError **) outError
+{
+	ExpectR (outError, NO);
 	BOOL retval = NO;
-	if (async)
-	{
-		NSDictionary* newUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-									 NSStringFromSelector (callback), kBXPGCallbackSelectorStringKey,
-									 delegate, kBXPGDelegateKey,
-									 userInfo, kBXPGUserInfoKey,
-									 nil];
-		[self beginIfNeededAsync: YES delegate: self callback: @selector (begunTransaction:) 
-						userInfo: newUserInfo outError: NULL];
-	}
-	else if ((retval = [self beginIfNeeded: outError]))
+	if ((retval = [self beginIfNeeded: outError]))
 	{
 		PGTransactionStatusType status = [mConnection transactionStatus];
 		if (PQTRANS_INTRANS == status)
@@ -313,9 +314,10 @@
 }
 
 
-- (void) rollback: (NSError **) outError
+- (BOOL) rollback: (NSError **) outError
 {
-	ExpectV (outError);
+	ExpectR (outError, NO);
+	BOOL retval = YES;
 	
     //The locked key should be cleared in any case to cope with the situation
     //where the lock was acquired after the last savepoint and the same key 
@@ -334,7 +336,11 @@
 		
 		NSString* query = @"ROLLBACK";
 		res = [mConnection executeQuery: query];
-		if ((localError = [res error])) *outError = localError;
+		if ((localError = [res error])) 
+		{
+			retval = NO;
+			*outError = localError;
+		}
 		
 		if (BASETEN_SENT_ROLLBACK_TRANSACTION_ENABLED ())
 		{
@@ -343,14 +349,8 @@
 			free (message_s);
 		}		
 	}
-	[self resetSavepointIndex];	
-}
-
-
-- (BOOL) savepointIfNeeded: (NSError **) outError
-{
-	ExpectR (outError, NO);
-	return [self savepointAsync: NO delegate: nil callback: NULL userInfo: nil outError: outError];
+	[self resetSavepointIndex];
+	return retval;
 }
 
 
@@ -393,7 +393,7 @@
 
 - (void) beginAsyncSubTransactionFor: (id) delegate callback: (SEL) callback userInfo: (NSDictionary *) userInfo
 {
-	[self savepointAsync: YES delegate: delegate callback: callback userInfo: userInfo outError: NULL];
+	[self savepointFor: delegate callback: callback userInfo: userInfo];
 }
 
 

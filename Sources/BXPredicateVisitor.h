@@ -27,13 +27,20 @@
 //
 
 
-#if defined (PREDICATE_VISITOR)
-
 #import <Foundation/Foundation.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/PGTSConnection.h>
+#import <BaseTen/BXPGVisitor.h>
+#import <BaseTen/BXPGQueryBuilder.h>
 
 
-@protocol BXPredicateVisitor <NSObject>
+@class BXPGExpressionVisitor;
+@class BXPGConstantParameterMapper;
+@class BXPGExpressionValueType;
+@class BXPGPredefinedFunctionExpressionValueType;
+
+
+@protocol BXPGPredicateVisitor <NSObject>
 - (void) visitUnknownPredicate: (NSPredicate *) predicate;
 - (void) visitTruePredicate: (NSPredicate *) predicate;
 - (void) visitFalsePredicate: (NSPredicate *) predicate;
@@ -42,38 +49,70 @@
 - (void) visitNotPredicate: (NSCompoundPredicate *) predicate;
 - (void) visitComparisonPredicate: (NSComparisonPredicate *) predicate;
 
-- (void) visitConstantValueExpression: (NSExpression *) expression;
-- (void) visitEvaluatedObjectExpression: (NSExpression *) expression;
-- (void) visitVariableExpression: (NSExpression *) expression;
-- (void) visitKeyPathExpression: (NSExpression *) expression;
-- (void) visitFunctionExpression: (NSExpression *) expression;
-- (void) visitAggregateExpression: (NSExpression *) expression;
-- (void) visitSubqueryExpression: (NSExpression *) expression;
-- (void) visitUnionSetExpression: (NSExpression *) expression;
-- (void) visitIntersectSetExpression: (NSExpression *) expression;
-- (void) visitMinusSetExpression: (NSExpression *) expression;
-- (void) visitUnknownExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitConstantValueExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitEvaluatedObjectExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitVariableExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitKeyPathExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitFunctionExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitAggregateExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitSubqueryExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitUnionSetExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitIntersectSetExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitMinusSetExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitUnknownExpression: (NSExpression *) expression;
 @end
 
 
-@interface BXPredicateVisitor : NSObject
+@protocol BXPGExpressionHandler <NSObject>
+- (NSString *) handlePGConstantExpressionValue: (id) value;
+- (NSString *) handlePGKeyPathExpressionValue: (NSArray *) keyPath;
+- (NSString *) handlePGAggregateExpressionValue: (NSArray *) valueTree;
+- (NSString *) handlePGPredefinedFunctionExpressionValue: (BXPGPredefinedFunctionExpressionValueType *) valueType;
+@end
+
+
+struct bx_predicate_st 
+{
+	NSString* p_where_clause;
+	BOOL p_results_require_filtering;
+};
+
+
+@interface BXPGPredicateVisitor : BXPGVisitor
 {
 	BXDatabaseObject* mObject;
+	BXEntityDescription* mEntity;
 	NSMutableDictionary* mContext; //For evaluating expressions.
+	BXPGExpressionVisitor* mExpressionVisitor;
+	BXPGConstantParameterMapper* mParameterMapper;
+	Class mQueryHandler;
 	
 	NSMutableArray* mStack; //Array of NSMutableArrays.
 	NSInteger mStackIdx;
 	BOOL mCollectAllState;
+	BOOL mWillCollectAll;
 }
+
+- (void) setEntity: (BXEntityDescription *) entity;
+- (void) setObject: (BXDatabaseObject *) anObject;
+- (void) setConnection: (PGTSConnection *) connection;
+- (void) setQueryType: (enum BXPGQueryType) queryType;
+
 - (void) addFrame;
 - (void) removeFrame;
 - (NSMutableArray *) currentFrame;
+- (void) addToFrame: (id) value;
 
-- (NSString *) beginWithPredicate: (NSPredicate *) predicate;
+- (struct bx_predicate_st) beginWithPredicate: (NSPredicate *) predicate;
+
+- (BXPGConstantParameterMapper *) constantParameterMapper;
+- (BXPGExpressionVisitor *) expressionVisitor;
 @end
 
 
-@interface BXPredicateVisitor (BXPredicateVisitor) <BXPredicateVisitor>
+@interface BXPGPredicateVisitor (BXPGPredicateVisitor) <BXPGPredicateVisitor>
 @end
 
-#endif
+
+@interface BXPGPredicateVisitor (BXPGExpressionHandler) <BXPGExpressionHandler>
+@end

@@ -72,6 +72,12 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
     return self;
 }
 
+- (void) dealloc
+{
+	//Everything is weak.
+	[super dealloc];
+}
+
 - (BOOL) SSLSetUp
 {
 	return mSSLSetUp;
@@ -185,7 +191,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) cancel
 {
-    if (mConnection)
+    if (mConnection && ! mPassedConnection)
     {
         PQfinish (mConnection);
         mConnection = NULL;
@@ -248,6 +254,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	[self freeCFTypes];
 	[mDelegate connector: self gotConnection: mConnection succeeded: succeeded];
+	mPassedConnection = YES;
 }
 
 - (BOOL) connect: (const char *) conninfo

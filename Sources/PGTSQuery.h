@@ -30,6 +30,14 @@
 #import <BaseTen/postgresql/libpq-fe.h>
 
 @class PGTSConnection;
+@class PGTSQuery;
+@class PGTSAbstractParameterQuery;
+
+
+@protocol PGTSQueryVisitor <NSObject>
+- (id) visitQuery: (PGTSQuery *) query;
+- (id) visitParameterQuery: (PGTSAbstractParameterQuery *) query;
+@end
 
 
 @interface PGTSQuery : NSObject
@@ -37,6 +45,7 @@
 }
 - (NSString *) query;
 - (int) sendQuery: (PGTSConnection *) connection;
+- (id) visitQuery: (id <PGTSQueryVisitor>) visitor;
 @end
 
 

@@ -68,7 +68,7 @@
     }
     
     const unsigned int objectId = 5;
-	[context connectIfNeeded: nil];
+	[context connectSync: NULL];
     NSUndoManager* undoManager = [context undoManager];
     BXEntityDescription* updatetest = [context entityForTable: @"updatetest" error: nil];
 

@@ -64,14 +64,12 @@
 		tooLate = YES;
         
         // Register the transformers with the names that we refer to them with
-        BXObjectStatusToColorTransformer* transformer = [[BXObjectStatusToColorTransformer alloc] init];        
+        BXObjectStatusToColorTransformer* transformer = [[[BXObjectStatusToColorTransformer alloc] init] autorelease];
         [NSValueTransformer setValueTransformer: transformer
                                         forName: @"BXObjectStatusToColorTransformer"];
-        [transformer release];
-        transformer = [[BXObjectStatusToEditableTransformer alloc] init];
+        transformer = [[[BXObjectStatusToEditableTransformer alloc] init] autorelease];
         [NSValueTransformer setValueTransformer: transformer
                                         forName: @"BXObjectStatusToEditableTransformer"];
-        [transformer release];
 		
 		[self exposeBinding: @"databaseContext"];
 		[self exposeBinding: @"modalWindow"];
@@ -165,13 +163,12 @@
 }
 
 - (void) gotDatabaseURI: (NSNotification *) notification
-{
+{	
 	BXDatabaseContext* ctx = [notification object];
+	ExpectV (ctx == databaseContext)
+
 	[[ctx notificationCenter] removeObserver: self name: kBXGotDatabaseURINotification object: ctx];
-	if (ctx == databaseContext) //Just to make sure.
-	{
-		[self prepareEntity];
-	}
+	[self prepareEntity];
 }
 
 /**
@@ -189,12 +186,11 @@
 		[nc removeObserver: self name: kBXGotDatabaseURINotification object: databaseContext];
 		
         [databaseContext release];
-        databaseContext = ctx;
+        databaseContext = [ctx retain];
 		
 		if (nil != databaseContext)
 		{
             nc = [databaseContext notificationCenter];
-            [databaseContext retain];
 			if (mFetchesOnConnect)
 				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
             
@@ -446,6 +442,8 @@ IsKindOfClass (id self, Class class)
 
 - (BOOL) fetchWithRequest: (NSFetchRequest *) fetchRequest merge: (BOOL) merge error: (NSError **) error
 {
+	ExpectR (mEntityDescription, NO);
+	
     BOOL retval = NO;
 	if (merge && nil != [self content])
 	{

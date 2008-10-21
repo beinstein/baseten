@@ -285,9 +285,8 @@ SSLMode (enum BXSSLMode mode)
 
 - (void) refreshDatabaseDescription
 {
-	id desc = [[BXPGDatabaseDescription alloc] init];
+	id desc = [[[BXPGDatabaseDescription alloc] init] autorelease];
 	[mConnection setDatabaseDescription: desc];
-	[desc release];
 }
 
 
@@ -402,36 +401,20 @@ error:
 
 #pragma mark Transactions
 
-- (BOOL) beginIfNeededAsync: (BOOL) async delegate: (id) delegate callback: (SEL) callback 
-				   userInfo: (id) userInfo outError: (NSError **) outError
+- (void) beginIfNeededFor: (id) delegate callback: (SEL) callback userInfo: (id) userInfo
 {
-	BOOL retval = NO;
 	PGTransactionStatusType status = [mConnection transactionStatus];
 	switch (status) 
 	{
 		case PQTRANS_INTRANS:
-			retval = YES;
-			if (async)
-				[self sendPlaceholderResultTo: delegate callback: callback succeeded: YES userInfo: userInfo];
+            [self sendPlaceholderResultTo: delegate callback: callback succeeded: YES userInfo: userInfo];
 			break;
 			
 		case PQTRANS_IDLE:
 		{
 			NSString* query = @"BEGIN";
-			if (async)
-			{
-				[mConnection sendQuery: query delegate: delegate callback: callback 
-						parameterArray: nil userInfo: userInfo];
-			}
-			else 
-			{
-				PGTSResultSet* res = [mConnection executeQuery: query];
-				
-				if ([res querySucceeded])
-					retval = YES;
-				else
-					*outError = [res error];				
-			}
+            [mConnection sendQuery: query delegate: delegate callback: callback 
+                    parameterArray: nil userInfo: userInfo];
 			break;
 		}
 			
@@ -440,13 +423,37 @@ error:
 			//FIXME: set an error.
 			break;
 	}
-	return retval;
 }
 
 - (BOOL) beginIfNeeded: (NSError **) outError
 {
-	ExpectR (outError, NO);
-	return [self beginIfNeededAsync: NO delegate: nil callback: NULL userInfo: nil outError: outError];
+    ExpectR (outError, NO);
+	BOOL retval = NO;
+	PGTransactionStatusType status = [mConnection transactionStatus];
+	switch (status) 
+	{
+		case PQTRANS_INTRANS:
+			retval = YES;
+			break;
+			
+		case PQTRANS_IDLE:
+		{
+			NSString* query = @"BEGIN";
+            PGTSResultSet* res = [mConnection executeQuery: query];
+				
+            if ([res querySucceeded])
+                retval = YES;
+            else
+                *outError = [res error];				
+
+			break;
+		}
+			
+		default:
+			//FIXME: set an error.
+			break;
+	}
+	return retval;
 }
 
 
@@ -457,9 +464,10 @@ error:
 }
 
 
-- (void) rollback: (NSError **) outError
+- (BOOL) rollback: (NSError **) outError
 {
 	[self doesNotRecognizeSelector: _cmd];
+	return NO;
 }
 
 
@@ -564,7 +572,7 @@ error:
 					NSString* nname = [res valueForKey: @"nname"];
 					
 					//Create the observer.
-					BXPGTableNotificationHandler* handler = [[aClass alloc] init];
+					BXPGTableNotificationHandler* handler = [[[aClass alloc] init] autorelease];
 					
 					[handler setInterface: mInterface];
 					[handler setConnection: connection];
@@ -587,7 +595,6 @@ error:
 						default:
 							break;
 					}
-					[handler release];					
 					i++;
 				}
 				
@@ -628,12 +635,11 @@ error:
 		PGTSResultSet* res = [connection executeQuery: query];
 		if ([res querySucceeded])
 		{
-			BXPGClearLocksHandler* handler = [[BXPGClearLocksHandler alloc] init];
+			BXPGClearLocksHandler* handler = [[[BXPGClearLocksHandler alloc] init] autorelease];
 			[handler setInterface: mInterface];
 			[handler setConnection: connection];
 			[handler prepare];
 			[mObservers setObject: handler forKey: nname];
-			[handler release];
 			
 			retval = YES;
 		}

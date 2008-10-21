@@ -26,7 +26,7 @@
 -- $Id$
 --
 
-define(`_bx_version_', `0.917')dnl
+define(`_bx_version_', `0.918')dnl
 define(`_bx_compat_version_', `0.14')dnl
 
 BEGIN;
@@ -174,6 +174,33 @@ CREATE FUNCTION "baseten".LockNextId () RETURNS BIGINT AS $$
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".LockNextId () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".LockNextId () TO basetenuser;
+
+
+define(`between_operator', `
+CREATE FUNCTION "baseten".between ($1 [2], $1) RETURNS BOOLEAN AS $$
+    SELECT $`'1[1] <= $`'2 AND $`'2 <= $`'1[2];
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".between ($1 [2], $1) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".between ($1 [2], $1) TO basetenread;
+
+CREATE OPERATOR "baseten".<<>> (
+    PROCEDURE = "baseten".between,
+    LEFTARG = $1[2],
+    RIGHTARG = $1,
+    HASHES
+)')dnl
+between_operator(`SMALLINT');
+between_operator(`INTEGER');
+between_operator(`BIGINT');
+between_operator(`NUMERIC');
+between_operator(`REAL');
+between_operator(`DOUBLE PRECISION');
+between_operator(`TIMESTAMP WITHOUT TIME ZONE');
+between_operator(`TIMESTAMP WITH TIME ZONE');
+between_operator(`INTERVAL');
+between_operator(`DATE');
+between_operator(`TIME WITHOUT TIME ZONE');
+between_operator(`TIME WITH TIME ZONE');
 
 
 -- No privileges on types

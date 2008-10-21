@@ -118,7 +118,7 @@
  primaryKeyFields: (NSDictionary **) outPkeyDict
 {
     //FIXME: URI validation?
-    NSString* absoluteURI = [anURI absoluteString];
+    //NSString* absoluteURI = [anURI absoluteString];
     NSString* query = [anURI query];
     NSString* path = [anURI path];
     
@@ -126,9 +126,8 @@
     unsigned int count = [pathComponents count];
     NSString* tableName = [pathComponents objectAtIndex: count - 1];
     NSString* schemaName = [pathComponents objectAtIndex: count - 2];
-    NSString* dbAddress = [absoluteURI substringToIndex: [absoluteURI length] - ([tableName length] + 1 + [query length])];
     //FIXME: object address and context address should be compared.
-    dbAddress = nil; //Suppress a warning
+    //NSString* dbAddress = [absoluteURI substringToIndex: [absoluteURI length] - ([tableName length] + 1 + [query length])];
         
 	NSMutableDictionary* pkeyDict = [NSMutableDictionary dictionary];
 	NSScanner* queryScanner = [NSScanner scannerWithString: query];
@@ -261,7 +260,7 @@ bail:
         TSEnumerate (currentKey, e, [pkeyFValues keyEnumerator])
         {
             NSExpression* rhs = [NSExpression expressionForConstantValue: [pkeyFValues objectForKey: currentKey]];
-            NSExpression* lhs = [NSExpression expressionForConstantValue: [attributes objectForKey: currentKey]];
+            NSExpression* lhs = [NSExpression expressionForKeyPath: currentKey];
             NSPredicate* predicate = 
                 [NSComparisonPredicate predicateWithLeftExpression: lhs
                                                    rightExpression: rhs

@@ -77,7 +77,7 @@
     //Get an object from the result
     //Here it doesn't matter, whether there are any objects in the relationship or not.
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    NSCountedSet* foreignObjects = [object valueForKey: [manyEntity name]];
+    NSCountedSet* foreignObjects = [object primitiveValueForKey: [manyEntity name]];
     NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: [manyEntity name]];
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
@@ -95,8 +95,8 @@
     STAssertNil (error, [error description]);
     MKCAssertTrue (3 == [objects2 count]);
     
-    //Set the referenced objects
-    [object setValue: objects2 forKey: [manyEntity name]];
+    //Set the referenced objects. The self-updating collection should get notified when objects are added.
+    [object setPrimitiveValue: objects2 forKey: [manyEntity name]];
     
     MKCAssertTrue (3 == [foreignObjects count]);
     MKCAssertEqualObjects ([NSSet setWithSet: foreignObjects], objects2);

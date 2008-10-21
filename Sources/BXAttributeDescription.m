@@ -98,6 +98,11 @@
 {
 	return kBXPropertyKindAttribute;
 }
+
+- (BOOL) isArray
+{
+	return (kBXPropertyIsArray & mFlags ? YES : NO);
+}
 @end
 
 
@@ -120,6 +125,14 @@
     return [[[self alloc] initWithName: aName entity: anEntity] autorelease];
 }
 //@}
+
+- (void) setArray: (BOOL) isArray
+{
+	if (isArray)
+		mFlags |= kBXPropertyIsArray;
+	else
+		mFlags &= ~kBXPropertyIsArray;
+}
 
 - (void) setPrimaryKey: (BOOL) aBool
 {

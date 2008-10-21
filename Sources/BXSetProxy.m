@@ -30,6 +30,7 @@
 #import "BXDatabaseContext.h"
 #import "BXDatabaseAdditions.h"
 #import "BXLogger.h"
+#import "BXDatabaseObject.h"
 
 
 /**
@@ -68,11 +69,12 @@
 	if (0 < [objects count])
 	{
 		NSSet* change = [NSSet setWithArray: objects];
-		[mOwner willChangeValueForKey: [self key] 
+		NSString* key = [self key];
+		[mOwner willChangeValueForKey: key
 					  withSetMutation: NSKeyValueUnionSetMutation 
 						 usingObjects: change];
 		[mContainer unionSet: change];
-		[mOwner didChangeValueForKey: [self key] 
+		[mOwner didChangeValueForKey: key 
 					 withSetMutation: NSKeyValueUnionSetMutation 
 						usingObjects: change];
 	}
@@ -85,11 +87,12 @@
 	[change intersectSet: mContainer];
 	if (0 < [change count])
 	{
-		[mOwner willChangeValueForKey: [self key] 
+		NSString* key = [self key];
+		[mOwner willChangeValueForKey: key
 					  withSetMutation: NSKeyValueMinusSetMutation 
 						 usingObjects: change];
 		[mContainer minusSet: change];
-		[mOwner didChangeValueForKey: [self key] 
+		[mOwner didChangeValueForKey: key 
 					 withSetMutation: NSKeyValueMinusSetMutation 
 						usingObjects: change];
 	}
@@ -137,7 +140,8 @@
     
     if (changed)
     {
-        [mOwner willChangeValueForKey: [self key] withSetMutation: mutation usingObjects: changed];
+		NSString* key = [self key];
+        [mOwner willChangeValueForKey: key withSetMutation: mutation usingObjects: changed];
         switch (mutation)
         {
             case NSKeyValueUnionSetMutation:
@@ -152,7 +156,7 @@
             default:
                 break;
         }
-        [mOwner didChangeValueForKey: [self key] withSetMutation: mutation usingObjects: changed];
+        [mOwner didChangeValueForKey: key withSetMutation: mutation usingObjects: changed];
     }
 	BXLogDebug (@"Count after operation:\t%d", [mContainer count]);
 }

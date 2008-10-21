@@ -45,6 +45,11 @@
 	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
+
+- (id) visitQuery: (id <PGTSQueryVisitor>) visitor
+{
+	return [visitor visitQuery: self];
+}
 @end
 
 
@@ -72,6 +77,11 @@
 - (int) parameterCount
 {
 	return [mParameters count];
+}
+
+- (id) visitQuery: (id <PGTSQueryVisitor>) visitor
+{
+	return [visitor visitParameterQuery: self];
 }
 @end
 

@@ -28,11 +28,16 @@
 
 #import <Foundation/Foundation.h>
 #import "PGTS.h"
-
+#import "BXPGExpressionVisitor.h"
 #import "BaseTen.h"
 #import "BXLogger.h"
 
+@interface BXPropertyDescription (BXPGInterfaceAdditions)
+- (void) BXPGVisitKeyPathComponent: (id <BXPGExpressionVisitor>) visitor;
+@end
 
+
+//FIXME: perhaps we could replace the name methods with something more easily understandable?
 @interface NSObject (BXPGAdditions)
 - (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;

@@ -182,7 +182,8 @@ __strong static id gProperties = nil;
 		if (! [gProperties containsObject: aProperty])
 		{
 			retval = YES;
-			[gProperties addObject: aProperty];
+			//FIXME: testing.
+			//[gProperties addObject: aProperty];
 		}
 	}
 

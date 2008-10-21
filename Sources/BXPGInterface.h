@@ -29,11 +29,13 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXInterface.h>
+#import <BaseTen/PGTSQuery.h>
 
 
 @class BXPGTransactionHandler;
 @class BXPGNotificationHandler;
 @class BXPGDatabaseDescription;
+@class BXPGQueryBuilder;
 @class PGTSConnection;
 @class PGTSTableDescription;
 @class PGTSFieldDescription;
@@ -49,6 +51,7 @@ extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
 	NSMutableDictionary* mForeignKeys;
 	BXPGTransactionHandler* mTransactionHandler;
 	NSNumber* mFrameworkCompatVersion;
+	BXPGQueryBuilder* mQueryBuilder;
 	
 	NSMutableSet* mLockedObjects;
 	BOOL mLocking;
@@ -65,17 +68,18 @@ extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
 					returningFaults: (BOOL) returnFaults class: (Class) aClass forUpdate: (BOOL) forUpdate error: (NSError **) error;
 - (NSArray *) observedOids;
-- (NSString *) insertQuery: (BXEntityDescription *) entity insertedAttrs: (NSArray *) insertedAttrs error: (NSError **) error;
+- (NSString *) insertQuery: (BXEntityDescription *) entity fieldValues: (NSDictionary *) fieldValues error: (NSError **) error;
 
 - (NSString *) viewDefaultValue: (BXAttributeDescription *) attr error: (NSError **) error;
 - (NSString *) recursiveDefaultValue: (NSString *) name entity: (BXEntityDescription *) entity error: (NSError **) error;
 
+- (void) prepareForConnecting;
 - (BXPGTransactionHandler *) transactionHandler;
 
 //Some of the methods needed by BaseTen Assistant.
-- (void) process: (BOOL) shouldAdd primaryKeyFields: (NSArray *) attributeArray error: (NSError **) outError;
-- (void) process: (BOOL) shouldEnable entities: (NSArray *) entityArray error: (NSError **) outError;
-- (void) removePrimaryKeyForEntity: (BXEntityDescription *) viewEntity error: (NSError **) outError;
+- (BOOL) process: (BOOL) shouldAdd primaryKeyFields: (NSArray *) attributeArray error: (NSError **) outError;
+- (BOOL) process: (BOOL) shouldEnable entities: (NSArray *) entityArray error: (NSError **) outError;
+- (BOOL) removePrimaryKeyForEntity: (BXEntityDescription *) viewEntity error: (NSError **) outError;
 
 - (BOOL) hasBaseTenSchema;
 - (NSNumber *) schemaVersion;
@@ -97,7 +101,7 @@ extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
 @end
 
 
-@interface BXPGInterface (Visitor)
+@interface BXPGInterface (Visitor) <PGTSQueryVisitor>
 - (void) addAttributeFor: (PGTSFieldDescription *) field into: (NSMutableDictionary *) attrs 
 				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey;
 - (void) qualifiedNameFor: (PGTSFieldDescription *) field into: (NSMutableArray *) array 

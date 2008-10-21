@@ -80,6 +80,11 @@
 	}
 }
 
+- (BXEntityDescription *) helperEntity
+{
+	return mHelperEntity;
+}
+
 - (void) setHelperEntity: (BXEntityDescription *) anEntity
 {
 	if (mHelperEntity != anEntity)
@@ -96,93 +101,141 @@
 	return NSNullifyDeleteRule;
 }
 
-- (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
+- (Class) fetchedClass
 {
-	BXAssertValueReturn (NULL != error, nil , @"Expected error to be set.");
-	BXAssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
-	BXAssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil,
-						  @"Expected aDatabaseObject entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
-	
-	NSPredicate* helperSrcPredicate = [[self srcForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: aDatabaseObject];
-	NSPredicate* helperDstPredicate = [[self dstForeignKey] predicateForSrcEntity: mHelperEntity dstEntity: [self destinationEntity]];
-	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: 
-		[NSArray arrayWithObjects: helperSrcPredicate, helperDstPredicate, mPredicate, nil]];
-	
-	id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
-														withPredicate: predicate 
-													  returningFaults: YES
-													  excludingFields: nil
-														returnedClass: [BXSetHelperTableRelationProxy class]
-																error: error];
-	//We want the helper to be observed instead of our destination entity.
-	[(BXSetHelperTableRelationProxy *) res setEntity: mHelperEntity];
-	[res setFilterPredicate: helperSrcPredicate];
-	[res setRelationship: self];
-	[res setOwner: aDatabaseObject];
-	[res setKey: [self name]];
-	return res;
+	return [BXSetHelperTableRelationProxy class];
 }
 
-- (void) setTarget: (id) target
-		 forObject: (BXDatabaseObject *) aDatabaseObject
+struct PredicateContext
+{
+	BXDatabaseObject* pc_object;
+	NSMutableArray* pc_parts;
+};
+
+static void
+AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
+{
+	struct PredicateContext* ctx = (struct PredicateContext *) context;
+	id value = [ctx->pc_object primitiveValueForKey: entityKey];
+	NSExpression* lhs = [NSExpression expressionForKeyPath: helperKey];
+	NSExpression* rhs = [NSExpression expressionForConstantValue: value];
+	NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
+																rightExpression: rhs 
+																	   modifier: NSDirectPredicateModifier 
+																		   type: NSEqualToPredicateOperatorType 
+																		options: 0];
+	[ctx->pc_parts addObject: predicate];
+}
+
+- (NSPredicate *) predicateForAnyObject: (NSSet *) objects
+{
+	NSPredicate* retval = nil;
+	BXForeignKey* fkey = [self srcForeignKey];	
+
+	//FIXME: perhaps handle the case where 1 == [[fkey fieldNames] count] with an IN predicate?
+	
+	{
+		NSMutableArray* objectParts = [NSMutableArray arrayWithCapacity: [objects count]];
+		NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [[fkey fieldNames] count]];
+		struct PredicateContext ctx = {nil, fkeyParts};
+		TSEnumerate (currentObject, e, [objects objectEnumerator])
+		{
+			ctx.pc_object = currentObject;  
+			[self iterateForeignKey: &AddToCompoundPredicate context: &ctx];
+			NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: ctx.pc_parts];
+			[objectParts addObject: predicate];
+			[ctx.pc_parts removeAllObjects];
+		}
+		retval = [NSCompoundPredicate orPredicateWithSubpredicates: objectParts];
+	}
+	return retval;
+}
+
+- (NSPredicate *) filterPredicateFor: (BXDatabaseObject *) object
+{
+	Expect (object);
+	Expect ([[object entity] isEqual: [self entity]]);
+	
+	BXForeignKey* fkey = [self srcForeignKey];
+	NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [[fkey fieldNames] count]];
+	struct PredicateContext ctx = {object, fkeyParts};
+	[self iterateForeignKey: &AddToCompoundPredicate context: &ctx];
+	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: ctx.pc_parts];
+	return predicate;
+}
+
+- (BOOL) setTarget: (id) target
+		 forObject: (BXDatabaseObject *) databaseObject
 			 error: (NSError **) error
 {
-	BXAssertVoidReturn (NULL != error, @"Expected error to be set.");
-	BXAssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
-	BXAssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
-						  @"Expected aDatabaseObject entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
+	ExpectR (error, NO);
+	ExpectR (databaseObject, NO);
+	ExpectR ([[self entity] isEqual: [databaseObject entity]], NO);
 	
+	BOOL retval = NO;
 	NSString* name = [self name];
-		
+
 	//Compare collection to cached values.
-	NSSet* oldObjects = [aDatabaseObject primitiveValueForKey: name];
+	NSSet* oldObjects = [databaseObject primitiveValueForKey: name];
 	NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
 	[removedObjects minusSet: target];
 	NSMutableSet* addedObjects = [[target mutableCopy] autorelease];
 	[addedObjects minusSet: oldObjects];
 	
 	//First remove old objects from the relationship, then add new ones.
-	//FIXME: this could be configurable by the user unless we want to look for
-	//       non-empty or maximum size constraints, which are likely CHECK clauses.
+	//FIXME: this could be configurable by the user unless we want to look for non-empty or maximum size constraints, which are likely CHECK clauses.
 	//FIXME: these should be inside a transaction. Use the undo manager?
-	BXDatabaseContext* context = [aDatabaseObject databaseContext];
+	BXDatabaseContext* context = [databaseObject databaseContext];
 	
 	//Remove all objects from current object's set.
 	if (0 < [removedObjects count])
 	{
-		NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [removedObjects count]];
+		NSPredicate* removedPredicate = [(id) [self inverseRelationship] predicateForAnyObject: removedObjects];
+		NSPredicate* objectPredicate = [self filterPredicateFor: databaseObject];
+		NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: 
+								  [NSArray arrayWithObjects: removedPredicate, objectPredicate, nil]];
 		
-		TSEnumerate (currentObject, e, [removedObjects objectEnumerator])
-			[parts addObject: [[self dstForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: currentObject]];
-		
-		NSPredicate* srcPredicate = [[self srcForeignKey] predicateForSrcEntity: mHelperEntity valuesInObject: aDatabaseObject];
-		NSPredicate* dstPredicates = [NSCompoundPredicate orPredicateWithSubpredicates: parts];
-		NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: [NSArray arrayWithObjects: srcPredicate, dstPredicates, nil]];
 		[context executeDeleteFromEntity: mHelperEntity
 						   withPredicate: predicate 
 								   error: error];
+		if (*error)
+			goto bail;
 	}
 	
-	if (nil == *error)
+	//Add objects to current object's set.
+	//First get values for helper entity from source foreign key and then add values from each destination object.
+	//Here, src for the foreign key is always mHelper.
+	NSDictionary* srcHelperValues = [[self srcForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: databaseObject];
+	TSEnumerate (currentObject, e, [addedObjects objectEnumerator])
 	{
-		//Add objects to current object's set.
-		//First get values for helper entity from source foreign key and then add values from each destination object.
-		//Here, src for the foreign key is always mHelper.
-		NSDictionary* srcHelperValues = [[self srcForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: aDatabaseObject];
-		TSEnumerate (currentObject, e, [addedObjects objectEnumerator])
-		{
-			NSMutableDictionary* values = [[self dstForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: currentObject];
-			[values addEntriesFromDictionary: srcHelperValues];
-			[context createObjectForEntity: mHelperEntity
-						   withFieldValues: values 
-									 error: error];
-			
-			if (nil != *error)
-				break;
-		}
+		NSMutableDictionary* values = [[self dstForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: currentObject];
+		[values addEntriesFromDictionary: srcHelperValues];
+		[context createObjectForEntity: mHelperEntity
+					   withFieldValues: values 
+								 error: error];
 		
-		//Don't set since if the object has the collection cached, it will be self-updating one.
+		if (nil != *error)
+			goto bail;
 	}
+	
+		//Don't set since if the object has the collection cached, it will be self-updating one.
+	
+	retval = YES;
+bail:
+	return retval;
 }
 
+- (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
+{
+	TSEnumerate (currentPair, e, [[[self srcForeignKey] fieldNames] objectEnumerator])
+		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);
+}
+@end
+
+
+@implementation BXManyToManyRelationshipDescription (BXPGRelationAliasMapper)
+- (id) BXPGVisitRelationship: (id <BXPGRelationshipVisitor>) visitor fromItem: (BXPGHelperTableRelationshipFromItem *) fromItem
+{
+	return [visitor visitManyToManyRelationship: fromItem];
+}
 @end

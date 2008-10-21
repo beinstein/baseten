@@ -37,6 +37,9 @@
 #import "BXSetRelationProxy.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXLogger.h"
+#import "PGTSHOM.h"
+#import "BXPropertyDescriptionPrivate.h"
+#import "BXProbes.h"
 
 
 /**
@@ -46,11 +49,10 @@
  * \ingroup descriptions
  */
 @implementation BXRelationshipDescription
-
-- (void) dealloc
+- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity 
 {
-    [[self entity] removeRelationship: self];
-    [super dealloc];
+	[self doesNotRecognizeSelector: _cmd];
+	return nil;
 }
 
 /** 
@@ -60,6 +62,7 @@
 - (void) dealloc2
 {
 	[mForeignKey release];
+	[mInverseName release];
 	[super dealloc2];
 }
 
@@ -67,8 +70,8 @@
 {
 	return [NSString stringWithFormat: @"<%@ (%p) name: %@ entity: %@ destinationEntity: %@>",
 		[self class], self, [self name], 
-		(void *) [[self entity] name] ?: [self entity], 
-		(void *) [[self destinationEntity] name] ?: [self destinationEntity]];
+		(id) [[self entity] name] ?: [self entity], 
+		(id) [[self destinationEntity] name] ?: [self destinationEntity]];
 }
 
 /**
@@ -123,7 +126,6 @@
 	retval->mDestinationEntity = mDestinationEntity;
 	retval->mForeignKey = [mForeignKey copy];
 	retval->mInverseName = [mInverseName copy];
-	retval->mPredicate = [mPredicate copy];
 	retval->mDeleteRule = mDeleteRule;
 	retval->mIsInverse = mIsInverse;
 	
@@ -138,10 +140,21 @@
 
 
 @implementation BXRelationshipDescription (PrivateMethods)
+- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity 
+  destinationEntity: (BXEntityDescription *) destinationEntity
+{
+	if ((self = [super initWithName: name entity: entity]))
+	{
+		mDestinationEntity = destinationEntity;
+	}
+	return self;
+}
 
 - (void) setDestinationEntity: (BXEntityDescription *) entity
 {
-	mDestinationEntity = entity; //Weak;
+	if (! entity)
+		[[self entity] removeRelationship: self];
+	mDestinationEntity = entity;
 }
 
 - (void) setForeignKey: (BXForeignKey *) aKey
@@ -172,126 +185,183 @@
 	}
 }
 
-- (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
+- (NSPredicate *) predicateForObject: (BXDatabaseObject *) databaseObject
 {
-	BXAssertValueReturn (NULL != error, nil , @"Expected error to be set.");
-	BXAssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
-	BXAssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil, 
-						   @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
-
-	id retval = nil;
-	//Many-to-many relationships don't call super's implementation, so we can determine from this, if we are to-one.
-	if ([self isInverse])
-	{
-		BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: [self destinationEntity] fromObject: aDatabaseObject];
-		retval = (objectID ? [[aDatabaseObject databaseContext] objectWithID: objectID error: error] : [NSNull null]);
-	}
+	BXRelationshipDescription* inverse = [self inverseRelationship];
+	NSComparisonPredicateModifier modifier = NSDirectPredicateModifier;
+	if ([inverse isToMany])
+		modifier = NSAnyPredicateModifier;
 	
-	if (! retval)
+	NSExpression* lhs = [NSExpression expressionForKeyPath: [inverse name]];
+	NSExpression* rhs = [NSExpression expressionForConstantValue: databaseObject];
+	NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
+																rightExpression: rhs
+																	   modifier: modifier 
+																		   type: NSEqualToPredicateOperatorType 
+																		options: 0];
+	return predicate;
+}
+
+//Subclassing helpers
+- (NSPredicate *) predicateForRemoving: (id) target 
+						databaseObject: (BXDatabaseObject *) databaseObject
+{
+	NSPredicate* retval = nil;
+	
+	//Compare collection to cached values.
+	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];	
+	
+	NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
+	[removedObjects minusSet: target];
+	
+	if (0 < [removedObjects count])
 	{
-		NSPredicate* predicate = nil;
-		if (mIsInverse)
-		{
-			//FIXME: this might not be necessary since we already try using the object ID above.
-			//We want to select from foreign key's dst entity, which is our destination entity as well.
-			predicate = [mForeignKey predicateForDstEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
-		}
-		else
-		{
-			//We want to select from foreign key's src entity, which is our destination entity.
-			predicate = [mForeignKey predicateForSrcEntity: [self destinationEntity] valuesInObject: aDatabaseObject];
-		}
-		
-		if (nil != mPredicate)
-		{
-			predicate = [NSCompoundPredicate andPredicateWithSubpredicates:
-						 [NSArray arrayWithObjects: predicate, mPredicate, nil]];
-		}
-		
-		//Expression order matters since foreign key is always in src table or view.
-		id res = [[aDatabaseObject databaseContext] executeFetchForEntity: [self destinationEntity]
-															withPredicate: predicate 
-														  returningFaults: YES
-														  excludingFields: nil
-															returnedClass: [BXSetRelationProxy class]
-																	error: error];
-		[res setRelationship: self];
-		[res setOwner: aDatabaseObject];
-		[res setKey: [self name]];
-		
-		if ([self isToMany])
-			retval = res;
-		else
-		{
-			if (0 < [res count])
-				retval = [res anyObject];
-			else
-				retval = [NSNull null];
-		}		
+		NSExpression* lhs = [NSExpression expressionForConstantValue: removedObjects];
+		NSExpression* rhs = [NSExpression expressionForEvaluatedObject];
+		retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs
+														   modifier: NSAnyPredicateModifier 
+															   type: NSEqualToPredicateOperatorType 
+															options: 0];
 	}
 	return retval;
 }
 
-- (void) setTarget: (id) target
-		 forObject: (BXDatabaseObject *) aDatabaseObject
-			 error: (NSError **) error
+- (NSPredicate *) predicateForAdding: (id) target 
+					  databaseObject: (BXDatabaseObject *) databaseObject
 {
-	BXAssertVoidReturn (NULL != error, @"Expected error to be set.");
-	BXAssertVoidReturn (nil != aDatabaseObject, @"Expected aDatabaseObject not to be nil.");
-	BXAssertVoidReturn ([[self entity] isEqual: [aDatabaseObject entity]], 
-						  @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);	
+	NSPredicate* retval = nil;
 	
-	//We always want to modify the foreign key's (or corresponding view's) entity, hence the branch here.
-	if (mIsInverse)
-	{		
-		NSPredicate* predicate = [[aDatabaseObject objectID] predicate];
-		NSDictionary* values = [mForeignKey srcDictionaryFor: [self entity] valuesFromDstObject: target];
-		
-		[[aDatabaseObject databaseContext] executeUpdateObject: nil
-														entity: [self entity]
-													 predicate: predicate
-												withDictionary: values
-														 error: error];
-		if (nil == *error)
-			[aDatabaseObject setCachedValue: target forKey: [self name]];
+	//Compare collection to cached values.
+	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];	
+	NSMutableSet* addedObjects = [[target mutableCopy] autorelease];
+	[addedObjects minusSet: oldObjects];
+	
+	if (0 < [addedObjects count])
+	{
+		NSExpression* lhs = [NSExpression expressionForConstantValue: addedObjects];
+		NSExpression* rhs = [NSExpression expressionForEvaluatedObject];
+		retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs
+														   modifier: NSAnyPredicateModifier 
+															   type: NSEqualToPredicateOperatorType 
+															options: 0];
 	}
+	return retval;
+}
+
+- (Class) fetchedClass
+{
+	return [BXSetRelationProxy class];
+}
+
+- (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
+{
+    BXAssertValueReturn (NULL != error, nil , @"Expected error to be set.");
+    BXAssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
+    BXAssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil, 
+						 @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
+	
+	id retval = nil;
+	//If we can determine an object ID, fetch the target object from the context's cache.
+    if (! [self isToMany] && [self isInverse])
+    {
+		BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: [self destinationEntity] fromObject: aDatabaseObject];
+		if (objectID)
+			retval = [[aDatabaseObject databaseContext] objectWithID: objectID error: error];
+    }
 	else
 	{
-		//First remove old objects from the relationship, then add new ones.
-		//FIXME: this could be configurable by the user unless we want to look for
-		//       non-empty or maximum size constraints, which are likely CHECK clauses.
-		//FIXME: these should be inside a transaction. Use the undo manager?
+		BXEntityDescription* entity = [self destinationEntity];
+		NSPredicate* predicate = [self predicateForObject: aDatabaseObject];
+		Class fetchedClass = [self fetchedClass];
+		id res = [[aDatabaseObject databaseContext] executeFetchForEntity: entity
+															withPredicate: predicate 
+														  returningFaults: NO
+														  excludingFields: nil
+															returnedClass: fetchedClass
+																	error: error];
+		if (fetchedClass)
+			[res fetchedForRelationship: self owner: aDatabaseObject key: [self name]];
+		
+		if ([self isToMany])
+			retval = res;
+		else
+			retval = [res PGTSAny];
+	}
+	
+	if (! retval)
+		retval = [NSNull null];
+	
+	return retval;
+}
+
+- (BOOL) setTarget: (id) target
+		 forObject: (BXDatabaseObject *) databaseObject
+			 error: (NSError **) error
+{
+	ExpectR (error, NO);
+	ExpectR (databaseObject, NO);
+	ExpectR ([[self entity] isEqual: [databaseObject entity]], NO);
+	BOOL retval = NO;
+	
+    //We always want to modify the foreign key's (or corresponding view's) entity, hence the branch here.
+    if (mIsInverse)
+    {		
+    	NSPredicate* predicate = [[databaseObject objectID] predicate];
+    	NSDictionary* values = [mForeignKey srcDictionaryFor: [self entity] valuesFromDstObject: target];
+		
+    	[[databaseObject databaseContext] executeUpdateObject: nil
+    													entity: [self entity]
+    												 predicate: predicate
+    											withDictionary: values
+    													 error: error];
+    	if (nil == *error)
+    		[databaseObject setCachedValue: target forKey: [self name]];
+		else
+			goto bail;
+    }
+    else
+    {
+    	//First remove old objects from the relationship, then add new ones.
+    	//FIXME: this could be configurable by the user unless we want to look for
+    	//       non-empty or maximum size constraints, which are likely CHECK clauses.
+    	//FIXME: these should be inside a transaction. Use the undo manager?
 		
 		NSPredicate* predicate = nil;
-		NSDictionary* values = nil;
+    	if ((predicate = [self predicateForRemoving: target databaseObject: databaseObject]))
+    	{
+    		NSDictionary* values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: nil];
+    		[[databaseObject databaseContext] executeUpdateObject: nil
+    														entity: [self destinationEntity]
+    													 predicate: predicate 
+    												withDictionary: values
+    														 error: error];
+			
+			if (*error)
+				goto bail;
+    	}
 		
-		if ([self shouldRemoveForTarget: target databaseObject: aDatabaseObject predicate: &predicate])
+		if ((predicate = [self predicateForAdding: target databaseObject: databaseObject]))
 		{
-			values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: nil];
-			[[aDatabaseObject databaseContext] executeUpdateObject: nil
-															entity: [self destinationEntity]
-														 predicate: predicate 
-													withDictionary: values
-															 error: error];
+			NSDictionary* values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: databaseObject];
+			[[databaseObject databaseContext] executeUpdateObject: nil
+														   entity: [self destinationEntity]
+														predicate: predicate 
+												   withDictionary: values
+															error: error];
+			
+			if (*error)
+				goto bail;
 		}
 		
-		if (nil == *error)
-		{
-			if ([self shouldAddForTarget: target databaseObject: aDatabaseObject predicate: &predicate values: &values])
-			{
-				[[aDatabaseObject databaseContext] executeUpdateObject: nil
-																entity: [self destinationEntity]
-															 predicate: predicate 
-														withDictionary: values
-																 error: error];
-			}
-
-			//Don't set if we are updating a collection because if the object has the
-			//value, it will be self-updating one.
-			if (nil == *error && NO == [self isToMany])
-				[aDatabaseObject setCachedValue: target forKey: [self name]];
-		}
-	}
+		//Don't set if we are updating a collection because if the object has the
+		//value, it will be self-updating one.
+		if (! [self isToMany])
+			[databaseObject setCachedValue: target forKey: [self name]];
+    }
+	
+	retval = YES;
+bail:
+	return retval;
 }
 
 - (BXForeignKey *) foreignKey
@@ -304,62 +374,24 @@
 	mDeleteRule = aRule;
 }
 
-//Subclassing helpers
-- (BOOL) shouldRemoveForTarget: (id) target 
-				databaseObject: (BXDatabaseObject *) databaseObject
-					 predicate: (NSPredicate **) predicatePtr
+- (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
 {
-	BXAssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
-	BOOL retval = NO;
-	
-	//Compare collection to cached values.
-	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];	
-	
-	NSMutableSet* removedObjects = [[oldObjects mutableCopy] autorelease];
-	[removedObjects minusSet: target];
-	
-	if (0 < [removedObjects count])
+	NSUInteger i = 1, j = 0;
+	if ([self isInverse])
 	{
-		retval = YES;
-		NSPredicate* predicate = [removedObjects BXOrPredicateForObjects];
-		*predicatePtr = predicate;
+		i = 0;
+		j = 1;
 	}
-	return retval;
-}
-
-- (BOOL) shouldAddForTarget: (id) target 
-			 databaseObject: (BXDatabaseObject *) databaseObject
-				  predicate: (NSPredicate **) predicatePtr 
-					 values: (NSDictionary **) valuePtr
-{
-	BXAssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
-	BOOL retval = NO;
 	
-	//Compare collection to cached values.
-	NSSet* oldObjects = [databaseObject primitiveValueForKey: [self name]];	
-	NSMutableSet* addedObjects = [[target mutableCopy] autorelease];
-	[addedObjects minusSet: oldObjects];
-
-	if (0 < [addedObjects count])
-	{
-		retval = YES;
-		
-		NSDictionary* values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: databaseObject];
-		NSPredicate* predicate = [addedObjects BXOrPredicateForObjects];
-		
-		*valuePtr = values;
-		*predicatePtr = predicate;
-	}
-	return retval;
+	TSEnumerate (currentFieldPair, e, [[[self foreignKey] fieldNames] objectEnumerator])
+		callback ([currentFieldPair objectAtIndex: i], [currentFieldPair objectAtIndex: j], ctx);
 }
+@end
 
-- (void) setPredicate: (NSPredicate *) predicate
+
+@implementation BXRelationshipDescription (BXPGRelationAliasMapper)
+- (id) BXPGVisitRelationship: (id <BXPGRelationshipVisitor>) visitor fromItem: (BXPGRelationshipFromItem *) fromItem
 {
-    if (mPredicate != predicate)
-    {
-        [mPredicate release];
-        mPredicate = [predicate retain];
-    }
+	return [visitor visitSimpleRelationship: fromItem];
 }
-
 @end

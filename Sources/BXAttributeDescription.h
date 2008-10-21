@@ -43,5 +43,5 @@
 - (NSString *) databaseTypeName;
 - (BOOL) isPrimaryKey;
 - (BOOL) isExcluded;
-
+- (BOOL) isArray;
 @end

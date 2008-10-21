@@ -37,5 +37,5 @@ provider PGTS
 	probe begin_sleep_preparation ();
 	probe end_sleep_preparation ();
 	probe begin_wake_preparation ();
-	probe end_wake_preparation ();
+	probe end_wake_preparation ();	
 };

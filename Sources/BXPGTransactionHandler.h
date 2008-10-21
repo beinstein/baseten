@@ -121,6 +121,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
  * Begins a transactions unless there already is one.
  */
 - (BOOL) beginIfNeeded: (NSError **) outError;
+- (void) beginIfNeededFor: (id) delegate callback: (SEL) callback userInfo: (id) userInfo;
 
 /**
  * \internal
@@ -132,7 +133,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
  * \internal
  * Cancels the current transaction.
  */
-- (void) rollback: (NSError **) outError;
+- (BOOL) rollback: (NSError **) outError;
 
 /**
  * \internal
@@ -169,8 +170,6 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 
 - (BOOL) autocommits;
 
-- (BOOL) beginIfNeededAsync: (BOOL) async delegate: (id) delegate callback: (SEL) callback 
-				   userInfo: (id) userInfo outError: (NSError **) outError;
 @end
 
 

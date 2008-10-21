@@ -27,11 +27,14 @@
 //
 
 #import <BaseTen/BXRelationshipDescription.h>
+#import <BaseTen/BXPGRelationAliasMapper.h>
 
 @class BXForeignKey;
 @class BXDatabaseObject;
 
 @interface BXRelationshipDescription (PrivateMethods)
+- (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) entity 
+  destinationEntity: (BXEntityDescription *) destinationEntity;
 - (BXForeignKey *) foreignKey;
 - (void) setDestinationEntity: (BXEntityDescription *) entity;
 - (void) setForeignKey: (BXForeignKey *) aKey;
@@ -39,20 +42,17 @@
 - (void) setIsInverse: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
 - (void) setDeleteRule: (NSDeleteRule) aRule;
-- (void) setPredicate: (NSPredicate *) predicate;
 
 //Remember to override these in subclasses.
 - (id) targetForObject: (BXDatabaseObject *) anObject error: (NSError **) error;
-- (void) setTarget: (id) target
+- (BOOL) setTarget: (id) target
 		 forObject: (BXDatabaseObject *) aDatabaseObject
 			 error: (NSError **) error;
 
-- (BOOL) shouldRemoveForTarget: (id) target 
-				databaseObject: (BXDatabaseObject *) databaseObject
-					 predicate: (NSPredicate **) predicatePtr;
-- (BOOL) shouldAddForTarget: (id) target 
-			 databaseObject: (BXDatabaseObject *) databaseObject
-				  predicate: (NSPredicate **) predicatePtr 
-					 values: (NSDictionary **) valuePtr;
+- (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*) )callback context: (void *) ctx;
+@end
 
+
+@interface BXRelationshipDescription (BXPGRelationAliasMapper)
+- (id) BXPGVisitRelationship: (id <BXPGRelationshipVisitor>) visitor fromItem: (BXPGRelationshipFromItem *) fromItem;
 @end

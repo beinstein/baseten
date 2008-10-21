@@ -58,6 +58,8 @@
 
 
 @interface NSArray (PGTSHOM)
+- (NSArray *) PGTSReverse;
+
 - (id) PGTSAny;
 - (id) PGTSDo;
 - (id) PGTSCollect;
@@ -81,5 +83,6 @@
 - (id) PGTSCollect;
 - (id) PGTSKeyCollect;
 - (id) PGTSVisit: (id) visitor;
+- (id) PGTSValueSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSValueSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 @end

@@ -60,12 +60,6 @@
     return self;
 }
 
-- (void) dealloc
-{
-    [self removeObserver: self forKeyPath: @"set"];
-    [super dealloc];
-}
-
 - (void) observeValueForKeyPath: (NSString *) keyPath
                        ofObject: (id) object
                          change: (NSDictionary *) change
@@ -100,6 +94,7 @@
     [super dealloc];
 }
 
+#if 0
 - (id) mutableCopyWithZone: (NSZone *) zone
 {
 	BXSetRelationProxy* retval = [super mutableCopyWithZone: zone];
@@ -108,6 +103,7 @@
 	retval->mForwardToHelper = mForwardToHelper;
 	return retval;
 }
+#endif
 
 - (void) observeValueForKeyPath: (NSString *) keyPath
                        ofObject: (id) object
@@ -166,7 +162,8 @@
         id realContainer = mContainer;
         mContainer = oldValue;
         mForwardToHelper = NO;
-        [mOwner willChangeValueForKey: [self key]
+		NSString* key = [self key];
+        [mOwner willChangeValueForKey: key
                       withSetMutation: mutationKind
                          usingObjects: changed];
 		
@@ -179,12 +176,27 @@
         //Switch back.
         mContainer = realContainer;
         mForwardToHelper = YES;
-        [mOwner didChangeValueForKey: [self key]
+        [mOwner didChangeValueForKey: key
                      withSetMutation: mutationKind
 						usingObjects: changed];
         
         mChanging = NO;
     }
+}
+
+- (void) fetchedForEntity: (BXEntityDescription *) entity predicate: (NSPredicate *) predicate
+{
+	[self setFilterPredicate: predicate];
+}
+
+- (void) fetchedForRelationship: (BXRelationshipDescription *) relationship 
+						  owner: (BXDatabaseObject *) databaseObject
+							key: (NSString *) key
+{
+	[self setEntity: [relationship destinationEntity]];
+	[self setRelationship: relationship];
+	[self setOwner: databaseObject];
+	[self setKey: key];
 }
 
 - (void) setRelationship: (BXRelationshipDescription *) relationship
@@ -213,7 +225,7 @@
 
 - (NSString *) key
 {
-    return [mRelationship name];
+    return [[[mRelationship name] copy] autorelease];
 }
 
 - (BOOL) BXIsRelationshipProxy

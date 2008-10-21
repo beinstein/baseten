@@ -34,6 +34,7 @@
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXForeignKey.h"
+#import "BXEntityDescription.h"
 
 
 /**
@@ -43,45 +44,59 @@
  */
 //FIXME: this needs to be changed to use set mutation -style KVO notifications.
 @implementation BXSetHelperTableRelationProxy
-
-- (NSArray *) objectIDsFromHelperObjectIDs: (NSArray *) ids others: (NSMutableArray *) otherObjectIDs
+- (void) fetchedForEntity: (BXEntityDescription *) entity predicate: (NSPredicate *) predicate
 {
-	NSMutableArray* retval = [NSMutableArray array];
-	NSMutableArray* otherHelperIDs = nil;
+}
+
+- (void) fetchedForRelationship: (BXRelationshipDescription *) rel
+						  owner: (BXDatabaseObject *) databaseObject
+							key: (NSString *) key
+{
+	BXManyToManyRelationshipDescription* relationship = (id) rel;
+	BXEntityDescription* entity = [relationship helperEntity];
+	[self setEntity: entity];
+	[self setRelationship: relationship];
+	[self setOwner: databaseObject];
+	[self setKey: key];
+	[self setFilterPredicate: [relationship filterPredicateFor: databaseObject]];
+}
+
+- (NSArray *) objectIDsFromHelperObjectIDs: (NSArray *) ids others: (NSMutableArray *) others
+{
 	
     //Iterate two times if ids that don't pass the filter should be added to otherObjectIDs
-    unsigned int count = 1;
-    if (nil != otherObjectIDs)
-    {
-        otherHelperIDs = [NSMutableArray arrayWithCapacity: [ids count]];
+    int count = 1;
+    if (others)
         count = 2;
-    }
 	
-	NSArray* helperIDs = [ids BXFilteredArrayUsingPredicate: mFilterPredicate others: otherHelperIDs];
-	id filteredIDs [2] = {helperIDs, otherObjectIDs};
-	id targetArrays [2] = {retval, otherObjectIDs};
+	NSArray* faults = [mContext faultsWithIDs: ids];
+	NSMutableArray* otherObjects = [NSMutableArray arrayWithCapacity: [faults count]];
+	NSArray* filteredObjects = [faults BXFilteredArrayUsingPredicate: mFilterPredicate others: otherObjects];
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [filteredObjects count]];
+	
+	id filtered [2] = {filteredObjects, otherObjects};
+	id target [2] = {retval, others};
 	NSSet* fieldNames = [[(BXManyToManyRelationshipDescription *) mRelationship dstForeignKey] fieldNames];
 	NSMutableDictionary* pkeyFValues = [NSMutableDictionary dictionaryWithCapacity: [fieldNames count]];
 
 	for (int i = 0; i < count; i++)
 	{
-		unsigned int count = [filteredIDs [i] count];
+		unsigned int count = [filtered [i] count];
 		if (0 < count)
 		{
-			TSEnumerate (currentHelperID, e, [filteredIDs [i] objectEnumerator])
+			TSEnumerate (currentObject, e, [filtered [i] objectEnumerator])
 			{
 				[pkeyFValues removeAllObjects];
-				NSDictionary* helperValues = [(BXDatabaseObjectID *) currentHelperID allValues];
 				TSEnumerate (currentFieldArray, e, [fieldNames objectEnumerator])
 				{
 					NSString* helperFName = [currentFieldArray objectAtIndex: 0];
 					NSString* fName = [currentFieldArray objectAtIndex: 1];
 					
-					[pkeyFValues setObject: [helperValues objectForKey: helperFName] forKey: fName];
-					BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: [mRelationship destinationEntity] 
-																   primaryKeyFields: pkeyFValues];
-					[targetArrays [i] addObject: objectID];
+					[pkeyFValues setObject: [currentObject primitiveValueForKey: helperFName] forKey: fName];
 				}
+				BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: [mRelationship destinationEntity] 
+															   primaryKeyFields: pkeyFValues];
+				[target [i] addObject: objectID];				
 			}
 		}
 	}
@@ -95,9 +110,10 @@
 	{
 		//Post notifications since modifying a self-updating collection won't cause
 		//value cache to be changed.
-		[mOwner willChangeValueForKey: [self key]];
+		NSString* key = [self key];
+		[mOwner willChangeValueForKey: key];
         [self handleAddedObjects: [mContext faultsWithIDs: objectIDs]];
-		[mOwner didChangeValueForKey: [self key]];
+		[mOwner didChangeValueForKey: key];
 	}
 }
 
@@ -107,9 +123,10 @@
     if (0 < [objectIDs count])
 	{
 		//See above.
-		[mOwner willChangeValueForKey: [self key]];
+		NSString* key = [self key];
+		[mOwner willChangeValueForKey: key];
         [self handleRemovedObjects: [mContext registeredObjectsWithIDs: objectIDs]];
-		[mOwner didChangeValueForKey: [self key]];
+		[mOwner didChangeValueForKey: key];
 	}
 }
 
@@ -120,12 +137,13 @@
 	if (0 < [removedIDs count] || 0 < [addedIDs count])
 	{
 		//See above.
-		[mOwner willChangeValueForKey: [self key]];
+		NSString* key = [self key];
+		[mOwner willChangeValueForKey: key];
 		if (0 < [removedIDs count])
 			[self handleRemovedObjects: [mContext registeredObjectsWithIDs: removedIDs]];
 		if (0 < [addedIDs count])
 			[self handleAddedObjects: [mContext faultsWithIDs: addedIDs]];
-		[mOwner didChangeValueForKey: [self key]];
+		[mOwner didChangeValueForKey: key];
 	}
 }
 

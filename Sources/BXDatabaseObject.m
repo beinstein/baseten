@@ -56,7 +56,9 @@ MakeKey (const char* start, const int length)
     size_t size = length + 1;
     char* copy = malloc (size * sizeof (char));
     strlcpy (copy, start, size);
-    copy [0] = tolower (copy [0]);
+	int initial = tolower (copy [0]);
+	Expect (0 <= initial && initial <= UCHAR_MAX);
+    copy [0] = initial;
     return [[[NSString alloc] initWithBytesNoCopy: copy
                                            length: length
                                          encoding: NSASCIIStringEncoding
@@ -479,7 +481,10 @@ ParseSelector (SEL aSelector, NSString** key)
 					if (nil != rel)
 					{
 						retval = [rel targetForObject: self error: &error];
-						if (nil == error)
+						//We can't cache to-one relationships because they won't be faulted.
+						//This is a problem in one-to-one relationships on the side that doesn't reference
+						//the primary key.
+						if (!error && [rel isToMany] && [NSNull null] != retval)
 						{
 							//Caching the result might cause a retain cycle.
 							[self setCachedValue: retval forKey: aKey];
@@ -572,7 +577,10 @@ ParseSelector (SEL aSelector, NSString** key)
         {
             //Undo in case of autocommit
             if ([mContext autocommits])
-                [[[mContext undoManager] prepareWithInvocationTarget: self] setPrimitiveValue: oldValue forKey: aKey];
+			{
+				NSUndoManager* undoManager = [mContext undoManager];
+                [[undoManager prepareWithInvocationTarget: self] setPrimitiveValue: oldValue forKey: aKey];
+			}
         }
         else
         {
@@ -856,6 +864,16 @@ ParseSelector (SEL aSelector, NSString** key)
     {
         retval = YES;
         
+		@synchronized (mValues)
+		{
+			//We make the assumption that if mValues has at least some objects, it has the pkey.
+			if (! [mValues count])
+			{
+				NSDictionary* values = [mObjectID allValues];
+				[self setCachedValuesForKeysWithDictionary: values];
+			}
+		}
+		
         //Context
         mContext = ctx; //Weak
     }        

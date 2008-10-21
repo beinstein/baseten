@@ -30,6 +30,17 @@
 
 
 @implementation BXPGFromItem
+- (void) dealloc
+{
+	[mAlias release];
+	[super dealloc];
+}
+
+- (NSString *) alias
+{
+	return mAlias;
+}
+
 - (void) setAlias: (NSString *) aString
 {
 	if (mAlias != aString)
@@ -37,6 +48,74 @@
 		[mAlias release];
 		mAlias = [aString retain];
 	}
+}
+
+- (BXEntityDescription *) entity
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return nil;
+}
+@end
+
+
+@implementation BXPGRelationshipFromItem
+- (void) dealloc
+{
+	[mRelationship release];
+	[mPrevious release];
+	[super dealloc];
+}
+
+- (void) setRelationship: (BXRelationshipDescription *) aRel
+{
+	if (mRelationship != aRel)
+	{
+		[mRelationship release];
+		mRelationship = [aRel retain];
+	}
+}
+
+- (BXRelationshipDescription *) relationship
+{
+	return mRelationship;
+}
+
+- (BXPGFromItem *) previous
+{
+	return mPrevious;
+}
+
+- (void) setPrevious: (BXPGFromItem *) anItem
+{
+	if (mPrevious != anItem)
+	{
+		[mPrevious release];
+		mPrevious = [anItem retain];
+	}
+}
+
+- (BXEntityDescription *) entity
+{
+	return [mRelationship destinationEntity];
+}
+
+- (NSString *) BXPGVisitFromItem: (id <BXPGFromItemVisitor>) visitor
+{
+	return [visitor visitRelationshipJoinItem: self];
+}
+@end
+
+
+@implementation BXPGPrimaryRelationFromItem
+- (void) dealloc
+{
+	[mEntity release];
+	[super dealloc];
+}
+
+- (BXEntityDescription *) entity
+{
+	return mEntity;
 }
 
 - (void) setEntity: (BXEntityDescription *) anEntity
@@ -48,8 +127,31 @@
 	}
 }
 
-- (void) setType: (enum BXPGFromItemType) aType
+- (NSString *) BXPGVisitFromItem: (id <BXPGFromItemVisitor>) visitor
 {
-	mType = aType;
+	return [visitor visitPrimaryRelation: self];
+}
+@end
+
+
+@implementation BXPGHelperTableRelationshipFromItem
+- (void) dealloc
+{
+	[mHelperAlias release];
+	[super dealloc];
+}
+
+- (NSString *) helperAlias
+{
+	return mHelperAlias;
+}
+
+- (void) setHelperAlias: (NSString *) aString
+{
+	if (mHelperAlias != aString)
+	{
+		[mHelperAlias release];
+		mHelperAlias = [aString retain];
+	}
 }
 @end

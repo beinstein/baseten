@@ -27,6 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 @class PGTSResultSet;
 @class PGTSConnection;
 @class PGTSTypeDescription;
@@ -36,5 +37,6 @@
 - (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
 - (BOOL) PGTSIsBinaryParameter;
 - (BOOL) PGTSIsCollection;
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType;
 @end
 

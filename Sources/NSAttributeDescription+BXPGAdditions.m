@@ -32,43 +32,7 @@
 #import "PGTSConstantValue.h"
 #import "PGTSFunctions.h"
 #import "BXLogger.h"
-
-
-@interface NSObject (BXPGAdditions)
-- (id) BXPGDefaultValueForAttributeType: (NSAttributeType) attrType;
-@end
-
-
-@implementation NSString (BXPGAdditions)
-- (id) BXPGDefaultValueForAttributeType: (NSAttributeType) attrType
-{
-	NSMutableString* retval = [NSMutableString stringWithString: self];
-	[retval replaceOccurrencesOfString: @"'" withString: @"\\'" options: 0 range: NSMakeRange (0, [retval length])];
-	[retval insertString: @"'" atIndex: 0];
-	[retval appendString: @"'"];
-	return retval;
-}
-@end
-
-
-@implementation NSNumber (BXPGAdditions)
-- (id) BXPGDefaultValueForAttributeType: (NSAttributeType) attrType
-{
-	id retval = self;
-	if (NSBooleanAttributeType == attrType)
-		retval = ([self boolValue] ? @"true" : @"false");
-	return retval;
-}
-@end
-
-
-@implementation NSDate (BXPGAdditions)
-- (id) BXPGDefaultValueForAttributeType: (NSAttributeType) attrType
-{
-	return [NSString stringWithFormat: @"timestamp with time zone 'epoch' + interval '%f seconds'", [self timeIntervalSince1970]];
-}
-@end
-
+#import "PGTSFoundationObjects.h"
 
 
 @implementation NSAttributeDescription (BXPGAdditions)
@@ -337,7 +301,7 @@ CharLengthExpression (NSString* name)
 	id defaultValue = [self defaultValue];
 	if (defaultValue)
 	{
-		NSString* defaultExp = [defaultValue BXPGDefaultValueForAttributeType: [self attributeType]];
+		NSString* defaultExp = [defaultValue PGTSExpressionOfType: [self attributeType]];
 		addition = [NSString stringWithFormat: @"DEFAULT %@", defaultExp];
 	}
 	return [NSString stringWithFormat: @"\"%@\" %@ %@", [self name], typeDefinition, addition];

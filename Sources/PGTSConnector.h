@@ -41,7 +41,7 @@
 {
 	id <PGTSConnectorDelegate> mDelegate; //Weak
 	PostgresPollingStatusType (* mPollFunction)(PGconn *);
-	PGconn* mConnection;
+	PGconn* mConnection; //Weak
 	FILE* mTraceFile;
 	BOOL mSSLSetUp;
 	BOOL mNegotiationStarted;
@@ -62,6 +62,7 @@
 	CFRunLoopRef mRunLoop;
 	CFSocketRef mSocket;
 	CFRunLoopSourceRef mSocketSource;
+	BOOL mPassedConnection;
 }
 - (void) socketReady;
 - (void) finishedConnecting: (BOOL) succeeded;

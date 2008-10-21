@@ -80,7 +80,7 @@ BXHandleError2 (id ctx, id <BXDatabaseContextDelegate> delegateProxy, NSError **
 }
 
 static NSMutableDictionary*
-BXObjectIDsByEntity (NSArray *ids)
+ObjectIDsByEntity (NSArray *ids)
 {
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
     TSEnumerate (objectID, e, [ids objectEnumerator])
@@ -98,7 +98,7 @@ BXObjectIDsByEntity (NSArray *ids)
 }
 
 static void
-BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescription* entity)
+AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescription* entity)
 {
     id subEntities = [entity subEntities];
     TSEnumerate (currentEntity, e, [subEntities objectEnumerator])
@@ -126,15 +126,15 @@ BXAddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescrip
             [subIds addObject: newID];
             [newID release];
         }
-        BXAddObjectIDsForInheritance2 (idsByEntity, currentEntity);
+        AddObjectIDsForInheritance2 (idsByEntity, currentEntity);
     }    
 }
 
 static void
-BXAddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
+AddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
     TSEnumerate (entity, e, [[idsByEntity allKeys] objectEnumerator])
-        BXAddObjectIDsForInheritance2 (idsByEntity, entity);
+        AddObjectIDsForInheritance2 (idsByEntity, entity);
 }
 
 static void
@@ -142,6 +142,22 @@ bx_query_during_reconnect ()
 {
 	BXLogError (@"Tried to send a query during reconnection attempt.");
 	BXLogInfo (@"Break on bx_query_during_reconnect to inspect.");
+}
+
+
+static enum BXModificationType
+ObjectToModType (NSValue* value)
+{
+    enum BXModificationType retval = kBXNoModification;
+    [value getValue: &retval];
+    return retval;
+}
+
+
+static NSValue*
+ModTypeToObject (enum BXModificationType value)
+{
+    return [NSValue valueWithBytes: &value objCType: @encode (enum BXModificationType)];
 }
 
 
@@ -242,6 +258,7 @@ bx_query_during_reconnect ()
 		mCanConnect = YES;
 		mConnectsOnAwake = NO;
 		mSendsLockQueries = YES;
+		mUsesKeychain = YES;
 		
 		mEntities = [[NSMutableSet alloc] init];
 		mRelationships = [[NSMutableSet alloc] init];
@@ -263,7 +280,7 @@ bx_query_during_reconnect ()
     [mDatabaseInterface release];
     [mDatabaseURI release];
     [mObjects release];
-    [(id) mModifiedObjectIDs release];
+    [mModifiedObjectIDs release];
     [mUndoManager release];
 	[mLazilyValidatedEntities release];
 	[mUndoGroupingLevels release];
@@ -280,13 +297,6 @@ bx_query_during_reconnect ()
     
     BXLogDebug (@"Deallocating BXDatabaseContext");
     [super dealloc];
-}
-
-- (void) finalize
-{
-	[self rollback];
-	[self disconnect];
-	[super finalize];
 }
 
 /** \name Handling registered objects */
@@ -328,6 +338,13 @@ bx_query_during_reconnect ()
 	[self setDatabaseURIInternal: uri];
 	[self setKeychainPasswordItem: NULL];
 	[mEntities removeAllObjects];
+
+	if (0 < [[uri host] length])
+	{
+		[[self internalDelegate] databaseContextGotDatabaseURI: self];
+		NSNotificationCenter* nc = [self notificationCenter];
+		[nc postNotificationName: kBXGotDatabaseURINotification object: self];	
+	}
 }
 
 /**
@@ -581,7 +598,7 @@ bx_query_during_reconnect ()
         TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
         {
 			BXDatabaseObject* registeredObject = [self registeredObjectWithID: currentID];
-            switch ([(id) mModifiedObjectIDs BXModificationTypeForKey: currentID])
+            switch (ObjectToModType ([mModifiedObjectIDs objectForKey: currentID]))
             {
                 case kBXUpdateModification:
                     [registeredObject removeFromCache: nil postingKVONotifications: YES];
@@ -802,7 +819,7 @@ bx_query_during_reconnect ()
     const char* username = [[mDatabaseURI user] UTF8String];
     const char* path = [[mDatabaseURI path] UTF8String];    
     NSNumber* portObject = [mDatabaseURI port];
-    UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432);
+    UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432U);
     
     NSString* password = [mDatabaseURI password];
     const char* tempPassword = [password UTF8String];
@@ -1311,8 +1328,8 @@ bx_query_during_reconnect ()
 					BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 					if (nil == localError)
 					{
-						if (! [entity getsChangedByTriggers])
-							[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
+						//This is needed for self-updating collections. See the deletion method.
+						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
 						[retval awakeFromInsertIfNeeded];
 						
 						//For redo
@@ -1331,13 +1348,13 @@ bx_query_during_reconnect ()
 						if (createdSavepoint)
 							[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 						[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: invocations];
-						[[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType: 
-                                               [(id) mModifiedObjectIDs BXModificationTypeForKey: objectID] forKey: objectID];
+						[[mUndoManager prepareWithInvocationTarget: mModifiedObjectIDs] setObject: [mModifiedObjectIDs objectForKey: objectID] 
+                                                                                           forKey: objectID];
 						if (![mUndoManager groupsByEvent])
     						[mUndoManager endUndoGrouping];        
 						
 						//Remember the modification type for ROLLBACK
-                        [(id) mModifiedObjectIDs BXSetModificationType: kBXInsertModification forKey: objectID];
+                        [mModifiedObjectIDs setObject: ModTypeToObject (kBXInsertModification) forKey: objectID];
 					}
 				}
 			}
@@ -1566,10 +1583,9 @@ bx_query_during_reconnect ()
         //This might have changed during connection.
         TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
             [currentEntity setDatabaseURI: mDatabaseURI];
-        [self iterateValidationQueue: &localError];
 		
 		NSNotification* notification = nil;
-		if (nil == localError)
+		if ([self iterateValidationQueue: &localError])
 		{
 			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification object: self userInfo: nil];
 			if (async)
@@ -1596,8 +1612,8 @@ bx_query_during_reconnect ()
 {
     if (0 < [objectIDs count])
     {
-		NSMutableDictionary* idsByEntity = BXObjectIDsByEntity (objectIDs);
-		BXAddObjectIDsForInheritance (idsByEntity);
+		NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+		AddObjectIDsForInheritance (idsByEntity);
 		NSNotificationCenter* nc = [self notificationCenter];
 
 		TSEnumerate (entity, e, [idsByEntity keyEnumerator])
@@ -1657,8 +1673,8 @@ bx_query_during_reconnect ()
 {
     if (0 < [objectIDs count])
     {
-        NSMutableDictionary* idsByEntity = BXObjectIDsByEntity (objectIDs);
-        BXAddObjectIDsForInheritance (idsByEntity);
+        NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+        AddObjectIDsForInheritance (idsByEntity);
         NSNotificationCenter* nc = [self notificationCenter];
         		
         //Post the notifications
@@ -1728,8 +1744,8 @@ bx_query_during_reconnect ()
 {
 	if (0 < [objectIDs count])
     {
-        NSMutableDictionary* idsByEntity = BXObjectIDsByEntity (objectIDs);
-        BXAddObjectIDsForInheritance (idsByEntity);
+        NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+        AddObjectIDsForInheritance (idsByEntity);
         NSNotificationCenter* nc = [self notificationCenter];
 		
         //Post the notifications
@@ -2098,12 +2114,11 @@ bx_query_during_reconnect ()
 				{
 					retval = [[[returnedClass alloc] BXInitWithArray: retval] autorelease];
 					[retval setDatabaseContext: self];
-					[(BXContainerProxy *) retval setEntity: entity];
-					[retval setFilterPredicate: predicate];
+					[(BXContainerProxy *) retval fetchedForEntity: entity predicate: predicate];
 				}
 				else if (0 == [retval count])
 				{
-					//If an automatically updating container wasn't desired, we could also return nil.
+					//If an automatically updating container wasn't requested, we might as well return nil.
 					retval = nil;
 				}
 			}
@@ -2170,9 +2185,8 @@ bx_query_during_reconnect ()
                 BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
                 if (nil == localError)
                 {
-                    //This is needed for self-updating collections.
-					if (! [anEntity getsChangedByTriggers])
-						[self updatedObjectsInDatabase: oldIDs faultObjects: NO];
+                    //This is needed for self-updating collections. See the deletion method.
+					[self updatedObjectsInDatabase: oldIDs faultObjects: NO];
                     
                     //For redo
                     BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
@@ -2180,7 +2194,7 @@ bx_query_during_reconnect ()
                                                                            predicate: predicate withDictionary: aDict error: NULL];
 #if 0
                     //Finally fault the object.
-                    //FIXME: do we need this either?
+                    //FIXME: do we need this?
                     [[recorder recordWithPersistentTarget: self] faultKeys: [aDict allKeys] inObjectsWithIDs: objectIDs];
 #endif
                     
@@ -2196,9 +2210,9 @@ bx_query_during_reconnect ()
                     //Set the modification type. No need for undo since insert and delete override this anyway.
                     TSEnumerate (currentID, e, [objectIDs objectEnumerator])
                     {
-                        enum BXModificationType modificationType = [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID];
+                        enum BXModificationType modificationType = ObjectToModType ([mModifiedObjectIDs objectForKey: currentID]);
                         if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
-                            [(id) mModifiedObjectIDs BXSetModificationType: kBXUpdateModification forKey: currentID];
+                            [mModifiedObjectIDs setObject: ModTypeToObject (kBXUpdateModification) forKey: currentID];
                     }
                     
 					//FIXME: move this to the if block where oldIDs are set.
@@ -2247,8 +2261,9 @@ bx_query_during_reconnect ()
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
                         [[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeletePending];
 					
-					if (! [entity getsChangedByTriggers])
-						[self deletedObjectsFromDatabase: objectIDs];
+					//The change notice will only be delivered at commit time, but there could be e.g. two
+					//BXSetHelperTableRelationProxies for one relationship, and objects get deleted from one of them.
+					[self deletedObjectsFromDatabase: objectIDs];
 
 					//For redo
 					BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
@@ -2273,9 +2288,9 @@ bx_query_during_reconnect ()
                     //Remember the modification type for ROLLBACK.
 					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 					{
-                        [[mUndoManager prepareWithInvocationTarget: (id) mModifiedObjectIDs] BXSetModificationType:
-                                              [(id) mModifiedObjectIDs BXModificationTypeForKey: currentID] forKey: currentID];                        
-                        [(id) mModifiedObjectIDs BXSetModificationType: kBXDeleteModification forKey: currentID];
+                        [[mUndoManager prepareWithInvocationTarget: mModifiedObjectIDs] setObject: [mModifiedObjectIDs objectForKey: currentID] 
+                                                                                           forKey: currentID];                        
+                        [mModifiedObjectIDs setObject: ModTypeToObject (kBXDeleteModification) forKey: currentID];
 					}
 					if (![mUndoManager groupsByEvent])
     					[mUndoManager endUndoGrouping];
@@ -2332,7 +2347,7 @@ bx_query_during_reconnect ()
 	}
 	
 	if (nil == mModifiedObjectIDs)
-        mModifiedObjectIDs = CFDictionaryCreateMutable (NULL, 0, &kCFTypeDictionaryKeyCallBacks, NULL);
+        mModifiedObjectIDs = [[NSMutableDictionary alloc] init];
 	
 	if (nil == mUndoGroupingLevels)
 		mUndoGroupingLevels = [[NSMutableIndexSet alloc] init];
@@ -2491,9 +2506,9 @@ error:
     return retval;
 }
 
-- (void) iterateValidationQueue: (NSError **) error
+- (BOOL) iterateValidationQueue: (NSError **) error
 {
-    BXAssertVoidReturn (NULL != error, @"Expected error to be set.");
+    BXAssertValueReturn (NULL != error, NO, @"Expected error to be set.");
     while (0 < [mLazilyValidatedEntities count])
     {
         NSSet* entities = [[mLazilyValidatedEntities copy] autorelease];
@@ -2508,10 +2523,11 @@ error:
             {
                 //Remember the remaining objects.
                 [mLazilyValidatedEntities addObjectsFromArray: [e allObjects]];
-                return;
+                return NO;
             }
         }
     }
+	return YES;
 }
 
 - (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
@@ -2686,8 +2702,8 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 #endif
     
     NSNumber* portObject = [mDatabaseURI port];
-    UInt32 port = (portObject ? [portObject unsignedIntValue] : 5432);
-    AddKeychainAttribute (kSecPortItemAttr, &port, sizeof (UInt32), attributeBuffer);
+    UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432U);
+    AddKeychainAttribute (kSecPortItemAttr, &port, sizeof (UInt16), attributeBuffer);
     
     //FIXME: Do we also need the creator code? Does the current application have one?
     SecKeychainAttributeList attrList = {

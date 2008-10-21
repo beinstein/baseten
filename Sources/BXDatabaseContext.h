@@ -60,7 +60,7 @@
     BXHiddenId <BXInterface>				mDatabaseInterface;
     NSURL*									mDatabaseURI;
     id										mObjects;
-    CFMutableDictionaryRef                  mModifiedObjectIDs;
+    NSMutableDictionary*                    mModifiedObjectIDs;
     NSUndoManager*							mUndoManager;
 	NSMutableSet*							mLazilyValidatedEntities;
 	NSMutableIndexSet*						mUndoGroupingLevels;

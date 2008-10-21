@@ -61,6 +61,11 @@
 {
 	return NO;
 }
+
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType
+{
+	return nil;
+}
 @end
 
 
@@ -95,6 +100,15 @@
     if (NULL != length)
         *length = strlen (retval);
     return (char *) retval;
+}
+
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType
+{
+	NSMutableString* retval = [NSMutableString stringWithString: self];
+	[retval replaceOccurrencesOfString: @"'" withString: @"\\'" options: 0 range: NSMakeRange (0, [retval length])];
+	[retval insertString: @"'" atIndex: 0];
+	[retval appendString: @"'"];
+	return retval;
 }
 @end
 
@@ -410,6 +424,11 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 #endif
     return rval;
 }
+
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType
+{
+	return [NSString stringWithFormat: @"timestamp with time zone 'epoch' + interval '%f seconds'", [self timeIntervalSince1970]];
+}
 @end
 
 
@@ -543,13 +562,27 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 {
     return [NSNumber numberWithLongLong: strtoll (value, NULL, 10)];
 }
+
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType
+{
+	id retval = self;
+	if (NSBooleanAttributeType == attrType)
+		retval = ([self boolValue] ? @"true" : @"false");
+	return retval;
+}
 @end
 
 
-//FIXME: NSSet doesn't implement -PGTSParameterLength:connection:.
 @implementation NSSet (PGTSFoundationObjects)
 - (BOOL) PGTSIsCollection
 {
 	return YES;
+}
+
+//FIXME: should we allow set parameters?
+- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return NULL;
 }
 @end

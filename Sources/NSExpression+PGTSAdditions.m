@@ -34,62 +34,78 @@
 #import "BXKeyPathParser.h"
 #import "BXPropertyDescription.h"
 #import "BXPGAdditions.h"
+#import "BXPGExpressionValueType.h"
 
 
-#if defined (PREDICATE_VISITOR)
-@implementation NSExpression (BXAdditions)
-- (void) BXVisit: (id <BXPredicateVisitor>) visitor
+@implementation NSExpression (BXPGAdditions)
+- (BXPGExpressionValueType *) BXPGVisitExpression: (id <BXPGPredicateVisitor>) visitor
 {
+	//Return value of nil means unexpected.
+	BXPGExpressionValueType* retval = nil;
 	NSExpressionType type = [self expressionType];
 	switch (type)
 	{
 		case NSConstantValueExpressionType:
-			[visitor visitConstantValueExpression: self];
+			retval = [visitor visitConstantValueExpression: self];
 			break;
 			
 		case NSEvaluatedObjectExpressionType:
-			[visitor visitEvaluatedObjectExpression: self];
+			retval = [visitor visitEvaluatedObjectExpression: self];
 			break;
 			
 		case NSVariableExpressionType:
-			[visitor visitVariableExpression: self];
+			retval = [visitor visitVariableExpression: self];
 			break;
 			
+		case 10: //NSKeyPathSpecifierExpression
 		case NSKeyPathExpressionType:
-			[visitor visitKeyPathExpression: self];
+			retval = [visitor visitKeyPathExpression: self];
 			break;
-			
+						
 		case NSFunctionExpressionType:
-			[visitor visitFunctionExpression: self];
+			retval = [visitor visitFunctionExpression: self];
 			break;
 			
 		case NSAggregateExpressionType:
-			[visitor visitAggregateExpression: self];
+			retval = [visitor visitAggregateExpression: self];
 			break;
 			
 		case NSSubqueryExpressionType:
-			[visitor visitSubqueryExpression: self];
+			retval = [visitor visitSubqueryExpression: self];
 			break;
 			
 		case NSUnionSetExpressionType:
-			[visitor visitUnionSetExpression: self];
+			retval = [visitor visitUnionSetExpression: self];
 			break;
 			
 		case NSIntersectSetExpressionType:
-			[visitor visitIntersectSetExpression: self];
+			retval = [visitor visitIntersectSetExpression: self];
 			break;
 			
 		case NSMinusSetExpressionType:
-			[visitor visitMinusSetExpression: self];
+			retval = [visitor visitMinusSetExpression: self];
 			break;
 			
 		default:
-			[visitor visitUnknownExpression: self];
+			retval = [visitor visitUnknownExpression: self];
 			break;
 	}
+	return retval;
 }
-@end
-#else
+
+//FIXME: These are only used with SQL schema generation. It should be removed in a future revision.
+static void
+AddRelationship (BXRelationshipDescription* rel, NSMutableDictionary* ctx)
+{
+	NSMutableSet* relationships = [ctx objectForKey: kBXRelationshipsKey];
+	if (! relationships)
+	{
+		relationships = [NSMutableSet set];
+		[ctx setObject: relationships forKey: kBXRelationshipsKey];
+	}
+	[relationships addObject: rel];
+}
+
 static NSString*
 AddParameter (id parameter, NSMutableDictionary* context)
 {
@@ -134,27 +150,6 @@ AddParameter (id parameter, NSMutableDictionary* context)
 	return retval;
 }
 
-
-static void
-AddRelationship (BXRelationshipDescription* rel, NSMutableDictionary* ctx)
-{
-	NSMutableSet* relationships = [ctx objectForKey: kBXRelationshipsKey];
-	if (! relationships)
-	{
-		relationships = [NSMutableSet set];
-		[ctx setObject: relationships forKey: kBXRelationshipsKey];
-	}
-	[relationships addObject: rel];
-}
-
-
-@interface NSObject (PGTSConstantExpressionValue)
-- (id) PGTSConstantExpressionValue: (NSMutableDictionary *) ctx;
-@end
-
-
-
-@implementation NSExpression (PGTSAdditions)
 - (id) PGTSValueWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
     id retval = nil;
@@ -248,28 +243,4 @@ AddRelationship (BXRelationshipDescription* rel, NSMutableDictionary* ctx)
 end:
     return retval;
 }
-
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
-{
-	id objectValue = nil;
-	switch ([self expressionType])
-	{
-		case NSConstantValueExpressionType:
-			objectValue = [self constantValue];
-			break;
-			
-		case NSEvaluatedObjectExpressionType:
-			objectValue = [self keyPath];
-			break;
-			
-		case NSVariableExpressionType:
-		case NSKeyPathExpressionType:
-		case NSFunctionExpressionType:
-		default:
-			break;
-	}
-	
-	return [objectValue PGTSParameterLength: length connection: connection];
-}
 @end
-#endif

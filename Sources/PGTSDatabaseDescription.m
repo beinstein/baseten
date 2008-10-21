@@ -239,10 +239,9 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
         retval = [mTables objectForKey: oidObject];
         if (! retval)
         {
-            retval = [[[self tableDescriptionClass] alloc] init];
+            retval = [[[[self tableDescriptionClass] alloc] init] autorelease];
             [retval setOid: oidValue];
             [mTables setObject: retval forKey: oidObject];
-            [retval release];
         }
     }
     return retval;	
@@ -290,20 +289,23 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
 		while ([res advanceRow])
 		{
 			//Oid needs to be fetched manually because the system doesn't know its type yet.
-			PGTSTypeDescription* type = [[PGTSTypeDescription alloc] init];			
+			PGTSTypeDescription* type = [[[PGTSTypeDescription alloc] init] autorelease];
 			char* oidString = PQgetvalue ([res PGresult], [res currentRow], 0);
-			long long oid = strtoll (oidString, NULL, 10);
+			long oid = strtol (oidString, NULL, 10);
 			[type setOid: oid];
 			[mTypes setObject: type forKey: PGTSOidAsObject (oid)];
 			[retval addObject: type];
-			[type release];			
 			
 			[type setName: [res valueForKey: @"typname"]];
 			[type setSchemaOid: [[res valueForKey: @"typnamespace"] PGTSOidValue]];
 			[type setSchemaName: [res valueForKey: @"nspname"]];
 			[type setElementOid: [[res valueForKey: @"typelem"] PGTSOidValue]];
-			[type setDelimiter: [[res valueForKey: @"typdelim"] characterAtIndex: 0]];
-			[type setKind: [[res valueForKey: @"typtype"] characterAtIndex: 0]];
+			unichar delimiter = [[res valueForKey: @"typdelim"] characterAtIndex: 0];
+			Expect (delimiter <= UCHAR_MAX);
+			[type setDelimiter: delimiter];
+			unichar kind = [[res valueForKey: @"typtype"] characterAtIndex: 0];
+			Expect (kind <= UCHAR_MAX);
+			[type setKind: kind];
 		}
 	}
 	return retval;
@@ -333,7 +335,9 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
 {
 	[desc setName: [res valueForKey: @"relname"]];
 	[desc setSchemaName: [res valueForKey: @"nspname"]];
-	[desc setKind: [[res valueForKey: @"relkind"] characterAtIndex: 0]];
+	unichar kind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
+	ExpectV (kind <= UCHAR_MAX);
+	[desc setKind: kind];
 	[desc setSchemaOid: [[res valueForKey: @"schemaoid"] PGTSOidValue]];
 	
 	PGTSRoleDescription* role = [[mConnection databaseDescription] roleNamed: [res valueForKey: @"rolname"]

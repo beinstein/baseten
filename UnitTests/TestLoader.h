@@ -43,11 +43,6 @@
 @end
 
 
-@interface SenTestCase (fjldks)
-- (void) logException:(NSException *) anException;
-@end
-
-
 @interface BXTestCase : SenTestCase
 {
 }

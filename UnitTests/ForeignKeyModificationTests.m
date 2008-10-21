@@ -43,12 +43,12 @@
     [context setAutocommits: NO];
     MKCAssertNotNil (context);
     
-    test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
-    test2 = [context entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
-    ototest1 = [context entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil];
-    ototest2 = [context entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil];
-    mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
-    mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
+    test1 		= [[context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil] retain];
+    test2 		= [[context entityForTable: @"test2" inSchema: @"Fkeytest" error: nil] retain];
+    ototest1 	= [[context entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil] retain];
+    ototest2 	= [[context entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil] retain];
+    mtmtest1 	= [[context entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil] retain];
+    mtmtest2 	= [[context entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil] retain];
 
     MKCAssertNotNil (test1);
     MKCAssertNotNil (test2);
@@ -57,13 +57,13 @@
     MKCAssertNotNil (mtmtest1);
     MKCAssertNotNil (mtmtest2);
 
-    test1v = [context entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil];
-    test2v = [context entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil];
-    ototest1v = [context entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil];
-    ototest2v = [context entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil];
-    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
-    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
-	mtmrel1 = [context entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil];
+    test1v		= [[context entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil] retain];
+    test2v		= [[context entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil] retain];
+    ototest1v	= [[context entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil] retain];
+    ototest2v	= [[context entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil] retain];
+    mtmtest1v	= [[context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil] retain];
+    mtmtest2v	= [[context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil] retain];
+	mtmrel1		= [[context entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil] retain];
     
     MKCAssertNotNil (test1v);
     MKCAssertNotNil (test2v);
@@ -77,7 +77,19 @@
 - (void) tearDown
 {
     [context release];
-    context = nil;
+	[test1 release];
+	[test2 release];	
+	[ototest1 release];
+	[ototest2 release];
+	[mtmtest1 release];
+	[mtmtest2 release];
+	[test1v release];
+	[test2v release];
+	[ototest1v release];
+	[ototest2v release];
+	[mtmtest1v release];
+	[mtmtest2v release];
+	[mtmrel1 release];
 }
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
@@ -136,7 +148,7 @@
     
 	[object setPrimitiveValue: foreignObjects forKey: [manyEntity name]];
     
-    NSSet* referencedObjects = [NSSet setWithSet: [object valueForKey: [manyEntity name]]];
+    NSSet* referencedObjects = [NSSet setWithSet: [object primitiveValueForKey: [manyEntity name]]];
     MKCAssertEqualObjects (referencedObjects, foreignObjects);
 
     [context rollback];
@@ -147,6 +159,9 @@
     //Change a reference in entity1 and entity2
     
     NSError* error = nil;
+	[context connectSync: &error];
+    STAssertNil (error, [error localizedDescription]);
+	
     MKCAssertFalse ([[[entity1 relationshipsByName] objectForKey: [entity2 name]] isToMany]);
     MKCAssertFalse ([[[entity2 relationshipsByName] objectForKey: [entity1 name]] isToMany]);
     

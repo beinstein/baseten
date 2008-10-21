@@ -31,10 +31,14 @@
 @class BXEntityDescription;
 
 @interface BXForeignKey (PrivateMethods)
+#if 0
 - (NSPredicate *) predicateForEntity: (BXEntityDescription *) entity 
 					  valuesInObject: (BXDatabaseObject *) anObject
 						 entityIndex: (unsigned int) ei 
 						 objectIndex: (unsigned int) oi;
-- (NSMutableDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
-								entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi;
+#endif
+- (NSMutableDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity 
+									valuesInObject: (BXDatabaseObject *) object 
+									   entityIndex: (unsigned int) ei 
+									   objectIndex: (unsigned int) oi;
 @end

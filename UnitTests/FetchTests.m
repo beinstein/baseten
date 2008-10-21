@@ -212,17 +212,7 @@
 	BXEntityDescription* person = [context entityForTable: @"person" error: &error];
 	STAssertNil (error, [error localizedDescription]);
 	
-	BXPropertyDescription* person_id = [[person attributesByName] objectForKey: @"id"];
-	BXPropertyDescription* test_id = [[entity attributesByName] objectForKey: @"id"];
-	MKCAssertNotNil (person_id);
-	MKCAssertNotNil (test_id);
-	
-	NSExpression* lhs = [NSExpression expressionForConstantValue: person_id];
-	NSExpression* rhs = [NSExpression expressionForConstantValue: test_id];
-	NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs
-																	   modifier: NSDirectPredicateModifier 
-																		   type: NSEqualToPredicateOperatorType
-																		options: 0];
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"person_address.address = 'Mannerheimintie 1'"];
 	MKCAssertNotNil (predicate);
 	
 	//Make another predicate just to test compound predicates.

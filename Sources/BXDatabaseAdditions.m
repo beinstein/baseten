@@ -547,21 +547,6 @@ URLDecode (const char* bytes, size_t length, id sender)
 @end
 
 
-@implementation NSMutableDictionary (BXDatabaseAdditions)
-- (void) BXSetModificationType: (enum BXModificationType) aType forKey: (BXDatabaseObjectID *) aKey
-{
-    [self setObject: [NSValue valueWithBytes: &aType objCType: @encode (enum BXModificationType)] forKey: aKey];
-}
-
-- (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey
-{
-    enum BXModificationType retval = kBXNoModification;
-    [[self objectForKey: aKey] getValue: &retval];
-    return retval;
-}
-@end
-
-
 @implementation NSObject (BXDatabaseAdditions)
 - (BOOL) BXIsRelationshipProxy
 {

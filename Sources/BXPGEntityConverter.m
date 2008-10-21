@@ -149,7 +149,8 @@ ImportError (NSString* message, NSString* reason)
 	
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
-		BXEntityDescription* match = [context matchingEntity: currentEntity inSchema: schemaName error: NULL];
+        NSError* error = nil;
+		BXEntityDescription* match = [context matchingEntity: currentEntity inSchema: schemaName error: &error];
 		if (match)
 		{
 			if ([match isView])
@@ -157,6 +158,9 @@ ImportError (NSString* message, NSString* reason)
 			else
 				[retval addObject: [NSString stringWithFormat: @"DROP TABLE \"%@\".\"%@\";", schemaName, [match name]]];
 		}
+
+        if (error)
+            [errors addObject: error];
 		
 		[retval addObject: [currentEntity BXPGCreateStatementWithIDColumn: YES inSchema: schemaName errors: errors]];
 		[retval addObject: [currentEntity BXPGPrimaryKeyConstraintInSchema: schemaName]];
@@ -164,11 +168,15 @@ ImportError (NSString* message, NSString* reason)
 		
 		TSEnumerate (currentAttr, e, [[currentEntity attributesByName] objectEnumerator])
 		{
-			if ([currentAttr BXCanAddAttribute: NULL])
+            NSError* error = nil;
+			if ([currentAttr BXCanAddAttribute: &error])
 			{
 				[retval addObjectsFromArray: [currentAttr BXPGAttributeConstraintsInSchema: schemaName]];
 				[retval addObjectsFromArray: [currentAttr BXPGConstraintsForValidationPredicatesInSchema: schemaName connection: connection]];
 			}
+
+            if (error)
+                [errors addObject: error];
 		}
 	}
 	

@@ -95,6 +95,7 @@
 	return [self retain];
 }
 
+#if 0
 - (id) mutableCopyWithZone: (NSZone *) aZone
 {
 	BXContainerProxy* retval = [[self class] allocWithZone: aZone];
@@ -107,6 +108,7 @@
 	retval->mChanging = mChanging;
 	return retval;
 }
+#endif
 
 - (void) filterObjectsForUpdate: (NSArray *) objects 
                           added: (NSMutableArray **) added 
@@ -189,9 +191,10 @@
     
     //Post notifications since modifying a self-updating collection won't cause
     //value cache to be changed.
-    [mOwner willChangeValueForKey: [self key]];    
+	NSString* key = [self key];
+    [mOwner willChangeValueForKey: key];    
     [self handleAddedObjects: objects];
-    [mOwner didChangeValueForKey: [self key]];
+    [mOwner didChangeValueForKey: key];
     
     BXLogDebug (@"Contents after adding: %@", mContainer);
 }
@@ -200,9 +203,10 @@
 {
     //Post notifications since modifying a self-updating collection won't cause
     //value cache to be changed.
-    [mOwner willChangeValueForKey: [self key]];    
+	NSString* key = [self key];
+    [mOwner willChangeValueForKey: key];    
     [self handleRemovedObjects: [mContext registeredObjectsWithIDs: ids]];
-    [mOwner didChangeValueForKey: [self key]];
+    [mOwner didChangeValueForKey: key];
     BXLogDebug (@"Contents after removal: %@", mContainer);
 }
 
@@ -233,10 +237,11 @@
     //value cache to be changed.
 	if (changed)
 	{
-		[mOwner willChangeValueForKey: [self key]];    
+		NSString* key = [self key];
+		[mOwner willChangeValueForKey: key];    
 		[self handleRemovedObjects: removedObjects];
 		[self handleAddedObjects: addedObjects];
-		[mOwner didChangeValueForKey: [self key]];
+		[mOwner didChangeValueForKey: key];
 	}
 	
 	BXLogDebug (@"Count after operation:\t%d", [mContainer count]);
@@ -292,6 +297,12 @@
     }
 }
 
+- (void) fetchedForEntity: (BXEntityDescription *) entity predicate: (NSPredicate *) predicate
+{
+	[self setEntity: entity];
+	[self setFilterPredicate: predicate];
+}
+
 - (void) setEntity: (BXEntityDescription *) entity
 {
     BXAssertVoidReturn (nil != mContext, @"Expected mContext not to be nil.");
@@ -299,6 +310,7 @@
     //Set up the modification notification
     if (mEntity != entity) 
     {
+		[mEntity release];
         mEntity = [entity retain];
         
         NSNotificationCenter* nc = [mContext notificationCenter];
@@ -333,7 +345,7 @@
 /** The owner's key for the container. */
 - (NSString *) key
 {
-    return mKey;
+    return [[mKey copy] autorelease];
 }
 
 /** 

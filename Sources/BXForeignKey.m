@@ -33,7 +33,6 @@
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseObject.h"
-#import "BXObjectKeyPathExpression.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXLogger.h"
@@ -74,23 +73,6 @@
 	[mFieldNames addObject: [NSArray arrayWithObjects: srcFName, dstFName, nil]];
 }
 
-- (NSArray *) srcFieldNames
-{
-	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
-		[retval addObject: [currentFieldArray objectAtIndex: 0]];
-	
-	return retval;
-}
-
-- (NSArray *) dstFieldNames
-{
-	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
-		[retval addObject: [currentFieldArray objectAtIndex: 1]];
-	
-	return retval;
-}
 - (NSSet *) fieldNames
 {
 	return mFieldNames;
@@ -106,6 +88,7 @@
 	mDeleteRule = aRule;
 }
 
+#if 0
 - (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject
 {
 	return [self predicateForEntity: srcEntity valuesInObject: anObject entityIndex: 0 objectIndex: 1];
@@ -115,6 +98,7 @@
 {
 	return [self predicateForEntity: dstEntity valuesInObject: anObject entityIndex: 1 objectIndex: 0];
 }
+#endif
 
 - (BXDatabaseObjectID *) objectIDForEntity: (BXEntityDescription *) entity fromObject: (BXDatabaseObject *) object
 							   entityIndex: (int) ei objectIndex: (int) oi
@@ -152,33 +136,6 @@
 	return [self objectIDForEntity: srcEntity fromObject: object entityIndex: 0 objectIndex: 1];
 }
 
-
-- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
-							  dstEntity: (BXEntityDescription *) dstEntity
-{
-	BXAssertValueReturn (nil != srcEntity, nil, @"Expected srcEntity to be set.");
-	BXAssertValueReturn (nil != dstEntity, nil, @"Expected dstEntity to be set.");
-	
-	NSDictionary* srcAttributes = [srcEntity attributesByName];
-	NSDictionary* dstAttributes = [dstEntity attributesByName];
-	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	
-	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
-	{
-		BXAttributeDescription* lhAttribute = [srcAttributes objectForKey: [currentFieldArray objectAtIndex: 0]];
-		BXAttributeDescription* rhAttribute = [dstAttributes objectForKey: [currentFieldArray objectAtIndex: 1]];
-		NSExpression* lhs = [NSExpression expressionForConstantValue: lhAttribute];
-		NSExpression* rhs = [NSExpression expressionForConstantValue: rhAttribute];
-		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
-																	rightExpression: rhs
-																		   modifier: NSDirectPredicateModifier
-																			   type: NSEqualToPredicateOperatorType 
-																			options: 0];
-		[subPredicates addObject: predicate];
-	}
-	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];
-}
-
 - (NSMutableDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object
 {
 	return [self valueDictionaryForEntity: entity valuesInObject: object entityIndex: 0 objectIndex: 1];
@@ -193,7 +150,7 @@
 
 
 @implementation BXForeignKey (PrivateMethods)
-
+#if 0
 - (NSPredicate *) predicateForEntity: (BXEntityDescription *) entity 
 					  valuesInObject: (BXDatabaseObject *) anObject
 						 entityIndex: (unsigned int) ei 
@@ -220,6 +177,7 @@
 	}
 	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];	
 }
+#endif
 
 /**
  * \internal

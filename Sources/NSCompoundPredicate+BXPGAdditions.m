@@ -32,9 +32,8 @@
 #import "BXLogger.h"
 
 
-#if defined (PREDICATE_VISITOR)
-@implementation NSCompoundPredicate (BXAdditions)
-- (void) BXVisit: (id <BXPredicateVisitor>) visitor
+@implementation NSCompoundPredicate (BXPGAdditions)
+- (void) BXPGVisit: (id <BXPGPredicateVisitor>) visitor
 {
 	switch ([self compoundPredicateType])
 	{
@@ -55,14 +54,8 @@
 			break;
 	}
 }
-@end
-#else
-@implementation NSCompoundPredicate (BXPGAdditions)
-- (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
-{
-	return [self PGTSExpressionWithObject: nil context: context];
-}
 
+//FIXME: This is only used with SQL schema generation. It should be removed in a future revision.
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
     BXAssertValueReturn (nil != [context objectForKey: kPGTSConnectionKey], nil, 
@@ -104,4 +97,3 @@
     return retval;
 }
 @end
-#endif

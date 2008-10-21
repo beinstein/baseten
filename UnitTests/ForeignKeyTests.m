@@ -81,12 +81,12 @@
     context = nil;
 }
 
-- (void) testMTO
+- (void) test1MTO
 {
     [self many: test2 toOne: test1];
 }
 
-- (void) testMTOView
+- (void) test4MTOView
 {
     [self many: test2v toOne: test1v];
 }
@@ -108,7 +108,6 @@
 		MKCAssertTrue ([object isFaultKey: [oneEntity name]]);
 		
         BXDatabaseObject* foreignObject = [object primitiveValueForKey: [oneEntity name]];
-		MKCAssertFalse ([object isFaultKey: [oneEntity name]]);
 
         //See that the object has the given entity
         MKCAssertTrue ([[object objectID] entity] == manyEntity);
@@ -130,12 +129,12 @@
     }
 }
 
-- (void) testOTM
+- (void) test1OTM
 {
     [self one: test1 toMany: test2];
 }
 
-- (void) testOTMView
+- (void) test4OTMView
 {
     [self one: test1v toMany: test2v];
 }
@@ -183,12 +182,12 @@
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 }
 
-- (void) testOTO
+- (void) test2OTO
 {
     [self one: ototest1 toOne: ototest2];
 }
 
-- (void) testOTOView
+- (void) test5OTOView
 {
     [self one: ototest1v toOne: ototest2v];
 }
@@ -214,7 +213,7 @@
     {
         BXDatabaseObject* object = [res objectAtIndex: i];
         
-        BXDatabaseObject* foreignObject  = [object valueForKey: [entity2 name]];
+        BXDatabaseObject* foreignObject  = [object primitiveValueForKey: [entity2 name]];
         BXDatabaseObject* foreignObject2 = [foobar targetForObject: object error: &error];
         STAssertNil (error, [error description]);
         
@@ -253,12 +252,12 @@
     MKCAssertTrue ([[object objectID] entity] == entity2);
 }
 
-- (void) testMTM
+- (void) test3MTM
 {
     [self many: mtmtest1 toMany: mtmtest2];
 }
 
-- (void) testMTMView
+- (void) test6MTMView
 {
     [self many: mtmtest1v toMany: mtmtest2v];
 }
@@ -316,12 +315,12 @@
     }
 }
 
-- (void) testMTMHelper
+- (void) test3MTMHelper
 {
 	[self MTMHelper: mtmtest1];
 }
 
-- (void) testMTMHelperView
+- (void) test6MTMHelperView
 {
 	[self MTMHelper: mtmtest1v];
 }

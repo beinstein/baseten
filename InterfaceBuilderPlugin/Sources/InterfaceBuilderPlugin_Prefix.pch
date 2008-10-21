@@ -29,5 +29,4 @@
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
     #import <InterfaceBuilderKit/InterfaceBuilderKit.h>
-	#import <BaseTen/BaseTen.h>
 #endif

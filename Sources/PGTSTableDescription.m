@@ -210,7 +210,7 @@ PrimaryKey (NSArray* uIndexes)
 			NSString* name = [res valueForKey: @"attname"];
 			NSNumber* index = [res valueForKey: @"attnum"];
 			
-			PGTSFieldDescription* field = [[PGTSFieldDescription alloc] init];
+			PGTSFieldDescription* field = [[[PGTSFieldDescription alloc] init] autorelease];
 			[field setName: name];
 			[field setIndex: [index intValue]];
 			[field setTypeOid: [[res valueForKey: @"atttypid"] PGTSOidValue]];
@@ -219,7 +219,6 @@ PrimaryKey (NSArray* uIndexes)
 			
 			[mFields setObject: field forKey: [field name]];
 			[mFieldIndexes setObject: name forKey: index];
-			[field release];
 		}
 	}
 	return mFields;
@@ -251,14 +250,13 @@ PrimaryKey (NSArray* uIndexes)
 		NSMutableArray* indexes = [NSMutableArray arrayWithCapacity: count];
 		while (([res advanceRow]))
 		{
-			PGTSIndexDescription* currentIndex = [[PGTSIndexDescription alloc] init];
+			PGTSIndexDescription* currentIndex = [[[PGTSIndexDescription alloc] init] autorelease];
 			[indexes addObject: currentIndex];
-			[currentIndex release];
 			
 			//Some attributes from the result set
 			[currentIndex setName: [res valueForKey: @"name"]];
 			[currentIndex setOid: [[res valueForKey: @"oid"] PGTSOidValue]];
-			[currentIndex setPrimaryKey: [[res valueForKey: @"indisprimary"] intValue]];
+			[currentIndex setPrimaryKey: [[res valueForKey: @"indisprimary"] boolValue]];
 			
 			//Get the field indexes and set the fields
 			NSMutableSet* indexFields = [NSMutableSet setWithCapacity: 

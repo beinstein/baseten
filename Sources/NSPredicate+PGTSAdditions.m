@@ -29,14 +29,12 @@
 #import "NSPredicate+PGTSAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
 #import "BXLogger.h"
-
 #import "PGTSFunctions.h"
 #import "PGTSConstants.h"
 
 
-#if defined (PREDICATE_VISITOR)
-@implementation NSPredicate (BXAdditions)
-- (void) BXVisit: (id <BXPredicateVisitor>) visitor
+@implementation NSPredicate (BXPGAdditions)
+- (void) BXPGVisit: (id <BXPGPredicateVisitor>) visitor
 {
     Class tpClass = NSClassFromString (@"NSTruePredicate");
     Class fpClass = NSClassFromString (@"NSFalsePredicate");
@@ -47,14 +45,8 @@
 	else
 		[visitor visitUnknownPredicate: self];
 }
-@end
-#else
-@implementation NSPredicate (PGTSAdditions)
-- (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
-{
-	return [self PGTSExpressionWithObject: nil context: context];
-}
 
+//FIXME: This is only used with SQL schema generation. It should be removed in a future revision.
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
     NSString* retval = nil;
@@ -68,4 +60,3 @@
     return retval;
 }
 @end
-#endif

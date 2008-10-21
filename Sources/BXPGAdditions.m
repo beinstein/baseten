@@ -32,6 +32,7 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXDatabaseObjectPrivate.h"
+#import "BXPGExpressionVisitor.h"
 #import "BXLogger.h"
 
 
@@ -58,6 +59,15 @@
 @end
 
 
+@implementation BXPropertyDescription (BXPGInterfaceAdditions)
+- (void) BXPGVisitKeyPathComponent: (id <BXPGExpressionVisitor>) visitor
+{
+	[self doesNotRecognizeSelector: _cmd];
+}
+@end
+
+
+
 @implementation BXAttributeDescription (BXPGInterfaceAdditions)
 - (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
 {    
@@ -70,11 +80,20 @@
 	return [[self name] BXPGEscapedName: connection];
 }
 
-- (id) PGTSConstantExpressionValue: (NSMutableDictionary *) context
+- (id) PGTSConstantExpressionValue: (NSMutableDictionary *) ctx
 {
-    PGTSConnection* connection = [context objectForKey: kPGTSConnectionKey];
-    BXAssertValueReturn (nil != connection, nil, @"Expected connection not to be nil.");
-    return [self BXPGQualifiedName: connection];
+	BXEntityDescription* myEntity = [self entity];
+	BXEntityDescription* primaryRelation = [ctx objectForKey: kBXEntityDescriptionKey];
+	Expect (primaryRelation);
+	BXAssertValueReturn ([myEntity isEqual: primaryRelation], nil, 
+						 @"BXAttributeDescription as expression value is required to be one of the primary relation's attributes.");
+	NSString* key = [self name];
+	return [NSExpression expressionForKeyPath: key];
+}
+
+- (void) BXPGVisitKeyPathComponent: (id <BXPGExpressionVisitor>) visitor
+{
+	[visitor visitAttribute: self];
 }
 @end
 
@@ -115,5 +134,13 @@
 {
     [res goToRow: row];
     [self setCachedValuesForKeysWithDictionary: [res currentRowAsDictionary]];
+}
+@end
+
+
+@implementation BXRelationshipDescription (BXPGInterfaceAdditions)
+- (void) BXPGVisitKeyPathComponent: (id <BXPGExpressionVisitor>) visitor
+{
+	[visitor visitRelationship: self];
 }
 @end

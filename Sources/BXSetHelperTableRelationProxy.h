@@ -34,7 +34,4 @@
 @interface BXSetHelperTableRelationProxy : BXSetRelationProxy 
 {
 }
-
-- (NSArray *) objectIDsFromHelperObjectIDs: (NSArray *) ids others: (NSMutableArray *) otherObjectIDs;
-
 @end

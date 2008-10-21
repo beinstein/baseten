@@ -35,6 +35,7 @@
 #import "PGTSRoleDescription.h"
 #import "PGTSACLItem.h"
 #import "PGTSDatabaseDescription.h"
+#import "BXLogger.h"
 
 
 @implementation PGTSAbstractClassDescriptionProxy
@@ -188,7 +189,9 @@
         if (0 < [res count])
         {
             [res advanceRow];
-            mRelkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
+			unichar relkind = [[res valueForKey: @"relkind"] characterAtIndex: 0];
+			ExpectV (relkind <= UCHAR_MAX);
+            mRelkind = relkind;
             [self setName:  [res valueForKey: @"relname"]];
             [self setSchemaName: [res valueForKey: @"nspname"]];
             [self setSchemaOid: [[res valueForKey: @"oid"] PGTSOidValue]];

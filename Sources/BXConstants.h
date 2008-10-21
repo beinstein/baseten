@@ -67,6 +67,7 @@ BX_EXPORT NSString* const kBXGotDatabaseURINotification;
 BX_EXPORT NSString* const kBXAttributeKey;
 BX_EXPORT NSString* const kBXUnknownPredicatesKey;
 BX_EXPORT NSString* const kBXRelationshipsKey;
+BX_EXPORT NSString* const kBXPredicateKey;
 
 BX_EXPORT NSString* const kBXErrorDomain;
 BX_EXPORT NSString* const kBXErrorMessageKey;
@@ -87,7 +88,8 @@ enum BXError
 	kBXErrorSSLError,
 	kBXErrorConnectionLost,
 	kBXErrorUnknown,
-	kBXErrorIncompleteDatabaseURI
+	kBXErrorIncompleteDatabaseURI,
+	kBXErrorPredicateNotAllowedForUpdateDelete
 };
 
 enum BXModificationType

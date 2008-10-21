@@ -76,9 +76,9 @@
 }
 
 
-- (void) connectSync: (NSError **) outError
+- (BOOL) connectSync: (NSError **) outError
 {
-	ExpectV (outError);
+	ExpectR (outError, NO);
 	
 	[self prepareForConnecting];
 	mAsync = NO;
@@ -90,6 +90,7 @@
 	//-finishedConnecting gets executed here.
 	
 	mSyncErrorPtr = NULL;
+	return mConnectionSucceeded;
 }
 
 
@@ -153,9 +154,10 @@
 }
 
 
-- (void) rollback: (NSError **) outError
+- (BOOL) rollback: (NSError **) outError
 {
-	ExpectV (outError);
+	ExpectR (outError, NO);
+	BOOL retval = NO;
 	
     //The locked key should be cleared in any case to cope with the situation
     //where the lock was acquired  after the last savepoint and the same key 
@@ -167,7 +169,10 @@
 		if ([[mInterface databaseContext] sendsLockQueries])
 			query = @"ROLLBACK; SELECT baseten.ClearLocks ();";
 		PGTSResultSet* res = [mConnection executeQuery: query];
-		*outError = [res error];
+		if ([res querySucceeded])
+			retval = YES;
+		else
+			*outError = [res error];
 		
 		if (BASETEN_SENT_ROLLBACK_TRANSACTION_ENABLED ())
 		{
@@ -177,6 +182,7 @@
 		}		
 	}
 	[self resetSavepointIndex];	
+	return retval;
 }
 
 
@@ -194,7 +200,7 @@
 
 - (void) beginAsyncSubTransactionFor: (id) delegate callback: (SEL) callback userInfo: (NSDictionary *) userInfo
 {
-	[self beginIfNeededAsync: YES delegate: delegate callback: callback userInfo: userInfo outError: NULL];
+	[self beginIfNeededFor: delegate callback: callback userInfo: userInfo];
 }
 
 

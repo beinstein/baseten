@@ -261,8 +261,8 @@
 			isa = PBXGroup;
 			children = (
 				5354443E0D634CA4002A6C47 /* BaseTen.framework */,
-				5302CB5B0E360ACD00587EAD /* SQLParser.o */,
 				53906EE50E51CFF700D837EA /* libBaseTen.a */,
+				5302CB5B0E360ACD00587EAD /* SQLParser.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";

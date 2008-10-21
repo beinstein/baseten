@@ -41,37 +41,49 @@
 	return NO;
 }
 
-- (BOOL) shouldRemoveForTarget: (id) target 
-				databaseObject: (BXDatabaseObject *) databaseObject
-					 predicate: (NSPredicate **) predicatePtr
+- (Class) fetchedClass
 {
-	BXAssertValueReturn (NULL != predicatePtr, NO, @"Expected predicatePtr not to be NULL.");
-	BOOL retval = NO;
+	return Nil;
+}
+
+- (NSPredicate *) predicateForRemoving: (id) target 
+						databaseObject: (BXDatabaseObject *) databaseObject
+{
+	NSPredicate* retval = nil;	
 	BXDatabaseObject* oldObject = [databaseObject primitiveValueForKey: [self name]];
-	if (nil != oldObject)
+	if (oldObject)
 	{
-		retval = YES;
-		NSPredicate* predicate = [[oldObject objectID] predicate];
-		*predicatePtr = predicate;
+		NSExpression* lhs = [NSExpression expressionForConstantValue: oldObject];
+		NSExpression* rhs = [NSExpression expressionForEvaluatedObject];
+		retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs
+														   modifier: NSDirectPredicateModifier 
+															   type: NSEqualToPredicateOperatorType 
+															options: 0];
 	}
 	return retval;
 }
 
-- (BOOL) shouldAddForTarget: (id) target 
-			 databaseObject: (BXDatabaseObject *) databaseObject
-				  predicate: (NSPredicate **) predicatePtr 
-					 values: (NSDictionary **) valuePtr
+- (NSPredicate *) predicateForAdding: (id) target 
+					  databaseObject: (BXDatabaseObject *) databaseObject
 {
-	BXAssertValueReturn (NULL != predicatePtr && NULL != valuePtr, NO, @"Expected predicatePtr and valuePtr not to be NULL.");
-	BOOL retval = NO;
-	if (nil != target)
+	
+	NSPredicate* retval = nil;
+	if (target)
 	{
-		retval = YES;
-		NSDictionary* values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: databaseObject];
-		NSPredicate* predicate = [(BXDatabaseObjectID *) [target objectID] predicate];
-		*valuePtr = values;
-		*predicatePtr = predicate;
+		NSExpression* lhs = [NSExpression expressionForConstantValue: target];
+		NSExpression* rhs = [NSExpression expressionForEvaluatedObject];
+		retval = [NSComparisonPredicate predicateWithLeftExpression: lhs rightExpression: rhs
+														   modifier: NSDirectPredicateModifier 
+															   type: NSEqualToPredicateOperatorType 
+															options: 0];
 	}
+	return retval;
+}
+
+- (NSPredicate *) predicateForTarget: (BXDatabaseObject *) target
+{
+	BXDatabaseObjectID* objectID = [target objectID];
+	NSPredicate* retval = [objectID predicate];
 	return retval;
 }
 

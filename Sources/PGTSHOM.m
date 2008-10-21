@@ -371,6 +371,11 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 
 
 @implementation NSArray (PGTSHOM)
+- (NSArray *) PGTSReverse
+{
+	return [[self reverseObjectEnumerator] allObjects];
+}
+
 - (id) PGTSAny
 {
 	return [self lastObject];
@@ -483,6 +488,12 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 - (void) PGTSVisit: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	Visit (invocation, [self objectEnumerator]);
+}
+
+- (id) PGTSValueSelectFunction: (int (*)(id)) fptr
+{
+	id retval = [NSMutableArray arrayWithCapacity: [self count]];
+	return SelectFunction (self, retval, fptr);
 }
 
 - (id) PGTSValueSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg

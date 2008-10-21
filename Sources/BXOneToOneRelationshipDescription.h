@@ -30,8 +30,7 @@
 #import <BaseTen/BXRelationshipDescription.h>
 
 
-@interface BXOneToOneRelationshipDescription : BXRelationshipDescription {
-
+@interface BXOneToOneRelationshipDescription : BXRelationshipDescription 
+{
 }
-
 @end

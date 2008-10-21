@@ -27,13 +27,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <BaseTen/BXPredicateVisitor.h>
+@class BXPGExpressionValueType;
 
-#if defined (PREDICATE_VISITOR)
-@interface NSExpression (BXAdditions)
-- (void) BXVisit: (id <BXPredicateVisitor>) visitor;
-@end
-#else
-@interface NSExpression (PGTSAdditions)
+@interface NSExpression (BXPGAdditions)
+- (BXPGExpressionValueType *) BXPGVisitExpression: (id <BXPGPredicateVisitor>) visitor;
 - (id) PGTSValueWithObject: (id) anObject context: (NSMutableDictionary *) context;
 @end
-#endif

@@ -34,14 +34,6 @@
 #import "BXConstants.h"
 
 
-#if defined (PREDICATE_VISITOR)
-@implementation NSComparisonPredicate (BXAdditions)
-- (void) BXVisit: (id <BXPredicateVisitor>) visitor
-{
-	[visitor visitComparisonPredicate: self];
-}
-@end
-#else
 static void
 MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 {
@@ -55,12 +47,13 @@ MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 }
 
 
-@implementation NSComparisonPredicate (PGTSAdditions)
-- (NSString *) PGTSWhereClauseWithContext: (NSMutableDictionary *) context
+@implementation NSComparisonPredicate (BXPGAdditions)
+- (void) BXPGVisit: (id <BXPGPredicateVisitor>) visitor
 {
-	return [self PGTSExpressionWithObject: nil context: context];
+	[visitor visitComparisonPredicate: self];
 }
 
+//FIXME: This is only used with SQL schema generation. It should be removed in a future revision.
 - (NSString *) PGTSExpressionWithObject: (id) anObject context: (NSMutableDictionary *) context
 {
 	NSString* retval = nil;
@@ -255,4 +248,3 @@ end:
 	return retval;
 }
 @end
-#endif

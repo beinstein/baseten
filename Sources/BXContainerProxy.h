@@ -32,7 +32,7 @@
 @class BXEntityDescription;
 @class BXDatabaseObject;
 
-@interface BXContainerProxy : NSProxy <NSCopying, NSMutableCopying>
+@interface BXContainerProxy : NSProxy <NSCopying>
 {
     BXDatabaseContext* mContext;
     id mContainer;
@@ -58,6 +58,7 @@
 - (NSPredicate *) filterPredicate;
 - (void) setFilterPredicate: (NSPredicate *) aPredicate;
 - (void) setEntity: (BXEntityDescription *) anEntity;
+- (void) fetchedForEntity: (BXEntityDescription *) entity predicate: (NSPredicate *) predicate;
 - (id) owner;
 - (void) setOwner: (id) anObject;
 - (void) setKey: (NSString *) aString;

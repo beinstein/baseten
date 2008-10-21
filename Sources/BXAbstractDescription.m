@@ -69,6 +69,7 @@
 {
     if (nil == mName) 
 	{
+		[mName release];
 		mName = [aName retain];
     }
 }

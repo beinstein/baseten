@@ -44,10 +44,18 @@
 #import "MTMCollectionTest.h"
 #import "UndoTests.h"
 #import "ObjectTests.h"
+#import "PredicateTests.h"
+#import "KeyPathComponentTest.h"
 
 @interface SenTestSuite (BXAdditions)
 - (void) addSuitesForClasses: (NSArray *) anArray;
 @end
+
+
+@interface SenTestCase (UndocumentedMethods)
+- (void) logException:(NSException *) anException;
+@end
+
 
 @implementation SenTestSuite (BXAdditions)
 - (void) addSuitesForClasses: (NSArray *) anArray
@@ -64,6 +72,10 @@
 @implementation BXTestLoader
 - (void) test
 {
+	NSArray* nonconnectingTestClasses = [NSArray arrayWithObjects:
+										 [KeyPathComponentTest class],
+										 [PredicateTests class],
+										 nil];
 	NSArray* simpleTestClasses = [NSArray arrayWithObjects:
 		[ConnectTest class],
 		[EntityTests class],
@@ -78,8 +90,14 @@
 	NSArray* relationshipTestClasses = [NSArray arrayWithObjects:
 		[ForeignKeyTests class],
 		[ForeignKeyModificationTests class],
+		nil];
+	
+	NSArray* MTTestClasses = [NSArray arrayWithObjects:
 		[MTOCollectionTest class],
 		[MTMCollectionTest class],
+		nil];
+	
+	NSArray* undoTestClasses = [NSArray arrayWithObjects:
 		[UndoTests class],
 		nil];
 	
@@ -92,15 +110,29 @@
 	SenTestSuite* relationshipSuite = [SenTestSuite testSuiteWithName: @"RelationshipTests"];
 	[relationshipSuite addSuitesForClasses: relationshipTestClasses];
 	
+	SenTestSuite* MTTestSuite = [SenTestSuite testSuiteWithName: @"MTTestSuite"];
+	[MTTestSuite addSuitesForClasses: MTTestClasses];
+	
+	SenTestSuite* undoSuite = [SenTestSuite testSuiteWithName: @"UndoSuite"];
+	[undoSuite addSuitesForClasses: undoTestClasses];
+	
+	SenTestSuite* nonconnectingSuite = [SenTestSuite testSuiteWithName: @"NonconnectingTests"];
+	[nonconnectingSuite addSuitesForClasses: nonconnectingTestClasses];
+
 	SenTestSuite* bxSuite = [SenTestSuite testSuiteWithName: @"BaseTenTests"];
 	[bxSuite addTestsEnumeratedBy: [[NSArray arrayWithObjects:
+		nonconnectingSuite,
 		simpleSuite,
 		useCaseSuite,
 		relationshipSuite,
+		MTTestSuite,
+		undoSuite,
 		nil] objectEnumerator]];
 	
-	SenTestRun* run = [bxSuite run];
-    //SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [FetchTests class]] run];
+	
+	//SenTestRun* run = [bxSuite run];
+	SenTestRun* run = [undoSuite run];
+    //SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [ForeignKeyTests class]] run];
 	STAssertTrue (0 == [run failureCount], @"Expected tests to succeed.");
 }
 @end

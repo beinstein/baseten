@@ -37,7 +37,8 @@ enum BXPropertyFlag
 	kBXPropertyNoFlag		= 0,
 	kBXPropertyOptional		= 1 << 0,
 	kBXPropertyPrimaryKey	= 1 << 1,
-	kBXPropertyExcluded		= 1 << 2
+	kBXPropertyExcluded		= 1 << 2,
+	kBXPropertyIsArray		= 1 << 3
 };
 
 enum BXPropertyKind

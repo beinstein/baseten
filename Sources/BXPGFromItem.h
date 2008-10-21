@@ -28,23 +28,51 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/BaseTen.h>
-
-
-enum BXPGFromItemType
-{
-	kBXPGFromItemNoType = 0,
-	kBXPGFromItemRelation,
-	kBXPGFromItemLeftJoin
-};
+#import <BaseTen/BXPGExpressionVisitor.h>
 
 
 @interface BXPGFromItem : NSObject 
 {
 	NSString* mAlias;
-	BXEntityDescription* mEntity;
-	enum BXPGFromItemType mType;
 }
+- (BXEntityDescription *) entity;
+- (NSString *) alias;
 - (void) setAlias: (NSString *) aString;
+@end
+
+
+@interface BXPGPrimaryRelationFromItem : BXPGFromItem
+{
+	BXEntityDescription* mEntity;
+}
 - (void) setEntity: (BXEntityDescription *) anEntity;
-- (void) setType: (enum BXPGFromItemType) aType;
+- (NSString *) BXPGVisitFromItem: (id <BXPGFromItemVisitor>) visitor;
+@end
+
+
+@interface BXPGRelationshipFromItem : BXPGFromItem
+{
+	BXRelationshipDescription* mRelationship;
+	BXPGFromItem* mPrevious;
+}
+- (BXRelationshipDescription *) relationship;
+- (void) setRelationship: (BXRelationshipDescription *) aRel;
+- (BXPGFromItem *) previous;
+- (void) setPrevious: (BXPGFromItem *) anItem;
+
+- (NSString *) BXPGVisitFromItem: (id <BXPGFromItemVisitor>) visitor;
+@end
+
+
+@interface BXPGHelperTableRelationshipFromItem : BXPGRelationshipFromItem
+{
+	NSString* mHelperAlias;
+}
+- (NSString *) helperAlias;
+- (void) setHelperAlias: (NSString *) aString;
+
+@end
+
+@interface BXPGHelperTableRelationshipFromItem (OverriddenMethods)
+- (BXManyToManyRelationshipDescription *) relationship;
 @end

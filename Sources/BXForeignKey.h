@@ -33,6 +33,7 @@
 @class BXEntityDescription;
 @class BXDatabaseObject;
 @class BXDatabaseObjectID;
+@class BXRelationshipDescription;
 
 @interface BXForeignKey : BXAbstractDescription 
 {
@@ -44,18 +45,14 @@
 }
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
 - (NSSet *) fieldNames;
-- (NSArray *) srcFieldNames;
-- (NSArray *) dstFieldNames;
 
 - (NSDeleteRule) deleteRule;
 - (void) setDeleteRule: (NSDeleteRule) aRule;
 
 - (BXDatabaseObjectID *) objectIDForSrcEntity: (BXEntityDescription *) srcEntity fromObject: (BXDatabaseObject *) object;
 - (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) anObject;
-- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject;
-- (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;
-- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity
-							  dstEntity: (BXEntityDescription *) dstEntity;	
+//- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject;
+//- (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;
 - (NSMutableDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object;
 - (NSMutableDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object;
 @end
