@@ -187,4 +187,8 @@
 - (void) PGTSConnection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query
 {
 }
+
+- (void) PGTSConnection: (PGTSConnection *) connection networkStatusChanged: (SCNetworkConnectionFlags) newFlags
+{
+}
 @end

@@ -732,6 +732,12 @@ error:
 {
 	[mInterface connection: connection sentQuery: query];
 }
+
+- (void) PGTSConnection: (PGTSConnection *) connection networkStatusChanged: (SCNetworkConnectionFlags) newFlags
+{
+	//FIXME: do something about this.
+	NSLog (@"Network status changed: %d", newFlags);
+}
 @end
 
 

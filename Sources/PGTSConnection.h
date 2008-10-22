@@ -49,9 +49,15 @@
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification;
 - (void) PGTSConnection: (PGTSConnection *) connection receivedNotice: (NSError *) notice;
 - (FILE *) PGTSConnectionTraceFile: (PGTSConnection *) connection;
-@end
+- (void) PGTSConnection: (PGTSConnection *) connection networkStatusChanged: (SCNetworkConnectionFlags) newFlags;
 
+//Optional section of the protocol either as an interface or @optional.
+#if __MAC_OS_X_VERSION_10_5 <= __MAC_OS_X_VERSION_MAX_ALLOWED
+@optional
+#else
+@end
 @interface NSObject (PGTSConnectionDelegate)
+#endif
 - (void) PGTSConnection: (PGTSConnection *) connection sentQueryString: (const char *) queryString;
 - (void) PGTSConnection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query;
 @end
@@ -82,7 +88,7 @@ enum PGTSConnectionError
 	
 	SCNetworkReachabilityRef mReachability;
     
-    id mDelegate; //Weak
+    id <PGTSConnectionDelegate> mDelegate; //Weak
 	
 	BOOL mDidDisconnectOnSleep;
 	BOOL mProcessingNotifications;
@@ -108,6 +114,7 @@ enum PGTSConnectionError
 - (int) backendPID;
 - (SSL *) SSLStruct;
 - (CFSocketRef) socket;
+- (BOOL) canSend;
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;

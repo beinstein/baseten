@@ -180,8 +180,8 @@ NextIdentifier ()
 - (int) sendForConnection: (PGTSConnection *) connection
 {
     int retval = [mQuery sendQuery: connection];
-	//FIXME: check retval?
-	mSent = YES;
+	if (0 < retval)
+		mSent = YES;
 	return retval;
 }
 
@@ -211,14 +211,14 @@ NextIdentifier ()
 - (PGTSResultSet *) finishForConnection: (PGTSConnection *) connection
 {
     id retval = nil;
-    if (! mSent)
-        [self sendForConnection: connection];
-    
-    while (! mFinished)
-    {
-        retval = [self receiveForConnection: connection] ?: retval;
-        [connection processNotifications];
-    }
+    if (mSent || 0 < [self sendForConnection: connection])
+	{
+	    while (! mFinished)
+		{
+			retval = [self receiveForConnection: connection] ?: retval;
+			[connection processNotifications];
+    	}
+	}
     return retval;
 }
 

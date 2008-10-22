@@ -166,45 +166,48 @@ ParameterString (int nParams, const char** values, int* formats)
 - (int) sendQuery: (PGTSConnection *) connection
 {    
     int retval = 0;
-	int nParams = [self parameterCount];
-    const char** paramValues  = calloc (nParams, sizeof (char *));
-    Oid*   paramTypes   = calloc (nParams, sizeof (Oid));
-    int*   paramLengths = calloc (nParams, sizeof (int));
-    int*   paramFormats = calloc (nParams, sizeof (int));
-
-    for (int i = 0; i < nParams; i++)
-    {
-        id parameter = [mParameters objectAtIndex: i];
-        int length = 0;
-        const char* value = [parameter PGTSParameterLength: &length connection: connection];
-
-        paramTypes   [i] = InvalidOid;
-        paramValues  [i] = value;
-        paramLengths [i] = length;
-        paramFormats [i] = [parameter PGTSIsBinaryParameter];
-    }
-
-	if (PGTS_SEND_QUERY_ENABLED ())
+	//For some reason, libpq doesn't receive signal or EPIPE from send if network is down. Hence we check it here.
+	if ([connection canSend])
 	{
-		const char* params = ParameterString (nParams, paramValues, paramFormats);
-		char* query_s = strdup ([mQuery UTF8String] ?: "");
-		char* params_s = strdup (params ?: "");
-		PGTS_SEND_QUERY (connection, retval, query_s, params_s);
-		free (query_s);
-		free (params_s);
+		int nParams = [self parameterCount];
+		const char** paramValues  = calloc (nParams, sizeof (char *));
+		Oid*   paramTypes   = calloc (nParams, sizeof (Oid));
+		int*   paramLengths = calloc (nParams, sizeof (int));
+		int*   paramFormats = calloc (nParams, sizeof (int));
+		
+		for (int i = 0; i < nParams; i++)
+		{
+			id parameter = [mParameters objectAtIndex: i];
+			int length = 0;
+			const char* value = [parameter PGTSParameterLength: &length connection: connection];
+			
+			paramTypes   [i] = InvalidOid;
+			paramValues  [i] = value;
+			paramLengths [i] = length;
+			paramFormats [i] = [parameter PGTSIsBinaryParameter];
+		}
+		
+		if (PGTS_SEND_QUERY_ENABLED ())
+		{
+			const char* params = ParameterString (nParams, paramValues, paramFormats);
+			char* query_s = strdup ([mQuery UTF8String] ?: "");
+			char* params_s = strdup (params ?: "");
+			PGTS_SEND_QUERY (connection, retval, query_s, params_s);
+			free (query_s);
+			free (params_s);
+		}
+		
+		retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
+									paramValues, paramLengths, paramFormats, 0);
+		
+		if ([connection logsQueries])
+			[(id) [connection delegate] PGTSConnection: connection sentQuery: self];
+		
+		free (paramTypes);
+		free (paramValues);
+		free (paramLengths);
+		free (paramFormats);
 	}
-	
-    retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
-                            	paramValues, paramLengths, paramFormats, 0);
-	
-	if ([connection logsQueries])
-		[(id) [connection delegate] PGTSConnection: connection sentQuery: self];
-	
-    free (paramTypes);
-    free (paramValues);
-    free (paramLengths);
-    free (paramFormats);
-
     return retval;
 }
 

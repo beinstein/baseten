@@ -75,13 +75,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 
 static void
-NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags flags, void *self )
+NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags flags, void *connectionPtr)
 {
-	//Testing for now.
-	if (kSCNetworkFlagsReachable & flags)
-		NSLog (@"Target is reachable.");
-	else
-		NSLog (@"Target is NOT reachable.");
+	PGTSConnection* connection = (PGTSConnection *) connectionPtr;
+	[(connection->mDelegate) PGTSConnection: connection networkStatusChanged: flags];
 }
 
 
@@ -423,17 +420,20 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 
 - (PGresult *) execQuery: (const char *) query
 {
-	if (mLogsQueries)
-		[mDelegate PGTSConnection: self sentQueryString: query];
-	
-	PGresult* res = PQexec (mConnection, query);
-	if (PGTS_SEND_QUERY_ENABLED ())
+	PGresult* res = NULL;
+	if ([self canSend])
 	{
-		char* query_s = strdup (query);
-		PGTS_SEND_QUERY (self, 1, query_s, NULL);
-		free (query_s);
+		if (mLogsQueries)
+			[mDelegate PGTSConnection: self sentQueryString: query];
+		
+		res = PQexec (mConnection, query);
+		if (PGTS_SEND_QUERY_ENABLED ())
+		{
+			char* query_s = strdup (query);
+			PGTS_SEND_QUERY (self, 1, query_s, NULL);
+			free (query_s);
+		}
 	}
-	
 	return res;
 }
 
@@ -484,6 +484,21 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 			mReachability = NULL;
 		}
 	}
+}
+
+- (BOOL) canSend
+{
+	BOOL retval = NO;
+	SCNetworkConnectionFlags flags = 0;
+	if (SCNetworkReachabilityGetFlags (mReachability, &flags))
+	{
+		if (kSCNetworkFlagsReachable & flags ||
+			kSCNetworkFlagsConnectionAutomatic & flags)
+		{
+			retval = YES;
+		}
+	}
+	return retval;
 }
 @end
 
@@ -586,13 +601,15 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
     [self sendQuery: queryString delegate: nil callback: NULL parameterArray: parameters];
 	
 	PGTSQueryDescription* desc = nil;
-	while (0 < [mQueue count] && (desc = [[mQueue objectAtIndex: 0] retain])) 
+	while (0 < [mQueue count] && (desc = [mQueue objectAtIndex: 0])) 
 	{
-		[mQueue removeObjectAtIndex: 0];
+		//If we don't get a return value, the query couldn't be sent.
 		retval = [desc finishForConnection: self];
-		[desc release];
+		if (! retval)
+			break;
+		
+		[mQueue removeObjectAtIndex: 0];
 	}
-	
     return retval;
 }
 
