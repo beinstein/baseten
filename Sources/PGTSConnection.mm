@@ -583,6 +583,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
     return retval;
 }
 
+//FIXME: move this elsewhere, perhaps PGTSConcreteQueryDescription or PGTSParameterQuery.
 - (PGTSQueryDescription *) queryDescriptionFor: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
 								parameterArray: (NSArray *) parameters userInfo: (id) userInfo
 {

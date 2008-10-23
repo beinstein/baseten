@@ -1318,9 +1318,9 @@ ModTypeToObject (enum BXModificationType value)
 				
 				if (YES == [mDatabaseInterface autocommits])
 				{
+					[retval awakeFromInsertIfNeeded];
 					if (! [entity getsChangedByTriggers])
 						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
-					[retval awakeFromInsertIfNeeded];
 				}
 				else
 				{
@@ -1328,9 +1328,10 @@ ModTypeToObject (enum BXModificationType value)
 					BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 					if (nil == localError)
 					{
+						[retval awakeFromInsertIfNeeded];
+
 						//This is needed for self-updating collections. See the deletion method.
 						[self addedObjectsToDatabase: [NSArray arrayWithObject: objectID]];
-						[retval awakeFromInsertIfNeeded];
 						
 						//For redo
 						BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];

@@ -743,7 +743,9 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Callback for saving the row into the database.
+ * Callback for inserting the row into the database.
+ * \note This method will be called before posting insert notifications
+ *       and adding the object to self-updating collections.
  * \note BXDatabaseContext may create new objects during redo causing their 
  *       -awakeFromInsert method to be invoked. This could be checked by 
  *       sending -isRedoing to the context's undo manager.
