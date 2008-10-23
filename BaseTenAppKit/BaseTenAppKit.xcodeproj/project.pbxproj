@@ -42,6 +42,7 @@
 		535444800D634D9C002A6C47 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		535444820D634D9C002A6C47 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531650C30B72040700785454 /* SecurityInterface.framework */; };
 		53ED303F0E1ACBA80095BE8B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5354443E0D634CA4002A6C47 /* BaseTen.framework */; };
+		53F137CD0EB074C400D0F517 /* WaitForNetworkWindow.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53F137CB0EB074C400D0F517 /* WaitForNetworkWindow.nib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -118,6 +119,7 @@
 		53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAuthenticationPanel.m; path = Sources/BXAuthenticationPanel.m; sourceTree = "<group>"; };
 		53E9BB080B909EA000DDB9BE /* BXPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPanel.h; path = Sources/BXPanel.h; sourceTree = "<group>"; };
 		53E9BB090B909EA000DDB9BE /* BXPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPanel.m; path = Sources/BXPanel.m; sourceTree = "<group>"; };
+		53F137CC0EB074C400D0F517 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/WaitForNetworkWindow.nib; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -152,6 +154,7 @@
 				2B8B5E3B0B20185100EF04F3 /* xcconfig */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
+				53F137CB0EB074C400D0F517 /* WaitForNetworkWindow.nib */,
 			);
 			name = CocoaFramework;
 			sourceTree = "<group>";
@@ -373,6 +376,7 @@
 				5354446E0D634D9C002A6C47 /* BaseTen.icns in Resources */,
 				5354446F0D634D9C002A6C47 /* ConnectionView.nib in Resources */,
 				535444700D634D9C002A6C47 /* AuthenticationView.nib in Resources */,
+				53F137CD0EB074C400D0F517 /* WaitForNetworkWindow.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -450,6 +454,14 @@
 				53E907740B849F07008CEA4B /* English */,
 			);
 			name = AuthenticationView.nib;
+			sourceTree = "<group>";
+		};
+		53F137CB0EB074C400D0F517 /* WaitForNetworkWindow.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				53F137CC0EB074C400D0F517 /* English */,
+			);
+			name = WaitForNetworkWindow.nib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
