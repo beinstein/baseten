@@ -81,6 +81,8 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 - (void) disconnect;
 - (BOOL) connected;
 
+- (BOOL) canSend: (NSError **) outError;
+
 - (NSString *) savepointQuery;
 - (NSString *) rollbackToSavepointQuery;
 - (void) resetSavepointIndex;

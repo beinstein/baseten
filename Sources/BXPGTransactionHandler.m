@@ -237,6 +237,30 @@ SSLMode (enum BXSSLMode mode)
 	}
 }
 
+- (BOOL) canSend: (NSError **) outError
+{
+	ExpectR (outError, NO);
+	BOOL retval = [mConnection canSend];
+	if (! retval)
+	{
+		NSString* title = BXLocalizedString (@"networkError", @"Network Error", @"Title for a sheet");
+		NSString* description = BXLocalizedString (@"networkErrorDescription", 
+												   @"The database server can no longer be reached.", 
+												   @"Explanation");
+		
+		NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+										 description, NSLocalizedFailureReasonErrorKey,
+										 description, NSLocalizedRecoverySuggestionErrorKey,
+										 title, NSLocalizedDescriptionKey,
+										 [mInterface databaseContext], kBXDatabaseContextKey,
+										 nil];
+		
+		NSError* error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorGenericNetworkError userInfo: userInfo];
+		*outError = error;
+	}
+	return retval;
+}
+
 #pragma mark Connecting
 
 - (void) didDisconnect
@@ -735,8 +759,8 @@ error:
 
 - (void) PGTSConnection: (PGTSConnection *) connection networkStatusChanged: (SCNetworkConnectionFlags) newFlags
 {
-	//FIXME: do something about this.
-	NSLog (@"Network status changed: %d", newFlags);
+	BXDatabaseContext* context = [mInterface databaseContext];
+	[[context delegate] databaseContext: context networkStatusChanged: newFlags];
 }
 @end
 

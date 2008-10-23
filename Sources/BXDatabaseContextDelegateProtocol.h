@@ -29,6 +29,7 @@
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
 #import <BaseTen/BXConstants.h>
+#import <SystemConfiguration/SCNetwork.h>
 
 
 @class BXDatabaseContext;
@@ -149,6 +150,16 @@
  */
 - (enum BXSSLMode) SSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
 
+//FIXME: documentation needed.
 - (void) databaseContext: (BXDatabaseContext *) ctx validatingEntity: (BXEntityDescription *) entity entitiesLeft: (NSUInteger) count;
 - (void) databaseContextGotDatabaseURI: (BXDatabaseContext *) ctx;
+
+/**
+ * Network status change.
+ * Changes in network status are received from System Configuration framework.
+ * \note The default implementation does nothing but this might change in the future.
+ * \note If connection is lost, the underlying database connection will begin to return nil values.
+ */
+- (void) databaseContext: (BXDatabaseContext *) context
+	networkStatusChanged: (SCNetworkConnectionFlags) newFlags;
 @end

@@ -59,9 +59,9 @@
 	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return (retval); }} while (0)
 
 
-#define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to have been set.");
-#define ExpectR( X, RETVAL )	BXAssertValueReturn( X, RETVAL, @"Expected " #X " to have been set.");
-#define ExpectV( X ) BXAssertVoidReturn( X, @"Expected " #X " to have been set.");
+#define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to evaluate to true.");
+#define ExpectR( X, RETVAL )	BXAssertValueReturn( X, RETVAL, @"Expected " #X " to evaluate to true.");
+#define ExpectV( X ) BXAssertVoidReturn( X, @"Expected " #X " to evaluate to true.");
 //C function variants.
 #define ExpectC( X ) Expect( X )
 #define ExpectCV( X ) ExpectV( X )

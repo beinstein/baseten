@@ -445,6 +445,9 @@ bx_error_during_rollback (id self, NSError* error)
 	Expect (error);
 	
 	NSArray* retval = nil;
+	if (! [mTransactionHandler canSend: error]) 
+		goto error;
+
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: queryString parameterArray: parameters];
 	if (YES == [res querySucceeded])
 		retval = [res resultAsArray];
@@ -455,6 +458,8 @@ bx_error_during_rollback (id self, NSError* error)
 									 code: kBXErrorUnsuccessfulQuery
 								 userInfo: nil];
 	}
+	
+error:
 	return retval;
 }
 
@@ -462,7 +467,11 @@ bx_error_during_rollback (id self, NSError* error)
 - (unsigned long long) executeCommand: (NSString *) commandString error: (NSError **) error;
 {
 	ExpectR (error, 0);
+
 	unsigned long long retval = 0;
+	if (! [mTransactionHandler canSend: error]) 
+		goto error;
+
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: commandString];
 	if (YES == [res querySucceeded])
 		retval = [res numberOfRowsAffectedByCommand];
@@ -473,6 +482,8 @@ bx_error_during_rollback (id self, NSError* error)
 									 code: kBXErrorUnsuccessfulQuery
 								 userInfo: nil];		
 	}
+	
+error:
 	return retval;
 }
 
@@ -488,6 +499,7 @@ bx_error_during_rollback (id self, NSError* error)
 	Expect (error);
     id retval = nil;
 	
+	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 	if (! [self validateEntity: entity error: error]) goto error;
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
@@ -543,6 +555,7 @@ error:
 	Expect (aClass);
 	Expect (error);
     NSArray* retval = nil;
+	if (! [mTransactionHandler canSend: error]) goto error;
 	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error; //FIXME: set the error.
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
@@ -599,6 +612,7 @@ error:
 		entity = [objectID entity];
 	}
 	
+	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 
 	PGTSConnection* connection = [mTransactionHandler connection];
@@ -658,6 +672,8 @@ error:
 	BXAssertValueReturn (0 < [keys count], NO, @"Expected to have received some keys to fetch.");
 	
     BOOL retval = NO;
+	if (! [mTransactionHandler canSend: error]) goto error;
+	
 	NSPredicate* predicate = [[anObject objectID] predicate];
 	PGTSConnection* connection = [mTransactionHandler connection];
 	[mQueryBuilder reset];
@@ -680,6 +696,8 @@ error:
 		[anObject setCachedValuesForKeysWithDictionary: [res currentRowAsDictionary]];
 		retval = YES;
 	}
+	
+error:
 	return retval;
 }
 
@@ -693,13 +711,14 @@ error:
 	Expect (error);
 		
     NSArray* retval = nil;
-
+	
 	if (nil != objectID)
 	{
 		entity = [objectID entity];
 		predicate = [objectID predicate];
 	}
 	
+	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 	PGTSTableDescription* table = [self tableForEntity: entity error: error];
 	if (! table) goto error;
@@ -748,6 +767,9 @@ error:
 	Expect (error);
     
 	NSMutableDictionary* retval = [NSMutableDictionary dictionary];
+	if (! [mTransactionHandler canSend: error])
+		goto bail;
+	
 	PGTSConnection* connection = [mTransactionHandler connection];
 
 	if ([(id) [connection databaseDescription] hasBaseTenSchema] && [self fetchForeignKeys: error])
@@ -878,7 +900,7 @@ bail:
 	BOOL retval = NO;
 	if (mForeignKeys)
 		retval = YES;
-	else if ([[mTransactionHandler databaseDescription] hasBaseTenSchema])
+	else if ([mTransactionHandler canSend: outError] && [[mTransactionHandler databaseDescription] hasBaseTenSchema])
 	{
 		NSString* query = @"SELECT * from baseten.foreignkey";
 		PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
@@ -955,7 +977,12 @@ bail:
 	ExpectR (entity, NO);
 	ExpectR (error, NO);
 	ExpectR (database, NO);
-	BXPGTableDescription* table = (id) [database table: [entity name] inSchema: [entity schemaName]];
+	
+	BXPGTableDescription* table = nil;
+	if (! [mTransactionHandler canSend: error])
+		goto bail;	
+	
+	table = (id) [database table: [entity name] inSchema: [entity schemaName]];
 	if (table)
 	{
 		if (! [entity isValidated])
@@ -987,6 +1014,8 @@ bail:
 		NSString* localizedError = [NSString stringWithFormat: errorFormat, [entity name], [entity schemaName]];
 		*error = DatabaseError (kBXErrorNoTableForEntity, localizedError, mContext, entity);
 	}
+	
+bail:
 	return table;
 }
 
@@ -1009,6 +1038,10 @@ bail:
 		[sender BXLockAcquired: YES object: anObject error: nil];
 	else
 	{
+		NSError* error = nil;
+		if (! [mTransactionHandler canSend: &error])
+			[sender BXLockAcquired: NO object: anObject error: error];
+		
 		mLocking = YES;
 		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 								  sender, kBXPGLockerKey,
@@ -1340,6 +1373,7 @@ error:
 {
 	Expect (error);
 	NSMutableDictionary* retval = nil;
+	if (! [mTransactionHandler canSend: error]) goto error;
 	
 	NSString* query = @"SELECT c.oid "
     " FROM pg_class c, pg_namespace n "
@@ -1402,6 +1436,9 @@ error:
 	ExpectR (outError, NO);	
 	
 	BOOL retval = NO;
+	if (! [mTransactionHandler canSend: outError])
+		goto error;
+	
 	NSString* query = [NSString stringWithFormat: @"DELETE FROM baseten.viewprimarykey WHERE nspname = $1 AND relname = $2"];
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameters: [viewEntity schemaName], [viewEntity name]];
 	if ([res querySucceeded])
@@ -1414,6 +1451,7 @@ error:
 	{
 		*outError = [res error];
 	}
+error:
 	return retval;
 }
 
@@ -1421,7 +1459,13 @@ error:
 {
 	ExpectR (attributeArray, NO);
 	ExpectR (outError, NO);
-	BOOL retval = YES;
+
+	BOOL retval = NO;
+
+	if (! [mTransactionHandler canSend: outError])
+		goto bail;
+
+	retval = YES;
 	
 	TSEnumerate (currentAttribute, e, [attributeArray objectEnumerator])
 	{
@@ -1446,6 +1490,7 @@ error:
 			}
 		}
 	}
+bail:
 	return retval;
 }
 
@@ -1454,6 +1499,9 @@ error:
 	ExpectR (entityArray, NO);
 	ExpectR (outError, NO);
 	BOOL retval = NO;
+	
+	if (! [mTransactionHandler canSend: outError])
+		goto bail;
 	
 	NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [entityArray count]];
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])

@@ -89,7 +89,8 @@ enum BXError
 	kBXErrorConnectionLost,
 	kBXErrorUnknown,
 	kBXErrorIncompleteDatabaseURI,
-	kBXErrorPredicateNotAllowedForUpdateDelete
+	kBXErrorPredicateNotAllowedForUpdateDelete,
+	kBXErrorGenericNetworkError
 };
 
 enum BXModificationType
