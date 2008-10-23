@@ -35,7 +35,8 @@
 #import <BaseTen/postgresql/libpq-fe.h>
 
 
-static int gIdentifier = 0;
+volatile static int gIdentifier = 0;
+//Synchronization should happen in caller.
 static int
 NextIdentifier ()
 {
@@ -44,6 +45,14 @@ NextIdentifier ()
 }
 
 @implementation PGTSQueryDescription
+- (NSString *) description
+{
+	NSString* retval = [NSString stringWithFormat: @"<%@ (%p): %@>",
+						[self class],
+						self,
+						[[self query] query]];
+	return retval;
+}
 
 - (SEL) callback
 {

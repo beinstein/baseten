@@ -509,6 +509,7 @@ bx_error_during_rollback (id self, NSError* error)
 		goto error;
 	}
 	
+	Expect (1 == [res count]);
 	[res setRowClass: aClass];
 	[res advanceRow];
 	retval = [res currentRowAsObject];
