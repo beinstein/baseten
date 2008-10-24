@@ -42,6 +42,7 @@
 
 - (void) tearDown
 {
+	[ctx disconnect];
 	[ctx release];
 }
 
@@ -125,6 +126,8 @@
 	BXDatabaseObject* anObject = [ctx objectWithID: anId error: &error];
 	STAssertNil (error, [error description]);
 	MKCAssertNotNil (anObject);
+	
+	[ctx2 disconnect];
 }
 
 @end

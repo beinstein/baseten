@@ -54,6 +54,12 @@
     MKCAssertNotNil (mtmtest2v);
 }
 
+- (void) tearDown
+{
+	[context disconnect];
+	[context release];
+}
+
 - (void) testModMTM
 {
     [self modMany: mtmtest1 toMany: mtmtest2];

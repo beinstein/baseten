@@ -77,8 +77,8 @@
 
 - (void) tearDown
 {
+	[context disconnect];
     [context release];
-    context = nil;
 }
 
 - (void) test1MTO

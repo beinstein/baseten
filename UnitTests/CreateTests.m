@@ -56,6 +56,7 @@
 - (void) tearDown
 {
     [context rollback];
+	[context disconnect];
     [context release];
     [entity release];
 }

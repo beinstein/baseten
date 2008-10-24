@@ -73,6 +73,7 @@
 
 - (void) tearDown
 {
+	[context disconnect];
     [context release];
 }
 

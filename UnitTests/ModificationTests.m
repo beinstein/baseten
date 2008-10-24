@@ -46,6 +46,7 @@
 
 - (void) tearDown
 {
+	[context disconnect];
     [context release];
 }
 
@@ -203,6 +204,9 @@
     STAssertNil (error, [error description]);    
 	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
     MKCAssertEquals (count, [array count]);
+	
+	[context2 disconnect];
+	[context2 release];
 }
 
 @end

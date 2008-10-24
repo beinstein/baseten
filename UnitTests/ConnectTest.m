@@ -42,6 +42,7 @@
 
 - (void) tearDown
 {
+	[ctx disconnect];
     [ctx release];
 }
 

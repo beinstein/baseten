@@ -76,6 +76,7 @@
 
 - (void) tearDown
 {
+	[context disconnect];
     [context release];
 	[test1 release];
 	[test2 release];	

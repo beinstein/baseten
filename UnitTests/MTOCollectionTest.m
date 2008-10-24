@@ -54,6 +54,12 @@
     MKCAssertNotNil (mtocollectiontest2v);
 }
 
+- (void) tearDown
+{
+	[context disconnect];
+	[context release];
+}
+
 - (void) testModMTOCollection
 {
     [self modMany: mtocollectiontest2 toOne: mtocollectiontest1];
