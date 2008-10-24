@@ -147,8 +147,36 @@
  * Since BaseTen relies on database introspection, SQL may be used to define the database schema.
  * Another option is to create a data model using Xcode's data modeler and import it using BaseTen Assistant.
  *
+ * \see \subpage predicates
  * \see \subpage sql_views
  * \see \subpage baseten_enabling
+ */
+
+/**
+ * \page predicates Predicates
+ *
+ * Most types of predicates and expressions are converted to SQL and sent to the database server.
+ * Others cause the returned object set to be filtered again on the client side. Notably, the following
+ * use cases cause part of the predicate to be replaced with \em true or \em false:
+ *
+ * <ul>
+ *     <li>Use of NSDiacriticInsensitivePredicateOption</li>
+ *     <li>Use of NSCustomSelectorPredicateOperatorType</li>
+ *     <li>Use of NSSubqueryExpressionType</li>
+ *     <li>Use of NSUnionSetExpressionType</li>
+ *     <li>Use of NSIntersectSetExpressionType</li>
+ *     <li>Use of NSMinusSetExpressionType</li>
+ *     <li>A modifier other than NSDirectPredicateModifier in combination with any of the following:
+ *         <ul>
+ *             <li>NSBeginsWithPredicateOperatorType</li>
+ *             <li>NSEndsWithPredicateOperatorType</li>
+ *             <li>NSMatchesPredicateOperatorType</li>
+ *             <li>NSLikePredicateOperatorType</li>
+ *             <li>NSContainsPredicateOperatorType</li>
+ *             <li>NSInPredicateOperatorType</li>
+ *         </ul>
+ *     </li>
+ * </ul>
  */
 
 /**
@@ -382,7 +410,7 @@
  * value.
  *
  *
- * \subsection accessing_relationships Accessing relationships
+ * \section accessing_relationships Accessing relationships
  *
  * BaseTen supports the same types of relationships as Core Data: one-to-one, one-to-many and many-to-many.
  *
@@ -444,7 +472,7 @@
  * <tt>[aPerson valueForKey: @"person_title_rel"]</tt>.
  * 
  *
- * \subsubsection relationship_naming_conflicts Naming conflicts
+ * \section relationship_naming_conflicts Naming conflicts
  *
  * Referencing relationships with target table names works as long as there are only one foreign key in
  * a given table referencing another. As the number increases, relationships obviously cannot be 
@@ -539,7 +567,7 @@
  * controller subclasses.
  *
  *
- * \subsection using_bxsynchronizedarraycontroller Using BXSyncronizedArrayController from Interface Builder
+ * \section using_bxsynchronizedarraycontroller Using BXSyncronizedArrayController from Interface Builder
  *
  * <ol>
  *     <li>Load the BaseTen plug-in or palette.</li>
@@ -610,7 +638,7 @@
  * in the \em Documentation folder.
  *
  *
- * \subsection Building for the release DMG
+ * \section Building for the release DMG
  *
  * The files needed to build the release disk image are in the SVN repository as well. Doxygen is needed during 
  * the process. To create the DMG, follow these steps:
