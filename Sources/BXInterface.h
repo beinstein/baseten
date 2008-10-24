@@ -56,6 +56,7 @@ struct BXTrustResult
 - (BOOL) handleInvalidTrust: (SecTrustRef) trust result: (SecTrustResultType) result;
 - (NSError *) packQueryError: (NSError *) error;
 - (enum BXSSLMode) sslMode;
+- (void) networkStatusChanged: (SCNetworkConnectionFlags) newFlags;
 @end
 
 

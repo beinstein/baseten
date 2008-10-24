@@ -760,7 +760,7 @@ error:
 - (void) PGTSConnection: (PGTSConnection *) connection networkStatusChanged: (SCNetworkConnectionFlags) newFlags
 {
 	BXDatabaseContext* context = [mInterface databaseContext];
-	[[context delegate] databaseContext: context networkStatusChanged: newFlags];
+	[context networkStatusChanged: newFlags];
 }
 @end
 

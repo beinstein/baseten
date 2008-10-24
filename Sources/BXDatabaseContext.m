@@ -1920,6 +1920,11 @@ ModTypeToObject (enum BXModificationType value)
 	}
 	return mode;
 }
+
+- (void) networkStatusChanged: (SCNetworkConnectionFlags) newFlags
+{
+	[[self internalDelegate] databaseContext: self networkStatusChanged: newFlags];
+}
 @end
 
 
