@@ -335,6 +335,7 @@
  * \endlatexonly
  * \htmlonly 
  * <pre>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</pre>
+ * \endhtmlonly
  * \latexonly \caption{Getting a BXEntityDescription} \end{table} \endlatexonly
  *
  * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
