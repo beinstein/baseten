@@ -156,8 +156,10 @@
  * \page predicates Predicates
  *
  * Most types of predicates and expressions are converted to SQL and sent to the database server.
- * Others cause the returned object set to be filtered again on the client side. Notably, the following
- * use cases cause part of the predicate to be replaced with \em true or \em false:
+ * Others cause the returned object set to be filtered again on the client side. Specifically, the following
+ * use cases work in this manner: The affected part of the predicate is replaced with \em true (or \em false, 
+ * if the part is inside an odd number of NOT predicates), and excess objects are removed after a result set
+ * has been received.
  *
  * <ul>
  *     <li>Use of NSDiacriticInsensitivePredicateOption</li>

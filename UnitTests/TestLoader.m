@@ -80,7 +80,6 @@
 		if (0 < [run failureCount])
 			abort ();
 	}
-	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 5.0]];
 }
 @end
 
