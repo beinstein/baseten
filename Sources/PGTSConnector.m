@@ -99,6 +99,10 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 
 - (BOOL) start: (const char *) connectionString
 {
+	BXAssertLog (! mConnection, @"Expected not to have mConnection set.");
+	if (mConnection)
+		PQfinish (mConnection);
+	
 	mConnection = PQconnectStart (connectionString);
 	return (mConnection ? YES : NO);
 }
@@ -113,33 +117,61 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 	mTraceFile = stream;
 }
 
-- (NSError *) error
+- (NSError *) connectionError
 {
-	enum PGTSConnectionError code = kPGTSConnectionErrorNone;
-	const char* SSLMode = pq_ssl_mode (mConnection);
-	
-	if (! mNegotiationStarted)
-		code = kPGTSConnectionErrorUnknown;
-	else if (! mSSLSetUp && 0 == strcmp ("require", SSLMode))
-		code = kPGTSConnectionErrorSSLUnavailable;
-	else if (PQconnectionNeedsPassword (mConnection))
-		code = kPGTSConnectionErrorPasswordRequired;
-	else if (PQconnectionUsedPassword (mConnection))
-		code = kPGTSConnectionErrorInvalidPassword;
+	return [[mConnectionError copy] autorelease];
+}
+
+- (void) setConnectionError: (NSError *) anError
+{
+	if (anError != mConnectionError)
+	{
+		[mConnectionError release];
+		mConnectionError = [anError retain];
+	}
+}
+
+- (void) finishedConnecting: (BOOL) status
+{
+	if (status)
+	{
+		[mDelegate connector: self gotConnection: mConnection];
+		mConnection = NULL;
+	}
 	else
-		code = kPGTSConnectionErrorUnknown;
-	
-	NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
-															  @"Connection error", @"Title for a sheet.");
-	NSString* errorMessage = [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
-	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-							  errorTitle, NSLocalizedDescriptionKey,
-							  errorTitle, NSLocalizedFailureReasonErrorKey,
-							  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
-							  nil];
-	
-	NSError* retval = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
-	return retval;	
+	{
+		{
+			enum PGTSConnectionError code = kPGTSConnectionErrorNone;
+			const char* SSLMode = pq_ssl_mode (mConnection);
+			
+			if (! mNegotiationStarted)
+				code = kPGTSConnectionErrorUnknown;
+			else if (! mSSLSetUp && 0 == strcmp ("require", SSLMode))
+				code = kPGTSConnectionErrorSSLUnavailable;
+			else if (PQconnectionNeedsPassword (mConnection))
+				code = kPGTSConnectionErrorPasswordRequired;
+			else if (PQconnectionUsedPassword (mConnection))
+				code = kPGTSConnectionErrorInvalidPassword;
+			else
+				code = kPGTSConnectionErrorUnknown;
+			
+			NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
+																	  @"Connection error", @"Title for a sheet.");
+			NSString* errorMessage = [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  errorTitle, NSLocalizedDescriptionKey,
+									  errorTitle, NSLocalizedFailureReasonErrorKey,
+									  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
+									  nil];
+			
+			NSError* error = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
+			[self setConnectionError: error];
+		}	
+		
+		PQfinish (mConnection);		
+		mConnection = NULL;
+		[mDelegate connectorFailed: self];		
+	}	
 }
 @end
 
@@ -191,7 +223,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 
 - (void) cancel
 {
-    if (mConnection && ! mPassedConnection)
+    if (mConnection)
     {
         PQfinish (mConnection);
         mConnection = NULL;
@@ -201,12 +233,15 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (void) dealloc
 {
 	[self freeCFTypes];
+	[self cancel];
+	[mConnectionError release];
 	[super dealloc];
 }
 
 - (void) finalize
 {
 	[self freeCFTypes];
+	[self cancel];
 	[super finalize];
 }
 
@@ -253,15 +288,14 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 - (void) finishedConnecting: (BOOL) succeeded
 {
 	[self freeCFTypes];
-	[mDelegate connector: self gotConnection: mConnection succeeded: succeeded];
-	mPassedConnection = YES;
+	[super finishedConnecting: succeeded];
 }
 
 - (BOOL) connect: (const char *) conninfo
 {
 	BOOL retval = NO;	
 	mNegotiationStarted = NO;
-	if ((mConnection = PQconnectStart (conninfo)))
+	if ([self start: conninfo])
 	{
 		if (CONNECTION_BAD == PQstatus (mConnection))
 			[self finishedConnecting: NO];
@@ -327,7 +361,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 		if (mTraceFile)
 			PQtrace (mConnection, mTraceFile);
 		
-		//FIXME: this is rather an an error than information.
 		if (bsdSocket < 0)
 			BXLogInfo (@"Unable to get connection socket from libpq.");
 		else
@@ -388,8 +421,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 				}
 			}			
 		}		
-	}	
-	[mDelegate connector: self gotConnection: mConnection succeeded: (retval && CONNECTION_OK == PQstatus (mConnection))];
+	}
+	
+	[self finishedConnecting: retval && CONNECTION_OK == PQstatus (mConnection)];
 	return retval;
 }
 @end

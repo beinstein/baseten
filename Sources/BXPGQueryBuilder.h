@@ -65,6 +65,7 @@ enum BXPGQueryType
 
 - (NSString *) fromClause;
 - (NSString *) target;
+- (NSString *) fromClauseForSelect;
 
 - (struct bx_predicate_st) whereClauseForPredicate: (NSPredicate *) predicate 
 														   object: (BXDatabaseObject *) object;

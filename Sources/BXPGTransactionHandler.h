@@ -37,6 +37,7 @@
 @class BXPGInterface;
 @class BXPGDatabaseDescription;
 @class BXPGCertificateVerificationDelegate;
+@class BXPGQueryBuilder;
 
 
 BX_EXPORT NSString* kBXPGUserInfoKey;
@@ -107,11 +108,20 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 - (NSArray *) observedOids;
 
 
-- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
-		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete;
-- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
-		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
-		 connection: (PGTSConnection *) connection notifyConnection: (PGTSConnection *) notifyConnection;
+- (void) markLocked: (BXEntityDescription *) entity 
+	  relationAlias: (NSString *) alias
+		 fromClause: (NSString *) fromClause
+		whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters
+		 willDelete: (BOOL) willDelete;
+- (void) markLocked: (BXEntityDescription *) entity
+	  relationAlias: (NSString *) alias
+		 fromClause: (NSString *) fromClause
+		whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters
+		 willDelete: (BOOL) willDelete
+		 connection: (PGTSConnection *) connection 
+   notifyConnection: (PGTSConnection *) notifyConnection;
 
 - (void) sendPlaceholderResultTo: (id) receiver callback: (SEL) callback 
 					   succeeded: (BOOL) didSucceed userInfo: (id) userInfo;

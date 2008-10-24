@@ -63,11 +63,21 @@
 }
 
 
-- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
-		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
+- (void) markLocked: (BXEntityDescription *) entity 
+	  relationAlias: (NSString *) alias
+		 fromClause: (NSString *) fromClause
+		whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters
+		 willDelete: (BOOL) willDelete
 {
-	[self markLocked: entity whereClause: whereClause parameters: parameters willDelete: willDelete
-		  connection: mConnection notifyConnection: mNotifyConnection];
+	[self markLocked: entity 
+	   relationAlias: alias
+		  fromClause: fromClause
+		 whereClause: whereClause 
+		  parameters: parameters
+		  willDelete: willDelete
+		  connection: mConnection 
+	notifyConnection: mNotifyConnection];
 }
 
 

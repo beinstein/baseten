@@ -47,93 +47,40 @@
 #import "PredicateTests.h"
 #import "KeyPathComponentTest.h"
 
-@interface SenTestSuite (BXAdditions)
-- (void) addSuitesForClasses: (NSArray *) anArray;
-@end
-
 
 @interface SenTestCase (UndocumentedMethods)
 - (void) logException:(NSException *) anException;
 @end
 
 
-@implementation SenTestSuite (BXAdditions)
-- (void) addSuitesForClasses: (NSArray *) anArray
-{
-	TSEnumerate (currentClass, e, [anArray objectEnumerator])
-	{
-		SenTestSuite* suite = [[self class] testSuiteForTestCaseClass: currentClass];
-		[self addTest: suite];
-	}
-}
-@end
-
-
 @implementation BXTestLoader
 - (void) test
 {
-	NSArray* nonconnectingTestClasses = [NSArray arrayWithObjects:
-										 [KeyPathComponentTest class],
-										 [PredicateTests class],
-										 nil];
-	NSArray* simpleTestClasses = [NSArray arrayWithObjects:
-		[ConnectTest class],
-		[EntityTests class],
-        //[ObjectTests class], //FIXME: enable this. It still requires a modified OCMock, though.
-		[ObjectIDTests class],
-		[CreateTests class],
-		nil];
-	NSArray* useCaseTestClasses = [NSArray arrayWithObjects:
-		[FetchTests class],
-		[ModificationTests class],
-		nil];
-	NSArray* relationshipTestClasses = [NSArray arrayWithObjects:
-		[ForeignKeyTests class],
-		[ForeignKeyModificationTests class],
-		nil];
+	NSArray* testClasses = [NSArray arrayWithObjects:
+							[KeyPathComponentTest class],
+							[PredicateTests class],
+							[ConnectTest class],
+							[EntityTests class],
+							//[ObjectTests class], //FIXME: enable this. It still requires a modified OCMock, though.
+							[ObjectIDTests class],
+							[CreateTests class],
+							[FetchTests class],
+							[ModificationTests class],
+							[ForeignKeyTests class],
+							[ForeignKeyModificationTests class],
+							[MTOCollectionTest class],
+							[MTMCollectionTest class],
+							[UndoTests class],
+							nil];
 	
-	NSArray* MTTestClasses = [NSArray arrayWithObjects:
-		[MTOCollectionTest class],
-		[MTMCollectionTest class],
-		nil];
-	
-	NSArray* undoTestClasses = [NSArray arrayWithObjects:
-		[UndoTests class],
-		nil];
-	
-	SenTestSuite* simpleSuite = [SenTestSuite testSuiteWithName: @"SimpleTests"];
-	[simpleSuite addSuitesForClasses: simpleTestClasses];
-	
-	SenTestSuite* useCaseSuite = [SenTestSuite testSuiteWithName: @"UseCaseTests"];
-	[useCaseSuite addSuitesForClasses: useCaseTestClasses];
-	
-	SenTestSuite* relationshipSuite = [SenTestSuite testSuiteWithName: @"RelationshipTests"];
-	[relationshipSuite addSuitesForClasses: relationshipTestClasses];
-	
-	SenTestSuite* MTTestSuite = [SenTestSuite testSuiteWithName: @"MTTestSuite"];
-	[MTTestSuite addSuitesForClasses: MTTestClasses];
-	
-	SenTestSuite* undoSuite = [SenTestSuite testSuiteWithName: @"UndoSuite"];
-	[undoSuite addSuitesForClasses: undoTestClasses];
-	
-	SenTestSuite* nonconnectingSuite = [SenTestSuite testSuiteWithName: @"NonconnectingTests"];
-	[nonconnectingSuite addSuitesForClasses: nonconnectingTestClasses];
-
-	SenTestSuite* bxSuite = [SenTestSuite testSuiteWithName: @"BaseTenTests"];
-	[bxSuite addTestsEnumeratedBy: [[NSArray arrayWithObjects:
-		nonconnectingSuite,
-		simpleSuite,
-		useCaseSuite,
-		relationshipSuite,
-		MTTestSuite,
-		undoSuite,
-		nil] objectEnumerator]];
-	
-	
-	//SenTestRun* run = [bxSuite run];
-	SenTestRun* run = [undoSuite run];
-    //SenTestRun* run = [(SenTestSuite *) [SenTestSuite testSuiteForTestCaseClass: [ForeignKeyTests class]] run];
-	STAssertTrue (0 == [run failureCount], @"Expected tests to succeed.");
+	for (Class testCaseClass in testClasses)
+	{
+		SenTestSuite* suite = [SenTestSuite testSuiteForTestCaseClass: testCaseClass];
+		SenTestRun* run = [suite run];
+		if (0 < [run failureCount])
+			abort ();
+	}
+	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 5.0]];
 }
 @end
 

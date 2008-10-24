@@ -48,9 +48,7 @@
 
 
 @interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
 @end
-
 
 
 @implementation PGTSConnection
@@ -88,7 +86,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	if (! tooLate)
 	{
 		tooLate = YES;
-		
+				
 		{
             NSMutableArray* keys = [[NSMutableArray alloc] init];
 			CFRetain (keys);
@@ -172,7 +170,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	[self setConnector: connector];
 	[connector release];
 	
-	[connector setConnection: mConnection];
+	[connector setConnection: mConnection]; //For resetting.
 	[connector setDelegate: self];
 	[connector setTraceFile: [mDelegate PGTSConnectionTraceFile: self]];
 	[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
@@ -203,11 +201,14 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 {
     BXLogInfo (@"Disconnecting.");
     [mConnector cancel];
+	[self setConnector: nil];
+	
+	[self freeCFTypes];
     if (mConnection)
-    {
-        PQfinish (mConnection);
+    {        
+		PQfinish (mConnection);
         mConnection = NULL;
-    }
+	}
 }
 
 - (PGconn *) pgConnection
@@ -219,7 +220,8 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 {
 	if (mConnector != anObject)
 	{
-		[mConnector autorelease];
+		[mConnector cancel];
+		[mConnector release];
 		mConnector = [anObject retain];
 	}
 }
@@ -361,7 +363,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 
 - (NSError *) connectionError
 {
-	return [mConnector error];
+	return [mConnector connectionError];
 }
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate
@@ -504,53 +506,52 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 
 
 @implementation PGTSConnection (PGTSConnectorDelegate)
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded
+- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection
 {
 	mConnection = connection;
-	if (succeeded)
-	{
-		//Rather than call PQsendquery etc. multiple times, monitor the socket state.
-		PQsetnonblocking (connection, 0); 
-		//Use UTF-8.
-        PQsetClientEncoding (connection, "UNICODE"); 
-		[self execQuery: "SET standard_conforming_strings TO true"];
-		[self execQuery: "SET datestyle TO 'ISO, YMD'"];
-		PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
-        //FIXME: set other things as well?
-		
-		//Create a runloop source to receive data asynchronously.
-		CFSocketContext context = {0, self, NULL, NULL, NULL};
-		CFSocketCallBackType callbacks = (CFSocketCallBackType)(kCFSocketReadCallBack | kCFSocketWriteCallBack);
-		mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
-        
-		CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
-		CFSocketSetSocketFlags (mSocket, flags);
-		mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
-		
-		BXAssertLog (mSocket, @"Expected source to have been created.");
-		BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
-		BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
-		BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
-		
-        CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
-        CFStringRef mode = kCFRunLoopCommonModes;
-        CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
-        CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
-        CFRunLoopAddSource (runloop, mSocketSource, mode);
-		
-		[self beginTrackingNetworkStatusIn: runloop mode: mode];
-		        
-        if (0 < [mQueue count])
-            [self sendNextQuery];
-        [mDelegate PGTSConnectionEstablished: self];
-		[self setConnector: nil];
-	}
-	else
-	{
-		[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
-        [mDelegate PGTSConnectionFailed: self];
-		//Retain the connector for error handling.
-	}
+	
+	//Rather than call PQsendquery etc. multiple times, monitor the socket state.
+	PQsetnonblocking (connection, 0); 
+	//Use UTF-8.
+	PQsetClientEncoding (connection, "UNICODE"); 
+	[self execQuery: "SET standard_conforming_strings TO true"];
+	[self execQuery: "SET datestyle TO 'ISO, YMD'"];
+	PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
+	//FIXME: set other things as well?
+	
+	//Create a runloop source to receive data asynchronously.
+	CFSocketContext context = {0, self, NULL, NULL, NULL};
+	CFSocketCallBackType callbacks = (CFSocketCallBackType)(kCFSocketReadCallBack | kCFSocketWriteCallBack);
+	mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
+	
+	CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
+	CFSocketSetSocketFlags (mSocket, flags);
+	mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
+	
+	BXAssertLog (mSocket, @"Expected source to have been created.");
+	BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
+	BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
+	BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
+	
+	CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
+	CFStringRef mode = kCFRunLoopCommonModes;
+	CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
+	CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
+	CFRunLoopAddSource (runloop, mSocketSource, mode);
+	
+	[self beginTrackingNetworkStatusIn: runloop mode: mode];
+	
+	if (0 < [mQueue count])
+		[self sendNextQuery];
+	[mDelegate PGTSConnectionEstablished: self];
+	[self setConnector: nil];
+}
+
+- (void) connectorFailed: (PGTSConnector*) connector
+{
+	[[PGTSConnectionMonitor sharedInstance] unmonitorConnection: self];
+	[mDelegate PGTSConnectionFailed: self];
+	//Retain the connector for error handling.
 }
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate

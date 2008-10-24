@@ -32,6 +32,7 @@
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXPGInterface.h>
 #import <BaseTen/BXPGQueryBuilder.h>
+#import <BaseTen/BXPredicateVisitor.h>
 
 
 @implementation PredicateTests
@@ -60,7 +61,7 @@
 - (void) testAddition
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"1 + 2 == 3"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 = ($2 + $3)");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects: [NSNumber numberWithInt: 3], [NSNumber numberWithInt: 1], [NSNumber numberWithInt: 2], nil];
@@ -70,7 +71,7 @@
 - (void) testSubtraction
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"3 - 2 == 1"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 = ($2 - $3)");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects: [NSNumber numberWithInt: 1], [NSNumber numberWithInt: 3], [NSNumber numberWithInt: 2], nil];
@@ -80,7 +81,7 @@
 - (void) testBegins
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"'foobar' BEGINSWITH 'foo'"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 ~~ (regexp_replace ($2, '([%_\\\\])', '\\\\\\1', 'g') || '%')");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects: @"foobar", @"foo", nil];
@@ -90,7 +91,7 @@
 - (void) testEndsCase
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"'foobar' ENDSWITH[c] 'b%a_r'"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 ~~* ('%' || regexp_replace ($2, '([%_\\\\])', '\\\\\\1', 'g'))");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects: @"foobar", @"b%a_r", nil];
@@ -100,7 +101,7 @@
 - (void) testBetween
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"2 BETWEEN {1, 3}"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"ARRAY [$1,$2] OPERATOR (\"baseten\".<<>>) $3");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects:
@@ -114,7 +115,7 @@
 - (void) testGt
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"1 < 2"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 > $2");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects:
@@ -127,7 +128,7 @@
 - (void) testContains
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"{1, 2, 3} CONTAINS 2"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 = ANY (ARRAY [$2,$3,$4])");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects:
@@ -142,7 +143,7 @@
 - (void) testIn
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"2 IN {1, 2, 3}"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 = ANY (ARRAY [$2,$3,$4])");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects:
@@ -157,7 +158,7 @@
 - (void) testIn2
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"'bb' IN 'aabbccdd'"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"(0 != position ($1 in $2))");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects: @"bb", @"aabbccdd", nil];
@@ -167,7 +168,7 @@
 - (void) testIn3
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"'bb' IN[c] 'aabbccdd'"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 ~~* ('%' || regexp_replace ($2, '([%_\\\\])', '\\\\\\1', 'g') || '%')");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects: @"aabbccdd", @"bb", nil];
@@ -177,7 +178,7 @@
 - (void) testAndOr
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"1 < 2 AND (2 < 3 OR 4 > 5)"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"($1 > $2 AND ($3 > $4 OR $5 < $6))");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects:

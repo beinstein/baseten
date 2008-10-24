@@ -33,7 +33,8 @@
 
 
 @protocol PGTSConnectorDelegate <NSObject>
-- (void) connector: (PGTSConnector*) connector gotConnection: (PGconn *) connection succeeded: (BOOL) succeeded;
+- (void) connector: (PGTSConnector *) connector gotConnection: (PGconn *) connection;
+- (void) connectorFailed: (PGTSConnector *) connector;
 @end
 
 
@@ -41,12 +42,12 @@
 {
 	id <PGTSConnectorDelegate> mDelegate; //Weak
 	PostgresPollingStatusType (* mPollFunction)(PGconn *);
-	PGconn* mConnection; //Weak
+	PGconn* mConnection;
+	NSError* mConnectionError;
 	FILE* mTraceFile;
 	BOOL mSSLSetUp;
 	BOOL mNegotiationStarted;
 }
-- (NSError *) error;
 - (BOOL) connect: (const char *) connectionString;
 - (void) cancel;
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
@@ -54,6 +55,9 @@
 
 - (BOOL) start: (const char *) connectionString;
 - (void) setTraceFile: (FILE *) stream;
+
+- (NSError *) connectionError;
+- (void) setConnectionError: (NSError *) anError;
 @end
 
 
@@ -62,10 +66,8 @@
 	CFRunLoopRef mRunLoop;
 	CFSocketRef mSocket;
 	CFRunLoopSourceRef mSocketSource;
-	BOOL mPassedConnection;
 }
 - (void) socketReady;
-- (void) finishedConnecting: (BOOL) succeeded;
 @end
 
 

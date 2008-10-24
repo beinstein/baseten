@@ -193,15 +193,24 @@ SSLMode (enum BXSSLMode mode)
 	return ([mConnection SSLStruct] ? YES : NO);
 }
 
-- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
-		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
+- (void) markLocked: (BXEntityDescription *) entity 
+	  relationAlias: (NSString *) alias
+		 fromClause: (NSString *) fromClause
+		whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters
+		 willDelete: (BOOL) willDelete
 {
 	[super doesNotRecognizeSelector: _cmd];
 }
 
-- (void) markLocked: (BXEntityDescription *) entity whereClause: (NSString *) whereClause 
-		 parameters: (NSArray *) parameters willDelete: (BOOL) willDelete
-		 connection: (PGTSConnection *) connection notifyConnection: (PGTSConnection *) notifyConnection
+- (void) markLocked: (BXEntityDescription *) entity 
+	  relationAlias: (NSString *) alias
+		 fromClause: (NSString *) fromClause
+		whereClause: (NSString *) whereClause 
+		 parameters: (NSArray *) parameters
+		 willDelete: (BOOL) willDelete
+		 connection: (PGTSConnection *) connection 
+   notifyConnection: (PGTSConnection *) notifyConnection
 {
 	ExpectV (entity);
 	ExpectV (whereClause);
@@ -218,22 +227,19 @@ SSLMode (enum BXSSLMode mode)
 		//Table
 		NSError* localError = nil;
 		PGTSTableDescription* table = [mInterface tableForEntity: entity error: &localError];
-		BXAssertLog (table, @"Expected to get a table description. Error: %@", localError);
-		if (table)
-		{
-			//Get and sort the primary key fields.
-			NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
-			BXAssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
-			
-			NSMutableArray* quoted = [NSMutableArray arrayWithCapacity: [pkeyFields count]];
-			[[pkeyFields PGTSVisit: mInterface] qualifiedNameFor: nil into: quoted entity: entity connection: notifyConnection];
-			NSString* quotedNames = [quoted componentsJoinedByString: @", "];
-			NSString* entityName = [entity BXPGQualifiedName: notifyConnection];
-			
-			//Execute the query.
-			NSString* query = [NSString stringWithFormat: format, funcname, 0, quotedNames, entityName, whereClause];
-			[notifyConnection sendQuery: query delegate: nil callback: NULL parameterArray: parameters]; 			
-		}
+		BXAssertVoidReturn (table, @"Expected to get a table description. Error: %@", localError);
+
+		//Get and sort the primary key fields.
+		NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
+		BXAssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
+		NSArray* pkeyNames = (id) [[pkeyFields PGTSCollect] name];
+		NSArray* attrs = [[entity attributesByName] objectsForKeys: pkeyNames notFoundMarker: [NSNull null]];
+		ExpectV (! [attrs containsObject: [NSNull null]]);
+		NSString* fieldList = BXPGReturnList (attrs, alias, YES);
+		
+		//Execute the query.
+		NSString* query = [NSString stringWithFormat: format, funcname, 0, fieldList, fromClause, whereClause];
+		[notifyConnection sendQuery: query delegate: nil callback: NULL parameterArray: parameters]; 			
 	}
 }
 

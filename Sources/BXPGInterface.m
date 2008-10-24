@@ -65,6 +65,8 @@ static NSString* kBXPGLockerKey = @"BXPGLockerKey";
 static NSString* kBXPGWhereClauseKey = @"BXPGWhereClauseKey";
 static NSString* kBXPGParametersKey = @"BXPGParametersKey";
 static NSString* kBXPGObjectKey = @"BXPGObjectKey";
+static NSString* kBXPGPrimaryRelationAliasKey = @"kBXPGPrimaryRelationAliasKey";
+static NSString* kBXPGFromClauseKey = @"kBXPGFromClauseKey";
 
 
 static void
@@ -98,21 +100,15 @@ IsPkeyAttr (BXAttributeDescription* attr)
 }
 
 
-static NSString*
-ReturnedFields (BXPGQueryBuilder* queryBuilder, NSArray* attrs, BOOL prependAlias)
+NSString*
+BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prependAlias)
 {
-	BXPGFromItem* fromItem = [queryBuilder primaryRelation];
-	NSString* alias = [fromItem alias];
-	BXEntityDescription* entity = [fromItem entity];
-	
 	NSMutableArray* qnames = [NSMutableArray arrayWithCapacity: [attrs count]];
 	TSEnumerate (currentAttribute, e, [attrs objectEnumerator])
 	{
-		Expect ([[currentAttribute entity] isEqual: entity]);
-		
 		NSString* name = [currentAttribute name];
 		NSString* qname = nil;
-
+		
 		if (prependAlias)
 			qname = [NSString stringWithFormat: @"%@.\"%@\"", alias, name];
 		else
@@ -120,7 +116,22 @@ ReturnedFields (BXPGQueryBuilder* queryBuilder, NSArray* attrs, BOOL prependAlia
 		
 		[qnames addObject: qname];
 	}
-	return [qnames componentsJoinedByString: @", "];	
+	return [qnames componentsJoinedByString: @", "];		
+}
+
+
+static NSString*
+ReturnedFields (BXPGQueryBuilder* queryBuilder, NSArray* attrs, BOOL prependAlias)
+{
+	BXPGFromItem* fromItem = [queryBuilder primaryRelation];
+	NSString* alias = [fromItem alias];
+	BXEntityDescription* entity = [fromItem entity];
+	
+	TSEnumerate (currentAttribute, e, [attrs objectEnumerator])
+		Expect ([[currentAttribute entity] isEqual: entity]);
+	
+	NSString* retval = BXPGReturnList (attrs, alias, prependAlias);
+	return retval;
 }
 
 
@@ -337,6 +348,32 @@ SetClause (BXPGQueryBuilder* queryBuilder, NSDictionary* valueDict)
 		[fields addObject: qname];
 	}
     return [fields componentsJoinedByString: @", "];
+}
+
+
+static void
+MarkLocked (BXPGTransactionHandler* transactionHandler, 
+			BXEntityDescription* entity, 
+			BXPGQueryBuilder* queryBuilder, 
+			NSString* whereClause,
+			NSArray* parameters,
+			BOOL willDelete)
+{
+	BXPGFromItem* fromItem = [queryBuilder primaryRelation];
+	NSString* alias = [fromItem alias];
+	NSString* fromClause = [queryBuilder fromClauseForSelect];
+	
+	ExpectCV (entity);
+	ExpectCV (alias);
+	ExpectCV (fromClause);
+	ExpectCV (whereClause);
+
+	[transactionHandler markLocked: entity
+					 relationAlias: alias 
+						fromClause: fromClause
+					   whereClause: whereClause
+						parameters: parameters 
+						willDelete: willDelete];
 }
 
 
@@ -619,14 +656,16 @@ error:
 	[mQueryBuilder reset];
 	[mQueryBuilder setQueryType: kBXPGQueryTypeUpdate];
 	[mQueryBuilder addPrimaryRelationForEntity: entity];
+	
 	NSString* whereClause = WhereClauseUsingEntity (mQueryBuilder, predicate, entity, connection).p_where_clause;
 	if (! whereClause)
 	{
 		*error = PredicateNotAllowedError (mContext, predicate);
 		goto error;
 	}
-	NSString* setClause = SetClause (mQueryBuilder, valueDict);
+	NSArray* whereClauseParameters = [mQueryBuilder parameters];
 	
+	NSString* setClause = SetClause (mQueryBuilder, valueDict);
 	NSString* updateQuery = UpdateQuery (mQueryBuilder, setClause, whereClause);
 	NSArray* parameters = [mQueryBuilder parameters];
 	
@@ -639,7 +678,7 @@ error:
 	}
 	else
 	{
-		[mTransactionHandler markLocked: entity whereClause: whereClause parameters: parameters willDelete: NO];
+		MarkLocked (mTransactionHandler, entity, mQueryBuilder, whereClause, whereClauseParameters, NO);
 		[mTransactionHandler checkSuperEntities: entity];
 		NSArray* objectIDs = ObjectIDs (entity, res);
 
@@ -744,7 +783,7 @@ error:
 	{
 		retval = ObjectIDs (entity, res);
 		[mTransactionHandler checkSuperEntities: entity];
-		[mTransactionHandler markLocked: entity whereClause: whereClause parameters: parameters willDelete: YES];
+		MarkLocked (mTransactionHandler, entity, mQueryBuilder, whereClause, parameters, YES);
 	}
 	else
 	{
@@ -1060,21 +1099,32 @@ bail:
 		BXDatabaseObject* object = [userInfo objectForKey: kBXPGObjectKey];		
 		BXDatabaseObjectID* objectID = [object objectID];
 		BXEntityDescription* entity = [objectID entity];
-
 		PGTSConnection* connection = [mTransactionHandler connection];
-		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObjectsAndKeys: 
-									connection, kPGTSConnectionKey,
-									entity, kBXEntityDescriptionKey,
-									nil];
-		NSString* whereClause = @""; //FIXME: make this work. [[objectID predicate] PGTSWhereClauseWithContext: ctx];
-		NSString* fromClause = [entity BXPGQualifiedName: connection];
+		NSPredicate* predicate = [objectID predicate];
+		
+		[mQueryBuilder reset];
+		[mQueryBuilder setQueryType: kBXPGQueryTypeSelect];
+		[mQueryBuilder addPrimaryRelationForEntity: entity];
+		
+		NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: entity connection: connection].p_where_clause;
+		NSString* fromClause = [mQueryBuilder fromClause];
 		NSString* queryFormat = @"SELECT null FROM ONLY %@ WHERE %@ FOR UPDATE NOWAIT";
 		NSString* queryString = [NSString stringWithFormat: queryFormat, fromClause, whereClause];
-		NSArray* parameters = [ctx objectForKey: kPGTSParametersKey];
+		NSString* alias = [[mQueryBuilder primaryRelation] alias];
+		NSArray* parameters = [mQueryBuilder parameters];
+		
+		ExpectV (sender);
+		ExpectV (object);
+		ExpectV (alias);
+		ExpectV (fromClause);
+		ExpectV (whereClause);
+		ExpectV (parameters);
 
 		NSDictionary* newUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									 sender, kBXPGLockerKey,
 									 object, kBXPGObjectKey,
+									 alias, kBXPGPrimaryRelationAliasKey,
+									 fromClause, kBXPGFromClauseKey,
 									 whereClause, kBXPGWhereClauseKey,
 									 parameters, kBXPGParametersKey,
 									 nil];
@@ -1099,10 +1149,19 @@ bail:
 	if ([res querySucceeded])
 	{
 		[mLockedObjects addObject: object];
+		NSString* alias = [userInfo objectForKey: kBXPGPrimaryRelationAliasKey];
+		NSString* fromClause = [userInfo objectForKey: kBXPGFromClauseKey];
 		NSString* whereClause = [userInfo objectForKey: kBXPGWhereClauseKey];
 		NSArray* parameters = [userInfo objectForKey: kBXPGParametersKey];
 		[sender BXLockAcquired: YES object: object error: nil];
-		[mTransactionHandler markLocked: [object entity] whereClause: whereClause parameters: parameters willDelete: NO];
+
+		
+		[mTransactionHandler markLocked: [object entity]
+						  relationAlias: alias
+							 fromClause: fromClause
+							whereClause: whereClause 
+							 parameters: parameters
+							 willDelete: NO];
 	}
 	else
 	{
@@ -1685,15 +1744,5 @@ bail:
 		[desc setExcluded: YES];
 	
 	[attrs setObject: desc forKey: name];
-}
-
-
-- (void) qualifiedNameFor: (PGTSFieldDescription *) field into: (NSMutableArray *) array 
-				   entity: (BXEntityDescription *) entity connection: (PGTSConnection *) connection
-{
-	NSString* name = [field name];
-	BXAttributeDescription* attr = [[entity attributesByName] objectForKey: name];
-	NSString* qname = [attr BXPGQualifiedName: connection];
-	[array addObject: qname];
 }
 @end

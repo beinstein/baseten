@@ -112,6 +112,11 @@
 	return retval;
 }
 
+- (NSString *) fromClauseForSelect
+{
+	return [mRelationMapper fromClauseForSelect];
+}
+
 - (NSString *) target
 {
 	return [mRelationMapper target];

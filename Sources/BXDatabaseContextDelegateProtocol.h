@@ -158,7 +158,6 @@
  * Network status change.
  * Changes in network status are received from System Configuration framework.
  * \note The default implementation does nothing but this might change in the future.
- * \note If connection is lost, the underlying database connection will begin to return nil values.
  */
 - (void) databaseContext: (BXDatabaseContext *) context
 	networkStatusChanged: (SCNetworkConnectionFlags) newFlags;

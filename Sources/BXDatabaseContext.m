@@ -1530,6 +1530,7 @@ ModTypeToObject (enum BXModificationType value)
 			
 			if (certificateVerifyFailed)
 			{
+				[mDatabaseInterface disconnect];
 				if (async)
 					[self connectAsync];
 				else if ([self connectSync: error])

@@ -42,7 +42,8 @@
 @class PGTSQuery;
 
 
-extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
+BX_EXPORT NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
+BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prependAlias);
 
 
 @interface BXPGInterface : NSObject <BXInterface> 
@@ -104,6 +105,4 @@ extern NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
 @interface BXPGInterface (Visitor) <PGTSQueryVisitor>
 - (void) addAttributeFor: (PGTSFieldDescription *) field into: (NSMutableDictionary *) attrs 
 				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey;
-- (void) qualifiedNameFor: (PGTSFieldDescription *) field into: (NSMutableArray *) array 
-				   entity: (BXEntityDescription *) entity connection: (PGTSConnection *) connection;
 @end
