@@ -135,8 +135,10 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 {
 	if (status)
 	{
-		[mDelegate connector: self gotConnection: mConnection];
+		//Resign ownership. mConnection needs to be set to NULL before calling delegate method.
+		PGconn* connection = mConnection;
 		mConnection = NULL;
+		[mDelegate connector: self gotConnection: connection];
 	}
 	else
 	{

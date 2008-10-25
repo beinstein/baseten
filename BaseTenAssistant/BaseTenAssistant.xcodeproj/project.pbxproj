@@ -393,8 +393,8 @@
 			isa = PBXGroup;
 			children = (
 				5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */,
-				5388DCDD0E23AE22006CDBD8 /* SQLParser.o */,
 				531282030E51EA9100207E91 /* libBaseTen.a */,
+				5388DCDD0E23AE22006CDBD8 /* SQLParser.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -735,7 +735,7 @@
 				);
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = required;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G4;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;

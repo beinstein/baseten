@@ -467,17 +467,17 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 - (void) beginTrackingNetworkStatusIn: (CFRunLoopRef) runloop mode: (CFStringRef) mode
 {
 	//Create the reachability object with socket addresses.
-	{
-		CFDataRef addressData = CFSocketCopyAddress (mSocket);
-		CFDataRef peerAddressData = CFSocketCopyPeerAddress (mSocket);
-		struct sockaddr* address = (struct sockaddr *) CFDataGetBytePtr (addressData);
-		struct sockaddr* peerAddress = (struct sockaddr *) CFDataGetBytePtr (peerAddressData);
-		mReachability = SCNetworkReachabilityCreateWithAddressPair (NULL, address, peerAddress);
-		CFRelease (addressData);
-		CFRelease (peerAddressData);
-	}
 	
+	CFDataRef addressData = CFSocketCopyAddress (mSocket);
+	CFDataRef peerAddressData = CFSocketCopyPeerAddress (mSocket);
+	struct sockaddr* address = (struct sockaddr *) CFDataGetBytePtr (addressData);
+	struct sockaddr* peerAddress = (struct sockaddr *) CFDataGetBytePtr (peerAddressData);
+	
+	//We don't need to monitor UNIX internal protocols and SC functions seem to return
+	//bad values for them anyway.
+	if (! (AF_LOCAL == address->sa_family && AF_LOCAL == peerAddress->sa_family))
 	{
+		mReachability = SCNetworkReachabilityCreateWithAddressPair (NULL, address, peerAddress);
 		SCNetworkReachabilityContext ctx = {0, self, NULL, NULL, NULL};
 		SCNetworkReachabilitySetCallback (mReachability, &NetworkStatusChanged, &ctx);
 		if (! SCNetworkReachabilityScheduleWithRunLoop (mReachability, runloop, mode))
@@ -491,13 +491,21 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 - (BOOL) canSend
 {
 	BOOL retval = NO;
-	SCNetworkConnectionFlags flags = 0;
-	if (SCNetworkReachabilityGetFlags (mReachability, &flags))
+	if (! mReachability)
 	{
-		if (kSCNetworkFlagsReachable & flags ||
-			kSCNetworkFlagsConnectionAutomatic & flags)
+		//If we don't have mReachability, it wasn't needed.
+		retval = YES;
+	}
+	else
+	{
+		SCNetworkConnectionFlags flags = 0;
+		if (SCNetworkReachabilityGetFlags (mReachability, &flags))
 		{
-			retval = YES;
+			if (kSCNetworkFlagsReachable & flags ||
+				kSCNetworkFlagsConnectionAutomatic & flags)
+			{
+				retval = YES;
+			}
 		}
 	}
 	return retval;
@@ -621,11 +629,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 		PGTSQueryDescription* desc = nil;
 		while (0 < [mQueue count] && (desc = [mQueue objectAtIndex: 0])) 
 		{
-			//If we don't get a return value, the query couldn't be sent.
 			res = [desc finishForConnection: self];
-			if (! res)
-				goto end;
-			
 			[mQueue removeObjectAtIndex: 0];		
 		}
 	}
@@ -636,7 +640,6 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 
 	retval = [desc finishForConnection: self];
 	
-end:
     return retval;
 }
 

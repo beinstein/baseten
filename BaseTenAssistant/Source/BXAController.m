@@ -319,7 +319,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
 	BOOL retval = [db checkBaseTenSchema: &localError];
 	[self didChangeValueForKey: @"hasBaseTenSchema"];
-	
+
 	if (! retval)
 	{
 		if (error)

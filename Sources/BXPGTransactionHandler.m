@@ -378,9 +378,9 @@ SSLMode (enum BXSSLMode mode)
 error:
 	{
 		if (mAsync)
-			*mSyncErrorPtr = localError;
-		else
 			[mInterface connectionFailed: localError];
+		else
+			*mSyncErrorPtr = localError;
 	}
 }
 
