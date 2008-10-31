@@ -84,7 +84,7 @@ ImportError (NSString* message, NSString* reason)
 {
 	Expect (schemaName);
 	Expect (errorMessages);
-	
+		
 	NSMutableArray* retval = nil;
 	if (! [self inverseRelationship] && [self isToMany])
 	{

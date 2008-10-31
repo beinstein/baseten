@@ -42,6 +42,21 @@
 #import "PGTSDatabaseDescription.h"
 
 
+static Boolean
+EqualRelationship (const void *value1, const void *value2)
+{
+	Boolean retval = FALSE;
+	NSRelationshipDescription* r1 = (id) value1;
+	NSRelationshipDescription* r2 = (id) value2;
+	if ([[r1 name] isEqualToString: [r2 name]])
+	{
+		if ([[r1 entity] isEqual: [r2 entity]])
+			retval = TRUE;
+	}
+	return retval;
+}
+
+
 @implementation BXPGEntityConverter
 - (NSMutableArray *) add: (NSString *) aName fromUnsatisfied: (NSMutableDictionary *) unsatisfied
 {
@@ -180,7 +195,11 @@ ImportError (NSString* message, NSString* reason)
 		}
 	}
 	
-	NSMutableSet* handledRelationships = [NSMutableSet set];
+	CFSetCallBacks callbacks = kCFTypeSetCallBacks;
+	callbacks.equal = &EqualRelationship;
+	//No need to use a scanned memory allocator, because the set contents are referenced elsewhere.
+	NSMutableSet* handledRelationships = [(id) CFSetCreateMutable (NULL, 0, &callbacks) autorelease];
+	
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
 		TSEnumerate (currentRel, e, [[currentEntity relationshipsByName] objectEnumerator])
