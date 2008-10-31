@@ -686,7 +686,7 @@ RelationshipCallback (NSString* srcKey, NSString* dstKey, void* contextPointer)
 	struct RelationshipContext* ctx = (struct RelationshipContext *) contextPointer;
 	id value = [ctx->rc_object primitiveValueForKey: dstKey];
 	NSString* parameterName = [ctx->rc_mapper addParameter: value];
-	//FIXME: check the operator, if we'd like to support others than equality. (Do we?)
+	//FIXME: check the operator, if we wanted to support others than equality. (Would we?)
 	NSString* component = [NSString stringWithFormat: @"%@.\"%@\" = %@", ctx->rc_fi_alias, dstKey, parameterName];
 	[ctx->rc_components addObject: component];
 }

@@ -44,4 +44,5 @@
 - (BXEntityDescription *) helperEntity;
 - (void) setHelperEntity: (BXEntityDescription *) anEntity;
 - (NSPredicate *) filterPredicateFor: (BXDatabaseObject *) object;
+- (void) iterateSrcForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx;
 @end

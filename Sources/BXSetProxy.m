@@ -64,7 +64,13 @@
     NSArray* objects = [mContext faultsWithIDs: ids];
 	BXLogDebug (@"Adding objects: %@", objects);
     if (nil != mFilterPredicate)
-        objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
+	{
+		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
+																	  forKey: kBXOwnerObjectVariableName];
+        objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate 
+												  others: nil
+								   substitutionVariables: ctx];
+	}
     
 	if (0 < [objects count])
 	{

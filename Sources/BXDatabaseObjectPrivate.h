@@ -29,14 +29,6 @@
 
 #import <BaseTen/BXDatabaseObject.h>
 
-enum BXDatabaseObjectKeyType
-{
-	kBXDatabaseObjectNoKeyType = 0,
-	kBXDatabaseObjectUnknownKey,
-	kBXDatabaseObjectPrimaryKey,
-	kBXDatabaseObjectKnownKey,
-	kBXDatabaseObjectForeignKey
-};
 
 @interface BXDatabaseObject (PrivateMethods)
 - (BOOL) isCreatedInCurrentTransaction;

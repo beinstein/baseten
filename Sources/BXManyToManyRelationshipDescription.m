@@ -35,6 +35,7 @@
 #import "BXSetHelperTableRelationProxy.h"
 #import "BXForeignKey.h"
 #import "BXLogger.h"
+#import "BXDatabaseObjectPrivate.h"
 
 
 @implementation BXManyToManyRelationshipDescription
@@ -112,18 +113,15 @@ struct PredicateContext
 	NSMutableArray* pc_parts;
 };
 
+
 static void
 AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 {
 	struct PredicateContext* ctx = (struct PredicateContext *) context;
-	id value = [ctx->pc_object primitiveValueForKey: entityKey];
-	NSExpression* lhs = [NSExpression expressionForKeyPath: helperKey];
-	NSExpression* rhs = [NSExpression expressionForConstantValue: value];
-	NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
-																rightExpression: rhs 
-																	   modifier: NSDirectPredicateModifier 
-																		   type: NSEqualToPredicateOperatorType 
-																		options: 0];
+	ExpectCV (kBXDatabaseObjectUnknownKey < [ctx->pc_object keyType: entityKey]);
+
+	NSString* predicateFormat = [NSString stringWithFormat: @"$%@.%%K == %%K", kBXOwnerObjectVariableName];
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: predicateFormat, entityKey, helperKey];
 	[ctx->pc_parts addObject: predicate];
 }
 
@@ -159,7 +157,7 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	BXForeignKey* fkey = [self srcForeignKey];
 	NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [[fkey fieldNames] count]];
 	struct PredicateContext ctx = {object, fkeyParts};
-	[self iterateForeignKey: &AddToCompoundPredicate context: &ctx];
+	[self iterateSrcForeignKey: &AddToCompoundPredicate context: &ctx];
 	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: ctx.pc_parts];
 	return predicate;
 }
@@ -226,6 +224,12 @@ bail:
 }
 
 - (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
+{
+	TSEnumerate (currentPair, e, [[[self dstForeignKey] fieldNames] objectEnumerator])
+		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);
+}
+
+- (void) iterateSrcForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
 {
 	TSEnumerate (currentPair, e, [[[self srcForeignKey] fieldNames] objectEnumerator])
 		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);

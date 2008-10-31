@@ -68,6 +68,7 @@ BX_EXPORT NSString* const kBXAttributeKey;
 BX_EXPORT NSString* const kBXUnknownPredicatesKey;
 BX_EXPORT NSString* const kBXRelationshipsKey;
 BX_EXPORT NSString* const kBXPredicateKey;
+BX_EXPORT NSString* const kBXOwnerObjectVariableName;
 
 BX_EXPORT NSString* const kBXErrorDomain;
 BX_EXPORT NSString* const kBXErrorMessageKey;
@@ -138,4 +139,13 @@ enum BXEntityCapability
 	kBXEntityCapabilityNone				= 0,
 	kBXEntityCapabilityAutomaticUpdate	= (1 << 0),
 	kBXEntityCapabilityRelationships	= (1 << 1)
+};
+
+enum BXDatabaseObjectKeyType
+{
+	kBXDatabaseObjectNoKeyType = 0,
+	kBXDatabaseObjectUnknownKey,
+	kBXDatabaseObjectPrimaryKey,
+	kBXDatabaseObjectKnownKey,
+	kBXDatabaseObjectForeignKey
 };

@@ -71,7 +71,11 @@
 	
 	NSArray* faults = [mContext faultsWithIDs: ids];
 	NSMutableArray* otherObjects = [NSMutableArray arrayWithCapacity: [faults count]];
-	NSArray* filteredObjects = [faults BXFilteredArrayUsingPredicate: mFilterPredicate others: otherObjects];
+	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
+																  forKey: kBXOwnerObjectVariableName];
+	NSArray* filteredObjects = [faults BXFilteredArrayUsingPredicate: mFilterPredicate 
+															  others: otherObjects
+											   substitutionVariables: ctx];
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [filteredObjects count]];
 	
 	id filtered [2] = {filteredObjects, otherObjects};

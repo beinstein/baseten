@@ -30,12 +30,6 @@
 #import "BXDatabaseAdditions.h"
 
 
-@interface NSPredicate (BXAdditions)
-- (BOOL) evaluateWithObject: (id) anObject variableBindings: (id) bindings;
-@end
-
-
-
 @implementation BXSubqueryExpression
 - (id) initWithSubquery: (NSExpression *) expression 
   usingIteratorVariable: (NSString *) variable 
@@ -86,34 +80,17 @@
 	return mPredicate;
 }
 
-static BOOL 
-EvaluateSubst (NSPredicate* predicate, id object, NSMutableDictionary* ctx)
-{
-	return [predicate evaluateWithObject: object substitutionVariables: ctx];
-}
-
-static BOOL 
-EvaluateBind (NSPredicate* predicate, id object, NSMutableDictionary* ctx)
-{
-	return [predicate evaluateWithObject: object variableBindings: ctx];
-}
-
 - (id) expressionValueWithObject: (id) object context: (NSMutableDictionary *) ctx
 {
 	NSString* variableName = [self variable];
 	id oldValue = [ctx objectForKey: variableName];
 	id collection = [mCollection expressionValueWithObject: object context: ctx];
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [collection count]];
-
-	//10.5 and 10.4 have the same method but it's named differently.
-	BOOL (* evaluator)(NSPredicate*, id, NSMutableDictionary*) = &EvaluateBind;
-	if ([mPredicate respondsToSelector: @selector (evaluateWithObject:substitutionVariables:)])
-		evaluator = &EvaluateSubst;
-	
+		
 	TSEnumerate (currentObject, e, [collection objectEnumerator])
 	{
 		[ctx setObject: currentObject forKey: variableName];
-		if (evaluator (mPredicate, object, ctx))
+		if ([mPredicate BXEvaluateWithObject: currentObject substitutionVariables: ctx])
 			[retval addObject: currentObject];
 	}
 	

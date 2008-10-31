@@ -38,6 +38,11 @@
 #import "BXLogger.h"
 
 
+@interface NSPredicate (BXAdditions)
+- (BOOL) evaluateWithObject: (id) anObject variableBindings: (id) bindings;
+@end
+
+
 @implementation NSURL (BXDatabaseAdditions)
 
 - (unsigned int) BXHash
@@ -298,12 +303,17 @@ URLDecode (const char* bytes, size_t length, id sender)
     return rval;
 }
 
-- (BOOL) BXEvaluateWithObject: (id) anObject
+- (BOOL) BXEvaluateWithObject: (id) object substitutionVariables: (NSMutableDictionary *) ctx
 {
-    //True / false predicate
-    return [self evaluateWithObject: anObject];
+	//10.5 and 10.4 have the same method but it's named differently.
+	BOOL retval = NO;
+	if ([self respondsToSelector: @selector (evaluateWithObject:substitutionVariables:)])
+		retval = [self evaluateWithObject: object substitutionVariables: ctx];
+	else
+		retval = [self evaluateWithObject: object variableBindings: ctx];
+	
+	return retval;
 }
-
 @end
 
 
@@ -314,34 +324,6 @@ URLDecode (const char* bytes, size_t length, id sender)
     TSEnumerate (currentPredicate, e, [[self subpredicates] objectEnumerator])
         [set unionSet: [currentPredicate BXEntitySet]];
     return set;
-}
-
-- (BOOL) BXEvaluateWithObject: (id) anObject
-{
-    NSCompoundPredicateType type = [self compoundPredicateType];
-    BOOL rval = NO;
-    switch (type)
-    {
-        case NSNotPredicateType:
-        {
-            rval = ! ([[[self subpredicates] objectAtIndex: 0] BXEvaluateWithObject: anObject]);
-            break;
-        }
-        case NSAndPredicateType:
-        case NSOrPredicateType:
-        {
-            TSEnumerate (currentPredicate, e, [[self subpredicates] objectEnumerator])
-            {
-                rval = [currentPredicate BXEvaluateWithObject: anObject];
-                if ((!rval && NSAndPredicateType == type) || (rval && NSOrPredicateType == type))
-                    break;
-            }
-            break;
-        }
-        default:
-            break;
-    }
-    return rval;
 }
 @end
 
@@ -441,52 +423,6 @@ URLDecode (const char* bytes, size_t length, id sender)
 	
 	return rval;
 }
-
-- (BOOL) BXEvaluateWithObject: (id) anObject
-{
-    BOOL retval = NO;
-    id expressions [2] = {[self leftExpression], [self rightExpression]};
-    BOOL createNew = NO;
-    NSDictionary* values = nil;
-	
-	//FIXME: reconsider this in the future.
-    for (int i = 0; i < 2; i++)
-    {
-        if (NSConstantValueExpressionType == [expressions [i] expressionType])
-        {
-            id attribute = [expressions [i] constantValue];
-            if ([attribute isKindOfClass: [BXAttributeDescription class]])
-            {
-                createNew = YES;
-				
-				//Stupid optimizations for objectIDs and database objects.
-				//In case we have an object id or only need a fault, get the value dict.
-				if (nil == values)
-					values = [(BXDatabaseObject *) anObject allValues];
-				NSString* name = [attribute name];
-				id value = [values objectForKey: name];
-				if (nil == value)
-					value = [anObject primitiveValueForKey: name];
-					
-                expressions [i] = [NSExpression expressionForConstantValue: value];
-            }
-        }
-    }
-    
-    if (NO == createNew)
-        retval = [self evaluateWithObject: anObject];
-    else
-    {
-        //Custom selectors needn't be supported, since Postgres interface won't handle them anyway.
-        NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: expressions [0]
-                                                                    rightExpression: expressions [1]
-                                                                           modifier: [self comparisonPredicateModifier]
-                                                                               type: [self predicateOperatorType]
-                                                                            options: [self options]];
-        retval = [predicate evaluateWithObject: anObject];
-    }
-    return retval;
-}
 @end
 
 
@@ -505,12 +441,14 @@ URLDecode (const char* bytes, size_t length, id sender)
     return rval;
 }
 
-- (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate others: (NSMutableArray *) otherArray
+- (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
+											others: (NSMutableArray *) otherArray
+							 substitutionVariables: (NSMutableDictionary *) variables
 {
     NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [self count]];
     TSEnumerate (currentObject, e, [self objectEnumerator])
     {
-        if ([predicate BXEvaluateWithObject: currentObject])
+		if ([predicate BXEvaluateWithObject: currentObject substitutionVariables: [[variables mutableCopy] autorelease]])
             [retval addObject: currentObject];
         else
             [otherArray addObject: currentObject];

@@ -119,14 +119,15 @@
     if (nil == mFilterPredicate)
     {
         //If filter predicate is not set, then every object in the entity should be added.
-        //FIXME: this might need a reality check.
         *added = [[objects mutableCopy] autorelease];
     }
     else
     {
         //Otherwise, separate the objects using the filter predicate.
+		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
+																	  forKey: kBXOwnerObjectVariableName];
         *removed = [NSMutableArray arrayWithCapacity: [objects count]];
-        *added   = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: *removed];
+        *added   = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: *removed substitutionVariables: ctx];
     }    
 }
 
@@ -186,8 +187,14 @@
 {    
     NSArray* objects = [mContext faultsWithIDs: ids];
 	BXLogDebug (@"Adding objects: %@", objects);
+	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
+																  forKey: kBXOwnerObjectVariableName];
     if (nil != mFilterPredicate)
-        objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: nil];
+	{
+        objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate 
+												  others: nil
+								   substitutionVariables: ctx];
+	}
     
     //Post notifications since modifying a self-updating collection won't cause
     //value cache to be changed.
