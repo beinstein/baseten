@@ -65,8 +65,7 @@
 	BXLogDebug (@"Adding objects: %@", objects);
     if (nil != mFilterPredicate)
 	{
-		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
-																	  forKey: kBXOwnerObjectVariableName];
+		NSMutableDictionary* ctx = [self substitutionVariables];
         objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate 
 												  others: nil
 								   substitutionVariables: ctx];

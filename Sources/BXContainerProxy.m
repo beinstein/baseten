@@ -124,13 +124,22 @@
     else
     {
         //Otherwise, separate the objects using the filter predicate.
-		NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
-																	  forKey: kBXOwnerObjectVariableName];
+		NSMutableDictionary* ctx = [self substitutionVariables];
         *removed = [NSMutableArray arrayWithCapacity: [objects count]];
         *added   = [objects BXFilteredArrayUsingPredicate: mFilterPredicate others: *removed substitutionVariables: ctx];
     }    
 }
 
+- (NSMutableDictionary *) substitutionVariables
+{
+	NSMutableDictionary* retval = nil;
+	id owner = [self owner];
+	if (owner)
+		retval = [NSMutableDictionary dictionaryWithObject: owner forKey: kBXOwnerObjectVariableName];
+	else
+		retval = [NSMutableDictionary dictionary];
+	return retval;
+}
 @end
 
 
@@ -187,8 +196,7 @@
 {    
     NSArray* objects = [mContext faultsWithIDs: ids];
 	BXLogDebug (@"Adding objects: %@", objects);
-	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
-																  forKey: kBXOwnerObjectVariableName];
+	NSMutableDictionary* ctx = [self substitutionVariables];
     if (nil != mFilterPredicate)
 	{
         objects = [objects BXFilteredArrayUsingPredicate: mFilterPredicate 

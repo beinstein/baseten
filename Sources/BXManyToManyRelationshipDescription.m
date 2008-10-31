@@ -115,13 +115,29 @@ struct PredicateContext
 
 
 static void
-AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
+AddToFilterCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 {
 	struct PredicateContext* ctx = (struct PredicateContext *) context;
 	ExpectCV (kBXDatabaseObjectUnknownKey < [ctx->pc_object keyType: entityKey]);
-
+	
 	NSString* predicateFormat = [NSString stringWithFormat: @"$%@.%%K == %%K", kBXOwnerObjectVariableName];
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: predicateFormat, entityKey, helperKey];
+	[ctx->pc_parts addObject: predicate];
+}
+
+
+static void
+AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
+{
+	struct PredicateContext* ctx = (struct PredicateContext *) context;
+	id value = [ctx->pc_object primitiveValueForKey: entityKey];
+	NSExpression* lhs = [NSExpression expressionForKeyPath: helperKey];
+	NSExpression* rhs = [NSExpression expressionForConstantValue: value];
+	NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
+																rightExpression: rhs
+																	   modifier: NSDirectPredicateModifier
+																		   type: NSEqualToPredicateOperatorType
+																		options: 0];
 	[ctx->pc_parts addObject: predicate];
 }
 
@@ -139,7 +155,7 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 		TSEnumerate (currentObject, e, [objects objectEnumerator])
 		{
 			ctx.pc_object = currentObject;  
-			[self iterateForeignKey: &AddToCompoundPredicate context: &ctx];
+			[self iterateSrcForeignKey: &AddToCompoundPredicate context: &ctx];
 			NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: ctx.pc_parts];
 			[objectParts addObject: predicate];
 			[ctx.pc_parts removeAllObjects];
@@ -149,7 +165,10 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	return retval;
 }
 
-- (NSPredicate *) filterPredicateFor: (BXDatabaseObject *) object
+//When sending queries, a predicate that has fkey values is needed.
+//Set proxies, on the other hand, benefit from predicates that have a variable reference to the owner object.
+//This way changes in primary key values don't matter.
+- (NSPredicate *) predicateFor: (BXDatabaseObject *) object useWithContainerProxy: (BOOL) useWithContainerProxy
 {
 	Expect (object);
 	Expect ([[object entity] isEqual: [self entity]]);
@@ -157,9 +176,24 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	BXForeignKey* fkey = [self srcForeignKey];
 	NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [[fkey fieldNames] count]];
 	struct PredicateContext ctx = {object, fkeyParts};
-	[self iterateSrcForeignKey: &AddToCompoundPredicate context: &ctx];
+	
+	if (useWithContainerProxy)
+		[self iterateSrcForeignKey: &AddToFilterCompoundPredicate context: &ctx];
+	else
+		[self iterateSrcForeignKey: &AddToCompoundPredicate context: &ctx];
+		
 	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: ctx.pc_parts];
-	return predicate;
+	return predicate;	
+}
+
+- (NSPredicate *) objectPredicateFor: (BXDatabaseObject *) object
+{
+	return [self predicateFor: object useWithContainerProxy: NO];
+}
+
+- (NSPredicate *) filterPredicateFor: (BXDatabaseObject *) object
+{
+	return [self predicateFor: object useWithContainerProxy: YES];
 }
 
 - (BOOL) setTarget: (id) target
@@ -189,7 +223,7 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	if (0 < [removedObjects count])
 	{
 		NSPredicate* removedPredicate = [(id) [self inverseRelationship] predicateForAnyObject: removedObjects];
-		NSPredicate* objectPredicate = [self filterPredicateFor: databaseObject];
+		NSPredicate* objectPredicate = [self objectPredicateFor: databaseObject];
 		NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: 
 								  [NSArray arrayWithObjects: removedPredicate, objectPredicate, nil]];
 		

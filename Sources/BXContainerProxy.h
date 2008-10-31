@@ -49,6 +49,7 @@
 - (void) filterObjectsForUpdate: (NSArray *) objects 
                           added: (NSMutableArray **) added 
                         removed: (NSMutableArray **) removed;
+- (NSMutableDictionary *) substitutionVariables;
 @end
 
 

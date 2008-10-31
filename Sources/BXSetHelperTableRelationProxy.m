@@ -71,8 +71,7 @@
 	
 	NSArray* faults = [mContext faultsWithIDs: ids];
 	NSMutableArray* otherObjects = [NSMutableArray arrayWithCapacity: [faults count]];
-	NSMutableDictionary* ctx = [NSMutableDictionary dictionaryWithObject: [self owner] 
-																  forKey: kBXOwnerObjectVariableName];
+	NSMutableDictionary* ctx = [self substitutionVariables];
 	NSArray* filteredObjects = [faults BXFilteredArrayUsingPredicate: mFilterPredicate 
 															  others: otherObjects
 											   substitutionVariables: ctx];
