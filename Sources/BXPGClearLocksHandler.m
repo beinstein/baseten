@@ -68,7 +68,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 	@"   baseten.locktablename (baseten_lock_relid) AS lock_table_name "
 	@" FROM baseten.lock "
 	@" WHERE baseten_lock_cleared = true "
-	@"  AND baseten_lock_timestamp > $1 " 
+	@"  AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp " 
 	@"  AND baseten_lock_backend_pid != $2 "
 	@"  AND baseten_lock_relid = ANY ($3) "
 	@" GROUP BY baseten_lock_relid";
@@ -100,7 +100,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 			@"FROM %@ l NATURAL INNER JOIN %@ "
 			@"WHERE baseten_lock_cleared = true "
 			@" AND baseten_lock_backend_pid != $1 "
-			@" AND baseten_lock_timestamp > $2 ";
+			@" AND baseten_lock_timestamp > COALESCE ($2, '-infinity')::timestamp ";
 						
 			//Primary key field names.
 			NSArray* pkeyfnames = (id) [[[[[table primaryKey] fields] allObjects] PGTSCollect] BXPGEscapedName: mConnection];

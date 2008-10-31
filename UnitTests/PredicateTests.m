@@ -192,6 +192,16 @@
 	MKCAssertEqualObjects (parameters, expected);
 }
 
+- (void) testNull
+{
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"1 == %@", [NSNull null]];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
+	MKCAssertEqualObjects (whereClause, @"$1 IS NULL");
+	NSArray* parameters = [mQueryBuilder parameters];
+	NSArray* expected = [NSArray arrayWithObject: [NSNumber numberWithInt: 1]];
+	MKCAssertEqualObjects (parameters, expected);
+}
+
 //We need a validated entity for this test.
 #if 0
 - (void) testAdditionWithKeyPath

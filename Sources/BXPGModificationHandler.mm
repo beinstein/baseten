@@ -52,7 +52,7 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
     //pgts_modification_timestamp should be included in the query.	
 	BOOL isIdle = (PQTRANS_IDLE == [mConnection transactionStatus]);
 	
-    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, $2::timestamp, $3)", mTableName];
+    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, COALESCE ($2, '-infinity')::timestamp, $3)", mTableName];
 	PGTSResultSet* res = [mConnection executeQuery: query parameters: [NSNumber numberWithBool: isIdle], mLastCheck, [NSNumber numberWithInt: backendPID]];
 	
 	//Update the timestamp.

@@ -80,7 +80,7 @@ typedef std::tr1::unordered_map <Oid, LockStruct,
 		NSString* query = 
 		@"SELECT * FROM %@ "
 		@"WHERE baseten_lock_cleared = false "
-		@" AND baseten_lock_timestamp > $1::timestamp "
+		@" AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp "
 		@" AND baseten_lock_backend_pid != $2 "
 		@"ORDER BY baseten_lock_timestamp ASC";
 		query = [NSString stringWithFormat: query, mTableName];
