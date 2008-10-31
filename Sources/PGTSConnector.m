@@ -38,6 +38,9 @@
 #ifdef USE_SSL
 #import <openssl/ssl.h>
 
+
+//This is thread safe because it's called in +initialize for the first time.
+//Afterwards, the static variable is only read.
 static int
 SSLConnectionExIndex ()
 {
@@ -63,6 +66,16 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 
 
 @implementation PGTSConnector
++ (void) initialize
+{
+	static BOOL tooLate = NO;
+	if (! tooLate)
+	{
+		tooLate = YES;
+		SSLConnectionExIndex ();
+	}
+}
+
 - (id) init
 {
     if ((self = [super init]))
