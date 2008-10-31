@@ -1655,6 +1655,16 @@ bail:
 	}
 	return retval;
 }
+
+- (void) setLogsQueries: (BOOL) shouldLog
+{
+	[mTransactionHandler setLogsQueries: shouldLog];
+}
+
+- (BOOL) logsQueries
+{
+	return [mTransactionHandler logsQueries];
+}
 @end
 
 
@@ -1678,11 +1688,6 @@ bail:
 - (FILE *) traceFile
 {
 	return NULL;
-}
-
-- (BOOL) logsQueries
-{
-	return NO;
 }
 
 - (void) connection: (PGTSConnection *) connection sentQueryString: (const char *) queryString

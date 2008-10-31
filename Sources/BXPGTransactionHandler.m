@@ -124,6 +124,16 @@ SSLMode (enum BXSSLMode mode)
 
 
 @implementation BXPGTransactionHandler
+- (BOOL) logsQueries
+{
+	return [mConnection logsQueries];
+}
+
+- (void) setLogsQueries: (BOOL) shouldLog
+{
+	[mConnection setLogsQueries: shouldLog];
+}
+
 - (void) sendPlaceholderResultTo: (id) receiver callback: (SEL) callback 
 					   succeeded: (BOOL) didSucceed userInfo: (id) userInfo
 {

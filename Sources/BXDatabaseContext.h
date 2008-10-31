@@ -146,6 +146,9 @@
 
 - (void) setAllowReconnecting: (BOOL) shouldAllow;
 - (BOOL) isSSLInUse;
+
+- (BOOL) logsQueries;
+- (void) setLogsQueries: (BOOL) shouldLog;
 @end
 
 

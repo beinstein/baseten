@@ -69,6 +69,9 @@ struct BXTrustResult
 
 - (id) initWithContext: (BXDatabaseContext *) aContext;
 
+- (BOOL) logsQueries;
+- (void) setLogsQueries: (BOOL) shouldLog;
+
 /** 
  * \internal
  * \name Queries 

@@ -96,7 +96,6 @@ BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prepen
 - (void) connectionLost: (BXPGTransactionHandler *) handler error: (NSError *) error;
 
 - (FILE *) traceFile;
-- (BOOL) logsQueries;
 - (void) connection: (PGTSConnection *) connection sentQueryString: (const char *) queryString;
 - (void) connection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query;
 @end

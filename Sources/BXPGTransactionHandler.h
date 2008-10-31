@@ -107,6 +107,8 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 - (void) checkSuperEntities: (BXEntityDescription *) entity connection: (PGTSConnection *) connection;
 - (NSArray *) observedOids;
 
+- (BOOL) logsQueries;
+- (void) setLogsQueries: (BOOL) shouldLog;
 
 - (void) markLocked: (BXEntityDescription *) entity 
 	  relationAlias: (NSString *) alias

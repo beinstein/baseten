@@ -923,6 +923,16 @@ ModTypeToObject (enum BXModificationType value)
 {
 	return [mDatabaseInterface isSSLInUse];
 }
+
+- (BOOL) logsQueries
+{
+	return [mDatabaseInterface logsQueries];
+}
+
+- (void) setLogsQueries: (BOOL) shouldLog
+{
+	[mDatabaseInterface setLogsQueries: shouldLog];
+}
 @end
 
 
@@ -1056,7 +1066,6 @@ ModTypeToObject (enum BXModificationType value)
 	}
 	[self updatedObjectsInDatabase: oldIDs faultObjects: YES];
 }
-
 @end
 
 
@@ -2012,7 +2021,6 @@ ModTypeToObject (enum BXModificationType value)
 
 
 @implementation BXDatabaseContext (NSCoding)
-
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
     [encoder encodeObject: mDatabaseURI forKey: @"databaseURI"];
@@ -2030,7 +2038,6 @@ ModTypeToObject (enum BXModificationType value)
     }
     return self;
 }
-
 @end
 
 

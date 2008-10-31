@@ -38,6 +38,13 @@
 
 
 @implementation BXPGManualCommitTransactionHandler
+- (void) setLogsQueries: (BOOL) shouldLog
+{
+	[super setLogsQueries: shouldLog];
+	[mNotifyConnection setLogsQueries: shouldLog];
+}
+
+
 - (PGTSDatabaseDescription *) databaseDescription
 {
 	return [mNotifyConnection databaseDescription];
