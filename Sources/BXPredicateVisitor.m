@@ -343,6 +343,36 @@ AppendModifier (NSString* operatorString, NSComparisonPredicateModifier modifier
 	[self collectAll];
 }
 
+- (BOOL) checkNullity: (NSPredicateOperatorType) operator 
+				 lval: (BXPGExpressionValueType *) lval
+				 rval: (BXPGExpressionValueType *) rval
+{
+	BOOL retval = NO;
+	if ([rval value] == [NSNull null])
+	{
+		retval = YES;
+		NSString* SQLExpression = [lval expressionSQL: self];
+
+		switch (operator) 
+		{
+			case NSEqualToPredicateOperatorType:
+				SQLExpression = [SQLExpression stringByAppendingString: @" IS NULL"];
+				[self addToFrame: SQLExpression];
+				break;
+				
+			case NSNotEqualToPredicateOperatorType:
+				SQLExpression = [SQLExpression stringByAppendingString: @" IS NOT NULL"];
+				[self addToFrame: SQLExpression];
+				break;
+				
+			default:
+				[self collectAll];
+				break;
+		}		
+	}
+	return retval;
+}
+
 - (void) handleEqualityComparison: (NSComparisonPredicate *) predicate 
 							 lval: (BXPGExpressionValueType *) rval 
 							 rval: (BXPGExpressionValueType *) lval
@@ -350,47 +380,73 @@ AppendModifier (NSString* operatorString, NSComparisonPredicateModifier modifier
 	//Equality doesn't have options like case or diacritic insensitivity.
 	//Choose the operator. We need to switch places to handle ANY and ALL since
 	//NSExpressions are something like ANY x > y. This is done in parameter list.
-	NSString* operatorString = nil;
+	
 	NSPredicateOperatorType operatorType = [predicate predicateOperatorType];
-	switch (operatorType)
+	//Flip again to get the correct result for ascending.
+	enum ComparisonType	comparisonType = ComparisonType (predicate, rval, lval);
+	
+	switch (comparisonType) 
 	{
-		case NSEqualToPredicateOperatorType:
-			operatorString = @"=";
+		//Check nullity.
+		case kComparisonTypeBothScalar:
+		case kComparisonTypeBothCollections:
+		{
+			if ([self checkNullity: operatorType lval: lval rval: rval])
+				break;
+			
+			if ([self checkNullity: operatorType lval: rval rval: lval])
+				break;
+
+			//Otherwise fall through.
+		}
+			
+		case kComparisonTypeAscendingCardinality:
+		{
+			NSString* operatorString = nil;
+			switch (operatorType)
+			{
+				case NSEqualToPredicateOperatorType:
+					operatorString = @"=";
+					break;
+				case NSNotEqualToPredicateOperatorType:
+					operatorString = @"<>";
+					break;
+				default:
+					break;
+			}
+			
+			if (! operatorString)
+				[self collectAll];
+			else
+			{
+				NSComparisonPredicateModifier modifier = [predicate comparisonPredicateModifier];
+				switch (comparisonType)
+				{
+					case kComparisonTypeAscendingCardinality:
+						operatorString = AppendModifier (operatorString, modifier);
+						//Fall through.
+						
+					case kComparisonTypeBothScalar:
+					case kComparisonTypeBothCollections:
+					{
+						NSString* lSQL = [lval expressionSQL: self];
+						NSString* rSQL = [rval expressionSQL: self];
+						Comparison (lSQL, operatorString, rSQL, modifier);
+						break;
+					}
+						
+					default:
+						[self collectAll];
+						break;
+				}
+			}
 			break;
-		case NSNotEqualToPredicateOperatorType:
-			operatorString = @"<>";
-			break;
+		}
+			
 		default:
+			[self collectAll];
 			break;
 	}
-	
-	if (! operatorString)
-		[self collectAll];
-	else
-	{
-		NSComparisonPredicateModifier modifier = [predicate comparisonPredicateModifier];
-		switch (ComparisonType (predicate, rval, lval)) //Flip again to get the correct result.
-		{
-			case kComparisonTypeAscendingCardinality:
-				operatorString = AppendModifier (operatorString, modifier);
-				//Fall through.
-				
-			case kComparisonTypeBothScalar:
-			case kComparisonTypeBothCollections:
-			{
-				NSString* lSQL = [lval expressionSQL: self];
-				NSString* rSQL = [rval expressionSQL: self];
-				Comparison (lSQL, operatorString, rSQL, modifier);
-				break;
-			}
-				
-			default:
-			{
-				[self collectAll];
-				break;
-			}
-		}
-	}	
 }
 
 - (void) handleStringOperation: (NSComparisonPredicate *) predicate 

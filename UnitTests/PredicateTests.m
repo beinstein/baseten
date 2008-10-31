@@ -192,7 +192,6 @@
 	MKCAssertEqualObjects (parameters, expected);
 }
 
-
 //We need a validated entity for this test.
 #if 0
 - (void) testAdditionWithKeyPath
