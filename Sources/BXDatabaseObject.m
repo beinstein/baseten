@@ -472,25 +472,26 @@ ParseSelector (SEL aSelector, NSString** key)
 				
 			case kBXDatabaseObjectForeignKey:
 			{
+                BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+
+                BXRelationshipDescription* rel = [[[self entity] relationshipsByName] objectForKey: aKey];
 				retval = [self cachedValueForKey: aKey];
-				
-				if (nil == retval)
-				{
-					BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-					BXRelationshipDescription* rel = [[[self entity] relationshipsByName] objectForKey: aKey];
-					if (nil != rel)
-					{
+
+                if (rel)
+                {
+                    //We'll have to fetch all to-one relationships because they won't be faulted automatically.
+                    //This is a problem in one-to-one relationships on the side that doesn't reference
+                    //the primary key.
+                    if (! ([rel isToMany] && retval))
+                    {
 						retval = [rel targetForObject: self error: &error];
-						//We can't cache to-one relationships because they won't be faulted.
-						//This is a problem in one-to-one relationships on the side that doesn't reference
-						//the primary key.
-						if (!error && [rel isToMany] && [NSNull null] != retval)
-						{
+                        if (! error && [NSNull null] != retval)
+                        {
 							//Caching the result might cause a retain cycle.
 							[self setCachedValue: retval forKey: aKey];
-						}
-					}									
-				}
+                        }
+                    }
+                }
 				break;
 			}
 				
