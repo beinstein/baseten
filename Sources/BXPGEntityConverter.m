@@ -198,7 +198,7 @@ ImportError (NSString* message, NSString* reason)
 	CFSetCallBacks callbacks = kCFTypeSetCallBacks;
 	callbacks.equal = &EqualRelationship;
 	//No need to use a scanned memory allocator, because the set contents are referenced elsewhere.
-	NSMutableSet* handledRelationships = [(id) CFSetCreateMutable (NULL, 0, &callbacks) autorelease];
+	NSMutableSet* handledRelationships = (id) CFSetCreateMutable (NULL, 0, &callbacks);
 	
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
@@ -223,6 +223,9 @@ ImportError (NSString* message, NSString* reason)
 	
 	if (outArray)
 		*outArray = enabledRelations;
+
+    if (handledRelationships)
+        CFRelease (handledRelationships);
 	
 	return retval;
 }
