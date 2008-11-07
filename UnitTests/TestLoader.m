@@ -46,6 +46,7 @@
 #import "ObjectTests.h"
 #import "PredicateTests.h"
 #import "KeyPathComponentTest.h"
+#import "ToOneChangeNotificationTests.h"
 
 
 @interface SenTestCase (UndocumentedMethods)
@@ -72,6 +73,8 @@
 							[MTMCollectionTest class],
 							[UndoTests class],
 							nil];
+	
+	testClasses = [NSArray arrayWithObject: [ToOneChangeNotificationTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
@@ -103,5 +106,21 @@ bx_test_failed (NSException* exception)
 		[self setFailureAction: @selector (logAndCallBXTestFailed:)];
 	}
 	return self;
+}
+@end
+
+
+@implementation BXDatabaseTestCase
+- (void) setUp
+{
+	NSURL* databaseURI = [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"];
+	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
+	[mContext setAutocommits: NO];
+}
+
+- (void) tearDown
+{
+	[mContext disconnect];
+	[mContext release];
 }
 @end

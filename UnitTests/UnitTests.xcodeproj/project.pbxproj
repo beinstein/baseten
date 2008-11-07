@@ -22,6 +22,7 @@
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
 		53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
 		53C98A140CF0803A00D6A0A7 /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
+		53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */; };
 		53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538B40F50D634EA40009005B /* BaseTen.framework */; };
 		53DAA0590E6EEB46001DC1D9 /* KeyPathComponentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */; };
 		53F8E1DD0CBF7FF100C000C5 /* UnitTestAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A494840BD4D92F008E850E /* UnitTestAdditions.m */; };
@@ -93,6 +94,8 @@
 		53BD96750A5C1DC3001C950C /* CreateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CreateTests.h; sourceTree = "<group>"; };
 		53BD96760A5C1DC3001C950C /* CreateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CreateTests.m; sourceTree = "<group>"; };
 		53BD96BE0A5C2501001C950C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = /System/Library/Frameworks/SenTestingKit.framework; sourceTree = "<absolute>"; };
+		53CC514E0EC45F0B003D33BF /* ToOneChangeNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ToOneChangeNotificationTests.h; sourceTree = "<group>"; };
+		53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ToOneChangeNotificationTests.m; sourceTree = "<group>"; };
 		53CEB9EF0B28516F007DAF0D /* MKCSenTestCaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; path = MKCSenTestCaseAdditions.h; sourceTree = SOURCE_ROOT; };
 		53DAA0570E6EEB46001DC1D9 /* KeyPathComponentTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyPathComponentTest.h; sourceTree = "<group>"; };
 		53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyPathComponentTest.m; sourceTree = "<group>"; };
@@ -189,6 +192,8 @@
 				5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */,
 				53B2C1380BE88608002B66B1 /* UndoTests.h */,
 				53B2C1390BE88608002B66B1 /* UndoTests.m */,
+				53CC514E0EC45F0B003D33BF /* ToOneChangeNotificationTests.h */,
+				53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */,
 			);
 			name = "Tests requiring a connection";
 			sourceTree = "<group>";
@@ -312,6 +317,7 @@
 				53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */,
 				535627B90E6E805D002EA3FD /* PredicateTests.m in Sources */,
 				53DAA0590E6EEB46001DC1D9 /* KeyPathComponentTest.m in Sources */,
+				53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

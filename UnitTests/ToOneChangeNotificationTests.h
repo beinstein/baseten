@@ -1,5 +1,5 @@
 //
-// TestLoader.h
+// ToOneChangeNotificationTests.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,34 +26,13 @@
 // $Id$
 //
 
-/*
- * Instructions for running the tests:
- * 1. Build the test bundle.
- * 2. Set a symbolic breakpoint to bx_test_failed if you want to stop on errors.
- * 3. Run otest with like this: `otest -SenTest BXTestLoader your_custom_path/UnitTests.octest`.
- */
-
-#import <Cocoa/Cocoa.h>
 #import <SenTestingKit/SenTestingKit.h>
-
+#import "TestLoader.h"
 @class BXDatabaseContext;
 
 
-@interface BXTestLoader : SenTestCase 
+@interface ToOneChangeNotificationTests : BXDatabaseTestCase 
 {
-}
-
-@end
-
-
-@interface BXTestCase : SenTestCase
-{
-}
-@end
-
-
-@interface BXDatabaseTestCase: BXTestCase
-{
-	BXDatabaseContext* mContext;
+	NSInteger mNotesReceived;
 }
 @end
