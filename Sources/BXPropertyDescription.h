@@ -38,8 +38,14 @@ enum BXPropertyFlag
 	kBXPropertyOptional		= 1 << 0,
 	kBXPropertyPrimaryKey	= 1 << 1,
 	kBXPropertyExcluded		= 1 << 2,
-	kBXPropertyIsArray		= 1 << 3
+	kBXPropertyIsArray		= 1 << 3	
 };
+
+#ifdef __cplusplus
+inline BXPropertyFlag operator |= (BXPropertyFlag x, BXPropertyFlag y) { return static_cast <BXPropertyFlag> (x | y); }
+inline BXPropertyFlag operator &= (BXPropertyFlag x, BXPropertyFlag y) { return static_cast <BXPropertyFlag> (x & y); }
+#endif 
+	
 
 enum BXPropertyKind
 {
@@ -49,7 +55,7 @@ enum BXPropertyKind
 };
 
 
-@interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSMutableCopying, NSCoding>
+@interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSMutableCopying> //, NSCoding>
 {
     BXEntityDescription*  mEntity; //Weak
 	enum BXPropertyFlag   mFlags;

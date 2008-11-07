@@ -34,6 +34,7 @@
 #import "MKCCollections.h"
 #import "PGTS.h"
 #import "PGTSFunctions.h"
+#import "PGTSCFScannedMemoryAllocator.h"
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
@@ -189,6 +190,8 @@ ModTypeToObject (enum BXModificationType value)
         //If this class were in a separate framework, this method should be called from the
         //framework initializer function
         [BXPGInterface initialize];
+		
+		PGTSScannedMemoryAllocator ();
     }
 }
 

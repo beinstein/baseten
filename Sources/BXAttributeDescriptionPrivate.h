@@ -26,6 +26,11 @@
 // $Id$
 //
 
+#import <BaseTen/BXAttributeDescription.h>
+
+@class BXRelationshipDescription;
+
+
 @interface BXAttributeDescription (PrivateMethods)
 + (id) attributeWithName: (NSString *) name entity: (BXEntityDescription *) entity;
 - (void) setPrimaryKey: (BOOL) aBool;
@@ -35,4 +40,5 @@
 
 - (void) setAttributeValueClass: (Class) aClass;
 - (void) setDatabaseTypeName: (NSString *) typeName;
+- (void) addReferencingRelationship: (BXRelationshipDescription *) rel;
 @end

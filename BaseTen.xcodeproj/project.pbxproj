@@ -357,6 +357,8 @@
 		53E3B1EB0E55C8D8001A99B5 /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB50E1CD8D20028DBEA /* PGTSConstants.m */; };
 		53E3B1EF0E55C8DE001A99B5 /* PGTSFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */; };
 		53ED2E8E0E1AB7CB0095BE8B /* BXLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53F0BBA10EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53F0BB9F0EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h */; };
+		53F0BBA80EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m in Sources */ = {isa = PBXBuildFile; fileRef = 53F0BBA70EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
@@ -728,7 +730,7 @@
 		539AD0250E3B4C3F006602B5 /* BXDatabaseContextDelegateDefaultImplementation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextDelegateDefaultImplementation.h; path = Sources/BXDatabaseContextDelegateDefaultImplementation.h; sourceTree = "<group>"; };
 		539AD0260E3B4C3F006602B5 /* BXDatabaseContextDelegateDefaultImplementation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextDelegateDefaultImplementation.m; path = Sources/BXDatabaseContextDelegateDefaultImplementation.m; sourceTree = "<group>"; };
 		539EDD730C46218B00B6E5EC /* BXAttributeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAttributeDescription.h; path = Sources/BXAttributeDescription.h; sourceTree = "<group>"; };
-		539EDD740C46218B00B6E5EC /* BXAttributeDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAttributeDescription.m; path = Sources/BXAttributeDescription.m; sourceTree = "<group>"; };
+		539EDD740C46218B00B6E5EC /* BXAttributeDescription.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; name = BXAttributeDescription.m; path = Sources/BXAttributeDescription.m; sourceTree = "<group>"; };
 		539EDD800C46243100B6E5EC /* BXAttributeDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAttributeDescriptionPrivate.h; path = Sources/BXAttributeDescriptionPrivate.h; sourceTree = "<group>"; };
 		539EE9F10B4A7E85005DDDA5 /* BXEntityDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescriptionPrivate.h; path = Sources/BXEntityDescriptionPrivate.h; sourceTree = "<group>"; };
 		53A59B230E34EB570026D7E1 /* BXWeakNotification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXWeakNotification.h; path = Sources/BXWeakNotification.h; sourceTree = "<group>"; };
@@ -773,6 +775,8 @@
 		53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXLogger.h; path = Sources/BXLogger.h; sourceTree = "<group>"; };
 		53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = "<group>"; };
 		53EFEA950BA98028008666B7 /* BXDatabaseObjectPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectPrivate.h; path = Sources/BXDatabaseObjectPrivate.h; sourceTree = "<group>"; };
+		53F0BB9F0EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCFScannedMemoryAllocator.h; path = Sources/PGTSCFScannedMemoryAllocator.h; sourceTree = "<group>"; };
+		53F0BBA70EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSCFScannedMemoryAllocator.m; path = Sources/PGTSCFScannedMemoryAllocator.m; sourceTree = "<group>"; };
 		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
@@ -986,6 +990,8 @@
 				53666CC20E1CD8D20028DBEA /* PGTSHOM.h */,
 				53666CC30E1CD8D20028DBEA /* PGTSHOM.m */,
 				53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */,
+				53F0BB9F0EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h */,
+				53F0BBA70EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m */,
 				53680C0C0E59922C00A53B26 /* BXKeyPathParser.h */,
 				53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */,
 			);
@@ -1481,6 +1487,7 @@
 				535F235B0E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h in Headers */,
 				535F24C00E8AA62800311CB5 /* BXPGObjectExpressionValueType.h in Headers */,
 				535F24EE0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.h in Headers */,
+				53F0BBA10EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1822,6 +1829,7 @@
 				535F235C0E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.m in Sources */,
 				535F24C10E8AA62800311CB5 /* BXPGObjectExpressionValueType.m in Sources */,
 				535F24EF0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.m in Sources */,
+				53F0BBA80EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

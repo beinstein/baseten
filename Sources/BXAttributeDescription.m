@@ -26,11 +26,16 @@
 // $Id$
 //
 
+#import "BXPropertyDescription.h"
 #import "BXAttributeDescription.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXEntityDescription.h"
 #import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
+#import "PGTSCFScannedMemoryAllocator.h"
+
+
+@class BXRelationshipDescription;
 
 
 /**
@@ -38,8 +43,17 @@
  * \ingroup descriptions
  */
 @implementation BXAttributeDescription
+- (void) finalize
+{
+	if (mRelationshipsUsing)
+		CFRelease (mRelationshipsUsing);
+	[super finalize];
+}
+
 - (void) dealloc
 {
+	if (mRelationshipsUsing)
+		CFRelease (mRelationshipsUsing);
 	[mDatabaseTypeName release];
 	[super dealloc];
 }
@@ -107,7 +121,6 @@
 
 
 @implementation BXAttributeDescription (PrivateMethods)
-
 /** 
  * \internal
  * \name Creating an attribute description
@@ -177,5 +190,16 @@
 		[mDatabaseTypeName release];
 		mDatabaseTypeName = [typeName retain];
 	}
+}
+
+- (void) addReferencingRelationship: (BXRelationshipDescription *) rel
+{
+	if (! mRelationshipsUsing)
+	{
+		CFSetCallBacks callbacks = PGTSScannedSetCallbacks ();
+		mRelationshipsUsing = CFSetCreateMutable (PGTSScannedMemoryAllocator (), 0, &callbacks);
+	}
+	
+	CFSetAddValue (mRelationshipsUsing, rel);
 }
 @end

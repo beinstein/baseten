@@ -50,8 +50,8 @@
 
 
 typedef std::tr1::unordered_map <NSString*, int, 
-	ObjectHash, 
-	ObjectCompare <NSString *>, 
+	PGTS::ObjectHash, 
+	PGTS::ObjectCompare <NSString *>, 
 	PGTS::scanned_memory_allocator <std::pair <NSString * const, int> > > 
 	FieldIndexMap;
 typedef std::tr1::unordered_map <int, Class, 

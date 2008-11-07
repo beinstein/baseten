@@ -40,6 +40,7 @@
 #import "NSAttributeDescription+BXPGAdditions.h"
 #import "NSRelationshipDescription+BXPGAdditions.h"
 #import "PGTSDatabaseDescription.h"
+#import "PGTSCFScannedMemoryAllocator.h"
 
 
 static Boolean
@@ -195,10 +196,9 @@ ImportError (NSString* message, NSString* reason)
 		}
 	}
 	
-	CFSetCallBacks callbacks = kCFTypeSetCallBacks;
+	CFSetCallBacks callbacks = PGTSScannedSetCallbacks ();
 	callbacks.equal = &EqualRelationship;
-	//No need to use a scanned memory allocator, because the set contents are referenced elsewhere.
-	NSMutableSet* handledRelationships = (id) CFSetCreateMutable (NULL, 0, &callbacks);
+	NSMutableSet* handledRelationships = (id) CFSetCreateMutable (PGTSScannedMemoryAllocator (), 0, &callbacks);
 	
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{

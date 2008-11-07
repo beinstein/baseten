@@ -72,9 +72,10 @@
 							[MTOCollectionTest class],
 							[MTMCollectionTest class],
 							[UndoTests class],
+							[ToOneChangeNotificationTests class],
 							nil];
 	
-	testClasses = [NSArray arrayWithObject: [ToOneChangeNotificationTests class]];
+	//testClasses = [NSArray arrayWithObject: [ToOneChangeNotificationTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
