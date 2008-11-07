@@ -62,7 +62,7 @@ namespace PGTS
 			void* p = NULL;
 			
 			//Symbol existence verification requires NULL != -like comparison.
-			if (NULL != NSAllocateCollectable)
+			if (NULL != NSAllocateCollectable && [NSGarbageCollector defaultCollector])
 				p = NSAllocateCollectable (n * sizeof (T), NSScannedOption | NSCollectorDisabledOption);
 			else
 				p = malloc (n * sizeof (T));

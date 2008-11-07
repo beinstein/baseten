@@ -40,6 +40,7 @@
 #import "PGTSHOM.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXProbes.h"
+#import "BXAttributeDescriptionPrivate.h"
 
 
 /**
@@ -157,12 +158,68 @@
 	mDestinationEntity = entity;
 }
 
+
+struct rel_attr_st
+{
+	__strong BXRelationshipDescription* ra_sender;
+	__strong NSDictionary* ra_attrs;
+};
+
+
+static void
+RemoveRelFromAttribute (NSString* srcKey, NSString* dstKey, void* context)
+{
+	struct rel_attr_st* ctx = (struct rel_attr_st *) context;
+	BXRelationshipDescription* self = ctx->ra_sender;
+	BXRelationshipDescription* inverse = [self inverseRelationship];
+	NSDictionary* attributes = ctx->ra_attrs;
+	
+	BXAttributeDescription* attr = [attributes objectForKey: srcKey];
+	[attr removeReferencingRelationship: self];
+	[attr removeReferencingRelationship: inverse];
+}
+
+
+static void
+AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
+{
+	struct rel_attr_st* ctx = (struct rel_attr_st *) context;
+	BXRelationshipDescription* self = ctx->ra_sender;
+	BXRelationshipDescription* inverse = [self inverseRelationship];
+	NSDictionary* attributes = ctx->ra_attrs;
+	
+	BXAttributeDescription* attr = [attributes objectForKey: srcKey];
+	[attr addReferencingRelationship: self];
+	[attr addReferencingRelationship: inverse];
+}
+
+
+- (void) removeAttributeDependency
+{
+	if (! [self isToMany])
+	{
+		struct rel_attr_st ctx = {self, [[self entity] attributesByName]};
+		[self iterateForeignKey: &RemoveRelFromAttribute context: &ctx];
+	}
+}
+
+
+- (void) setAttributeDependency
+{
+	if (! [self isToMany])
+	{
+		struct rel_attr_st ctx = {self, [[self entity] attributesByName]};
+		[self iterateForeignKey: &AddRelToAttribute context: &ctx];
+	}
+}
+
+
 - (void) setForeignKey: (BXForeignKey *) aKey
 {
 	if (mForeignKey != aKey)
 	{
 		[mForeignKey release];
-		mForeignKey = [aKey retain];
+		mForeignKey = [aKey retain];		
 	}
 }
 

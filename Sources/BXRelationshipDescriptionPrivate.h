@@ -50,6 +50,9 @@
 			 error: (NSError **) error;
 
 - (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*) )callback context: (void *) ctx;
+
+- (void) removeAttributeDependency;
+- (void) setAttributeDependency;
 @end
 
 

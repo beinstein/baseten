@@ -202,4 +202,10 @@
 	
 	CFSetAddValue (mRelationshipsUsing, rel);
 }
+
+- (void) removeReferencingRelationship: (BXRelationshipDescription *) rel
+{
+	if (mRelationshipsUsing)
+		CFSetRemoveValue (mRelationshipsUsing, rel);
+}
 @end

@@ -58,7 +58,7 @@ PGTSScannedMemoryAllocator ()
 {
 	if (! gAllocator)
 	{
-		if (NULL != NSAllocateCollectable)
+		if (NULL != NSAllocateCollectable && [NSGarbageCollector defaultCollector])
 		{
 			CFAllocatorContext ctx = {
 				0,		//Version
@@ -86,7 +86,7 @@ CFSetCallBacks
 PGTSScannedSetCallbacks ()
 {
 	CFSetCallBacks callbacks = kCFTypeSetCallBacks;
-	if (NULL != NSAllocateCollectable)
+	if (NULL != NSAllocateCollectable && [NSGarbageCollector defaultCollector])
 	{
 		callbacks.retain = NULL;
 		callbacks.release = NULL;

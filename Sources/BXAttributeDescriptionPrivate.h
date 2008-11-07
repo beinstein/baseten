@@ -40,5 +40,7 @@
 
 - (void) setAttributeValueClass: (Class) aClass;
 - (void) setDatabaseTypeName: (NSString *) typeName;
+
 - (void) addReferencingRelationship: (BXRelationshipDescription *) rel;
+- (void) removeReferencingRelationship: (BXRelationshipDescription *) rel;
 @end

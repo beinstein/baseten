@@ -87,4 +87,18 @@
 	return retval;
 }
 
+
+- (void) removeAttributeDependency
+{
+	if (! [self isInverse])
+		[super removeAttributeDependency];
+}
+
+
+- (void) setAttributeDependency
+{
+	if (! [self isInverse])
+		[super setAttributeDependency];
+}
+
 @end

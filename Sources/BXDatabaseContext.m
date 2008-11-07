@@ -60,6 +60,7 @@
 #import "BXProbes.h"
 #import "BXDelegateProxy.h"
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
+#import "BXRelationshipDescriptionPrivate.h"
 
 
 __strong static NSMutableDictionary* gInterfaceClassSchemes = nil;
@@ -2526,9 +2527,11 @@ error:
 - (BOOL) iterateValidationQueue: (NSError **) error
 {
     BXAssertValueReturn (NULL != error, NO, @"Expected error to be set.");
+	NSMutableSet* allEntities = [NSMutableSet set];
     while (0 < [mLazilyValidatedEntities count])
     {
         NSSet* entities = [[mLazilyValidatedEntities copy] autorelease];
+		[allEntities unionSet: entities];
         [mLazilyValidatedEntities removeAllObjects];
 		NSUInteger i = [entities count];
         TSEnumerate (currentEntity, e, [entities objectEnumerator])
@@ -2544,6 +2547,13 @@ error:
             }
         }
     }
+	
+	TSEnumerate (currentEntity, e, [allEntities objectEnumerator])
+	{
+		TSEnumerate (currentRelationship, e, [[currentEntity relationshipsByName] objectEnumerator])
+			[currentRelationship setAttributeDependency];
+	}
+	
 	return YES;
 }
 

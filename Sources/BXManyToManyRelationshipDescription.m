@@ -268,6 +268,15 @@ bail:
 	TSEnumerate (currentPair, e, [[[self srcForeignKey] fieldNames] objectEnumerator])
 		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);
 }
+
+- (void) removeAttributeDependency
+{
+}
+
+
+- (void) setAttributeDependency
+{
+}
 @end
 
 
