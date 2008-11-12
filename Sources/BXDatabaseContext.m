@@ -2550,8 +2550,11 @@ error:
 	
 	TSEnumerate (currentEntity, e, [allEntities objectEnumerator])
 	{
-		TSEnumerate (currentRelationship, e, [[currentEntity relationshipsByName] objectEnumerator])
-			[currentRelationship setAttributeDependency];
+		if ([currentEntity hasCapability: kBXEntityCapabilityRelationships])
+		{
+			TSEnumerate (currentRelationship, e, [[currentEntity relationshipsByName] objectEnumerator])
+				[currentRelationship setAttributeDependency];
+		}
 	}
 	
 	return YES;
