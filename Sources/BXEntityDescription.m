@@ -412,7 +412,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 - (NSDictionary *) relationshipsByName
 {
 	if (! [self hasCapability: kBXEntityCapabilityRelationships])
-		[NSException raise: NSInvalidArgumentException format: @"Entity %@ can't access its relationships.", self];
+		[NSException raise: NSInvalidArgumentException format: @"Entity %@ doesn't have relationship capability. (BaseTen enabling is required for this.)", self];
 	return [[mRelationships copy] autorelease];
 }
 
