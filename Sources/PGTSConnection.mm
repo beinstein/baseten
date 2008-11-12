@@ -630,7 +630,8 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 		while (0 < [mQueue count] && (desc = [mQueue objectAtIndex: 0])) 
 		{
 			res = [desc finishForConnection: self];
-			[mQueue removeObjectAtIndex: 0];		
+			if ([mQueue count]) //Patch by Jianhua Meng 2008-11-12
+				[mQueue removeObjectAtIndex: 0];		
 		}
 	}
 	
