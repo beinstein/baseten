@@ -27,6 +27,7 @@
 //
 
 #import "PGTSCFScannedMemoryAllocator.h"
+#import "PGTSScannedMemoryAllocator.h"
 
 
 static CFAllocatorRef gAllocator;
@@ -58,7 +59,7 @@ PGTSScannedMemoryAllocator ()
 {
 	if (! gAllocator)
 	{
-		if (NULL != NSAllocateCollectable && [NSGarbageCollector defaultCollector])
+		if (PGTS::scanned_memory_allocator_env::allocate_scanned)
 		{
 			CFAllocatorContext ctx = {
 				0,		//Version
@@ -86,7 +87,7 @@ CFSetCallBacks
 PGTSScannedSetCallbacks ()
 {
 	CFSetCallBacks callbacks = kCFTypeSetCallBacks;
-	if (NULL != NSAllocateCollectable && [NSGarbageCollector defaultCollector])
+	if (PGTS::scanned_memory_allocator_env::allocate_scanned)
 	{
 		callbacks.retain = NULL;
 		callbacks.release = NULL;
