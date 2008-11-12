@@ -1608,6 +1608,7 @@ ModTypeToObject (enum BXModificationType value)
 		}
 		else
 		{
+			retval = NO;
 			if (NULL != error)
 				*error = localError;
 			[mDatabaseInterface disconnect];
