@@ -36,9 +36,17 @@
 
 
 namespace PGTS 
-{
-	template <typename T> class scanned_memory_allocator {
+{		
+	class scanned_memory_allocator_env {
 	public:
+		static BOOL allocate_scanned;
+	};			
+	
+	
+	template <typename T> 
+	class scanned_memory_allocator {
+		
+	public:		
 		typedef T                 value_type;
 		typedef value_type*       pointer;
 		typedef const value_type* const_pointer;
@@ -62,7 +70,7 @@ namespace PGTS
 			void* p = NULL;
 			
 			//Symbol existence verification requires NULL != -like comparison.
-			if (NULL != NSAllocateCollectable && [NSGarbageCollector defaultCollector])
+			if (scanned_memory_allocator_env::allocate_scanned)
 				p = NSAllocateCollectable (n * sizeof (T), NSScannedOption | NSCollectorDisabledOption);
 			else
 				p = malloc (n * sizeof (T));
