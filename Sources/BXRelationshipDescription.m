@@ -190,6 +190,8 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	
 	BXAttributeDescription* attr = [attributes objectForKey: srcKey];
 	[attr addReferencingRelationship: self];
+
+    ExpectCV (inverse);
 	[attr addReferencingRelationship: inverse];
 }
 
