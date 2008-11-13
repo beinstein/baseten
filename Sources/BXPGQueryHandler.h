@@ -32,8 +32,16 @@
 
 
 BX_EXPORT NSString* kBXPGExceptionCollectAllNoneNotAllowed;
+BX_EXPORT NSString* kBXPGExceptionInternalInconsistency;
+
 
 @interface BXPGExceptionCollectAllNoneNotAllowed : NSException
+{
+}
+@end
+
+
+@interface BXPGExceptionInternalInconsistency : NSException
 {
 }
 @end

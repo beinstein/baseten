@@ -34,9 +34,14 @@
 #import "BXForeignKey.h"
 
 NSString* kBXPGExceptionCollectAllNoneNotAllowed = @"kBXPGExceptionCollectAllNoneNotAllowed";
+NSString* kBXPGExceptionInternalInconsistency = @"kBXPGExceptionInternalInconsistency";
 
 
 @implementation BXPGExceptionCollectAllNoneNotAllowed
+@end
+
+
+@implementation BXPGExceptionInternalInconsistency
 @end
 
 

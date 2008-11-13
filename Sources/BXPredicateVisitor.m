@@ -116,6 +116,12 @@ ComparisonType (NSComparisonPredicate* predicate, BXPGExpressionValueType* lval,
 static NSString*
 Comparison1 (NSString* lval, NSString* operatorString, NSString* rval, NSComparisonPredicateModifier modifier)
 {
+	if (! (lval && rval && operatorString))
+		[BXPGExceptionInternalInconsistency raise: kBXPGExceptionInternalInconsistency format: nil];
+	
+	if (! (0 < [lval length] && 0 < [rval length] && 0 < [operatorString length]))
+		[BXPGExceptionInternalInconsistency raise: kBXPGExceptionInternalInconsistency format: nil];
+
 	NSString* format = @"%@ %@ %@";
 	if (NSDirectPredicateModifier != modifier)
 		format = @"%@ %@ (%@)";
@@ -308,6 +314,11 @@ AppendModifier (NSString* operatorString, NSComparisonPredicateModifier modifier
 		}
 		@catch (BXPGExceptionCollectAllNoneNotAllowed* e)
 		{
+			retval.p_where_clause = nil;
+		}
+		@catch (BXPGExceptionInternalInconsistency* e) 
+		{
+			BXLogError (@"Unable to convert predicate: %@", [predicate predicateFormat]);
 			retval.p_where_clause = nil;
 		}
 	}
