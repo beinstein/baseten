@@ -51,4 +51,5 @@
 - (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
 - (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag;
 - (void) setEnabled: (BOOL) flag;
+- (id) inverseToOneRelationships;
 @end

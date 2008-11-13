@@ -101,7 +101,7 @@
 #endif
 
 - (BXDatabaseObjectID *) objectIDForEntity: (BXEntityDescription *) entity fromObject: (BXDatabaseObject *) object
-							   entityIndex: (int) ei objectIndex: (int) oi
+							   entityIndex: (int) ei objectIndex: (int) oi fireFault: (BOOL) fireFault
 {
 	BOOL haveValues = YES;
 	NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
@@ -109,7 +109,13 @@
 	{
 		NSString* name = [currentFieldArray objectAtIndex: ei];
 		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
-		id value = [object primitiveValueForKey: objectKey];
+		
+		id value = nil;
+		if (fireFault)
+			value = [object primitiveValueForKey: objectKey];
+		else
+			value = [object cachedValueForKey: objectKey];
+		
 		if (value)
 			[values setObject: value forKey: name];
 		else
@@ -126,14 +132,14 @@
 }
 
 
-- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) object
+- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) object fireFault: (BOOL) fireFault
 {
-	return [self objectIDForEntity: dstEntity fromObject: object entityIndex: 1 objectIndex: 0];
+	return [self objectIDForEntity: dstEntity fromObject: object entityIndex: 1 objectIndex: 0 fireFault: fireFault];
 }
 
-- (BXDatabaseObjectID *) objectIDForSrcEntity: (BXEntityDescription *) srcEntity fromObject: (BXDatabaseObject *) object
+- (BXDatabaseObjectID *) objectIDForSrcEntity: (BXEntityDescription *) srcEntity fromObject: (BXDatabaseObject *) object fireFault: (BOOL) fireFault
 {
-	return [self objectIDForEntity: srcEntity fromObject: object entityIndex: 0 objectIndex: 1];
+	return [self objectIDForEntity: srcEntity fromObject: object entityIndex: 0 objectIndex: 1 fireFault: fireFault];
 }
 
 - (NSMutableDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object

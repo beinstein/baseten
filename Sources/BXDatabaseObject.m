@@ -47,7 +47,9 @@
 #import "BXObjectStatusInfo.h"
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "BXAttributeDescriptionPrivate.h"
 #import "BXLogger.h"
+#import "PGTSHOM.h"
 
 
 static NSString* 
@@ -444,6 +446,8 @@ ParseSelector (SEL aSelector, NSString** key)
 	NSError* error = nil;
 	id retval = nil;
 	
+	BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
+	
 	//If we have an error condition, return anything we have in cache.
 	if (! [mContext checkErrorHandling])
 		retval = [self cachedValueForKey: aKey];
@@ -459,38 +463,29 @@ ParseSelector (SEL aSelector, NSString** key)
 			case kBXDatabaseObjectKnownKey:
 			{
 				retval = [self cachedValueForKey: aKey];
-				
-				if (nil == retval)
+				if (! retval)
 				{
-					BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-					NSDictionary* attrs = [[self entity] attributesByName];
-					if ([mContext fireFault: self key: [attrs objectForKey: aKey] error: &error])
-						retval = [self cachedValueForKey: aKey];
+					BXEntityDescription* entity = [self entity];
+					NSDictionary* attrs = [entity attributesByName];
+					BXAttributeDescription* attr = [attrs objectForKey: aKey];					
+					if ([mContext fireFault: self key: attr error: &error])
+						retval = [self cachedValueForKey: aKey];					
 				}
 				break;
 			}
 				
 			case kBXDatabaseObjectForeignKey:
 			{
-                BXAssertValueReturn (nil != mContext, nil, @"Expected mContext not to be nil.");
-
                 BXRelationshipDescription* rel = [[[self entity] relationshipsByName] objectForKey: aKey];
 				retval = [self cachedValueForKey: aKey];
-
-                if (rel)
+                if (rel && ! retval)
                 {
-                    //We'll have to fetch all to-one relationships because they won't be faulted automatically.
-                    //This is a problem in one-to-one relationships on the side that doesn't reference
-                    //the primary key.
-                    if (! ([rel isToMany] && retval))
-                    {
-						retval = [rel targetForObject: self error: &error];
-                        if (! error && [NSNull null] != retval)
-                        {
-							//Caching the result might cause a retain cycle.
-							[self setCachedValue: retval forKey: aKey];
-                        }
-                    }
+					retval = [rel targetForObject: self error: &error];
+					if (! error && [NSNull null] != retval)
+					{
+						//Caching the result might cause a retain cycle.
+						[self setCachedValue: retval forKey: aKey];
+					}
                 }
 				break;
 			}
@@ -548,10 +543,19 @@ ParseSelector (SEL aSelector, NSString** key)
 
 				BXEntityDescription* entity = [mObjectID entity];
 				BXAttributeDescription* attr = [[entity attributesByName] objectForKey: aKey];
+				
+				NSSet* rels = [attr dependentRelationships];
+				id oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+				[self setCachedValue: aVal forKey: aKey];
+				id newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+				[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				
 				[mContext executeUpdateObject: self entity: nil predicate: nil
 							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: attr]
 										error: &error];
-                break;
+				
+				[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				break;
 			}
 				
 			case kBXDatabaseObjectForeignKey:
@@ -609,9 +613,20 @@ ParseSelector (SEL aSelector, NSString** key)
 		id attr = [attributes objectForKey: currentKey];
 		[dict setObject: [aDict objectForKey: currentKey] forKey: attr];
 	}
-	
-    if (NO == [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: dict error: &error])
+
+	NSMutableSet* rels = [NSMutableSet set];
+	TSEnumerate (currentAttr, e, [dict objectEnumerator])
+		[rels unionSet: [currentAttr dependentRelationships]];
+
+	id oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+	[self setCachedValuesForKeysWithDictionary: aDict];
+	id newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+	[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+		
+    if (! [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: dict error: &error])
 		[[mContext internalDelegate] databaseContext: mContext hadError: error willBePassedOn: NO];
+	
+	[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 }
 
 /** 
@@ -1175,4 +1190,65 @@ ParseSelector (SEL aSelector, NSString** key)
 		[self didTurnIntoFault];
 }	
 
+- (NSDictionary *) valuesForRelationships: (id) relationships fireFault: (BOOL) fireFault
+{
+	Expect (relationships);
+	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [relationships count]];
+	TSEnumerate (currentRelationship, e, [relationships objectEnumerator])
+	{
+		BXDatabaseObject* value = [currentRelationship registeredTargetFor: self fireFault: fireFault];
+		if (value)
+			[retval setObject: value forKey: currentRelationship];
+	}
+	return retval;
+}
+
+- (void) changeInverseToOneRelationships: (id) relationships 
+									from: (NSDictionary *) oldTargets 
+									  to: (NSDictionary *) newTargets 
+								callback: (void (*)(id, NSString*)) callback
+{
+	ExpectV (relationships);
+	ExpectV (oldTargets);
+	ExpectV (newTargets);
+	
+	TSEnumerate (currentRelationship, e, [relationships objectEnumerator])
+	{
+		callback (self, [currentRelationship name]);
+		BXRelationshipDescription* inverse = (BXRelationshipDescription *) [currentRelationship inverseRelationship];
+		if (inverse)
+		{
+			BXDatabaseObject* oldTarget = [oldTargets objectForKey: currentRelationship];
+			BXDatabaseObject* newTarget = [newTargets objectForKey: currentRelationship];
+			if (oldTarget && newTarget)
+			{
+				NSString* inverseName = [inverse name];
+				callback (oldTarget, inverseName);
+				callback (newTarget, inverseName);
+			}
+		}
+	}	
+}
+
+static void
+WillChange (id sender, NSString* key)
+{
+	[sender willChangeValueForKey: key];
+}
+
+static void
+DidChange (id sender, NSString* key)
+{
+	[sender didChangeValueForKey: key];
+}
+
+- (void) willChangeInverseToOneRelationships: (id) relationships from: (NSDictionary *) oldTargets to: (NSDictionary *) newTargets
+{
+	[self changeInverseToOneRelationships: relationships from: oldTargets to: newTargets callback: &WillChange];
+}
+
+- (void) didChangeInverseToOneRelationships: (id) relationships from: (NSDictionary *) oldTargets to: (NSDictionary *) newTargets
+{
+	[self changeInverseToOneRelationships: relationships from: oldTargets to: newTargets callback: &DidChange];
+}
 @end

@@ -51,6 +51,7 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
     if (kObservingContext == context) 
 	{
 		mNotesReceived++;
+		NSLog (@"Got note!");
 	}
 	else 
 	{
@@ -81,10 +82,10 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 	[b1 addObserver: self forKeyPath: @"test2" options: 0 context: kObservingContext];
 	[b2 addObserver: self forKeyPath: @"test2" options: 0 context: kObservingContext];
 	
-	MKCAssertTrue (0 == mNotesReceived);
+	MKCAssertEquals (0, mNotesReceived);
 	[a setPrimitiveValue: [NSNull null] forKey: @"fkt1id"];
 	[a setPrimitiveValue: [NSNumber numberWithInteger: 2] forKey: @"fkt1id"];
-	MKCAssertTrue (4 == mNotesReceived);
+	MKCAssertEquals (4, mNotesReceived);
 	
 	[a removeObserver: self forKeyPath: @"test1"];
 	[b1 removeObserver: self forKeyPath: @"test2"];
@@ -115,10 +116,10 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 	[b1 addObserver: self forKeyPath: @"ototest1" options: 0 context: kObservingContext];
 	[b2 addObserver: self forKeyPath: @"ototest1" options: 0 context: kObservingContext];
 	
-	MKCAssertTrue (0 == mNotesReceived);
+	MKCAssertEquals (0, mNotesReceived);
 	[b1 setPrimitiveValue: [NSNull null] forKey: @"r1"];
 	[b2 setPrimitiveValue: [NSNumber numberWithInteger: 1] forKey: @"r1"];
-	MKCAssertTrue (4 == mNotesReceived);
+	MKCAssertEquals (4, mNotesReceived);
 	
 	[a removeObserver: self forKeyPath: @"ototest2"];
 	[b1 removeObserver: self forKeyPath: @"ototest1"];

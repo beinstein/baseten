@@ -30,9 +30,11 @@
 #import "BXAttributeDescription.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXEntityDescription.h"
+#import "BXRelationshipDescription.h"
 #import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "PGTSCFScannedMemoryAllocator.h"
+#import "BXLogger.h"
 
 
 @class BXRelationshipDescription;
@@ -54,6 +56,7 @@
 {
 	if (mRelationshipsUsing)
 		CFRelease (mRelationshipsUsing);
+	
 	[mDatabaseTypeName release];
 	[super dealloc];
 }
@@ -192,20 +195,31 @@
 	}
 }
 
-- (void) addReferencingRelationship: (BXRelationshipDescription *) rel
+- (void) addDependentRelationship: (BXRelationshipDescription *) rel
 {
-	if (! mRelationshipsUsing)
+	BXEntityDescription* entity = [self entity];
+	CFSetCallBacks callbacks = PGTSScannedSetCallbacks ();
+	if ([[rel entity] isEqual: entity])
 	{
-		CFSetCallBacks callbacks = PGTSScannedSetCallbacks ();
-		mRelationshipsUsing = CFSetCreateMutable (PGTSScannedMemoryAllocator (), 0, &callbacks);
+		if (! mRelationshipsUsing)
+			mRelationshipsUsing = CFSetCreateMutable (PGTSScannedMemoryAllocator (), 0, &callbacks);
+
+		CFSetAddValue (mRelationshipsUsing, rel);
 	}
-	
-	CFSetAddValue (mRelationshipsUsing, rel);
+	else
+	{
+		BXLogError (@"Tried to add a relationship doesn't correspond to current attribute. Attribute: %@ relationship: %@", self, rel);
+	}
 }
 
-- (void) removeReferencingRelationship: (BXRelationshipDescription *) rel
+- (void) removeDependentRelationship: (BXRelationshipDescription *) rel
 {
 	if (mRelationshipsUsing)
 		CFSetRemoveValue (mRelationshipsUsing, rel);
+}
+
+- (NSSet *) dependentRelationships
+{
+	return (NSSet *) mRelationshipsUsing;
 }
 @end

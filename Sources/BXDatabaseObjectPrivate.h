@@ -58,4 +58,8 @@
 - (NSDictionary *) allValues;
 - (void) removeFromCache: (NSString *) aKey postingKVONotifications: (BOOL) posting;
 - (id) valueForUndefinedKey2: (NSString *) aKey;
+
+- (NSDictionary *) valuesForRelationships: (id) relationships fireFault: (BOOL) fireFault;
+- (void) willChangeInverseToOneRelationships: (id) relationships from: (NSDictionary *) oldTargets to: (NSDictionary *) newTargets;
+- (void) didChangeInverseToOneRelationships: (id) relationships from: (NSDictionary *) oldTargets to: (NSDictionary *) newTargets;
 @end

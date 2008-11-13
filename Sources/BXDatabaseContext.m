@@ -61,6 +61,7 @@
 #import "BXDelegateProxy.h"
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "PGTSHOM.h"
 
 
 __strong static NSMutableDictionary* gInterfaceClassSchemes = nil;
@@ -1624,6 +1625,21 @@ ModTypeToObject (enum BXModificationType value)
 	return retval;
 }
 
+- (NSDictionary *) targetsByObject: (NSArray *) objects forRelationships: (id) rels fireFaults: (BOOL) shouldFire
+{
+	NSMutableDictionary* targetsByObject = [NSMutableDictionary dictionaryWithCapacity: [objects count]];
+	TSEnumerate (currentObject, e, [objects objectEnumerator])
+	{
+		if ([NSNull null] != currentObject)
+		{
+			id targets = [[rels PGTSKeyCollect] registeredTargetFor: currentObject fireFault: shouldFire]; 
+			if (targets)
+				[targetsByObject setObject: targets forKey: currentObject];
+		}
+	}
+	return targetsByObject;
+}
+
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
 {
     if (0 < [objectIDs count])
@@ -1639,8 +1655,14 @@ ModTypeToObject (enum BXModificationType value)
 			
 			if (0 < [objects count])
 			{
-				//Fault the objects and send the notification
-				if (YES == shouldFault)
+				id rels = [entity inverseToOneRelationships];
+				NSDictionary* oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
+				NSDictionary* newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+				TSEnumerate (currentObject, e, [objects objectEnumerator])
+					[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				
+				//Fault the objects and send the notifications
+				if (shouldFault)
 				{
 					TSEnumerate (currentObject, e, [objects objectEnumerator])
 						[currentObject removeFromCache: nil postingKVONotifications: YES];
@@ -1652,35 +1674,12 @@ ModTypeToObject (enum BXModificationType value)
 										  self, kBXDatabaseContextKey,
 										  nil];
 				
-				id notificationNames [2] = {kBXUpdateEarlyNotification, kBXUpdateNotification};
-				for (int i = 0; i < 2; i++)
-				{
-					[nc postNotificationName: notificationNames [i]
-									  object: entity
-									userInfo: userInfo];
-				}
+				[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
+				TSEnumerate (currentObject, e, [objects objectEnumerator])
+					[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				
+				[nc postNotificationName: kBXUpdateNotification object: entity userInfo: userInfo];
 			}
-			
-#if 0
-			//Handle the views.
-			//This method will be called recursively, when the changed rows have been determined.
-			if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
-			{
-				NSSet* dependentViews = [entity dependentViews];
-				TSEnumerate (currentView, e, [dependentViews objectEnumerator])
-				{
-					NSMutableArray* viewIDs = [NSMutableArray array];
-					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-					{
-						BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
-						if (nil != [self registeredObjectWithID: partialID])
-							[viewIDs addObject: partialID];
-					}
-					
-					[self updatedObjectsInDatabase: viewIDs faultObjects: YES];
-				}
-			}        
-#endif			
 		}
     }
 }
@@ -1697,61 +1696,25 @@ ModTypeToObject (enum BXModificationType value)
         TSEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
             NSArray* objectIDs = [idsByEntity objectForKey: entity];
+			NSArray* objects = [self faultsWithIDs: objectIDs];
+			
+			id rels = [entity inverseToOneRelationships];
+			NSDictionary* oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
+			NSDictionary* newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+			TSEnumerate (currentObject, e, [objects objectEnumerator])
+				[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 
             //Send the notifications
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                 objectIDs, kBXObjectIDsKey,
                 self, kBXDatabaseContextKey,
                 nil];
-            NSString* notificationNames [2] = {kBXInsertEarlyNotification, kBXInsertNotification};
-            for (int i = 0; i < 2; i++)
-                [nc postNotificationName: notificationNames [i] object: entity userInfo: userInfo];
-            
-#if 0
-            //If we can find objects with matching partial keys, send update notifications instead
-            if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
-            {
-                NSSet* dependentViews = [entity dependentViews];
-                NSMutableArray* insertedIDs = [NSMutableArray array];
-                NSMutableArray* updatedIDs = [NSMutableArray array];
-                TSEnumerate (currentView, e, [dependentViews objectEnumerator])
-                {
-                    [insertedIDs removeAllObjects];
-                    [updatedIDs removeAllObjects];
-                    
-                    TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-                    {
-                        BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
-                        if (nil == [self registeredObjectWithID: partialID])
-                            [insertedIDs addObject: partialID];
-                        else
-                            [updatedIDs addObject: partialID];
-                    }
-                    
-                    id updatedIds = [self registeredObjectsWithIDs: updatedIDs];
-                    NSString* notificationNames [4] = {
-                        kBXInsertEarlyNotification, 
-                        kBXUpdateEarlyNotification,
-                        kBXInsertNotification, 
-                        kBXUpdateNotification
-                    };
-                    NSArray* arrays [4] = {insertedIDs, updatedIDs, insertedIDs, updatedIDs};
-                    id objectArrays [4] = {nil, updatedIds, nil, updatedIds};
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (0 < [arrays [i] count])
-                        {
-                            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                [[insertedIDs copy] autorelease], kBXObjectIDsKey,
-                                self, kBXDatabaseContextKey,
-                                objectArrays [i], kBXObjectsKey, //This needs to be the last item since objectArrays [i] might be nil
-                                nil];
-                            [nc postNotificationName: notificationNames [i] object: currentView userInfo: userInfo];
-                        }
-                    }
-                }
-            }
-#endif            
+			
+			[nc postNotificationName: kBXInsertEarlyNotification object: entity userInfo: userInfo];
+			TSEnumerate (currentObject, e, [objects objectEnumerator])
+				[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+
+			[nc postNotificationName: kBXInsertNotification object: entity userInfo: userInfo];
         }
     }
 }
@@ -1767,10 +1730,19 @@ ModTypeToObject (enum BXModificationType value)
         //Post the notifications
         TSEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
+			id rels = [entity inverseToOneRelationships];
+			id objects = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
+
 			TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 				[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeleted];
         
-			id objects = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
+			NSDictionary* oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
+			NSDictionary* newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+			TSEnumerate (currentObject, e, [objects objectEnumerator])
+			{
+				if ([NSNull null] != currentObject)
+					[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+			}
         
 			//Send the notifications
 			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1778,33 +1750,16 @@ ModTypeToObject (enum BXModificationType value)
 									  objects, kBXObjectsKey,
 									  self, kBXDatabaseContextKey,
 									  nil];
-			const int count = 2;
-			NSString* notificationNames [2] = {kBXDeleteEarlyNotification, kBXDeleteNotification};
-			for (int i = 0; i < count; i++)
+			
+			[nc postNotificationName: kBXDeleteEarlyNotification object: entity userInfo: userInfo];
+			
+			TSEnumerate (currentObject, e, [objects objectEnumerator])
 			{
-				[nc postNotificationName: notificationNames [i]
-								  object: entity
-								userInfo: userInfo];
-			}
-        
-#if 0
-			//This method will be called recursively, when the changed rows have been determined
-			if (NO == [mDatabaseInterface messagesForViewModifications] && NO == [entity isView])
-			{
-				NSSet* dependentViews = [entity dependentViews];
-				TSEnumerate (currentView, e, [dependentViews objectEnumerator])
-				{
-					NSMutableSet* knownIDs = [NSMutableSet set];
-					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
-					{
-						BXDatabaseObjectID* partialID = [currentID partialKeyForView: currentView];
-						if (nil != [self registeredObjectWithID: partialID])
-							[knownIDs addObject: partialID];
-					}
-					[self deletedObjectsFromDatabase: [knownIDs allObjects]];
-				}
-			}
-#endif
+				if ([NSNull null] != currentObject)
+					[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+			}			
+			
+			[nc postNotificationName: kBXDeleteNotification object: entity userInfo: userInfo];
 		}
 	}
 }
@@ -2554,7 +2509,7 @@ error:
 		if ([currentEntity hasCapability: kBXEntityCapabilityRelationships])
 		{
 			TSEnumerate (currentRelationship, e, [[currentEntity relationshipsByName] objectEnumerator])
-				[currentRelationship setAttributeDependency];
+				[currentRelationship makeAttributeDependency];
 		}
 	}
 	

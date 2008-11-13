@@ -29,6 +29,7 @@
 #import <BaseTen/BXAttributeDescription.h>
 
 @class BXRelationshipDescription;
+@class BXDatabaseObject;
 
 
 @interface BXAttributeDescription (PrivateMethods)
@@ -41,6 +42,7 @@
 - (void) setAttributeValueClass: (Class) aClass;
 - (void) setDatabaseTypeName: (NSString *) typeName;
 
-- (void) addReferencingRelationship: (BXRelationshipDescription *) rel;
-- (void) removeReferencingRelationship: (BXRelationshipDescription *) rel;
+- (void) addDependentRelationship: (BXRelationshipDescription *) rel;
+- (void) removeDependentRelationship: (BXRelationshipDescription *) rel;
+- (NSSet *) dependentRelationships;
 @end

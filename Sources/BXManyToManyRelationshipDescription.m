@@ -274,7 +274,7 @@ bail:
 }
 
 
-- (void) setAttributeDependency
+- (void) makeAttributeDependency
 {
 }
 @end

@@ -32,6 +32,7 @@
 #import "BXDatabaseContext.h"
 #import "BXAttributeDescription.h"
 #import "BXRelationshipDescription.h"
+#import "BXRelationshipDescriptionPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
@@ -416,6 +417,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 	return [[mRelationships copy] autorelease];
 }
 
+
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability
 {
 	return (mCapabilities & aCapability ? YES : NO);
@@ -740,5 +742,21 @@ FilterPkeyAttributes (id attribute, void* arg)
 		mFlags |= kBXEntityIsEnabled;
 	else
 		mFlags &= ~kBXEntityIsEnabled;
+}
+
+static int
+InverseToOneRelationships (id arg)
+{
+	int retval = 0;
+	BXRelationshipDescription* relationship = (BXRelationshipDescription *) arg;
+	if ([relationship isInverse] && ! [relationship isToMany])
+		retval = 1;
+	return retval;
+}
+
+
+- (id) inverseToOneRelationships;
+{
+	return [mRelationships PGTSValueSelectFunction: &InverseToOneRelationships];
 }
 @end

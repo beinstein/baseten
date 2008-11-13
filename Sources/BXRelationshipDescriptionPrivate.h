@@ -44,6 +44,7 @@
 - (void) setDeleteRule: (NSDeleteRule) aRule;
 
 //Remember to override these in subclasses.
+- (id) registeredTargetFor: (BXDatabaseObject *) databaseObject fireFault: (BOOL) fireFault;
 - (id) targetForObject: (BXDatabaseObject *) anObject error: (NSError **) error;
 - (BOOL) setTarget: (id) target
 		 forObject: (BXDatabaseObject *) aDatabaseObject
@@ -52,7 +53,7 @@
 - (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*) )callback context: (void *) ctx;
 
 - (void) removeAttributeDependency;
-- (void) setAttributeDependency;
+- (void) makeAttributeDependency;
 @end
 
 

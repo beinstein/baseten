@@ -95,10 +95,9 @@
 }
 
 
-- (void) setAttributeDependency
+- (void) makeAttributeDependency
 {
 	if (! [self isInverse])
-		[super setAttributeDependency];
+		[super makeAttributeDependency];
 }
-
 @end

@@ -171,12 +171,10 @@ RemoveRelFromAttribute (NSString* srcKey, NSString* dstKey, void* context)
 {
 	struct rel_attr_st* ctx = (struct rel_attr_st *) context;
 	BXRelationshipDescription* self = ctx->ra_sender;
-	BXRelationshipDescription* inverse = [self inverseRelationship];
 	NSDictionary* attributes = ctx->ra_attrs;
 	
 	BXAttributeDescription* attr = [attributes objectForKey: srcKey];
-	[attr removeReferencingRelationship: self];
-	[attr removeReferencingRelationship: inverse];
+	[attr removeDependentRelationship: self];
 }
 
 
@@ -185,20 +183,16 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 {
 	struct rel_attr_st* ctx = (struct rel_attr_st *) context;
 	BXRelationshipDescription* self = ctx->ra_sender;
-	BXRelationshipDescription* inverse = [self inverseRelationship];
 	NSDictionary* attributes = ctx->ra_attrs;
 	
 	BXAttributeDescription* attr = [attributes objectForKey: srcKey];
-	[attr addReferencingRelationship: self];
-
-    ExpectCV (inverse);
-	[attr addReferencingRelationship: inverse];
+	[attr addDependentRelationship: self];
 }
 
 
 - (void) removeAttributeDependency
 {
-	if (! [self isToMany])
+	if ([self isInverse] && ![self isToMany])
 	{
 		struct rel_attr_st ctx = {self, [[self entity] attributesByName]};
 		[self iterateForeignKey: &RemoveRelFromAttribute context: &ctx];
@@ -206,9 +200,9 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 }
 
 
-- (void) setAttributeDependency
+- (void) makeAttributeDependency
 {
-	if (! [self isToMany])
+	if ([self isInverse] && ![self isToMany])
 	{
 		struct rel_attr_st ctx = {self, [[self entity] attributesByName]};
 		[self iterateForeignKey: &AddRelToAttribute context: &ctx];
@@ -312,34 +306,59 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	return [BXSetRelationProxy class];
 }
 
-- (id) targetForObject: (BXDatabaseObject *) aDatabaseObject error: (NSError **) error
+- (id) toOneTargetFor: (BXDatabaseObject *) databaseObject registeredOnly: (BOOL) registeredOnly 
+			fireFault: (BOOL) fireFault error: (NSError **) error
 {
-    BXAssertValueReturn (NULL != error, nil , @"Expected error to be set.");
-    BXAssertValueReturn (nil != aDatabaseObject, nil, @"Expected aDatabaseObject not to be nil.");
-    BXAssertValueReturn ([[self entity] isEqual: [aDatabaseObject entity]], nil, 
-						 @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, aDatabaseObject);
+	Expect ([self isInverse]);
+	Expect (! [self isToMany]);
+	Expect (registeredOnly || error);
+
+	BXDatabaseObject* retval = nil;
+	BXEntityDescription* entity = [self destinationEntity];
+	BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: entity fromObject: databaseObject fireFault: fireFault];
+	if (objectID)
+	{
+		BXDatabaseContext* ctx = [databaseObject databaseContext];
+		if (registeredOnly)
+			retval = [ctx registeredObjectWithID: objectID];
+		else
+			retval = [ctx objectWithID: objectID error: error];	
+	}
+	return retval;
+}
+			
+- (id) registeredTargetFor: (BXDatabaseObject *) databaseObject fireFault: (BOOL) fireFault
+{
+	id retval = nil;
+	if (databaseObject)
+		retval = [self toOneTargetFor: databaseObject registeredOnly: YES fireFault: fireFault error: NULL];
+	return retval;
+}
+
+- (id) targetForObject: (BXDatabaseObject *) databaseObject error: (NSError **) error
+{
+	Expect (error);
+	Expect (databaseObject);
+    BXAssertValueReturn ([[self entity] isEqual: [databaseObject entity]], nil, 
+						 @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, databaseObject);
 	
 	id retval = nil;
 	//If we can determine an object ID, fetch the target object from the context's cache.
     if (! [self isToMany] && [self isInverse])
-    {
-		BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: [self destinationEntity] fromObject: aDatabaseObject];
-		if (objectID)
-			retval = [[aDatabaseObject databaseContext] objectWithID: objectID error: error];
-    }
+		[self toOneTargetFor: databaseObject registeredOnly: NO fireFault: YES error: error];
 	else
 	{
 		BXEntityDescription* entity = [self destinationEntity];
-		NSPredicate* predicate = [self predicateForObject: aDatabaseObject];
+		NSPredicate* predicate = [self predicateForObject: databaseObject];
 		Class fetchedClass = [self fetchedClass];
-		id res = [[aDatabaseObject databaseContext] executeFetchForEntity: entity
-															withPredicate: predicate 
-														  returningFaults: NO
-														  excludingFields: nil
-															returnedClass: fetchedClass
-																	error: error];
+		id res = [[databaseObject databaseContext] executeFetchForEntity: entity
+														   withPredicate: predicate 
+														 returningFaults: NO
+														 excludingFields: nil
+														   returnedClass: fetchedClass
+																   error: error];
 		if (fetchedClass)
-			[res fetchedForRelationship: self owner: aDatabaseObject key: [self name]];
+			[res fetchedForRelationship: self owner: databaseObject key: [self name]];
 		
 		if ([self isToMany])
 			retval = res;
@@ -361,21 +380,39 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	ExpectR (databaseObject, NO);
 	ExpectR ([[self entity] isEqual: [databaseObject entity]], NO);
 	BOOL retval = NO;
+	BXRelationshipDescription* inverse = [self inverseRelationship];
+	NSString* inverseName = [inverse name];
 	
     //We always want to modify the foreign key's (or corresponding view's) entity, hence the branch here.
+	//Also with one-to-many relationships the false branch is for modifying a collection of objects.
     if (mIsInverse)
     {		
     	NSPredicate* predicate = [[databaseObject objectID] predicate];
     	NSDictionary* values = [mForeignKey srcDictionaryFor: [self entity] valuesFromDstObject: target];
+		
+		BXDatabaseObject* oldTarget = nil;
+		if (inverseName)
+		{
+			oldTarget = [self registeredTargetFor: databaseObject fireFault: NO];
+			[oldTarget willChangeValueForKey: inverseName];
+			[target willChangeValueForKey: inverseName];
+		}
 		
     	[[databaseObject databaseContext] executeUpdateObject: nil
     													entity: [self entity]
     												 predicate: predicate
     											withDictionary: values
     													 error: error];
-    	if (nil == *error)
+    	if (! *error)
     		[databaseObject setCachedValue: target forKey: [self name]];
-		else
+
+		if (inverseName)
+		{
+			[oldTarget didChangeValueForKey: inverseName];
+			[target didChangeValueForKey: inverseName];
+		}
+
+		if (*error)
 			goto bail;
     }
     else
@@ -384,6 +421,14 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
     	//FIXME: this could be configurable by the user unless we want to look for
     	//       non-empty or maximum size constraints, which are likely CHECK clauses.
     	//FIXME: these should be inside a transaction. Use the undo manager?
+		
+		BXDatabaseObject* oldTarget = nil;
+		if (! [self isToMany] && inverseName)
+		{
+			oldTarget = [databaseObject cachedValueForKey: [self name]];
+			[oldTarget willChangeValueForKey: inverseName];
+			[target willChangeValueForKey: inverseName];
+		}
 		
 		NSPredicate* predicate = nil;
     	if ((predicate = [self predicateForRemoving: target databaseObject: databaseObject]))
@@ -411,12 +456,15 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 			if (*error)
 				goto bail;
 		}
-		
+				
 		//Don't set if we are updating a collection because if the object has the
 		//value, it will be self-updating one.
-		if (! [self isToMany])
-			[databaseObject setCachedValue: target forKey: [self name]];
-    }
+		if (! [self isToMany] && inverseName)
+		{
+			[oldTarget didChangeValueForKey: inverseName];
+			[target didChangeValueForKey: inverseName];
+		}
+	}
 	
 	retval = YES;
 bail:
