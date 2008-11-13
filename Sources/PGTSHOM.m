@@ -271,6 +271,20 @@ CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
 
 
 static void
+CollectAndPerformKeysSetArray (id self, id retval, NSInvocation* invocation)
+{
+	TSEnumerate (currentObject, e, [self objectEnumerator])
+	{
+		[invocation invokeWithTarget: currentObject];
+		id collected = nil;
+		[invocation getReturnValue: &collected];
+		if (! collected) collected = [NSNull null];
+		[retval setObject: collected forKey: currentObject];
+	}
+}
+
+
+static void
 Do (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	TSEnumerate (currentObject, e, enumerator)
@@ -325,6 +339,11 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return [self PGTSCollectReturning: [NSMutableSet class]];
 }
 
+- (id) PGTSKeyCollect
+{
+	return HOMTrampoline (self, @selector (PGTSKeyCollect:userInfo:), nil);
+}
+
 - (id) PGTSSelectFunction: (int (*)(id)) fptr
 {
 	id retval = [NSMutableSet setWithCapacity: [self count]];
@@ -341,6 +360,12 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	id retval = [[[retclass alloc] initWithCapacity: [self count]] autorelease];
 	CollectAndPerformSetArray (self, retval, invocation);
+}
+
+- (void) PGTSKeyCollect: (NSInvocation *) invocation userInfo: (id) ignored
+{
+	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
+	CollectAndPerformKeysSetArray (self, retval, invocation);
 }
 
 - (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) anObject
@@ -386,6 +411,11 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return [self PGTSCollectReturning: [NSMutableArray class]];
 }
 
+- (id) PGTSKeyCollect
+{
+	return HOMTrampoline (self, @selector (PGTSKeyCollect:userInfo:), nil);
+}
+
 - (id) PGTSCollectReturning: (Class) aClass
 {
 	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
@@ -417,6 +447,12 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	id retval = [[[retclass alloc] initWithCapacity: [self count]] autorelease];
 	CollectAndPerformSetArray (self, retval, invocation);
+}
+
+- (void) PGTSKeyCollect: (NSInvocation *) invocation userInfo: (id) ignored
+{
+	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
+	CollectAndPerformKeysSetArray (self, retval, invocation);
 }
 
 - (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) userInfo

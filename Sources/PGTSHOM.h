@@ -51,6 +51,7 @@
 - (id) PGTSDo;
 - (id) PGTSCollect;
 - (id) PGTSCollectReturning: (Class) aClass;
+- (id) PGTSKeyCollect;
 - (id) PGTSSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 - (id) PGTSVisit: (id) visitor;
@@ -64,6 +65,7 @@
 - (id) PGTSDo;
 - (id) PGTSCollect;
 - (id) PGTSCollectReturning: (Class) aClass;
+- (id) PGTSKeyCollect;
 - (id) PGTSSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 /**
