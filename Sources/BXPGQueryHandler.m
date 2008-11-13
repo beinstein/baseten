@@ -63,7 +63,7 @@ NSString* kBXPGExceptionCollectAllNoneNotAllowed = @"kBXPGExceptionCollectAllNon
 
 
 @implementation BXPGSelectQueryHandler
-+ (void) willCollecAllNone
++ (void) willCollectAllNone
 {
 	//Don't raise the exception.
 }
