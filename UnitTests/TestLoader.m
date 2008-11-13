@@ -75,7 +75,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [ToOneChangeNotificationTests class]];
+	//testClasses = [NSArray arrayWithObject: [PredicateTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{

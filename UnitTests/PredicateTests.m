@@ -207,13 +207,23 @@
 - (void) testAdditionWithKeyPath
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"1 + id == 2"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
 	MKCAssertEqualObjects (whereClause, @"$1 = ($2 + $3)");
 	NSArray* parameters = [mQueryBuilder parameters];
 	NSArray* expected = [NSArray arrayWithObjects: [NSNumber numberWithInt: 3], [NSNumber numberWithInt: 1], [NSNumber numberWithInt: 2], nil];
 	MKCAssertEqualObjects (parameters, expected);	
 }
 #endif
+
+- (void) testDiacriticInsensitivity
+{
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"'a' LIKE[cd] 'b'"];
+	[mQueryBuilder setQueryType: kBXPGQueryTypeSelect];
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
+	MKCAssertEqualObjects (whereClause, @"(true)");
+	NSArray* parameters = [mQueryBuilder parameters];
+	MKCAssertEqualObjects (parameters, [NSArray array]);
+}
 
 
 @end
