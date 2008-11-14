@@ -545,16 +545,22 @@ ParseSelector (SEL aSelector, NSString** key)
 				BXAttributeDescription* attr = [[entity attributesByName] objectForKey: aKey];
 				
 				NSSet* rels = [attr dependentRelationships];
-				id oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
-				[self setCachedValue: aVal forKey: aKey];
-				id newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
-				[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				id oldTargets = nil;
+				id newTargets = nil;
+				if (0 < [rels count])
+				{
+					oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+					[self setCachedValue: aVal forKey: aKey];
+					newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+					[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				}
 				
 				[mContext executeUpdateObject: self entity: nil predicate: nil
 							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: attr]
 										error: &error];
 				
-				[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				if (0 < [rels count])
+					[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				break;
 			}
 				
@@ -618,15 +624,21 @@ ParseSelector (SEL aSelector, NSString** key)
 	TSEnumerate (currentAttr, e, [dict objectEnumerator])
 		[rels unionSet: [currentAttr dependentRelationships]];
 
-	id oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
-	[self setCachedValuesForKeysWithDictionary: aDict];
-	id newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
-	[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+	id oldTargets = nil;
+	id newTargets = nil;
+	if (0 < [rels count])
+	{
+		oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+		[self setCachedValuesForKeysWithDictionary: aDict];
+		newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+		[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+	}
 		
     if (! [mContext executeUpdateObject: self entity: nil predicate: nil withDictionary: dict error: &error])
 		[[mContext internalDelegate] databaseContext: mContext hadError: error willBePassedOn: NO];
 	
-	[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+	if (0 < [rels count])
+		[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 }
 
 /** 
@@ -1208,10 +1220,8 @@ ParseSelector (SEL aSelector, NSString** key)
 									  to: (NSDictionary *) newTargets 
 								callback: (void (*)(id, NSString*)) callback
 {
+	//The given relationships respond to -isInverse with YES.
 	ExpectV (relationships);
-	ExpectV (oldTargets);
-	ExpectV (newTargets);
-	
 	TSEnumerate (currentRelationship, e, [relationships objectEnumerator])
 	{
 		callback (self, [currentRelationship name]);
@@ -1245,10 +1255,24 @@ DidChange (id sender, NSString* key)
 - (void) willChangeInverseToOneRelationships: (id) relationships from: (NSDictionary *) oldTargets to: (NSDictionary *) newTargets
 {
 	[self changeInverseToOneRelationships: relationships from: oldTargets to: newTargets callback: &WillChange];
+	@synchronized (mValues)
+	{
+		TSEnumerate (currentRel, e, [relationships objectEnumerator])
+			[mValues removeObjectForKey: [currentRel name]];
+	}
 }
 
 - (void) didChangeInverseToOneRelationships: (id) relationships from: (NSDictionary *) oldTargets to: (NSDictionary *) newTargets
 {
+	@synchronized (mValues)
+	{
+		TSEnumerate (currentRel, e, [relationships objectEnumerator])
+		{
+			id newValue = [newTargets objectForKey: currentRel];
+			if (newValue)
+				[mValues setObject: newValue forKey: [currentRel name]];
+		}
+	}
 	[self changeInverseToOneRelationships: relationships from: oldTargets to: newTargets callback: &DidChange];
 }
 @end

@@ -86,18 +86,4 @@
 	NSPredicate* retval = [objectID predicate];
 	return retval;
 }
-
-
-- (void) removeAttributeDependency
-{
-	if (! [self isInverse])
-		[super removeAttributeDependency];
-}
-
-
-- (void) makeAttributeDependency
-{
-	if (! [self isInverse])
-		[super makeAttributeDependency];
-}
 @end

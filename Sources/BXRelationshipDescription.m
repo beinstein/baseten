@@ -345,7 +345,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	id retval = nil;
 	//If we can determine an object ID, fetch the target object from the context's cache.
     if (! [self isToMany] && [self isInverse])
-		[self toOneTargetFor: databaseObject registeredOnly: NO fireFault: YES error: error];
+		retval = [self toOneTargetFor: databaseObject registeredOnly: NO fireFault: YES error: error];
 	else
 	{
 		BXEntityDescription* entity = [self destinationEntity];

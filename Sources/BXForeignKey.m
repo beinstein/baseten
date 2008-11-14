@@ -114,7 +114,11 @@
 		if (fireFault)
 			value = [object primitiveValueForKey: objectKey];
 		else
+		{
 			value = [object cachedValueForKey: objectKey];
+			if ([NSNull null] == value)
+				value = nil;
+		}
 		
 		if (value)
 			[values setObject: value forKey: name];

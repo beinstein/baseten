@@ -1043,7 +1043,7 @@ NormalizeForIdentityTest (BXPGExpressionValueType** lval, BXPGExpressionValueTyp
 	//First we collect the relationships.
 	//Remember to change the second test, if the last component may be a function name 
 	//instead of an attribute name.
-	while ((currentKey = [e nextObject]) && currentKey != [components lastObject])
+	while ((currentKey = [e nextObject]))// && currentKey != [components lastObject])
 	{
 		property = [[entity relationshipsByName] objectForKey: currentKey];
 		if (! property)

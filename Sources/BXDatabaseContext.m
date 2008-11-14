@@ -1656,10 +1656,15 @@ ModTypeToObject (enum BXModificationType value)
 			if (0 < [objects count])
 			{
 				id rels = [entity inverseToOneRelationships];
-				NSDictionary* oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
-				NSDictionary* newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
-				TSEnumerate (currentObject, e, [objects objectEnumerator])
-					[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				NSDictionary* oldTargets = nil;
+				NSDictionary* newTargets = nil;
+				if (0 < [rels count])
+				{
+					oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
+					newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+					TSEnumerate (currentObject, e, [objects objectEnumerator])
+						[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				}
 				
 				//Fault the objects and send the notifications
 				if (shouldFault)
@@ -1675,8 +1680,11 @@ ModTypeToObject (enum BXModificationType value)
 										  nil];
 				
 				[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
-				TSEnumerate (currentObject, e, [objects objectEnumerator])
-					[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				if (0 < [rels count])
+				{
+					TSEnumerate (currentObject, e, [objects objectEnumerator])
+						[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				}
 				
 				[nc postNotificationName: kBXUpdateNotification object: entity userInfo: userInfo];
 			}
@@ -1699,10 +1707,15 @@ ModTypeToObject (enum BXModificationType value)
 			NSArray* objects = [self faultsWithIDs: objectIDs];
 			
 			id rels = [entity inverseToOneRelationships];
-			NSDictionary* oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
-			NSDictionary* newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
-			TSEnumerate (currentObject, e, [objects objectEnumerator])
-				[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+			NSDictionary* oldTargets = nil;
+			NSDictionary* newTargets = nil;
+			if (0 < [rels count])
+			{
+				oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
+				newTargets= [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+				TSEnumerate (currentObject, e, [objects objectEnumerator])
+					[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+			}
 
             //Send the notifications
             NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -1711,8 +1724,11 @@ ModTypeToObject (enum BXModificationType value)
                 nil];
 			
 			[nc postNotificationName: kBXInsertEarlyNotification object: entity userInfo: userInfo];
-			TSEnumerate (currentObject, e, [objects objectEnumerator])
-				[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+			if (0 < [rels count])
+			{
+				TSEnumerate (currentObject, e, [objects objectEnumerator])
+					[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+			}
 
 			[nc postNotificationName: kBXInsertNotification object: entity userInfo: userInfo];
         }
@@ -1730,18 +1746,24 @@ ModTypeToObject (enum BXModificationType value)
         //Post the notifications
         TSEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
-			id rels = [entity inverseToOneRelationships];
+			NSArray* objectIDs = [idsByEntity objectForKey: entity];
 			id objects = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
 
 			TSEnumerate (currentID, e, [objectIDs objectEnumerator])
 				[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeleted];
         
-			NSDictionary* oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
-			NSDictionary* newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
-			TSEnumerate (currentObject, e, [objects objectEnumerator])
+			id rels = [entity inverseToOneRelationships];
+			NSDictionary* oldTargets = nil;
+			NSDictionary* newTargets = nil;
+			if (0 < [rels count])
 			{
-				if ([NSNull null] != currentObject)
-					[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				oldTargets= [self targetsByObject: objects forRelationships: rels fireFaults: NO];
+				newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+				TSEnumerate (currentObject, e, [objects objectEnumerator])
+				{
+					if ([NSNull null] != currentObject)
+						[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				}
 			}
         
 			//Send the notifications
@@ -1753,11 +1775,14 @@ ModTypeToObject (enum BXModificationType value)
 			
 			[nc postNotificationName: kBXDeleteEarlyNotification object: entity userInfo: userInfo];
 			
-			TSEnumerate (currentObject, e, [objects objectEnumerator])
+			if (0 < [rels count])
 			{
-				if ([NSNull null] != currentObject)
-					[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
-			}			
+				TSEnumerate (currentObject, e, [objects objectEnumerator])
+				{
+					if ([NSNull null] != currentObject)
+						[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				}
+			}
 			
 			[nc postNotificationName: kBXDeleteNotification object: entity userInfo: userInfo];
 		}
