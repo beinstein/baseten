@@ -1029,76 +1029,55 @@ NormalizeForIdentityTest (BXPGExpressionValueType** lval, BXPGExpressionValueTyp
 	
 	id property = nil;
 	NSMutableArray* propertyStack = [NSMutableArray arrayWithCapacity: [components count]];
-	NSEnumerator* e = [components objectEnumerator];
-	NSString* currentKey = nil;
 	NSInteger arrayCardinality = 0;
 	NSInteger relationshipCardinality = 0;
 	BOOL hasRelationships = NO;
+	BOOL hasAttributes = NO;
 	
-	//The key path must be like one of the following:
-	//attribute.function*
-	//relationship.function*
-	//relationship.attribute.function*
-	
-	//First we collect the relationships.
-	//Remember to change the second test, if the last component may be a function name 
-	//instead of an attribute name.
-	while ((currentKey = [e nextObject]))// && currentKey != [components lastObject])
+	TSEnumerate (currentKey, e, [components objectEnumerator])
 	{
-		property = [[entity relationshipsByName] objectForKey: currentKey];
-		if (! property)
-			break;
-		
-		hasRelationships = YES;
-
-		if ([property isToMany])
-			relationshipCardinality++;
-
-		[propertyStack addObject: property];
-		entity = [(BXRelationshipDescription *) property destinationEntity];
-	}
-	
-	//We have problems with properties the cardinality of which caused by relationships is greater than one.
-	if (1 < relationshipCardinality)
-		goto end;
-		
-	if (currentKey)
-	{
-		//Also collect an attribute. We don't allow PG's compound types at least yet.
-		property = [[entity attributesByName] objectForKey: currentKey];
-		if (property)
+		//We prefer attributes over relationships.
+		if ((property = [[entity attributesByName] objectForKey: currentKey]))
 		{
-			currentKey = nil;
+			if (hasAttributes)
+				goto end;
+			hasAttributes = YES;
+			
 			[propertyStack addObject: property];
 			if ([property isArray])
 				arrayCardinality++;
 		}
-	
-		//FIXME: we should allow functions in the future.
-#if 0
-		//Also collect the functions.
-		BXPGSQLFunction* function = nil;
-		if (! currentKey)
-			currentKey = [e nextObject];
-		
-		if (currentKey)
+		else if ((property = [[entity relationshipsByName] objectForKey: currentKey]))
 		{
-			do
-			{
-				BXPGExpressionValueType* valueType = [propertyStack lastObject];
-				function = [BXPGSQLFunction functionNamed: currentKey valueType: valueType];
-				if (! function)
-					goto end;
-				
-				arrayCardinality = [function arrayCardinality];
-				relationshipCardinality = [function relationshipCardinality];
-				[propertyStack addObject: function];
-			}
-			while ((currentKey = [e nextObject]));
+			if (hasAttributes)
+				goto end;
+			
+			hasRelationships = YES;
+			
+			if ([property isToMany])
+				relationshipCardinality++;
+			
+			[propertyStack addObject: property];
+			entity = [(BXRelationshipDescription *) property destinationEntity];
 		}
+		else
+		{
+			goto end;
+			
+			//FIXME: we should allow functions in the future.
+#if 0
+			BXPGExpressionValueType* valueType = [propertyStack lastObject];
+			BXPGSQLFunction* function = [BXPGSQLFunction functionNamed: currentKey valueType: valueType];
+			if (! function)
+				goto end;
+			
+			arrayCardinality = [function arrayCardinality];
+			relationshipCardinality = [function relationshipCardinality];
+			[propertyStack addObject: function];
 #endif
+		}
 	}
-		
+	
 	//FIXME: PostgreSQL doesn't allow array_accum in WHERE clause, so for now we just accept duplicate rows and the resulting problems.
 #if 0
 	//Check if we need an array_accum.
