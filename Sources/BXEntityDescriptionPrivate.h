@@ -35,6 +35,7 @@
 
 
 @interface BXEntityDescription (PrivateMethods)
++ (id) cachedEntities;
 - (NSURL *) entityKey;
 + (NSURL *) entityKeyForDatabaseURI: (NSURL *) databaseURI schema: (NSString *) schemaName table: (NSString *) tableName;
 + (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;

@@ -36,7 +36,7 @@
 - (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) entity 
   destinationEntity: (BXEntityDescription *) destinationEntity;
 - (BXForeignKey *) foreignKey;
-- (void) setDestinationEntity: (BXEntityDescription *) entity;
+- (void) removeDestinationEntity;
 - (void) setForeignKey: (BXForeignKey *) aKey;
 - (BOOL) isInverse;
 - (void) setIsInverse: (BOOL) aBool;

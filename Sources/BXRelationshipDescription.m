@@ -141,9 +141,14 @@
 
 
 @implementation BXRelationshipDescription (PrivateMethods)
-- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity 
+- (id) initWithName: (NSString *) name 
+			 entity: (BXEntityDescription *) entity 
   destinationEntity: (BXEntityDescription *) destinationEntity
 {
+	Expect (name);
+	Expect (entity);
+	Expect (destinationEntity);
+	
 	if ((self = [super initWithName: name entity: entity]))
 	{
 		mDestinationEntity = destinationEntity;
@@ -151,11 +156,10 @@
 	return self;
 }
 
-- (void) setDestinationEntity: (BXEntityDescription *) entity
+- (void) removeDestinationEntity
 {
-	if (! entity)
-		[[self entity] removeRelationship: self];
-	mDestinationEntity = entity;
+	[[self entity] removeRelationship: self];
+	mDestinationEntity = nil;
 }
 
 

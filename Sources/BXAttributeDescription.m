@@ -199,6 +199,7 @@
 {
 	BXEntityDescription* entity = [self entity];
 	CFSetCallBacks callbacks = PGTSScannedSetCallbacks ();
+	ExpectV ([rel destinationEntity]);
 	if ([[rel entity] isEqual: entity])
 	{
 		if (! mRelationshipsUsing)

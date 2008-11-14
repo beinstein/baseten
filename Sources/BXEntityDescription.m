@@ -59,7 +59,6 @@ static id gEntities;
  * \ingroup descriptions
  */
 @implementation BXEntityDescription
-
 + (void) initialize
 {
     static BOOL tooLate = NO;
@@ -110,7 +109,10 @@ static id gEntities;
         TSEnumerate (currentRel, e, [mRelationships objectEnumerator])
         {
             [currentRel setEntity: nil];
-            [[currentRel inverseRelationship] setDestinationEntity: nil];
+			[currentRel removeAttributeDependency];
+			BXRelationshipDescription* inverse = [(BXRelationshipDescription *) currentRel inverseRelationship];
+            [inverse removeDestinationEntity];
+			[inverse removeAttributeDependency];
 			[[currentRel class] unregisterProperty: currentRel entity: self];
         }
     }
@@ -758,5 +760,11 @@ InverseToOneRelationships (id arg)
 - (id) inverseToOneRelationships;
 {
 	return [mRelationships PGTSValueSelectFunction: &InverseToOneRelationships];
+}
+
+
++ (id) cachedEntities
+{
+	return gEntities;
 }
 @end
