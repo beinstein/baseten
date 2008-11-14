@@ -281,6 +281,7 @@ CollectAndPerformKeysSetArray (id self, id retval, NSInvocation* invocation)
 		if (! collected) collected = [NSNull null];
 		[retval setObject: collected forKey: currentObject];
 	}
+	[invocation setReturnValue: &retval];
 }
 
 
