@@ -102,6 +102,7 @@
 
 - (NSString *) expressionSQL: (id <BXPGExpressionHandler>) visitor
 {
+	BXLogError (@"Tried to call -expressionSQL: for class %@, value %@", [self class], [self value]);
 	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
