@@ -75,14 +75,12 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [PredicateTests class]];
+	//testClasses = [NSArray arrayWithObject: [ToOneChangeNotificationTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
 		SenTestSuite* suite = [SenTestSuite testSuiteForTestCaseClass: testCaseClass];
-		SenTestRun* run = [suite run];
-		if (0 < [run failureCount])
-			abort ();
+		[suite run];
 	}
 }
 @end
@@ -92,6 +90,7 @@
 static void
 bx_test_failed (NSException* exception)
 {
+	abort ();
 }
 
 - (void) logAndCallBXTestFailed: (NSException *) exception

@@ -42,7 +42,14 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 - (void) setUp
 {
 	[super setUp];
-	mNotesReceived = 0;
+	
+	mA = nil;
+	mB1 = nil;
+	mB2 = nil;
+	
+	mReceivedForA = 0;
+	mReceivedForB1 = 0;
+	mReceivedForB2 = 0;
 }
 
 
@@ -50,8 +57,14 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 {
     if (kObservingContext == context) 
 	{
-		mNotesReceived++;
-		NSLog (@"Got note!");
+		if (mA == object)
+			mReceivedForA++;
+		else if (mB1 == object)
+			mReceivedForB1++;
+		else if (mB2 == object)
+			mReceivedForB2++;
+		else
+			NSLog (@"Got a strange KVO notification.");
 	}
 	else 
 	{
@@ -69,27 +82,40 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 	NSArray* r1 = [mContext executeFetchForEntity: test1 withPredicate: p error: NULL];
 	NSArray* r2 = [mContext executeFetchForEntity: test2 withPredicate: p error: NULL];
 	
-	BXDatabaseObject* a = [r2 objectAtIndex: 0];
-	BXDatabaseObject* b1 = [a primitiveValueForKey: @"test1"];
-	BXDatabaseObject* b2 = [r1 objectAtIndex: 0];
+	mA = [r2 objectAtIndex: 0];
+	mB1 = [mA primitiveValueForKey: @"test1"];
+	mB2 = [r1 objectAtIndex: 0];
 
-	MKCAssertNotNil (a);
-	MKCAssertNotNil (b1);
-	MKCAssertNotNil (b2);
-	MKCAssertFalse (b1 == b2);
+	MKCAssertNotNil (mA);
+	MKCAssertNotNil (mB1);
+	MKCAssertNotNil (mB2);
+	MKCAssertFalse (mB1 == mB2);
 	
-	[a addObserver: self forKeyPath: @"test1" options: 0 context: kObservingContext];
-	[b1 addObserver: self forKeyPath: @"test2" options: 0 context: kObservingContext];
-	[b2 addObserver: self forKeyPath: @"test2" options: 0 context: kObservingContext];
+	[mA addObserver: self forKeyPath: @"test1" options: 0 context: kObservingContext];
+	[mB1 addObserver: self forKeyPath: @"test2" options: 0 context: kObservingContext];
+	[mB2 addObserver: self forKeyPath: @"test2" options: 0 context: kObservingContext];
 	
-	MKCAssertEquals (0, mNotesReceived);
-	[a setPrimitiveValue: [NSNull null] forKey: @"fkt1id"];
-	[a setPrimitiveValue: [NSNumber numberWithInteger: 2] forKey: @"fkt1id"];
-	MKCAssertEquals (4, mNotesReceived);
+	MKCAssertEquals (0, mReceivedForA);
+	MKCAssertEquals (0, mReceivedForB1);
+	MKCAssertEquals (0, mReceivedForB2);
 	
-	[a removeObserver: self forKeyPath: @"test1"];
-	[b1 removeObserver: self forKeyPath: @"test2"];
-	[b2 removeObserver: self forKeyPath: @"test2"];
+	[mA setPrimitiveValue: [NSNull null] forKey: @"fkt1id"];
+	MKCAssertTrue (0 < mReceivedForA);
+	MKCAssertTrue (0 < mReceivedForB1);
+	MKCAssertEquals (0, mReceivedForB2);
+	
+	mReceivedForA = 0;
+	mReceivedForB1 = 0;
+	mReceivedForB2 = 0;
+	
+	[mA setPrimitiveValue: [NSNumber numberWithInteger: 2] forKey: @"fkt1id"];
+	MKCAssertTrue (0 < mReceivedForA);
+	MKCAssertEquals (0, mReceivedForB1);
+	MKCAssertTrue (0 < mReceivedForB2);
+	
+	[mA removeObserver: self forKeyPath: @"test1"];
+	[mB1 removeObserver: self forKeyPath: @"test2"];
+	[mB2 removeObserver: self forKeyPath: @"test2"];
 }
 
 
@@ -103,26 +129,39 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 	NSArray* r1 = [mContext executeFetchForEntity: ototest1 withPredicate: p1 error: NULL];
 	NSArray* r2 = [mContext executeFetchForEntity: ototest2 withPredicate: p2 error: NULL];
 	
-	BXDatabaseObject* a = [r1 objectAtIndex: 0];
-	BXDatabaseObject* b1 = [a primitiveValueForKey: @"ototest2"];
-	BXDatabaseObject* b2 = [r2 objectAtIndex: 0];
+	mA = [r1 objectAtIndex: 0];
+	mB1 = [mA primitiveValueForKey: @"ototest2"];
+	mB2 = [r2 objectAtIndex: 0];
 	
-	MKCAssertNotNil (a);
-	MKCAssertNotNil (b1);
-	MKCAssertNotNil (b2);
-	MKCAssertFalse (b1 == b2);
+	MKCAssertNotNil (mA);
+	MKCAssertNotNil (mB1);
+	MKCAssertNotNil (mB2);
+	MKCAssertFalse (mB1 == mB2);
 	
-	[a addObserver: self forKeyPath: @"ototest2" options: 0 context: kObservingContext];
-	[b1 addObserver: self forKeyPath: @"ototest1" options: 0 context: kObservingContext];
-	[b2 addObserver: self forKeyPath: @"ototest1" options: 0 context: kObservingContext];
+	[mA addObserver: self forKeyPath: @"ototest2" options: 0 context: kObservingContext];
+	[mB1 addObserver: self forKeyPath: @"ototest1" options: 0 context: kObservingContext];
+	[mB2 addObserver: self forKeyPath: @"ototest1" options: 0 context: kObservingContext];
 	
-	MKCAssertEquals (0, mNotesReceived);
-	[b1 setPrimitiveValue: [NSNull null] forKey: @"r1"];
-	[b2 setPrimitiveValue: [NSNumber numberWithInteger: 1] forKey: @"r1"];
-	MKCAssertEquals (4, mNotesReceived);
+	MKCAssertEquals (0, mReceivedForA);
+	MKCAssertEquals (0, mReceivedForB1);
+	MKCAssertEquals (0, mReceivedForB2);
+
+	[mB1 setPrimitiveValue: [NSNull null] forKey: @"r1"];
+	MKCAssertTrue (0 < mReceivedForA);
+	MKCAssertTrue (0 < mReceivedForB1);
+	MKCAssertEquals (0, mReceivedForB2);	
 	
-	[a removeObserver: self forKeyPath: @"ototest2"];
-	[b1 removeObserver: self forKeyPath: @"ototest1"];
-	[b2 removeObserver: self forKeyPath: @"ototest1"];
+	mReceivedForA = 0;
+	mReceivedForB1 = 0;
+	mReceivedForB2 = 0;
+	
+	[mB2 setPrimitiveValue: [NSNumber numberWithInteger: 1] forKey: @"r1"];
+	MKCAssertTrue (0 < mReceivedForA);
+	MKCAssertEquals (0, mReceivedForB1);
+	MKCAssertTrue (0 < mReceivedForB2);
+	
+	[mA removeObserver: self forKeyPath: @"ototest2"];
+	[mB1 removeObserver: self forKeyPath: @"ototest1"];
+	[mB2 removeObserver: self forKeyPath: @"ototest1"];
 }
 @end

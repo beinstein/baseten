@@ -33,6 +33,12 @@
 
 @interface ToOneChangeNotificationTests : BXDatabaseTestCase 
 {
-	NSInteger mNotesReceived;
+	BXDatabaseObject* mA;
+	BXDatabaseObject* mB1;
+	BXDatabaseObject* mB2;
+	
+	NSInteger mReceivedForA;
+	NSInteger mReceivedForB1;
+	NSInteger mReceivedForB2;
 }
 @end
