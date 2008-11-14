@@ -321,6 +321,11 @@ AppendModifier (NSString* operatorString, NSComparisonPredicateModifier modifier
 			BXLogError (@"Unable to convert predicate: %@", [predicate predicateFormat]);
 			retval.p_where_clause = nil;
 		}
+		@catch (id e) 
+		{
+			BXLogError (@"Caught exception when handling predicate: %@", [predicate predicateFormat]);
+			@throw e;
+		}
 	}
 	else
 	{
