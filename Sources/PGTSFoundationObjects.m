@@ -96,7 +96,8 @@
 		BXAssertValueReturn (clientEncoding && 0 == strcmp ("UNICODE", clientEncoding), NULL,
 							 @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
     }
-    const char* retval = [self UTF8String];
+	NSString* decomposed = [self decomposedStringWithCanonicalMapping];
+    const char* retval = [decomposed UTF8String];
     if (NULL != length)
         *length = strlen (retval);
     return (char *) retval;
