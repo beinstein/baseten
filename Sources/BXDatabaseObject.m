@@ -611,18 +611,16 @@ ParseSelector (SEL aSelector, NSString** key)
     BXAssertVoidReturn (nil != mContext, @"Expected to have a database context.");
     NSError* error = nil;
 	
-	//Replace string keys with attributes.
+	//Replace string keys with attributes and get dependent relationships.
 	NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity: [aDict count]];
 	NSDictionary* attributes = [[self entity] attributesByName];
+	NSMutableSet* rels = [NSMutableSet set];
 	TSEnumerate (currentKey, e, [aDict keyEnumerator])
 	{
 		id attr = [attributes objectForKey: currentKey];
+		[rels unionSet: [attr dependentRelationships]]; //Patch by Todd Blanchard 2008-11-15
 		[dict setObject: [aDict objectForKey: currentKey] forKey: attr];
 	}
-
-	NSMutableSet* rels = [NSMutableSet set];
-	TSEnumerate (currentAttr, e, [dict objectEnumerator])
-		[rels unionSet: [currentAttr dependentRelationships]];
 
 	id oldTargets = nil;
 	id newTargets = nil;
