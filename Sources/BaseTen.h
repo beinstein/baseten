@@ -231,8 +231,7 @@
  * <ul>
  *     <li>\subpage creating_a_database_context "Creating an instance of BXDatabaseContext"</li>
  *     <li>\subpage connecting_to_a_database "Connecting to a database"</li>
- *     <li>\subpage getting_an_entity_and_a_predicate "Getting an entity description from the context"</li>
- *     <li>\subpage getting_an_entity_and_a_predicate "Possibly creating an NSPredicate for reducing the number of fetched objects"</li>
+ *     <li>\subpage getting_an_entity_and_a_predicate "Getting an entity description from the context and possibly creating an NSPredicate for reducing the number of fetched objects"</li>
  *     <li>\subpage performing_a_fetch "Performing a fetch using the entity and the predicate"</li>
  *     <li>\subpage handling_the_results "Handling the results"</li>
  * </ul>
@@ -366,7 +365,6 @@
  * \htmlonly 
  * <pre>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</pre>
  * \endhtmlonly
- * \latexonly \caption{Getting a BXEntityDescription} \end{table} \endlatexonly
  *
  * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
  * be used to fetch objects from the database. The method takes a BXEntityDescription and an NSPredicate and

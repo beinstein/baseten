@@ -366,7 +366,7 @@
 		53F5B8170E32B97C000F527B /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
-			filePatterns = "*.m4	";
+			filePatterns = "*.m4";
 			fileType = pattern.proxy;
 			isEditable = 1;
 			outputFiles = (
