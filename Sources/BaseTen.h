@@ -600,7 +600,7 @@
  * Here's a brief tutorial on PostgreSQL installation.
  * <ol>
  *     <li>Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.</li>
- *     <li>Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so <tt>./configure --with-bonjour --with-openssl && make && sudo make install</tt> probably gives the expected results.</li>
+ *     <li>Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so <tt>./configure &ndash;-with-bonjour &ndash;-with-openssl && make && sudo make install</tt> probably gives the expected results.</li>
  *     <li>It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.</li>
  *     <li>Make <tt>mysql</tt> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
  *         <tt>
@@ -638,7 +638,7 @@
  * in the \em Documentation folder.
  *
  *
- * \section Building for the release DMG
+ * \section building_for_the_release_dmg Building for the release DMG
  *
  * The files needed to build the release disk image are in the SVN repository as well. Doxygen is needed during 
  * the process. To create the DMG, follow these steps:
@@ -648,7 +648,7 @@
  *     <li>
  *         Do <tt>./create_release_dmg.sh</tt>. The build DMG will appear in the ReleaseDMG folder.
  *         <ul>
- *             <li>If you don't have LaTeX installed, do <tt>./create_release_dmg.sh --without-latex</tt> instead. The PDF manual won't be included on the DMG, though.</li>
+ *             <li>If you don't have LaTeX installed, do <tt>./create_release_dmg.sh -&ndash;without-latex</tt> instead. The PDF manual won't be included on the DMG, though.</li>
  *         </ul>
  *     </li>
  * </ol>
