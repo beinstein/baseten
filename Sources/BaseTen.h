@@ -57,7 +57,7 @@
 
 /**
  * \defgroup baseten BaseTen
- * BaseTen is linked to Foundation, Security and IOKit frameworks and 
+ * BaseTen is linked to Foundation, CoreData, Security, IOKit and SystemConfiguration frameworks and 
  * libcrypto, libssl and libstdc++ dynamic libraries. In addition, it is weakly linked to AppKit framework.
  * Therefore it can be used to develop applications that don't require the graphical user interface.
  */
@@ -80,18 +80,17 @@
  * \mainpage Introduction
  *
  * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
- * has been designed with familiar, Core Data -like semantics and APIs. With this 1.0 Release Candidate 
- * 2 version, a final 1.0 release is very near and it is safe to start development with the current BaseTen API.
- *
+ * has been designed with familiar, Core Data -like semantics and APIs. 
+ * *
  * The BaseTen feature highlights include:
- * \li BaseTen Assistant imports Core Data / Xcode data models
- * \li Discovers the database schema automatically at runtime, including 1-1, 1-many and many-many relationships
- * \li Database changes are propagated to clients automatically, without polling
- * \li In-memory database objects are uniqued, and objects fetched via relationships are faults by default
- * \li Support for RDBMS features like database-driven data validation, multi-column primary keys and updateable views
- * \li Autocommit and manual save/rollback modes, both with NSUndoManager integration
- * \li A BaseTen-aware NSArrayController subclass automates locking and change propagation
- * \li Fetches are specified with NSPredicates (the relevant portions of which are evaluated on the database)
+ * \li BaseTen Assistant imports Core Data / Xcode data models.
+ * \li Discovers the database schema automatically at runtime, including 1-1, 1-many and many-many relationships.
+ * \li Database changes are propagated to clients automatically, without polling.
+ * \li In-memory database objects are uniqued, and objects fetched via relationships are faults by default.
+ * \li Support for RDBMS features like database-driven data validation, multi-column primary keys and updateable views.
+ * \li Autocommit and manual save/rollback modes, both with NSUndoManager integration.
+ * \li A BaseTen-aware NSArrayController subclass automates locking and change propagation.
+ * \li Fetches are specified with NSPredicates (the relevant portions of which are evaluated on the database).
  * 
  * \sa \ref general_usage
  */
@@ -158,8 +157,8 @@
  * Most types of predicates and expressions are converted to SQL and sent to the database server.
  * Others cause the returned object set to be filtered again on the client side. Specifically, the following
  * use cases work in this manner: The affected part of the predicate is replaced with \em true (or \em false, 
- * if the part is inside an odd number of NOT predicates), and excess objects are removed after a result set
- * has been received.
+ * if the part is inside an odd number of NOT predicates), and excess objects are removed from the result set 
+ * after it has been received.
  *
  * <ul>
  *     <li>Use of NSDiacriticInsensitivePredicateOption</li>
