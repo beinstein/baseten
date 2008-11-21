@@ -42,7 +42,8 @@
 
 
 /**
- * A unique identifier for a database object.
+ * \brief A unique identifier for a database object.
+ *
  * This class is not thread-safe, i.e. 
  * if methods of a BXDatabaseObjectID instance will be called from 
  * different threads the result is undefined.
@@ -187,7 +188,7 @@ bail:
 }
 
 /** 
- * Create an object identifier from an NSURL.
+ * \brief Create an object identifier from an NSURL.
  * \note This is not the designated initializer.
  */
 - (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error
@@ -221,13 +222,13 @@ bail:
     [super dealloc];
 }
 
-/** The entity of the receiver. */
+/** \brief The entity of the receiver. */
 - (BXEntityDescription *) entity
 {
     return mEntity;
 }
 
-/** URI representation of the receiver. */
+/** \brief URI representation of the receiver. */
 - (NSURL *) URIRepresentation
 {
     return mURIRepresentation;
@@ -243,7 +244,7 @@ bail:
 }
 
 /** 
- * An NSPredicate for this object ID.
+ * \brief An NSPredicate for this object ID.
  * The predicate can be used to fetch the object from the database, for example.
  */
 - (NSPredicate *) predicate
@@ -297,7 +298,7 @@ bail:
 
 
 @implementation BXDatabaseObjectID (NSCopying)
-/** Retain on copy. */
+/** \brief Retain on copy. */
 - (id) copyWithZone: (NSZone *) zone
 {
     return [self retain];
@@ -332,7 +333,7 @@ bail:
  * \internal
  * \name Creating object IDs */
 //@{
-/** A convenience method. */
+/** \brief A convenience method. */
 + (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) pkeyFValues
 {
     NSArray* keys = [pkeyFValues allKeys];
@@ -350,7 +351,7 @@ bail:
 
 /** 
  * \internal
- * The designated initializer.
+ * \brief The designated initializer.
  */
 - (id) initWithEntity: (BXEntityDescription *) anEntity objectURI: (NSURL *) anURI
 {

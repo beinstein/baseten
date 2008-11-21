@@ -34,8 +34,6 @@
 
 #if defined(__cplusplus)
 
-//FIXME: make some gc-compatible additions.
-
 namespace PGTS 
 {
 	struct ObjectHash

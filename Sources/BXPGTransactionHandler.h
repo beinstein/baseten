@@ -131,7 +131,8 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 
 /**
  * \internal
- * Begins a transaction.
+ * \brief Begins a transaction.
+ *
  * Begins a transactions unless there already is one.
  */
 - (BOOL) beginIfNeeded: (NSError **) outError;
@@ -139,32 +140,34 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 
 /**
  * \internal
- * Commits the current transaction.
+ * \brief Commits the current transaction.
  */
 - (BOOL) save: (NSError **) outError;
 
 /**
  * \internal
- * Cancels the current transaction.
+ * \brief Cancels the current transaction.
  */
 - (BOOL) rollback: (NSError **) outError;
 
 /**
  * \internal
- * Creates a savepoint if needed.
+ * \brief Creates a savepoint if needed.
+ *
  * Use with single queries.
  */
 - (BOOL) savepointIfNeeded: (NSError **) outError;
 
 /**
  * \internal
- * Rollback to last savepoint.
+ * \brief Rollback to last savepoint.
  */
 - (BOOL) rollbackToLastSavepoint: (NSError **) outError;
 
 /**
  * \internal
- * Creates a savepoint or begins a transaction.
+ * \brief Creates a savepoint or begins a transaction.
+ *
  * Use with multiple queries.
  */
 - (BOOL) beginSubTransactionIfNeeded: (NSError **) outError;
@@ -172,13 +175,13 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 
 /**
  * \internal
- * Commits a previously begun subtransaction.
+ * \brief Commits a previously begun subtransaction.
  */
 - (BOOL) endSubtransactionIfNeeded: (NSError **) outError;
 
 /**
  * \internal
- * Rollback a previously begun subtransaction.
+ * \brief Rollback a previously begun subtransaction.
  */
 - (void) rollbackSubtransaction;
 

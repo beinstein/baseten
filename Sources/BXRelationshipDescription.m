@@ -44,7 +44,8 @@
 
 
 /**
- * A description for one-to-many relationships and a superclass for others.
+ * \brief A description for one-to-many relationships and a superclass for others.
+ *
  * Relationships between entities are defined with foreign keys in the database.
  * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  * \ingroup descriptions
@@ -58,7 +59,7 @@
 
 /** 
  * \internal
- * Deallocation helper. 
+ * \brief Deallocation helper. 
  */
 - (void) dealloc2
 {
@@ -76,7 +77,7 @@
 }
 
 /**
- * Destination entity for this relationship.
+ * \brief Destination entity for this relationship.
  */
 - (BXEntityDescription *) destinationEntity
 {
@@ -84,7 +85,8 @@
 }
 
 /**
- * Inverse relationship for this relationship.
+ * \brief Inverse relationship for this relationship.
+ *
  * In BaseTen, inverse relationships always exist.
  */
 - (BXRelationshipDescription *) inverseRelationship
@@ -96,7 +98,7 @@
 }
 
 /**
- * Delete rule for this relationship.
+ * \brief Delete rule for this relationship.
  */
 - (NSDeleteRule) deleteRule
 {
@@ -105,7 +107,7 @@
 }
 
 /**
- * Whether this relationship is to-many.
+ * \brief Whether this relationship is to-many.
  */
 - (BOOL) isToMany
 {

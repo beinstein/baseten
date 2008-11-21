@@ -31,7 +31,7 @@
 
 
 /**
- * An abstract superclass for various description classes.
+ * \brief An abstract superclass for various description classes.
  * \ingroup descriptions
  */
 @implementation BXAbstractDescription
@@ -75,7 +75,7 @@
 }
 
 
-/** Name of the object. */
+/** \brief Name of the object. */
 - (NSString *) name
 {
     return [[mName retain] autorelease];

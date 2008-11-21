@@ -171,7 +171,7 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
 
 /** 
  * \internal
- * Database.
+ * \brief Database.
  */
 @implementation PGTSDatabaseDescription
 

@@ -49,7 +49,7 @@
 }
 
 /** 
- * Check if given role is member of self.
+ * \brief Check if given role is member of self.
  * \param aRole The role to be tested. May be a proxy.
  */
 - (BOOL) hasMember: (PGTSRoleDescription *) aRole

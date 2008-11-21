@@ -118,7 +118,7 @@ PrimaryKey (NSArray* uIndexes)
 
 /** 
  * \internal
- * Database table
+ * \brief Database table
  */
 @implementation PGTSTableDescription
 

@@ -83,7 +83,8 @@ RemoveCharactersFromEnd (NSMutableString* string, NSUInteger count)
 
 /**
  * \internal
- * A helper for determining returned attributes.
+ * \brief A helper for determining returned attributes.
+ *
  * Primary key attributes are always returned.
  */
 static int
@@ -137,7 +138,8 @@ ReturnedFields (BXPGQueryBuilder* queryBuilder, NSArray* attrs, BOOL prependAlia
 
 /**
  * \internal
- * Create a list of returned fields.
+ * \brief Create a list of returned fields.
+ *
  * This may be passed to SELECT or to a RETURNING clause.
  */
 static NSString*
@@ -153,7 +155,7 @@ ReturnedFieldsByCallback (BXPGQueryBuilder* queryBuilder, int (* filterFunction)
 
 /**
  * \internal
- * Create a WHERE clause.
+ * \brief Create a WHERE clause.
  */
 static struct bx_predicate_st
 WhereClauseUsingEntity (BXPGQueryBuilder* queryBuilder, NSPredicate* predicate, BXEntityDescription* entity, PGTSConnection* connection)
@@ -170,7 +172,7 @@ WhereClauseUsingEntity (BXPGQueryBuilder* queryBuilder, NSPredicate* predicate, 
 
 /**
  * \internal
- * Create a WHERE clause.
+ * \brief Create a WHERE clause.
  */
 static struct bx_predicate_st
 WhereClauseUsingObject (BXPGQueryBuilder* queryBuilder, NSPredicate* predicate, BXDatabaseObject* object)
@@ -187,7 +189,7 @@ WhereClauseUsingObject (BXPGQueryBuilder* queryBuilder, NSPredicate* predicate, 
 
 /**
  * \internal
- * Create a SELECT query.
+ * \brief Create a SELECT query.
  */
 static NSString*
 SelectQueryFormat (PGTSConnection* connection, BOOL forUpdate)
@@ -201,7 +203,8 @@ SelectQueryFormat (PGTSConnection* connection, BOOL forUpdate)
 
 /**
  * \internal
- * Create an NSArray from a PGTSResultSet.
+ * \brief Create an NSArray from a PGTSResultSet.
+ *
  * Objects that are already registered wont'be recreated.
  */
 static NSArray*
@@ -286,7 +289,8 @@ ErrorUserInfo (NSString* localizedName, NSString* localizedError, BXDatabaseCont
 
 /**
  * \internal
- * Create a database error.
+ * \brief Create a database error.
+ *
  * Automatically fills some common fields in the userInfo dictionary.
  */
 static NSError*
@@ -316,7 +320,7 @@ PredicateNotAllowedError (BXDatabaseContext* context, NSPredicate* predicate)
 
 /**
  * \internal
- * Create object IDs from a PGTSResultSet.
+ * \brief Create object IDs from a PGTSResultSet.
  * \param entity The IDs' entity.
  */
 static NSArray*
@@ -378,7 +382,8 @@ MarkLocked (BXPGTransactionHandler* transactionHandler,
 
 
 /**
- * An error handler for ROLLBACK errors.
+ * \brief An error handler for ROLLBACK errors.
+ *
  * The intended use is to set a symbolic breakpoint for possible errors caught during ROLLBACK.
  */
 static void
@@ -1061,7 +1066,8 @@ bail:
 
 /** 
  * \internal
- * Lock an object asynchronously.
+ * \brief Lock an object asynchronously.
+ *
  * Lock notifications should always be listened to, since modifications cause the rows to be locked until
  * the end of the ongoing transaction.
  */
@@ -1174,7 +1180,7 @@ bail:
 
 /**
  * \internal
- * Unlock a locked object synchronously.
+ * \brief Unlock a locked object synchronously.
  */
 - (void) unlockObject: (BXDatabaseObject *) anObject key: (id) aKey
 {
@@ -1314,7 +1320,7 @@ bail:
 
 /**
  * \internal
- * Create an insert query.
+ * \brief Create an insert query.
  */
 - (NSString *) insertQuery: (BXEntityDescription *) entity fieldValues: (NSDictionary *) fieldValues error: (NSError **) error
 {

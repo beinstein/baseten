@@ -32,7 +32,7 @@
 
 
 /**
- * A proxy for retrieving database object status.
+ * \brief A proxy for retrieving database object status.
  * \see ValueTransformers
  * \ingroup baseten
  */
@@ -104,7 +104,8 @@
 }
 
 /** 
- * Returns a status constant for the given key.
+ * \brief Returns a status constant for the given key.
+ *
  * The constant may then be passed to value transformers in BaseTenAppKit.
  * \param aKey An NSString that corresponds to a field name.
  * \return An NSValue that contains the constant.

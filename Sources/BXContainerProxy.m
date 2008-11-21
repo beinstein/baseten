@@ -35,7 +35,7 @@
 
 
 /**
- * A generic self-updating container proxy.
+ * \brief A generic self-updating container proxy.
  * \ingroup auto_containers
  */
 @implementation BXContainerProxy
@@ -282,7 +282,7 @@
 
 @implementation BXContainerProxy (Accessors)
 
-/** The container's context. */
+/** \brief The container's context. */
 - (BXDatabaseContext *) context
 {
     return mContext; 
@@ -297,7 +297,7 @@
     }
 }
 
-/** The container's filter predicate. */
+/** \brief The container's filter predicate. */
 - (NSPredicate *) filterPredicate;
 {
     return mFilterPredicate;
@@ -341,14 +341,15 @@
     }
 }
 
-/** The container's owner. */
+/** \brief The container's owner. */
 - (id) owner
 {
 	return mOwner;
 }
 
 /** 
- * Set the cotainer's owner.
+ * \brief Set the cotainer's owner.
+ *
  * NSKeyValueObserving notifications will be posted to the owner.
  * \note The owner is not retained.
  */
@@ -357,14 +358,15 @@
     mOwner = anObject;
 }
 
-/** The owner's key for the container. */
+/** \brief The owner's key for the container. */
 - (NSString *) key
 {
     return [[mKey copy] autorelease];
 }
 
 /** 
- * Set the owner's key for the container.
+ * \brief Set the owner's key for the container.
+ *
  * NSKeyValueObserving notifications will be posted using this key.
  */
 - (void) setKey: (NSString *) aString

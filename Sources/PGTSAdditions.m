@@ -60,7 +60,8 @@
 }
 
 /**
- * Escape the string for the SQL interpreter.
+ * \internal
+ * \brief Escape the string for the SQL interpreter.
  */
 - (NSString *) PGTSEscapedString: (PGTSConnection *) connection
 {
@@ -74,7 +75,9 @@
 }
 
 /**
- * The number of parameters in a string.
+ * \internal
+ * \brief The number of parameters in a string.
+ *
  * Parameters are marked as follows: $n. The number of parameters is equal to the highest value of n.
  */
 - (int) PGTSParameterCount
@@ -142,7 +145,8 @@
 
 @implementation NSNumber (PGTSAdditions)
 /**
- * Return the value as Oid.
+ * \internal
+ * \brief Return the value as Oid.
  * \sa PGTSOidAsObject
  */
 - (Oid) PGTSOidValue

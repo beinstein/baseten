@@ -28,7 +28,7 @@
 
 /**
  * \internal
- * Notifications for self-updating containers to be sent before the others.
+ * \brief Notifications for self-updating containers to be sent before the others.
  */
 //@{
 BX_EXPORT NSString* const kBXInsertEarlyNotification;

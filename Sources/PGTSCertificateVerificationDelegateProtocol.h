@@ -30,7 +30,9 @@
 
 @protocol PGTSCertificateVerificationDelegate
 /** 
- * Should the SSL connection be allowed or not.
+ * \internal
+ * \brief Should the SSL connection be allowed or not.
+ *
  * This might not be called from the main thread.
  */
 - (BOOL) PGTSAllowSSLForConnection: (PGTSConnection *) connection context: (void *) x509_ctx preverifyStatus: (int) preverifyStatus;

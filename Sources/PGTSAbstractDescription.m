@@ -155,7 +155,7 @@ id PGTSNilReturn (id anObject);
 
 /** 
  * \internal
- * Abstract base class
+ * \brief Abstract base class.
  */
 @implementation PGTSAbstractDescription
 
@@ -215,7 +215,8 @@ id PGTSNilReturn (id anObject);
 }
 
 /**
- * Retain on copy.
+ * \internal
+ * \brief Retain on copy.
  */
 - (id) copyWithZone: (NSZone *) zone
 {

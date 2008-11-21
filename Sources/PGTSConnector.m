@@ -52,7 +52,7 @@ SSLConnectionExIndex ()
 
 /**
  * \internal
- * Verify an X.509 certificate.
+ * \brief Verify an X.509 certificate.
  */
 static int
 VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)

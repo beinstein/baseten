@@ -112,7 +112,7 @@ NSString* const kPGTSErrorMessage				  = @"kPGTSErrorMessage";
 NSString* const kPGTSSSLAttemptedKey			  = @"kPGTSSSLAttemptedKey";
 
 
-/** Declared in PGTSConnectionDelegate.h */
+/* Declared in PGTSConnectionDelegate.h */
 SEL kPGTSSentQuerySelector                  = NULL;
 SEL kPGTSFailedToSendQuerySelector          = NULL;
 SEL kPGTSAcceptCopyingDataSelector          = NULL;

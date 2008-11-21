@@ -75,6 +75,9 @@
 
 
 @protocol PGTSResultRowProtocol <NSObject>
-/** Called when a new result set and row index are associated with the target */
+/** 
+ * \internal
+ * \brief Called when a new result set and row index are associated with the target 
+ */
 - (void) PGTSSetRow: (int) row resultSet: (PGTSResultSet *) res;
 @end

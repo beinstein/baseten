@@ -163,7 +163,8 @@ ErrorUserInfoKey (char fieldCode)
 
 /** 
  * \internal
- * Result set for a query.
+ * \brief Result set for a query.
+ *
  * A result set contains rows that may be iterated by the user.
  */
 @implementation PGTSConcreteResultSet
@@ -404,7 +405,8 @@ ErrorUserInfoKey (char fieldCode)
 }
 
 /**
- * Current row with field names as keys.
+ * \brief Current row with field names as keys.
+ *
  * NSNull is used in place of nil.
  */
 - (NSDictionary *) currentRowAsDictionary
@@ -414,7 +416,7 @@ ErrorUserInfoKey (char fieldCode)
     return retval;
 }
 
-/** Move to the beginning of the result set */
+/** \brief Move to the beginning of the result set */
 - (void) goBeforeFirstRow
 {
     [self goToRow: -1];
@@ -477,7 +479,7 @@ ErrorUserInfoKey (char fieldCode)
 @implementation PGTSConcreteResultSet (FieldAccessors)
 
 /**
- * Set the class that should be used with a specific field.
+ * \brief Set the class that should be used with a specific field.
  * @{
  */
 - (BOOL) setClass: (Class) aClass forKey: (NSString *) aName

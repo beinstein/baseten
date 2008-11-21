@@ -56,7 +56,8 @@ static NSString* kPGTSConnectionMonitorExitNotification = @"PGTSConnectionMonito
 
 /**
  * \internal
- * A class cluster for handling various notifications provided by AppKit-specific classes.
+ * \brief A class cluster for handling various notifications provided by AppKit-specific classes.
+ *
  * This class and its subclasses are thread-safe.
  */
 @implementation PGTSConnectionMonitor

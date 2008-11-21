@@ -45,7 +45,7 @@
 
 /** 
  * \internal
- * Table field.
+ * \brief Table field.
  */
 @implementation PGTSFieldDescription
 

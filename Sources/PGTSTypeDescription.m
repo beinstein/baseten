@@ -35,7 +35,7 @@
 
 /** 
  * \internal
- * Data type in a database.
+ * \brief Data type in a database.
  */
 @implementation PGTSTypeDescription
 

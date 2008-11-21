@@ -58,7 +58,7 @@
 
 /** 
  * \internal
- * Table index
+ * \brief Table index
  */
 @implementation PGTSIndexDescription
 

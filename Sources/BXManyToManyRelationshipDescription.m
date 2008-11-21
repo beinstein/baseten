@@ -42,7 +42,7 @@
 
 /** 
  * \internal
- * Deallocation helper. 
+ * \brief Deallocation helper. 
  */
 - (void) dealloc2
 {

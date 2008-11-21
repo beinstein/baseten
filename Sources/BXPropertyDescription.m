@@ -39,7 +39,7 @@ __strong static id gProperties = nil;
 
 
 /**
- * A superclass for various description classes.
+ * \brief A superclass for various description classes.
  * \ingroup descriptions
  */
 @implementation BXPropertyDescription
@@ -57,7 +57,8 @@ __strong static id gProperties = nil;
 
 /**
  * \internal
- * Deallocation helper. 
+ * \brief Deallocation helper.
+ *
  * Subclasses should override this instead of dealloc and then call 
  * super's implementation of dealloc2. This is because BXPropertyDescriptions 
  * will be stored into a non-retaining collection on creation and removed from 
@@ -67,13 +68,13 @@ __strong static id gProperties = nil;
 {
 }
 
-/** Entity for this property. */
+/** \brief Entity for this property. */
 - (BXEntityDescription *) entity
 {
     return mEntity;
 }
 
-/** Retain on copy. */
+/** \brief Retain on copy. */
 - (id) copyWithZone: (NSZone *) zone
 {
     return [self retain];
@@ -148,7 +149,7 @@ __strong static id gProperties = nil;
     return rval;
 }
 
-/** Whether the property is optional. */
+/** \brief Whether the property is optional. */
 - (BOOL) isOptional
 {
 	return (mFlags & kBXPropertyOptional ? YES : NO);
@@ -203,7 +204,7 @@ __strong static id gProperties = nil;
 
 /**
  * \internal
- * The designated initializer.
+ * \brief The designated initializer.
  */
 - (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity
 {

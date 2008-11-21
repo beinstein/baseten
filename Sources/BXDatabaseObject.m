@@ -80,7 +80,7 @@ ColonCount (const char* start)
 }
 
 /**
- * Is the given selector a setter or a getter?
+ * \brief Is the given selector a setter or a getter?
  * \return 2 if setter, 1 if getter, 0 if neither
  */
 static int 
@@ -120,7 +120,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }    
 
 /** 
- * A class that represents a single row in a database table.
+ * \brief A class that represents a single row in a database table.
+ *
  * The objects returned by the database context are instances of this class 
  * or its subclasses. The class is KVC-compliant. It is not thread-safe
  * for the most part, i.e. if methods of an BXDatabaseObject instance will 
@@ -155,7 +156,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * The database context to which this object is registered. 
+ * \brief The database context to which this object is registered. 
+ *
  * This method doesn't cause a fault to fire.
  */
 - (BXDatabaseContext *) databaseContext
@@ -164,7 +166,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Test object equality.
+ * \brief Test object equality.
+ *
  * Currently objects are considered equal if they are managed by the same database context and
  * their object IDs are equal.
  * This method doesn't cause a fault to fire.
@@ -182,7 +185,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * A convenience method for retrieving values for multiple keys. 
+ * \brief A convenience method for retrieving values for multiple keys. 
  * \param   keys    An NSArray of NSStrings.
  * \return          The requested values.
  */
@@ -198,7 +201,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Value or objects from the database.
+ * \brief Value or objects from the database.
+ *
  * Look up the value from cache or ask the database context to fetch it.
  * Currently this method calls #primitiveValueForKey:.
  * \param   aKey    A BXAttributeDescription.
@@ -210,7 +214,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * A convenience method for retrieving values for multiple keys. 
+ * \brief A convenience method for retrieving values for multiple keys. 
  * \param   keys    An NSArray of BXAttributeDescriptions.
  * \return          The requested values.
  */
@@ -220,7 +224,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Validate a value.
+ * \brief Validate a value.
+ *
  * Currently, only null constraints are checked.
  * This method doesn't cause a fault to fire.
  */
@@ -234,7 +239,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Determines whether the receiver can be deleted in its current state.
+ * \brief Determines whether the receiver can be deleted in its current state.
+ *
  * Currently, only inverse relationships' delete rules are checked.
  * This method could cause a fault to fire.
  */
@@ -266,7 +272,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * The object ID. 
+ * \brief The object ID. 
+ *
  * This method doesn't cause a fault to fire.
  */
 - (BXDatabaseObjectID *) objectID
@@ -275,7 +282,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Predicate for this object.
+ * \brief Predicate for this object.
+ *
  * This method might cause a fault to fire.
  */
 - (NSPredicate *) predicate
@@ -323,7 +331,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * \internal
- * Returns cached objects.
+ * \brief Returns cached objects.
  */
 - (NSDictionary *) cachedObjects
 {
@@ -346,7 +354,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * A proxy for monitoring the object's status.
+ * \brief A proxy for monitoring the object's status.
+ *
  * Returns a proxy that can be used with BXObjectStatusToEditableTransformer and
  * BXObjectStatusToColorTransformer.
  * This method doesn't cause a fault to fire.
@@ -418,7 +427,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Value from the object's cache.
+ * \brief Value from the object's cache.
+ *
  * This method is thread-safe and doesn't cause a fault to fire.
  * \return      The value in question or nil, if it has not been fetched from the database yet.
  *              NSNulls represent nil values.
@@ -434,7 +444,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Value or objects from the database.
+ * \brief Value or objects from the database.
+ *
  * Look up the value from cache or ask the database context to fetch it.
  * Calls super's implementation of -valueForUndefinedKey: if the key isn't known.
  * \param   aKey    Name of the column or a relationship.
@@ -514,7 +525,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * Set value for a given key in the database.
+ * \brief Set value for a given key in the database.
  * \param   aVal    The new value. May be nil for ordinary columns.
  * \param   aKey    An NSString.
  */
@@ -601,7 +612,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Set multiple values.
+ * \brief Set multiple values.
+ *
  * This is not merely a convenience method; invoking this is potentially much faster than 
  * repeatedly using #setPrimitiveValue:forKey:. However, for foreign keys, #setPrimitiveValue:forKey: 
  * should be used instead or the collection proxy be modified directly.
@@ -640,7 +652,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * Fault the given key. 
+ * \brief Fault the given key. 
+ *
  * The object's cached value or related object will be released.
  * A new fetch won't be performed until any of the object's values is requested.
  * \param aKey The key to fault. If nil, all values will be removed.
@@ -652,7 +665,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /** 
- * Whether the given key is faulted or not.
+ * \brief Whether the given key is faulted or not.
+ *
  * This method doesn't cause a fault to fire.
  * \param   aKey    An NSString. May be nil, in which case the object
  *                  is considered a fault if value for any of its keys is
@@ -691,7 +705,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Values from the object's cache.
+ * \brief Values from the object's cache.
+ *
  * This method is thread-safe and doesn't cause a fault to fire.
  * \return      An NSDictionary which contains the cached values.
  */
@@ -706,7 +721,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Whether the given key is locked locked or not.
+ * \brief Whether the given key is locked locked or not.
+ *
  * Returns YES if modifying the given key would block.
  * Current implementation locks the whole object
  * when any key gets locked.
@@ -718,7 +734,8 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Whether the object has beed deleted or is going to be deleted in the next commit.
+ * \brief Whether the object has beed deleted or is going to be deleted in the next commit.
+ *
  * This method doesn't cause a fault to fire.
  */
 - (BOOL) isDeleted
@@ -728,7 +745,8 @@ ParseSelector (SEL aSelector, NSString** key)
 
 //FIXME: documentation bug? This method's behaviour should be checked with Core Data.
 /**
- * Whether the object has been inserted to the database in a previous transaction.
+ * \brief Whether the object has been inserted to the database in a previous transaction.
+ *
  * If the object has been deleted, this method returns YES.
  * This method doesn't cause a fault to fire.
  */
@@ -737,13 +755,13 @@ ParseSelector (SEL aSelector, NSString** key)
 	return (kBXObjectExists != mDeleted || mCreatedInCurrentTransaction);
 }
 
-/** Retain on copy. */
+/** \brief Retain on copy. */
 - (id) copyWithZone: (NSZone *) zone
 {
 	return [self retain];
 }
 
-/** Returns the entity of the receiver. */
+/** \brief Returns the entity of the receiver. */
 - (BXEntityDescription *) entity
 {
 	return [[self objectID] entity];
@@ -755,13 +773,13 @@ ParseSelector (SEL aSelector, NSString** key)
 @implementation BXDatabaseObject (Subclassing)
 /**
  * \name Methods that subclasses might override
- * \brief
  * \note When fetching values, #primitiveValueForKey: will always be used.
  */
 //@{
 //
 /**
- * Callback for deserializing the row.
+ * \brief Callback for deserializing the row.
+ *
  * Called once after a fetch or firing a fault.
  */
 - (void) awakeFromFetch
@@ -769,7 +787,7 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Callback for inserting the row into the database.
+ * \brief Callback for inserting the row into the database.
  * \note This method will be called before posting insert notifications
  *       and adding the object to self-updating collections.
  * \note BXDatabaseContext may create new objects during redo causing their 
@@ -781,14 +799,15 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 
 /**
- * Callback for turning into a fault.
+ * \brief Callback for turning into a fault.
+ *
  * This method will be called if any of the object's fields is faulted.
  */
 - (void) didTurnIntoFault
 {
 }
 
-/** The designated initializer */
+/** \brief The designated initializer */
 - (id) init
 {
     if ((self = [super init]))
@@ -817,13 +836,13 @@ ParseSelector (SEL aSelector, NSString** key)
 }
 //@}
 
-/** Returns NO. */
+/** \brief Returns NO. */
 + (BOOL) accessInstanceVariablesDirectly
 {
     return NO;
 }
 
-/** Returns NO. */
+/** \brief Returns NO. */
 + (BOOL) automaticallyNotifiesObserversForKey: (NSString *) aKey
 {
 	return NO;
@@ -840,7 +859,8 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * \internal
- * Register the object with a context.
+ * \brief Register the object with a context.
+ *
  * In order to function properly, the database object needs to know about its context and its entity.
  * Registration is possible only if the object has not already been assigned a context. 
  * \return A boolean indicating whether the operation was successful or not.
@@ -874,7 +894,8 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * \internal
- * Register the object with a context.
+ * \brief Register the object with a context.
+ *
  * Register with a pre-defined object ID
  * \return A boolean indicating whether the operation was successful or not.
  */
@@ -911,7 +932,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * \internal
- * Set lock status for the given key.
+ * \brief Set lock status for the given key.
  */
 - (void) setLockedForKey: (NSString *) aKey
 {
@@ -958,7 +979,7 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /** 
  * \internal
- * A convenience method for handling the object's cache.
+ * \brief A convenience method for handling the object's cache.
  */
 - (void) setCachedValuesForKeysWithDictionary: (NSDictionary *) aDict
 {
@@ -1060,7 +1081,8 @@ ParseSelector (SEL aSelector, NSString** key)
 
 /**
  * \internal
- * Lock the object in an asynchronous manner.
+ * \brief Lock the object in an asynchronous manner.
+ *
  * Ask the database to change the status of the key. The result is sent to the 
  * provided object.
  * \param   key             The key to be locked

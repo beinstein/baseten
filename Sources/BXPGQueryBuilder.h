@@ -48,7 +48,7 @@ enum BXPGQueryType
 
 /**
  * \internal
- * A facade for the predicate etc. handling classes.
+ * \brief A facade for the predicate etc. handling classes.
  */
 @interface BXPGQueryBuilder : NSObject 
 {

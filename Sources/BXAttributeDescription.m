@@ -41,7 +41,7 @@
 
 
 /**
- * An attribute description contains information about a column in a specific entity.
+ * \brief An attribute description contains information about a column in a specific entity.
  * \ingroup descriptions
  */
 @implementation BXAttributeDescription
@@ -78,14 +78,14 @@
 	[super encodeWithCoder: coder];
 }
 
-/** Whether the attribute is part of the primary key of its entity. */
+/** \brief Whether the attribute is part of the primary key of its entity. */
 - (BOOL) isPrimaryKey
 {
 	return (mFlags & kBXPropertyPrimaryKey ? YES : NO);
 }
 
 /** 
- * Whether the attribute will be excluded from fetches and queried only when needed. 
+ * \brief Whether the attribute will be excluded from fetches and queried only when needed. 
  * \see BXDatabaseContext::executeFetchForEntity:withPredicate:excludingFields:error:
  */
 - (BOOL) isExcluded
@@ -93,19 +93,19 @@
 	return (mFlags & kBXPropertyExcluded ? YES : NO);
 }
 
-/** Name of the attribute's database type. */
+/** \brief Name of the attribute's database type. */
 - (NSString *) databaseTypeName
 {
 	return mDatabaseTypeName;
 }
 
-/** Class of fetched objects. */
+/** \brief Class of fetched objects. */
 - (Class) attributeValueClass
 {
 	return mAttributeClass;
 }
 
-/** Class name of fetched values. */
+/** \brief Class name of fetched values. */
 - (NSString *) attributeValueClassName
 {
 	return NSStringFromClass (mAttributeClass);
@@ -131,7 +131,7 @@
 //@{
 /**
  * \internal
- * Create an attribute description.
+ * \brief Create an attribute description.
  * \param       aName       Name of the attribute
  * \param       anEntity    The entity which contains the attribute.
  * \return                  The attribute description.

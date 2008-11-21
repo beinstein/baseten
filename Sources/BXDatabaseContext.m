@@ -165,7 +165,8 @@ ModTypeToObject (enum BXModificationType value)
 
 
 /** 
- * The database context. 
+ * \brief The database context. 
+ *
  * A database context connects to a given database, sends queries and commands to it and
  * creates objects from rows in its tables. In order to function properly, it needs an URI formatted 
  * like pgsql://username:password\@hostname/database_name/.
@@ -226,7 +227,7 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Creating a database context */
 //@{
 /**
- * A convenience method.
+ * \brief A convenience method.
  * \param   uri     URI of the target database
  * \return          The database context
  * \throw   NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
@@ -237,7 +238,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * An initializer.
+ * \brief An initializer.
+ *
  * The database URI has to be set afterwards.
  * \return          The database context
  */
@@ -247,7 +249,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * The designated initializer.
+ * \brief The designated initializer.
  * \param   uri     URI of the target database
  * \return          The database context
  * \throw           NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
@@ -315,7 +317,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Set whether the receiver should retain all registered objects.
+ * \brief Set whether the receiver should retain all registered objects.
  */
 - (void) setRetainsRegisteredObjects: (BOOL) flag
 {
@@ -333,7 +335,8 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Connecting and disconnecting */
 //@{
 /**
- * Set the database URI.
+ * \brief Set the database URI.
+ *
  * Also clears the context's strong references to entity descriptions received from it.
  * \param   uri     The database URI
  * \throw   NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
@@ -353,7 +356,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * The database URI.
+ * \brief The database URI.
  */
 - (NSURL *) databaseURI
 {
@@ -361,7 +364,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Whether connection is attempted on -awakeFromNib.
+ * \brief Whether connection is attempted on -awakeFromNib.
  */
 - (BOOL) connectsOnAwake
 {
@@ -369,7 +372,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Set whether connection should be attempted on -awakeFromNib.
+ * \brief Set whether connection should be attempted on -awakeFromNib.
  */
 - (void) setConnectsOnAwake: (BOOL) aBool
 {
@@ -377,7 +380,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Establishing a connection.
+ * \brief Establishing a connection.
+ *
  * Returns a boolean indicating whether connecting can be attempted using -connect:.
  * Presently this method returns YES when connection attempt hasn't already been started and after
  * the attempt has failed.
@@ -388,7 +392,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Connection status.
+ * \brief Connection status.
  */
 - (BOOL) isConnected
 {
@@ -401,7 +405,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Connect to the database.
+ * \brief Connect to the database.
+ *
  * This method returns after the connection has been made.
  */
 - (BOOL) connectSync: (NSError **) error
@@ -429,7 +434,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Connect to the database.
+ * \brief Connect to the database.
+ *
  * Hand over the connection setup to \c mConnectionSetupManager. In BaseTenAppKit 
  * applications, a BXNetServiceConnector will be created automatically if 
  * one doesn't exist.
@@ -454,7 +460,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Connect to the database.
+ * \brief Connect to the database.
+ *
  * This method returns immediately.
  * After the attempt, either a \c kBXConnectionSuccessfulNotification or a 
  * \c kBXConnectionFailedNotification will be posted to the context's
@@ -488,7 +495,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Disconnect from the database.
+ * \brief Disconnect from the database.
  */
 - (void) disconnect
 {
@@ -502,7 +509,8 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Transactions and undo */
 //@{
 /**
- * Set the query execution method.
+ * \brief Set the query execution method.
+ *
  * In manual commit mode, savepoints are inserted after each query
  * Changes don't get propagated immediately to other clients.
  * Instead, other users get information about locked rows.
@@ -521,7 +529,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Query execution method
+ * \brief Query execution method
  * \return          A BOOL indicating whether or not autocommit is in use.
  */
 - (BOOL) autocommits
@@ -530,7 +538,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Set whether the context should try to lock rows before editing.
+ * \brief Set whether the context should try to lock rows before editing.
+ *
  * BaseTen's controller subclasses notify the context in NSEditorRegistration's methods.
  * This method controls whether the context pays attention to those messages.
  * The context may still receive lock notifications from other contexts.
@@ -543,7 +552,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Whether the context tries to lock rows before editing.
+ * \brief Whether the context tries to lock rows before editing.
  */
 - (BOOL) sendsLockQueries
 {
@@ -551,7 +560,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * The undo manager used by this context.
+ * \brief The undo manager used by this context.
  */
 - (NSUndoManager *) undoManager
 {
@@ -559,7 +568,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Set the undo manager used by the context.
+ * \brief Set the undo manager used by the context.
+ *
  * Instead of creating an undo manager owned by the context, the undo invocations 
  * can be sent to a window's undo manager, for example. The change is done only if there isn't an
  * open undo group in the current undo manager.
@@ -587,7 +597,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Rollback the transaction ina manual commit mode.
+ * \brief Rollback the transaction ina manual commit mode.
+ *
  * Guaranteed to succeed.
  */
 - (void) rollback
@@ -647,7 +658,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Commit the current transaction in manual commit mode.
+ * \brief Commit the current transaction in manual commit mode.
+ *
  * Undo will be disabled after this.
  * \return      A boolean indicating whether the commit was successful or not.
  */
@@ -674,7 +686,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /** 
- * Commit the changes.
+ * \brief Commit the changes.
  * \param sender Ignored.
  * \throw A BXException named \c kBXFailedToExecuteQueryException if commit fails.
  */
@@ -689,7 +701,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Rollback the changes.
+ * \brief Rollback the changes.
  * \param sender Ignored.
  */
 - (IBAction) revertDocumentToSaved: (id) sender
@@ -703,7 +715,8 @@ ModTypeToObject (enum BXModificationType value)
  */
 //@{
 /**
- * Objects with given IDs.
+ * \brief Objects with given IDs.
+ *
  * If the objects do not exist yet, they get created.
  * The database is not queried in any case. It is the user's responsibility to
  * provide this method with valid IDs.
@@ -731,7 +744,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Retrieve a registered database object.
+ * \brief Retrieve a registered database object.
+ *
  * Looks up an object from the cache. The database is not queried in any case.
  * \return The cached object or nil.
  */
@@ -741,7 +755,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Retrieve registered database objects.
+ * \brief Retrieve registered database objects.
+ *
  * Looks up objects from the cache. The database is not queried in any case.
  * \param objectIDs         The object IDs to look for.
  * \return An NSArray of cached objects and NSNulls.
@@ -752,7 +767,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Retrieve registered database objects.
+ * \brief Retrieve registered database objects.
+ *
  * Looks up objects from the cache. The database is not queried in any case.
  * \param objectIDs         The object IDs to look for.
  * \param returnNullObjects Whether the returned array should be filled with NSNulls
@@ -779,7 +795,7 @@ ModTypeToObject (enum BXModificationType value)
 
 
 /** 
- * The delegate. 
+ * \brief The delegate. 
  */
 - (id <BXDatabaseContextDelegate>) delegate
 {
@@ -787,7 +803,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Set the delegate.
+ * \brief Set the delegate.
+ *
  * The delegate object will not be retained.
  */
 - (void) setDelegate: (id <BXDatabaseContextDelegate>) anObject;
@@ -799,7 +816,7 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Using the Keychain */
 //@{
 /**
- * Whether the default keychain is searched for database passwords.
+ * \brief Whether the default keychain is searched for database passwords.
  */
 - (BOOL) usesKeychain
 {
@@ -807,7 +824,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Set whether the default keychain should be searched for database passwords.
+ * \brief Set whether the default keychain should be searched for database passwords.
  */
 - (void) setUsesKeychain: (BOOL) usesKeychain
 {
@@ -815,7 +832,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Store login credentials from the database URI to the default keychain.
+ * \brief Store login credentials from the database URI to the default keychain.
  */
 - (void) storeURICredentials
 {
@@ -863,7 +880,8 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Faulting database objects */
 //@{
 /**
- * Refresh or fault an object.
+ * \brief Refresh or fault an object.
+ *
  * This method is provided for Core Data compatibility.
  * \param flag   If NO, all the object's cached values including related objects will be released.
  *               A new fetch won't be performed until any of the object's values is requested.
@@ -884,7 +902,8 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Receiving notifications */
 //@{
 /**
- * The notification center for this context.
+ * \brief The notification center for this context.
+ *
  * Context-related notifications, such as connection notifications,
  * are posted to this notification center instead of the default center.
  */
@@ -899,14 +918,15 @@ ModTypeToObject (enum BXModificationType value)
 
 /** \name Error handling */
 //@{
-/** The NSWindow used with various sheets. */
+/** \brief The NSWindow used with various sheets. */
 - (NSWindow *) modalWindow
 {
 	return modalWindow;
 }
 
 /**
- * Set the NSWindow used with various sheets.
+ * \brief Set the NSWindow used with various sheets.
+ *
  * If set to nil, application modal alerts will be used.
  */
 - (void) setModalWindow: (NSWindow *) aWindow
@@ -1078,11 +1098,12 @@ ModTypeToObject (enum BXModificationType value)
 
 /** 
  * \name Retrieving objects from the database
- * These methods block until the result has been retrieved.
+ * \brief These methods block until the result has been retrieved.
  */
 //@{
 /**
- * Fetch an object with a given ID.
+ * \brief Fetch an object with a given ID.
+ *
  * The database is queried only if the object isn't in cache.
  */
 - (id) objectWithID: (BXDatabaseObjectID *) anID error: (NSError **) error
@@ -1116,7 +1137,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Fetch objects with given IDs.
+ * \brief Fetch objects with given IDs.
+ *
  * The database is queried only if the object aren't in cache.
  */
 - (NSSet *) objectsWithIDs: (NSArray *) anArray error: (NSError **) error
@@ -1164,7 +1186,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Fetch objects from the database.
+ * \brief Fetch objects from the database.
+ *
  * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:error: with \c returningFaults set to NO.
  *  
  * \param       entity          The entity from which rows are fetched.
@@ -1180,7 +1203,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Fetch objects from the database.
+ * \brief Fetch objects from the database.
+ *
  * Instead of fetching the field values, the context can retrieve objects that
  * contain only the object ID. The other values get fetched on-demand.\n
  * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:updateAutomatically:error: with \c updateAutomatically set to NO.
@@ -1204,7 +1228,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Fetch objects from the database.
+ * \brief Fetch objects from the database.
+ *
  * Instead of fetching all the columns, the user may supply a list of fields
  * that are excluded from the query results. The returned objects are 
  * faults. Values for the non-excluded fields are cached, though.\n
@@ -1231,7 +1256,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /** 
- * Fetch objects from the database.
+ * \brief Fetch objects from the database.
+ *
  * The result array can be set to be updated automatically. 
  * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
@@ -1253,7 +1279,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Fetch objects from the database.
+ * \brief Fetch objects from the database.
+ *
  * The result array can be set to be updated automatically.
  * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
@@ -1281,7 +1308,8 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Creating new database objects */
 //@{
 /**
- * Create a new database object.
+ * \brief Create a new database object.
+ *
  * Essentially inserts a new row into the database and retrieves it.
  * \param       entity           The target entity.
  * \param       givenFieldValues Initial values for fields. May be nil or left empty if
@@ -1418,7 +1446,8 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Deleting database objects */
 //@{
 /**
- * Delete a database object.
+ * \brief Delete a database object.
+ *
  * Essentially this method deletes a single row from the database.
  * \param       anObject        The object to be deleted.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
@@ -1434,7 +1463,8 @@ ModTypeToObject (enum BXModificationType value)
 /** \name Executing arbitrary queries */
 //@{
 /**
- * Execute a query directly.
+ * \brief Execute a query directly.
+ *
  * This method should only be used when fetching objects and modifying 
  * them is cumbersome or doesn't accomplish the task altogether.
  * \return An NSArray of NSDictionaries that correspond to each row.
@@ -1445,7 +1475,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Execute a query directly.
+ * \brief Execute a query directly.
+ *
  * This method should only be used when fetching objects and modifying 
  * them is cumbersome or doesn't accomplish the task altogether.
  * \param queryString The SQL query.
@@ -1468,7 +1499,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * Execute a command directly.
+ * \brief Execute a command directly.
+ *
  * This method should only be used when fetching objects and modifying 
  * them is cumbersome or doesn't accomplish the task altogether.
  * \return The number of rows affected by the command.
@@ -1939,7 +1971,7 @@ ModTypeToObject (enum BXModificationType value)
  */
 //@{
 /** 
- * Entity for a table in the given schema. 
+ * \brief Entity for a table in the given schema.
  * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
  *       the database name before entities may be received.
  */
@@ -1952,7 +1984,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /** 
- * Entity for a table in the default schema 
+ * \brief Entity for a table in the default schema 
  * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
  *       the database name before entities may be received.
  */
@@ -1964,7 +1996,8 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * All entities found in the database.
+ * \brief All entities found in the database.
+ *
  * Entities in private and metadata schemata won't be included.
  * \param reload Whether the entity list should be reloaded.
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
@@ -2034,7 +2067,7 @@ ModTypeToObject (enum BXModificationType value)
 
 /** 
  * \internal
- * Delete multiple objects at the same time. 
+ * \brief Delete multiple objects at the same time. 
  * \note Redoing this re-executes the query with the given predicate and thus
  *       might cause other objects to be deleted than those which were in the original invocation.
  */
@@ -2065,7 +2098,7 @@ ModTypeToObject (enum BXModificationType value)
 
 /**
  * \internal
- * Fetch objects from the database.
+ * \brief Fetch objects from the database.
  * \param       returnedClass   The class an instance of which gets returned. The class should be a
  *                              subclass of BXContainerProxy.
  */
@@ -2130,7 +2163,7 @@ ModTypeToObject (enum BXModificationType value)
 //FIXME: do the following methods set modification types correctly in undo & redo, or do they get set in callbacks?
 /** 
  * \internal
- * Update multiple objects at the same time. 
+ * \brief Update multiple objects at the same time. 
  * \note Redoing this re-executes the query with the given predicate and thus
  *       might cause modifications in other objects than in the original invocation.
  */
@@ -2410,7 +2443,8 @@ ModTypeToObject (enum BXModificationType value)
 
 /**
  * \internal
- * Register an object to the context
+ * \brief Register an object to the context.
+ *
  * After fetching objects from the database, a database interface should register them with a context.
  * This enables updating the database as well as automatic synchronization, if this has been implemented
  * in the database interface class.

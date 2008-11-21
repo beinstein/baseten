@@ -70,7 +70,8 @@
 - (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 /**
  * \internal
- * Visit each item.
+ * \brief Visit each item.
+ *
  * The first parameter after self and _cmd will be replaced with the visited object.
  * \param visitor The object that will be called.
  * \return An invocation recorder.

@@ -38,7 +38,7 @@
 
 
 /**
- * Return the value as an object
+ * \brief Return the value as an object.
  * \sa PGTSOidValue
  */
 id 

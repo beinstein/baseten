@@ -36,7 +36,8 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 
 /**
  * \internal
- * Default implementation for verifying OpenSSL X.509 certificates.
+ * \brief Default implementation for verifying OpenSSL X.509 certificates.
+ *
  * This class is thread-safe.
  */
 @implementation PGTSCertificateVerificationDelegate
@@ -87,9 +88,10 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 }
 
 /**
- * Get search policies.
- * To find search policies, we need to create
- * a search criteria. To create a search criteria, we need to give the criteria creation function some constants.
+ * \brief Get search policies.
+ *
+ * To find search policies, we need to create a search criteria. To create a search criteria, 
+ * we need to give the criteria creation function some constants.
  */
 - (NSArray *) policies
 {
@@ -127,7 +129,7 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 }
 
 /**
- * Create a SecCertificateRef from an OpenSSL certificate.
+ * \brief Create a SecCertificateRef from an OpenSSL certificate.
  * \param bioOutput A memory buffer so we don't have to allocate one.
  */
 - (SecCertificateRef) copyCertificateFromX509: (X509 *) opensslCert bioOutput: (BIO *) bioOutput
@@ -157,7 +159,8 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 }
 
 /**
- * Verify an OpenSSL X.509 certificate.
+ * \brief Verify an OpenSSL X.509 certificate.
+ *
  * Get the X.509 certificate from OpenSSL, encode it in DER format and let Security framework parse it again.
  * This way, we can use the Keychain to verify the certificate, since a CA trusted by the OS or the user
  * might have signed it or the user could have stored the certificate earlier. The preverification result
@@ -189,7 +192,8 @@ error:
 }
 
 /**
- * Create a trust.
+ * \brief Create a trust.
+ *
  * To verify a certificate, we need to
  * create a trust. To create a trust, we need to find search policies.
  * \param certificates An array of SecCertificateRefs.
@@ -211,7 +215,7 @@ error:
 }
 
 /**
- * Create Security certificates from OpenSSL certificates.
+ * \brief Create Security certificates from OpenSSL certificates.
  * \return An array of SecCertificateRefs.
  */
 - (CFArrayRef) copyCertificateArrayFromOpenSSLCertificates: (X509_STORE_CTX *) x509_ctx
