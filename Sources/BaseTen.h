@@ -81,7 +81,7 @@
  *
  * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
  * has been designed with familiar, Core Data -like semantics and APIs. 
- * *
+ *
  * The BaseTen feature highlights include:
  * \li BaseTen Assistant imports Core Data / Xcode data models.
  * \li Discovers the database schema automatically at runtime, including 1-1, 1-many and many-many relationships.
