@@ -113,7 +113,8 @@
 		}
 		else
 		{
-			[panel end];
+			if (modalWindow != panel)
+				[panel end];
 			[self displayAuthenticationPanel];
 		}
     }
