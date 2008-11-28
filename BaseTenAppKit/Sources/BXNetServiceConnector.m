@@ -113,6 +113,7 @@
 		}
 		else
 		{
+			[panel end];
 			[self displayAuthenticationPanel];
 		}
     }
