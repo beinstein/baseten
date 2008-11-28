@@ -262,8 +262,8 @@
  * \end{lstlisting} 
  * \endlatexonly
  * \htmlonly
- * <pre> #import <Foundation/Foundation.h>
- * #import <BaseTen/BaseTen.h>
+ * <code> #import &lt;Foundation/Foundation.h&gt;
+ * #import &lt;BaseTen/BaseTen.h&gt;
  *
  * int main (int argc, char** argv)
  * {
@@ -281,7 +281,7 @@
  *     }
  *
  *     return 0;
- * }</pre>
+ * }</code>
  * \endhtmlonly
  */
  
@@ -310,7 +310,7 @@
  * \end{lstlisting}
  * \endlatexonly
  * \htmlonly
- * <pre>[ctx connectSync: NULL];</pre>
+ * <code>[ctx connectSync: NULL];</code>
  * \endhtmlonly
  *
  *
@@ -340,7 +340,7 @@
  * \end{lstlisting}
  * \endlatexonly
  * \htmlonly
- * <pre>BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];</pre>
+ * <code>BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];</code>
  * \endhtmlonly
  *
  * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
@@ -362,7 +362,7 @@
  * \end{lstlisting}
  * \endlatexonly
  * \htmlonly 
- * <pre>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</pre>
+ * <code>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</code>
  * \endhtmlonly
  *
  * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
@@ -383,11 +383,11 @@
  * \end{lstlisting}
  * \endlatexonly
  * \htmlonly 
- * <pre>for (BXDatabaseObject* object in result)
+ * <code>for (BXDatabaseObject* object in result)
  *{
  *    NSLog (@"Object ID: %@ column: %@", 
  *           [[object objectID] URIRepresentation], [object valueForKey: @"column"]);
- *}</pre>
+ *}</code>
  * \endhtmlonly 
  *
  * Since BXDatabaseObject conforms to \em NSKeyValueObserving, methods <tt>-valueForKey:</tt> and 
@@ -421,7 +421,7 @@
  * collection of objects that reference the table in a foreign key. They key used is the other table's name.
  *
  * Consider the following example:
- * <pre>CREATE TABLE person (
+ * <code>CREATE TABLE person (
  *    id SERIAL PRIMARY KEY,
  *    firstname VARCHAR (255),
  *    surname VARCHAR (255)
@@ -431,14 +431,14 @@
  *    id SERIAL PRIMARY KEY,
  *    address VARCHAR (255),
  *    person_id INTEGER CONSTRAINT person REFERENCES person (id)
- *);</pre>
+ *);</code>
  *
  * Lets say we have two objects: \em aPerson and \em anEmail which have been fetched from the person and email
  * tables, respectively. <tt>[aPerson valueForKey: @"email"]</tt> will now return a collection of \em email objects. 
  * <tt>[anEmail valueForKey: @"person"]</tt> will return a single \em person object.
  *
  * If we modify the previous example, we get a one-to-one relationship: 
- * <pre>ALTER TABLE email ADD UNIQUE (person_id);</pre> 
+ * <code>ALTER TABLE email ADD UNIQUE (person_id);</code> 
  * Now both <tt>[aPerson valueForKey: @"email"]</tt> 
  * and <tt>[anEmail valueForKey: @"person"]</tt> will return a single object from the corresponding table.
  *
@@ -446,7 +446,7 @@
  * both tables' primary keys. It needs to be BaseTen enabled as well.
  *
  * Another example: 
- *<pre>CREATE TABLE person (
+ *<code>CREATE TABLE person (
  *    id SERIAL PRIMARY KEY,
  *    firstname VARCHAR (255),
  *    surname VARCHAR (255)
@@ -461,7 +461,7 @@
  *    person_id INTEGER REFERENCES person (id),
  *    title_id INTEGER REFERENCES title (id),
  *    PRIMARY KEY (person_id, title_id)
- *);</pre>
+ *);</code>
  *
  * Lets say \em aPerson has been fetched from the person table and \em aTitle from the title table. 
  * In this case, <tt>[aPerson valueForKey: @"title"]</tt> will return a collection of title objects 

@@ -111,3 +111,8 @@ li dl
 {
     font-style: italic;
 }
+
+code
+{
+    white-space: pre;
+}
