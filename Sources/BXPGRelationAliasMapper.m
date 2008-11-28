@@ -160,20 +160,18 @@ BXPGConditions (NSString* srcAlias, NSString* dstAlias, NSSet* fieldNamePairs)
 {
 	Expect (entity);
 	NSString* base = BaseAliasForEntity (entity);
-	NSString* retval = base;
+	
+	//Get an index and increment by one.
 	NSNumber* idx = [mUsedAliases objectForKey: base];
+	NSInteger i = 0;
 	if (idx)
-	{
-		int i = 1 + [idx intValue];
-		idx = [NSNumber numberWithInt: i];
-		[mUsedAliases setObject: idx forKey: base];
-		retval = [retval stringByAppendingString: [idx description]];
-	}
-	else
-	{
-		idx = [NSNumber numberWithInt: 1];
-		[mUsedAliases setObject: idx forKey: base];
-	}
+		i = [idx integerValue];
+	i++;
+	idx = [NSNumber numberWithInteger: i];
+	[mUsedAliases setObject: idx forKey: base];
+	
+	//Append the index to our table alias.
+	NSString* retval = [base stringByAppendingFormat: [idx description]];
 	return retval;
 }
 
