@@ -30,7 +30,8 @@
 #import <BaseTen/BXDatabaseObject.h>
 
 /**
- * Transforms and object's status into a boolean indicating, whether it's editable or not.
+ * \brief Transforms and object's status into a boolean indicating, whether it's editable or not.
+ *
  * If object has been edited or deleted in another transaction, it won't be editable.
  * \ingroup value_transformers
  */

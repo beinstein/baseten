@@ -35,7 +35,7 @@
 @implementation NSObjectController (BXCocoaAdditions)
 /** 
  * \internal
- * A convenience method for locking the key in the currently selected object. 
+ * \brief A convenience method for locking the key in the currently selected object. 
  */
 - (void) BXLockKey: (NSString *) key status: (enum BXObjectLockStatus) status editor: (id) editor
 {
@@ -50,14 +50,14 @@
 
 
 /**
- * Some methods used by BaseTen in BXArrayController.
+ * \brief Some methods used by BaseTen in BXArrayController.
  * \ingroup baseten_appkit
  */
 @implementation NSController (BXCocoaAdditions)
 
 /** 
  * \internal
- * Lock an object asynchronously. 
+ * \brief Lock an object asynchronously. 
  */
 - (void) BXLockObject: (BXDatabaseObject *) object key: (NSString *) key 
                   status: (enum BXObjectLockStatus) status editor: (id) editor
@@ -76,7 +76,7 @@
 
 /** 
  * \internal
- * Unlock an object synchronously. 
+ * \brief Unlock an object synchronously. 
  */
 - (void) BXUnlockObject: (BXDatabaseObject *) object key: (NSString *) key editor: (id) editor
 {
@@ -93,7 +93,7 @@
 
 /** 
  * \internal 
- * Handle the error if a lock couldn't be acquired. 
+ * \brief Handle the error if a lock couldn't be acquired. 
  */
 - (void) BXLockAcquired: (BOOL) lockAcquired object: (BXDatabaseObject *) receiver error: (NSError *) dbError
 {
@@ -106,7 +106,8 @@
 }
 
 /** 
- * The database context. 
+ * \internal
+ * \brief The database context. 
  */
 - (BXDatabaseContext *) BXDatabaseContext
 {
@@ -117,7 +118,8 @@
 }
 
 /** 
- * The window in which all the edited NSControls are. 
+ * \internal
+ * \brief The window in which all the edited NSControls are. 
  */
 - (NSWindow *) BXWindow
 {
@@ -125,7 +127,8 @@
 }
 
 /**
- * An error handler.
+ * \internal
+ * \brief An error handler.
  */
 - (void) BXHandleError: (NSError *) error
 {

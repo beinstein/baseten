@@ -47,7 +47,8 @@
 
 
 /**
- * An NSArrayController subclass for use with BaseTen.
+ * \brief An NSArrayController subclass for use with BaseTen.
+ *
  * A BXSynchronizedArrayController updates its contents automatically based on notifications received 
  * from a database context. In order to function, its databaseContext outlet needs to be connected. 
  * It may also fetch objects when the context connects. However, this option should not be enabled 
@@ -127,7 +128,7 @@
 }
 
 /**
- * The entity used with this array controller.
+ * \brief The entity used with this array controller.
  */
 - (BXEntityDescription *) entityDescription
 {
@@ -135,7 +136,7 @@
 }
 
 /**
- * Set the entity used with this array controller.
+ * \brief Set the entity used with this array controller.
  */
 - (void) setEntityDescription: (BXEntityDescription *) desc
 {
@@ -172,8 +173,8 @@
 }
 
 /**
- * Set the database context.
  * \internal
+ * \brief Set the database context.
  * \see #setFetchesOnAwake:
  */
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx
@@ -209,9 +210,9 @@
 }
 
 /**
- * Whether this controller fetches on connect.
- * \note Controllers bound to an automatically-fetching controller should not fetch on connect.
  * \internal
+ * \brief Whether this controller fetches on connect.
+ * \note Controllers bound to an automatically-fetching controller should not fetch on connect.
  * \see #setDatabaseContext:
  */
 - (void) setFetchesOnConnect: (BOOL) aBool
@@ -254,7 +255,7 @@
 }
 
 /**
- * Database schema name for this controller.
+ * \brief Database schema name for this controller.
  */
 - (NSString *) schemaName
 {
@@ -262,7 +263,7 @@
 }
 
 /**
- * Set the database schema name for this controller.
+ * \brief Set the database schema name for this controller.
  */
 - (void) setSchemaName: (NSString *) aSchemaName
 {
@@ -274,7 +275,7 @@
 }
 
 /**
- * Database table name for this controller.
+ * \brief Database table name for this controller.
  */
 - (NSString *) tableName
 {
@@ -282,7 +283,7 @@
 }
 
 /**
- * Set the database table name for this controller.
+ * \brief Set the database table name for this controller.
  */
 - (void) setTableName: (NSString *) aTableName
 {
@@ -294,7 +295,8 @@
 }
 
 /**
- * Database object class name for this controller.
+ * \brief Database object class name for this controller.
+ *
  * When setting the database context, this will be changed into a Class.
  */
 - (NSString *) databaseObjectClassName
@@ -303,7 +305,7 @@
 }
 
 /**
- * Set the database object class name for this controller.
+ * \brief Set the database object class name for this controller.
  */
 - (void) setDatabaseObjectClassName: (NSString *) aDBObjectClassName
 {

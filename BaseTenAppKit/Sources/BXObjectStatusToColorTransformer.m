@@ -31,7 +31,8 @@
 
 
 /**
- * Transforms an object status to a colour.
+ * \brief Transforms an object status to a colour.
+ *
  * Presently, grey corresponds to a locked object and red to a deleted object.
  * \ingroup value_transformers
  */

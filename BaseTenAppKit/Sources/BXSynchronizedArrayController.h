@@ -35,9 +35,9 @@
 
 @interface BXSynchronizedArrayController : NSArrayController
 {
-	/** The database context. */
+	/** \brief The database context. */
 	IBOutlet BXDatabaseContext* databaseContext;
-	/** An NSWindow to which sheets are attached. */
+	/** \brief An NSWindow to which sheets are attached. */
     IBOutlet NSWindow* modalWindow;
         
     BXEntityDescription* mEntityDescription; //Weak
