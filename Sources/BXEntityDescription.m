@@ -128,7 +128,8 @@ static id gEntities;
 
 /** 
  * \internal
- * Deallocation helper. 
+ * \brief Deallocation helper.
+ *
  * Subclasses should override this instead of dealloc and then call 
  * super's implementation of dealloc2. This is because BXEntityDescriptions 
  * will be stored into a non-retaining collection on creation and removed from 
@@ -163,13 +164,17 @@ static id gEntities;
     [[NSNotificationCenter defaultCenter] removeObserver: self];
 }
 
-/** The schema name. */
+/** 
+ * \brief The schema name. 
+ */
 - (NSString *) schemaName
 {
     return [[mSchemaName retain] autorelease];
 }
 
-/** The database URI. */
+/** 
+ * \brief The database URI. 
+ */
 - (NSURL *) databaseURI
 {
     return mDatabaseURI;
@@ -202,7 +207,9 @@ static id gEntities;
 	//FIXME: relationships as well?
 }
 
-/** Retain on copy. */
+/** 
+ * \brief Retain on copy. 
+ */
 - (id) copyWithZone: (NSZone *) zone
 {
     return [self retain];
@@ -253,7 +260,8 @@ bail:
 }
 
 /**
- * Set the class for this entity.
+ * \brief Set the class for this entity.
+ *
  * Objects fetched using this entity will be instances of
  * the given class, which needs to be a subclass of BXDatabaseObject.
  * \param   cls     The object class.
@@ -277,7 +285,7 @@ bail:
 }
 
 /**
- * The class for this entity
+ * \brief The class for this entity.
  * \return          The default class is BXDatabaseObject.
  */
 - (Class) databaseObjectClass
@@ -286,7 +294,8 @@ bail:
 }
 
 /**
- * Set the primary key fields for this entity.
+ * \brief Set the primary key fields for this entity.
+ *
  * Normally the database context determines the primary key, when
  * an entity is used in a database query. However, when an entity is a view, the fields
  * may need to be set manually before using the entity in a query.
@@ -322,7 +331,7 @@ bail:
 }
 
 /**
- * Registered object IDs for this entity.
+ * \brief Registered object IDs for this entity.
  */
 - (NSArray *) objectIDs
 {
@@ -340,7 +349,8 @@ FilterPkeyAttributes (id attribute, void* arg)
 }
 
 /**
- * Primary key fields for this entity.
+ * \brief Primary key fields for this entity.
+ *
  * The fields get determined automatically after database connection has been made.
  * \return          An array of BXAttributeDescriptions
  * \see #isValidated
@@ -356,7 +366,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 }
 
 /** 
- * Non-primary key fields for this entity.
+ * \brief Non-primary key fields for this entity.
  * \return          An array of BXAttributeDescriptions
  * \see #isValidated
  */
@@ -365,7 +375,9 @@ FilterPkeyAttributes (id attribute, void* arg)
 	return [mAttributes PGTSValueSelectFunction: &FilterPkeyAttributes argument: (void *) 0L] ?: nil;
 }
 
-/** Whether this entity is marked as a view or not. */
+/** 
+ * \brief Whether this entity is marked as a view or not. 
+ */
 - (BOOL) isView
 {
     return (mFlags & kBXEntityIsView) ? YES : NO;
@@ -388,7 +400,8 @@ FilterPkeyAttributes (id attribute, void* arg)
 }
 
 /** 
- * Attributes for this entity.
+ * \brief Attributes for this entity.
+ *
  * Primary key fields and other fields for this entity.
  * \return          An NSDictionary with NSStrings as keys and BXAttributeDescriptions as objects.
  * \see #isValidated
@@ -399,7 +412,8 @@ FilterPkeyAttributes (id attribute, void* arg)
 }
 
 /**
- * Entity validation.
+ * \brief Entity validation.
+ *
  * The entity will be validated after a database connection has been made. Afterwards, 
  * #fields, #primaryKeyFields, #attributesByName and #relationshipsByName return meaningful values.
  */
@@ -409,7 +423,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 }
 
 /**
- * Relationships for this entity.
+ * \brief Relationships for this entity.
  * \return An NSDictionary with NSStrings as keys and BXRelationshipDescriptions as objects.
  */
 - (NSDictionary *) relationshipsByName
@@ -499,7 +513,8 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 /**
  * \internal
- * Whether this entity gets changed by triggers, rules etc.
+ * \brief Whether this entity gets changed by triggers, rules etc.
+ *
  * If the entity gets changed only directly, some queries may possibly be optimized.
  */
 - (BOOL) getsChangedByTriggers
@@ -537,7 +552,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 //@{
 /**
  * \internal
- * Create the entity.
+ * \brief Create the entity.
  * \param       anURI   The database URI
  * \param       tName   Table name
  * \param       sName   Schema name
@@ -565,7 +580,8 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 /**
  * \internal
- * The designated initializer.
+ * \brief The designated initializer.
+ *
  * Create the entity.
  * \param       anURI   The database URI
  * \param       tName   Table name
