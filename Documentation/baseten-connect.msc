@@ -1,0 +1,21 @@
+msc
+{
+    hscale = "1";
+
+    d   [ label = "Delegate" ],
+    ctx [ label = "Database context" ],
+    c   [ label = "Connector" ] ;
+
+    d=>ctx [ label = "-connect:" ];
+    ctx->c [ label = "Begin connection attempt" ];
+    c->c   [ label = "Display connection panel" ];
+    ...    [ label = "User sets the host name" ];
+    c=>>d  [ label = "-databaseContextGotDatabaseURI:" ];
+    d=>ctx [ label = "-entityForTable:error: or\n-entityForTable:inSchema:error:", ID = "Repeat" ];
+    ctx>>d [ label = "BXEntityDescription" ];
+    d->d   [ label = "Prepare entities" ];
+    c->c   [ label = "Continue connecting" ];
+    ...    [ label = "Connection gets negotiated" ];
+    ---    [ label = "Connection attempt finished" ];
+    c=>>d  [ label = "-databaseContextConnectionSucceeded: or -databaseContext:failedToConnect:" ];
+}
