@@ -1,0 +1,50 @@
+digraph baseten_class_hierarchy
+{
+	compound=true;
+	rankdir="RL";
+	
+	node [shape = box]
+		NSObject
+		NSProxy
+		NSException
+		BXDatabaseContext
+		BXDatabaseObject
+		BXDatabaseObjectID
+		BXException
+		
+		BXAbstractDescription
+		BXEntityDescription
+		BXPropertyDescription
+		BXAttributeDescription
+		BXRelationshipDescription
+		
+		BXContainerProxy
+		BXArrayProxy
+		BXSetProxy;
+		
+	node [shape = diamond]
+		NSObjectProtocol [label = NSObject]
+		BXDatabaseContextDelegate;
+		
+	edge [arrowhead = onormal]
+		NSObject -> NSObjectProtocol 
+		NSProxy -> NSObjectProtocol
+		BXDatabaseContext -> NSObject
+		BXDatabaseObject -> NSObject
+		BXDatabaseObjectID -> NSObject
+
+		NSException:w -> NSObject
+		BXException -> NSException
+	
+		BXAbstractDescription -> NSObject
+		BXEntityDescription -> BXAbstractDescription
+		BXPropertyDescription -> BXAbstractDescription
+		BXAttributeDescription -> BXPropertyDescription
+		BXRelationshipDescription -> BXPropertyDescription
+	
+		BXContainerProxy -> NSProxy
+		BXArrayProxy -> BXContainerProxy
+		BXSetProxy -> BXContainerProxy
+	
+		BXDatabaseContextDelegate -> NSObjectProtocol;
+}
