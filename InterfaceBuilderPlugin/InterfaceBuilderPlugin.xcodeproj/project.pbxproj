@@ -368,7 +368,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "BASETEN_PROJECT_DIR=\"$PROJECT_DIR\"/../\n\nICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenPaletteIcon\"\n\n\"$BASETEN_PROJECT_DIR\"/unzip.sh \"$PROJECT_DIR\"/BaseTenPaletteIcon.zip \"$ICON_FOLDER_PATH\"\n\"$BASETEN_PROJECT_DIR\"/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
+			shellScript = "BASETEN_PROJECT_DIR=\"$PROJECT_DIR\"/../\n\nICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenPaletteIcon\"\n\nditto -xk \"$PROJECT_DIR\"/BaseTenPaletteIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"\n\"$BASETEN_PROJECT_DIR\"/Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
 		53C8C31A0CEDDBE800676C98 /* Copy Per Project Build Dir Items */ = {
