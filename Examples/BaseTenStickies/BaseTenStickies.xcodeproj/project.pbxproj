@@ -1,0 +1,484 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0D31FA5A07A844EF00A98CDE /* Sticky.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D31FA5807A844EF00A98CDE /* Sticky.m */; };
+		0D7D6E4B07AAF61600CBBE7D /* StickyTitleBarView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7D6E4A07AAF61600CBBE7D /* StickyTitleBarView.m */; };
+		0D7D703307AB23EF00CBBE7D /* StickyResizeCornerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D7D703207AB23EF00CBBE7D /* StickyResizeCornerView.m */; };
+		0DBA893407A1D02F00A2FA49 /* StickyWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DBA893307A1D02F00A2FA49 /* StickyWindow.m */; };
+		0DD034A607A8A5FA00DB4C24 /* Stickies.icns in Resources */ = {isa = PBXBuildFile; fileRef = 0DD034A507A8A5FA00DB4C24 /* Stickies.icns */; };
+		531283C70E37AD2600DC021E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531283C60E37AD2600DC021E /* Cocoa.framework */; };
+		535BEA970EE9896300225D68 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 535BEA8D0EE9892800225D68 /* BaseTen.framework */; };
+		535BEA980EE9896600225D68 /* BaseTenAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 535BEA960EE9893300225D68 /* BaseTenAppKit.framework */; };
+		535BEA990EE9896800225D68 /* BaseTenAppKit.framework in Copy BaseTen Frameworks */ = {isa = PBXBuildFile; fileRef = 535BEA960EE9893300225D68 /* BaseTenAppKit.framework */; };
+		535BEA9A0EE9896D00225D68 /* BaseTen.framework in Copy BaseTen Frameworks */ = {isa = PBXBuildFile; fileRef = 535BEA8D0EE9892800225D68 /* BaseTen.framework */; };
+		770B37ED0679A11B001EADE2 /* Stickies_DataModel.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 770B37EC0679A11B001EADE2 /* Stickies_DataModel.xcdatamodel */; };
+		7721BE2107AED7110021D625 /* Sticky.nib in Resources */ = {isa = PBXBuildFile; fileRef = 7721BE2007AED7110021D625 /* Sticky.nib */; };
+		77C8280E06725ACE000B614F /* StickiesAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 77C8280C06725ACE000B614F /* StickiesAppDelegate.m */; };
+		8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 29B97318FDCFA39411CA2CEA /* MainMenu.nib */; };
+		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
+		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		535BEA8C0EE9892800225D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5319403B0BC52243009A77EC /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 535444130D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
+		};
+		535BEA8E0EE9892800225D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5319403B0BC52243009A77EC /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 534EE22F0E53213300B079B0;
+			remoteInfo = "BaseTen for iPhone";
+		};
+		535BEA900EE9892800225D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5319403B0BC52243009A77EC /* BaseTen.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
+			remoteInfo = "SQL Parser";
+		};
+		535BEA950EE9893300225D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531940450BC5224C009A77EC /* BaseTenAppKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 535444870D634D9C002A6C47;
+			remoteInfo = "BaseTenAppKit + GC";
+		};
+		535BEA9B0EE9898C00225D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531940450BC5224C009A77EC /* BaseTenAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535444570D634D9C002A6C47;
+			remoteInfo = "BaseTenAppKit + GC";
+		};
+		535BEA9D0EE9898C00225D68 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5319403B0BC52243009A77EC /* BaseTen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2B9411AF0B1EC69D004ACEB7 /* Copy BaseTen Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 12;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				535BEA9A0EE9896D00225D68 /* BaseTen.framework in Copy BaseTen Frameworks */,
+				535BEA990EE9896800225D68 /* BaseTenAppKit.framework in Copy BaseTen Frameworks */,
+			);
+			name = "Copy BaseTen Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		0D31FA5807A844EF00A98CDE /* Sticky.m */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = Sticky.m; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
+		0D31FA5907A844EF00A98CDE /* Sticky.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Sticky.h; sourceTree = "<group>"; };
+		0D7D6E4907AAF61600CBBE7D /* StickyTitleBarView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StickyTitleBarView.h; sourceTree = "<group>"; };
+		0D7D6E4A07AAF61600CBBE7D /* StickyTitleBarView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StickyTitleBarView.m; sourceTree = "<group>"; };
+		0D7D703107AB23EF00CBBE7D /* StickyResizeCornerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StickyResizeCornerView.h; sourceTree = "<group>"; };
+		0D7D703207AB23EF00CBBE7D /* StickyResizeCornerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StickyResizeCornerView.m; sourceTree = "<group>"; };
+		0DBA893207A1D02F00A2FA49 /* StickyWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StickyWindow.h; sourceTree = "<group>"; };
+		0DBA893307A1D02F00A2FA49 /* StickyWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StickyWindow.m; sourceTree = "<group>"; };
+		0DBA893907A1D15D00A2FA49 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/Sticky.nib; sourceTree = "<group>"; };
+		0DD034A507A8A5FA00DB4C24 /* Stickies.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = Stickies.icns; sourceTree = "<group>"; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		29B97319FDCFA39411CA2CEA /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		32CA4F630368D1EE00C91783 /* Stickies_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stickies_Prefix.pch; sourceTree = "<group>"; };
+		531283C60E37AD2600DC021E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		5319403B0BC52243009A77EC /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
+		531940450BC5224C009A77EC /* BaseTenAppKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenAppKit.xcodeproj; path = ../../BaseTenAppKit/BaseTenAppKit.xcodeproj; sourceTree = SOURCE_ROOT; };
+		770B37EC0679A11B001EADE2 /* Stickies_DataModel.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; path = Stickies_DataModel.xcdatamodel; sourceTree = "<group>"; };
+		77C8280B06725ACE000B614F /* StickiesAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StickiesAppDelegate.h; sourceTree = "<group>"; };
+		77C8280C06725ACE000B614F /* StickiesAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StickiesAppDelegate.m; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* BaseTen Stickies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BaseTen Stickies.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				531283C70E37AD2600DC021E /* Cocoa.framework in Frameworks */,
+				535BEA970EE9896300225D68 /* BaseTen.framework in Frameworks */,
+				535BEA980EE9896600225D68 /* BaseTenAppKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				0D368EAF07AEB56000334144 /* Model and Controller Code */,
+				0D368EAC07AEB53C00334144 /* UI Implementation */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		0D368EAC07AEB53C00334144 /* UI Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				0D7D703107AB23EF00CBBE7D /* StickyResizeCornerView.h */,
+				0D7D703207AB23EF00CBBE7D /* StickyResizeCornerView.m */,
+				0DBA893207A1D02F00A2FA49 /* StickyWindow.h */,
+				0DBA893307A1D02F00A2FA49 /* StickyWindow.m */,
+				0D7D6E4907AAF61600CBBE7D /* StickyTitleBarView.h */,
+				0D7D6E4A07AAF61600CBBE7D /* StickyTitleBarView.m */,
+			);
+			name = "UI Implementation";
+			sourceTree = "<group>";
+		};
+		0D368EAF07AEB56000334144 /* Model and Controller Code */ = {
+			isa = PBXGroup;
+			children = (
+				77C8280B06725ACE000B614F /* StickiesAppDelegate.h */,
+				77C8280C06725ACE000B614F /* StickiesAppDelegate.m */,
+				0D31FA5907A844EF00A98CDE /* Sticky.h */,
+				0D31FA5807A844EF00A98CDE /* Sticky.m */,
+			);
+			name = "Model and Controller Code";
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107320486CEB800E47090 /* BaseTen Stickies.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* Stickies */ = {
+			isa = PBXGroup;
+			children = (
+				7756732906782D8800D1FEB8 /* Models */,
+				080E96DDFE201D6D7F000001 /* Classes */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+			);
+			name = Stickies;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32CA4F630368D1EE00C91783 /* Stickies_Prefix.pch */,
+				29B97316FDCFA39411CA2CEA /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				0DD034A507A8A5FA00DB4C24 /* Stickies.icns */,
+				7721BE2007AED7110021D625 /* Sticky.nib */,
+				8D1107310486CEB800E47090 /* Info.plist */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				29B97318FDCFA39411CA2CEA /* MainMenu.nib */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5319403B0BC52243009A77EC /* BaseTen.xcodeproj */,
+				531940450BC5224C009A77EC /* BaseTenAppKit.xcodeproj */,
+				531283C60E37AD2600DC021E /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		535BEA830EE9892800225D68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				535BEA8D0EE9892800225D68 /* BaseTen.framework */,
+				535BEA8F0EE9892800225D68 /* libBaseTen.a */,
+				535BEA910EE9892800225D68 /* SQLParser.o */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		535BEA920EE9893300225D68 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				535BEA960EE9893300225D68 /* BaseTenAppKit.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7756732906782D8800D1FEB8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				770B37EC0679A11B001EADE2 /* Stickies_DataModel.xcdatamodel */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D1107260486CEB800E47090 /* BaseTen Stickies */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2644ADA108B68B980014924E /* Build configuration list for PBXNativeTarget "BaseTen Stickies" */;
+			buildPhases = (
+				8D1107290486CEB800E47090 /* Resources */,
+				2B9411AF0B1EC69D004ACEB7 /* Copy BaseTen Frameworks */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				535BEA9E0EE9898C00225D68 /* PBXTargetDependency */,
+				535BEA9C0EE9898C00225D68 /* PBXTargetDependency */,
+			);
+			name = "BaseTen Stickies";
+			productInstallPath = "$(HOME)/Applications";
+			productName = Stickies;
+			productReference = 8D1107320486CEB800E47090 /* BaseTen Stickies.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 2644ADA508B68B980014924E /* Build configuration list for PBXProject "BaseTenStickies" */;
+			compatibilityVersion = "Xcode 2.4";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* Stickies */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 535BEA830EE9892800225D68 /* Products */;
+					ProjectRef = 5319403B0BC52243009A77EC /* BaseTen.xcodeproj */;
+				},
+				{
+					ProductGroup = 535BEA920EE9893300225D68 /* Products */;
+					ProjectRef = 531940450BC5224C009A77EC /* BaseTenAppKit.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				8D1107260486CEB800E47090 /* BaseTen Stickies */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		535BEA8D0EE9892800225D68 /* BaseTen.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTen.framework;
+			remoteRef = 535BEA8C0EE9892800225D68 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		535BEA8F0EE9892800225D68 /* libBaseTen.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBaseTen.a;
+			remoteRef = 535BEA8E0EE9892800225D68 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		535BEA910EE9892800225D68 /* SQLParser.o */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.objfile";
+			path = SQLParser.o;
+			remoteRef = 535BEA900EE9892800225D68 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		535BEA960EE9893300225D68 /* BaseTenAppKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = BaseTenAppKit.framework;
+			remoteRef = 535BEA950EE9893300225D68 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D1107290486CEB800E47090 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072A0486CEB800E47090 /* MainMenu.nib in Resources */,
+				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				7721BE2107AED7110021D625 /* Sticky.nib in Resources */,
+				0DD034A607A8A5FA00DB4C24 /* Stickies.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072D0486CEB800E47090 /* main.m in Sources */,
+				77C8280E06725ACE000B614F /* StickiesAppDelegate.m in Sources */,
+				770B37ED0679A11B001EADE2 /* Stickies_DataModel.xcdatamodel in Sources */,
+				0DBA893407A1D02F00A2FA49 /* StickyWindow.m in Sources */,
+				0D31FA5A07A844EF00A98CDE /* Sticky.m in Sources */,
+				0D7D6E4B07AAF61600CBBE7D /* StickyTitleBarView.m in Sources */,
+				0D7D703307AB23EF00CBBE7D /* StickyResizeCornerView.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		535BEA9C0EE9898C00225D68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTenAppKit + GC";
+			targetProxy = 535BEA9B0EE9898C00225D68 /* PBXContainerItemProxy */;
+		};
+		535BEA9E0EE9898C00225D68 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTen Framework + GC";
+			targetProxy = 535BEA9D0EE9898C00225D68 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C165DFE840E0CC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		29B97318FDCFA39411CA2CEA /* MainMenu.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				29B97319FDCFA39411CA2CEA /* English */,
+			);
+			name = MainMenu.nib;
+			sourceTree = "<group>";
+		};
+		7721BE2007AED7110021D625 /* Sticky.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0DBA893907A1D15D00A2FA49 /* English */,
+			);
+			name = Sticky.nib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		2644ADA208B68B980014924E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(PROJECT_DIR)\"/../Dependencies/BaseTen/build/$(BUILD_STYLE)";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = required;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Stickies_Prefix.pch;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = "BaseTen Stickies";
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				WARNING_CFLAGS = "-Wall";
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		2644ADA308B68B980014924E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				FRAMEWORK_SEARCH_PATHS = "\"$(TARGET_BUILD_DIR)/$(TARGET_NAME).app/Contents/Frameworks\"";
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_OBJC_GC = required;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = Stickies_Prefix.pch;
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = "BaseTen Stickies";
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				WARNING_CFLAGS = "-Wall";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		2644ADA608B68B980014924E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Debug;
+		};
+		2644ADA708B68B980014924E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2644ADA108B68B980014924E /* Build configuration list for PBXNativeTarget "BaseTen Stickies" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2644ADA208B68B980014924E /* Debug */,
+				2644ADA308B68B980014924E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2644ADA508B68B980014924E /* Build configuration list for PBXProject "BaseTenStickies" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2644ADA608B68B980014924E /* Debug */,
+				2644ADA708B68B980014924E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
