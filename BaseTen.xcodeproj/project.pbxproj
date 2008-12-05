@@ -488,7 +488,7 @@
 
 /* Begin PBXFileReference section */
 		0867D69BFE84028FC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		089C1667FE841158C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		089C1667FE841158C02AAC07 /* InfoPlist.strings */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = InfoPlist.strings; path = Resources/English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTen_Prefix.pch; path = Sources/BaseTen_Prefix.pch; sourceTree = "<group>"; };
 		5301300B09D437030037C485 /* BXDatabaseContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseContext.h; path = Sources/BXDatabaseContext.h; sourceTree = "<group>"; };
 		5301300C09D437030037C485 /* BXDatabaseContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContext.m; path = Sources/BXDatabaseContext.m; sourceTree = "<group>"; };
@@ -543,7 +543,7 @@
 		535444220D634A98002A6C47 /* debug-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "debug-non-gc.xcconfig"; sourceTree = "<group>"; };
 		535444230D634A98002A6C47 /* release-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-gc.xcconfig"; sourceTree = "<group>"; };
 		535444240D634A98002A6C47 /* release-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-non-gc.xcconfig"; sourceTree = "<group>"; };
-		53596CF50A3714AC009C39E9 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.xml; path = datatypeassociations.plist; sourceTree = "<group>"; };
+		53596CF50A3714AC009C39E9 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.xml; name = datatypeassociations.plist; path = Resources/datatypeassociations.plist; sourceTree = "<group>"; };
 		5359D1850C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXOneToOneRelationshipDescription.h; path = Sources/BXOneToOneRelationshipDescription.h; sourceTree = "<group>"; };
 		5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOneToOneRelationshipDescription.m; path = Sources/BXOneToOneRelationshipDescription.m; sourceTree = "<group>"; };
 		5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXManyToManyRelationshipDescription.h; path = Sources/BXManyToManyRelationshipDescription.h; sourceTree = "<group>"; };
@@ -706,7 +706,7 @@
 		538A83100E1D1E5F0025B3C8 /* keywords.c */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.c; name = keywords.c; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/backend/parser/keywords.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		538A83140E1D1EE00025B3C8 /* BXPGSQLScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLScanner.h; path = Sources/BXPGSQLScanner.h; sourceTree = "<group>"; };
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
-		538A83CC0E1D85420025B3C8 /* sql_parser.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = sql_parser.exp; sourceTree = "<group>"; };
+		538A83CC0E1D85420025B3C8 /* sql_parser.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = sql_parser.exp; path = Resources/sql_parser.exp; sourceTree = "<group>"; };
 		5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXPGCurrentCompatVersion.m.m4; path = Sources/BXPGCurrentCompatVersion.m.m4; sourceTree = "<group>"; };
 		53915F9C0E3FD22D0098B419 /* libpq_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libpq_additions.h; path = Sources/libpq_additions.h; sourceTree = "<group>"; };
 		53915F9D0E3FD22D0098B419 /* libpq_additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libpq_additions.c; path = Sources/libpq_additions.c; sourceTree = "<group>"; };
@@ -739,7 +739,7 @@
 		53A75FEE0B032ECF0032A99C /* BXDatabaseContextPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseContextPrivate.h; path = Sources/BXDatabaseContextPrivate.h; sourceTree = "<group>"; };
 		53AA8BF10E6B65B7007A64FC /* BXPGFunctionExpressionEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGFunctionExpressionEvaluator.h; path = Sources/BXPGFunctionExpressionEvaluator.h; sourceTree = "<group>"; };
 		53AA8BF20E6B65B7007A64FC /* BXPGFunctionExpressionEvaluator.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = BXPGFunctionExpressionEvaluator.m; path = Sources/BXPGFunctionExpressionEvaluator.m; sourceTree = "<group>"; };
-		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BaseTen.icns; sourceTree = "<group>"; };
+		53AE2C990B1721A4000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTen.icns; path = Resources/BaseTen.icns; sourceTree = "<group>"; };
 		53B143DC0E65A5D80043B75D /* BXPGRelationAliasMapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGRelationAliasMapper.h; path = Sources/BXPGRelationAliasMapper.h; sourceTree = "<group>"; };
 		53B143DD0E65A5D80043B75D /* BXPGRelationAliasMapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGRelationAliasMapper.m; path = Sources/BXPGRelationAliasMapper.m; sourceTree = "<group>"; };
 		53B143E40E65A7F80043B75D /* BXPGVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGVisitor.h; path = Sources/BXPGVisitor.h; sourceTree = "<group>"; };
@@ -779,7 +779,7 @@
 		53F0BB9F0EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCFScannedMemoryAllocator.h; path = Sources/PGTSCFScannedMemoryAllocator.h; sourceTree = "<group>"; };
 		53F0BBA70EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; name = PGTSCFScannedMemoryAllocator.m; path = Sources/PGTSCFScannedMemoryAllocator.m; sourceTree = "<group>"; };
 		53F0BD990EC523A200773BE7 /* PGTSScannedMemoryAllocator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGTSScannedMemoryAllocator.mm; path = Sources/PGTSScannedMemoryAllocator.mm; sourceTree = "<group>"; };
-		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8DC2EF5A0486A6940098B216 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Resources/Info.plist; sourceTree = "<group>"; };
 		D2F7E79907B2D74100F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -1631,7 +1631,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/BaseTenFrameworkIcon\"\n\nditto -xk \"$PROJECT_DIR\"/BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"\n\"$PROJECT_DIR\"/Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
+			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR/Resources/BaseTenFrameworkIcon\"\n\nditto -xk \"$PROJECT_DIR\"/Resources/BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"\n\"$PROJECT_DIR\"/Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
 		5362E86B0E1CE46D005C7654 /* ShellScript */ = {
@@ -1910,7 +1910,7 @@
 		089C1666FE841158C02AAC07 /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
-				089C1667FE841158C02AAC07 /* English */,
+				089C1667FE841158C02AAC07 /* InfoPlist.strings */,
 			);
 			name = InfoPlist.strings;
 			sourceTree = "<group>";

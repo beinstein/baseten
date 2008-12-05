@@ -104,7 +104,7 @@
 		537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSynchronizedArrayController.m; path = Sources/BXSynchronizedArrayController.m; sourceTree = "<group>"; };
 		537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit.h; path = Sources/BaseTenAppKit.h; sourceTree = "<group>"; };
-		53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTen.icns; path = ../BaseTen.icns; sourceTree = SOURCE_ROOT; };
+		53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTen.icns; path = ../Resources/BaseTen.icns; sourceTree = SOURCE_ROOT; };
 		53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitAdditions.h; path = Sources/BXAppKitAdditions.h; sourceTree = "<group>"; };
 		53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAppKitAdditions.m; path = Sources/BXAppKitAdditions.m; sourceTree = "<group>"; };
 		53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextAdditions.h; path = Sources/BXDatabaseContextAdditions.h; sourceTree = "<group>"; };
@@ -395,7 +395,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR\"/../BaseTenFrameworkIcon\n\nditto -xk \"$PROJECT_DIR\"/../BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"/../\n\"$PROJECT_DIR\"/../Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
+			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon\n\nditto -xk \"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"/../Resources/\n\"$PROJECT_DIR\"/../Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
