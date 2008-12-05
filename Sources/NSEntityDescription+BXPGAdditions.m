@@ -79,7 +79,7 @@
 
 - (NSString *) BXPGPrimaryKeyConstraintInSchema: (NSString *) schemaName
 {
-	NSString* format = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (id)";
+	NSString* format = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (id);";
 	NSString* constraint = [NSString stringWithFormat: format, schemaName, [self name]];
 	return constraint;
 }

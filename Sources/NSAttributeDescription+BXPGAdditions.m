@@ -188,7 +188,7 @@
 static NSExpression*
 CharLengthExpression (NSString* name)
 {
-	NSString* fcall = [NSString stringWithFormat: @"char_length (%@)", name];
+	NSString* fcall = [NSString stringWithFormat: @"char_length (\"%@\")", name];
 	PGTSConstantValue* value = [PGTSConstantValue valueWithString: fcall];
 	NSExpression* retval = [NSExpression expressionForConstantValue: value];
 	return retval;
@@ -251,7 +251,7 @@ CharLengthExpression (NSString* name)
 		
 	if (! [self isOptional])
 	{
-		NSString* format = @"ALTER TABLE \"%@\".\"%@\" ALTER COLUMN \"%@\" SET NOT NULL";
+		NSString* format = @"ALTER TABLE \"%@\".\"%@\" ALTER COLUMN \"%@\" SET NOT NULL;";
 		[retval addObject: [NSString stringWithFormat: format, schemaName, entityName, name]];
 	}
 	
