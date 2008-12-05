@@ -52,7 +52,7 @@ fi
 "$CP" -pRP "$SYMROOT"/Release/"BaseTen.ibplugin" /Volumes/BaseTen/.
 
 "$RM" -rf /Volumes/BaseTen/Manual.pdf
-"$CP" -pRP ../Documentation/latex/refman.pdf /Volumes/BaseTen/Manual.pdf
+"$CP" -pRP ../../Documentation/latex/refman.pdf /Volumes/BaseTen/Manual.pdf
 
 "$RM" -f /Volumes/BaseTen/Frameworks
 ln -s /Library/Frameworks /Volumes/BaseTen/Frameworks
@@ -73,7 +73,7 @@ hdiutil convert BaseTen-temp.sparseimage -format UDZO -o BaseTen.dmg
 
 # Add license resources to BaseTen.dmg
 hdiutil unflatten BaseTen.dmg
-/Developer/Tools/Rez -a ReleaseDiskImageResources.r -o BaseTen.dmg
+Rez -a ReleaseDiskImageResources.r -o BaseTen.dmg
 hdiutil flatten BaseTen.dmg
 
 # Internet-enable disk image

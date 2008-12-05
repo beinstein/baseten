@@ -20,10 +20,10 @@ xcodebuild -version
 exit_on_error
 
 for x in \
-    ../BaseTen.xcodeproj \
-    ../BaseTenAppKit/BaseTenAppKit.xcodeproj \
-    ../BaseTenAssistant/BaseTenAssistant.xcodeproj \
-    ../InterfaceBuilderPlugin/InterfaceBuilderPlugin.xcodeproj
+    ../../BaseTen.xcodeproj \
+    ../../BaseTenAppKit/BaseTenAppKit.xcodeproj \
+    ../../BaseTenAssistant/BaseTenAssistant.xcodeproj \
+    ../../InterfaceBuilderPlugin/InterfaceBuilderPlugin.xcodeproj
 do
     xcodebuild -project "$x" -configuration Release OBJROOT="$OBJROOT" SYMROOT="$SYMROOT"
     exit_on_error
@@ -31,7 +31,7 @@ done
 
 if [ ! "$1" = "--without-latex" ]
 then
-    make -C ../Documentation/latex
+    make -C ../../Documentation/latex
     exit_on_error
 fi
 
