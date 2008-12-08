@@ -39,6 +39,7 @@
 	NSManagedObjectModel* mModel;
 	NSString* mSchemaName;
 	BXPGEntityImporter* mEntityImporter; //Currently we only support PostgreSQL.
+	NSArray* mConflictingEntities;
 	
 	IBOutlet NSArrayController* mConfigurations;
 	IBOutlet NSArrayController* mEntities;
@@ -51,14 +52,13 @@
 	IBOutlet NSTableView* mFieldView;
 	
 	IBOutlet NSArrayController* mImportErrors;
-	IBOutlet NSPanel* mChangePanel;
-	
-	BOOL mHasNameConflicts;
+	IBOutlet NSPanel* mChangePanel;	
 }
 @property (readwrite, retain) BXAController* controller;
 @property (readwrite, retain) NSManagedObjectModel* objectModel;
 @property (readwrite, retain) NSString* schemaName;
 @property (readwrite, retain) BXDatabaseContext* databaseContext;
+@property (readwrite, retain) NSArray* conflictingEntities;
 - (void) showPanel;
 
 - (void) errorEnded: (BOOL) didRecover contextInfo: (void *) contextInfo;

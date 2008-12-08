@@ -57,4 +57,5 @@
 - (NSArray *) importStatements: (NSArray **) outErrors;
 - (void) importEntities;
 - (BOOL) enableEntities: (NSError **) outError;
+- (BOOL) disableEntities: (NSArray *) entities error: (NSError **) outError;
 @end

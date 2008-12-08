@@ -83,18 +83,23 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
 
 
 @implementation BXAImportController
-@synthesize objectModel = mModel, schemaName = mSchemaName, databaseContext = mContext, controller = mController;
+@synthesize objectModel = mModel, schemaName = mSchemaName, databaseContext = mContext, controller = mController, 
+conflictingEntities = mConflictingEntities;
 
 - (void) checkNameConflicts
 {
-	BOOL hasConflicts = NO;
+	NSMutableArray* conflictingEntities = nil;	
 	NSString* schemaName = mSchemaName ?: @"public";
 	
 	for (NSEntityDescription* entity in [mEntities arrangedObjects])
 	{
-		if ([mContext entity: entity existsInSchema: schemaName error: NULL])
+		BXEntityDescription* bxEntity = [mContext matchingEntity: entity inSchema: schemaName error: NULL];
+		if (bxEntity)
 		{
-			hasConflicts = YES;
+			if (! conflictingEntities)
+				conflictingEntities = [NSMutableArray array];
+			
+			[conflictingEntities addObject: bxEntity];
 			[entity setBXATextColor: [NSColor redColor]];
 		}
 		else
@@ -102,7 +107,8 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
 			[entity setBXATextColor: [NSColor blackColor]];
 		}
 	}
-	mHasNameConflicts = hasConflicts;
+	
+	[self setConflictingEntities: conflictingEntities];
 }
 
 - (void) windowDidLoad
@@ -235,7 +241,7 @@ ShouldImport (id entity)
 		}
 		else
 		{
-			if (mHasNameConflicts)
+			if (0 < [mConflictingEntities count])
 			{
 				shouldContinue = NO;
 				//Patch by Tim Bedford 2008-08-11
@@ -266,34 +272,48 @@ ShouldImport (id entity)
 				[mController displayProgressPanel: NSLocalizedString(@"Importing data model", @"Progress panel message")];
 				[mController logAppend: NSLocalizedString(@"beginImport", @"Log separator")];
 				//End patch
-				[mEntityImporter importEntities];
 				
-				shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
-				[mController logAppend: NSLocalizedString(@"endImport", @"Log separator")]; //Patch by Tim Bedford 2008-08-11
+				NSError* error = nil;
+				if (0 < [mConflictingEntities count] && ! [mEntityImporter disableEntities: mConflictingEntities error: &error])
+				{
+					shouldContinue = NO;
+					[NSApp presentError: error modalForWindow: [mController mainWindow] 
+							   delegate: nil didPresentSelector: NULL contextInfo: NULL];
+					[NSApp runModalForWindow: [mController mainWindow]];
+				}
+				
 				if (shouldContinue)
 				{
-					if (! [mController hasBaseTenSchema])
-					{
-						shouldContinue = NO;
-						if (! [mController schemaInstallDenied])
-						{
-							NSError* error = [mController schemaInstallError];
-							[NSApp presentError: error modalForWindow: [mController mainWindow] 
-									   delegate: self didPresentSelector: @selector (errorEnded:contextInfo:) contextInfo: NULL];
-							shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
-						}
-					}
+					[mEntityImporter importEntities];
 					
+					shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+					[mController logAppend: NSLocalizedString(@"endImport", @"Log separator")]; //Patch by Tim Bedford 2008-08-11
 					if (shouldContinue)
 					{
-						NSError* error = nil;
-						[mEntityImporter enableEntities: &error];
-						if (error)
+						if (! [mController hasBaseTenSchema])
 						{
-							[NSApp presentError: error modalForWindow: [mController mainWindow] 
-									   delegate: nil didPresentSelector: NULL contextInfo: NULL];
-							[NSApp runModalForWindow: [mController mainWindow]];
-						}					
+							shouldContinue = NO;
+							//See if the user didn't want to install the schema.
+							if (! [mController schemaInstallDenied])
+							{
+								NSError* error = [mController schemaInstallError];
+								[NSApp presentError: error modalForWindow: [mController mainWindow] 
+										   delegate: self didPresentSelector: @selector (errorEnded:contextInfo:) contextInfo: NULL];
+								shouldContinue = [NSApp runModalForWindow: [mController mainWindow]];
+							}
+						}
+						
+						if (shouldContinue)
+						{
+							NSError* error = nil;
+							[mEntityImporter enableEntities: &error];
+							if (error)
+							{
+								[NSApp presentError: error modalForWindow: [mController mainWindow] 
+										   delegate: nil didPresentSelector: NULL contextInfo: NULL];
+								[NSApp runModalForWindow: [mController mainWindow]];
+							}					
+						}
 					}
 				}
 				[mController finishedImporting];

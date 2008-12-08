@@ -33,6 +33,7 @@
 #import "BXPGTransactionHandler.h"
 #import "BXPGEntityConverter.h"
 #import "PGTSResultSet.h"
+#import "PGTSHOM.h"
 
 
 @implementation BXPGEntityImporter
@@ -178,6 +179,31 @@
 		
 		PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
 		PGTSResultSet* res = [connection executeQuery: queryString parameters: mSchemaName, mEnabledRelations];
+		
+		if (! [res querySucceeded])
+		{
+			retval = NO;
+			if (outError)
+				*outError = [res error];
+		}
+	}
+	return retval;
+}
+
+- (BOOL) disableEntities: (NSArray *) entities error: (NSError **) outError
+{
+	BOOL retval = YES;
+	ExpectR (mSchemaName, NO);
+	if (0 < [entities count])
+	{
+		NSArray* names = (id) [[entities PGTSCollect] name];
+		NSString* queryString = 
+		@"SELECT baseten.cancelmodificationobserving (c.oid) "
+		"  FROM pg_class c, pg_namespace n "
+		"  WHERE c.relnamespace = n.oid AND n.nspname = $1 AND c.relname = ANY ($2);";
+		
+		PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+		PGTSResultSet* res = [connection executeQuery: queryString parameters: mSchemaName, names];
 		
 		if (! [res querySucceeded])
 		{
