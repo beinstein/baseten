@@ -133,7 +133,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) setEnabledForAssistant: (BOOL) aBool
 {
-	NSLog (@"setting enabling");
 	[gController process: aBool entity: self];
 }
 
@@ -166,7 +165,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) setEnabledForAssistantV: (BOOL) aBool
 {
-	NSLog (@"setting enabling");
 	[gController process: aBool entity: self];
 }
 
@@ -198,7 +196,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) setPrimaryKeyForAssistant: (BOOL) aBool
 {
-	NSLog (@"setPrimaryKey: %d", aBool);
 	[gController process: aBool attribute: self];
 }
 

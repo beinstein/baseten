@@ -151,7 +151,13 @@ conflictingEntities = mConflictingEntities;
 		[textField setStringValue: NSLocalizedString(@"Tables", @"TableView header label")]; //Patch by Tim Bedford 2008-08-11
 		[textField makeEtchedSmall: NO];
 		[mLeftHeaderView addSubview: textField];
-	}
+	}	
+}
+
+- (void) showPanel
+{
+	//Ensure that the window gets loaded.
+	[self window];
 	
 	NSMutableArray* configurations = [[mModel configurations] mutableCopy];
 	[configurations insertObject: NSLocalizedString(@"Default Configuration", @"Configurations menu item") atIndex: 0]; //Patch by Tim Bedford 2008-08-11
@@ -159,11 +165,8 @@ conflictingEntities = mConflictingEntities;
 	[mConfigurations setContent: configurations];		
 	[self didChangeValueForKey: @"entitiesForSelectedConfiguration"];
 	
-	[self selectedConfiguration: nil];	
-}
-
-- (void) showPanel
-{
+	[self selectedConfiguration: nil];		
+	
 	[NSApp beginSheet: [self window] modalForWindow: [mController mainWindow] modalDelegate: self 
 	   didEndSelector: @selector (importPanelDidEnd:returnCode:contextInfo:) contextInfo: NULL];
 }
