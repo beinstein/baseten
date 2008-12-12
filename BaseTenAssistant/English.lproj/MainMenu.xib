@@ -2,13 +2,14 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9E17</string>
+		<string key="IBDocument.SystemVersion">9F33</string>
 		<string key="IBDocument.InterfaceBuilderVersion">670</string>
-		<string key="IBDocument.AppKitVersion">949.33</string>
+		<string key="IBDocument.AppKitVersion">949.34</string>
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="849"/>
+			<integer value="512"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -31,7 +32,6 @@
 			</object>
 			<object class="BXDatabaseContext" id="418952110">
 				<nil key="databaseURI"/>
-				<bool key="logsQueries">NO</bool>
 				<bool key="autocommits">YES</bool>
 				<bool key="connectsOnAwake">YES</bool>
 			</object>
@@ -855,7 +855,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				<string key="NSWindowContentMaxSize">{800, 252}</string>
 				<string key="NSWindowContentMinSize">{400, 252}</string>
 				<object class="NSView" key="NSWindowView" id="55362827">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1044,8 +1044,8 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 										<bool key="NS.raise.underflow">YES</bool>
 										<bool key="NS.raise.dividebyzero">YES</bool>
 									</object>
-									<string key="NS.decimal">.</string>
-									<string key="NS.thousand">,</string>
+									<string key="NS.decimal">,</string>
+									<string type="base64-UTF8" key="NS.thousand">wqA</string>
 									<bool key="NS.hasthousands">NO</bool>
 									<bool key="NS.localized">YES</bool>
 									<bool key="NS.allowsfloats">YES</bool>
@@ -1223,6 +1223,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						</object>
 					</object>
 					<string key="NSFrameSize">{462, 252}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1680, 1028}}</string>
 				<string key="NSMinSize">{400, 274}</string>
@@ -1454,6 +1455,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 									</object>
 									<string key="NSFrame">{{1, 17}, {232, 161}}</string>
 									<reference key="NSSuperview" ref="997710616"/>
+									<reference key="NSNextKeyView" ref="770310250"/>
 									<reference key="NSDocView" ref="770310250"/>
 									<reference key="NSBGColor" ref="874207058"/>
 									<int key="NScvFlags">4</int>
@@ -1487,6 +1489,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 									</object>
 									<string key="NSFrame">{{1, 0}, {232, 17}}</string>
 									<reference key="NSSuperview" ref="997710616"/>
+									<reference key="NSNextKeyView" ref="715486966"/>
 									<reference key="NSDocView" ref="715486966"/>
 									<reference key="NSBGColor" ref="874207058"/>
 									<int key="NScvFlags">4</int>
@@ -1495,6 +1498,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							</object>
 							<string key="NSFrame">{{8, 32}, {245, 179}}</string>
 							<reference key="NSSuperview" ref="341542925"/>
+							<reference key="NSNextKeyView" ref="301678497"/>
 							<int key="NSsFlags">18</int>
 							<reference key="NSVScroller" ref="404326479"/>
 							<reference key="NSHScroller" ref="46938036"/>
@@ -3997,7 +4001,6 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<reference ref="998616146"/>
 							<reference ref="806107404"/>
 							<reference ref="120924669"/>
-							<reference ref="53798354"/>
 							<reference ref="481053304"/>
 							<reference ref="783553964"/>
 							<reference ref="320592763"/>
@@ -4007,6 +4010,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<reference ref="936697685"/>
 							<reference ref="471261356"/>
 							<reference ref="292838079"/>
+							<reference ref="53798354"/>
 						</object>
 						<reference key="parent" ref="1061141832"/>
 					</object>
@@ -5173,6 +5177,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>1004.IBPluginDependency</string>
 					<string>1005.IBPluginDependency</string>
 					<string>1006.IBPluginDependency</string>
+					<string>1013.CustomClassName</string>
 					<string>1013.IBPluginDependency</string>
 					<string>1016.IBPluginDependency</string>
 					<string>1017.IBPluginDependency</string>
@@ -5490,6 +5495,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>BXAPortFormatter</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -5754,9 +5760,9 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{565, 332}, {389, 320}}</string>
+					<string>{{429, 332}, {389, 320}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{565, 332}, {389, 320}}</string>
+					<string>{{429, 332}, {389, 320}}</string>
 					<reference ref="9"/>
 					<string>{{906, 834}, {308, 201}}</string>
 					<reference ref="9"/>
@@ -5936,7 +5942,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/BXAController.h</string>
+						<string key="minorKey">Sources/BXAController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5944,7 +5950,15 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="superclassName">MKCImageAndTextCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/BXAEntityCell.h</string>
+						<string key="minorKey">Sources/BXAEntityCell.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">BXAPortFormatter</string>
+					<string key="superclassName">NSNumberFormatter</string>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">BXAPortFormatter.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5952,7 +5966,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="superclassName">MKCImageAndTextCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/BXASchemaCell.h</string>
+						<string key="minorKey">Sources/BXASchemaCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5960,7 +5974,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="superclassName">NSTableColumn</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/MKCAlternativeDataCellColumn.h</string>
+						<string key="minorKey">Sources/MKCAlternativeDataCellColumn.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5976,7 +5990,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/MKCBackgroundView.h</string>
+						<string key="minorKey">Sources/MKCBackgroundView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -5992,7 +6006,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="superclassName">NSTextFieldCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/MKCImageAndTextCell.h</string>
+						<string key="minorKey">Sources/MKCImageAndTextCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -6008,7 +6022,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="superclassName">NSTableHeaderView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/MKCPolishedHeaderView.h</string>
+						<string key="minorKey">Sources/MKCPolishedHeaderView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -6016,19 +6030,19 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string key="superclassName">NSView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/MKCStackView.h</string>
+						<string key="minorKey">Sources/MKCStackView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="669671291">
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="1040290549">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/Additions.h</string>
+						<string key="minorKey">Sources/Additions.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSTextFieldCell</string>
-					<reference key="sourceIdentifier" ref="669671291"/>
+					<reference key="sourceIdentifier" ref="1040290549"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSWindow</string>
@@ -6036,7 +6050,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						<string key="NS.key.0">MKCToggle:</string>
 						<string key="NS.object.0">id</string>
 					</object>
-					<reference key="sourceIdentifier" ref="669671291"/>
+					<reference key="sourceIdentifier" ref="1040290549"/>
 				</object>
 			</object>
 		</object>

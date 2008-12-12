@@ -36,6 +36,7 @@
 		5388DC660E23AC3F006CDBD8 /* BXAController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5388DC650E23AC3F006CDBD8 /* BXAController.m */; };
 		5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
 		5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DE290E23AE48006CDBD8 /* Cocoa.framework */; };
+		538963170EF2A480004391BF /* BXAPortFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 538963160EF2A480004391BF /* BXAPortFormatter.m */; };
 		5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5395E82F0E2F9F15006E8441 /* RegexKit.framework */; };
 		5395E8450E2F9FE8006E8441 /* RegexKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5395E82F0E2F9F15006E8441 /* RegexKit.framework */; };
 		53B94D310B53AD4A00733341 /* MKCForcedSizeToFitButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */; };
@@ -209,6 +210,8 @@
 		5388DC650E23AC3F006CDBD8 /* BXAController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAController.m; path = Sources/BXAController.m; sourceTree = SOURCE_ROOT; };
 		5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5388DE290E23AE48006CDBD8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		538963150EF2A480004391BF /* BXAPortFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAPortFormatter.h; path = Sources/BXAPortFormatter.h; sourceTree = "<group>"; };
+		538963160EF2A480004391BF /* BXAPortFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAPortFormatter.m; path = Sources/BXAPortFormatter.m; sourceTree = "<group>"; };
 		5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RegexKit.xcodeproj; path = ../Contrib/RegexKit/RegexKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		53B94D2E0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCForcedSizeToFitButtonCell.h; path = Sources/MKCForcedSizeToFitButtonCell.h; sourceTree = "<group>"; };
 		53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCForcedSizeToFitButtonCell.m; path = Sources/MKCForcedSizeToFitButtonCell.m; sourceTree = "<group>"; };
@@ -312,6 +315,8 @@
 			isa = PBXGroup;
 			children = (
 				531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */,
+				538963150EF2A480004391BF /* BXAPortFormatter.h */,
+				538963160EF2A480004391BF /* BXAPortFormatter.m */,
 				5374E4B60B0D364E000D353D /* Additions.h */,
 				5374E4B70B0D364E000D353D /* Additions.m */,
 				2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */,
@@ -612,6 +617,7 @@
 				531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */,
 				227A5CE40E4BC2EB0009CC08 /* BXAGetInfoWindowController.m in Sources */,
 				227A5F4C0E4C5B9D0009CC08 /* BXAInspectorPanelController.m in Sources */,
+				538963170EF2A480004391BF /* BXAPortFormatter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
