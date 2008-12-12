@@ -707,7 +707,7 @@
 		538A83140E1D1EE00025B3C8 /* BXPGSQLScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLScanner.h; path = Sources/BXPGSQLScanner.h; sourceTree = "<group>"; };
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
 		538A83CC0E1D85420025B3C8 /* sql_parser.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = sql_parser.exp; path = Resources/sql_parser.exp; sourceTree = "<group>"; };
-		5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXPGCurrentCompatVersion.m.m4; path = Sources/BXPGCurrentCompatVersion.m.m4; sourceTree = "<group>"; };
+		5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = BXPGCurrentCompatVersion.m.m4; path = Sources/BXPGCurrentCompatVersion.m.m4; sourceTree = "<group>"; };
 		53915F9C0E3FD22D0098B419 /* libpq_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libpq_additions.h; path = Sources/libpq_additions.h; sourceTree = "<group>"; };
 		53915F9D0E3FD22D0098B419 /* libpq_additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libpq_additions.c; path = Sources/libpq_additions.c; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
@@ -2100,6 +2100,14 @@
 				);
 				INSTALL_PATH = /usr/local/lib;
 				KEEP_PRIVATE_EXTERNS = NO;
+				OTHER_CFLAGS = (
+					"$(OTHER_CFLAGS_QUOTED_FOR_TARGET_1)",
+					"$(OTHER_CFLAGS_QUOTED_FOR_TARGET_2)",
+					"$(OTHER_CFLAGS_QUOTED_FOR_TARGET_3)",
+				);
+				OTHER_CFLAGS_QUOTED_FOR_TARGET_1 = "-DXCODEBUILD_TARGET_NAME=\"$(TARGET_NAME)\"";
+				OTHER_CFLAGS_QUOTED_FOR_TARGET_2 = "-DXCODEBUILD_PROJECT_NAME=\"$(PROJECT_NAME)\"";
+				OTHER_CFLAGS_QUOTED_FOR_TARGET_3 = "-DXCODEBUILD_PROJECT_FILE_PATH=\"$(PROJECT_FILE_PATH)\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = SQLParser;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
