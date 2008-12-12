@@ -395,7 +395,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon\n\nif [ ! -e \"$ICON_FOLDER_PATH\" ]\nthen\n\tditto -xk \"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"/../Resources/\nfi\n\"$PROJECT_DIR\"/../Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
+			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon\n\nif [ ! -e \"$ICON_FOLDER_PATH\" ]\nthen\n\tditto -xk \"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"/../Resources/\nfi\nsh \"$PROJECT_DIR\"/../Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

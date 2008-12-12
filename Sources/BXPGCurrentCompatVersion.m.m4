@@ -29,7 +29,7 @@
 #import <Foundation/Foundation.h>
 
 divert(-1)
-include(`BaseTenModifications.sql.m4')
+include(`Resources/BaseTenModifications.sql.m4')
 divert(0)dnl
 
 NSNumber*
