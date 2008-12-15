@@ -26,8 +26,8 @@
 -- $Id$
 --
 
-define(`_bx_version_', `0.918')dnl
-define(`_bx_compat_version_', `0.14')dnl
+define(`_bx_version_', `0.919')dnl
+define(`_bx_compat_version_', `0.15')dnl
 
 
 \unset ON_ERROR_STOP
