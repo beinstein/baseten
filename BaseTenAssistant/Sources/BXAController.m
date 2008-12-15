@@ -391,6 +391,15 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	mCompilationFailedRegex = [[RKRegex alloc] initWithRegexString: regex options: RKCompileNoOptions];
 	regex = @"/([^/]+.xcdatamodel[d]?.+)$";
 	mCompilationErrorRegex = [[RKRegex alloc] initWithRegexString: regex options: RKCompileNoOptions];
+	
+	//Set main window's position and display it.
+	//Frame name format from NSWindow's documentation.
+	NSString* key = @"NSWindow Frame mainWindow";
+	NSString* frameString = [[NSUserDefaults standardUserDefaults] objectForKey: key];
+	[mMainWindow setFrameAutosaveName: @"mainWindow"];
+	if (! frameString)
+		[mMainWindow center];
+	[mMainWindow makeKeyAndOrderFront: nil];
 }
 
 
