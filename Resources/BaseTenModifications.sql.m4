@@ -26,41 +26,8 @@
 -- $Id$
 --
 
-define(`_bx_version_', `0.919')dnl
-define(`_bx_compat_version_', `0.15')dnl
-
-
-\unset ON_ERROR_STOP
-\set ON_ERROR_ROLLBACK
-
-
-BEGIN;
-CREATE LANGUAGE plpgsql;
-COMMIT;
-
-
-DROP SCHEMA IF EXISTS "baseten" CASCADE;
-
-
--- Groups for BaseTen users
-BEGIN;
-DROP ROLE IF EXISTS basetenread;
-DROP ROLE IF EXISTS basetenuser;
-CREATE ROLE basetenread WITH
-	INHERIT
-	NOSUPERUSER
-	NOCREATEDB
-	NOCREATEROLE
-	NOLOGIN;
-CREATE ROLE basetenuser WITH
-	INHERIT
-	NOSUPERUSER
-	NOCREATEDB
-	NOCREATEROLE
-	NOLOGIN;
--- COMMENT ON ROLE basetenread IS 'Read-only rights for BaseTen relations';
--- COMMENT ON ROLE basetenuser IS 'Read and write access to BaseTen relations';
-COMMIT;
+define(`_bx_version_', `0.920')dnl
+define(`_bx_compat_version_', `0.16')dnl
 
 
 \unset ON_ERROR_ROLLBACK
@@ -69,8 +36,43 @@ COMMIT;
 
 BEGIN; -- Schema, helper functions and classes
 
+DROP SCHEMA IF EXISTS "baseten" CASCADE;
 CREATE SCHEMA "baseten";
 COMMENT ON SCHEMA "baseten" IS 'Schema used by BaseTen. Please use the provided functions to edit.';
+-- Privileges are set a bit later.
+
+CREATE FUNCTION "baseten".prepare () RETURNS VOID AS $$
+    BEGIN
+		PERFORM lanname FROM pg_language WHERE lanname = 'plpgsql';
+		IF NOT FOUND THEN
+			CREATE LANGUAGE plpgsql;
+		END IF;
+		
+		PERFORM rolname FROM pg_roles WHERE rolname = 'basetenread';
+		IF NOT FOUND THEN
+			CREATE ROLE basetenread WITH
+				INHERIT
+				NOSUPERUSER
+				NOCREATEDB
+				NOCREATEROLE
+				NOLOGIN;
+		END IF;
+			
+		PERFORM rolname FROM pg_roles WHERE rolname = 'basetenuser';
+		IF NOT FOUND THEN
+        	CREATE ROLE basetenuser WITH
+            	INHERIT
+            	NOSUPERUSER
+            	NOCREATEDB
+            	NOCREATEROLE
+            	NOLOGIN;
+		END IF;
+	END;
+$$ VOLATILE LANGUAGE plpgsql;
+SELECT "baseten".prepare ();
+DROP FUNCTION "baseten".prepare ();
+
+
 REVOKE ALL PRIVILEGES ON SCHEMA "baseten" FROM PUBLIC;
 GRANT USAGE ON SCHEMA "baseten" TO basetenread;
 
