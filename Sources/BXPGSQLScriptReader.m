@@ -150,6 +150,7 @@
 		[mScanner continueScanning];
 	else
 	{
+		[mConnection executeQuery: @"ROLLBACK;"];
 		[self performEndSelector: NO resultSet: res];
 		[self scriptEnded];
 	}
