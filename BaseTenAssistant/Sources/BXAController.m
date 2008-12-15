@@ -46,6 +46,8 @@
 #import <BaseTen/BXAttributeDescriptionPrivate.h>
 #import <BaseTen/BXPGTransactionHandler.h>
 #import <BaseTen/BXPGDatabaseDescription.h>
+#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/PGTSConstants.h>
 
 #import <sys/socket.h>
 //Patch by Tim Bedford 2008-08-11
@@ -1075,9 +1077,29 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	InvokeRecoveryInvocation (userInfo, NO);
 	[reader setDelegateUserInfo: nil];
 	
+	
+	NSError* underlyingError = [res error];
+	NSString* errorReason = BXLocalizedString (@"schemaInstallFailedTitle",
+											   @"Failed to install BaseTen schema",
+											   @"Schema install failure description");
+	NSString* recoverySuggestionFormat = BXLocalizedString (@"schemaInstallFailedFormat", 
+															@"Schema install failed for the following reason: %@.", 
+															@"Schema install failure recovery suggestion format");
+	NSString* recoverySuggestion = [NSString stringWithFormat: recoverySuggestionFormat, 
+									[[underlyingError userInfo] objectForKey: kPGTSErrorPrimaryMessage]];
+	NSDictionary* newUserInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								 errorReason, NSLocalizedDescriptionKey,
+								 [underlyingError localizedFailureReason], NSLocalizedFailureReasonErrorKey,
+								 recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
+								 underlyingError, NSUnderlyingErrorKey,
+								 nil];
+	NSError* error = [NSError errorWithDomain: kBXAControllerErrorDomain 
+										 code: kBXAControllerErrorCouldNotInstallBaseTenSchema
+									 userInfo: newUserInfo];
+	
 	if (res)
 	{
-		[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil 
+		[NSApp presentError: error modalForWindow: mMainWindow delegate: nil 
 		 didPresentSelector: NULL contextInfo: NULL];
 	}
 }
