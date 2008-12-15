@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export SYMROOT=~/Build/BaseTen-dmg-build
+export SYMROOT="$PWD"/BaseTen-dmg-build
 export OBJROOT="$SYMROOT"/Intermediates
 
 function exit_on_error
