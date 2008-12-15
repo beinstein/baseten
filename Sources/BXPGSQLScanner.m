@@ -148,23 +148,25 @@ QueryFromBuffer (PQExpBuffer buffer)
 				NSString* optionsString = nil;
 				
 				char* command = psql_scan_slash_command (mScanState);
-				commandString = [[[NSString alloc] initWithBytesNoCopy: &command length: strlen (command)
+				commandString = [[[NSString alloc] initWithBytesNoCopy: command length: strlen (command)
 															 encoding: NSUTF8StringEncoding freeWhenDone: YES]
 								 autorelease];
 				
 				char* options = psql_scan_slash_option (mScanState, OT_WHOLE_LINE, NULL, true);
 				if (options)
 				{
-					optionsString = [[[NSString alloc] initWithBytesNoCopy: &options length: strlen (options)
+					//Options has a trailing newline.
+					optionsString = [[[NSString alloc] initWithBytesNoCopy: options length: strlen (options) - 1
 																  encoding: NSUTF8StringEncoding freeWhenDone: YES]
 									 autorelease];
 				}
 				
-				[mDelegate scanner: self scannedCommand: commandString options: optionsString];
 				psql_scan_slash_command_end (mScanState);
 				psql_scan_finish (mScanState);
 				mCurrentLine = NULL;
 				mShouldStartScanning = YES;
+
+				[mDelegate scanner: self scannedCommand: commandString options: optionsString];
 				break;
 			}
 		}

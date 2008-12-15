@@ -239,6 +239,21 @@
 
 - (void) scanner: (BXPGSQLScanner *) scanner scannedCommand: (NSString *) command options: (NSString *) options
 {
+	//We only recognize \set and \unset with ON_ERROR_STOP and ON_ERROR_ROLLBACK for now.
+	if ([@"set" isEqualToString: command])
+	{
+		if ([@"ON_ERROR_STOP" isEqualToString: options])
+			[self setIgnoresErrors: NO];
+		else if ([@"ON_ERROR_ROLLBACK" isEqualToString: options])
+			[self setIgnoresErrors: YES];
+	}
+	else if ([@"unset" isEqualToString: command])
+	{
+		if ([@"ON_ERROR_STOP" isEqualToString: options])
+			[self setIgnoresErrors: YES];
+		else if ([@"ON_ERROR_ROLLBACK" isEqualToString: options])
+			[self setIgnoresErrors: NO];
+	}
 	[mScanner continueScanning];
 }
 @end

@@ -29,6 +29,11 @@
 define(`_bx_version_', `0.918')dnl
 define(`_bx_compat_version_', `0.14')dnl
 
+
+\unset ON_ERROR_STOP
+\set ON_ERROR_ROLLBACK
+
+
 BEGIN;
 CREATE LANGUAGE plpgsql;
 COMMIT;
@@ -56,6 +61,10 @@ CREATE ROLE basetenuser WITH
 -- COMMENT ON ROLE basetenread IS 'Read-only rights for BaseTen relations';
 -- COMMENT ON ROLE basetenuser IS 'Read and write access to BaseTen relations';
 COMMIT;
+
+
+\unset ON_ERROR_ROLLBACK
+\set ON_ERROR_STOP
 
 
 BEGIN; -- Schema, helper functions and classes
@@ -904,10 +913,8 @@ CREATE TABLE "baseten".lock (
 REVOKE ALL PRIVILEGES ON "baseten".lock FROM PUBLIC;
 GRANT SELECT ON "baseten".lock TO basetenread;
 
-COMMIT; -- Schema and classes
 
-
-BEGIN; -- Functions
+-- Functions
 
 CREATE FUNCTION "baseten".Version () RETURNS NUMERIC AS $$
     SELECT _bx_version_::NUMERIC;
