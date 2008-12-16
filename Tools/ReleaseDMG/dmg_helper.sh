@@ -67,6 +67,12 @@ ln -s /Library/Frameworks /Volumes/BaseTen/Frameworks
 
 # Unmount the finished disk image
 hdiutil detach /Volumes/BaseTen
+if [ -d "/Volumes/BaseTen" ]
+then
+    echo "warning: hdiutil detach failed - forcing detach"
+    hdiutil detach -force /Volumes/BaseTen
+fi
+
 
 # Convert the master disk image to UDIF zlib-compressed image (UDZO) and copy the result file
 hdiutil convert BaseTen-temp.sparseimage -format UDZO -o BaseTen.dmg
