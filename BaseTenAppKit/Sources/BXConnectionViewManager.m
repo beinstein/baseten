@@ -275,8 +275,7 @@ __strong static NSArray* gManuallyNotifiedKeys = nil;
     if (YES == mUseHostname)
     {
         NSString* scheme = [baseURI scheme];
-        NSString* uriString = mGivenHostname;
-		NSURL* userURI = [[[NSURL alloc] initWithScheme: scheme host: uriString 
+		NSURL* userURI = [[[NSURL alloc] initWithScheme: scheme host: mGivenHostname 
                                                    path: [baseURI path]] autorelease];
 		if (nil != userURI)
 		{

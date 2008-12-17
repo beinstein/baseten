@@ -76,9 +76,23 @@
 		else if (nil != username && 0 < [username length])
 			[URLString appendFormat: @"%@@", [username BXURLEncodedString]];
 	
-		if (nil == host) host = [self host];
-		if (nil == host) host = @"";
-		[URLString appendString: host];
+		if (! host) 
+			host = [self host];
+		
+		if (host)
+		{
+			if (NSNotFound != [host rangeOfString: @":"].location)
+			{
+				//IPv6
+				[URLString appendString: @"["];
+				[URLString appendString: host];
+				[URLString appendString: @"]"];
+			}
+			else
+			{
+				[URLString appendString: host];
+			}
+		}
 		
 		NSNumber* port = [self port];
 		if (port) [URLString appendFormat: @":%@", port];
