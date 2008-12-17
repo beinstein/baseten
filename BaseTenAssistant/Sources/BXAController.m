@@ -1472,8 +1472,23 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	
 	NSString* host = [mHostCell objectValue];
 	NSNumber* port = [mPortCell objectValue];
-	NSString* target = ((port != nil) ? [NSString stringWithFormat: @"%@:%@", host, [port stringValue]] : host); //Patch by Tim Bedford 2008-08-11
-	
+	NSString* target = nil;
+	if (host && NSNotFound != [host rangeOfString: @":"].location)
+	{
+		//IPv6
+		if (port)
+			target = [NSString stringWithFormat: @"[%@]:%@", host, port];
+		else
+			target = [NSString stringWithFormat: @"[%@]", host];
+	}
+	else
+	{
+		if (port)
+			target = [NSString stringWithFormat: @"%@:%@", host, port];
+		else
+			target = host;
+	}
+		
 	NSString* URIFormat = [NSString stringWithFormat: @"pgsql://%@@%@/%@", credentials, target, [mDBNameCell objectValue]];
 	NSURL* connectionURI = [NSURL URLWithString: URIFormat];
 	[mContext setDatabaseURI: connectionURI];
