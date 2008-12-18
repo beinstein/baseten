@@ -899,9 +899,9 @@
 				539758510E1E86200042120A /* BXDataModelCompiler.m */,
 				53E068240DEAE02A0004363D /* BXProbes.d */,
 				32DBCF5E0370ADEE00C91783 /* BaseTen_Prefix.pch */,
-				53D0D1980B6F908A00D2D101 /* PostgreSQL Interface */,
 				53B8730F0A0A53D9007315BC /* Descriptions */,
 				537E983E0AAF539E00542F9C /* Automatically-updating containers */,
+				53D0D1980B6F908A00D2D101 /* PostgreSQL Interface */,
 			);
 			name = BaseTen;
 			sourceTree = "<group>";

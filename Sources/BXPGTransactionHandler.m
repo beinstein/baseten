@@ -305,6 +305,7 @@ SSLMode (enum BXSSLMode mode)
 - (void) prepareForConnecting
 {
 	mSyncErrorPtr = NULL;
+	mConnectionSucceeded = NO;
 	
 	if (! mCertificateVerificationDelegate)
 	{
