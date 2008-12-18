@@ -1,26 +1,75 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {authenticate = id; cancelAuthentication = id; }; 
-            CLASS = BXAuthenticationPanel; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                mCredentialFieldMatrix = NSMatrix; 
-                mMessageTextField = NSTextField; 
-                mPasswordAuthenticationView = NSView; 
-                mPasswordField = NSSecureTextFieldCell; 
-                mRememberInKeychainButton = NSButton; 
-                mUsernameField = NSTextFieldCell; 
-            }; 
-            SUPERCLASS = BXPanel; 
-        }, 
-        {
-            CLASS = BXPanel; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {mPanelDelegate = id; }; 
-            SUPERCLASS = NSPanel; 
-        }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>authenticate</key>
+				<string>id</string>
+				<key>cancelAuthentication</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>BXAuthenticationPanel</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>mCredentialFieldMatrix</key>
+				<string>NSMatrix</string>
+				<key>mMessageTextField</key>
+				<string>NSTextField</string>
+				<key>mPasswordAuthenticationView</key>
+				<string>NSView</string>
+				<key>mPasswordField</key>
+				<string>NSSecureTextFieldCell</string>
+				<key>mRememberInKeychainButton</key>
+				<string>NSButton</string>
+				<key>mUsernameField</key>
+				<string>NSTextFieldCell</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>BXPanel</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSResponder</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>continue</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>BXPanel</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>mPanelDelegate</key>
+				<string>id</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSPanel</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

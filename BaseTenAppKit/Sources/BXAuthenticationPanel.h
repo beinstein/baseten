@@ -34,8 +34,9 @@
 @interface BXAuthenticationPanel : BXPanel 
 {
 	//Retained
-	BXDatabaseContext*				mDatabaseContext;
 	NSString*						mUsername;
+	NSString*						mPassword;
+	
     //Top-level objects
     IBOutlet NSView*                mPasswordAuthenticationView;
     
@@ -46,14 +47,18 @@
     IBOutlet NSMatrix*              mCredentialFieldMatrix;
         
     BOOL                            mIsAuthenticating;
+	BOOL							mShouldStorePasswordInKeychain;
 }
 
 + (id) authenticationPanel;
 - (BOOL) isAuthenticating;
 - (void) setAuthenticating: (BOOL) aBool;
-- (void) setDatabaseContext: (BXDatabaseContext *) ctx;
-- (BXDatabaseContext *) databaseContext;
+- (BOOL) shouldStorePasswordInKeychain;
+- (void) setShouldStorePasswordInKeychain: (BOOL) aBool;
+- (NSString *) username;
 - (void) setUsername: (NSString *) aString;
+- (NSString *) password;
+- (void) setPassword: (NSString *) aString;
 - (void) setMessage: (NSString *) aString;
 
 @end

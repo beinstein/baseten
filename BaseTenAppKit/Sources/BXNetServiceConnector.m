@@ -27,6 +27,7 @@
 //
 
 #import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/BXDatabaseAdditions.h>
 #import <BaseTen/BXLogger.h>
 #import "BXNetServiceConnector.h"
 #import "BXConnectionPanel.h"
@@ -59,6 +60,8 @@
 
 - (IBAction) connect: (id) sender
 {	
+	mShouldStoreCredentials = NO;
+	
 	if (nil != [[databaseContext databaseURI] host])
 	{
 		[self continueFromDatabaseSelection: nil returnCode: NSOKButton];
@@ -132,10 +135,11 @@
         [self setAuthenticationPanel: [BXAuthenticationPanel authenticationPanel]];
     
     [self setPanel: mAuthenticationPanel];
-
-	[mAuthenticationPanel setDatabaseContext: databaseContext];
+	
+	NSURL* databaseURI = [databaseContext databaseURI];
+	[mAuthenticationPanel setUsername: [databaseURI user]];
+	[mAuthenticationPanel setPassword: [databaseURI password]];
     [mAuthenticationPanel setLeftOpenOnContinue: YES];
-        
 	[mAuthenticationPanel beginSheetModalForWindow: modalWindow modalDelegate: self
 									didEndSelector: @selector (authenticationPanelDidEnd:returnCode:contextInfo:)
 									   contextInfo: NULL];
@@ -147,6 +151,15 @@
 	if (NSOKButton == returnCode)
 	{
 		BXAssertVoidReturn (nil != databaseContext, @"Expected databaseContext not to be nil.");
+
+		mShouldStoreCredentials = [mAuthenticationPanel shouldStorePasswordInKeychain];
+
+		NSURL* databaseURI = [databaseContext databaseURI];
+		databaseURI = [databaseURI BXURIForHost: nil
+									   database: nil
+									   username: [mAuthenticationPanel username]
+									   password: [mAuthenticationPanel password]];
+		[databaseContext setDatabaseURI: databaseURI];
 		[databaseContext setConnectionSetupManager: self];
 		[databaseContext connectAsync];
 	}
@@ -205,6 +218,9 @@
     {        
         [mPanel end];
         [self setPanel: nil];
+		
+		if (mShouldStoreCredentials)
+			[databaseContext storeURICredentials];
     }
 }
 

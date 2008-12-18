@@ -27,8 +27,6 @@
 //
 
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseContextPrivate.h>
-#import <BaseTen/BXDatabaseAdditions.h>
 #import "BXAuthenticationPanel.h"
 
 
@@ -49,7 +47,11 @@ const float kSizeDiff = 25.0;
         tooLate = YES;
         gAuthenticationViewNib = [[NSNib alloc] initWithNibNamed: @"AuthenticationView" 
                                                           bundle: [NSBundle bundleForClass: self]];
-        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: @"isAuthenticating", @"username", nil];
+        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: 
+								 @"isAuthenticating", 
+								 @"username", 
+								 @"shouldStorePasswordInKeychain",
+								 nil];
     }
 }
 
@@ -85,19 +87,8 @@ const float kSizeDiff = 25.0;
 - (void) dealloc
 {
     [mPasswordAuthenticationView release];
-	[mDatabaseContext release];
 	[mUsername release];
     [super dealloc];
-}
-
-- (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
-				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo
-{
-	NSURL* connectionURI = [mDatabaseContext databaseURI];
-	[self setUsername: [connectionURI user]];
-	[mPasswordField setObjectValue: [connectionURI password]];
-	[super beginSheetModalForWindow: docWindow modalDelegate: modalDelegate
-					 didEndSelector: didEndSelector contextInfo: contextInfo];
 }
 
 - (BOOL) isAuthenticating
@@ -115,26 +106,35 @@ const float kSizeDiff = 25.0;
 	}
 }
 
-- (void) setDatabaseContext: (BXDatabaseContext *) ctx
+- (BOOL) shouldStorePasswordInKeychain
 {
-	if (mDatabaseContext != ctx)
-	{
-		[mDatabaseContext release];
-		mDatabaseContext = [ctx retain];
-	}
+	return mShouldStorePasswordInKeychain;
 }
 
-- (BXDatabaseContext *) databaseContext
+- (void) setShouldStorePasswordInKeychain: (BOOL) aBool
 {
-	return mDatabaseContext;
+	if (aBool != mShouldStorePasswordInKeychain)
+	{
+		[self willChangeValueForKey: @"shouldStorePasswordInKeychain"];
+		mShouldStorePasswordInKeychain = aBool;
+		[self didChangeValueForKey: @"shouldStorePasswordInKeychain"];
+	}
 }
 
 - (NSString *) username
 {
-	NSString* rval = mUsername;
-	if (0 == [rval length])
-		rval = nil;
-	return rval;
+	NSString* retval = mUsername;
+	if (0 == [retval length])
+		retval = nil;
+	return retval;
+}
+
+- (NSString *) password
+{
+	NSString* retval = mPassword;
+	if (0 == [retval length])
+		retval = nil;
+	return retval;
 }
 
 - (void) setUsername: (NSString *) aString
@@ -145,6 +145,17 @@ const float kSizeDiff = 25.0;
 		[mUsername release];
 		mUsername = [aString retain];
 		[self didChangeValueForKey: @"username"];
+	}
+}
+
+- (void) setPassword: (NSString *) aString
+{
+	if (mPassword != aString && ![mPassword isEqualToString: aString])
+	{
+		[self willChangeValueForKey: @"password"];
+		[mPassword release];
+		mPassword = [aString retain];
+		[self didChangeValueForKey: @"password"];
 	}
 }
 
@@ -191,29 +202,16 @@ const float kSizeDiff = 25.0;
 - (IBAction) authenticate: (id) sender
 {
 	[self makeFirstResponder: self];
-	
-	NSURL* connectionURI = [mDatabaseContext databaseURI];
-	connectionURI = [connectionURI BXURIForHost: nil database: nil 
-									   username: [mUsernameField objectValue]
-									   password: [mPasswordField objectValue]];
-	[mDatabaseContext setDatabaseURIInternal: connectionURI];
-	if (NSOnState == [mRememberInKeychainButton state])
-    {
-        //This should be done before -[BXDatabaseContext connect] since SecKeychainUnlock might get called.
-        [[NSRunLoop currentRunLoop] performSelector: @selector (storeURICredentials)
-                                             target: mDatabaseContext
-                                           argument: nil
-                                              order: UINT_MAX
-                                              modes: [NSArray arrayWithObject: NSDefaultRunLoopMode]];
-    }
-	
+
 	[self setAuthenticating: YES];
     [self continueWithReturnCode: NSOKButton];
+	[self setPassword: nil];
 }
 
 - (IBAction) cancelAuthentication: (id) sender
 {
 	[self setAuthenticating: NO];
     [self continueWithReturnCode: NSCancelButton];
+	[self setPassword: nil];
 }
 @end

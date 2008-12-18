@@ -43,6 +43,8 @@
 	
 	BXAuthenticationPanel* mAuthenticationPanel;
     BXPanel* mPanel;
+	
+	BOOL mShouldStoreCredentials;
 }
 - (void) displayAuthenticationPanel;
 - (void) setPanel: (BXPanel *) aPanel;

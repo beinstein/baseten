@@ -292,7 +292,8 @@ __strong static NSArray* gManuallyNotifiedKeys = nil;
 	    
     if (nil == databaseURI)
     {
-        NSString* title = BXLocalizedString (@"invalidConnectionURI", @"Invalid Connection URI", 
+        NSString* title = BXLocalizedString (@"invalidConnectionURI", 
+											 @"Invalid Connection URI", 
                                              @"Title for dialog");
         NSString* explanation = BXLocalizedString (@"invalidConnectionURIDescription", 
                                                    @"The connection URI could not be resolved.", 
