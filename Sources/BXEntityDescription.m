@@ -41,6 +41,7 @@
 #import "PGTSHOM.h"
 #import "BXWeakNotification.h"
 
+#import "PGTSCollections.h"
 #import "MKCCollections.h"
 
 
@@ -599,9 +600,9 @@ FilterPkeyAttributes (id attribute, void* arg)
         mSchemaName = [sName copy];
 		mRelationships = [[NSMutableDictionary alloc] init];
 		
-		mObjectIDs = [[MKCHashTable alloc] init];
-        mSuperEntities = [[MKCHashTable alloc] init];
-        mSubEntities = [[MKCHashTable alloc] init];
+		mObjectIDs = PGTSCreateWeakNonretainingMutableSet ();
+        mSuperEntities = PGTSCreateWeakNonretainingMutableSet ();
+        mSubEntities = PGTSCreateWeakNonretainingMutableSet ();
 		
 		mValidationLock = [[NSLock alloc] init];
     }
