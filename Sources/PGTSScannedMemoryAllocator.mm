@@ -32,6 +32,7 @@
 static BOOL should_allocate_scanned ()
 {
 	BOOL retval = NO;
+    //Symbol existence verification requires NULL != -like comparison.
 	if (NULL != NSAllocateCollectable && [NSGarbageCollector defaultCollector])
 		retval = YES;
 	return retval;

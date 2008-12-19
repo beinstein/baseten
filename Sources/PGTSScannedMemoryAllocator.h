@@ -69,7 +69,6 @@ namespace PGTS
 		{
 			void* p = NULL;
 			
-			//Symbol existence verification requires NULL != -like comparison.
 			if (scanned_memory_allocator_env::allocate_scanned)
 				p = NSAllocateCollectable (n * sizeof (T), NSScannedOption | NSCollectorDisabledOption);
 			else
