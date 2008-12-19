@@ -31,10 +31,10 @@
 #import <string.h>
 #import <pthread.h>
 
-#import "MKCCollections.h"
 #import "PGTS.h"
 #import "PGTSFunctions.h"
 #import "PGTSCFScannedMemoryAllocator.h"
+#import "PGTSCollections.h"
 
 #import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
@@ -2374,8 +2374,7 @@ ModTypeToObject (enum BXModificationType value)
 		
 	if (nil == mObjects)
 	{
-		mObjects = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
-												  valueType: kMKCCollectionTypeWeakObject];
+		mObjects = PGTSCreateMutableDictionaryWithWeakNonretainedObjects ();
 	}
 	
 	if (nil == mModifiedObjectIDs)

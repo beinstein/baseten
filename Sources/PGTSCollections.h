@@ -30,3 +30,4 @@
 #import <BaseTen/BXLogger.h>
 
 BX_EXPORT id PGTSCreateWeakNonretainingMutableSet ();
+BX_EXPORT id PGTSCreateMutableDictionaryWithWeakNonretainedObjects ();

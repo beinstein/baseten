@@ -29,7 +29,7 @@
 #import "PGTSCollections.h"
 #import "PGTSScannedMemoryAllocator.h"
 
-const CFSetCallBacks kNonRetainingCallbacks = {
+const CFSetCallBacks kNonRetainingSetCallbacks = {
 	0,
 	NULL,
 	NULL,
@@ -38,12 +38,64 @@ const CFSetCallBacks kNonRetainingCallbacks = {
 	&CFHash
 };
 
+
+const CFDictionaryValueCallBacks kNonRetainingDictionaryValueCallbacks = {
+	0,
+	NULL,
+	NULL,
+	&CFCopyDescription,
+	&CFEqual
+};
+
+
 id PGTSCreateWeakNonretainingMutableSet ()
 {
 	id retval = nil;
 	if (PGTS::scanned_memory_allocator_env::allocate_scanned)
 		retval = [NSHashTable hashTableWithWeakObjects];
 	else
-		retval = (id) CFSetCreateMutable (NULL, 0, &kNonRetainingCallbacks);
+		retval = (id) CFSetCreateMutable (NULL, 0, &kNonRetainingSetCallbacks);
 	return retval;
 }
+
+
+id PGTSCreateMutableDictionaryWithWeakNonretainedObjects ()
+{
+	id retval = nil;
+	if (PGTS::scanned_memory_allocator_env::allocate_scanned)
+		retval = [NSMapTable mapTableWithStrongToWeakObjects];
+	else
+	{
+		retval = (id) CFDictionaryCreateMutable (NULL, 0, &kCFTypeDictionaryKeyCallBacks, 
+												 &kNonRetainingDictionaryValueCallbacks);
+		
+	}
+	return retval;
+}
+
+
+//By adding the methods to NSObject we don't override NSMapTable's implementation if one gets made.
+@implementation NSObject (PGTSCollectionAdditions)
+- (void) makeObjectsPerformSelector: (SEL) selector withObject: (id) object
+{
+	NSEnumerator* e = [(id) self objectEnumerator];
+	id currentObject = nil;
+	while ((currentObject = [e nextObject]))
+		[currentObject performSelector: selector withObject: object];
+}
+
+- (NSArray *) objectsForKeys: (NSArray *) keys notFoundMarker: (id) marker
+{
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [keys count]];
+	NSEnumerator* e = [keys objectEnumerator];
+	id currentKey = nil;
+	while ((currentKey = [e nextObject]))
+	{
+		id object = [(id) self objectForKey: currentKey];
+		if (! object)
+			object = marker;
+		[retval addObject: object];
+	}
+	return retval;
+}
+@end

@@ -66,8 +66,7 @@ static id gEntities;
     if (NO == tooLate)
     {
         tooLate = YES;
-        gEntities = [MKCDictionary copyDictionaryWithKeyType: kMKCCollectionTypeObject
-												   valueType: kMKCCollectionTypeWeakObject];
+        gEntities = PGTSCreateMutableDictionaryWithWeakNonretainedObjects ();
     }
 }
 
