@@ -605,22 +605,6 @@
 		53666CD50E1CD8D20028DBEA /* PGTSTableDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTableDescription.h; path = Sources/PGTSTableDescription.h; sourceTree = "<group>"; };
 		53666CD60E1CD8D20028DBEA /* PGTSTableDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSTableDescription.m; path = Sources/PGTSTableDescription.m; sourceTree = "<group>"; };
 		53666CD70E1CD8D20028DBEA /* PGTSTypeDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSTypeDescription.h; path = Sources/PGTSTypeDescription.h; sourceTree = "<group>"; };
-		53666D520E1CDE3A0028DBEA /* MKCAbstractIntegerDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAbstractIntegerDictionary.m; path = Sources/MKCAbstractIntegerDictionary.m; sourceTree = "<group>"; };
-		53666D540E1CDE3A0028DBEA /* MKCCollections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCCollections.h; path = Sources/MKCCollections.h; sourceTree = "<group>"; };
-		53666D550E1CDE3A0028DBEA /* MKCCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCCompatibility.h; path = Sources/MKCCompatibility.h; sourceTree = "<group>"; };
-		53666D560E1CDE3A0028DBEA /* MKCDictionary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionary.h; path = Sources/MKCDictionary.h; sourceTree = "<group>"; };
-		53666D570E1CDE3A0028DBEA /* MKCDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionary.m; path = Sources/MKCDictionary.m; sourceTree = "<group>"; };
-		53666D580E1CDE3A0028DBEA /* MKCDictionaryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionaryEnumerator.m; path = Sources/MKCDictionaryEnumerator.m; sourceTree = "<group>"; };
-		53666D590E1CDE3A0028DBEA /* MKCDictionaryEnumerators.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionaryEnumerators.h; path = Sources/MKCDictionaryEnumerators.h; sourceTree = "<group>"; };
-		53666D5A0E1CDE3A0028DBEA /* MKCDictionaryKeyEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCDictionaryKeyEnumerator.m; path = Sources/MKCDictionaryKeyEnumerator.m; sourceTree = "<group>"; };
-		53666D5B0E1CDE3A0028DBEA /* MKCDictionaryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCDictionaryPrivate.h; path = Sources/MKCDictionaryPrivate.h; sourceTree = "<group>"; };
-		53666D5C0E1CDE3A0028DBEA /* MKCHashTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCHashTable.h; path = Sources/MKCHashTable.h; sourceTree = "<group>"; };
-		53666D5D0E1CDE3A0028DBEA /* MKCHashTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCHashTable.m; path = Sources/MKCHashTable.m; sourceTree = "<group>"; };
-		53666D5E0E1CDE3A0028DBEA /* MKCIntegerDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerDictionary.m; path = Sources/MKCIntegerDictionary.m; sourceTree = "<group>"; };
-		53666D5F0E1CDE3A0028DBEA /* MKCIntegerDictionaryEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerDictionaryEnumerator.m; path = Sources/MKCIntegerDictionaryEnumerator.m; sourceTree = "<group>"; };
-		53666D600E1CDE3A0028DBEA /* MKCIntegerDictionaryKeyEnumerator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerDictionaryKeyEnumerator.m; path = Sources/MKCIntegerDictionaryKeyEnumerator.m; sourceTree = "<group>"; };
-		53666D610E1CDE3A0028DBEA /* MKCIntegerKeyDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCIntegerKeyDictionary.m; path = Sources/MKCIntegerKeyDictionary.m; sourceTree = "<group>"; };
-		53666D620E1CDE3A0028DBEA /* MKCObjectDictionary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCObjectDictionary.m; path = Sources/MKCObjectDictionary.m; sourceTree = "<group>"; };
 		53666D790E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSPredicate+PGTSAdditions.m"; path = "Sources/NSPredicate+PGTSAdditions.m"; sourceTree = "<group>"; };
 		53666D7A0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSExpression+PGTSAdditions.h"; path = "Sources/NSExpression+PGTSAdditions.h"; sourceTree = "<group>"; };
 		53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSExpression+PGTSAdditions.m"; path = "Sources/NSExpression+PGTSAdditions.m"; sourceTree = "<group>"; };
@@ -820,7 +804,6 @@
 			children = (
 				08FB77AEFE84172EC02AAC07 /* BaseTen */,
 				53666C8E0E1CD89F0028DBEA /* PGTS */,
-				53666D740E1CDE3E0028DBEA /* MKCCollections */,
 				53666C800E1CD8580028DBEA /* Utility */,
 				53F77DA10A3806580058F7D6 /* xcconfig */,
 				089C1665FE841158C02AAC07 /* Resources */,
@@ -1032,29 +1015,6 @@
 				53666C990E1CD8D20028DBEA /* PGTSTypeDescription.m */,
 			);
 			name = Metadata;
-			sourceTree = "<group>";
-		};
-		53666D740E1CDE3E0028DBEA /* MKCCollections */ = {
-			isa = PBXGroup;
-			children = (
-				53666D520E1CDE3A0028DBEA /* MKCAbstractIntegerDictionary.m */,
-				53666D540E1CDE3A0028DBEA /* MKCCollections.h */,
-				53666D550E1CDE3A0028DBEA /* MKCCompatibility.h */,
-				53666D560E1CDE3A0028DBEA /* MKCDictionary.h */,
-				53666D570E1CDE3A0028DBEA /* MKCDictionary.m */,
-				53666D580E1CDE3A0028DBEA /* MKCDictionaryEnumerator.m */,
-				53666D590E1CDE3A0028DBEA /* MKCDictionaryEnumerators.h */,
-				53666D5A0E1CDE3A0028DBEA /* MKCDictionaryKeyEnumerator.m */,
-				53666D5B0E1CDE3A0028DBEA /* MKCDictionaryPrivate.h */,
-				53666D5E0E1CDE3A0028DBEA /* MKCIntegerDictionary.m */,
-				53666D5F0E1CDE3A0028DBEA /* MKCIntegerDictionaryEnumerator.m */,
-				53666D600E1CDE3A0028DBEA /* MKCIntegerDictionaryKeyEnumerator.m */,
-				53666D610E1CDE3A0028DBEA /* MKCIntegerKeyDictionary.m */,
-				53666D620E1CDE3A0028DBEA /* MKCObjectDictionary.m */,
-				53666D5C0E1CDE3A0028DBEA /* MKCHashTable.h */,
-				53666D5D0E1CDE3A0028DBEA /* MKCHashTable.m */,
-			);
-			name = MKCCollections;
 			sourceTree = "<group>";
 		};
 		53666D820E1CDF100028DBEA /* Queries */ = {
