@@ -33,7 +33,7 @@
 #import "BXRelationshipDescription.h"
 #import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
-#import "PGTSCFScannedMemoryAllocator.h"
+#import "PGTSCollections.h"
 #import "BXLogger.h"
 
 
@@ -198,14 +198,13 @@
 - (void) addDependentRelationship: (BXRelationshipDescription *) rel
 {
 	BXEntityDescription* entity = [self entity];
-	CFSetCallBacks callbacks = PGTSScannedSetCallbacks ();
 	ExpectV ([rel destinationEntity]);
 	if ([[rel entity] isEqual: entity])
 	{
 		if (! mRelationshipsUsing)
-			mRelationshipsUsing = CFSetCreateMutable (PGTSScannedMemoryAllocator (), 0, &callbacks);
+			mRelationshipsUsing = PGTSSetCreateMutableStrongRetainingForNSRD ();
 
-		CFSetAddValue (mRelationshipsUsing, rel);
+		[mRelationshipsUsing addObject: rel];
 	}
 	else
 	{
@@ -215,12 +214,11 @@
 
 - (void) removeDependentRelationship: (BXRelationshipDescription *) rel
 {
-	if (mRelationshipsUsing)
-		CFSetRemoveValue (mRelationshipsUsing, rel);
+	[mRelationshipsUsing removeObject: rel];
 }
 
 - (NSSet *) dependentRelationships
 {
-	return (NSSet *) mRelationshipsUsing;
+	return mRelationshipsUsing;
 }
 @end

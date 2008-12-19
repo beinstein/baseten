@@ -29,5 +29,6 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXLogger.h>
 
-BX_EXPORT id PGTSCreateWeakNonretainingMutableSet ();
-BX_EXPORT id PGTSCreateMutableDictionaryWithWeakNonretainedObjects ();
+BX_EXPORT id PGTSSetCreateMutableWeakNonretaining ();
+BX_EXPORT id PGTSSetCreateMutableStrongRetainingForNSRD ();
+BX_EXPORT id PGTSDictionaryCreateMutableWeakNonretainedObjects ();

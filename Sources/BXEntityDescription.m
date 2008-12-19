@@ -64,7 +64,7 @@ static id gEntities;
     if (NO == tooLate)
     {
         tooLate = YES;
-        gEntities = PGTSCreateMutableDictionaryWithWeakNonretainedObjects ();
+        gEntities = PGTSDictionaryCreateMutableWeakNonretainedObjects ();
     }
 }
 
@@ -597,9 +597,9 @@ FilterPkeyAttributes (id attribute, void* arg)
         mSchemaName = [sName copy];
 		mRelationships = [[NSMutableDictionary alloc] init];
 		
-		mObjectIDs = PGTSCreateWeakNonretainingMutableSet ();
-        mSuperEntities = PGTSCreateWeakNonretainingMutableSet ();
-        mSubEntities = PGTSCreateWeakNonretainingMutableSet ();
+		mObjectIDs = PGTSSetCreateMutableWeakNonretaining ();
+        mSuperEntities = PGTSSetCreateMutableWeakNonretaining ();
+        mSubEntities = PGTSSetCreateMutableWeakNonretaining ();
 		
 		mValidationLock = [[NSLock alloc] init];
     }

@@ -40,22 +40,7 @@
 #import "NSAttributeDescription+BXPGAdditions.h"
 #import "NSRelationshipDescription+BXPGAdditions.h"
 #import "PGTSDatabaseDescription.h"
-#import "PGTSCFScannedMemoryAllocator.h"
-
-
-static Boolean
-EqualRelationship (const void *value1, const void *value2)
-{
-	Boolean retval = FALSE;
-	NSRelationshipDescription* r1 = (id) value1;
-	NSRelationshipDescription* r2 = (id) value2;
-	if ([[r1 name] isEqualToString: [r2 name]])
-	{
-		if ([[r1 entity] isEqual: [r2 entity]])
-			retval = TRUE;
-	}
-	return retval;
-}
+#import "PGTSCollections.h"
 
 
 @implementation BXPGEntityConverter
@@ -196,10 +181,7 @@ ImportError (NSString* message, NSString* reason)
 		}
 	}
 	
-	CFSetCallBacks callbacks = PGTSScannedSetCallbacks ();
-	callbacks.equal = &EqualRelationship;
-	NSMutableSet* handledRelationships = (id) CFSetCreateMutable (PGTSScannedMemoryAllocator (), 0, &callbacks);
-	
+	NSMutableSet* handledRelationships = PGTSSetCreateMutableStrongRetainingForNSRD ();
 	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
 		TSEnumerate (currentRel, e, [[currentEntity relationshipsByName] objectEnumerator])

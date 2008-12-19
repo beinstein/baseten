@@ -964,12 +964,12 @@
 				53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */,
 				53666CC20E1CD8D20028DBEA /* PGTSHOM.h */,
 				53666CC30E1CD8D20028DBEA /* PGTSHOM.m */,
+				5350CC360EFBE66500EBC328 /* PGTSCollections.h */,
+				5350CC370EFBE66500EBC328 /* PGTSCollections.mm */,
 				53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */,
 				53F0BD990EC523A200773BE7 /* PGTSScannedMemoryAllocator.mm */,
 				53F0BB9F0EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h */,
 				53F0BBA70EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m */,
-				5350CC360EFBE66500EBC328 /* PGTSCollections.h */,
-				5350CC370EFBE66500EBC328 /* PGTSCollections.mm */,
 			);
 			name = Utility;
 			sourceTree = "<group>";

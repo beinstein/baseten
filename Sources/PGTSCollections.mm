@@ -26,8 +26,10 @@
 // $Id$
 //
 
+#import <CoreData/CoreData.h>
 #import "PGTSCollections.h"
 #import "PGTSScannedMemoryAllocator.h"
+#import "PGTSCFScannedMemoryAllocator.h"
 
 const CFSetCallBacks kNonRetainingSetCallbacks = {
 	0,
@@ -48,7 +50,22 @@ const CFDictionaryValueCallBacks kNonRetainingDictionaryValueCallbacks = {
 };
 
 
-id PGTSCreateWeakNonretainingMutableSet ()
+static Boolean
+EqualRelationship (const void *value1, const void *value2)
+{
+	Boolean retval = FALSE;
+	NSRelationshipDescription* r1 = (id) value1;
+	NSRelationshipDescription* r2 = (id) value2;
+	if ([[r1 name] isEqualToString: [r2 name]])
+	{
+		if ([[r1 entity] isEqual: [r2 entity]])
+			retval = TRUE;
+	}
+	return retval;
+}
+
+
+id PGTSSetCreateMutableWeakNonretaining ()
 {
 	id retval = nil;
 	if (PGTS::scanned_memory_allocator_env::allocate_scanned)
@@ -59,7 +76,37 @@ id PGTSCreateWeakNonretainingMutableSet ()
 }
 
 
-id PGTSCreateMutableDictionaryWithWeakNonretainedObjects ()
+id PGTSSetCreateMutableStrongRetainingCB (const CFSetCallBacks* callbacks)
+{
+	CFSetCallBacks cb = *callbacks;
+	CFAllocatorRef allocator = NULL;
+	
+	if (PGTS::scanned_memory_allocator_env::allocate_scanned)
+	{
+		allocator = PGTSScannedMemoryAllocator ();
+		cb.retain = NULL;
+		cb.release = NULL;
+	}
+	else
+	{
+		cb.retain = kCFTypeSetCallBacks.retain;
+		cb.release = kCFTypeSetCallBacks.release;
+	}
+	
+	id retval = (id) CFSetCreateMutable (allocator, 0, &cb);
+	return retval;
+}
+
+
+id PGTSSetCreateMutableStrongRetainingForNSRD ()
+{
+	CFSetCallBacks cb = kCFTypeSetCallBacks;
+	cb.equal = &EqualRelationship;
+	return PGTSSetCreateMutableStrongRetainingCB (&cb);
+}
+
+
+id PGTSDictionaryCreateMutableWeakNonretainedObjects ()
 {
 	id retval = nil;
 	if (PGTS::scanned_memory_allocator_env::allocate_scanned)

@@ -36,7 +36,7 @@
 {
 	Class mAttributeClass;
 	NSString* mDatabaseTypeName;
-	CFMutableSetRef mRelationshipsUsing;
+	NSMutableSet* mRelationshipsUsing;
 }
 
 - (Class) attributeValueClass;

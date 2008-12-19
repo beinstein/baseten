@@ -2374,7 +2374,7 @@ ModTypeToObject (enum BXModificationType value)
 		
 	if (nil == mObjects)
 	{
-		mObjects = PGTSCreateMutableDictionaryWithWeakNonretainedObjects ();
+		mObjects = PGTSDictionaryCreateMutableWeakNonretainedObjects ();
 	}
 	
 	if (nil == mModifiedObjectIDs)
