@@ -152,10 +152,10 @@ pgts_hom_unrecognized_selector ()
 @interface PGTSCallbackInvocationRecorder : PGTSInvocationRecorder
 {
 	id mUserInfo;
-	id mCollection;
+	id mCallbackTarget;
 	SEL mCallback;
 }
-- (void) setCollection: (id) collection;
+- (void) setCallbackTarget: (id) target;
 - (void) setCallback: (SEL) callback;
 - (void) setUserInfo: (id) anObject;
 - (id) userInfo;
@@ -166,13 +166,13 @@ pgts_hom_unrecognized_selector ()
 - (void) dealloc
 {
 	[mUserInfo release];
-	[mCollection release];
+	[mCallbackTarget release];
 	[super dealloc];
 }
 
 - (void) gotInvocation
 {
-	[mCollection performSelector: mCallback withObject: mHelper->mInvocation withObject: mUserInfo];
+	[mCallbackTarget performSelector: mCallback withObject: mHelper->mInvocation withObject: mUserInfo];
 }
 
 - (void) setCallback: (SEL) callback
@@ -194,12 +194,12 @@ pgts_hom_unrecognized_selector ()
 	return mUserInfo;
 }
 
-- (void) setCollection: (id) anObject
+- (void) setCallbackTarget: (id) anObject
 {
-	if (mCollection != anObject)
+	if (mCallbackTarget != anObject)
 	{
-		[mCollection release];
-		mCollection = [anObject retain];
+		[mCallbackTarget release];
+		mCallbackTarget = [anObject retain];
 	}
 }
 @end
@@ -209,16 +209,16 @@ pgts_hom_unrecognized_selector ()
 @interface PGTSHOMInvocationRecorder : PGTSCallbackInvocationRecorder
 {
 }
-- (void) setCollection: (id) collection callback: (SEL) callback;
+- (void) setCallback: (SEL) callback target: (id) target;
 @end
 
 
 @implementation PGTSHOMInvocationRecorder
-- (void) setCollection: (id) collection callback: (SEL) callback
+- (void) setCallback: (SEL) callback target: (id) target
 {
 	[self setCallback: callback];
-	[self setCollection: collection];
-	[self setTarget: [mCollection PGTSAny]];
+	[self setCallbackTarget: target];
+	[self setTarget: [mCallbackTarget PGTSAny]];
 }
 @end
 
@@ -231,7 +231,7 @@ VisitorTrampoline (id self, id target, SEL callback, id userInfo)
 	{
 		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
 		[recorder setTarget: target];
-		[recorder setCollection: self];
+		[recorder setCallbackTarget: self];
 		[recorder setCallback: callback];
 		[recorder setUserInfo: userInfo];
 		retval = [recorder record];
@@ -247,7 +247,7 @@ HOMTrampoline (id self, SEL callback, id userInfo)
 	if (0 < [self count])
 	{
 		PGTSHOMInvocationRecorder* recorder = [[[PGTSHOMInvocationRecorder alloc] init] autorelease];
-		[recorder setCollection: self callback: callback];
+		[recorder setCallback: callback target: self];
 		[recorder setUserInfo: userInfo];
 		retval = [recorder record];
 	}
@@ -546,7 +546,7 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	{
 		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
 		[recorder setCallback: @selector (PGTSKeyCollect:userInfo:)];
-		[recorder setCollection: self];
+		[recorder setCallbackTarget: self];
 		[recorder setTarget: [[self allKeys] PGTSAny]];
 		retval = [recorder record];
 	}
