@@ -29,23 +29,6 @@
 #import <Foundation/Foundation.h>
 
 
-@class PGTSInvocationRecorderHelper;
-
-
-@interface PGTSInvocationRecorder : NSObject
-{
-	PGTSInvocationRecorderHelper* mHelper;
-	NSInvocation** mOutInvocation;
-}
-- (void) setTarget: (id) target;
-- (NSInvocation *) invocation;
-- (id) record;
-- (id) recordWithTarget: (id) target;
-- (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
-+ (id) recordWithTarget: (id) target outInvocation: (NSInvocation **) outInvocation;
-@end
-
-
 @interface NSSet (PGTSHOM)
 - (id) PGTSAny;
 - (id) PGTSDo;

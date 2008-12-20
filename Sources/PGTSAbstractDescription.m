@@ -30,14 +30,12 @@
 #import "PGTSConstants.h"
 #import "PGTSConnection.h"
 #import "PGTSHOM.h"
+#import "PGTSInvocationRecorder.h"
 #import "BXLogger.h"
 
 
 extern inline
 id PGTSNilReturn (id anObject);
-
-
-@class PGTSInvocationRecorder;
 
 
 @implementation PGTSAbstractDescriptionProxy

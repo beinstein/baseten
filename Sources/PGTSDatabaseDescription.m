@@ -35,6 +35,7 @@
 #import "PGTSFunctions.h"
 #import "PGTSRoleDescription.h"
 #import "PGTSHOM.h"
+#import "PGTSInvocationRecorder.h"
 #import "BXLogger.h"
 
 

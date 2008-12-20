@@ -28,6 +28,7 @@
 
 #import "PGTSIndexDescription.h"
 #import "PGTSHOM.h"
+#import "PGTSInvocationRecorder.h"
 
 
 @implementation PGTSIndexDescriptionProxy

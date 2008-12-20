@@ -36,6 +36,7 @@
 #import "PGTSDatabaseDescription.h"
 //#import "PGTSForeignKeyDescription.h"
 #import "PGTSHOM.h"
+#import "PGTSInvocationRecorder.h"
 
 
 static PGTSIndexDescription*
