@@ -47,6 +47,16 @@
 @end
 
 
+
+@interface PGTSPersistentTargetInvocation : NSInvocation
+{
+	id mPersistentTarget; //Weak
+}
++ (id) invocationWithInvocation: (NSInvocation *) invocation;
+@end
+
+
+
 @implementation PGTSInvocationRecorder
 - (id) init
 {
@@ -110,9 +120,10 @@
 @end
 
 
+
 @implementation PGTSInvocationRecorderHelper
 static void
-pgts_hom_unrecognized_selector ()
+pgts_unrecognized_selector ()
 {
 }
 
@@ -136,7 +147,7 @@ pgts_hom_unrecognized_selector ()
 	NSMethodSignature* signature = [mTarget methodSignatureForSelector: selector];
 	if (! signature)
 	{
-		pgts_hom_unrecognized_selector ();
+		pgts_unrecognized_selector ();
 		//We need to raise an exception because we don't implement -doesNotRecognizeSelector.
 		[NSException raise: NSInvalidArgumentException format: @"%@ does not respond to %s.", mTarget, selector];
 	}
@@ -151,6 +162,60 @@ pgts_hom_unrecognized_selector ()
 	[mRecorder gotInvocation];
 }
 @end
+
+
+
+@implementation PGTSPersistentTargetInvocation
++ (id) invocationWithInvocation: (NSInvocation *) invocation
+{
+	NSMethodSignature* sig = [invocation methodSignature];
+	id retval = [self invocationWithMethodSignature: sig];
+	[retval setSelector: [invocation selector]];
+	[retval setTarget: [invocation target]];
+	
+	//We could save some space by getting the largest argument but this is easier.
+	NSUInteger size = [sig frameLength];
+	void* argumentBuffer = alloca (size);	
+	for (NSUInteger i = 2, count = [sig numberOfArguments]; i < count; i++)
+	{
+		bzero (argumentBuffer, size);
+		[invocation getArgument: argumentBuffer atIndex: i];
+		[retval setArgument: argumentBuffer atIndex: i];
+	}	
+	return retval;
+}
+
+- (void) setTarget: (id) target
+{
+	mPersistentTarget = target;
+}
+
+- (id) target
+{
+	return mPersistentTarget;
+}
+
+- (void) invoke
+{
+	[self invokeWithTarget: mPersistentTarget];
+}
+@end
+
+
+
+@implementation PGTSPersistentTargetInvocationRecorder
+- (void) gotInvocation
+{
+	if (mOutInvocation)
+		*mOutInvocation = mHelper->mInvocation;
+}
+
+- (NSInvocation *) invocation
+{
+	return mHelper->mInvocation;
+}
+@end
+
 
 
 @implementation PGTSCallbackInvocationRecorder

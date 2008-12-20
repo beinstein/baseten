@@ -265,6 +265,8 @@
 		5390DE590E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */; };
 		53915F9E0E3FD22D0098B419 /* libpq_additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53915F9C0E3FD22D0098B419 /* libpq_additions.h */; };
 		53915F9F0E3FD22D0098B419 /* libpq_additions.c in Sources */ = {isa = PBXBuildFile; fileRef = 53915F9D0E3FD22D0098B419 /* libpq_additions.c */; };
+		53937B670EFD097700510DBD /* PGTSInvocationRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = 53937B650EFD097700510DBD /* PGTSInvocationRecorder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53937B680EFD097700510DBD /* PGTSInvocationRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 53937B660EFD097700510DBD /* PGTSInvocationRecorder.m */; };
 		5395E7260E2F77DF006E8441 /* BXPGEntityImporter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5395E7240E2F77DF006E8441 /* BXPGEntityImporter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5395E7270E2F77DF006E8441 /* BXPGEntityImporter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5395E7250E2F77DF006E8441 /* BXPGEntityImporter.m */; };
 		539758520E1E86200042120A /* BXDataModelCompiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 539758500E1E86200042120A /* BXDataModelCompiler.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -683,6 +685,8 @@
 		53915F9C0E3FD22D0098B419 /* libpq_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libpq_additions.h; path = Sources/libpq_additions.h; sourceTree = "<group>"; };
 		53915F9D0E3FD22D0098B419 /* libpq_additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libpq_additions.c; path = Sources/libpq_additions.c; sourceTree = "<group>"; };
 		53933EF409EBD082001D00BB /* BXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXInterface.h; path = Sources/BXInterface.h; sourceTree = "<group>"; };
+		53937B650EFD097700510DBD /* PGTSInvocationRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSInvocationRecorder.h; path = Sources/PGTSInvocationRecorder.h; sourceTree = "<group>"; };
+		53937B660EFD097700510DBD /* PGTSInvocationRecorder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSInvocationRecorder.m; path = Sources/PGTSInvocationRecorder.m; sourceTree = "<group>"; };
 		5395E7240E2F77DF006E8441 /* BXPGEntityImporter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGEntityImporter.h; path = Sources/BXPGEntityImporter.h; sourceTree = "<group>"; };
 		5395E7250E2F77DF006E8441 /* BXPGEntityImporter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGEntityImporter.m; path = Sources/BXPGEntityImporter.m; sourceTree = "<group>"; };
 		539758500E1E86200042120A /* BXDataModelCompiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDataModelCompiler.h; path = Sources/BXDataModelCompiler.h; sourceTree = "<group>"; };
@@ -964,6 +968,8 @@
 				53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */,
 				53666CC20E1CD8D20028DBEA /* PGTSHOM.h */,
 				53666CC30E1CD8D20028DBEA /* PGTSHOM.m */,
+				53937B650EFD097700510DBD /* PGTSInvocationRecorder.h */,
+				53937B660EFD097700510DBD /* PGTSInvocationRecorder.m */,
 				5350CC360EFBE66500EBC328 /* PGTSCollections.h */,
 				5350CC370EFBE66500EBC328 /* PGTSCollections.mm */,
 				53666CD20E1CD8D20028DBEA /* PGTSScannedMemoryAllocator.h */,
@@ -1436,6 +1442,7 @@
 				535F24EE0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.h in Headers */,
 				53F0BBA10EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h in Headers */,
 				5350CC380EFBE66500EBC328 /* PGTSCollections.h in Headers */,
+				53937B670EFD097700510DBD /* PGTSInvocationRecorder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1770,6 +1777,7 @@
 				53F0BBA80EC4A40700773BE7 /* PGTSCFScannedMemoryAllocator.m in Sources */,
 				53F0BD9A0EC523A200773BE7 /* PGTSScannedMemoryAllocator.mm in Sources */,
 				5350CC390EFBE66500EBC328 /* PGTSCollections.mm in Sources */,
+				53937B680EFD097700510DBD /* PGTSInvocationRecorder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -46,6 +46,12 @@
 @end
 
 
+@interface PGTSPersistentTargetInvocationRecorder : PGTSInvocationRecorder
+{
+}
+@end
+
+
 @interface PGTSCallbackInvocationRecorder : PGTSInvocationRecorder
 {
 	id mUserInfo;
