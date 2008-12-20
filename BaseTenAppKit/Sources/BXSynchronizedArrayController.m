@@ -27,7 +27,7 @@
 //
 
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEnumerate.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXContainerProxy.h>
 #import <BaseTen/BXSetRelationProxy.h>
@@ -523,7 +523,7 @@ IsKindOfClass (id self, Class class)
     NSError* error = nil;
     NSArray* objects = [[self arrangedObjects] objectsAtIndexes: indexes];
     NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [objects count]];
-    TSEnumerate (currentObject, e, [objects objectEnumerator])
+    BXEnumerate (currentObject, e, [objects objectEnumerator])
         [predicates addObject: [[(BXDatabaseObject *) currentObject objectID] predicate]];
     [databaseContext executeDeleteFromEntity: [self entityDescription]
                                withPredicate: [NSCompoundPredicate andPredicateWithSubpredicates: predicates]

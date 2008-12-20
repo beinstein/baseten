@@ -29,7 +29,7 @@
 #import "MKCPolishedHeaderView.h"
 #import "Additions.h"
 #import "MKCPolishedHeaderCell.h"
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEnumerate.h>
 
 NSString* kMKCEnabledColoursKey		 = @"kMKCEnabledColoursKey";
 NSString* kMKCDisabledColoursKey	 = @"kMKCDisabledColoursKey";
@@ -251,7 +251,7 @@ MKCShouldDrawEnabled (NSWindow* window)
 			NSSortDescriptor* d2 = [d1 reversedSortDescriptor];
 			
 			NSInteger i = 0;
-			TSEnumerate (currentColumn, e, [[[self tableView] tableColumns] objectEnumerator])
+			BXEnumerate (currentColumn, e, [[[self tableView] tableColumns] objectEnumerator])
 			{
 				NSSortDescriptor* currentDesc = [currentColumn sortDescriptorPrototype];
 				if ([currentDesc isEqual: d1])
