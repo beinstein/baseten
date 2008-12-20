@@ -745,8 +745,6 @@
 		53D69A870EAE072A00C4C22D /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = /System/Library/Frameworks/SystemConfiguration.framework; sourceTree = "<absolute>"; };
 		53DBE8010B666C3B00C3D20A /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = /usr/lib/libcrypto.dylib; sourceTree = "<absolute>"; };
 		53DBE8120B666C7900C3D20A /* libssl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libssl.dylib; path = /usr/lib/libssl.dylib; sourceTree = "<absolute>"; };
-		53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXObjectKeyPathExpression.h; path = Sources/BXObjectKeyPathExpression.h; sourceTree = "<group>"; };
-		53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectKeyPathExpression.m; path = Sources/BXObjectKeyPathExpression.m; sourceTree = "<group>"; };
 		53E068240DEAE02A0004363D /* BXProbes.d */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.dtrace; name = BXProbes.d; path = Sources/BXProbes.d; sourceTree = "<group>"; };
 		53E11A250A791A8D00D0107C /* ExceptionHandling.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ExceptionHandling.framework; path = /System/Library/Frameworks/ExceptionHandling.framework; sourceTree = "<absolute>"; };
 		53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXLogger.h; path = Sources/BXLogger.h; sourceTree = "<group>"; };
@@ -861,8 +859,6 @@
 				533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
-				53E01F4B0CAAE6B900AECF4E /* BXObjectKeyPathExpression.h */,
-				53E01F4C0CAAE6B900AECF4E /* BXObjectKeyPathExpression.m */,
 				537A23570E83B8DC002AAE95 /* BXSubqueryExpression.h */,
 				537A23580E83B8DC002AAE95 /* BXSubqueryExpression.m */,
 				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
