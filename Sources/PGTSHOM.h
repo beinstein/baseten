@@ -29,28 +29,20 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSSet (PGTSHOM)
+@protocol PGTSHOM <NSObject>
 - (id) PGTSAny;
 - (id) PGTSDo;
 - (id) PGTSCollect;
-- (id) PGTSCollectReturning: (Class) aClass;
+
+/**
+ * \internal
+ * \brief Make a dictionary of collected objects.
+ *
+ * Make existing objects keys and collected objects values.
+ * \return An invocation recorder that creates an NSDictionary.
+ */
 - (id) PGTSKeyCollect;
-- (id) PGTSSelectFunction: (int (*)(id)) fptr;
-- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
-- (id) PGTSVisit: (id) visitor;
-@end
 
-
-@interface NSArray (PGTSHOM)
-- (NSArray *) PGTSReverse;
-
-- (id) PGTSAny;
-- (id) PGTSDo;
-- (id) PGTSCollect;
-- (id) PGTSCollectReturning: (Class) aClass;
-- (id) PGTSKeyCollect;
-- (id) PGTSSelectFunction: (int (*)(id)) fptr;
-- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 /**
  * \internal
  * \brief Visit each item.
@@ -63,12 +55,22 @@
 @end
 
 
-@interface NSDictionary (PGTSHOM)
-- (id) PGTSAny;
-- (id) PGTSDo;
-- (id) PGTSCollect;
-- (id) PGTSKeyCollect;
-- (id) PGTSVisit: (id) visitor;
+@interface NSSet (PGTSHOM) <PGTSHOM>
+- (id) PGTSCollectReturning: (Class) aClass;
+- (id) PGTSSelectFunction: (int (*)(id)) fptr;
+- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
+@end
+
+
+@interface NSArray (PGTSHOM) <PGTSHOM>
+- (NSArray *) PGTSReverse;
+- (id) PGTSCollectReturning: (Class) aClass;
+- (id) PGTSSelectFunction: (int (*)(id)) fptr;
+- (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
+@end
+
+
+@interface NSDictionary (PGTSHOM) <PGTSHOM>
 - (id) PGTSValueSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSValueSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 @end
