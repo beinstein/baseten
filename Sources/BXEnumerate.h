@@ -1,11 +1,11 @@
 //
-// PGTSFunctions.h
+// BXEnumerate.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+// by visiting http://basetenframework.org/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -26,19 +26,7 @@
 // $Id$
 //
 
-#import <BaseTen/postgresql/libpq-fe.h>
-#import "PGTSConstants.h"
-
-
-#define SafeCFRelease( CF_VAL )  if (NULL != CF_VAL) { CFRelease (CF_VAL); CF_VAL = NULL; }
-
-
-PGTS_EXPORT id PGTSOidAsObject (Oid o);
-PGTS_EXPORT enum PGTSDeleteRule PGTSDeleteRule (const unichar rule);
-
-#if 0
-PGTS_EXPORT void PGTSNoticeProcessor (void* sender, const char* message);
-PGTS_EXPORT NSString* PGTSModificationName (unichar type);
-PGTS_EXPORT NSString* PGTSLockOperation (unichar type);
-PGTS_EXPORT int PGTSSSLConnectionExIndex ();
-#endif
+#undef BXEnumerate
+#define BXEnumerate( LOOP_VAR, ENUMERATOR_VAR, ENUMERATION )  \
+for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
+	nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])

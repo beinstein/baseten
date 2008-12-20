@@ -41,13 +41,14 @@
 #import "NSRelationshipDescription+BXPGAdditions.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSCollections.h"
+#import "BXEnumerate.h"
 
 
 @implementation BXPGEntityConverter
 - (NSMutableArray *) add: (NSString *) aName fromUnsatisfied: (NSMutableDictionary *) unsatisfied
 {
     NSMutableArray* retval = [NSMutableArray array];
-    TSEnumerate (subEntity, e, [[unsatisfied objectForKey: aName] objectEnumerator])
+    BXEnumerate (subEntity, e, [[unsatisfied objectForKey: aName] objectEnumerator])
     {
         [retval addObject: subEntity];
         [retval addObjectsFromArray: [self add: [subEntity name] fromUnsatisfied: unsatisfied]];
@@ -87,7 +88,7 @@ ImportError (NSString* message, NSString* reason)
     NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [entityArray count]];
     NSMutableDictionary* unsatisfiedDependencies = [NSMutableDictionary dictionary];
     NSMutableSet* addedEntities = [NSMutableSet setWithCapacity: [entityArray count]];
-    TSEnumerate (entityDesc, e, [entityArray objectEnumerator])
+    BXEnumerate (entityDesc, e, [entityArray objectEnumerator])
     {
         NSEntityDescription* superentityDesc = [entityDesc superentity];
         if (! superentityDesc || [addedEntities containsObject: superentityDesc])
@@ -113,9 +114,9 @@ ImportError (NSString* message, NSString* reason)
         }
     }
     
-    TSEnumerate (currentEntityArray, e, [unsatisfiedDependencies objectEnumerator])
+    BXEnumerate (currentEntityArray, e, [unsatisfiedDependencies objectEnumerator])
     {
-        TSEnumerate (entityDesc, e, [currentEntityArray objectEnumerator])
+        BXEnumerate (entityDesc, e, [currentEntityArray objectEnumerator])
         {
 			NSString* message = [NSString stringWithFormat: @"Entity %@ was skipped.", [entityDesc name]];
 			NSString* reason = [NSString stringWithFormat: @"Superentity %@ had not been added.", [[entityDesc superentity] name]];
@@ -148,7 +149,7 @@ ImportError (NSString* message, NSString* reason)
 	if (! [database schemaExists: schemaName])
 		[retval addObject: [NSString stringWithFormat: @"CREATE SCHEMA \"%@\";", schemaName]];
 	
-	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
+	BXEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
         NSError* error = nil;
 		BXEntityDescription* match = [context matchingEntity: currentEntity inSchema: schemaName error: &error];
@@ -167,7 +168,7 @@ ImportError (NSString* message, NSString* reason)
 		[retval addObject: [currentEntity BXPGPrimaryKeyConstraintInSchema: schemaName]];
 		[enabledRelations addObject: [currentEntity name]];
 		
-		TSEnumerate (currentAttr, e, [[currentEntity attributesByName] objectEnumerator])
+		BXEnumerate (currentAttr, e, [[currentEntity attributesByName] objectEnumerator])
 		{
             NSError* error = nil;
 			if ([currentAttr BXCanAddAttribute: &error])
@@ -182,9 +183,9 @@ ImportError (NSString* message, NSString* reason)
 	}
 	
 	NSMutableSet* handledRelationships = PGTSSetCreateMutableStrongRetainingForNSRD ();
-	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
+	BXEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
-		TSEnumerate (currentRel, e, [[currentEntity relationshipsByName] objectEnumerator])
+		BXEnumerate (currentRel, e, [[currentEntity relationshipsByName] objectEnumerator])
 		{
 			if (! [handledRelationships containsObject: currentRel])
 			{

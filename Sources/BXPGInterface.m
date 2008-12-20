@@ -50,6 +50,7 @@
 #import "BXPGFromItem.h"
 
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 //FIXME: it'd be nicer if we didn't need any private headers.
 #import "BXDatabaseContextPrivate.h"
@@ -105,7 +106,7 @@ NSString*
 BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prependAlias)
 {
 	NSMutableArray* qnames = [NSMutableArray arrayWithCapacity: [attrs count]];
-	TSEnumerate (currentAttribute, e, [attrs objectEnumerator])
+	BXEnumerate (currentAttribute, e, [attrs objectEnumerator])
 	{
 		NSString* name = [currentAttribute name];
 		NSString* qname = nil;
@@ -128,7 +129,7 @@ ReturnedFields (BXPGQueryBuilder* queryBuilder, NSArray* attrs, BOOL prependAlia
 	NSString* alias = [fromItem alias];
 	BXEntityDescription* entity = [fromItem entity];
 	
-	TSEnumerate (currentAttribute, e, [attrs objectEnumerator])
+	BXEnumerate (currentAttribute, e, [attrs objectEnumerator])
 		Expect ([[currentAttribute entity] isEqual: entity]);
 	
 	NSString* retval = BXPGReturnList (attrs, alias, prependAlias);
@@ -343,7 +344,7 @@ static NSString*
 SetClause (BXPGQueryBuilder* queryBuilder, NSDictionary* valueDict)
 {
     NSMutableArray* fields = [NSMutableArray arrayWithCapacity: [valueDict count]];
-    TSEnumerate (field, e, [valueDict keyEnumerator])
+    BXEnumerate (field, e, [valueDict keyEnumerator])
     {
 		id value = [valueDict objectForKey: field];
 		NSString* valueParam = [queryBuilder addParameter: value];
@@ -695,7 +696,7 @@ error:
 		}
 		else
 		{
-			TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+			BXEnumerate (currentID, e, [objectIDs objectEnumerator])
 			{
 				BXDatabaseObject* object = [mContext registeredObjectWithID: currentID];
 				[object setCachedValuesForKeysWithDictionary: values];
@@ -1339,7 +1340,7 @@ bail:
 	if ([entity isView])
 	{
 		viewDefaultValues = [NSMutableDictionary dictionaryWithCapacity: [pkeyFields count]];
-		TSEnumerate (currentAttr, e, [pkeyFields objectEnumerator])
+		BXEnumerate (currentAttr, e, [pkeyFields objectEnumerator])
 		{
 			if (! [fieldValues objectForKey: currentAttr])
 			{
@@ -1362,7 +1363,7 @@ bail:
 		NSMutableString* fields = [NSMutableString string];
 		NSMutableString* values = [NSMutableString string];
 		
-		TSEnumerate (currentAttr, e, [fieldValues keyEnumerator])
+		BXEnumerate (currentAttr, e, [fieldValues keyEnumerator])
 		{
 			id value = [fieldValues objectForKey: currentAttr];
 			NSString* alias = [mQueryBuilder addParameter: value];
@@ -1375,7 +1376,7 @@ bail:
 			[values appendString: @", "];
 		}
 		
-		TSEnumerate (currentAttr, e, [viewDefaultValues keyEnumerator])
+		BXEnumerate (currentAttr, e, [viewDefaultValues keyEnumerator])
 		{
 			NSString* expression = [viewDefaultValues objectForKey: currentAttr];
 
@@ -1415,7 +1416,7 @@ error:
 	NSString* defaultValue = nil;
 	if ([entity isView])
 	{
-		TSEnumerate (currentEntity, e, [[entity inheritedEntities] objectEnumerator])
+		BXEnumerate (currentEntity, e, [[entity inheritedEntities] objectEnumerator])
 		{
 			defaultValue = [self recursiveDefaultValue: name entity: currentEntity error: error];
 			if (defaultValue || *error)
@@ -1460,7 +1461,7 @@ error:
 		//Warm up the cache.
 		NSSet* tables = [[mTransactionHandler databaseDescription] tablesWithOids: oids];
 		retval = [NSMutableDictionary dictionary];
-		TSEnumerate (currentTable, e, [tables objectEnumerator])
+		BXEnumerate (currentTable, e, [tables objectEnumerator])
 		{
 			NSString* tableName = [currentTable name];
 			NSString* schemaName = [currentTable schemaName];
@@ -1509,7 +1510,7 @@ error:
 	if ([res querySucceeded])
 	{
 		retval = YES;
-		TSEnumerate (currentAttribute, e, [viewEntity primaryKeyFields])
+		BXEnumerate (currentAttribute, e, [viewEntity primaryKeyFields])
 			[currentAttribute setPrimaryKey: NO];
 	}
 	else
@@ -1532,7 +1533,7 @@ error:
 
 	retval = YES;
 	
-	TSEnumerate (currentAttribute, e, [attributeArray objectEnumerator])
+	BXEnumerate (currentAttribute, e, [attributeArray objectEnumerator])
 	{
 		BXEntityDescription* entity = [(BXAttributeDescription *) currentAttribute entity];
 		if ([entity isView] && [currentAttribute isPrimaryKey] != shouldAdd)
@@ -1569,7 +1570,7 @@ bail:
 		goto bail;
 	
 	NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [entityArray count]];
-	TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
+	BXEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
 		if ([currentEntity isEnabled] != shouldEnable)
 		{
@@ -1600,7 +1601,7 @@ bail:
 		PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameters: oids];
 		if ([res querySucceeded])
 		{
-			TSEnumerate (currentEntity, e, [entityArray objectEnumerator])
+			BXEnumerate (currentEntity, e, [entityArray objectEnumerator])
 				[currentEntity setEnabled: shouldEnable];
 		}
 		else
@@ -1720,7 +1721,7 @@ bail:
 {
 	printf ("%s\n", [[query query] UTF8String]);
 	int i = 0;
-	TSEnumerate (currentParameter, e, [[query parameters] objectEnumerator])
+	BXEnumerate (currentParameter, e, [[query parameters] objectEnumerator])
 	{
 		i++;
 		const char* description = [[currentParameter description] UTF8String];

@@ -87,7 +87,7 @@
 	id collection = [mCollection expressionValueWithObject: object context: ctx];
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [collection count]];
 		
-	TSEnumerate (currentObject, e, [collection objectEnumerator])
+	BXEnumerate (currentObject, e, [collection objectEnumerator])
 	{
 		[ctx setObject: currentObject forKey: variableName];
 		if ([mPredicate BXEvaluateWithObject: currentObject substitutionVariables: ctx])

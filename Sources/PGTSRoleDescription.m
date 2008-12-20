@@ -33,6 +33,7 @@
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
 #import "PGTSDatabaseDescription.h"
+#import "BXEnumerate.h"
 
 
 //FIXME: implement this.
@@ -74,7 +75,7 @@
         retval = YES;
     else
     {
-        TSEnumerate (currentRole, e, [mRoles objectEnumerator])
+        BXEnumerate (currentRole, e, [mRoles objectEnumerator])
         {
             retval = [currentRole hasMember: aRole];
             if (YES == retval)

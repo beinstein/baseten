@@ -32,6 +32,7 @@
 #import "PGTSResultSet.h"
 #import "PGTSFunctions.h"
 #import "PGTSIndexDescription.h"
+#import "BXEnumerate.h"
 
 
 @implementation BXPGTableDescription
@@ -58,7 +59,7 @@
 		{
 			PGTSIndexDescription* index = [[[PGTSIndexDescription alloc] init] autorelease];
 			NSMutableSet* indexFields = [NSMutableSet set];
-			TSEnumerate (currentFieldIndex, e, [[res valueForKey: @"attnum"] objectEnumerator])
+			BXEnumerate (currentFieldIndex, e, [[res valueForKey: @"attnum"] objectEnumerator])
 			[indexFields addObject: [self fieldAtIndex: [currentFieldIndex intValue]]];
 			[index setPrimaryKey: YES];
 			[index setFields: indexFields];

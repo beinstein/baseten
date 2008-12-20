@@ -36,6 +36,7 @@
 #import "BXForeignKey.h"
 #import "BXLogger.h"
 #import "BXDatabaseObjectPrivate.h"
+#import "BXEnumerate.h"
 
 
 @implementation BXManyToManyRelationshipDescription
@@ -152,7 +153,7 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 		NSMutableArray* objectParts = [NSMutableArray arrayWithCapacity: [objects count]];
 		NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [[fkey fieldNames] count]];
 		struct PredicateContext ctx = {nil, fkeyParts};
-		TSEnumerate (currentObject, e, [objects objectEnumerator])
+		BXEnumerate (currentObject, e, [objects objectEnumerator])
 		{
 			ctx.pc_object = currentObject;  
 			[self iterateSrcForeignKey: &AddToCompoundPredicate context: &ctx];
@@ -238,7 +239,7 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	//First get values for helper entity from source foreign key and then add values from each destination object.
 	//Here, src for the foreign key is always mHelper.
 	NSDictionary* srcHelperValues = [[self srcForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: databaseObject];
-	TSEnumerate (currentObject, e, [addedObjects objectEnumerator])
+	BXEnumerate (currentObject, e, [addedObjects objectEnumerator])
 	{
 		NSMutableDictionary* values = [[self dstForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: currentObject];
 		[values addEntriesFromDictionary: srcHelperValues];
@@ -259,13 +260,13 @@ bail:
 
 - (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
 {
-	TSEnumerate (currentPair, e, [[[self dstForeignKey] fieldNames] objectEnumerator])
+	BXEnumerate (currentPair, e, [[[self dstForeignKey] fieldNames] objectEnumerator])
 		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);
 }
 
 - (void) iterateSrcForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
 {
-	TSEnumerate (currentPair, e, [[[self srcForeignKey] fieldNames] objectEnumerator])
+	BXEnumerate (currentPair, e, [[[self srcForeignKey] fieldNames] objectEnumerator])
 		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);
 }
 

@@ -37,11 +37,12 @@
 #import "PGTSHOM.h"
 #import "PGTSInvocationRecorder.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 static void FilterCached (NSDictionary* cache, id given, id returned, id fetched)
 {
-	TSEnumerate (currentOid, e, [given objectEnumerator])
+	BXEnumerate (currentOid, e, [given objectEnumerator])
 	{
 		PGTSTableDescription* table = [cache objectForKey: currentOid];
 		if (table)
@@ -91,7 +92,7 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
 		{
 			[[[self invocationRecorder] record] tablesWithOids: fetched];
 			NSSet* realObjects = [self performSynchronizedAndReturnObject];
-			TSEnumerate (currentDesc, e, [realObjects objectEnumerator])
+			BXEnumerate (currentDesc, e, [realObjects objectEnumerator])
 			{
 				[currentDesc setConnection: mConnection];
 				id proxy = [currentDesc proxy];
@@ -347,7 +348,7 @@ static void FilterCached (NSDictionary* cache, id given, id returned, id fetched
 	
 	//FIXME: enable this.
 #if 0
-	TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
+	BXEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
 	[desc addACLItem: currentACLItem];
 #endif
 }

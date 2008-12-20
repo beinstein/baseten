@@ -217,6 +217,7 @@
 		53666DAC0E1CE2180028DBEA /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 53666DAB0E1CE2180028DBEA /* postgresql */; settings = {ATTRIBUTES = (Private, ); }; };
 		53680C0E0E59922C00A53B26 /* BXKeyPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53680C0C0E59922C00A53B26 /* BXKeyPathParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53680C0F0E59922C00A53B26 /* BXKeyPathParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */; };
+		536C9D600EFD94D10041422F /* BXEnumerate.h in Headers */ = {isa = PBXBuildFile; fileRef = 536C9D5F0EFD94D10041422F /* BXEnumerate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537920580E3F519000423965 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2F7E79907B2D74100F64583 /* CoreData.framework */; };
 		537A23B10E8404FA002AAE95 /* BXPGKeyPathExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 537A23AF0E8404FA002AAE95 /* BXPGKeyPathExpressionValueType.h */; };
 		537A23B20E8404FA002AAE95 /* BXPGKeyPathExpressionValueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 537A23B00E8404FA002AAE95 /* BXPGKeyPathExpressionValueType.m */; };
@@ -614,6 +615,7 @@
 		53666DAB0E1CE2180028DBEA /* postgresql */ = {isa = PBXFileReference; explicitFileType = folder; fileEncoding = 4; name = postgresql; path = "BaseTen-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53680C0C0E59922C00A53B26 /* BXKeyPathParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXKeyPathParser.h; path = Sources/BXKeyPathParser.h; sourceTree = "<group>"; };
 		53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXKeyPathParser.m; path = Sources/BXKeyPathParser.m; sourceTree = "<group>"; };
+		536C9D5F0EFD94D10041422F /* BXEnumerate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXEnumerate.h; path = Sources/BXEnumerate.h; sourceTree = "<group>"; };
 		537A23570E83B8DC002AAE95 /* BXSubqueryExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSubqueryExpression.h; path = Sources/BXSubqueryExpression.h; sourceTree = "<group>"; };
 		537A23580E83B8DC002AAE95 /* BXSubqueryExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSubqueryExpression.m; path = Sources/BXSubqueryExpression.m; sourceTree = "<group>"; };
 		537A23AF0E8404FA002AAE95 /* BXPGKeyPathExpressionValueType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGKeyPathExpressionValueType.h; path = Sources/BXPGKeyPathExpressionValueType.h; sourceTree = "<group>"; };
@@ -861,8 +863,6 @@
 				5339AB920A7542EC00994B1A /* BXException.m */,
 				537A23570E83B8DC002AAE95 /* BXSubqueryExpression.h */,
 				537A23580E83B8DC002AAE95 /* BXSubqueryExpression.m */,
-				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
-				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
 				5301302609D43A450037C485 /* BXConstants.h */,
 				53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */,
 				5301302709D43A450037C485 /* BXConstants.m */,
@@ -950,6 +950,11 @@
 		53666C800E1CD8580028DBEA /* Utility */ = {
 			isa = PBXGroup;
 			children = (
+				536C9D5F0EFD94D10041422F /* BXEnumerate.h */,
+				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
+				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
+				53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */,
+				53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */,
 				53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */,
 				5364EF5B0E1B940A003D3DB6 /* BXLogger.m */,
 				5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */,
@@ -1085,8 +1090,6 @@
 			children = (
 				53666CC80E1CD8D20028DBEA /* PGTSProbes.d */,
 				53666C9B0E1CD8D20028DBEA /* PGTS.h */,
-				53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */,
-				53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */,
 				53666CA60E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.h */,
 				53666CA70E1CD8D20028DBEA /* PGTSCertificateVerificationDelegate.m */,
 				53666CA80E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h */,
@@ -1439,6 +1442,7 @@
 				53F0BBA10EC49E3B00773BE7 /* PGTSCFScannedMemoryAllocator.h in Headers */,
 				5350CC380EFBE66500EBC328 /* PGTSCollections.h in Headers */,
 				53937B670EFD097700510DBD /* PGTSInvocationRecorder.h in Headers */,
+				536C9D600EFD94D10041422F /* BXEnumerate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

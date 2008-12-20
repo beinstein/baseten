@@ -50,6 +50,7 @@
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXLogger.h"
 #import "PGTSHOM.h"
+#import "BXEnumerate.h"
 
 
 static NSString* 
@@ -192,7 +193,7 @@ ParseSelector (SEL aSelector, NSString** key)
 - (NSArray *) valuesForKeys: (NSArray *) keys
 {
     NSMutableArray* rval = [NSMutableArray arrayWithCapacity: [keys count]];
-    TSEnumerate (currentKey, e, [keys objectEnumerator])
+    BXEnumerate (currentKey, e, [keys objectEnumerator])
     {
         id value = [self valueForKey: currentKey];
         [rval addObject: value ? value : [NSNull null]];
@@ -255,7 +256,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	else if ([[self entity] hasCapability: kBXEntityCapabilityRelationships])
 	{
 		retval = YES;
-		TSEnumerate (currentRel, e, [[[self entity] relationshipsByName] objectEnumerator])
+		BXEnumerate (currentRel, e, [[[self entity] relationshipsByName] objectEnumerator])
 		{
 			BXRelationshipDescription* inverse = [(BXRelationshipDescription *) currentRel inverseRelationship];
 			if (NSDenyDeleteRule == [inverse deleteRule] && 
@@ -290,7 +291,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     NSMutableArray* predicates = [NSMutableArray array];
     NSDictionary* attrs = [[[self objectID] entity] attributesByName];
-    TSEnumerate (currentAttr, e, [attrs objectEnumerator])
+    BXEnumerate (currentAttr, e, [attrs objectEnumerator])
     {
         if ([currentAttr isPrimaryKey])
         {
@@ -343,7 +344,7 @@ ParseSelector (SEL aSelector, NSString** key)
 		BXAssertValueReturn ([entity isValidated], nil, @"Expected entity %@ to have been validated earlier.", entity);
 		rval = [NSMutableDictionary dictionaryWithCapacity: [cachedValues count]];
 		
-		TSEnumerate (currentFName, e, [cachedValues keyEnumerator])
+		BXEnumerate (currentFName, e, [cachedValues keyEnumerator])
 		{
 			BXAttributeDescription* desc = [[entity attributesByName] objectForKey: currentFName]; 
             if (nil != desc)
@@ -627,7 +628,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	NSMutableDictionary* dict = [NSMutableDictionary dictionaryWithCapacity: [aDict count]];
 	NSDictionary* attributes = [[self entity] attributesByName];
 	NSMutableSet* rels = [NSMutableSet set];
-	TSEnumerate (currentKey, e, [aDict keyEnumerator])
+	BXEnumerate (currentKey, e, [aDict keyEnumerator])
 	{
 		id attr = [attributes objectForKey: currentKey];
 		[rels unionSet: [attr dependentRelationships]]; //Patch by Todd Blanchard 2008-11-15
@@ -683,7 +684,7 @@ ParseSelector (SEL aSelector, NSString** key)
     {
         rval = 0;
         NSArray* knownKeys = [[self cachedValues] allKeys];
-        TSEnumerate (currentProp, e, [[[mObjectID entity] fields] objectEnumerator])
+        BXEnumerate (currentProp, e, [[[mObjectID entity] fields] objectEnumerator])
         {
             if (NO == [knownKeys containsObject: [currentProp name]])
             {
@@ -985,7 +986,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     @synchronized (mValues)
     {
-		TSEnumerate (currentKey, e, [aDict keyEnumerator])
+		BXEnumerate (currentKey, e, [aDict keyEnumerator])
 			[self setCachedValue2: [aDict objectForKey: currentKey] forKey: currentKey];
     }
 }
@@ -1174,7 +1175,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
     NSArray* pkeyFields = [[self entity] primaryKeyFields];
     NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [pkeyFields count]];
-    TSEnumerate (currentKey, e, [pkeyFields objectEnumerator])
+    BXEnumerate (currentKey, e, [pkeyFields objectEnumerator])
         [retval setObject: [self cachedValueForKey: [currentKey name]] forKey: currentKey];
     return retval;
 }
@@ -1183,7 +1184,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
 	NSDictionary* attrs = [[self entity] attributesByName];
     NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [attrs count]];
-	TSEnumerate (currentKey, e, [attrs keyEnumerator])
+	BXEnumerate (currentKey, e, [attrs keyEnumerator])
 	{
 		if ([[attrs objectForKey: currentKey] isPrimaryKey])
 			[retval setObject: [self cachedValueForKey: currentKey] forKey: currentKey];
@@ -1199,7 +1200,7 @@ ParseSelector (SEL aSelector, NSString** key)
 	{
 		if (nil == aKey)
 		{
-			TSEnumerate (currentKey, e, [[mValues allKeys] objectEnumerator])
+			BXEnumerate (currentKey, e, [[mValues allKeys] objectEnumerator])
 			{
 				if (! [pkeyFNames containsObject: currentKey])
 				{
@@ -1226,7 +1227,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
 	Expect (relationships);
 	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [relationships count]];
-	TSEnumerate (currentRelationship, e, [relationships objectEnumerator])
+	BXEnumerate (currentRelationship, e, [relationships objectEnumerator])
 	{
 		BXDatabaseObject* value = [currentRelationship registeredTargetFor: self fireFault: fireFault];
 		if (value)
@@ -1242,7 +1243,7 @@ ParseSelector (SEL aSelector, NSString** key)
 {
 	//The given relationships respond to -isInverse with YES.
 	ExpectV (relationships);
-	TSEnumerate (currentRelationship, e, [relationships objectEnumerator])
+	BXEnumerate (currentRelationship, e, [relationships objectEnumerator])
 	{
 		callback (self, [currentRelationship name]);
 		BXRelationshipDescription* inverse = (BXRelationshipDescription *) [currentRelationship inverseRelationship];
@@ -1277,7 +1278,7 @@ DidChange (id sender, NSString* key)
 	[self changeInverseToOneRelationships: relationships from: oldTargets to: newTargets callback: &WillChange];
 	@synchronized (mValues)
 	{
-		TSEnumerate (currentRel, e, [relationships objectEnumerator])
+		BXEnumerate (currentRel, e, [relationships objectEnumerator])
 			[mValues removeObjectForKey: [currentRel name]];
 	}
 }
@@ -1286,7 +1287,7 @@ DidChange (id sender, NSString* key)
 {
 	@synchronized (mValues)
 	{
-		TSEnumerate (currentRel, e, [relationships objectEnumerator])
+		BXEnumerate (currentRel, e, [relationships objectEnumerator])
 		{
 			id newValue = [newTargets objectForKey: currentRel];
 			if (newValue)

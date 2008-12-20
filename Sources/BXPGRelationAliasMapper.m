@@ -35,6 +35,7 @@
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXForeignKey.h"
+#import "BXEnumerate.h"
 
 
 static NSString*
@@ -62,7 +63,7 @@ NSArray*
 BXPGConditions (NSString* srcAlias, NSString* dstAlias, NSSet* fieldNamePairs)
 {
 	NSMutableArray* conditions = [NSMutableArray arrayWithCapacity: [fieldNamePairs count]];
-	TSEnumerate (currentPair, e, [fieldNamePairs objectEnumerator])
+	BXEnumerate (currentPair, e, [fieldNamePairs objectEnumerator])
 	{
 		NSString* condition = [NSString stringWithFormat: @"%@.\"%@\" = %@.\"%@\"",
 							   srcAlias, [currentPair objectAtIndex: 0], dstAlias, [currentPair objectAtIndex: 1]];
@@ -148,7 +149,7 @@ BXPGConditions (NSString* srcAlias, NSString* dstAlias, NSSet* fieldNamePairs)
 {
 	NSMutableString* retval = [NSMutableString string];
 	[retval appendString: [mPrimaryRelation BXPGVisitFromItem: self]];
-	TSEnumerate (currentItem, e, [mFromItems objectEnumerator])
+	BXEnumerate (currentItem, e, [mFromItems objectEnumerator])
 	{
 		[retval appendString: @" "];
 		[retval appendString: [currentItem BXPGVisitFromItem: self]];

@@ -61,6 +61,7 @@
 #import "BXDelegateProxy.h"
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
 #import "BXRelationshipDescriptionPrivate.h"
+#import "BXEnumerate.h"
 #import "PGTSHOM.h"
 
 
@@ -86,7 +87,7 @@ static NSMutableDictionary*
 ObjectIDsByEntity (NSArray *ids)
 {
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
-    TSEnumerate (objectID, e, [ids objectEnumerator])
+    BXEnumerate (objectID, e, [ids objectEnumerator])
     {
         BXEntityDescription* entity = [(BXDatabaseObjectID *) objectID entity];
         NSMutableArray* array = [dict objectForKey: entity];
@@ -104,7 +105,7 @@ static void
 AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescription* entity)
 {
     id subEntities = [entity subEntities];
-    TSEnumerate (currentEntity, e, [subEntities objectEnumerator])
+    BXEnumerate (currentEntity, e, [subEntities objectEnumerator])
     {
         NSMutableArray* subIds = [idsByEntity objectForKey: currentEntity];
         if (nil == subIds)
@@ -114,7 +115,7 @@ AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescripti
         }
         
         //Create the corresponding ids.
-        TSEnumerate (objectID, e, [[idsByEntity objectForKey: entity] objectEnumerator])
+        BXEnumerate (objectID, e, [[idsByEntity objectForKey: entity] objectEnumerator])
         {
 			NSDictionary* pkeyFields = nil;
 			BOOL parsed = [BXDatabaseObjectID parseURI: [objectID URIRepresentation]
@@ -136,7 +137,7 @@ AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescripti
 static void
 AddObjectIDsForInheritance (NSMutableDictionary *idsByEntity)
 {
-    TSEnumerate (entity, e, [[idsByEntity allKeys] objectEnumerator])
+    BXEnumerate (entity, e, [[idsByEntity allKeys] objectEnumerator])
         AddObjectIDsForInheritance2 (idsByEntity, entity);
 }
 
@@ -611,7 +612,7 @@ ModTypeToObject (enum BXModificationType value)
         //FIXME: order by entity either here or in addedObjects and deletedObjects methods
         NSMutableArray* added = [NSMutableArray array];
         NSMutableArray* deleted = [NSMutableArray array];
-        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
+        BXEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
         {
 			BXDatabaseObject* registeredObject = [self registeredObjectWithID: currentID];
             switch (ObjectToModType ([mModifiedObjectIDs objectForKey: currentID]))
@@ -669,7 +670,7 @@ ModTypeToObject (enum BXModificationType value)
     if ([self checkErrorHandling] && NO == [mDatabaseInterface autocommits])
     {
         NSError* localError = nil;
-        TSEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
+        BXEnumerate (currentID, e, [(id) mModifiedObjectIDs keyEnumerator])
 		{
 			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
 			[currentObject setCreatedInCurrentTransaction: NO];
@@ -728,7 +729,7 @@ ModTypeToObject (enum BXModificationType value)
     if (0 < count)
     {
         rval = [NSMutableArray arrayWithCapacity: count];
-        TSEnumerate (currentID, e, [anArray objectEnumerator])
+        BXEnumerate (currentID, e, [anArray objectEnumerator])
         {
             BXDatabaseObject* object = [self registeredObjectWithID: currentID];
             if (nil == object)
@@ -782,7 +783,7 @@ ModTypeToObject (enum BXModificationType value)
     {
         NSNull* nullObject = [NSNull null];
         NSMutableArray* objects = [NSMutableArray arrayWithCapacity: [objectIDs count]];
-        TSEnumerate (currentObject, e, [rval objectEnumerator])
+        BXEnumerate (currentObject, e, [rval objectEnumerator])
         {
             if (nullObject != currentObject)
                 [objects addObject: currentObject];
@@ -1051,7 +1052,7 @@ ModTypeToObject (enum BXModificationType value)
 #if 0
 - (void) reregisterObjects: (NSArray *) objectIDs values: (NSDictionary *) pkeyValues
 {
-	TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+	BXEnumerate (currentID, e, [objectIDs objectEnumerator])
 	{
 		BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
 		if (nil != currentObject)
@@ -1078,7 +1079,7 @@ ModTypeToObject (enum BXModificationType value)
 	
 	if (updatedPkey)
 	{
-		TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+		BXEnumerate (currentID, e, [objectIDs objectEnumerator])
 		{
 			BXDatabaseObject* currentObject = [self registeredObjectWithID: currentID];
 			if (nil != currentObject)
@@ -1148,7 +1149,7 @@ ModTypeToObject (enum BXModificationType value)
     {
         rval = [NSMutableSet setWithCapacity: [anArray count]];
         NSMutableDictionary* entities = [NSMutableDictionary dictionary];
-        TSEnumerate (currentID, e, [anArray objectEnumerator])
+        BXEnumerate (currentID, e, [anArray objectEnumerator])
         {
             id currentObject = [self registeredObjectWithID: currentID];
             if (nil == currentObject)
@@ -1171,7 +1172,7 @@ ModTypeToObject (enum BXModificationType value)
         if (0 < [entities count])
         {
             NSError* localError = nil;
-			TSEnumerate (currentEntity, e, [entities keyEnumerator])
+			BXEnumerate (currentEntity, e, [entities keyEnumerator])
 			{
 				NSPredicate* predicate = [NSCompoundPredicate orPredicateWithSubpredicates: [entities objectForKey: currentEntity]];
 				NSArray* fetched = [self executeFetchForEntity: currentEntity withPredicate: predicate error: &localError];
@@ -1332,7 +1333,7 @@ ModTypeToObject (enum BXModificationType value)
 			NSMutableDictionary* fieldValues = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
 			Class attributeDescriptionClass = [BXAttributeDescription class];
 			Class stringClass = [NSString class];
-			TSEnumerate (currentKey, e, [givenFieldValues keyEnumerator])
+			BXEnumerate (currentKey, e, [givenFieldValues keyEnumerator])
 			{
 				id value = [givenFieldValues objectForKey: currentKey];
 				if ([currentKey isKindOfClass: attributeDescriptionClass])
@@ -1629,7 +1630,7 @@ ModTypeToObject (enum BXModificationType value)
 		[self setDatabaseURIInternal: newURI];
 		
         //This might have changed during connection.
-        TSEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
+        BXEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
             [currentEntity setDatabaseURI: mDatabaseURI];
 		
 		NSNotification* notification = nil;
@@ -1660,7 +1661,7 @@ ModTypeToObject (enum BXModificationType value)
 - (NSDictionary *) targetsByObject: (NSArray *) objects forRelationships: (id) rels fireFaults: (BOOL) shouldFire
 {
 	NSMutableDictionary* targetsByObject = [NSMutableDictionary dictionaryWithCapacity: [objects count]];
-	TSEnumerate (currentObject, e, [objects objectEnumerator])
+	BXEnumerate (currentObject, e, [objects objectEnumerator])
 	{
 		if ([NSNull null] != currentObject)
 		{
@@ -1680,7 +1681,7 @@ ModTypeToObject (enum BXModificationType value)
 		AddObjectIDsForInheritance (idsByEntity);
 		NSNotificationCenter* nc = [self notificationCenter];
 
-		TSEnumerate (entity, e, [idsByEntity keyEnumerator])
+		BXEnumerate (entity, e, [idsByEntity keyEnumerator])
 		{
 			NSArray* objectIDs = [idsByEntity objectForKey: entity];
 			NSArray* objects = [self registeredObjectsWithIDs: objectIDs nullObjects: NO];
@@ -1694,14 +1695,14 @@ ModTypeToObject (enum BXModificationType value)
 				{
 					oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
 					newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
-					TSEnumerate (currentObject, e, [objects objectEnumerator])
+					BXEnumerate (currentObject, e, [objects objectEnumerator])
 						[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				}
 				
 				//Fault the objects and send the notifications
 				if (shouldFault)
 				{
-					TSEnumerate (currentObject, e, [objects objectEnumerator])
+					BXEnumerate (currentObject, e, [objects objectEnumerator])
 						[currentObject removeFromCache: nil postingKVONotifications: YES];
 				}
 				
@@ -1714,7 +1715,7 @@ ModTypeToObject (enum BXModificationType value)
 				[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
 				if (0 < [rels count])
 				{
-					TSEnumerate (currentObject, e, [objects objectEnumerator])
+					BXEnumerate (currentObject, e, [objects objectEnumerator])
 						[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				}
 				
@@ -1733,7 +1734,7 @@ ModTypeToObject (enum BXModificationType value)
         NSNotificationCenter* nc = [self notificationCenter];
         		
         //Post the notifications
-        TSEnumerate (entity, e, [idsByEntity keyEnumerator])
+        BXEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
             NSArray* objectIDs = [idsByEntity objectForKey: entity];
 			NSArray* objects = [self faultsWithIDs: objectIDs];
@@ -1745,7 +1746,7 @@ ModTypeToObject (enum BXModificationType value)
 			{
 				oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
 				newTargets= [self targetsByObject: objects forRelationships: rels fireFaults: YES];
-				TSEnumerate (currentObject, e, [objects objectEnumerator])
+				BXEnumerate (currentObject, e, [objects objectEnumerator])
 					[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 			}
 
@@ -1758,7 +1759,7 @@ ModTypeToObject (enum BXModificationType value)
 			[nc postNotificationName: kBXInsertEarlyNotification object: entity userInfo: userInfo];
 			if (0 < [rels count])
 			{
-				TSEnumerate (currentObject, e, [objects objectEnumerator])
+				BXEnumerate (currentObject, e, [objects objectEnumerator])
 					[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 			}
 
@@ -1776,12 +1777,12 @@ ModTypeToObject (enum BXModificationType value)
         NSNotificationCenter* nc = [self notificationCenter];
 		
         //Post the notifications
-        TSEnumerate (entity, e, [idsByEntity keyEnumerator])
+        BXEnumerate (entity, e, [idsByEntity keyEnumerator])
         {
 			NSArray* objectIDs = [idsByEntity objectForKey: entity];
 			id objects = [mObjects objectsForKeys: objectIDs notFoundMarker: [NSNull null]];
 
-			TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+			BXEnumerate (currentID, e, [objectIDs objectEnumerator])
 				[[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeleted];
         
 			id rels = [entity inverseToOneRelationships];
@@ -1791,7 +1792,7 @@ ModTypeToObject (enum BXModificationType value)
 			{
 				oldTargets= [self targetsByObject: objects forRelationships: rels fireFaults: NO];
 				newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
-				TSEnumerate (currentObject, e, [objects objectEnumerator])
+				BXEnumerate (currentObject, e, [objects objectEnumerator])
 				{
 					if ([NSNull null] != currentObject)
 						[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
@@ -1809,7 +1810,7 @@ ModTypeToObject (enum BXModificationType value)
 			
 			if (0 < [rels count])
 			{
-				TSEnumerate (currentObject, e, [objects objectEnumerator])
+				BXEnumerate (currentObject, e, [objects objectEnumerator])
 				{
 					if ([NSNull null] != currentObject)
 						[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
@@ -1827,7 +1828,7 @@ ModTypeToObject (enum BXModificationType value)
     if (0 < count)
     {
         NSMutableArray* foundObjects = [NSMutableArray arrayWithCapacity: count];
-        TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+        BXEnumerate (currentID, e, [objectIDs objectEnumerator])
         {
             BXDatabaseObject* object = [self registeredObjectWithID: currentID];
             if (nil != object)
@@ -1865,7 +1866,7 @@ ModTypeToObject (enum BXModificationType value)
     {
         NSArray* foundObjects = [self registeredObjectsWithIDs: objectIDs];
         NSMutableArray* iteratedObjects = [NSMutableArray arrayWithCapacity: [foundObjects count]];
-        TSEnumerate (currentObject, e, [foundObjects objectEnumerator])
+        BXEnumerate (currentObject, e, [foundObjects objectEnumerator])
         {
             if ([NSNull null] != currentObject)
             {
@@ -2240,7 +2241,7 @@ ModTypeToObject (enum BXModificationType value)
 																		redoInvocations: [recorder recordedInvocations]];                    
 
                     //Set the modification type. No need for undo since insert and delete override this anyway.
-                    TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+                    BXEnumerate (currentID, e, [objectIDs objectEnumerator])
                     {
                         enum BXModificationType modificationType = ObjectToModType ([mModifiedObjectIDs objectForKey: currentID]);
                         if (! (kBXDeleteModification == modificationType || kBXInsertModification == modificationType))
@@ -2290,7 +2291,7 @@ ModTypeToObject (enum BXModificationType value)
 				BOOL createdSavepoint = [self prepareSavepointIfNeeded: &localError];
 				if (nil == localError)
 				{
-					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+					BXEnumerate (currentID, e, [objectIDs objectEnumerator])
                         [[self registeredObjectWithID: currentID] setDeleted: kBXObjectDeletePending];
 					
 					//The change notice will only be delivered at commit time, but there could be e.g. two
@@ -2308,7 +2309,7 @@ ModTypeToObject (enum BXModificationType value)
 
 					[[mUndoManager prepareWithInvocationTarget: self] addedObjectsToDatabase: objectIDs];
                     //Object status.
-                    TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+                    BXEnumerate (currentID, e, [objectIDs objectEnumerator])
 					{
 						enum BXObjectDeletionStatus status = [[self registeredObjectWithID: currentID] deletionStatus];
 						[[mUndoManager prepareWithInvocationTarget: currentID] setStatus: status forObjectRegisteredInContext: self];
@@ -2318,7 +2319,7 @@ ModTypeToObject (enum BXModificationType value)
 						[[mUndoManager prepareWithInvocationTarget: self] rollbackToLastSavepoint];
 					[[mUndoManager prepareWithInvocationTarget: self] undoWithRedoInvocations: [recorder recordedInvocations]];
                     //Remember the modification type for ROLLBACK.
-					TSEnumerate (currentID, e, [objectIDs objectEnumerator])
+					BXEnumerate (currentID, e, [objectIDs objectEnumerator])
 					{
                         [[mUndoManager prepareWithInvocationTarget: mModifiedObjectIDs] setObject: [mModifiedObjectIDs objectForKey: currentID] 
                                                                                            forKey: currentID];                        
@@ -2411,7 +2412,7 @@ ModTypeToObject (enum BXModificationType value)
 
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids
 {
-    TSEnumerate (currentObject, e, [[self registeredObjectsWithIDs: ids] objectEnumerator])
+    BXEnumerate (currentObject, e, [[self registeredObjectsWithIDs: ids] objectEnumerator])
     {
         if ([NSNull null] != currentObject)
         {
@@ -2419,7 +2420,7 @@ ModTypeToObject (enum BXModificationType value)
                 [currentObject faultKey: nil];
             else
             {
-                TSEnumerate (currentKey, e, [keys objectEnumerator])
+                BXEnumerate (currentKey, e, [keys objectEnumerator])
                     [currentObject faultKey: currentKey];
             }
         }
@@ -2548,7 +2549,7 @@ error:
 		[allEntities unionSet: entities];
         [mLazilyValidatedEntities removeAllObjects];
 		NSUInteger i = [entities count];
-        TSEnumerate (currentEntity, e, [entities objectEnumerator])
+        BXEnumerate (currentEntity, e, [entities objectEnumerator])
         {
 			i--;
 			[[self internalDelegate] databaseContext: self validatingEntity: currentEntity 
@@ -2562,11 +2563,11 @@ error:
         }
     }
 	
-	TSEnumerate (currentEntity, e, [allEntities objectEnumerator])
+	BXEnumerate (currentEntity, e, [allEntities objectEnumerator])
 	{
 		if ([currentEntity hasCapability: kBXEntityCapabilityRelationships])
 		{
-			TSEnumerate (currentRelationship, e, [[currentEntity relationshipsByName] objectEnumerator])
+			BXEnumerate (currentRelationship, e, [[currentEntity relationshipsByName] objectEnumerator])
 				[currentRelationship makeAttributeDependency];
 		}
 	}
@@ -2782,7 +2783,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 						   @"Expected arrays to have an equal number of items.");
     SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
     
-    TSEnumerate (currentItem, e, [[self keychainItems] objectEnumerator])
+    BXEnumerate (currentItem, e, [[self keychainItems] objectEnumerator])
     {
         SecKeychainItemRef item = (SecKeychainItemRef) currentItem;        
         OSStatus status = noErr;

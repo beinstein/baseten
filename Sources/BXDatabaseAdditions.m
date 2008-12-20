@@ -36,6 +36,7 @@
 #import "BXDatabaseObject.h"
 #import "BXAttributeDescription.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 @interface NSPredicate (BXAdditions)
@@ -335,7 +336,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 - (NSSet *) BXEntitySet
 {
     NSMutableSet* set = [NSMutableSet set];
-    TSEnumerate (currentPredicate, e, [[self subpredicates] objectEnumerator])
+    BXEnumerate (currentPredicate, e, [[self subpredicates] objectEnumerator])
         [set unionSet: [currentPredicate BXEntitySet]];
     return set;
 }
@@ -372,7 +373,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 - (NSDictionary *) BXSubDictionaryExcludingKeys: (NSArray *) keys
 {
     NSMutableDictionary* rval = [NSMutableDictionary dictionaryWithCapacity: [self count] - [keys count]];
-    TSEnumerate (currentKey, e, [self keyEnumerator])
+    BXEnumerate (currentKey, e, [self keyEnumerator])
     {
         if (NO == [keys containsObject: currentKey])
             [rval setObject: [self objectForKey: currentKey] forKey: currentKey];
@@ -384,7 +385,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 {
     NSMutableDictionary* rval = [NSMutableDictionary dictionaryWithCapacity: 
         MIN ([self count], [translationDict count])];
-    TSEnumerate (currentKey, e, [translationDict keyEnumerator])
+    BXEnumerate (currentKey, e, [translationDict keyEnumerator])
     {
         id currentObject = [self objectForKey: currentKey];
         if (nil != currentObject)
@@ -444,7 +445,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 - (BOOL) BXContainsObjectsInArray: (NSArray *) anArray
 {
     BOOL rval = YES;
-    TSEnumerate (currentObject, e, [anArray objectEnumerator])
+    BXEnumerate (currentObject, e, [anArray objectEnumerator])
     {
         if (NO == [self containsObject: currentObject])
         {
@@ -460,7 +461,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 							 substitutionVariables: (NSMutableDictionary *) variables
 {
     NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [self count]];
-    TSEnumerate (currentObject, e, [self objectEnumerator])
+    BXEnumerate (currentObject, e, [self objectEnumerator])
     {
 		if ([predicate BXEvaluateWithObject: currentObject substitutionVariables: [[variables mutableCopy] autorelease]])
             [retval addObject: currentObject];
@@ -490,7 +491,7 @@ URLDecode (const char* bytes, size_t length, id sender)
     if (0 < [self count])
     {
         NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [self count]];
-        TSEnumerate (currentObject, e, [self objectEnumerator])
+        BXEnumerate (currentObject, e, [self objectEnumerator])
             [parts addObject: [[currentObject objectID] predicate]];
         rval = [NSCompoundPredicate orPredicateWithSubpredicates: parts];
     }

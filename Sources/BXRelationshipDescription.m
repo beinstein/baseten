@@ -41,6 +41,7 @@
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXProbes.h"
 #import "BXAttributeDescriptionPrivate.h"
+#import "BXEnumerate.h"
 
 
 /**
@@ -496,7 +497,7 @@ bail:
 		j = 1;
 	}
 	
-	TSEnumerate (currentFieldPair, e, [[[self foreignKey] fieldNames] objectEnumerator])
+	BXEnumerate (currentFieldPair, e, [[[self foreignKey] fieldNames] objectEnumerator])
 		callback ([currentFieldPair objectAtIndex: i], [currentFieldPair objectAtIndex: j], ctx);
 }
 @end

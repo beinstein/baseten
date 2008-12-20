@@ -45,6 +45,7 @@
 #import "PGTSProbes.h"
 #import "BXLogger.h"
 #import "BXDatabaseAdditions.h"
+#import "BXEnumerate.h"
 
 
 @interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
@@ -344,7 +345,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
                                                                format: NULL errorDescription: &error] retain];
         BXAssertValueReturn (nil != mPGTypes, nil, @"Error creating PGTSDeserializationDictionary: %@ (file: %@)", error, path);
         NSArray* keys = [mPGTypes allKeys];
-        TSEnumerate (key, e, [keys objectEnumerator])
+        BXEnumerate (key, e, [keys objectEnumerator])
         {
             Class typeClass = NSClassFromString ([mPGTypes objectForKey: key]);
             if (Nil == typeClass)

@@ -30,6 +30,7 @@
 #import "NSCompoundPredicate+BXPGAdditions.h"
 #import "PGTSFunctions.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 @implementation NSCompoundPredicate (BXPGAdditions)
@@ -63,7 +64,7 @@
     NSString* retval = nil;
     NSArray* subpredicates = [self subpredicates];
     NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [subpredicates count]];
-    TSEnumerate (currentPredicate, e, [subpredicates objectEnumerator])
+    BXEnumerate (currentPredicate, e, [subpredicates objectEnumerator])
 	{
 		NSString* expression = [currentPredicate PGTSExpressionWithObject: anObject context: context];
 		if (expression)

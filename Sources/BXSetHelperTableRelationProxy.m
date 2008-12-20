@@ -35,6 +35,7 @@
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXForeignKey.h"
 #import "BXEntityDescription.h"
+#import "BXEnumerate.h"
 
 
 /**
@@ -87,10 +88,10 @@
 		unsigned int count = [filtered [i] count];
 		if (0 < count)
 		{
-			TSEnumerate (currentObject, e, [filtered [i] objectEnumerator])
+			BXEnumerate (currentObject, e, [filtered [i] objectEnumerator])
 			{
 				[pkeyFValues removeAllObjects];
-				TSEnumerate (currentFieldArray, e, [fieldNames objectEnumerator])
+				BXEnumerate (currentFieldArray, e, [fieldNames objectEnumerator])
 				{
 					NSString* helperFName = [currentFieldArray objectAtIndex: 0];
 					NSString* fName = [currentFieldArray objectAtIndex: 1];

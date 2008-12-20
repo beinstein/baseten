@@ -36,6 +36,7 @@
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 @implementation BXForeignKey
@@ -105,7 +106,7 @@
 {
 	BOOL haveValues = YES;
 	NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
-	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	BXEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
 	{
 		NSString* name = [currentFieldArray objectAtIndex: ei];
 		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
@@ -170,7 +171,7 @@
 	
 	NSDictionary* attributes = [entity attributesByName];
 	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	BXEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
 	{
 		id attributeKey = [currentFieldArray objectAtIndex: ei];
 		id objectKey = [currentFieldArray objectAtIndex: oi];
@@ -201,7 +202,7 @@
 	
 	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
 	NSDictionary* attributes = [entity attributesByName];
-	TSEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
+	BXEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
 	{
 		NSString* attributeName = [currentFieldArray objectAtIndex: ei];
 		BXAttributeDescription* attribute = [attributes objectForKey: attributeName];

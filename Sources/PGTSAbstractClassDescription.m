@@ -36,6 +36,7 @@
 #import "PGTSACLItem.h"
 #import "PGTSDatabaseDescription.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 @implementation PGTSAbstractClassDescriptionProxy
@@ -149,7 +150,7 @@
         retval = (0 != (aPrivilege & [[mACLItems objectAtIndex: kPGTSPUBLICOid] privileges]));
     if (NO == retval)
     {
-        TSEnumerate (currentItem, e, [mACLItems objectEnumerator])
+        BXEnumerate (currentItem, e, [mACLItems objectEnumerator])
         {
             if (aPrivilege & [currentItem privileges] && [[currentItem role] hasMember: aRole])
             {
@@ -200,7 +201,7 @@
 																				 oid: [[res valueForKey: @"relowner"] PGTSOidValue]];
             [self setOwner: role];
             
-            TSEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
+            BXEnumerate (currentACLItem, e, [[res valueForKey: @"relacl"] objectEnumerator])
 				[self addACLItem: currentACLItem];
         }
     }

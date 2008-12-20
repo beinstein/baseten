@@ -32,6 +32,7 @@
 #import "NSExpression+PGTSAdditions.h"
 #import "PGTSHOM.h"
 #import "BXPGPredefinedFunctionExpressionValueType.h"
+#import "BXEnumerate.h"
 #import <map>
 #import <tr1/unordered_map>
 #import <stdarg.h>
@@ -157,7 +158,7 @@ AddSelector (SEL selector, NSInteger cardinality, BOOL acceptsVariableArgs, ...)
 			(!varargs && function->fc_arguments->size () == argumentCount))
 		{
 			NSInteger i = 0;
-			TSEnumerate (currentExpression, e, [arguments objectEnumerator])
+			BXEnumerate (currentExpression, e, [arguments objectEnumerator])
 			{
 				BXPGExpressionValueType* valueType = [currentExpression BXPGVisitExpression: visitor];
 				if (! valueType)

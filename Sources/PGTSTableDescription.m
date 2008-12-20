@@ -37,6 +37,7 @@
 //#import "PGTSForeignKeyDescription.h"
 #import "PGTSHOM.h"
 #import "PGTSInvocationRecorder.h"
+#import "BXEnumerate.h"
 
 
 static PGTSIndexDescription*
@@ -169,12 +170,12 @@ PrimaryKey (NSArray* uIndexes)
         
         NSArray* sources = [res valueForKey: @"sources"];
         NSMutableArray* sourceFields = [NSMutableArray arrayWithCapacity: [sources count]];
-        TSEnumerate (currentIndex, e, [sources objectEnumerator])
+        BXEnumerate (currentIndex, e, [sources objectEnumerator])
             [sourceFields addObject: [src fieldAtIndex: [currentIndex unsignedIntValue]]];
         
         NSArray* references = [res valueForKey: @"references"];
         NSMutableArray* refFields = [NSMutableArray arrayWithCapacity: [references count]];
-        TSEnumerate (currentIndex, e, [references objectEnumerator])
+        BXEnumerate (currentIndex, e, [references objectEnumerator])
             [refFields addObject: [dst fieldAtIndex: [currentIndex unsignedIntValue]]];
         
         NSString* aName = [res valueForKey: @"name"];
@@ -262,7 +263,7 @@ PrimaryKey (NSArray* uIndexes)
 			//Get the field indexes and set the fields
 			NSMutableSet* indexFields = [NSMutableSet setWithCapacity: 
 										 [[res valueForKey: @"indnatts"] unsignedIntValue]];
-			TSEnumerate (currentFieldIndex, e, [[res valueForKey: @"indkey"] objectEnumerator])
+			BXEnumerate (currentFieldIndex, e, [[res valueForKey: @"indkey"] objectEnumerator])
 			{
 				int index = [currentFieldIndex intValue];
 				if (index > 0)

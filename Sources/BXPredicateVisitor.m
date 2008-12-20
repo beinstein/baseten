@@ -45,6 +45,7 @@
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXPGQueryHandler.h"
 #import "BXPGIdentityExpressionValueType.h"
+#import "BXEnumerate.h"
 
 
 enum ComparisonType
@@ -341,7 +342,7 @@ AppendModifier (NSString* operatorString, NSComparisonPredicateModifier modifier
 	if (0 < [subpredicates count])
 	{
 		[self addFrame];
-		TSEnumerate (currentPredicate, e, [subpredicates objectEnumerator])
+		BXEnumerate (currentPredicate, e, [subpredicates objectEnumerator])
 			[currentPredicate BXPGVisit: self];
 	
 		NSString* joined = [[self currentFrame] componentsJoinedByString: glue];
@@ -733,7 +734,7 @@ end:
 		NSString* alias = [fromItem alias];
 		[self addFrame];
 		
-		TSEnumerate (currentAttr, e, [[mEntity primaryKeyFields] objectEnumerator])
+		BXEnumerate (currentAttr, e, [[mEntity primaryKeyFields] objectEnumerator])
 		{
 			NSString* name = [currentAttr name];
 			id value = [object primitiveValueForKey: name];
@@ -828,7 +829,7 @@ NormalizeForIdentityTest (BXPGExpressionValueType** lval, BXPGExpressionValueTyp
 					id collection = [lval value];
 				
 					[self addFrame];
-					TSEnumerate (currentObject, e, [collection objectEnumerator])
+					BXEnumerate (currentObject, e, [collection objectEnumerator])
 						[self addConditionForObject: currentObject];
 										
 					NSString* joined = [[self currentFrame] componentsJoinedByString: @" OR "];
@@ -1034,7 +1035,7 @@ NormalizeForIdentityTest (BXPGExpressionValueType** lval, BXPGExpressionValueTyp
 	BOOL hasRelationships = NO;
 	BOOL hasAttributes = NO;
 	
-	TSEnumerate (currentKey, e, [components objectEnumerator])
+	BXEnumerate (currentKey, e, [components objectEnumerator])
 	{
 		//We prefer attributes over relationships.
 		if ((property = [[entity attributesByName] objectForKey: currentKey]))
@@ -1126,7 +1127,7 @@ end:
 	BXPGExpressionValueType* retval = nil;
 	NSArray* subExpressions = [expression collection];
 	NSMutableArray* subTypes = [NSMutableArray arrayWithCapacity: [subExpressions count]];
-	TSEnumerate (currentExpression, e, [subExpressions objectEnumerator])
+	BXEnumerate (currentExpression, e, [subExpressions objectEnumerator])
 	{
 		BXPGExpressionValueType* subType = [currentExpression BXPGVisitExpression: self];
 		if (! subType)
@@ -1141,7 +1142,7 @@ end:
 	
 	//See that the subtypes have the same cardinality.
 	NSInteger cardinality = [[subTypes lastObject] arrayCardinality];
-	TSEnumerate (currentSubType, e, [subTypes objectEnumerator])
+	BXEnumerate (currentSubType, e, [subTypes objectEnumerator])
 	{
 		if (0 < [currentSubType relationshipCardinality] || 
 			[currentSubType arrayCardinality] != cardinality)

@@ -33,11 +33,6 @@
 @class BXDatabaseContext;
 
 
-#undef TSEnumerate
-#define TSEnumerate( LOOP_VAR, ENUMERATOR_VAR, ENUMERATION )  \
-for (id ENUMERATOR_VAR = ENUMERATION, LOOP_VAR = [ENUMERATOR_VAR nextObject]; \
-     nil != LOOP_VAR; LOOP_VAR = [ENUMERATOR_VAR nextObject])
-
 #define BXLocalizedString( KEY, VALUE, COMMENT ) \
     ((id) NSLocalizedStringWithDefaultValue( KEY, nil, [NSBundle bundleForClass:[BXDatabaseContext class]], VALUE, COMMENT ) ?: [NSNull null])
 

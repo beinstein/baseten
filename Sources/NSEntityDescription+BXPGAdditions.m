@@ -30,6 +30,7 @@
 #import "NSAttributeDescription+BXPGAdditions.h"
 #import "BXLogger.h"
 #import "PGTSFunctions.h"
+#import "BXEnumerate.h"
 
 
 @implementation NSEntityDescription (BXPGAdditions)
@@ -46,7 +47,7 @@
     if (YES == addSerialIDColumn)
         [attributeDefs addObject: @"id SERIAL"];
 	
-	TSEnumerate (currentAttribute, e, [attributes objectEnumerator])
+	BXEnumerate (currentAttribute, e, [attributes objectEnumerator])
 	{
 		//Transient values are not stored
 		if ([currentAttribute isTransient])

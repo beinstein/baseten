@@ -35,6 +35,7 @@
 #import "BXPropertyDescription.h"
 #import "BXPGAdditions.h"
 #import "BXPGExpressionValueType.h"
+#import "BXEnumerate.h"
 
 
 @implementation NSExpression (BXPGAdditions)
@@ -197,7 +198,7 @@ AddParameter (id parameter, NSMutableDictionary* context)
 			NSMutableSet* entities = [NSMutableSet setWithCapacity: [components count]];
 			id property = nil;
 			
-			TSEnumerate (currentKey, e, [components objectEnumerator])
+			BXEnumerate (currentKey, e, [components objectEnumerator])
 			{
 				if ((property = [[entity attributesByName] objectForKey: currentKey]))
 				{

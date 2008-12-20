@@ -32,6 +32,7 @@
 #import "BXPGFromItem.h"
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXPGAdditions.h"
+#import "BXEnumerate.h"
 
 
 @implementation BXPGExpressionVisitor
@@ -87,7 +88,7 @@
 	[self reset];
 	[self setComponents: components];
 	
-	TSEnumerate (currentComponent, e, [components objectEnumerator])
+	BXEnumerate (currentComponent, e, [components objectEnumerator])
 		[currentComponent BXPGVisitKeyPathComponent: self];		
 	
 	return [[mSQLExpression copy] autorelease];

@@ -35,6 +35,7 @@
 #import "BXInterface.h"
 #import "BXProbes.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 #import "BXPGCertificateVerificationDelegate.h"
 #import "BXPGTransactionHandler.h"
@@ -650,7 +651,7 @@ error:
 	}
 	
 	//Inheritance.
-	TSEnumerate (currentEntity, e, [[entity inheritedEntities] objectEnumerator])
+	BXEnumerate (currentEntity, e, [[entity inheritedEntities] objectEnumerator])
 	{
 		if (! retval)
 			break;
@@ -695,7 +696,7 @@ error:
 
 - (void) checkSuperEntities: (BXEntityDescription *) entity connection: (PGTSConnection *) connection
 {
-	TSEnumerate (superEntity, e, [[entity inheritedEntities] objectEnumerator])
+	BXEnumerate (superEntity, e, [[entity inheritedEntities] objectEnumerator])
 		[[mChangeHandlers objectForKey: superEntity] checkModifications: 0];
 }
 
@@ -709,7 +710,7 @@ error:
 - (NSArray *) observedOids
 {
 	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [mObservedEntities count]];
-	TSEnumerate (currentEntity, e, [mObservedEntities objectEnumerator])
+	BXEnumerate (currentEntity, e, [mObservedEntities objectEnumerator])
 	{
 		NSString* name = [currentEntity name];
 		NSString* schemaName = [currentEntity schemaName];

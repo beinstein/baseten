@@ -41,6 +41,7 @@
 #import "BXWeakNotification.h"
 #import "PGTSHOM.h"
 #import "PGTSCollections.h"
+#import "BXEnumerate.h"
 
 
 static id gEntities;
@@ -95,7 +96,7 @@ static id gEntities;
 	
 	@synchronized (mAttributes)
 	{
-		TSEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
+		BXEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
 		{
 			[currentAttribute setEntity: nil];
 			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
@@ -104,7 +105,7 @@ static id gEntities;
     
     @synchronized (mRelationships)
     {
-        TSEnumerate (currentRel, e, [mRelationships objectEnumerator])
+        BXEnumerate (currentRel, e, [mRelationships objectEnumerator])
         {
             [currentRel setEntity: nil];
 			[currentRel removeAttributeDependency];
@@ -306,7 +307,7 @@ bail:
 	if (nil != anArray)
 	{
 		NSMutableDictionary* attributes = [[mAttributes mutableCopy] autorelease];
-		TSEnumerate (currentField, e, [anArray objectEnumerator])
+		BXEnumerate (currentField, e, [anArray objectEnumerator])
 		{
 			BXAttributeDescription* attribute = nil;
 			if ([currentField isKindOfClass: [BXAttributeDescription class]])
@@ -463,7 +464,7 @@ FilterPkeyAttributes (id attribute, void* arg)
         //FIXME: only single entity supported for now.
         BXAssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
         BXAssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
-        TSEnumerate (currentEntity, e, [entities objectEnumerator])
+        BXEnumerate (currentEntity, e, [entities objectEnumerator])
         {
             [mSuperEntities addObject: currentEntity];
             [currentEntity addSubEntity: self];
@@ -631,7 +632,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
 	if (attributes != mAttributes)
 	{
-		TSEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
+		BXEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
 			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
 		
 		[mAttributes release];
@@ -659,7 +660,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 - (void) resetAttributeExclusion
 {
-	TSEnumerate (currentProp, e, [mAttributes objectEnumerator])
+	BXEnumerate (currentProp, e, [mAttributes objectEnumerator])
 		[currentProp setExcluded: NO];
 }
 
@@ -669,7 +670,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 	if (0 < [strings count])
 	{
 		rval = [NSMutableArray arrayWithCapacity: [strings count]];
-		TSEnumerate (currentField, e, [strings objectEnumerator])
+		BXEnumerate (currentField, e, [strings objectEnumerator])
 		{
 			if ([currentField isKindOfClass: [NSString class]])
 				currentField = [mAttributes objectForKey: currentField];
@@ -703,7 +704,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
     @synchronized (mRelationships)
     {
-		TSEnumerate (currentRel, e, [mRelationships objectEnumerator])
+		BXEnumerate (currentRel, e, [mRelationships objectEnumerator])
 			[[currentRel class] unregisterProperty: currentRel entity: self];
 
 		[mRelationships removeAllObjects];

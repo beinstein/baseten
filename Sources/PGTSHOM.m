@@ -29,6 +29,7 @@
 #import "PGTSHOM.h"
 #import "PGTSInvocationRecorder.h"
 #import "PGTSFunctions.h"
+#import "BXEnumerate.h"
 
 
 static id 
@@ -66,7 +67,7 @@ HOMTrampoline (id self, SEL callback, id userInfo)
 static void
 CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
 {
-	TSEnumerate (currentObject, e, [self objectEnumerator])
+	BXEnumerate (currentObject, e, [self objectEnumerator])
 	{
 		[invocation invokeWithTarget: currentObject];
 		id collected = nil;
@@ -81,7 +82,7 @@ CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
 static void
 CollectAndPerformKeysSetArray (id self, id retval, NSInvocation* invocation)
 {
-	TSEnumerate (currentObject, e, [self objectEnumerator])
+	BXEnumerate (currentObject, e, [self objectEnumerator])
 	{
 		[invocation invokeWithTarget: currentObject];
 		id collected = nil;
@@ -96,7 +97,7 @@ CollectAndPerformKeysSetArray (id self, id retval, NSInvocation* invocation)
 static void
 Do (NSInvocation* invocation, NSEnumerator* enumerator)
 {
-	TSEnumerate (currentObject, e, enumerator)
+	BXEnumerate (currentObject, e, enumerator)
 		[invocation invokeWithTarget: currentObject];
 }
 
@@ -104,7 +105,7 @@ Do (NSInvocation* invocation, NSEnumerator* enumerator)
 static id
 SelectFunction (id sender, id retval, int (* fptr)(id))
 {
-	TSEnumerate (currentObject, e, [sender objectEnumerator])
+	BXEnumerate (currentObject, e, [sender objectEnumerator])
 	{
 		if (fptr (currentObject))
 			[retval addObject: currentObject];
@@ -116,7 +117,7 @@ SelectFunction (id sender, id retval, int (* fptr)(id))
 static id
 SelectFunction2 (id sender, id retval, int (* fptr)(id, void*), void* arg)
 {
-	TSEnumerate (currentObject, e, [sender objectEnumerator])
+	BXEnumerate (currentObject, e, [sender objectEnumerator])
 	{
 		if (fptr (currentObject, arg))
 			[retval addObject: currentObject];
@@ -128,7 +129,7 @@ SelectFunction2 (id sender, id retval, int (* fptr)(id, void*), void* arg)
 static void
 Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
-	TSEnumerate (currentObject, e, enumerator)
+	BXEnumerate (currentObject, e, enumerator)
 	{
 		[invocation setArgument: &currentObject atIndex: 2];
 		[invocation invoke];
@@ -300,7 +301,7 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 - (void) PGTSCollect: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	id retval = [[self mutableCopy] autorelease];
-	TSEnumerate (currentKey, e, [self keyEnumerator])
+	BXEnumerate (currentKey, e, [self keyEnumerator])
 	{
 		[invocation invokeWithTarget: [self objectForKey: currentKey]];
 		id collected = nil;
@@ -314,7 +315,7 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 - (void) PGTSKeyCollect: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	id retval = [NSMutableDictionary dictionaryWithCapacity: [self count]];
-	TSEnumerate (currentKey, e, [self keyEnumerator])
+	BXEnumerate (currentKey, e, [self keyEnumerator])
 	{
 		id collected = nil;
 		[invocation invokeWithTarget: currentKey];

@@ -33,6 +33,7 @@
 #import "PGTSFunctions.h"
 #import "BXLogger.h"
 #import "PGTSFoundationObjects.h"
+#import "BXEnumerate.h"
 
 
 @implementation NSAttributeDescription (BXPGAdditions)
@@ -270,7 +271,7 @@ CharLengthExpression (NSString* name)
 	//Check parent's validation predicates so that we don't create the same predicates two times.
 	NSSet* parentPredicates = [self BXPGParentPredicates];
 	NSString* format = @"ALTER TABLE \"%@\".\"%@\" ADD CHECK (%@);"; //Patch by Tim Bedford 2008-08-06.
-	TSEnumerate (currentPredicate, e, [givenValidationPredicates objectEnumerator])
+	BXEnumerate (currentPredicate, e, [givenValidationPredicates objectEnumerator])
 	{
 		//Skip if parent has this one.
 		if ([parentPredicates containsObject: currentPredicate])

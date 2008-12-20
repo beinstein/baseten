@@ -38,6 +38,7 @@
 #import "BXDatabaseObjectPrivate.h"
 //#import "BXAttributeDescriptionPrivate.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 /**
@@ -60,7 +61,7 @@
     if ([anEntity primaryKeyFields])
     {
         NSMutableArray* temp = [NSMutableArray array];
-        TSEnumerate (currentKey, e, [[anEntity primaryKeyFields] objectEnumerator])
+        BXEnumerate (currentKey, e, [[anEntity primaryKeyFields] objectEnumerator])
         {
             if ([currentKey isPrimaryKey])
                 [temp addObject: [currentKey name]];
@@ -73,7 +74,7 @@
         keys = [pkeyDict keysSortedByValueUsingSelector: @selector (compare:)];
     }
     
-    TSEnumerate (currentKey, e, [keys objectEnumerator])
+    BXEnumerate (currentKey, e, [keys objectEnumerator])
     {
         id currentValue = [pkeyDict objectForKey: currentKey];
         BXAssertValueReturn ([NSNull null] != currentValue, nil, @"A pkey value was NSNull. Entity: %@", anEntity);
@@ -257,7 +258,7 @@ bail:
 		Expect (attributes);
         NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [pkeyFValues count]];
     
-        TSEnumerate (currentKey, e, [pkeyFValues keyEnumerator])
+        BXEnumerate (currentKey, e, [pkeyFValues keyEnumerator])
         {
             NSExpression* rhs = [NSExpression expressionForConstantValue: [pkeyFValues objectForKey: currentKey]];
             NSExpression* lhs = [NSExpression expressionForKeyPath: currentKey];
@@ -320,7 +321,7 @@ bail:
     {
         BXAssertVoidReturn ([pkeyFields count] <= [pkeyDict count],
                               @"Expected to have received values for all primary key fields.");
-        TSEnumerate (currentAttribute, e, [pkeyFields objectEnumerator])
+        BXEnumerate (currentAttribute, e, [pkeyFields objectEnumerator])
         {
             BXAssertVoidReturn (nil != [pkeyDict objectForKey: [currentAttribute name]], 
                                   @"Primary key not included: %@ given: %@", currentAttribute, pkeyDict);
@@ -336,7 +337,7 @@ bail:
 + (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) pkeyFValues
 {
     NSArray* keys = [pkeyFValues allKeys];
-    TSEnumerate (currentKey, e, [keys objectEnumerator])
+    BXEnumerate (currentKey, e, [keys objectEnumerator])
     {
         BXAssertValueReturn ([currentKey isKindOfClass: [NSString class]],
                                nil, @"Expected to receive only NSStrings as keys. Keys: %@", keys);

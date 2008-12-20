@@ -36,6 +36,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSResultSet.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 @implementation NSObject (PGTSFoundationObjects)
@@ -315,7 +316,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
         NSMutableData* contents = [NSMutableData data];
         IMP impl = [contents methodForSelector: @selector (appendBytes:length:)];
         AppendBytes (impl, contents, "{", 1);
-        TSEnumerate (currentObject, e, [self objectEnumerator])
+        BXEnumerate (currentObject, e, [self objectEnumerator])
         {
             if ([NSNull null] == currentObject)
                 [contents PGTSAppendCString: "null,"];

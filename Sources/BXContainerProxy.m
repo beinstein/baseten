@@ -32,6 +32,7 @@
 #import "BXConstantsPrivate.h"
 #import "BXDatabaseAdditions.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 /**
@@ -232,12 +233,12 @@
     [self filterObjectsForUpdate: objects added: &addedObjects removed: &removedObjects];        
 
 	//Remove redundant objects
-	TSEnumerate (currentObject, e, [[[addedObjects copy] autorelease] objectEnumerator])
+	BXEnumerate (currentObject, e, [[[addedObjects copy] autorelease] objectEnumerator])
 	{
 		if ([mContainer containsObject: currentObject])
 			[addedObjects removeObject: currentObject];
 	}
-	TSEnumerate (currentObject, e, [[[removedObjects copy] autorelease] objectEnumerator])
+	BXEnumerate (currentObject, e, [[[removedObjects copy] autorelease] objectEnumerator])
 	{
 		if (! [mContainer containsObject: currentObject])
 			[removedObjects removeObject: currentObject];
@@ -264,7 +265,7 @@
 
 - (void) handleAddedObjects: (NSArray *) objectArray
 {
-    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
+    BXEnumerate (currentObject, e, [objectArray objectEnumerator])
 	{
 		if (NO == [mContainer containsObject: currentObject])
 			[mContainer addObject: currentObject];
@@ -273,7 +274,7 @@
 
 - (void) handleRemovedObjects: (NSArray *) objectArray
 {
-    TSEnumerate (currentObject, e, [objectArray objectEnumerator])
+    BXEnumerate (currentObject, e, [objectArray objectEnumerator])
         [mContainer removeObject: currentObject];
 }
 
