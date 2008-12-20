@@ -29,7 +29,7 @@
 #import "EntityTests.h"
 #import "MKCSenTestCaseAdditions.h"
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEnumerate.h>
 
 
 @implementation EntityTests
@@ -125,7 +125,7 @@
         nil];
     NSSet* container2 = [NSSet setWithArray: container];
 
-    TSEnumerate (currentEntity, e, [container objectEnumerator])
+    BXEnumerate (currentEntity, e, [container objectEnumerator])
     {
         MKCAssertFalse ([e1 hash] == [currentEntity hash]);
         MKCAssertFalse ([e2 hash] == [currentEntity hash]);

@@ -27,7 +27,7 @@
 //
 
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEnumerate.h>
 
 #import "MKCSenTestCaseAdditions.h"
 #import "MTOCollectionTest.h"
@@ -155,7 +155,7 @@
     MKCAssertTrue (3 == [objects2 count]);
     
     NSMutableSet* mock = [NSMutableSet set];
-    TSEnumerate (currentObject, e, [objects2 objectEnumerator])
+    BXEnumerate (currentObject, e, [objects2 objectEnumerator])
     {
         [mock addObject: currentObject];
         [foreignObjects addObject: currentObject];

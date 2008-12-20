@@ -27,7 +27,7 @@
 //
 
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEnumerate.h>
 #import <BaseTen/BXEntityDescriptionPrivate.h>
 #import <BaseTen/BXRelationshipDescriptionPrivate.h>
 
@@ -168,7 +168,7 @@
     MKCAssertTrue ([values containsObject: @"21"]);
     MKCAssertTrue ([values containsObject: @"22"]);    
     //See that the objects have the given entities
-    TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
+    BXEnumerate (currentObject, e, [foreignObjects objectEnumerator])
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 
     foreignObjects = [object valueForKey: [manyEntity name]];
@@ -178,7 +178,7 @@
     MKCAssertTrue ([values containsObject: @"21"]);
     MKCAssertTrue ([values containsObject: @"22"]);
     //See that the objects have the given entities
-    TSEnumerate (currentObject, e, [foreignObjects objectEnumerator])
+    BXEnumerate (currentObject, e, [foreignObjects objectEnumerator])
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 }
 
@@ -272,7 +272,7 @@
     NSSet* expected1 = [NSSet setWithObjects: @"a1", @"b1", @"c1", nil];
     NSSet* expected2 = [NSSet setWithObjects: @"a2", @"b2", @"c2", nil];
     
-    TSEnumerate (object, e, [res objectEnumerator])
+    BXEnumerate (object, e, [res objectEnumerator])
     {
         MKCAssertTrue ([[object objectID] entity] == entity1);
         
@@ -298,7 +298,7 @@
             NSSet* values2 = [foreignObjects valueForKey: @"value2"];
             MKCAssertEqualObjects (values2, expected2);
             
-            TSEnumerate (foreignObject, e, [foreignObjects objectEnumerator])
+            BXEnumerate (foreignObject, e, [foreignObjects objectEnumerator])
             {
                 MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
                 NSArray* objects = [foreignObject valueForKey: [entity1 name]];
@@ -308,7 +308,7 @@
                 NSSet* values1 = [objects valueForKey: @"value1"];
                 MKCAssertEqualObjects (values1, expected1);
                 
-                TSEnumerate (backRef, e, [objects objectEnumerator])
+                BXEnumerate (backRef, e, [objects objectEnumerator])
                     MKCAssertTrue ([[backRef objectID] entity] == entity1);
             }
         }
@@ -335,7 +335,7 @@
 	BXDatabaseObject* object = [res objectAtIndex: 0];
 	NSSet* helperObjects = [object primitiveValueForKey: @"mtmrel1"];
 	MKCAssertTrue (3 == [helperObjects count]);
-	TSEnumerate (currentObject, e, [helperObjects objectEnumerator])
+	BXEnumerate (currentObject, e, [helperObjects objectEnumerator])
 	{
 		MKCAssertTrue ([[currentObject objectID] entity] == mtmrel1);
 		MKCAssertTrue (1 == [[currentObject valueForKey: @"id1"] intValue]);

@@ -27,7 +27,7 @@
 //
 
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEnumerate.h>
 #import <BaseTen/BXEntityDescriptionPrivate.h>
 
 #import "ForeignKeyModificationTests.h"
@@ -221,7 +221,7 @@
 {
     BXDatabaseObject* object = [self removeRefObject: oneEntity];
     NSSet* refObjects = [object primitiveValueForKey: @"test2"];
-    TSEnumerate (currentObject, e, [[refObjects allObjects] objectEnumerator])
+    BXEnumerate (currentObject, e, [[refObjects allObjects] objectEnumerator])
         [currentObject setPrimitiveValue: nil forKey: @"test1"];
     
     [context rollback];

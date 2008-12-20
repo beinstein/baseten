@@ -31,7 +31,7 @@
 
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseObjectIDPrivate.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXEnumerate.h>
 #import <BaseTen/BXEntityDescriptionPrivate.h>
 
 
@@ -142,7 +142,7 @@
 	NSArray* result = [context executeQuery: [NSString stringWithUTF8String: "SELECT * FROM ♨"] error: &error];
 	STAssertNil (error, [error localizedDescription]);
 	MKCAssertTrue (3 == [result count]);
-	TSEnumerate (currentRow, e, [result objectEnumerator])
+	BXEnumerate (currentRow, e, [result objectEnumerator])
 		MKCAssertTrue (2 == [currentRow count]);
 }
 
