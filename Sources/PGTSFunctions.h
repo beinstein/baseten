@@ -35,10 +35,3 @@
 
 PGTS_EXPORT id PGTSOidAsObject (Oid o);
 PGTS_EXPORT enum PGTSDeleteRule PGTSDeleteRule (const unichar rule);
-
-#if 0
-PGTS_EXPORT void PGTSNoticeProcessor (void* sender, const char* message);
-PGTS_EXPORT NSString* PGTSModificationName (unichar type);
-PGTS_EXPORT NSString* PGTSLockOperation (unichar type);
-PGTS_EXPORT int PGTSSSLConnectionExIndex ();
-#endif

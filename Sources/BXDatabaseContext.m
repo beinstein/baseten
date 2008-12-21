@@ -2405,11 +2405,6 @@ ModTypeToObject (enum BXModificationType value)
     }	
 }
 
-- (NSArray *) keyPathComponents: (NSString *) keyPath
-{
-    return [mDatabaseInterface keyPathComponents: keyPath];
-}
-
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids
 {
     BXEnumerate (currentObject, e, [[self registeredObjectsWithIDs: ids] objectEnumerator])

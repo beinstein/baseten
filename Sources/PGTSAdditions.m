@@ -39,26 +39,6 @@
 
 
 @implementation NSString (PGTSAdditions)
-+ (NSString *) PGTSFieldAliases: (unsigned int) count
-{
-    return [self PGTSFieldAliases: count start: 1];
-}
-
-+ (NSString *) PGTSFieldAliases: (unsigned int) count start: (unsigned int) start
-{
-    NSString* rval = nil;
-    if (0 >= count)
-        rval = @"";
-    else
-    {
-        rval = [NSMutableString stringWithCapacity: 3 * (count % 10) + 4 * ((count / 10) % 10)];
-        for (unsigned int i = start; i <= count; i++)
-            [(NSMutableString *) rval appendFormat: @"$%u,", i];
-        [(NSMutableString *) rval deleteCharactersInRange: NSMakeRange ([rval length] - 1, 1)];
-    }
-    return rval;
-}
-
 /**
  * \internal
  * \brief Escape the string for the SQL interpreter.
@@ -259,31 +239,6 @@
     return [NSValue valueWithSize: s];
 }
 @end
-
-
-#if 0
-@implementation NSURL (PGTSAdditions)
-#define SetIf( VALUE, KEY ) if ((VALUE)) [connectionDict setObject: VALUE forKey: KEY];
-- (NSMutableDictionary *) PGTSConnectionDictionary
-{
-	NSMutableDictionary* connectionDict = nil;
-	if (0 == [@"pgsql" caseInsensitiveCompare: [self scheme]])
-	{
-		connectionDict = [NSMutableDictionary dictionary];    
-		
-		NSString* relativePath = [self relativePath];
-		if (1 <= [relativePath length])
-			SetIf ([relativePath substringFromIndex: 1], kPGTSDatabaseNameKey);
-		
-		SetIf ([self host], kPGTSHostKey);
-		SetIf ([self user], kPGTSUserNameKey);
-		SetIf ([self password], kPGTSPasswordKey);
-		SetIf ([self port], kPGTSPortKey);
-	}
-	return connectionDict;
-}
-@end
-#endif
 
 
 @implementation NSMutableData (PGTSPrivateAdditions)

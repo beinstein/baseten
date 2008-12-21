@@ -209,47 +209,6 @@ URLDecode (const char* bytes, size_t length, id sender)
     return [NSString BXURLDecodedData: self];
 }
 
-- (NSArray *) BXKeyPathComponentsWithQuote: (NSString *) quoteString
-{
-    NSMutableArray* rval = [NSMutableArray array];
-    NSString* part = nil;
-    NSScanner* scanner = [NSScanner scannerWithString: self];
-    for (;;)
-    {
-        if ('"' == [self characterAtIndex: [scanner scanLocation]])
-        {
-            NSMutableString* subpart = [NSMutableString string];
-            [scanner scanString: quoteString intoString: NULL];
-            for (;;) 
-            {
-                if ([scanner scanUpToString: quoteString intoString: &part])
-                    [subpart appendString: part];
-                else
-                {
-                    unichar c = [self characterAtIndex: [scanner scanLocation] - 1];
-                    [scanner scanString: quoteString intoString: NULL];
-                    if ('\\' != c)
-                        break;
-                }
-            }
-            [rval addObject: subpart];            
-        }
-        else if ([scanner scanUpToString: @"." intoString: &part])
-        {
-            [rval addObject: part];
-        }
-        
-        if ([scanner isAtEnd])
-            break;
-        else
-        {
-            BOOL period = [scanner scanString: @"." intoString: NULL];
-            assert (period);
-        }
-    }
-    return rval;
-}
-
 - (NSString *) BXAttributeName
 {
 	return self;
@@ -258,66 +217,6 @@ URLDecode (const char* bytes, size_t length, id sender)
 
 
 @implementation NSPredicate (BXDatabaseAdditions)
-+ (NSPredicate *) BXAndPredicateWithProperties: (NSArray *) properties
-                             matchingProperties: (NSArray *) otherProperties
-                                           type: (NSPredicateOperatorType) type
-{
-    NSArray* parts = [self BXSubpredicatesForProperties: properties
-                                      matchingProperties: otherProperties
-                                                    type: type];
-    id rval = nil;
-    if (nil != parts)
-        rval = [NSCompoundPredicate andPredicateWithSubpredicates: parts];
-    return rval;
-}
-
-+ (NSPredicate *) BXOrPredicateWithProperties: (NSArray *) properties
-                            matchingProperties: (NSArray *) otherProperites
-                                          type: (NSPredicateOperatorType) type
-{
-    NSArray* parts = [self BXSubpredicatesForProperties: properties
-                                      matchingProperties: otherProperites
-                                                    type: type];
-    id rval = nil;
-    if (nil != parts)
-        rval = [NSCompoundPredicate orPredicateWithSubpredicates: parts];
-    return rval;    
-}
-
-+ (NSArray *) BXSubpredicatesForProperties: (NSArray *) properties
-                         matchingProperties: (NSArray *) otherProperties
-                                       type: (NSPredicateOperatorType) type
-{
-    unsigned int count = [properties count];
-	BXAssertValueReturn (count == [otherProperties count], nil, @"Expected given arrays' counts to match.");
-    NSMutableArray* parts = [NSMutableArray arrayWithCapacity: count];
-    for (unsigned int i = 0; i < count; i++)
-    {
-        //The expression type should not be changed since it affects expression handling in NSExpression+PGTSAdditions.
-        NSExpression* lhs = [NSExpression expressionForConstantValue: [properties objectAtIndex: i]];
-        NSExpression* rhs = [NSExpression expressionForConstantValue: [otherProperties objectAtIndex: i]];
-        [parts addObject: [NSComparisonPredicate predicateWithLeftExpression: lhs
-                                                             rightExpression: rhs
-                                                                    modifier: NSDirectPredicateModifier
-                                                                        type: type
-                                                                     options: 0]];
-    }
-    if (0 == [parts count])
-        parts = nil;
-    return parts;
-}
-
-- (NSArray *) BXEntities
-{
-    return nil;
-}
-
-- (NSSet *) BXEntitySet
-{
-    NSMutableSet* rval = [NSMutableSet setWithArray: [self BXEntities]];
-    return rval;
-}
-
 - (BOOL) BXEvaluateWithObject: (id) object substitutionVariables: (NSMutableDictionary *) ctx
 {
 	//10.5 and 10.4 have the same method but it's named differently.
@@ -328,31 +227,6 @@ URLDecode (const char* bytes, size_t length, id sender)
 		retval = [self evaluateWithObject: object variableBindings: ctx];
 	
 	return retval;
-}
-@end
-
-
-@implementation NSCompoundPredicate (BXDatabaseAdditions)
-- (NSSet *) BXEntitySet
-{
-    NSMutableSet* set = [NSMutableSet set];
-    BXEnumerate (currentPredicate, e, [[self subpredicates] objectEnumerator])
-        [set unionSet: [currentPredicate BXEntitySet]];
-    return set;
-}
-@end
-
-
-@implementation NSMutableSet (BXDatabaseAdditions)
-- (id) BXConditionalAdd: (id) anObject
-{
-    id rval = [self member: anObject];
-    if (nil == rval)
-    {
-        [self addObject: anObject];
-        rval = anObject;
-    }
-    return rval;
 }
 @end
 
@@ -369,93 +243,7 @@ URLDecode (const char* bytes, size_t length, id sender)
 @end
 
 
-@implementation NSDictionary (BXDatabaseAdditions)
-- (NSDictionary *) BXSubDictionaryExcludingKeys: (NSArray *) keys
-{
-    NSMutableDictionary* rval = [NSMutableDictionary dictionaryWithCapacity: [self count] - [keys count]];
-    BXEnumerate (currentKey, e, [self keyEnumerator])
-    {
-        if (NO == [keys containsObject: currentKey])
-            [rval setObject: [self objectForKey: currentKey] forKey: currentKey];
-    }
-    return rval;
-}
-
-- (NSDictionary *) BXTranslateUsingKeys: (NSDictionary *) translationDict
-{
-    NSMutableDictionary* rval = [NSMutableDictionary dictionaryWithCapacity: 
-        MIN ([self count], [translationDict count])];
-    BXEnumerate (currentKey, e, [translationDict keyEnumerator])
-    {
-        id currentObject = [self objectForKey: currentKey];
-        if (nil != currentObject)
-            [rval setObject: currentObject forKey: [translationDict objectForKey: currentKey]];
-    }
-    return rval;
-}
-@end
-
-
-@implementation NSExpression (BXDatabaseAdditions)
-- (BXEntityDescription *) BXEntity
-{
-    return [[self BXAttribute] entity];
-}
-
-- (BXAttributeDescription *) BXAttribute
-{
-    BXAttributeDescription* rval = nil;
-    if ([self expressionType] == NSConstantValueExpressionType)
-    {
-        id constantValue = [self constantValue];
-        if ([constantValue isKindOfClass: [BXAttributeDescription class]])
-            rval = constantValue;
-    }
-    return rval;
-}
-@end
-
-
-@implementation NSComparisonPredicate (BXDatabaseAdditions)
-- (NSMutableSet *) BXEntitySet
-{
-	return [NSMutableSet setWithArray: [self BXEntities]];
-}
-
-- (NSArray *) BXEntities
-{
-    id lEnt = [[self  leftExpression] BXEntity];
-    id rEnt = [[self rightExpression] BXEntity];
-	id rval = nil;
-	if (nil == lEnt && nil == rEnt)
-		rval = nil;
-	else if (nil == lEnt)
-		rval = [NSArray arrayWithObject: rEnt];
-	else if (nil == rEnt)
-		rval = [NSArray arrayWithObject: lEnt];
-	else
-		rval = [NSArray arrayWithObjects: lEnt, rEnt, nil];
-	
-	return rval;
-}
-@end
-
-
 @implementation NSArray (BXDatabaseAdditions)
-- (BOOL) BXContainsObjectsInArray: (NSArray *) anArray
-{
-    BOOL rval = YES;
-    BXEnumerate (currentObject, e, [anArray objectEnumerator])
-    {
-        if (NO == [self containsObject: currentObject])
-        {
-            rval = NO;
-            break;
-        }
-    }
-    return rval;
-}
-
 - (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
 											others: (NSMutableArray *) otherArray
 							 substitutionVariables: (NSMutableDictionary *) variables
@@ -469,33 +257,6 @@ URLDecode (const char* bytes, size_t length, id sender)
             [otherArray addObject: currentObject];
     }
     return retval;
-}
-
-+ (NSArray *) BXNullArray: (unsigned int) count
-{
-	id* buffer = (id *) alloca (count * sizeof (id));
-	for (unsigned int i = 0; i < count; i++)
-		buffer [i] = [NSNull null];
-	
-	NSArray* rval = [NSArray arrayWithObjects: buffer count: count];
-	return rval;
-}
-
-@end
-
-
-@implementation NSSet (BXDatabaseAdditions)
-- (NSPredicate *) BXOrPredicateForObjects
-{
-    NSPredicate* rval = nil;
-    if (0 < [self count])
-    {
-        NSMutableArray* parts = [NSMutableArray arrayWithCapacity: [self count]];
-        BXEnumerate (currentObject, e, [self objectEnumerator])
-            [parts addObject: [[currentObject objectID] predicate]];
-        rval = [NSCompoundPredicate orPredicateWithSubpredicates: parts];
-    }
-    return rval;
 }
 @end
 

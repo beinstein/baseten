@@ -66,7 +66,6 @@
 - (void) unregisterObject: (BXDatabaseObject *) anObject;
 - (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
-- (NSArray *) keyPathComponents: (NSString *) keyPath;
 - (void) setCanConnect: (BOOL) aBool;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName 
                      validateImmediately: (BOOL) validateImmediately error: (NSError **) error;

@@ -119,7 +119,6 @@ struct BXTrustResult
 - (void) disconnect;
 //@}
 
-- (NSArray *) keyPathComponents: (NSString *) keyPath;
 #if 0
 - (void) setLogsQueries: (BOOL) aBool;
 - (BOOL) logsQueries;

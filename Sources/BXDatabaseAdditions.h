@@ -59,7 +59,6 @@
 - (NSData *) BXURLEncodedData;
 - (NSString *) BXURLEncodedString;
 - (NSString *) BXURLDecodedString;
-- (NSArray *) BXKeyPathComponentsWithQuote: (NSString *) quoteString;
 - (NSString *) BXAttributeName;
 @end
 
@@ -71,28 +70,7 @@
 
 
 @interface NSPredicate (BXDatabaseAdditions)
-+ (NSPredicate *) BXAndPredicateWithProperties: (NSArray *) properties
-							matchingProperties: (NSArray *) otherProperties
-										  type: (NSPredicateOperatorType) type;
-+ (NSPredicate *) BXOrPredicateWithProperties: (NSArray *) properties
-                            matchingProperties: (NSArray *) otherProperites
-                                          type: (NSPredicateOperatorType) type;
-+ (NSArray *) BXSubpredicatesForProperties: (NSArray *) properties
-						matchingProperties: (NSArray *) otherProperties
-									  type: (NSPredicateOperatorType) type;
-- (NSArray *) BXEntities;
-- (NSSet *) BXEntitySet;
 - (BOOL) BXEvaluateWithObject: (id) anObject substitutionVariables: (NSMutableDictionary *) dictionary;
-@end
-
-
-@interface NSCompoundPredicate (BXDatabaseAdditions)
-- (NSSet *) BXEntitySet;
-@end
-
-
-@interface NSMutableSet (BXDatabaseAdditions)
-- (id) BXConditionalAdd: (id) anObject;
 @end
 
 
@@ -101,35 +79,10 @@
 @end
 
 
-@interface NSDictionary (BXDatabaseAdditions)
-- (NSDictionary *) BXSubDictionaryExcludingKeys: (NSArray *) keys;
-- (NSDictionary *) BXTranslateUsingKeys: (NSDictionary *) translationDict;
-@end
-
-
-@interface NSExpression (BXDatabaseAdditions)
-- (BXEntityDescription *) BXEntity;
-- (BXAttributeDescription *) BXAttribute;
-@end
-
-
 @interface NSArray (BXDatabaseAdditions)
-- (BOOL) BXContainsObjectsInArray: (NSArray *) anArray;
 - (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
 											others: (NSMutableArray *) otherArray
 							 substitutionVariables: (NSMutableDictionary *) variables;
-+ (NSArray *) BXNullArray: (unsigned int) count;
-@end
-
-
-@interface NSSet (BXDatabaseAdditions)
-- (NSPredicate *) BXOrPredicateForObjects;
-@end
-
-
-@interface NSMutableDictionary (BXDatabaseAdditions)
-- (void) BXSetModificationType: (enum BXModificationType) aType forKey: (BXDatabaseObjectID *) aKey;
-- (enum BXModificationType) BXModificationTypeForKey: (BXDatabaseObjectID *) aKey;
 @end
 
 

@@ -65,8 +65,6 @@ namespace PGTS
 @interface NSString (PGTSAdditions)
 - (int) PGTSParameterCount;
 - (NSString *) PGTSEscapedString: (PGTSConnection *) connection;
-+ (NSString *) PGTSFieldAliases: (unsigned int) count;
-+ (NSString *) PGTSFieldAliases: (unsigned int) count start: (unsigned int) start;
 @end
 
 

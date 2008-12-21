@@ -1303,12 +1303,6 @@ bail:
 }
 
 
-- (NSArray *) keyPathComponents: (NSString *) keyPath
-{
-	return [keyPath BXKeyPathComponentsWithQuote: @"\""];
-}
-
-
 - (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted
 {
 	[mTransactionHandler handledTrust: trust accepted: accepted];

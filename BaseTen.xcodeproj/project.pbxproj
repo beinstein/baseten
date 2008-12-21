@@ -951,10 +951,7 @@
 			isa = PBXGroup;
 			children = (
 				536C9D5F0EFD94D10041422F /* BXEnumerate.h */,
-				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
-				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
-				53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */,
-				53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */,
+				536C9E8D0EFDAFF20041422F /* Generic additions */,
 				53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */,
 				5364EF5B0E1B940A003D3DB6 /* BXLogger.m */,
 				5321F8330CF77FFB00E663CE /* BXInvocationRecorder.h */,
@@ -1097,12 +1094,23 @@
 				53666CB50E1CD8D20028DBEA /* PGTSConstants.m */,
 				53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */,
 				53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */,
-				53666CC00E1CD8D20028DBEA /* PGTSFunctions.h */,
-				53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */,
 				53915F9C0E3FD22D0098B419 /* libpq_additions.h */,
 				53915F9D0E3FD22D0098B419 /* libpq_additions.c */,
 			);
 			name = Other;
+			sourceTree = "<group>";
+		};
+		536C9E8D0EFDAFF20041422F /* Generic additions */ = {
+			isa = PBXGroup;
+			children = (
+				53666CC00E1CD8D20028DBEA /* PGTSFunctions.h */,
+				53666CC10E1CD8D20028DBEA /* PGTSFunctions.m */,
+				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
+				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
+				53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */,
+				53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */,
+			);
+			name = "Generic additions";
 			sourceTree = "<group>";
 		};
 		537A23C00E84055F002AAE95 /* Expression value types */ = {

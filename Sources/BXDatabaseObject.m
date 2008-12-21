@@ -51,6 +51,7 @@
 #import "BXLogger.h"
 #import "PGTSHOM.h"
 #import "BXEnumerate.h"
+#import "BXKeyPathParser.h"
 
 
 static NSString* 
@@ -311,7 +312,7 @@ ParseSelector (SEL aSelector, NSString** key)
 - (id) valueForKeyPath: (NSString *) keyPath
 {
     id rval = nil;
-    NSArray* components = [mContext keyPathComponents: keyPath];
+	NSArray* components = BXKeyPathComponents (keyPath);
     unsigned int count = [components count];
     BXEntityDescription* entity = [mObjectID entity];
     
