@@ -29,7 +29,6 @@
 #import "NSPredicate+PGTSAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
 #import "BXLogger.h"
-#import "PGTSFunctions.h"
 #import "PGTSConstants.h"
 
 

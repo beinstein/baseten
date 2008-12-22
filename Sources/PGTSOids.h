@@ -1,5 +1,5 @@
 //
-// PGTSCollections.h
+// PGTSOids.h
 // BaseTen
 //
 // Copyright (C) 2008 Marko Karppinen & Co. LLC.
@@ -28,31 +28,10 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXExport.h>
+#import <BaseTen/postgresql/libpq-fe.h>
 
+PGTS_EXPORT id PGTSOidAsObject (Oid o);
 
-#if defined(__cplusplus)
-namespace PGTS 
-{
-	struct ObjectHash
-	{
-		size_t operator() (const id anObject) const { return [anObject hash]; }
-	};
-	
-	template <typename T>
-	struct ObjectCompare
-	{
-		bool operator() (const T x, const T y) const { return ([x isEqual: y] ? true : false); }
-	};
-	
-	template <>
-	struct ObjectCompare <NSString *>
-	{
-		bool operator() (const NSString* x, const NSString* y) const { return ([x isEqualToString: y] ? true : false); }
-	};
-}
-#endif
-
-
-BX_EXPORT id PGTSSetCreateMutableWeakNonretaining ();
-BX_EXPORT id PGTSSetCreateMutableStrongRetainingForNSRD ();
-BX_EXPORT id PGTSDictionaryCreateMutableWeakNonretainedObjects ();
+@interface NSNumber (PGTSOidAdditions)
+- (Oid) PGTSOidValue;
+@end

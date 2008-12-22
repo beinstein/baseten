@@ -1,11 +1,11 @@
 //
-// PGTSCollections.h
+// BXURLEncoding.h
 // BaseTen
 //
-// Copyright (C) 2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+// by visiting http://basetenframework.org/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -26,33 +26,20 @@
 // $Id$
 //
 
+
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXExport.h>
+
+@interface NSString (BXDatabaseAdditions)
++ (NSString *) BXURLEncodedData: (id) data;
++ (NSString *) BXURLDecodedData: (id) data;
+- (NSData *) BXURLDecodedData;
+- (NSData *) BXURLEncodedData;
+- (NSString *) BXURLEncodedString;
+- (NSString *) BXURLDecodedString;
+@end
 
 
-#if defined(__cplusplus)
-namespace PGTS 
-{
-	struct ObjectHash
-	{
-		size_t operator() (const id anObject) const { return [anObject hash]; }
-	};
-	
-	template <typename T>
-	struct ObjectCompare
-	{
-		bool operator() (const T x, const T y) const { return ([x isEqual: y] ? true : false); }
-	};
-	
-	template <>
-	struct ObjectCompare <NSString *>
-	{
-		bool operator() (const NSString* x, const NSString* y) const { return ([x isEqualToString: y] ? true : false); }
-	};
-}
-#endif
-
-
-BX_EXPORT id PGTSSetCreateMutableWeakNonretaining ();
-BX_EXPORT id PGTSSetCreateMutableStrongRetainingForNSRD ();
-BX_EXPORT id PGTSDictionaryCreateMutableWeakNonretainedObjects ();
+@interface NSData (BXDatabaseAdditions)
+- (NSData *) BXURLEncodedData;
+- (NSData *) BXURLDecodedData;
+@end

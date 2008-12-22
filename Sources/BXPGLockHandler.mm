@@ -30,8 +30,8 @@
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXLogger.h"
 #import "PGTSAdditions.h"
-#import "PGTSFunctions.h"
 #import "PGTSScannedMemoryAllocator.h"
+#import "PGTSOids.h"
 #import <tr1/unordered_map>
 
 

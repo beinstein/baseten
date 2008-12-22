@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXLogger.h>
+#import <BaseTen/BXExport.h>
 
 
 BX_EXPORT NSArray* BXKeyPathComponents (NSString* keyPath);

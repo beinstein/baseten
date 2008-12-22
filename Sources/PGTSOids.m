@@ -1,8 +1,8 @@
 //
-// PGTSFunctions.m
+// PGTSOids.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -26,63 +26,19 @@
 // $Id$
 //
 
-#import <libgen.h>
-#import <Foundation/Foundation.h>
-#import <openssl/x509.h>
-#import <openssl/ssl.h>
-#import <Security/Security.h>
-#import <BaseTen/postgresql/libpq-fe.h>
-#import "PGTSFunctions.h"
-#import "PGTSConstants.h"
-#import "PGTSConnection.h"
+#import "PGTSOids.h"
 
 
 /**
+ * \internal
  * \brief Return the value as an object.
+ *
  * \sa PGTSOidValue
  */
 id 
 PGTSOidAsObject (Oid o)
 {
-    //Methods inherited from NSValue seem to return an NSValue instead of an NSNumber
+    //Methods inherited from NSValue seem to return an NSValue instead of an NSNumber.
+	//Thus, we use NSNumber.
     return [NSNumber numberWithUnsignedInt: o];
-}
-
-
-enum PGTSDeleteRule
-PGTSDeleteRule (const unichar rule)
-{
-	enum PGTSDeleteRule deleteRule = kPGTSDeleteRuleUnknown;
-	switch (rule)
-	{
-		case ' ':
-			deleteRule = kPGTSDeleteRuleNone;
-			break;
-			
-		case 'c':
-			deleteRule = kPGTSDeleteRuleCascade;
-			break;
-			
-		case 'n':
-			deleteRule = kPGTSDeleteRuleSetNull;
-			break;
-			
-		case 'd':
-			deleteRule = kPGTSDeleteRuleSetDefault;
-			break;
-			
-		case 'r':
-			deleteRule = kPGTSDeleteRuleRestrict;
-			break;
-			
-		case 'a':
-			deleteRule = kPGTSDeleteRuleNone;
-			break;
-			
-		default:
-			deleteRule = kPGTSDeleteRuleUnknown;
-			break;
-	}	
-	
-	return deleteRule;
 }

@@ -176,11 +176,6 @@
 	}
 }
 
-- (NSString *) BXAttributeName
-{
-	return mName;
-}
-
 - (void) setAttributeValueClass: (Class) aClass
 {
 	mAttributeClass = aClass;

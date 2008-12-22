@@ -28,15 +28,7 @@
 
 
 #import <Foundation/Foundation.h>
-
-
-#ifndef BX_EXPORT
-#ifdef __cplusplus
-#define BX_EXPORT extern "C"
-#else
-#define BX_EXPORT extern
-#endif
-#endif
+#import <BaseTen/BXExport.h>
 
 
 BX_EXPORT NSString* const kBXNoDatabaseURIException;

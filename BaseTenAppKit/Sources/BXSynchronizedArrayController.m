@@ -46,6 +46,30 @@
 //FIXME: Handle locks
 
 
+@implementation NSObject (BXSynchronizedArrayControllerAdditions)
+- (BOOL) BXIsRelationshipProxy
+{
+	return NO;
+}
+@end
+
+
+@implementation NSProxy (BXSynchronizedArrayControllerAdditions)
+- (BOOL) BXIsRelationshipProxy
+{
+	return NO;
+}
+@end
+
+
+@implementation BXSetRelationProxy (BXSynchronizedArrayControllerAdditions)
+- (BOOL) BXIsRelationshipProxy
+{
+	return YES;
+}
+@end
+
+
 /**
  * \brief An NSArrayController subclass for use with BaseTen.
  *

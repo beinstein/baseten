@@ -38,7 +38,7 @@
 
 #define BXSafeObj( OBJECT )  ( (void *) OBJECT ?: [NSNull null] )
 
-#define BXSafeCFRelease( CF_VAL ) ( NULL != CF_VAL ? CFRelease( CF_VAL ) : NULL )
+#define SafeCFRelease( CF_VAL )  if (NULL != CF_VAL) { CFRelease (CF_VAL); CF_VAL = NULL; }
 
 #import <BaseTen/BXConstants.h>
 
@@ -52,30 +52,8 @@
 @end
 
 
-@interface NSString (BXDatabaseAdditions)
-+ (NSString *) BXURLEncodedData: (id) data;
-+ (NSString *) BXURLDecodedData: (id) data;
-- (NSData *) BXURLDecodedData;
-- (NSData *) BXURLEncodedData;
-- (NSString *) BXURLEncodedString;
-- (NSString *) BXURLDecodedString;
-- (NSString *) BXAttributeName;
-@end
-
-
-@interface NSData (BXDatabaseAdditions)
-- (NSData *) BXURLEncodedData;
-- (NSData *) BXURLDecodedData;
-@end
-
-
 @interface NSPredicate (BXDatabaseAdditions)
 - (BOOL) BXEvaluateWithObject: (id) anObject substitutionVariables: (NSMutableDictionary *) dictionary;
-@end
-
-
-@interface NSError (BXDatabaseAdditions)
-- (NSException *) BXExceptionWithName: (NSString *) aName;
 @end
 
 
@@ -83,14 +61,4 @@
 - (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
 											others: (NSMutableArray *) otherArray
 							 substitutionVariables: (NSMutableDictionary *) variables;
-@end
-
-
-@interface NSObject (BXDatabaseAdditions)
-- (BOOL) BXIsRelationshipProxy;
-@end
-
-
-@interface NSProxy (BXDatabaeAdditions)
-- (BOOL) BXIsRelationshipProxy;
 @end

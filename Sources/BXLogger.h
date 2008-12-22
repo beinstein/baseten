@@ -30,15 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <stdarg.h>
 #import <mach-o/dyld.h>
-
-
-#ifndef BX_EXPORT
-#ifdef __cplusplus
-#define BX_EXPORT extern "C"
-#else
-#define BX_EXPORT extern
-#endif
-#endif
+#import <BaseTen/BXExport.h>
 
 
 #define BX_LOG_ARGS __BASE_FILE__, __PRETTY_FUNCTION__, __builtin_return_address(0), __LINE__

@@ -40,6 +40,7 @@
 #import "PGTSFoundationObjects.h"
 #import "PGTSAdditions.h"
 #import "PGTSScannedMemoryAllocator.h"
+#import "PGTSCollections.h"
 
 //FIXME: enable (some of) these.
 #if 0

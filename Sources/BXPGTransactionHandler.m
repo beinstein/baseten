@@ -28,8 +28,8 @@
 
 #import "PGTS.h"
 #import "PGTSAdditions.h"
-#import "PGTSFunctions.h"
 #import "PGTSHOM.h"
+#import "PGTSOids.h"
 
 #import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
@@ -288,6 +288,23 @@ SSLMode (enum BXSSLMode mode)
 	[mLockHandlers removeAllObjects];
 }
 
+
+static NSString*
+ConnectionString (NSDictionary* connectionDict)
+{
+	NSMutableString* connectionString = [NSMutableString string];
+	NSEnumerator* e = [connectionDict keyEnumerator];
+	NSString* currentKey;
+	NSString* format = @"%@ = '%@' ";
+	while ((currentKey = [e nextObject]))
+	{
+		if ([kPGTSConnectionDictionaryKeys containsObject: currentKey])
+			[connectionString appendFormat: format, currentKey, [connectionDict objectForKey: currentKey]];
+	}
+	return connectionString;
+}
+
+
 - (NSString *) connectionString
 {
 	BXDatabaseContext* ctx = [mInterface databaseContext];
@@ -299,7 +316,7 @@ SSLMode (enum BXSSLMode mode)
 	
 	[connectionDict setValue: @"10" forKey: kPGTSConnectTimeoutKey];
 	
-	return [connectionDict PGTSConnectionString];
+	return ConnectionString (connectionDict);
 }
 
 

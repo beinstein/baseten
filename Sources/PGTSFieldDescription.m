@@ -30,7 +30,6 @@
 #import "PGTSResultSet.h"
 #import "PGTSConnection.h"
 #import "PGTSTableDescription.h"
-#import "PGTSFunctions.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSAdditions.h"
 

@@ -30,7 +30,6 @@
 #import "PGTSFoundationObjects.h"
 #import "PGTSConnection.h"
 #import "PGTSConnectionPrivate.h"
-#import "PGTSFunctions.h"
 #import "PGTSTypeDescription.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSAdditions.h"
@@ -319,7 +318,10 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
         BXEnumerate (currentObject, e, [self objectEnumerator])
         {
             if ([NSNull null] == currentObject)
-                [contents PGTSAppendCString: "null,"];
+			{
+				const char* bytes = "null,";
+                [contents appendBytes: bytes length: strlen (bytes)];
+			}
             else
             {
                 int length = -1;
@@ -586,5 +588,102 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return NULL;
+}
+@end
+
+
+@implementation PGTSAbstractClass
+- (id) init
+{
+    NSString* reason = [NSString stringWithFormat: @"%@ is an abstract class", [self class]];
+    [[NSException exceptionWithName: NSGenericException 
+                             reason: reason
+                           userInfo: nil] raise];
+    return nil;
+}
+@end
+
+
+@implementation PGTSFloat
+@end
+
+
+@implementation PGTSFloat (PGTSAdditions)
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
+{
+    return [NSNumber numberWithFloat: strtof (value, NULL)];
+}
+@end
+
+
+@implementation PGTSDouble
+@end
+
+
+@implementation PGTSDouble (PGTSAdditions)
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
+{
+    return [NSNumber numberWithDouble: strtod (value, NULL)];
+}
+@end
+
+
+@implementation PGTSBool
+@end
+
+
+@implementation PGTSBool (PGTSAdditions)
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
+{
+    BOOL boolValue = (value [0] == 't' ? YES : NO);
+    return [NSNumber numberWithBool: boolValue];
+}
+@end
+
+
+@implementation PGTSPoint
+@end
+
+
+@implementation PGTSPoint (PGTSAdditions)
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
+{
+    NSPoint retval = NSZeroPoint;
+    NSString* pointString = [NSString stringWithUTF8String: value];
+    NSScanner* pointScanner = [NSScanner scannerWithString: pointString];
+    [pointScanner setScanLocation: 1];
+	
+#if CGFLOAT_IS_DOUBLE
+    [pointScanner scanDouble: &(retval.x)];
+#else
+    [pointScanner scanFloat: &(retval.x)];
+#endif
+	
+    [pointScanner setScanLocation: [pointScanner scanLocation] + 1];
+	
+#if CGFLOAT_IS_DOUBLE
+    [pointScanner scanDouble: &(retval.y)];
+#else
+    [pointScanner scanFloat: &(retval.y)];
+#endif
+	
+    return [NSValue valueWithPoint: retval];
+}
+@end
+
+
+@implementation PGTSSize
+@end
+
+
+@implementation PGTSSize (PGTSAdditions)
++ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
+{
+    NSPoint p = NSZeroPoint;
+    [[PGTSPoint newForPGTSResultSet: set withCharacters: value type: typeInfo] getValue: &p];
+    NSSize s;
+    s.width = p.x;
+    s.height = p.y;
+    return [NSValue valueWithSize: s];
 }
 @end

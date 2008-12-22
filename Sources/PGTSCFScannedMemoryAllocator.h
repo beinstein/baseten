@@ -26,8 +26,8 @@
 // $Id$
 //
 
-#import <BaseTen/PGTSConstants.h>
 #import <CoreFoundation/CoreFoundation.h>
+#import <BaseTen/BXExport.h>
 
 
 PGTS_EXPORT CFAllocatorRef PGTSScannedMemoryAllocator ();

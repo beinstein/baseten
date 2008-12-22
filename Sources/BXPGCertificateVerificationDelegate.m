@@ -66,7 +66,7 @@ end:
 
 - (void) dealloc
 {
-	BXSafeCFRelease (mCertificates);
+	SafeCFRelease (mCertificates);
 	[super dealloc];
 }
 
@@ -119,10 +119,10 @@ end:
 		else
 			retval = [mHandler handleInvalidTrust: trust result: result];
 		
-		BXSafeCFRelease (trust);
+		SafeCFRelease (trust);
 	}
 	
-	BXSafeCFRelease (certificates);	
+	SafeCFRelease (certificates);	
 	return retval;
 }
 

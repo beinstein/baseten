@@ -26,17 +26,8 @@
 // $Id$
 //
 
-#if defined(PGTS_EXPORT)
-#undef PGTS_EXPORT
-#endif
-
-#if defined(__cplusplus)
-#define PGTS_EXPORT extern "C"
-#else
-#define PGTS_EXPORT extern
-#endif
-
 #import <BaseTen/postgresql/libpq-fe.h>
+#import <BaseTen/BXExport.h>
 
 
 PGTS_EXPORT const char* pq_ssl_mode (const PGconn* connection);

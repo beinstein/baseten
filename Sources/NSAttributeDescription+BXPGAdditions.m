@@ -30,9 +30,9 @@
 #import "NSPredicate+PGTSAdditions.h"
 #import "PGTSHOM.h"
 #import "PGTSConstantValue.h"
-#import "PGTSFunctions.h"
 #import "BXLogger.h"
 #import "PGTSFoundationObjects.h"
+#import "PGTSConstants.h"
 #import "BXEnumerate.h"
 
 

@@ -227,10 +227,4 @@
 {
     return [[[mRelationship name] copy] autorelease];
 }
-
-- (BOOL) BXIsRelationshipProxy
-{
-	return YES;
-}
-
 @end

@@ -28,11 +28,11 @@
 
 #import <BaseTen/postgresql/libpq-fe.h>
 #import "PGTSRoleDescription.h"
-#import "PGTSFunctions.h"
 #import "PGTSResultSet.h"
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
 #import "PGTSDatabaseDescription.h"
+#import "PGTSOids.h"
 #import "BXEnumerate.h"
 
 

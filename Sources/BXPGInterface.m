@@ -28,7 +28,10 @@
 
 #import "PGTS.h"
 #import "PGTSHOM.h"
-#import "PGTSFunctions.h"
+#import "PGTSDeleteRule.h"
+#import "PGTSConstants.h"
+#import "PGTSOids.h"
+
 #import "BaseTen.h"
 #import "BXRelationshipDescription.h"
 #import "BXOneToOneRelationshipDescription.h"

@@ -34,6 +34,7 @@
 #import "BXDatabaseObjectPrivate.h"
 #import "BXPGExpressionVisitor.h"
 #import "BXLogger.h"
+#import "BXURLEncoding.h"
 
 
 @implementation NSObject (BXPGAdditions)

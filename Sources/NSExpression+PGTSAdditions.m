@@ -26,7 +26,6 @@
 // $Id$
 //
 
-#import "PGTSFunctions.h"
 #import "PGTSAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
 #import "BXLogger.h"

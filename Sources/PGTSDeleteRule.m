@@ -1,5 +1,5 @@
 //
-// PGTSFunctions.h
+// PGTSDeleteRule.m
 // BaseTen
 //
 // Copyright (C) 2006 Marko Karppinen & Co. LLC.
@@ -26,12 +26,43 @@
 // $Id$
 //
 
-#import <BaseTen/postgresql/libpq-fe.h>
+#import "PGTSDeleteRule.h"
 #import "PGTSConstants.h"
 
-
-#define SafeCFRelease( CF_VAL )  if (NULL != CF_VAL) { CFRelease (CF_VAL); CF_VAL = NULL; }
-
-
-PGTS_EXPORT id PGTSOidAsObject (Oid o);
-PGTS_EXPORT enum PGTSDeleteRule PGTSDeleteRule (const unichar rule);
+enum PGTSDeleteRule
+PGTSDeleteRule (const unichar rule)
+{
+	enum PGTSDeleteRule deleteRule = kPGTSDeleteRuleUnknown;
+	switch (rule)
+	{
+		case ' ':
+			deleteRule = kPGTSDeleteRuleNone;
+			break;
+			
+		case 'c':
+			deleteRule = kPGTSDeleteRuleCascade;
+			break;
+			
+		case 'n':
+			deleteRule = kPGTSDeleteRuleSetNull;
+			break;
+			
+		case 'd':
+			deleteRule = kPGTSDeleteRuleSetDefault;
+			break;
+			
+		case 'r':
+			deleteRule = kPGTSDeleteRuleRestrict;
+			break;
+			
+		case 'a':
+			deleteRule = kPGTSDeleteRuleNone;
+			break;
+			
+		default:
+			deleteRule = kPGTSDeleteRuleUnknown;
+			break;
+	}	
+	
+	return deleteRule;
+}

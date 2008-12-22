@@ -40,3 +40,33 @@
 - (id) PGTSExpressionOfType: (NSAttributeType) attrType;
 @end
 
+
+@interface PGTSAbstractClass : NSObject
+{
+}
+@end
+
+@interface PGTSFloat : PGTSAbstractClass
+{
+}
+@end
+
+@interface PGTSDouble : PGTSAbstractClass
+{
+}
+@end
+
+@interface PGTSBool : PGTSAbstractClass
+{
+}
+@end
+
+@interface PGTSPoint : PGTSAbstractClass
+{
+}
+@end
+
+@interface PGTSSize : PGTSAbstractClass
+{
+}
+@end

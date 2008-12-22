@@ -119,7 +119,24 @@ ParseSelector (SEL aSelector, NSString** key)
         }
     }
     return rval;
-}    
+}
+
+
+@implementation NSString (BXDatabaseObjectAdditions)
+- (NSString *) BXAttributeName
+{
+	return self;
+}
+@end
+
+
+@implementation BXAttributeDescription (BXDatabaseObjectAdditions)
+- (NSString *) BXAttributeName
+{
+	return mName;
+}
+@end
+
 
 /** 
  * \brief A class that represents a single row in a database table.

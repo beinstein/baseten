@@ -39,6 +39,7 @@
 //#import "BXAttributeDescriptionPrivate.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "BXURLEncoding.h"
 
 
 /**

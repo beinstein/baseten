@@ -32,7 +32,6 @@
 #import <pthread.h>
 
 #import "PGTS.h"
-#import "PGTSFunctions.h"
 #import "PGTSCFScannedMemoryAllocator.h"
 #import "PGTSCollections.h"
 

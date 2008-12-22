@@ -32,10 +32,10 @@
 #import "PGTSResultSet.h"
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
-#import "PGTSFunctions.h"
 #import "PGTSRoleDescription.h"
 #import "PGTSHOM.h"
 #import "PGTSInvocationRecorder.h"
+#import "PGTSOids.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
 

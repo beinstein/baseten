@@ -46,5 +46,4 @@
 							key: (NSString *) key;
 - (BXRelationshipDescription *) relationship;
 - (void) setRelationship: (BXRelationshipDescription *) relationship;
-- (BOOL) BXIsRelationshipProxy;
 @end

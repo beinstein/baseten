@@ -28,9 +28,9 @@
 
 #import "NSPredicate+PGTSAdditions.h"
 #import "NSCompoundPredicate+BXPGAdditions.h"
-#import "PGTSFunctions.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "PGTSConstants.h"
 
 
 @implementation NSCompoundPredicate (BXPGAdditions)

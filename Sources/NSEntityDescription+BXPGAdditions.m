@@ -29,8 +29,8 @@
 #import "NSEntityDescription+BXPGAdditions.h"
 #import "NSAttributeDescription+BXPGAdditions.h"
 #import "BXLogger.h"
-#import "PGTSFunctions.h"
 #import "BXEnumerate.h"
+#import "PGTSOids.h"
 
 
 @implementation NSEntityDescription (BXPGAdditions)

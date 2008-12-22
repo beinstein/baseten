@@ -28,13 +28,13 @@
 
 #import "PGTSAbstractClassDescription.h"
 #import "PGTSResultSet.h"
-#import "PGTSFunctions.h"
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
 #import "PGTSConstants.h"
 #import "PGTSRoleDescription.h"
 #import "PGTSACLItem.h"
 #import "PGTSDatabaseDescription.h"
+#import "PGTSOids.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
 

@@ -30,8 +30,8 @@
 #import "BXPGDatabaseDescription.h"
 #import "PGTSConnection.h"
 #import "PGTSResultSet.h"
-#import "PGTSFunctions.h"
 #import "PGTSIndexDescription.h"
+#import "PGTSOids.h"
 #import "BXEnumerate.h"
 
 

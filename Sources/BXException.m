@@ -27,6 +27,7 @@
 //
 
 #import "BXException.h"
+#import "BXConstants.h"
 
 /**
  * A BaseTen-specific exception.
@@ -35,3 +36,14 @@
 @implementation BXException
 @end
 
+
+@implementation NSError (BXDatabaseAdditions)
+- (NSException *) BXExceptionWithName: (NSString *) aName
+{
+    NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithDictionary: [self userInfo]];
+    [userInfo setObject: self forKey: kBXErrorKey];
+    return [BXException exceptionWithName: kBXExceptionUnhandledError 
+								   reason: [self localizedFailureReason]
+								 userInfo: userInfo];
+}
+@end

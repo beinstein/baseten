@@ -32,5 +32,9 @@
 @interface BXException : NSException
 {
 }
+@end
 
+
+@interface NSError (BXExceptionAdditions)
+- (NSException *) BXExceptionWithName: (NSString *) aName;
 @end

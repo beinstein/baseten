@@ -28,7 +28,6 @@
 
 #import "PGTSTypeDescription.h"
 #import "PGTSResultSet.h"
-#import "PGTSFunctions.h"
 #import "PGTSConnection.h"
 #import "PGTSAdditions.h"
 

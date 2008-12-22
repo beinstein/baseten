@@ -39,7 +39,6 @@
 #import "PGTSAdditions.h"
 #import "PGTSResultSet.h"
 #import "PGTSDatabaseDescription.h"
-#import "PGTSFunctions.h"
 #import "PGTSConnectionMonitor.h"
 #import "PGTSNotification.h"
 #import "PGTSProbes.h"

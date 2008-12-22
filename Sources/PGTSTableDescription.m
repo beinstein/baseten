@@ -28,7 +28,6 @@
 
 #import "PGTSTableDescription.h"
 #import "PGTSFieldDescription.h"
-#import "PGTSFunctions.h"
 #import "PGTSIndexDescription.h"
 #import "PGTSResultSet.h"
 #import "PGTSConnection.h"
@@ -37,6 +36,7 @@
 //#import "PGTSForeignKeyDescription.h"
 #import "PGTSHOM.h"
 #import "PGTSInvocationRecorder.h"
+#import "PGTSOids.h"
 #import "BXEnumerate.h"
 
 
