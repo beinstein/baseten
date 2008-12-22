@@ -29,7 +29,6 @@
 #import "PGTSForeignKeyDescription.h"
 #import "PGTSTableDescription.h"
 #import "PGTSFieldDescription.h"
-#import "PGTSFunctions.h"
 
 
 @implementation PGTSForeignKeyDescriptionProxy

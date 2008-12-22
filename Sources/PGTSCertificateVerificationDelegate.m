@@ -23,11 +23,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: PGTSFunctions.m 101 2007-01-23 16:25:46Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
 #import "PGTSCertificateVerificationDelegate.h"
-#import "PGTSFunctions.h"
+#import "BXDatabaseAdditions.h"
 #import <Security/Security.h>
 #import <openssl/ssl.h>
 
