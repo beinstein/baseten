@@ -28,7 +28,6 @@
 
 #import "BXEntityDescription.h"
 #import "BXEntityDescriptionPrivate.h"
-#import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
 #import "BXAttributeDescription.h"
 #import "BXRelationshipDescription.h"
@@ -42,6 +41,7 @@
 #import "PGTSHOM.h"
 #import "PGTSCollections.h"
 #import "BXEnumerate.h"
+#import "NSURL+BaseTenAdditions.h"
 
 
 static id gEntities;

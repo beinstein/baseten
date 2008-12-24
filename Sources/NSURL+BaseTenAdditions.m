@@ -1,5 +1,5 @@
 //
-// BXDatabaseAdditions.m
+// NSURL+BaseTenAdditions.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,26 +26,12 @@
 // $Id$
 //
 
-#import "BXConstants.h"
-#import "BXDatabaseAdditions.h"
-#import "BXDatabaseObjectPrivate.h"
-#import "BXDatabaseObjectID.h"
-#import "BXDatabaseObjectIDPrivate.h"
-#import "BXDatabaseContext.h"
-#import "BXException.h"
-#import "BXDatabaseObject.h"
-#import "BXAttributeDescription.h"
-#import "BXLogger.h"
-#import "BXEnumerate.h"
+
+#import "NSURL+BaseTenAdditions.h"
 #import "BXURLEncoding.h"
 
 
-@interface NSPredicate (BXAdditions)
-- (BOOL) evaluateWithObject: (id) anObject variableBindings: (id) bindings;
-@end
-
-
-@implementation NSURL (BXDatabaseAdditions)
+@implementation NSURL (BaseTenAdditions)
 - (unsigned int) BXHash
 {
     unsigned int u = 0;
@@ -107,40 +93,5 @@
 		retval = [NSURL URLWithString: URLString];
 	}
 	return retval;
-}
-@end
-
-
-
-
-@implementation NSPredicate (BXDatabaseAdditions)
-- (BOOL) BXEvaluateWithObject: (id) object substitutionVariables: (NSMutableDictionary *) ctx
-{
-	//10.5 and 10.4 have the same method but it's named differently.
-	BOOL retval = NO;
-	if ([self respondsToSelector: @selector (evaluateWithObject:substitutionVariables:)])
-		retval = [self evaluateWithObject: object substitutionVariables: ctx];
-	else
-		retval = [self evaluateWithObject: object variableBindings: ctx];
-	
-	return retval;
-}
-@end
-
-
-@implementation NSArray (BXDatabaseAdditions)
-- (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
-											others: (NSMutableArray *) otherArray
-							 substitutionVariables: (NSMutableDictionary *) variables
-{
-    NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [self count]];
-    BXEnumerate (currentObject, e, [self objectEnumerator])
-    {
-		if ([predicate BXEvaluateWithObject: currentObject substitutionVariables: [[variables mutableCopy] autorelease]])
-            [retval addObject: currentObject];
-        else
-            [otherArray addObject: currentObject];
-    }
-    return retval;
 }
 @end

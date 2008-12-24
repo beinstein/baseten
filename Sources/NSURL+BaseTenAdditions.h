@@ -1,5 +1,5 @@
 //
-// BXDatabaseAdditions.h
+// NSURL+BaseTenAdditions.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -27,38 +27,10 @@
 //
 
 
-@class BXDatabaseObjectID;
-@class BXAttributeDescription;
-@class BXEntityDescription;
-@class BXDatabaseContext;
-
-
-#define BXLocalizedString( KEY, VALUE, COMMENT ) \
-    ((id) NSLocalizedStringWithDefaultValue( KEY, nil, [NSBundle bundleForClass:[BXDatabaseContext class]], VALUE, COMMENT ) ?: [NSNull null])
-
-#define BXSafeObj( OBJECT )  ( (void *) OBJECT ?: [NSNull null] )
-
-#define SafeCFRelease( CF_VAL )  if (NULL != CF_VAL) { CFRelease (CF_VAL); CF_VAL = NULL; }
-
-#import <BaseTen/BXConstants.h>
-
-
-@interface NSURL (BXDatabaseAdditions)
+@interface NSURL (BaseTenAdditions)
 - (unsigned int) BXHash;
 - (NSURL *) BXURIForHost: (NSString *) host 
 				database: (NSString *) dbName 
 				username: (NSString *) username 
 				password: (id) password;
-@end
-
-
-@interface NSPredicate (BXDatabaseAdditions)
-- (BOOL) BXEvaluateWithObject: (id) anObject substitutionVariables: (NSMutableDictionary *) dictionary;
-@end
-
-
-@interface NSArray (BXDatabaseAdditions)
-- (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
-											others: (NSMutableArray *) otherArray
-							 substitutionVariables: (NSMutableDictionary *) variables;
 @end

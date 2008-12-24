@@ -29,7 +29,6 @@
 #import "BXPropertyDescription.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXEntityDescription.h"
-#import "BXDatabaseAdditions.h"
 #import "BXLogger.h"
 
 

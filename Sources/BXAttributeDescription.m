@@ -31,7 +31,6 @@
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXEntityDescription.h"
 #import "BXRelationshipDescription.h"
-#import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "PGTSCollections.h"
 #import "BXLogger.h"

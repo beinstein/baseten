@@ -28,9 +28,9 @@
 
 #import "BXSetProxy.h"
 #import "BXDatabaseContext.h"
-#import "BXDatabaseAdditions.h"
 #import "BXLogger.h"
 #import "BXDatabaseObject.h"
+#import "NSArray+BaseTenAdditions.h"
 
 
 /**

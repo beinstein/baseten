@@ -28,7 +28,6 @@
 
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
-#import "BXDatabaseAdditions.h"
 #import "BXEntityDescription.h"
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseContext.h"
@@ -40,6 +39,7 @@
 #import "BXLogger.h"
 #import "BXEnumerate.h"
 #import "BXURLEncoding.h"
+#import "NSURL+BaseTenAdditions.h"
 
 
 /**

@@ -27,7 +27,6 @@
 //
 
 #import "BXSubqueryExpression.h"
-#import "BXDatabaseAdditions.h"
 
 
 @implementation BXSubqueryExpression

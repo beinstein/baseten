@@ -27,7 +27,7 @@
 //
 
 #import "PGTSCertificateVerificationDelegate.h"
-#import "BXDatabaseAdditions.h"
+#import "BXSafetyMacros.h"
 #import <Security/Security.h>
 #import <openssl/ssl.h>
 

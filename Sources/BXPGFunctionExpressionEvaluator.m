@@ -28,7 +28,6 @@
 
 #import "BXPGFunctionExpressionEvaluator.h"
 #import "BXPGExpressionValueType.h"
-#import "BXDatabaseAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
 #import "PGTSHOM.h"
 #import "BXPGPredefinedFunctionExpressionValueType.h"

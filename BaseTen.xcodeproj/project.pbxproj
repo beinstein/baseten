@@ -89,7 +89,6 @@
 		535443CA0D634A47002A6C47 /* BXDatabaseObjectID.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535443CB0D634A47002A6C47 /* BXObjectStatusInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535443CC0D634A47002A6C47 /* BXConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 5301302609D43A450037C485 /* BXConstants.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		535443CD0D634A47002A6C47 /* BXDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535443CE0D634A47002A6C47 /* BXAbstractDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B872800A0A4CEC007315BC /* BXAbstractDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535443CF0D634A47002A6C47 /* BXPropertyDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B86FF80A0A1D6F007315BC /* BXPropertyDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535443D00D634A47002A6C47 /* BXEntityDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 533229E40A024C2500BDB151 /* BXEntityDescription.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -124,7 +123,6 @@
 		535443F20D634A47002A6C47 /* BXDatabaseObjectID.m in Sources */ = {isa = PBXBuildFile; fileRef = 5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */; };
 		535443F30D634A47002A6C47 /* BXObjectStatusInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */; };
 		535443F40D634A47002A6C47 /* BXConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 5301302709D43A450037C485 /* BXConstants.m */; };
-		535443F50D634A47002A6C47 /* BXDatabaseAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */; };
 		535443F60D634A47002A6C47 /* BXAbstractDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B872810A0A4CEC007315BC /* BXAbstractDescription.m */; };
 		535443F70D634A47002A6C47 /* BXPropertyDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B86FF90A0A1D6F007315BC /* BXPropertyDescription.m */; };
 		535443F80D634A47002A6C47 /* BXEntityDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 533229E30A024C2500BDB151 /* BXEntityDescription.m */; };
@@ -155,6 +153,14 @@
 		5354F91F0F00511100422613 /* PGTSDeleteRule.m in Sources */ = {isa = PBXBuildFile; fileRef = 5354F91D0F00511100422613 /* PGTSDeleteRule.m */; };
 		5354F9410F00537200422613 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5354F9400F00537200422613 /* AppKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5356277D0E6E7D1F002EA3FD /* BXPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 530132E209D460230037C485 /* BXPGInterface.m */; };
+		535661D10F025DD800920008 /* NSURL+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CB0F025DD800920008 /* NSURL+BaseTenAdditions.m */; };
+		535661D20F025DD800920008 /* NSURL+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CC0F025DD800920008 /* NSURL+BaseTenAdditions.h */; };
+		535661D30F025DD800920008 /* NSArray+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CD0F025DD800920008 /* NSArray+BaseTenAdditions.h */; };
+		535661D40F025DD800920008 /* NSArray+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CE0F025DD800920008 /* NSArray+BaseTenAdditions.m */; };
+		535661D50F025DD800920008 /* NSPredicate+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CF0F025DD800920008 /* NSPredicate+BaseTenAdditions.m */; };
+		535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */; };
+		535661D90F02603600920008 /* BXLocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D70F02603600920008 /* BXLocalizedString.h */; };
+		535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D80F02603600920008 /* BXSafetyMacros.h */; };
 		535F23570E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F23550E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h */; };
 		535F23580E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F23560E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m */; };
 		535F235B0E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F23590E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h */; };
@@ -492,7 +498,6 @@
 		530132D809D45F9B0037C485 /* BXDatabaseObject.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; name = BXDatabaseObject.m; path = Sources/BXDatabaseObject.m; sourceTree = "<group>"; };
 		530132E109D460230037C485 /* BXPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGInterface.h; path = Sources/BXPGInterface.h; sourceTree = "<group>"; };
 		530132E209D460230037C485 /* BXPGInterface.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; includeInIndex = 1; name = BXPGInterface.m; path = Sources/BXPGInterface.m; sourceTree = "<group>"; };
-		53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseAdditions.m; path = Sources/BXDatabaseAdditions.m; sourceTree = "<group>"; };
 		5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = InterfaceBuilderPlugin.xcodeproj; path = InterfaceBuilderPlugin/InterfaceBuilderPlugin.xcodeproj; sourceTree = "<group>"; };
 		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
 		531266E40B68F9CA00637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -547,6 +552,14 @@
 		5354F91C0F00511100422613 /* PGTSDeleteRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSDeleteRule.h; path = Sources/PGTSDeleteRule.h; sourceTree = "<group>"; };
 		5354F91D0F00511100422613 /* PGTSDeleteRule.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSDeleteRule.m; path = Sources/PGTSDeleteRule.m; sourceTree = "<group>"; };
 		5354F9400F00537200422613 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		535661CB0F025DD800920008 /* NSURL+BaseTenAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSURL+BaseTenAdditions.m"; path = "Sources/NSURL+BaseTenAdditions.m"; sourceTree = "<group>"; };
+		535661CC0F025DD800920008 /* NSURL+BaseTenAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSURL+BaseTenAdditions.h"; path = "Sources/NSURL+BaseTenAdditions.h"; sourceTree = "<group>"; };
+		535661CD0F025DD800920008 /* NSArray+BaseTenAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+BaseTenAdditions.h"; path = "Sources/NSArray+BaseTenAdditions.h"; sourceTree = "<group>"; };
+		535661CE0F025DD800920008 /* NSArray+BaseTenAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+BaseTenAdditions.m"; path = "Sources/NSArray+BaseTenAdditions.m"; sourceTree = "<group>"; };
+		535661CF0F025DD800920008 /* NSPredicate+BaseTenAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSPredicate+BaseTenAdditions.m"; path = "Sources/NSPredicate+BaseTenAdditions.m"; sourceTree = "<group>"; };
+		535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSPredicate+BaseTenAdditions.h"; path = "Sources/NSPredicate+BaseTenAdditions.h"; sourceTree = "<group>"; };
+		535661D70F02603600920008 /* BXLocalizedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXLocalizedString.h; path = Sources/BXLocalizedString.h; sourceTree = "<group>"; };
+		535661D80F02603600920008 /* BXSafetyMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSafetyMacros.h; path = Sources/BXSafetyMacros.h; sourceTree = "<group>"; };
 		53596CF50A3714AC009C39E9 /* datatypeassociations.plist */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = text.plist.xml; name = datatypeassociations.plist; path = Resources/datatypeassociations.plist; sourceTree = "<group>"; };
 		5359D1850C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXOneToOneRelationshipDescription.h; path = Sources/BXOneToOneRelationshipDescription.h; sourceTree = "<group>"; };
 		5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOneToOneRelationshipDescription.m; path = Sources/BXOneToOneRelationshipDescription.m; sourceTree = "<group>"; };
@@ -659,7 +672,6 @@
 		537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGTransactionHandler.m; path = Sources/BXPGTransactionHandler.m; sourceTree = "<group>"; };
 		5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectID.h; path = Sources/BXDatabaseObjectID.h; sourceTree = "<group>"; };
 		5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectID.m; path = Sources/BXDatabaseObjectID.m; sourceTree = "<group>"; };
-		5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseAdditions.h; path = Sources/BXDatabaseAdditions.h; sourceTree = "<group>"; };
 		538678D30DE31BA0000C9A78 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		538679870DE31C1D000C9A78 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "/usr/lib/libstdc++.6.dylib"; sourceTree = "<absolute>"; };
 		53877E910E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSEntityDescription+BXPGAdditions.h"; path = "Sources/NSEntityDescription+BXPGAdditions.h"; sourceTree = "<group>"; };
@@ -821,7 +833,6 @@
 				08FB77AEFE84172EC02AAC07 /* BaseTen */,
 				53666C8E0E1CD89F0028DBEA /* PGTS */,
 				53666C800E1CD8580028DBEA /* Utility */,
-				536C9E8D0EFDAFF20041422F /* Remember to remove */,
 				53F77DA10A3806580058F7D6 /* xcconfig */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
@@ -964,6 +975,8 @@
 			children = (
 				5354F87A0F004A6600422613 /* BXExport.h */,
 				536C9D5F0EFD94D10041422F /* BXEnumerate.h */,
+				535661D70F02603600920008 /* BXLocalizedString.h */,
+				535661D80F02603600920008 /* BXSafetyMacros.h */,
 				53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */,
 				5364EF5B0E1B940A003D3DB6 /* BXLogger.m */,
 				53A59B230E34EB570026D7E1 /* BXWeakNotification.h */,
@@ -990,6 +1003,13 @@
 				5354F8820F004F9300422613 /* PGTSOids.m */,
 				5354F91C0F00511100422613 /* PGTSDeleteRule.h */,
 				5354F91D0F00511100422613 /* PGTSDeleteRule.m */,
+				535661CC0F025DD800920008 /* NSURL+BaseTenAdditions.h */,
+				535661CB0F025DD800920008 /* NSURL+BaseTenAdditions.m */,
+				535661CD0F025DD800920008 /* NSArray+BaseTenAdditions.h */,
+				535661CE0F025DD800920008 /* NSArray+BaseTenAdditions.m */,
+				535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */,
+				535661CF0F025DD800920008 /* NSPredicate+BaseTenAdditions.m */,
+				536C9E8D0EFDAFF20041422F /* Remember to remove */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -1119,8 +1139,6 @@
 		536C9E8D0EFDAFF20041422F /* Remember to remove */ = {
 			isa = PBXGroup;
 			children = (
-				5383CEA809F5809E0044D8B6 /* BXDatabaseAdditions.h */,
-				53067E7309F59FEC00749ED0 /* BXDatabaseAdditions.m */,
 				53666CA40E1CD8D20028DBEA /* PGTSAdditions.h */,
 				53666CA50E1CD8D20028DBEA /* PGTSAdditions.m */,
 				537F01700DDC58F100498B93 /* BXPGAdditions.h */,
@@ -1354,7 +1372,6 @@
 				535443CA0D634A47002A6C47 /* BXDatabaseObjectID.h in Headers */,
 				535443CB0D634A47002A6C47 /* BXObjectStatusInfo.h in Headers */,
 				535443CC0D634A47002A6C47 /* BXConstants.h in Headers */,
-				535443CD0D634A47002A6C47 /* BXDatabaseAdditions.h in Headers */,
 				535443CE0D634A47002A6C47 /* BXAbstractDescription.h in Headers */,
 				535443CF0D634A47002A6C47 /* BXPropertyDescription.h in Headers */,
 				535443D00D634A47002A6C47 /* BXEntityDescription.h in Headers */,
@@ -1472,6 +1489,11 @@
 				5354F87B0F004A6600422613 /* BXExport.h in Headers */,
 				5354F8830F004F9300422613 /* PGTSOids.h in Headers */,
 				5354F91E0F00511100422613 /* PGTSDeleteRule.h in Headers */,
+				535661D20F025DD800920008 /* NSURL+BaseTenAdditions.h in Headers */,
+				535661D30F025DD800920008 /* NSArray+BaseTenAdditions.h in Headers */,
+				535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */,
+				535661D90F02603600920008 /* BXLocalizedString.h in Headers */,
+				535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1705,7 +1727,6 @@
 				535443F20D634A47002A6C47 /* BXDatabaseObjectID.m in Sources */,
 				535443F30D634A47002A6C47 /* BXObjectStatusInfo.m in Sources */,
 				535443F40D634A47002A6C47 /* BXConstants.m in Sources */,
-				535443F50D634A47002A6C47 /* BXDatabaseAdditions.m in Sources */,
 				535443F60D634A47002A6C47 /* BXAbstractDescription.m in Sources */,
 				535443F70D634A47002A6C47 /* BXPropertyDescription.m in Sources */,
 				535443F80D634A47002A6C47 /* BXEntityDescription.m in Sources */,
@@ -1808,6 +1829,9 @@
 				5354F7DF0F00417400422613 /* BXURLEncoding.m in Sources */,
 				5354F8840F004F9300422613 /* PGTSOids.m in Sources */,
 				5354F91F0F00511100422613 /* PGTSDeleteRule.m in Sources */,
+				535661D10F025DD800920008 /* NSURL+BaseTenAdditions.m in Sources */,
+				535661D40F025DD800920008 /* NSArray+BaseTenAdditions.m in Sources */,
+				535661D50F025DD800920008 /* NSPredicate+BaseTenAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

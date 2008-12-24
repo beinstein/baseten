@@ -28,7 +28,6 @@
 
 #import "BXPredicateVisitor.h"
 #import "PGTSAdditions.h"
-#import "BXDatabaseAdditions.h"
 #import "NSPredicate+PGTSAdditions.h"
 #import "NSExpression+PGTSAdditions.h"
 #import "BXKeyPathParser.h"

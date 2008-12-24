@@ -31,7 +31,6 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXLogger.h"
 #import "BXPGInterface.h"
-#import "BXDatabaseAdditions.h"
 #import "BXPGTransactionHandler.h"
 #import "NSEntityDescription+BXPGAdditions.h"
 #import "NSAttributeDescription+BXPGAdditions.h"

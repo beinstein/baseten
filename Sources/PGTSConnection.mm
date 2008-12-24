@@ -43,7 +43,6 @@
 #import "PGTSNotification.h"
 #import "PGTSProbes.h"
 #import "BXLogger.h"
-#import "BXDatabaseAdditions.h"
 #import "BXEnumerate.h"
 
 
@@ -592,6 +591,31 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
     return retval;
 }
 
+
+/**
+ * \internal
+ * \brief The number of parameters in a string.
+ *
+ * Parameters are marked as follows: $n. The number of parameters is equal to the highest value of n.
+ */
+static int
+ParameterCount (NSString* query)
+{
+    NSScanner* scanner = [NSScanner scannerWithString: query];
+    int paramCount = 0;
+    while (NO == [scanner isAtEnd])
+    {
+        int foundCount = 0;
+        [scanner scanUpToString: @"$" intoString: NULL];
+        [scanner scanString: @"$" intoString: NULL];
+        //The largest found number specifies the number of parameters
+        if ([scanner scanInt: &foundCount])
+            paramCount = MAX (foundCount, paramCount);
+    }
+    return paramCount;
+}
+
+
 //FIXME: move this elsewhere, perhaps PGTSConcreteQueryDescription or PGTSParameterQuery.
 - (PGTSQueryDescription *) queryDescriptionFor: (NSString *) queryString delegate: (id) delegate callback: (SEL) callback 
 								parameterArray: (NSArray *) parameters userInfo: (id) userInfo
@@ -615,7 +639,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 - (PGTSResultSet *) executeQuery: (NSString *) queryString parameters: (id) p1, ...
 {
 	NSArray* parameters = nil;
-	StdargToNSArray (parameters, [queryString PGTSParameterCount], p1);
+	StdargToNSArray (parameters, ParameterCount (queryString), p1);
 	return [self executeQuery: queryString parameterArray: parameters];
 }
 
@@ -653,7 +677,7 @@ StdargToNSArray2 (va_list arguments, int argCount, id lastArg)
 	   parameters: (id) p1, ...
 {
 	NSArray* parameters = nil;
-	StdargToNSArray (parameters, [queryString PGTSParameterCount], p1);
+	StdargToNSArray (parameters, ParameterCount (queryString), p1);
 	return [self sendQuery: queryString delegate: delegate callback: callback parameterArray: parameters];
 }
 

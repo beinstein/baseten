@@ -28,7 +28,6 @@
 
 #import "BXPGRelationAliasMapper.h"
 #import "BXEntityDescription.h"
-#import "BXDatabaseAdditions.h"
 #import "BXPGFromItem.h"
 #import "BXRelationshipDescription.h"
 #import "PGTSHOM.h"

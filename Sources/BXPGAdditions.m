@@ -28,7 +28,6 @@
 
 #import "PGTSAdditions.h"
 #import "BXPGAdditions.h"
-#import "BXDatabaseAdditions.h"
 #import "BXPropertyDescriptionPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXDatabaseObjectPrivate.h"

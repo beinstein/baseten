@@ -31,7 +31,6 @@
 #import "BXForeignKey.h"
 #import "BXForeignKeyPrivate.h"
 #import "BXEntityDescription.h"
-#import "BXDatabaseAdditions.h"
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseObjectPrivate.h"

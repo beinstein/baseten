@@ -33,7 +33,6 @@
 #import "BXDatabaseContext.h"
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
 #import "BXException.h"
-#import "BXDatabaseAdditions.h"
 #import "BXLogger.h"
 
 

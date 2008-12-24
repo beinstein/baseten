@@ -30,9 +30,9 @@
 #import "BXDatabaseContext.h"
 #import "BXConstants.h"
 #import "BXConstantsPrivate.h"
-#import "BXDatabaseAdditions.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "NSArray+BaseTenAdditions.h"
 
 
 /**

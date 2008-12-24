@@ -34,8 +34,8 @@
 #import "PGTS.h"
 #import "PGTSCFScannedMemoryAllocator.h"
 #import "PGTSCollections.h"
+#import "PGTSHOM.h"
 
-#import "BXDatabaseAdditions.h"
 #import "BXDatabaseContext.h"
 #import "BXDatabaseContextPrivate.h"
 #import "BXConstants.h"
@@ -61,7 +61,9 @@
 #import "BXDatabaseContextDelegateDefaultImplementation.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXEnumerate.h"
-#import "PGTSHOM.h"
+#import "BXLocalizedString.h"
+
+#import "NSURL+BaseTenAdditions.h"
 
 
 __strong static NSMutableDictionary* gInterfaceClassSchemes = nil;

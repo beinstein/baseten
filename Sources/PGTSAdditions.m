@@ -53,28 +53,6 @@
     free (to);
     return rval;
 }
-
-/**
- * \internal
- * \brief The number of parameters in a string.
- *
- * Parameters are marked as follows: $n. The number of parameters is equal to the highest value of n.
- */
-- (int) PGTSParameterCount
-{
-    NSScanner* scanner = [NSScanner scannerWithString: self];
-    int paramCount = 0;
-    while (NO == [scanner isAtEnd])
-    {
-        int foundCount = 0;
-        [scanner scanUpToString: @"$" intoString: NULL];
-        [scanner scanString: @"$" intoString: NULL];
-        //The largest found number specifies the number of parameters
-        if ([scanner scanInt: &foundCount])
-            paramCount = MAX (foundCount, paramCount);
-    }
-    return paramCount;
-}
 @end
 
 
@@ -107,16 +85,6 @@
 
 
 @implementation NSNumber (PGTSAdditions)
-/**
- * \internal
- * \brief Return the value as Oid.
- * \sa PGTSOidAsObject
- */
-- (Oid) PGTSOidValue
-{
-    return [self unsignedIntValue];
-}
-
 - (id) PGTSConstantExpressionValue: (NSDictionary *) context
 {
 	id retval = self;

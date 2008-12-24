@@ -28,7 +28,7 @@
 
 #import "BXPGCertificateVerificationDelegate.h"
 #import "BXDatabaseContextPrivate.h"
-#import "BXDatabaseAdditions.h"
+#import "BXSafetyMacros.h"
 #import <openssl/x509.h>
 
 

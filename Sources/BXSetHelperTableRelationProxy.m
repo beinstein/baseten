@@ -27,7 +27,6 @@
 //
 
 #import "BXSetHelperTableRelationProxy.h"
-#import "BXDatabaseAdditions.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXDatabaseContext.h"
@@ -36,6 +35,7 @@
 #import "BXForeignKey.h"
 #import "BXEntityDescription.h"
 #import "BXEnumerate.h"
+#import "NSArray+BaseTenAdditions.h"
 
 
 /**

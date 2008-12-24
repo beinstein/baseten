@@ -29,9 +29,10 @@
 #import <objc/objc.h>
 #import <string.h>
 #import <ctype.h>
-
 #import <sys/types.h>
 #import <unistd.h>
+
+#import "PGTSHOM.h"
 
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
@@ -39,7 +40,6 @@
 #import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
-#import "BXDatabaseAdditions.h"
 #import "BXEntityDescription.h"
 #import "BXEntityDescriptionPrivate.h"
 #import "BXConstants.h"
@@ -49,9 +49,10 @@
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXLogger.h"
-#import "PGTSHOM.h"
 #import "BXEnumerate.h"
 #import "BXKeyPathParser.h"
+#import "BXLocalizedString.h"
+#import "BXSafetyMacros.h"
 
 
 static NSString* 

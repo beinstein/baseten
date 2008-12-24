@@ -31,7 +31,6 @@
 #import "PGTSHOM.h"
 #import "PGTSOids.h"
 
-#import "BXDatabaseAdditions.h"
 #import "BXInterface.h"
 #import "BXProbes.h"
 #import "BXLogger.h"
@@ -47,6 +46,7 @@
 #import "BXPGDatabaseDescription.h"
 #import "BXPGInterface.h"
 #import "BXPGCertificateVerificationDelegate.h"
+#import "BXLocalizedString.h"
 
 #import "BXEntityDescriptionPrivate.h"
 

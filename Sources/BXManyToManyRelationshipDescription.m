@@ -30,7 +30,6 @@
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXDatabaseObject.h"
-#import "BXDatabaseAdditions.h"
 #import "BXDatabaseContextPrivate.h"
 #import "BXSetHelperTableRelationProxy.h"
 #import "BXForeignKey.h"

@@ -37,7 +37,6 @@
 #import "BXOneToOneRelationshipDescription.h"
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXForeignKey.h"
-#import "BXDatabaseAdditions.h";
 
 #import "BXPGInterface.h"
 #import "BXPGLockHandler.h"
@@ -51,6 +50,7 @@
 #import "BXPGTableDescription.h"
 #import "BXPGQueryBuilder.h"
 #import "BXPGFromItem.h"
+#import "BXLocalizedString.h"
 
 #import "BXLogger.h"
 #import "BXEnumerate.h"

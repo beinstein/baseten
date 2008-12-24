@@ -1,11 +1,11 @@
 //
-// PGTSOids.m
+// BXLocalizedString.h
 // BaseTen
 //
-// Copyright (C) 2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+// by visiting http://basetenframework.org/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -26,32 +26,5 @@
 // $Id$
 //
 
-#import "PGTSOids.h"
-
-
-/**
- * \internal
- * \brief Return the value as an object.
- *
- * \sa PGTSOidValue
- */
-id 
-PGTSOidAsObject (Oid o)
-{
-    //Methods inherited from NSValue seem to return an NSValue instead of an NSNumber.
-	//Thus, we use NSNumber.
-    return [NSNumber numberWithUnsignedInt: o];
-}
-
-
-@implementation NSNumber (PGTSOidAdditions)
-/**
- * \internal
- * \brief Return the value as Oid.
- * \sa PGTSOidAsObject
- */
-- (Oid) PGTSOidValue
-{
-    return [self unsignedIntValue];
-}
-@end
+#define BXLocalizedString( KEY, VALUE, COMMENT ) \
+    ((id) NSLocalizedStringWithDefaultValue( KEY, nil, [NSBundle bundleForClass:[BXDatabaseContext class]], VALUE, COMMENT ) ?: [NSNull null])

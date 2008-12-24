@@ -33,7 +33,6 @@
 
 
 @interface NSString (PGTSAdditions)
-- (int) PGTSParameterCount;
 - (NSString *) PGTSEscapedString: (PGTSConnection *) connection;
 @end
 

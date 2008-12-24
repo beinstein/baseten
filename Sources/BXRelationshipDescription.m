@@ -33,7 +33,6 @@
 #import "BXForeignKey.h"
 #import "BXDatabaseContext.h"
 #import "BXDatabaseContextPrivate.h"
-#import "BXDatabaseAdditions.h"
 #import "BXSetRelationProxy.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXLogger.h"

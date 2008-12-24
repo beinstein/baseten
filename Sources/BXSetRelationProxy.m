@@ -28,7 +28,6 @@
 
 #import "BXDatabaseContext.h"
 #import "BXSetRelationProxy.h"
-#import "BXDatabaseAdditions.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObject.h"
 #import "BXRelationshipDescription.h"
