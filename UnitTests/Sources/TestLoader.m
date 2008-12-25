@@ -29,7 +29,6 @@
 #import "TestLoader.h"
 #import <SenTestingKit/SenTestingKit.h>
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
 #import "MKCSenTestCaseAdditions.h"
 
 #import "ConnectTest.h"

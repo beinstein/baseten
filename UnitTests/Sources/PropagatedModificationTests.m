@@ -31,7 +31,6 @@
 
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseObjectIDPrivate.h>
-#import <BaseTen/BXDatabaseAdditions.h>
 #import <BaseTen/BXEntityDescriptionPrivate.h>
 
 
