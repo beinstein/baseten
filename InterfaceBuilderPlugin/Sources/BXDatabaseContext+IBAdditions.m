@@ -27,7 +27,7 @@
 //
 
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXSafetyMacros.h>
 #import "BXDatabaseContext+IBAdditions.h"
 #import "BXDatabaseContextInspector.h"
 #import "BXIBPlugin.h"

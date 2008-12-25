@@ -160,7 +160,7 @@
 		535661D50F025DD800920008 /* NSPredicate+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CF0F025DD800920008 /* NSPredicate+BaseTenAdditions.m */; };
 		535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */; };
 		535661D90F02603600920008 /* BXLocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D70F02603600920008 /* BXLocalizedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D80F02603600920008 /* BXSafetyMacros.h */; };
+		535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D80F02603600920008 /* BXSafetyMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535F23570E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F23550E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h */; };
 		535F23580E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F23560E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m */; };
 		535F235B0E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F23590E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h */; };
