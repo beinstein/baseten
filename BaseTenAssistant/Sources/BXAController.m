@@ -46,7 +46,7 @@
 #import <BaseTen/BXAttributeDescriptionPrivate.h>
 #import <BaseTen/BXPGTransactionHandler.h>
 #import <BaseTen/BXPGDatabaseDescription.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/BXLocalizedString.h>
 #import <BaseTen/PGTSConstants.h>
 
 #import <sys/socket.h>
