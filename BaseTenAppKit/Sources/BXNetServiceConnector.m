@@ -27,7 +27,7 @@
 //
 
 #import <BaseTen/BXDatabaseContextPrivate.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/NSURL+BaseTenAdditions.h>
 #import <BaseTen/BXLogger.h>
 #import "BXNetServiceConnector.h"
 #import "BXConnectionPanel.h"

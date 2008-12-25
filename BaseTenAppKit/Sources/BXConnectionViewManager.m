@@ -28,7 +28,8 @@
 
 #import "BXConnectionViewManager.h"
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDatabaseAdditions.h>
+#import <BaseTen/NSURL+BaseTenAdditions.h>
+#import <BaseTen/BXLocalizedString.h>
 
 
 __strong static NSNib* gConnectionViewNib = nil;

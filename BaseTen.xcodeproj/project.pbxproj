@@ -154,12 +154,12 @@
 		5354F9410F00537200422613 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5354F9400F00537200422613 /* AppKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		5356277D0E6E7D1F002EA3FD /* BXPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 530132E209D460230037C485 /* BXPGInterface.m */; };
 		535661D10F025DD800920008 /* NSURL+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CB0F025DD800920008 /* NSURL+BaseTenAdditions.m */; };
-		535661D20F025DD800920008 /* NSURL+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CC0F025DD800920008 /* NSURL+BaseTenAdditions.h */; };
+		535661D20F025DD800920008 /* NSURL+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CC0F025DD800920008 /* NSURL+BaseTenAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535661D30F025DD800920008 /* NSArray+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CD0F025DD800920008 /* NSArray+BaseTenAdditions.h */; };
 		535661D40F025DD800920008 /* NSArray+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CE0F025DD800920008 /* NSArray+BaseTenAdditions.m */; };
 		535661D50F025DD800920008 /* NSPredicate+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CF0F025DD800920008 /* NSPredicate+BaseTenAdditions.m */; };
 		535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */; };
-		535661D90F02603600920008 /* BXLocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D70F02603600920008 /* BXLocalizedString.h */; };
+		535661D90F02603600920008 /* BXLocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D70F02603600920008 /* BXLocalizedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D80F02603600920008 /* BXSafetyMacros.h */; };
 		535F23570E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F23550E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h */; };
 		535F23580E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F23560E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m */; };
