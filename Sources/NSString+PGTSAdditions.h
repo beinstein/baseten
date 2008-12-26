@@ -1,11 +1,11 @@
 //
-// BXPGAdditions.h
+// NSString+PGTSAdditions.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://basetenframework.org/licensing/ or by contacting
+// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -27,32 +27,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTS.h"
-#import "BXPGExpressionVisitor.h"
-#import "BaseTen.h"
-#import "BXLogger.h"
 
-@interface BXPropertyDescription (BXPGInterfaceAdditions)
-- (void) BXPGVisitKeyPathComponent: (id <BXPGExpressionVisitor>) visitor;
-@end
+@class PGTSConnection;
 
 
-//FIXME: perhaps we could replace the name methods with something more easily understandable?
-@interface NSObject (BXPGAdditions)
-- (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
-@end
-
-
-@interface BXEntityDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
-@end
-
-
-@interface BXAttributeDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
-@end
-
-
-@interface NSURL (BXPGInterfaceAdditions)
-- (NSMutableDictionary *) BXPGConnectionDictionary;
+@interface NSString (PGTSAdditions)
+- (NSString *) escapeForPGTSConnection: (PGTSConnection *) connection;
+- (NSString *) quotedIdentifierForPGTSConnection: (PGTSConnection *) connection;
 @end

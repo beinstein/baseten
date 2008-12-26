@@ -35,31 +35,14 @@
 #import "PGTSTypeDescription.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSFoundationObjects.h"
+#import "NSString+PGTSAdditions.h"
 #import "BXLogger.h"
-
-
-@implementation NSString (PGTSAdditions)
-/**
- * \internal
- * \brief Escape the string for the SQL interpreter.
- */
-- (NSString *) PGTSEscapedString: (PGTSConnection *) connection
-{
-    const char* from = [self UTF8String];
-    size_t length = strlen (from);
-    char* to = (char *) calloc (1 + 2 * length, sizeof (char));
-    PQescapeStringConn ([connection pgConnection], to, from, length, NULL);
-    NSString* rval = [NSString stringWithUTF8String: to];
-    free (to);
-    return rval;
-}
-@end
 
 
 @implementation NSObject (PGTSAdditions)
 - (NSString *) PGTSEscapedName: (PGTSConnection *) connection
 {
-	NSString* name = [[self description] PGTSEscapedString: connection];
+	NSString* name = [[self description] escapeForPGTSConnection: connection];
 	return [NSString stringWithFormat: @"\"%@\"", name];
 }
 

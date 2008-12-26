@@ -37,6 +37,7 @@
 #import "PGTSOids.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "NSString+PGTSAdditions.h"
 
 
 @implementation PGTSAbstractClassDescriptionProxy
@@ -130,10 +131,12 @@
     return mName;
 }
 
-- (NSString *) qualifiedName
+- (NSString *) schemaQualifiedName
 {
 	[self fetchFromDatabase];
-    return [NSString stringWithFormat: @"\"%@\".\"%@\"", mSchemaName, mName];
+	NSString* schemaName = [mSchemaName escapeForPGTSConnection: mConnection];
+	NSString* name = [mName escapeForPGTSConnection: mConnection];
+    return [NSString stringWithFormat: @"\"%@\".\"%@\"", schemaName, name];
 }
 
 - (BOOL) role: (PGTSRoleDescription *) aRole 

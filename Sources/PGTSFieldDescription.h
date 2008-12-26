@@ -56,7 +56,7 @@
 
 - (int) index;
 - (Oid) typeOid;
-- (NSString *) qualifiedName;
+- (NSString *) quotedName;
 - (NSComparisonResult) indexCompare: (PGTSFieldDescription *) aField;
 - (id) defaultValue;
 - (BOOL) isNotNull;

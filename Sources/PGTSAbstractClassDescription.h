@@ -59,7 +59,7 @@
 - (NSString *) name;
 - (Oid) schemaOid;
 - (NSString *) schemaName;
-- (NSString *) qualifiedName;
+- (NSString *) schemaQualifiedName;
 - (BOOL) role: (PGTSRoleDescription *) aRole 
  hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege;
 - (NSArray *) ACLItems;

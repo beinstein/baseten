@@ -1,11 +1,11 @@
 //
-// BXPGAdditions.h
+// NSString+PGTSAdditions.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://basetenframework.org/licensing/ or by contacting
+// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -26,33 +26,31 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import "PGTS.h"
-#import "BXPGExpressionVisitor.h"
-#import "BaseTen.h"
-#import "BXLogger.h"
-
-@interface BXPropertyDescription (BXPGInterfaceAdditions)
-- (void) BXPGVisitKeyPathComponent: (id <BXPGExpressionVisitor>) visitor;
-@end
+#import <stdlib.h>
+#import <limits.h>
+#import <BaseTen/postgresql/libpq-fe.h>
+#import "NSString+PGTSAdditions.h"
+#import "PGTSConnection.h"
 
 
-//FIXME: perhaps we could replace the name methods with something more easily understandable?
-@interface NSObject (BXPGAdditions)
-- (NSString *) BXPGEscapedName: (PGTSConnection *) connection;
-@end
+@implementation NSString (PGTSAdditions)
+/**
+ * \internal
+ * \brief Escape the string for the SQL interpreter.
+ */
+- (NSString *) escapeForPGTSConnection: (PGTSConnection *) connection
+{
+    const char* from = [self UTF8String];
+    size_t length = strlen (from);
+    char* to = (char *) calloc (1 + 2 * length, sizeof (char));
+    PQescapeStringConn ([connection pgConnection], to, from, length, NULL);
+    NSString* retval = [NSString stringWithUTF8String: to];
+    free (to);
+    return retval;
+}
 
-
-@interface BXEntityDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
-@end
-
-
-@interface BXAttributeDescription (BXPGInterfaceAdditions)
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection;
-@end
-
-
-@interface NSURL (BXPGInterfaceAdditions)
-- (NSMutableDictionary *) BXPGConnectionDictionary;
+- (NSString *) quotedIdentifierForPGTSConnection: (PGTSConnection *) connection
+{
+	return [NSString stringWithFormat: @"\"%@\"", [self escapeForPGTSConnection: connection]];
+}
 @end

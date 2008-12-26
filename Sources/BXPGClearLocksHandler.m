@@ -104,12 +104,12 @@ bx_error_during_clear_notification (id self, NSError* error)
 			@" AND baseten_lock_timestamp > COALESCE ($2, '-infinity')::timestamp ";
 						
 			//Primary key field names.
-			NSArray* pkeyfnames = (id) [[[[[table primaryKey] fields] allObjects] PGTSCollect] BXPGEscapedName: mConnection];
+			NSArray* pkeyfnames = (id) [[[[[table primaryKey] fields] allObjects] PGTSCollect] quotedName];
 			NSString* pkeystr = [pkeyfnames componentsJoinedByString: @", "];
 			
 			//Table names.
 			NSString* lockTableName = [res valueForKey: @"lock_table_name"];
-			NSString* tableName = [table BXPGQualifiedName: mConnection];
+			NSString* tableName = [table schemaQualifiedName];
 			
 			query = [NSString stringWithFormat: queryFormat, pkeystr, lockTableName, tableName];
 		}

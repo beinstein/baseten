@@ -253,6 +253,10 @@
 		537F04E90DDC954900498B93 /* BXPGClearLocksHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */; };
 		537F05130DDCADA800498B93 /* BXPGTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		537F05140DDCADA800498B93 /* BXPGTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */; };
+		538334C50F03F4DF0040368E /* NSString+PGTSAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 538334C30F03F4DF0040368E /* NSString+PGTSAdditions.h */; };
+		538334C60F03F4DF0040368E /* NSString+PGTSAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 538334C40F03F4DF0040368E /* NSString+PGTSAdditions.m */; };
+		538334DA0F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 538334D80F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.h */; };
+		538334DB0F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.m in Sources */ = {isa = PBXBuildFile; fileRef = 538334D90F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.m */; };
 		538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538678D30DE31BA0000C9A78 /* IOKit.framework */; };
 		538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 538679870DE31C1D000C9A78 /* libstdc++.6.dylib */; };
 		53877E930E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53877E910E26AE920097C35F /* NSEntityDescription+BXPGAdditions.h */; };
@@ -670,6 +674,10 @@
 		537F04E70DDC954900498B93 /* BXPGClearLocksHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGClearLocksHandler.m; path = Sources/BXPGClearLocksHandler.m; sourceTree = "<group>"; };
 		537F05110DDCADA800498B93 /* BXPGTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGTransactionHandler.h; path = Sources/BXPGTransactionHandler.h; sourceTree = "<group>"; };
 		537F05120DDCADA800498B93 /* BXPGTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGTransactionHandler.m; path = Sources/BXPGTransactionHandler.m; sourceTree = "<group>"; };
+		538334C30F03F4DF0040368E /* NSString+PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+PGTSAdditions.h"; path = "Sources/NSString+PGTSAdditions.h"; sourceTree = "<group>"; };
+		538334C40F03F4DF0040368E /* NSString+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+PGTSAdditions.m"; path = "Sources/NSString+PGTSAdditions.m"; sourceTree = "<group>"; };
+		538334D80F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXDatabaseObject+PGTSResultRowProtocol.h"; path = "Sources/BXDatabaseObject+PGTSResultRowProtocol.h"; sourceTree = "<group>"; };
+		538334D90F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXDatabaseObject+PGTSResultRowProtocol.m"; path = "Sources/BXDatabaseObject+PGTSResultRowProtocol.m"; sourceTree = "<group>"; };
 		5383CD1009F57EA40044D8B6 /* BXDatabaseObjectID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectID.h; path = Sources/BXDatabaseObjectID.h; sourceTree = "<group>"; };
 		5383CD1109F57EA40044D8B6 /* BXDatabaseObjectID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectID.m; path = Sources/BXDatabaseObjectID.m; sourceTree = "<group>"; };
 		538678D30DE31BA0000C9A78 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
@@ -1009,6 +1017,8 @@
 				535661CE0F025DD800920008 /* NSArray+BaseTenAdditions.m */,
 				535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */,
 				535661CF0F025DD800920008 /* NSPredicate+BaseTenAdditions.m */,
+				538334C30F03F4DF0040368E /* NSString+PGTSAdditions.h */,
+				538334C40F03F4DF0040368E /* NSString+PGTSAdditions.m */,
 				536C9E8D0EFDAFF20041422F /* Remember to remove */,
 			);
 			name = Utility;
@@ -1326,6 +1336,8 @@
 				53D0D19B0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.h */,
 				53D0D19C0B6F90B300D2D101 /* BXPGCertificateVerificationDelegate.m */,
 				5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */,
+				538334D80F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.h */,
+				538334D90F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.m */,
 				53666D860E1CE01A0028DBEA /* SQL Generation */,
 				53B24CF70E223C70007AED76 /* Metadata subclasses */,
 				531A21AF0DE46860006C757A /* Notification Handlers */,
@@ -1494,6 +1506,8 @@
 				535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */,
 				535661D90F02603600920008 /* BXLocalizedString.h in Headers */,
 				535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */,
+				538334C50F03F4DF0040368E /* NSString+PGTSAdditions.h in Headers */,
+				538334DA0F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1832,6 +1846,8 @@
 				535661D10F025DD800920008 /* NSURL+BaseTenAdditions.m in Sources */,
 				535661D40F025DD800920008 /* NSArray+BaseTenAdditions.m in Sources */,
 				535661D50F025DD800920008 /* NSPredicate+BaseTenAdditions.m in Sources */,
+				538334C60F03F4DF0040368E /* NSString+PGTSAdditions.m in Sources */,
+				538334DB0F0405F50040368E /* BXDatabaseObject+PGTSResultRowProtocol.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

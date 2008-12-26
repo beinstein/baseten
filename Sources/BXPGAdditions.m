@@ -41,11 +41,6 @@
 {
 	return [self PGTSEscapedName: connection];
 }
-
-- (NSString *) BXPGQualifiedName: (PGTSConnection *) connection
-{
-	return [self BXPGEscapedName: connection];
-}
 @end
 
 
@@ -98,14 +93,6 @@
 @end
 
 
-@implementation PGTSFieldDescriptionProxy (BXPGAttributeDescription)
-- (NSString *) BXPGEscapedName: (PGTSConnection *) connection
-{
-	return [[(id) self name] BXPGEscapedName: connection];
-}
-@end
-
-
 @implementation NSURL (BXPGInterfaceAdditions)
 #define SetIf( VALUE, KEY ) if ((VALUE)) [connectionDict setObject: VALUE forKey: KEY];
 - (NSMutableDictionary *) BXPGConnectionDictionary
@@ -125,15 +112,6 @@
 		SetIf ([self port], kPGTSPortKey);
 	}
 	return connectionDict;
-}
-@end
-
-
-@implementation BXDatabaseObject (BXPGInterfaceAdditions)
-- (void) PGTSSetRow: (int) row resultSet: (PGTSResultSet *) res
-{
-    [res goToRow: row];
-    [self setCachedValuesForKeysWithDictionary: [res currentRowAsDictionary]];
 }
 @end
 

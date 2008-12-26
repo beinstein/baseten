@@ -32,6 +32,7 @@
 #import "PGTSTableDescription.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSAdditions.h"
+#import "NSString+PGTSAdditions.h"
 
 
 @implementation PGTSFieldDescriptionProxy
@@ -81,11 +82,11 @@
     return mName;
 }
 
-- (NSString *) qualifiedName
+- (NSString *) quotedName
 {
 	NSString* retval = nil;
     if (nil != mName)
-        retval = [NSString stringWithFormat: @"\"%@\"", mName];
+        retval = [mName quotedIdentifierForPGTSConnection: mConnection];
     return retval;
 }
 
