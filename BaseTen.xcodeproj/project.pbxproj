@@ -69,6 +69,7 @@
 		5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */; };
 		5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */; };
 		5338E5540E5EE69E0045B6D7 /* BXPGInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 530132E109D460230037C485 /* BXPGInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		534A14AF0F0FBBE6002A9F68 /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 534A14AE0F0FBBE6002A9F68 /* BaseTenModifications.sql.m4 */; };
 		5350CC380EFBE66500EBC328 /* PGTSCollections.h in Headers */ = {isa = PBXBuildFile; fileRef = 5350CC360EFBE66500EBC328 /* PGTSCollections.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5350CC390EFBE66500EBC328 /* PGTSCollections.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5350CC370EFBE66500EBC328 /* PGTSCollections.mm */; };
 		53526E0A0E5D70EB00B67550 /* BXPredicateVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 53526E080E5D70EB00B67550 /* BXPredicateVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -537,6 +538,7 @@
 		5339AB910A7542EC00994B1A /* BXException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXException.h; path = Sources/BXException.h; sourceTree = "<group>"; };
 		5339AB920A7542EC00994B1A /* BXException.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXException.m; path = Sources/BXException.m; sourceTree = "<group>"; };
 		5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectIDPrivate.h; path = Sources/BXDatabaseObjectIDPrivate.h; sourceTree = "<group>"; };
+		534A14AE0F0FBBE6002A9F68 /* BaseTenModifications.sql.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BaseTenModifications.sql.m4; path = Resources/BaseTenModifications.sql.m4; sourceTree = "<group>"; };
 		534EE22F0E53213300B079B0 /* libBaseTen.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBaseTen.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5350CC360EFBE66500EBC328 /* PGTSCollections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCollections.h; path = Sources/PGTSCollections.h; sourceTree = "<group>"; };
 		5350CC370EFBE66500EBC328 /* PGTSCollections.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGTSCollections.mm; path = Sources/PGTSCollections.mm; sourceTree = "<group>"; };
@@ -871,6 +873,7 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				534A14AE0F0FBBE6002A9F68 /* BaseTenModifications.sql.m4 */,
 				53AE2C990B1721A4000E6EF1 /* BaseTen.icns */,
 				8DC2EF5A0486A6940098B216 /* Info.plist */,
 				53596CF50A3714AC009C39E9 /* datatypeassociations.plist */,
@@ -1040,12 +1043,12 @@
 		53666D2E0E1CDDA70028DBEA /* Metadata */ = {
 			isa = PBXGroup;
 			children = (
-				53666C9C0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h */,
-				53666C9D0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m */,
 				53666C9E0E1CD8D20028DBEA /* PGTSAbstractDescription.h */,
 				53666C9F0E1CD8D20028DBEA /* PGTSAbstractDescription.m */,
 				53666CA00E1CD8D20028DBEA /* PGTSAbstractObjectDescription.h */,
 				53666CA10E1CD8D20028DBEA /* PGTSAbstractObjectDescription.m */,
+				53666C9C0E1CD8D20028DBEA /* PGTSAbstractClassDescription.h */,
+				53666C9D0E1CD8D20028DBEA /* PGTSAbstractClassDescription.m */,
 				53666CA20E1CD8D20028DBEA /* PGTSACLItem.h */,
 				53666CA30E1CD8D20028DBEA /* PGTSACLItem.m */,
 				53666CB60E1CD8D20028DBEA /* PGTSDatabaseDescription.h */,
@@ -1630,6 +1633,7 @@
 			files = (
 				535443EC0D634A47002A6C47 /* datatypeassociations.plist in Resources */,
 				535443ED0D634A47002A6C47 /* BaseTen.icns in Resources */,
+				534A14AF0F0FBBE6002A9F68 /* BaseTenModifications.sql.m4 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

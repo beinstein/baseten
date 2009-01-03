@@ -176,10 +176,10 @@
 		227A5C340E4BB4FA0009CC08 /* Reload32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reload32.tiff; path = Resources/Reload32.tiff; sourceTree = "<group>"; };
 		227A5CB80E4BBCBB0009CC08 /* Help32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Help32.tiff; path = Resources/Help32.tiff; sourceTree = "<group>"; };
 		227A5CD10E4BBEA50009CC08 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/GetInfoWindow.xib; sourceTree = "<group>"; };
-		227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAGetInfoWindowController.h; path = Sources/BXAGetInfoWindowController.h; sourceTree = SOURCE_ROOT; };
-		227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAGetInfoWindowController.m; path = Sources/BXAGetInfoWindowController.m; sourceTree = SOURCE_ROOT; };
-		227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAInspectorPanelController.h; path = Sources/BXAInspectorPanelController.h; sourceTree = SOURCE_ROOT; };
-		227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAInspectorPanelController.m; path = Sources/BXAInspectorPanelController.m; sourceTree = SOURCE_ROOT; };
+		227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAGetInfoWindowController.h; path = Sources/BXAGetInfoWindowController.h; sourceTree = "<group>"; };
+		227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAGetInfoWindowController.m; path = Sources/BXAGetInfoWindowController.m; sourceTree = "<group>"; };
+		227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAInspectorPanelController.h; path = Sources/BXAInspectorPanelController.h; sourceTree = "<group>"; };
+		227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAInspectorPanelController.m; path = Sources/BXAInspectorPanelController.m; sourceTree = "<group>"; };
 		227A5F4E0E4C5E300009CC08 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorPanel.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Sources/main.m; sourceTree = "<group>"; };
 		2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = SetupApplication_Prefix.pch; path = Sources/SetupApplication_Prefix.pch; sourceTree = "<group>"; };
@@ -202,12 +202,12 @@
 		5374E6980B0DC8A4000D353D /* MKCPolishedHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedHeaderView.m; path = Sources/MKCPolishedHeaderView.m; sourceTree = "<group>"; };
 		5374E9420B0E001C000D353D /* MKCPolishedCornerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCPolishedCornerView.h; path = Sources/MKCPolishedCornerView.h; sourceTree = "<group>"; };
 		5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCPolishedCornerView.m; path = Sources/MKCPolishedCornerView.m; sourceTree = "<group>"; };
-		53877AFF0E263AED0097C35F /* BXAImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAImportController.h; path = Sources/BXAImportController.h; sourceTree = SOURCE_ROOT; };
-		53877B000E263AED0097C35F /* BXAImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAImportController.m; path = Sources/BXAImportController.m; sourceTree = SOURCE_ROOT; };
+		53877AFF0E263AED0097C35F /* BXAImportController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAImportController.h; path = Sources/BXAImportController.h; sourceTree = "<group>"; };
+		53877B000E263AED0097C35F /* BXAImportController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAImportController.m; path = Sources/BXAImportController.m; sourceTree = "<group>"; };
 		53877E3D0E26A51B0097C35F /* BXAFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAFieldCell.h; path = Sources/BXAFieldCell.h; sourceTree = "<group>"; };
 		53877E3E0E26A51B0097C35F /* BXAFieldCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAFieldCell.m; path = Sources/BXAFieldCell.m; sourceTree = "<group>"; };
-		5388DC640E23AC3F006CDBD8 /* BXAController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAController.h; path = Sources/BXAController.h; sourceTree = SOURCE_ROOT; };
-		5388DC650E23AC3F006CDBD8 /* BXAController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAController.m; path = Sources/BXAController.m; sourceTree = SOURCE_ROOT; };
+		5388DC640E23AC3F006CDBD8 /* BXAController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAController.h; path = Sources/BXAController.h; sourceTree = "<group>"; };
+		5388DC650E23AC3F006CDBD8 /* BXAController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAController.m; path = Sources/BXAController.m; sourceTree = "<group>"; };
 		5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		5388DE290E23AE48006CDBD8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		538963150EF2A480004391BF /* BXAPortFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAPortFormatter.h; path = Sources/BXAPortFormatter.h; sourceTree = "<group>"; };
@@ -224,8 +224,8 @@
 		53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCEventPassingTextField.m; path = Sources/MKCEventPassingTextField.m; sourceTree = "<group>"; };
 		53D7BFEC0D6C787200290858 /* MKCImageAndTextCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCImageAndTextCell.h; path = Sources/MKCImageAndTextCell.h; sourceTree = "<group>"; };
 		53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCImageAndTextCell.m; path = Sources/MKCImageAndTextCell.m; sourceTree = "<group>"; };
-		53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAPGInterface.h; path = Sources/BXAPGInterface.h; sourceTree = SOURCE_ROOT; };
-		53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAPGInterface.m; path = Sources/BXAPGInterface.m; sourceTree = SOURCE_ROOT; };
+		53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAPGInterface.h; path = Sources/BXAPGInterface.h; sourceTree = "<group>"; };
+		53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAPGInterface.m; path = Sources/BXAPGInterface.m; sourceTree = "<group>"; };
 		53DAFF170B4F0DE700C000FE /* View16.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = View16.tif; path = Resources/View16.tif; sourceTree = "<group>"; };
 		53E029D30D7C49C8001AED9C /* MKCBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCBackgroundView.h; path = Sources/MKCBackgroundView.h; sourceTree = "<group>"; };
 		53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCBackgroundView.m; path = Sources/MKCBackgroundView.m; sourceTree = "<group>"; };
@@ -252,24 +252,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		080E96DDFE201D6D7F000001 /* Controllers */ = {
-			isa = PBXGroup;
-			children = (
-				5388DC640E23AC3F006CDBD8 /* BXAController.h */,
-				5388DC650E23AC3F006CDBD8 /* BXAController.m */,
-				53877AFF0E263AED0097C35F /* BXAImportController.h */,
-				53877B000E263AED0097C35F /* BXAImportController.m */,
-				53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */,
-				53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */,
-				227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */,
-				227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */,
-				227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */,
-				227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */,
-			);
-			name = Controllers;
-			path = Source;
-			sourceTree = "<group>";
-		};
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -302,7 +284,7 @@
 			isa = PBXGroup;
 			children = (
 				531517560AFA55FB003FB616 /* View Classes */,
-				080E96DDFE201D6D7F000001 /* Controllers */,
+				532490C00F058B9000BF17C1 /* Controllers */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
@@ -392,6 +374,23 @@
 				53877E3E0E26A51B0097C35F /* BXAFieldCell.m */,
 			);
 			name = "View Classes";
+			sourceTree = "<group>";
+		};
+		532490C00F058B9000BF17C1 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				5388DC640E23AC3F006CDBD8 /* BXAController.h */,
+				5388DC650E23AC3F006CDBD8 /* BXAController.m */,
+				53877AFF0E263AED0097C35F /* BXAImportController.h */,
+				53877B000E263AED0097C35F /* BXAImportController.m */,
+				53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */,
+				53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */,
+				227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */,
+				227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */,
+				227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */,
+				227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */,
+			);
+			name = Controllers;
 			sourceTree = "<group>";
 		};
 		5388DCD30E23AE22006CDBD8 /* Products */ = {
