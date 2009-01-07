@@ -28,6 +28,8 @@
 
 #import <Foundation/Foundation.h>
 
+//FIXME: this may be removed in the future since the function now exists in BaseTen.
+
 divert(-1)
 include(`../BaseTenModifications.sql.m4')
 divert(0)dnl
