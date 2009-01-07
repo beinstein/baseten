@@ -67,7 +67,7 @@
 	}
 	
 	const char* path = [[fileURL path] UTF8String];
-	int fd = open (path, O_RDONLY);
+	int fd = open (path, O_RDONLY | O_SHLOCK);
 	struct stat statbuf = {};
 	if (-1 != fstat (fd, &statbuf))
 	{

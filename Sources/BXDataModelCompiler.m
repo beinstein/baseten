@@ -29,32 +29,82 @@
 
 #import "BXDataModelCompiler.h"
 #import "BXLogger.h"
+#import "BXEnumerate.h"
 
 
 @implementation BXDataModelCompiler
 + (NSString *) momcPath
 {
-	static NSString* momcPath = nil;
+	__strong static NSString* momcPath = nil;
 	if (! momcPath)
 	{
-		NSString* paths [] = 
-		{
-			@"/Developer/usr/bin/momc", // Patch from Gustavo Moya Ortiz on 20080311, case #127.
-			@"/Developer/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc",
-			@"/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc",
-			nil
-		};
-		
 		NSFileManager* manager = [NSFileManager defaultManager];
-		for (int i = 0; nil != paths [i]; i++)
+		
+		//Paths inside the system developer directory which may lead to momc.
+		NSArray* developerSubpaths = [NSArray arrayWithObjects: 
+									  @"/usr/bin/momc", 
+									  @"/Library/Xcode/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc", 
+									  nil];
+		
+		
+		//Try using xcode-select's setting.
 		{
-			if ([manager fileExistsAtPath: paths [i]])
+			int fd = open ("/usr/share/xcode-select/xcode_dir_path", O_RDONLY | O_SHLOCK);
+			FILE* file = fdopen (fd, "r");
+			if (file)
 			{
-				momcPath = paths [i];
-				break;
+				char buffer [1024] = {};
+				if (fgets (buffer, 1024, file))
+				{
+					//Remove the newline character if one exists.
+					size_t length = strlen (buffer);
+					if ('\n' == buffer [length - 1])
+						buffer [length - 1] = '\0';
+					
+					BXEnumerate (currentSubpath, e, [developerSubpaths objectEnumerator])
+					{
+						NSString* path = [NSString stringWithFormat: @"%s%@", buffer, currentSubpath];
+						if ([manager fileExistsAtPath: path])
+						{
+							momcPath = [path retain];
+							fclose (file);
+							goto end;
+						}
+					}
+				}
+			}
+			fclose (file);
+		}
+		
+		//Try using paths from NSSearchPathForDirectoriesInDomains 
+		//(which returns always /Developer and not xcode-select's setting).
+		{
+			NSArray* paths = NSSearchPathForDirectoriesInDomains (NSDeveloperDirectory, NSAllDomainsMask, YES);
+			BXEnumerate (currentPath, e, [paths objectEnumerator])
+			{
+				BXEnumerate (currentSubpath, e, [developerSubpaths objectEnumerator])
+				{
+					NSString* path = [currentPath stringByAppendingString: currentSubpath];
+					if ([manager fileExistsAtPath: path])
+					{
+						momcPath = [path retain];
+						goto end;
+					}
+				}
+			}
+		}
+		
+		//Finally try something rather old.
+		{
+			NSString* path = @"/Library/Application Support/Apple/Developer Tools/Plug-ins/XDCoreDataModel.xdplugin/Contents/Resources/momc";
+			if ([manager fileExistsAtPath: path])
+			{
+				momcPath = [path retain];
+				goto end;
 			}
 		}
 	}
+end:
 	return momcPath;
 }
 
