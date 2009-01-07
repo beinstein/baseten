@@ -42,6 +42,7 @@
 @class PGTSQuery;
 
 
+BX_EXPORT NSNumber* BXPGCopyCurrentVersionNumber ();
 BX_EXPORT NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
 BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prependAlias);
 

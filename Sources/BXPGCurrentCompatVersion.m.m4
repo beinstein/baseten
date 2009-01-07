@@ -32,6 +32,14 @@ divert(-1)
 include(`Resources/BaseTenModifications.sql.m4')
 divert(0)dnl
 
+
+NSNumber*
+BXPGCopyCurrentVersionNumber ()
+{
+    return [[NSDecimalNumber alloc] initWithString: @"_bx_version_"];
+}
+
+
 NSNumber*
 BXPGCopyCurrentCompatibilityVersionNumber ()
 {
