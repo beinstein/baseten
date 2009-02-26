@@ -35,22 +35,19 @@
 
 
 @interface BXEntityDescription (PrivateMethods)
-+ (id) cachedEntities;
-- (NSURL *) entityKey;
-+ (NSURL *) entityKeyForDatabaseURI: (NSURL *) databaseURI schema: (NSString *) schemaName table: (NSString *) tableName;
-+ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (id) initWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName;
 - (void) registerObjectID: (BXDatabaseObjectID *) anID;
 - (void) unregisterObjectID: (BXDatabaseObjectID *) anID;
 - (NSArray *) attributes: (NSArray *) strings;
 - (void) setAttributes: (NSDictionary *) attributes;
 - (void) resetAttributeExclusion;
-- (void) setValidated: (BOOL) flag;
 - (void) setIsView: (BOOL) flag;
 - (void) setRelationships: (NSDictionary *) aDict;
-- (NSLock *) validationLock;
-- (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
 - (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag;
 - (void) setEnabled: (BOOL) flag;
 - (id) inverseToOneRelationships;
+
+- (BOOL) beginValidation;
+- (void) setValidated: (BOOL) flag;
+- (void) endValidation;
 @end

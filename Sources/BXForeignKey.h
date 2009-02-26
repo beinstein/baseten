@@ -28,31 +28,22 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import <BaseTen/BXAbstractDescription.h>
+#import <BaseTen/BXExport.h>
 
 @class BXEntityDescription;
 @class BXDatabaseObject;
 @class BXDatabaseObjectID;
-@class BXRelationshipDescription;
 
-@interface BXForeignKey : BXAbstractDescription 
-{
-	NSMutableSet* mFieldNames;
-	
-	//FIXME: this shouldn't really be here but unfortunately we are not using
-	//the PGTS metadata classes to fetch foreign keys and we have to store this somewhere.
-	NSDeleteRule mDeleteRule;
-}
-- (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
-- (NSSet *) fieldNames;
 
+@protocol BXForeignKey <NSObject>
 - (NSDeleteRule) deleteRule;
-- (void) setDeleteRule: (NSDeleteRule) aRule;
-
-- (BXDatabaseObjectID *) objectIDForSrcEntity: (BXEntityDescription *) srcEntity fromObject: (BXDatabaseObject *) object fireFault: (BOOL) fireFault;
-- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) anObject fireFault: (BOOL) fireFault;
-//- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject;
-//- (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject;
-- (NSMutableDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object;
-- (NSMutableDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object;
+- (NSUInteger) numberOfColumns;
+- (void) iterateColumnNames: (void (*)(NSString* srcName, NSString* dstName, void* context)) callback context: (void *) context;
+- (void) iterateReversedColumnNames: (void (*)(NSString* dstName, NSString* srcName, void* context)) callback context: (void *) context;
 @end
+
+
+BX_EXPORT NSMutableDictionary* BXFkeySrcDictionary (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom);
+BX_EXPORT NSMutableDictionary* BXFkeyDstDictionary (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom);
+BX_EXPORT BXDatabaseObjectID* BXFkeySrcObjectID (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom, BOOL fireFault);
+BX_EXPORT BXDatabaseObjectID* BXFkeyDstObjectID (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom, BOOL fireFault);

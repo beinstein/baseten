@@ -35,15 +35,15 @@
 #import <tr1/unordered_map>
 
 
-struct LockStruct 
+struct lock_st 
 {
-	__strong NSMutableArray* forUpdate;
-	__strong NSMutableArray* forDelete;
+	__strong NSMutableArray* l_for_update;
+	__strong NSMutableArray* l_for_delete;
 };
-typedef std::tr1::unordered_map <Oid, LockStruct, 
+typedef std::tr1::unordered_map <Oid, lock_st, 
 	std::tr1::hash <Oid>, 
 	std::equal_to <Oid>, 
-	PGTS::scanned_memory_allocator <std::pair <const Oid, LockStruct> > > 
+	PGTS::scanned_memory_allocator <std::pair <const Oid, lock_st> > > 
 	LockMap;
 
 
@@ -51,25 +51,31 @@ typedef std::tr1::unordered_map <Oid, LockStruct,
 - (void) dealloc
 {
 	[mLockFunctionName release];
+	[mLockTableName release];
 	[super dealloc];
+}
+
+- (void) setLockTableName: (NSString *) aName
+{
+	if (mLockTableName != aName)
+	{
+		[mLockTableName release];
+		mLockTableName = [aName retain];
+	}
 }
 
 - (NSString *) lockFunctionName
 {
-	if (! mLockFunctionName)
-	{
-		NSError* localError = nil;
-		PGTSTableDescription* table = [mInterface tableForEntity: mEntity error: &localError];
-		BXAssertValueReturn (table, @"Expected to get a table description. Error: %@", localError);
-		if (table)
-		{
-			PGTSResultSet* res = [mConnection executeQuery: @"SELECT baseten.LockNotifyFunctionName ($1::OID) AS fname" 
-												parameters: PGTSOidAsObject ([table oid])];
-			[res advanceRow];
-			mLockFunctionName = [[res valueForKey: @"fname"] retain];
-		}
-	}
 	return mLockFunctionName;
+}
+
+- (void) setLockFunctionName: (NSString *) name
+{
+	if (mLockFunctionName != name)
+	{
+		[mLockFunctionName release];
+		mLockFunctionName = [name retain];
+	}
 }
 
 - (void) handleNotification: (PGTSNotification *) notification
@@ -83,7 +89,7 @@ typedef std::tr1::unordered_map <Oid, LockStruct,
 		@" AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp "
 		@" AND baseten_lock_backend_pid != $2 "
 		@"ORDER BY baseten_lock_timestamp ASC";
-		query = [NSString stringWithFormat: query, mTableName];
+		query = [NSString stringWithFormat: query, mLockTableName];
 		PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID]];
 		
 		//Update the timestamp.
@@ -98,16 +104,16 @@ typedef std::tr1::unordered_map <Oid, LockStruct,
 			unichar lockType = [[row valueForKey: @"baseten_lock_query_type"] characterAtIndex: 0];
 			Oid tableOid = [[row valueForKey: @"baseten_lock_relid"] PGTSOidValue];
 			
-			struct LockStruct ls = (* locks) [tableOid];
+			struct lock_st ls = (* locks) [tableOid];
 			
 			NSMutableArray* ids = nil;
 			switch (lockType) 
 			{
 				case 'U':
-					ids = ls.forUpdate;
+					ids = ls.l_for_update;
 					break;
 				case 'D':
-					ids = ls.forDelete;
+					ids = ls.l_for_delete;
 					break;
 			}
 			
@@ -117,10 +123,10 @@ typedef std::tr1::unordered_map <Oid, LockStruct,
 				switch (lockType) 
 				{
 					case 'U':
-						ls.forUpdate = ids;
+						ls.l_for_update = ids;
 						break;
 					case 'D':
-						ls.forDelete = ids;
+						ls.l_for_delete = ids;
 						break;
 				}
 			}
@@ -130,13 +136,13 @@ typedef std::tr1::unordered_map <Oid, LockStruct,
 		}
 		
 		//Send changes.
-		LockMap::iterator iterator = locks->begin ();
+		LockMap::const_iterator iterator = locks->begin ();
 		BXDatabaseContext* ctx = [mInterface databaseContext];
 		while (locks->end () != iterator)
 		{
-			LockStruct ls = iterator->second;
-			if (ls.forUpdate) [ctx lockedObjectsInDatabase: ls.forUpdate status: kBXObjectLockedStatus];
-			if (ls.forDelete) [ctx lockedObjectsInDatabase: ls.forDelete status: kBXObjectDeletedStatus];
+			lock_st ls = iterator->second;
+			if (ls.l_for_update) [ctx lockedObjectsInDatabase: ls.l_for_update status: kBXObjectLockedStatus];
+			if (ls.l_for_delete) [ctx lockedObjectsInDatabase: ls.l_for_delete status: kBXObjectDeletedStatus];
 		}
 		
 		delete locks;

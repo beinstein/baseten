@@ -2,7 +2,7 @@
 // PGTSAbstractObjectDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -28,13 +28,19 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/postgresql/libpq-fe.h>
-#import "PGTSAbstractDescription.h"
+#import <BaseTen/PGTSAbstractDescription.h>
+#import <BaseTen/PGTSOids.h>
 
 
-@interface PGTSAbstractObjectDescriptionProxy : PGTSAbstractDescriptionProxy
+@class PGTSAbstractObjectDescription;
+
+
+#if defined (__cplusplus)
+namespace PGTS 
 {
+	void InsertConditionally (OidMap* map, PGTSAbstractObjectDescription* description);
 }
-@end
+#endif
 
 
 @interface PGTSAbstractObjectDescription : PGTSAbstractDescription 
@@ -42,7 +48,8 @@
     Oid mOid;
 }
 
-- (Oid)  oid;
-- (void) setOid: (Oid) anOid;
+- (Oid) oid;
 
+//Thread un-safe methods.
+- (void) setOid: (Oid) anOid;
 @end

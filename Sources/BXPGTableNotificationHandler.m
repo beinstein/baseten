@@ -35,7 +35,7 @@
 - (void) dealloc
 {
 	[mEntity release];
-	[mTableName release];
+	[mNotificationName release];
 	[super dealloc];
 }
 
@@ -45,21 +45,21 @@
 	ExpectV (mLastCheck);
 }
 
-- (void) setTableName: (NSString *) aName
-{
-	if (mTableName != aName)
-	{
-		[mTableName release];
-		mTableName = [aName retain];
-	}
-}
-
 - (void) setEntity: (BXEntityDescription *) entity
 {
 	if (mEntity != entity)
 	{
 		[mEntity release];
 		mEntity = [entity retain];
+	}
+}
+
+- (void) setNotificationName: (NSString *) name
+{
+	if (mNotificationName != name)
+	{
+		[mNotificationName release];
+		mNotificationName = [name retain];
 	}
 }
 @end

@@ -26,189 +26,114 @@
 // $Id$
 //
 
-#import "PGTSHOM.h"
-
 #import "BXForeignKey.h"
-#import "BXForeignKeyPrivate.h"
-#import "BXEntityDescription.h"
-#import "BXDatabaseObject.h"
-#import "BXDatabaseObjectIDPrivate.h"
-#import "BXDatabaseObjectPrivate.h"
 #import "BXLogger.h"
-#import "BXEnumerate.h"
+#import "BXAttributeDescription.h"
+#import "BXDatabaseObjectID.h"
+#import "BXDatabaseObjectIDPrivate.h"
+#import "BXDatabaseObject.h"
 
 
-@implementation BXForeignKey
-
-- (id) initWithName: (NSString *) aName
+struct srcdst_dictionary_st
 {
-	if ((self = [super initWithName: aName]))
-	{
-		mFieldNames = [[NSMutableSet alloc] init];
-	}
-	return self;
-}
+	__strong NSMutableDictionary* sd_target;
+	__strong id sd_object;
+	__strong NSDictionary* sd_attributes_by_name;
+};
 
-- (void) dealloc
-{
-	[mFieldNames release];
-	[super dealloc];
-}
 
-- (NSString *) description
+static void
+SrcDstDictionary (NSString* attributeName, NSString* objectKey, void* ctx)
 {
-	NSArray* fieldNames = [mFieldNames allObjects];
-	NSArray* from = [[fieldNames PGTSCollect] objectAtIndex: 0];
-	NSArray* to   = [[fieldNames PGTSCollect] objectAtIndex: 1];
-	NSString* retval = [NSString stringWithFormat: @"<%@ (%p): %@ (%@ -> %@)>", 
-						[self class], self, [self name],
-						[from componentsJoinedByString: @", "], [to componentsJoinedByString: @", "]];
-	return retval;
-}
-
-- (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName
-{
-	BXAssertVoidReturn (nil != srcFName, @"Expected srcFName not to be nil.");
-	BXAssertVoidReturn (nil != dstFName, @"Expected dstFName not to be nil.");
-	[mFieldNames addObject: [NSArray arrayWithObjects: srcFName, dstFName, nil]];
-}
-
-- (NSSet *) fieldNames
-{
-	return mFieldNames;
-}
-
-- (NSDeleteRule) deleteRule
-{
-	return mDeleteRule;
-}
-
-- (void) setDeleteRule: (NSDeleteRule) aRule
-{
-	mDeleteRule = aRule;
-}
-
-#if 0
-- (NSPredicate *) predicateForSrcEntity: (BXEntityDescription *) srcEntity valuesInObject: (BXDatabaseObject *) anObject
-{
-	return [self predicateForEntity: srcEntity valuesInObject: anObject entityIndex: 0 objectIndex: 1];
-}
-
-- (NSPredicate *) predicateForDstEntity: (BXEntityDescription *) dstEntity valuesInObject: (BXDatabaseObject *) anObject
-{
-	return [self predicateForEntity: dstEntity valuesInObject: anObject entityIndex: 1 objectIndex: 0];
-}
-#endif
-
-- (BXDatabaseObjectID *) objectIDForEntity: (BXEntityDescription *) entity fromObject: (BXDatabaseObject *) object
-							   entityIndex: (int) ei objectIndex: (int) oi fireFault: (BOOL) fireFault
-{
-	BOOL haveValues = YES;
-	NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
-	BXEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
-	{
-		NSString* name = [currentFieldArray objectAtIndex: ei];
-		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
-		
-		id value = nil;
-		if (fireFault)
-			value = [object primitiveValueForKey: objectKey];
-		else
-		{
-			value = [object cachedValueForKey: objectKey];
-			if ([NSNull null] == value)
-				value = nil;
-		}
-		
-		if (value)
-			[values setObject: value forKey: name];
-		else
-		{
-			haveValues = NO;
-			break;
-		}
-	}
+	struct srcdst_dictionary_st* sd = (struct srcdst_dictionary_st *) ctx;
 	
-	BXDatabaseObjectID* retval = nil;
-	if (haveValues)
-		retval = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: values];
+	NSDictionary* attrs = sd->sd_attributes_by_name;
+	id object = sd->sd_object;
+	BXAttributeDescription* attr = [attrs objectForKey: attributeName];
+	[sd->sd_target setObject: (object ? [object primitiveValueForKey: objectKey] : [NSNull null]) forKey: attr];
+}
+
+
+NSMutableDictionary* 
+BXFkeySrcDictionary (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom)
+{
+	ExpectC (fkey);
+	ExpectC (entity);
+	
+	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [fkey numberOfColumns]];
+	NSDictionary* attributes = [entity attributesByName];
+	struct srcdst_dictionary_st ctx = {retval, valuesFrom, attributes};
+	[fkey iterateColumnNames: &SrcDstDictionary context: &ctx];
 	return retval;	
 }
 
 
-- (BXDatabaseObjectID *) objectIDForDstEntity: (BXEntityDescription *) dstEntity fromObject: (BXDatabaseObject *) object fireFault: (BOOL) fireFault
+NSMutableDictionary* 
+BXFkeyDstDictionaryUsing (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom)
 {
-	return [self objectIDForEntity: dstEntity fromObject: object entityIndex: 1 objectIndex: 0 fireFault: fireFault];
-}
-
-- (BXDatabaseObjectID *) objectIDForSrcEntity: (BXEntityDescription *) srcEntity fromObject: (BXDatabaseObject *) object fireFault: (BOOL) fireFault
-{
-	return [self objectIDForEntity: srcEntity fromObject: object entityIndex: 0 objectIndex: 1 fireFault: fireFault];
-}
-
-- (NSMutableDictionary *) srcDictionaryFor: (BXEntityDescription *) entity valuesFromDstObject: (BXDatabaseObject *) object
-{
-	return [self valueDictionaryForEntity: entity valuesInObject: object entityIndex: 0 objectIndex: 1];
-}
-
-- (NSMutableDictionary *) dstDictionaryFor: (BXEntityDescription *) entity valuesFromSrcObject: (BXDatabaseObject *) object
-{
-	return [self valueDictionaryForEntity: entity valuesInObject: object entityIndex: 1 objectIndex: 0];
-}
-
-@end
-
-
-@implementation BXForeignKey (PrivateMethods)
-#if 0
-- (NSPredicate *) predicateForEntity: (BXEntityDescription *) entity 
-					  valuesInObject: (BXDatabaseObject *) anObject
-						 entityIndex: (unsigned int) ei 
-						 objectIndex: (unsigned int) oi
-{
-	BXAssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
+	ExpectC (fkey);
+	ExpectC (entity);
 	
+	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [fkey numberOfColumns]];
 	NSDictionary* attributes = [entity attributesByName];
-	NSMutableArray* subPredicates = [NSMutableArray arrayWithCapacity: [mFieldNames count]];
-	BXEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
-	{
-		id attributeKey = [currentFieldArray objectAtIndex: ei];
-		id objectKey = [currentFieldArray objectAtIndex: oi];
-		BXAttributeDescription* attribute = [attributes objectForKey: attributeKey];
-		
-		NSExpression* lhs = [NSExpression expressionForConstantValue: attribute];
-		NSExpression* rhs = [BXObjectKeyPathExpression expressionForKeyPath: objectKey object: [[anObject retain] autorelease]];
-		NSPredicate* predicate = [NSComparisonPredicate predicateWithLeftExpression: lhs
-																	rightExpression: rhs
-																		   modifier: NSDirectPredicateModifier
-																			   type: NSEqualToPredicateOperatorType 
-																			options: 0];
-		[subPredicates addObject: predicate];
-	}
-	return [NSCompoundPredicate andPredicateWithSubpredicates: subPredicates];	
-}
-#endif
-
-/**
- * \internal
- * \param ei Either 0 or 1
- * \param oi Either 1 or 0
- */
-- (NSMutableDictionary *) valueDictionaryForEntity: (BXEntityDescription *) entity valuesInObject: (BXDatabaseObject *) object 
-									   entityIndex: (unsigned int) ei objectIndex: (unsigned int) oi
-{
-	BXAssertValueReturn (nil != entity, nil, @"Expected entity to be set.");
-	
-	NSMutableDictionary* retval = [NSMutableDictionary dictionaryWithCapacity: [mFieldNames count]];
-	NSDictionary* attributes = [entity attributesByName];
-	BXEnumerate (currentFieldArray, e, [mFieldNames objectEnumerator])
-	{
-		NSString* attributeName = [currentFieldArray objectAtIndex: ei];
-		BXAttributeDescription* attribute = [attributes objectForKey: attributeName];
-		NSString* objectKey = [currentFieldArray objectAtIndex: oi];
-		[retval setObject: (object ? [object primitiveValueForKey: objectKey] : [NSNull null]) forKey: attribute];
-	}	
+	struct srcdst_dictionary_st ctx = {retval, valuesFrom, attributes};
+	[fkey iterateReversedColumnNames: &SrcDstDictionary context: &ctx];
 	return retval;
 }
 
-@end
+
+struct object_ids_st
+{
+	__strong NSMutableDictionary* oi_values;
+	__strong id oi_object;
+	BOOL oi_fire_fault;
+};
+
+static void
+ObjectIDs (NSString* name, NSString* objectKey, void* ctx)
+{
+	struct object_ids_st* os = (struct object_ids_st *) ctx;
+	if (os->oi_values)
+	{
+		id value = nil;
+		if (os->oi_fire_fault)
+			value = [os->oi_object primitiveValueForKey: objectKey];
+		else
+		{
+			value = [os->oi_object cachedValueForKey: objectKey];
+			if ([NSNull null] == value)
+				value = nil;
+		}
+
+		if (value)
+			[os->oi_values setObject: value forKey: name];
+		else
+			os->oi_values = nil;
+	}
+}
+
+BXDatabaseObjectID*
+BXFkeySrcObjectID (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom, BOOL fireFault)
+{
+	NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [fkey numberOfColumns]];
+	struct object_ids_st ctx = {values, valuesFrom, fireFault};
+	[fkey iterateColumnNames: &ObjectIDs context: &ctx];
+
+	BXDatabaseObjectID* retval = nil;
+	if (ctx.oi_values)
+		retval = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: values];
+	return retval;
+}
+
+BXDatabaseObjectID*
+BXFkeyDstObjectID (id <BXForeignKey> fkey, BXEntityDescription* entity, BXDatabaseObject* valuesFrom, BOOL fireFault)
+{
+	NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [fkey numberOfColumns]];
+	struct object_ids_st ctx = {values, valuesFrom, fireFault};
+	[fkey iterateReversedColumnNames: &ObjectIDs context: &ctx];
+	
+	BXDatabaseObjectID* retval = nil;
+	if (ctx.oi_values)
+		retval = [BXDatabaseObjectID IDWithEntity: entity primaryKeyFields: values];
+	return retval;
+}

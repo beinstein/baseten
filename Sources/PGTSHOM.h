@@ -33,6 +33,7 @@
 - (id) PGTSAny;
 - (id) PGTSDo;
 - (id) PGTSCollect;
+- (id) PGTSCollectReturning: (Class) aClass;
 
 /**
  * \internal
@@ -41,7 +42,16 @@
  * Make existing objects keys and collected objects values.
  * \return An invocation recorder that creates an NSDictionary.
  */
-- (id) PGTSKeyCollect;
+- (id) PGTSCollectD;
+
+/**
+ * \internal
+ * \brief Make a dictionary of collected objects.
+ *
+ * Make existing objects values and collected objects keys.
+ * \return An invocation recorder that creates an NSDictionary.
+ */
+- (id) PGTSCollectDK;
 
 /**
  * \internal
@@ -56,7 +66,6 @@
 
 
 @interface NSSet (PGTSHOM) <PGTSHOM>
-- (id) PGTSCollectReturning: (Class) aClass;
 - (id) PGTSSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 @end
@@ -64,13 +73,21 @@
 
 @interface NSArray (PGTSHOM) <PGTSHOM>
 - (NSArray *) PGTSReverse;
-- (id) PGTSCollectReturning: (Class) aClass;
 - (id) PGTSSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 @end
 
 
 @interface NSDictionary (PGTSHOM) <PGTSHOM>
+/**
+ * \internal
+ * \brief Make a dictionary of objects collected from keys.
+ *
+ * Make existing objects values and collected objects keys.
+ * \return An invocation recorder that creates an NSDictionary.
+ */
+- (id) PGTSKeyCollectDK;
+
 - (id) PGTSValueSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSValueSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
 @end

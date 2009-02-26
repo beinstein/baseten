@@ -158,6 +158,11 @@ SSLMode (enum BXSSLMode mode)
 	[receiver performSelector: callback withObject: result];
 }
 
+- (void) reloadDatabaseMetadata
+{
+	[mConnection reloadDatabaseDescription];
+}
+
 - (void) dealloc
 {
 	[mCertificateVerificationDelegate release];
@@ -237,11 +242,11 @@ SSLMode (enum BXSSLMode mode)
 		
 		//Table
 		NSError* localError = nil;
-		PGTSTableDescription* table = [mInterface tableForEntity: entity error: &localError];
+		BXPGTableDescription* table = [mInterface tableForEntity: entity];
 		BXAssertVoidReturn (table, @"Expected to get a table description. Error: %@", localError);
 
 		//Get and sort the primary key fields.
-		NSArray* pkeyFields = [[[[table primaryKey] fields] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
+		NSArray* pkeyFields = [[[[table primaryKey] columns] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
 		BXAssertVoidReturn (nil != pkeyFields, @"Expected to know the primary key.");
 		NSArray* pkeyNames = (id) [[pkeyFields PGTSCollect] name];
 		NSArray* attrs = [[entity attributesByName] objectsForKeys: pkeyNames notFoundMarker: [NSNull null]];
@@ -337,15 +342,13 @@ ConnectionString (NSDictionary* connectionDict)
 		[mConnection setDelegate: self];
 		[mConnection setCertificateVerificationDelegate: mCertificateVerificationDelegate];
 		[mConnection setLogsQueries: [mInterface logsQueries]];
-		[self refreshDatabaseDescription];
 	}	
 }
 
 
 - (void) refreshDatabaseDescription
 {
-	id desc = [[[BXPGDatabaseDescription alloc] init] autorelease];
-	[mConnection setDatabaseDescription: desc];
+	[mConnection reloadDatabaseDescription];
 }
 
 
@@ -384,33 +387,12 @@ ConnectionString (NSDictionary* connectionDict)
 
 - (void) handleSuccess
 {
-	NSError* localError = nil;
-	BXPGDatabaseDescription* db = (id) [mConnection databaseDescription];
-	
-	if (! [db checkBaseTenSchema: &localError])
-		goto error;
-	
-	if (! [db checkSchemaVersions: &localError])
-		goto error;
-	
-	if (! [mInterface checkSchemaCompatibility: &localError])
-		goto error;
-	
 	mConnectionSucceeded = YES;
 	if (mAsync)
 	{
 		[mInterface connectionSucceeded];
 	}
 	BXLogDebug (@"mConnection: %p", mConnection);
-	return;
-	
-error:
-	{
-		if (mAsync)
-			[mInterface connectionFailed: localError];
-		else
-			*mSyncErrorPtr = localError;
-	}
 }
 
 
@@ -607,56 +589,65 @@ error:
 			mLockHandlers = [[NSMutableDictionary alloc] init];
 		
 		BXPGDatabaseDescription* database = (id) [connection databaseDescription];
-		PGTSTableDescription* table = [mInterface tableForEntity: entity inDatabase: database error: error];
+		BXPGTableDescription* table = [mInterface tableForEntity: entity inDatabase: database];
 		if (table && [self addClearLocksHandler: connection error: error])
 		{
 			//Start listening to notifications and get the notification names.
 			id oid = PGTSOidAsObject ([table oid]);
 			NSString* query = 
-			@"SELECT CURRENT_TIMESTAMP::TIMESTAMP WITHOUT TIME ZONE AS ts, null AS nname UNION ALL "
-			@"SELECT null AS ts, baseten.ObserveModifications ($1) AS nname UNION ALL "
-			@"SELECT null AS ts, baseten.ObserveLocks ($1) AS nname";
+			@"SELECT "
+			@" CURRENT_TIMESTAMP::TIMESTAMP WITHOUT TIME ZONE AS ts, "
+			@" null AS relid, "
+			@" null AS n_name, "
+			@" null AS fn_name, "
+			@" null AS t_name "
+			@"UNION ALL "
+			@"SELECT null, m.* FROM baseten.mod_observe ($1) m "
+			@"UNION ALL "
+			@"SELECT null, l.* FROM baseten.lock_observe ($1) l";
 			PGTSResultSet* res = [connection executeQuery: query parameters: oid];
 			if ([res querySucceeded] && 3 == [res count])
 			{
 				[res advanceRow];
 				NSDate* lastCheck = [res valueForKey: @"ts"];
 				
-				Class observerClasses [] = {[BXPGModificationHandler class], [BXPGLockHandler class], Nil};
-				Class aClass = Nil;
-				int i = 0;
-				while ((aClass = observerClasses [i]))
 				{
 					[res advanceRow];
-					NSString* nname = [res valueForKey: @"nname"];
-					
-					//Create the observer.
-					BXPGTableNotificationHandler* handler = [[[aClass alloc] init] autorelease];
+					NSString* notificationName = [res valueForKey: @"n_name"];
+					BXPGModificationHandler* handler = [[[BXPGModificationHandler alloc] init] autorelease];
 					
 					[handler setInterface: mInterface];
 					[handler setConnection: connection];
 					[handler setLastCheck: lastCheck];
 					[handler setEntity: entity];
-					[handler setTableName: nname];
+					[handler setNotificationName: notificationName];
+					[handler setOid: [[res valueForKey: @"relid"] PGTSOidValue]];
 					[handler prepare];
 					
-					[mObservers setObject: handler forKey: nname];
-					switch (i)
-					{
-						case 0:
-							[mChangeHandlers setObject: handler forKey: entity];
-							break;
-							
-						case 1:
-							[mLockHandlers setObject: handler forKey: entity];
-							break;
-							
-						default:
-							break;
-					}
-					i++;
+					[mObservers setObject: handler forKey: notificationName];
+					[mChangeHandlers setObject: handler forKey: entity];
 				}
 				
+				{
+					[res advanceRow];
+					NSString* notificationName = [res valueForKey: @"n_name"];
+					NSString* functionName = [res valueForKey: @"fn_name"];
+					NSString* tableName = [res valueForKey: @"t_name"];
+					BXPGLockHandler* handler = [[[BXPGLockHandler alloc] init] autorelease];
+					
+					[handler setInterface: mInterface];
+					[handler setConnection: connection];
+					[handler setLastCheck: lastCheck];
+					[handler setEntity: entity];
+					[handler setNotificationName: notificationName];
+					[handler setLockFunctionName: functionName];
+					[handler setLockTableName: tableName];
+					[handler prepare];
+					
+					[mObservers setObject: handler forKey: notificationName];
+					[mLockHandlers setObject: handler forKey: entity];
+				}
+								
 				[mObservedEntities addObject: entity];			
 				retval = YES;
 			}
@@ -790,6 +781,11 @@ error:
 - (void) PGTSConnection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query
 {
 	[mInterface connection: connection sentQuery: query];
+}
+
+- (void) PGTSConnection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) res
+{
+	[mInterface connection: connection receivedResultSet: res];
 }
 
 - (void) PGTSConnection: (PGTSConnection *) connection networkStatusChanged: (SCNetworkConnectionFlags) newFlags

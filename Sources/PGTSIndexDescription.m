@@ -2,7 +2,7 @@
 // PGTSIndexDescription.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,34 +27,9 @@
 //
 
 #import "PGTSIndexDescription.h"
-#import "PGTSHOM.h"
-#import "PGTSInvocationRecorder.h"
 
 
-@implementation PGTSIndexDescriptionProxy
-- (void) dealloc
-{
-	[mFields release];
-	[super dealloc];
-}
-
-- (PGTSTableDescription *) table
-{
-	[[NSException exceptionWithName: NSInternalInconsistencyException reason: @"-[PGTSIndexDescriptionProxy table:] called." userInfo: nil] raise];
-	return nil;
-}
-
-- (NSSet *) fields
-{
-	if (! mFields)
-	{
-		[[[self invocationRecorder] record] fields];
-		mFields = [[self performSynchronizedAndReturnProxies] retain];
-	}
-	return mFields;
-}
-
-@end
+@class PGTSTableDescription;
 
 
 /** 
@@ -75,22 +50,22 @@
 
 - (void) dealloc
 {
-    [mFields release];
+    [mColumns release];
     [super dealloc];
 }
 
-- (void) setFields: (NSSet *) aSet
+- (void) setColumns: (NSSet *) columns
 {
-    if (mFields != aSet)
+    if (mColumns != columns)
     {
-        [mFields release];
-        mFields = [aSet copy];
+        [mColumns release];
+        mColumns = [columns copy];
     }
 }
 
-- (NSSet *) fields
+- (NSSet *) columns
 {
-    return mFields;
+    return mColumns;
 }
 
 - (void) setUnique: (BOOL) aBool
@@ -111,20 +86,5 @@
 - (BOOL) isPrimaryKey
 {
     return mIsPrimaryKey;
-}
-
-- (void) setTable: (PGTSTableDescription *) anObject
-{
-    mTable = anObject;
-}
-
-- (PGTSTableDescription *) table
-{
-    return mTable;
-}
-
-- (Class) proxyClass
-{
-	return [PGTSIndexDescriptionProxy class];
 }
 @end

@@ -33,6 +33,9 @@
 
 @interface ToOneChangeNotificationTests : BXDatabaseTestCase 
 {
+	BXEntityDescription* mTest1;
+	BXEntityDescription* mTest2;
+	
 	BXDatabaseObject* mA;
 	BXDatabaseObject* mB1;
 	BXDatabaseObject* mB2;

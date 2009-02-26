@@ -35,3 +35,23 @@ PGTS_EXPORT id PGTSOidAsObject (Oid o);
 @interface NSNumber (PGTSOidAdditions)
 - (Oid) PGTSOidValue;
 @end
+
+
+#if defined (__cplusplus)
+#import <tr1/unordered_map>
+#import <BaseTen/PGTSScannedMemoryAllocator.h>
+
+namespace PGTS 
+{
+	typedef std::tr1::unordered_map <Oid, id, 
+		std::tr1::hash <Oid>, 
+		std::equal_to <Oid>, 
+		PGTS::scanned_memory_allocator <std::pair <const Oid, id> > > 
+		OidMap;
+}
+
+#define PGTS_OidMap PGTS::OidMap
+
+#else
+#define PGTS_OidMap void
+#endif

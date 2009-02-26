@@ -45,27 +45,4 @@
 {
 	return mIsEnabled;
 }
-
-- (void) fetchUniqueIndexesForView
-{
-	if ([(id) [mConnection databaseDescription] hasBaseTenSchema])
-	{
-		NSString* query = @"SELECT baseten.array_accum (attnum) AS attnum "
-		" FROM baseten.primarykey WHERE oid = $1 GROUP BY oid";
-		PGTSResultSet* res = [mConnection executeQuery: query parameters: PGTSOidAsObject (mOid)];
-		if (NO == [res advanceRow])
-			[self setUniqueIndexes: [NSArray array]];
-		else
-		{
-			PGTSIndexDescription* index = [[[PGTSIndexDescription alloc] init] autorelease];
-			NSMutableSet* indexFields = [NSMutableSet set];
-			BXEnumerate (currentFieldIndex, e, [[res valueForKey: @"attnum"] objectEnumerator])
-			[indexFields addObject: [self fieldAtIndex: [currentFieldIndex intValue]]];
-			[index setPrimaryKey: YES];
-			[index setFields: indexFields];
-			[index setTable: self];
-			[self setUniqueIndexes: [NSArray arrayWithObject: index]];
-		}
-	}
-}
 @end

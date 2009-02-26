@@ -33,16 +33,15 @@
 
 @interface BXManyToManyRelationshipDescription : BXRelationshipDescription 
 {
-	BXForeignKey* mDstForeignKey;
+	id <BXForeignKey> mDstForeignKey;
 	BXEntityDescription* mHelperEntity;
 }
 
-- (BXForeignKey *) srcForeignKey;
-- (BXForeignKey *) dstForeignKey;
-- (void) setSrcForeignKey: (BXForeignKey *) aKey;
-- (void) setDstForeignKey: (BXForeignKey *) aKey;
+- (id <BXForeignKey>) dstForeignKey;
+- (void) setDstForeignKey: (id <BXForeignKey>) aKey;
 - (BXEntityDescription *) helperEntity;
 - (void) setHelperEntity: (BXEntityDescription *) anEntity;
 - (NSPredicate *) filterPredicateFor: (BXDatabaseObject *) object;
-- (void) iterateSrcForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx;
+- (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx;
+- (void) iterateDstForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx;
 @end

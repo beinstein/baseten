@@ -173,7 +173,7 @@
 	if (0 < [mEnabledRelations count])
 	{
 		NSString* queryString = 
-		@"SELECT baseten.prepareformodificationobserving (c.oid) "
+		@"SELECT baseten.enable (c.oid) "
 		"  FROM pg_class c, pg_namespace n "
 		"  WHERE c.relnamespace = n.oid AND n.nspname = $1 AND c.relname = ANY ($2);";
 		
@@ -198,7 +198,7 @@
 	{
 		NSArray* names = (id) [[entities PGTSCollect] name];
 		NSString* queryString = 
-		@"SELECT baseten.cancelmodificationobserving (c.oid) "
+		@"SELECT baseten.disable (c.oid) "
 		"  FROM pg_class c, pg_namespace n "
 		"  WHERE c.relnamespace = n.oid AND n.nspname = $1 AND c.relname = ANY ($2);";
 		

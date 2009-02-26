@@ -39,16 +39,11 @@
 
 
 @implementation BXManyToManyRelationshipDescription
-
-/** 
- * \internal
- * \brief Deallocation helper. 
- */
-- (void) dealloc2
+- (void) dealloc
 {
 	[mDstForeignKey release];
 	[mHelperEntity release];
-	[super dealloc2];
+	[super dealloc];
 }
 
 - (NSString *) description
@@ -57,22 +52,12 @@
 		[self class], self, [self name], [self entity], [self destinationEntity], mHelperEntity];
 }
 
-- (BXForeignKey *) srcForeignKey
-{
-	return [self foreignKey];
-}
-
-- (BXForeignKey *) dstForeignKey
+- (id <BXForeignKey>) dstForeignKey
 {
 	return mDstForeignKey;
 }
 
-- (void) setSrcForeignKey: (BXForeignKey *) aKey
-{
-	[self setForeignKey: aKey];
-}
-
-- (void) setDstForeignKey: (BXForeignKey *) aKey
+- (void) setDstForeignKey: (id <BXForeignKey>) aKey
 {
 	if (mDstForeignKey != aKey)
 	{
@@ -144,18 +129,18 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 - (NSPredicate *) predicateForAnyObject: (NSSet *) objects
 {
 	NSPredicate* retval = nil;
-	BXForeignKey* fkey = [self srcForeignKey];	
+	id <BXForeignKey> fkey = [self foreignKey];	
 
 	//FIXME: perhaps handle the case where 1 == [[fkey fieldNames] count] with an IN predicate?
 	
 	{
 		NSMutableArray* objectParts = [NSMutableArray arrayWithCapacity: [objects count]];
-		NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [[fkey fieldNames] count]];
+		NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [fkey numberOfColumns]];
 		struct PredicateContext ctx = {nil, fkeyParts};
 		BXEnumerate (currentObject, e, [objects objectEnumerator])
 		{
 			ctx.pc_object = currentObject;  
-			[self iterateSrcForeignKey: &AddToCompoundPredicate context: &ctx];
+			[self iterateForeignKey: &AddToCompoundPredicate context: &ctx];
 			NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: ctx.pc_parts];
 			[objectParts addObject: predicate];
 			[ctx.pc_parts removeAllObjects];
@@ -173,14 +158,14 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	Expect (object);
 	Expect ([[object entity] isEqual: [self entity]]);
 	
-	BXForeignKey* fkey = [self srcForeignKey];
-	NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [[fkey fieldNames] count]];
+	id <BXForeignKey> fkey = [self foreignKey];
+	NSMutableArray* fkeyParts = [NSMutableArray arrayWithCapacity: [fkey numberOfColumns]];
 	struct PredicateContext ctx = {object, fkeyParts};
 	
 	if (useWithContainerProxy)
-		[self iterateSrcForeignKey: &AddToFilterCompoundPredicate context: &ctx];
+		[fkey iterateColumnNames: &AddToFilterCompoundPredicate context: &ctx];
 	else
-		[self iterateSrcForeignKey: &AddToCompoundPredicate context: &ctx];
+		[fkey iterateColumnNames: &AddToCompoundPredicate context: &ctx];
 		
 	NSPredicate* predicate = [NSCompoundPredicate andPredicateWithSubpredicates: ctx.pc_parts];
 	return predicate;	
@@ -237,10 +222,10 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	//Add objects to current object's set.
 	//First get values for helper entity from source foreign key and then add values from each destination object.
 	//Here, src for the foreign key is always mHelper.
-	NSDictionary* srcHelperValues = [[self srcForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: databaseObject];
+	NSDictionary* srcHelperValues = BXFkeySrcDictionary ([self foreignKey], mHelperEntity, databaseObject);
 	BXEnumerate (currentObject, e, [addedObjects objectEnumerator])
 	{
-		NSMutableDictionary* values = [[self dstForeignKey] srcDictionaryFor: mHelperEntity valuesFromDstObject: currentObject];
+		NSMutableDictionary* values = BXFkeySrcDictionary ([self dstForeignKey], mHelperEntity,  currentObject);
 		[values addEntriesFromDictionary: srcHelperValues];
 		[context createObjectForEntity: mHelperEntity
 					   withFieldValues: values 
@@ -259,14 +244,12 @@ bail:
 
 - (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
 {
-	BXEnumerate (currentPair, e, [[[self dstForeignKey] fieldNames] objectEnumerator])
-		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);
+	[[self foreignKey] iterateColumnNames: callback context: ctx];
 }
 
-- (void) iterateSrcForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
+- (void) iterateDstForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
 {
-	BXEnumerate (currentPair, e, [[[self srcForeignKey] fieldNames] objectEnumerator])
-		callback ([currentPair objectAtIndex: 0], [currentPair objectAtIndex: 1], ctx);
+	[[self dstForeignKey] iterateColumnNames: callback context: ctx];
 }
 
 - (void) removeAttributeDependency

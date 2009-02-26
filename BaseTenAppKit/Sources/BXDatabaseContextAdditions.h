@@ -2,7 +2,7 @@
 // BXDatabaseContextAdditions.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -34,5 +34,6 @@
 @interface BXDatabaseContext (BaseTenAppKitAdditions)
 - (void) displayPanelForTrust: (SecTrustRef) trust;
 - (void) displayPanelForTrust: (SecTrustRef) trust modalWindow: (NSWindow *) aWindow;
-- (id <BXConnectionSetupManager>) copyDefaultConnectionSetupManager;
+- (void) certificateTrustSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) trust;
+- (id <BXConnector>) copyDefaultConnectionSetupManager;
 @end

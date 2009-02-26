@@ -31,6 +31,10 @@
 
 
 #if defined(__cplusplus)
+#import <BaseTen/PGTSScannedMemoryAllocator.h>
+#import <list>
+#import <tr1/unordered_set>
+#import <tr1/unordered_map>
 namespace PGTS 
 {
 	struct ObjectHash
@@ -49,10 +53,91 @@ namespace PGTS
 	{
 		bool operator() (const NSString* x, const NSString* y) const { return ([x isEqualToString: y] ? true : false); }
 	};
+	
+	template <typename T>
+	id FindObject (T *container, typename T::key_type key)
+	{
+		id retval = nil;
+		if (container)
+		{
+			typename T::const_iterator it = container->find (key);
+			if (container->end () != it)
+				retval = it->second;
+		}
+		return retval;
+	}
+	
+	struct RetainingIdPair
+	{
+		id first;
+		id second;
+		
+		explicit RetainingIdPair (id a, id b)
+		: first ([a retain]), second ([b retain]) {}
+		
+		RetainingIdPair (const RetainingIdPair& p)
+		: first ([p.first retain]), second ([p.second retain]) {}
+		
+		~RetainingIdPair ()
+		{
+			[first release];
+			[second release];
+		}
+						
+		struct Hash 
+		{
+			size_t operator() (const RetainingIdPair& p) const { return ([p.first hash] ^ [p.second hash]); }
+		};
+	};
+	
+	inline bool operator== (const RetainingIdPair& a, const RetainingIdPair& b)
+	{
+		return ([a.first isEqual: b.first] && [a.second isEqual: b.second]);
+	}	
+	
+		
+	typedef std::list <id, PGTS::scanned_memory_allocator <id> > IdList;
+	
+	typedef std::tr1::unordered_set <id,
+		PGTS::ObjectHash, 
+		PGTS::ObjectCompare <id>, 
+		PGTS::scanned_memory_allocator <id> > 
+		IdSet;
+	
+	typedef std::tr1::unordered_set  <RetainingIdPair,
+		RetainingIdPair::Hash,
+		std::equal_to <RetainingIdPair>,
+		PGTS::scanned_memory_allocator <RetainingIdPair> >
+		RetainingIdPairSet;
+	
+	typedef std::tr1::unordered_map <id, id, 
+		PGTS::ObjectHash, 
+		PGTS::ObjectCompare <id>, 
+		PGTS::scanned_memory_allocator <std::pair <const id, id> > >
+		IdMap;
+	
+	typedef std::tr1::unordered_map <NSInteger, id, 
+		std::tr1::hash <NSInteger>, 
+		std::equal_to <NSInteger>, 
+		PGTS::scanned_memory_allocator <std::pair <const NSInteger, id> > > 
+		IndexMap;	
 }
+
+#define PGTS_IdList PGTS::IdList
+#define PGTS_IdSet PGTS::IdSet
+#define PGTS_IdMap PGTS::IdMap
+#define PGTS_IndexMap PGTS::IndexMap
+#define PGTS_RetainingIdPairSet PGTS::RetainingIdPairSet
+
+#else
+#define PGTS_IdList void
+#define PGTS_IdSet void
+#define PGTS_IdMap void
+#define PGTS_IndexMap void
+#define PGTS_RetainingIdPairSet void
 #endif
 
 
 BX_EXPORT id PGTSSetCreateMutableWeakNonretaining ();
-BX_EXPORT id PGTSSetCreateMutableStrongRetainingForNSRD ();
+BX_EXPORT id PGTSSetCreateMutableStrongRetainingForNSRD (); //Has a better comparison function for NSRelationshipDescription.
 BX_EXPORT id PGTSDictionaryCreateMutableWeakNonretainedObjects ();

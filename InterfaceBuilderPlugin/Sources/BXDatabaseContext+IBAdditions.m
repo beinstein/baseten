@@ -47,7 +47,7 @@
     [[keyPaths objectForKey: IBAttributeKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
         @"databaseURI", @"autocommits", @"connectsOnAwake", nil]];
     [[keyPaths objectForKey: IBToOneRelationshipKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
-        @"policyDelegate", @"modalWindow", nil]];
+        @"delegate", @"modalWindow", nil]];
 }
 
 - (void) ibPopulateAttributeInspectorClasses: (NSMutableArray *) classes

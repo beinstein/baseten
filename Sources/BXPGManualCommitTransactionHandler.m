@@ -143,6 +143,13 @@
 {
 	[self forwardResult: res];
 }
+
+
+- (void) reloadDatabaseMetadata
+{
+	[super reloadDatabaseMetadata];
+	[mNotifyConnection reloadDatabaseDescription];
+}
 @end
 
 
@@ -169,7 +176,7 @@
 - (void) disconnect
 {
 	if ([[mInterface databaseContext] sendsLockQueries])
-		[mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+		[mNotifyConnection executeQuery: @"SELECT baseten.lock_unlock ()"];
 	[mNotifyConnection disconnect];
 	[mConnection disconnect];
 	[self didDisconnect];
@@ -236,10 +243,7 @@
 	if (failedConnection)
 		[self handleConnectionErrorFor: failedConnection];
 	else
-	{
-		[mNotifyConnection setDatabaseDescription: [mConnection databaseDescription]];
 		[self handleSuccess];
-	}
 }
 
 
@@ -308,7 +312,7 @@
 
 		if ([[mInterface databaseContext] sendsLockQueries])
 		{
-			res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+			res = [mNotifyConnection executeQuery: @"SELECT baseten.lock_unlock ()"];
 			if ((localError = [res error])) *outError = localError;
 		}
 		
@@ -347,7 +351,7 @@
 		
 		if ([[mInterface databaseContext] sendsLockQueries])
 		{
-			res = [mNotifyConnection executeQuery: @"SELECT baseten.ClearLocks ()"];
+			res = [mNotifyConnection executeQuery: @"SELECT baseten.lock_unlock ()"];
 			if ((localError = [res error])) *outError = localError;
 		}
 		

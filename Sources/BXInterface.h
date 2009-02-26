@@ -124,9 +124,6 @@ struct BXTrustResult
 - (BOOL) logsQueries;
 #endif
 
-- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error;
-- (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
-
 /**
  * \internal
  * \name Transactions 
@@ -143,6 +140,10 @@ struct BXTrustResult
 //@}
 
 - (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted;
-- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
 - (BOOL) isSSLInUse;
+- (NSNumber *) defaultPort;
+
+- (void) reloadDatabaseMetadata;
+- (void) prepareForEntityValidation;
+- (BOOL) validateEntities: (NSArray *) entities error: (NSError **) outError;
 @end

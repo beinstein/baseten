@@ -2,7 +2,7 @@
 // PGTSRoleDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,23 +27,17 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTSAbstractDescription.h"
-#import "PGTSAbstractObjectDescription.h"
-
-
-@interface PGTSRoleDescriptionProxy : PGTSAbstractObjectDescriptionProxy
-{
-}
-@end
+#import <BaseTen/PGTSAbstractDescription.h>
+#import <BaseTen/PGTSAbstractObjectDescription.h>
+#import <BaseTen/PGTSOids.h>
 
 
 @interface PGTSRoleDescription : PGTSAbstractObjectDescription
 {
-    id mRoles;
+	PGTS_OidMap* mMembersByOid;
 }
-@end
+- (BOOL) hasMember: (PGTSRoleDescription *) role;
 
-
-@interface PGTSRoleDescription (Queries)
-- (BOOL) hasMember: (PGTSRoleDescription *) aRole;
+//Thread un-safe methods.
+- (void) addMember: (PGTSRoleDescription *) role;
 @end

@@ -55,13 +55,12 @@ enum BXPropertyKind
 };
 
 
-@interface BXPropertyDescription : BXAbstractDescription <NSCopying, NSMutableCopying> //, NSCoding>
+@interface BXPropertyDescription : BXAbstractDescription <NSCopying> //, NSCoding>
 {
     BXEntityDescription*  mEntity; //Weak
 	enum BXPropertyFlag   mFlags;
 }
 
-- (void) dealloc2;
 - (BXEntityDescription *) entity;
 - (BOOL) isOptional;
 - (enum BXPropertyKind) propertyKind;

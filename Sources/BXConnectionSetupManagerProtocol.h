@@ -2,7 +2,7 @@
 // BXConnectionSetupManagerProtocol.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -27,9 +27,10 @@
 //
 
 
-@protocol BXConnectionSetupManager <NSObject>
+@protocol BXConnector <NSObject>
 - (IBAction) connect: (id) sender;
-- (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust;
 - (void) setDatabaseContext: (BXDatabaseContext *) aContext;
 - (void) setModalWindow: (NSWindow *) aWindow;
+
+- (void) databaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust;
 @end

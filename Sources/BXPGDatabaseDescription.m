@@ -2,7 +2,7 @@
 // BXPGDatabaseDescription.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -31,14 +31,40 @@
 #import "PGTSConnection.h"
 #import "PGTSResultSet.h"
 #import "BXPGTableDescription.h"
+#import "BXPGForeignKeyDescription.h"
+
+
+using namespace PGTS;
 
 
 @implementation BXPGDatabaseDescription
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		mForeignKeysByConoid = new OidMap ();
+	}
+	return self;
+}
+
 - (void) dealloc
 {
 	[mSchemaVersion release];
 	[mSchemaCompatibilityVersion release];
+	for (OidMap::const_iterator it = mForeignKeysByConoid->begin (), end = mForeignKeysByConoid->end (); 
+		 it != end; it++)
+	{
+		[it->second release];
+	}
+	
+	delete mForeignKeysByConoid;
 	[super dealloc];
+}
+
+- (void) finalize
+{
+	delete mForeignKeysByConoid;
+	[super finalize];
 }
 
 - (BOOL) hasBaseTenSchema
@@ -56,111 +82,36 @@
 	return mSchemaCompatibilityVersion;
 }
 
-- (BOOL) checkBaseTenSchema: (NSError **) outError
+- (void) setSchemaVersion: (NSNumber *) number
 {
-	ExpectR (outError, NO);
-	ExpectR (mConnection, NO);
-	BOOL retval = NO;
-	
-	NSString* query = @"SELECT EXISTS (SELECT n.oid FROM pg_namespace n WHERE nspname = 'baseten') AS exists";
-	PGTSResultSet* res = [mConnection executeQuery: query];
-	if ([res querySucceeded])
+	if (mSchemaVersion != number)
 	{
-		retval = YES;
-		[res advanceRow];
-		mHasBaseTenSchema = [[res valueForKey: @"exists"] boolValue];
+		[mSchemaVersion release];
+		mSchemaVersion = [number retain];
 	}
-	else
-	{
-		*outError = [res error];
-	}
-	return retval;
 }
 
-- (BOOL) checkSchemaVersions: (NSError **) outError
+- (void) setSchemaCompatibilityVersion: (NSNumber *) number
 {
-	ExpectR (outError, NO);
-	ExpectR (mConnection, NO);
-	BOOL retval = NO;
-
-	if (! mHasBaseTenSchema)
-		retval = YES;
-	else
+	if (mSchemaCompatibilityVersion != number)
 	{
-		NSString* query = 
-		@"SELECT baseten.version () AS version "
-		@" UNION ALL "
-		@" SELECT baseten.compatibilityversion () AS version";
-		PGTSResultSet* res = [mConnection executeQuery: query];
-		if ([res querySucceeded])
-		{
-			retval = YES;
-			[mSchemaVersion release];
-			[mSchemaCompatibilityVersion release];
-			
-			[res advanceRow];
-			mSchemaVersion = [[res valueForKey: @"version"] retain];
-			[res advanceRow];
-			mSchemaCompatibilityVersion = [[res valueForKey: @"version"] retain];
-		}
-		else
-		{
-			*outError = [res error];
-		}
+		[mSchemaCompatibilityVersion release];
+		mSchemaCompatibilityVersion = [number retain];
 	}
-	return retval;
 }
 
-- (Class) tableDescriptionClass
+- (void) setHasBaseTenSchema: (BOOL) aBool
 {
-	return [BXPGTableDescription class];
+	mHasBaseTenSchema = aBool;
 }
 
-- (NSString *) tableDescriptionByNameQuery
+- (void) addForeignKey: (BXPGForeignKeyDescription *) fkey
 {
-	NSString* queryString = nil;
-	if ([self hasBaseTenSchema])
-	{
-		queryString = 
-		@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
-		"   c.relacl, c.relowner, c.relkind, r.rolname, baseten.isobservingcompatible (c.oid) AS isenabled "
-		"  FROM pg_class c, pg_namespace n, pg_roles r "
-		"  WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";		
-	}
-	else
-	{
-		queryString = 
-		@"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
-		"   c.relacl, c.relowner, c.relkind, r.rolname, false AS isenabled "
-		"  FROM pg_class c, pg_namespace n, pg_roles r "
-		"  WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.relname = $1 AND n.nspname = $2";		
-	}
-	return queryString;
+	InsertConditionally (mForeignKeysByConoid, fkey);
 }
 
-- (NSString *) tableDescriptionsByOidQuery
+- (BXPGForeignKeyDescription *) foreignKeyWithOid: (Oid) oid
 {
-	NSString* queryString = nil;
-	if ([self hasBaseTenSchema])
-	{
-		queryString = @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
-		"  c.relacl, c.relowner, c.relkind, r.rolname, baseten.isobservingcompatible (c.oid) AS isenabled "
-		" FROM pg_class c, pg_namespace n, pg_roles r "
-		" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.oid = ANY ($1)";
-	}
-	else
-	{
-		queryString = @"SELECT c.oid AS oid, c.relnamespace AS schemaoid, c.relname, n.nspname, "
-		"  c.relacl, c.relowner, c.relkind, r.rolname, false AS isenabled "
-		" FROM pg_class c, pg_namespace n, pg_roles r "
-		" WHERE c.relowner = r.oid AND c.relnamespace = n.oid AND c.oid = ANY ($1)";
-	}
-	return queryString;
-}
-
-- (void) handleResult: (PGTSResultSet *) res forTable: (BXPGTableDescription *) desc
-{
-	[super handleResult: res forTable: desc];
-	[desc setEnabled: [[res valueForKey: @"isenabled"] boolValue]];
+	return FindObject (mForeignKeysByConoid, oid);
 }
 @end

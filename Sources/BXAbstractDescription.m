@@ -32,6 +32,8 @@
 
 /**
  * \brief An abstract superclass for various description classes.
+ *
+ * \note This class is thread-safe.
  * \ingroup descriptions
  */
 @implementation BXAbstractDescription
@@ -42,6 +44,7 @@
     {
         BXAssertValueReturn (nil != aName, nil, @"Expected name not to be nil.");
         mName = [aName copy];
+		mHash = [mName hash];
     }
     return self;
 }
@@ -65,16 +68,6 @@
 	[encoder encodeObject: mName forKey: @"name"];
 }
 
-- (void) setName: (NSString *) aName
-{
-    if (nil == mName) 
-	{
-		[mName release];
-		mName = [aName retain];
-    }
-}
-
-
 /** \brief Name of the object. */
 - (NSString *) name
 {
@@ -83,36 +76,32 @@
 
 - (unsigned int) hash
 {
-    if (0 == mHash)
-        mHash = [mName hash];
     return mHash;
 }
 
 - (NSComparisonResult) compare: (id) anObject
 {
-    NSComparisonResult rval = NSOrderedSame;
+    NSComparisonResult retval = NSOrderedSame;
     if ([anObject isKindOfClass: [self class]])
-        rval = [mName compare: [anObject name]];
-    return rval;
+        retval = [[self name] compare: [anObject name]];
+    return retval;
 }
 
 - (NSComparisonResult) caseInsensitiveCompare: (id) anObject
 {
-    NSComparisonResult rval = NSOrderedSame;
+    NSComparisonResult retval = NSOrderedSame;
     if ([anObject isKindOfClass: [self class]])
-        rval = [mName caseInsensitiveCompare: [anObject name]];
-    return rval;
-}
-
-- (BOOL) isEqual: (id) anObject
-{
-    BOOL retval = NO;
-    if ([anObject isKindOfClass: [self class]])
-    {
-        BXAbstractDescription* aDesc = (BXAbstractDescription *) anObject;
-        retval = [mName isEqualToString: aDesc->mName];
-    }
+        retval = [[self name] caseInsensitiveCompare: [anObject name]];
     return retval;
 }
 
+- (BOOL) isEqual: (BXAbstractDescription *) desc
+{
+    BOOL retval = NO;
+    if ([desc isKindOfClass: [self class]])
+    {
+        retval = [[self name] isEqualToString: [desc name]];
+    }
+    return retval;
+}
 @end

@@ -38,6 +38,5 @@
 - (NSString *) name;
 - (unsigned int) hash;
 - (id) initWithName: (NSString *) aName;
-- (void) setName: (NSString *) aName;
-
+//- (void) setName: (NSString *) aName;
 @end

@@ -2,7 +2,7 @@
 // BXNetServiceConnector.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,13 +26,206 @@
 // $Id$
 //
 
-#import <BaseTen/BXDatabaseContextPrivate.h>
-#import <BaseTen/NSURL+BaseTenAdditions.h>
-#import <BaseTen/BXLogger.h>
+
 #import "BXNetServiceConnector.h"
-#import "BXConnectionPanel.h"
+#import "BXHostPanel.h"
 #import "BXAuthenticationPanel.h"
 #import "BXDatabaseContextAdditions.h"
+#import <BaseTen/BaseTen.h>
+#import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/NSURL+BaseTenAdditions.h>
+
+
+@interface BXWindowModalNSConnectorImplementation : BXNSConnectorImplementation <BXNSConnectorImplementation>
+{
+}
+@end
+
+
+@interface BXApplicationModalNSConnectorImplementation : BXNSConnectorImplementation <BXNSConnectorImplementation>
+{
+}
+@end
+
+
+static NSInvocation*
+MakeInvocation (const id target, const SEL selector)
+{
+	NSMethodSignature* sig = [target methodSignatureForSelector: selector];
+	NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];
+	[invocation setSelector: selector];
+	[invocation setTarget: target];
+	return invocation;	
+}
+
+
+@implementation BXNSConnectorImplementation
+- (id) initWithConnector: (BXNetServiceConnector *) connector
+{
+	if ((self = [super init]))
+	{
+		mConnector = connector;
+	}
+	return self;
+}
+
+- (void) endHostPanel: (BXHostPanel *) hostPanel
+{
+	[hostPanel endConnecting];
+	[hostPanel setMessage: nil];	
+}
+
+- (void) endAuthenticationPanel: (BXAuthenticationPanel *) panel
+{
+	[panel setAuthenticating: NO];
+	[panel setMessage: nil];
+}
+@end
+
+
+@implementation BXWindowModalNSConnectorImplementation
+- (void) beginConnectionAttempt
+{
+}
+
+- (void) endConnectionAttempt
+{
+}
+
+- (NSString *) runLoopMode
+{
+	return NSDefaultRunLoopMode;
+}
+
+- (void) presentError: (NSError *) error didEndSelector: (SEL) selector
+{
+	[NSApp presentError: error modalForWindow: [mConnector modalWindow] delegate: self 
+	 didPresentSelector: @selector (didPresentErrorWithRecovery:contextInfo:) contextInfo: selector];
+}
+
+- (void) didPresentErrorWithRecovery: (BOOL) didRecover contextInfo: (void *) contextInfo
+{
+	NSInvocation* callback = MakeInvocation (mConnector, (SEL) contextInfo);
+	[callback setArgument: &didRecover atIndex: 2];
+	[callback invoke];
+}
+
+- (void) displayHostPanel: (BXHostPanel *) hostPanel
+{
+	[NSApp beginSheet: hostPanel modalForWindow: [mConnector modalWindow]
+		modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
+}
+
+- (void) endHostPanel: (BXHostPanel *) hostPanel
+{
+	[hostPanel orderOut: nil];
+	[NSApp endSheet: hostPanel];
+	[super endHostPanel: hostPanel];
+}
+
+- (void) displayAuthenticationPanel: (BXAuthenticationPanel *) authenticationPanel
+{
+	[NSApp beginSheet: authenticationPanel modalForWindow: [mConnector modalWindow]
+		modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
+}
+
+- (void) endAuthenticationPanel: (BXAuthenticationPanel *) authenticationPanel
+{
+	[authenticationPanel orderOut: nil];
+	[NSApp endSheet: authenticationPanel];
+	[super endAuthenticationPanel: authenticationPanel];
+}
+@end
+
+
+@implementation BXApplicationModalNSConnectorImplementation
+- (void) beginConnectionAttempt
+{
+	//This is rather stupid: NSApplication doesn't check if its
+	//run loop should be run after a modal session but instead
+	//requires some event before that happens. In other words,
+	//our next connection panel won't be displayed if the user
+	//doesn't click somewhere. (Initial mouse movement events are
+	//discarded?!?)
+	//We try to solve the problem by generating events for 
+	//NSApplication, so it can happily run the run loop.
+	[NSEvent startPeriodicEventsAfterDelay: 0.0 withPeriod: 0.5];
+}
+
+- (void) endConnectionAttempt
+{
+	[NSEvent stopPeriodicEvents];
+}
+
+- (NSString *) runLoopMode
+{
+	return NSModalPanelRunLoopMode;
+}
+
+- (void) presentError2: (NSError *) error callback: (SEL) selector
+{
+	BOOL didRecover = [(NSApplication *) NSApp presentError: error];
+	NSInvocation* callback = MakeInvocation (mConnector, selector);
+	[callback setArgument: &didRecover atIndex: 2];
+	[callback invoke];
+}
+
+- (void) presentError: (NSError *) error didEndSelector: (SEL) selector
+{
+	//If we don't schedule this, the error panel won't be centered.
+	NSInvocation* invocation = MakeInvocation (self, @selector (presentError2:callback:));
+	[invocation setArgument: &error atIndex: 2];
+	[invocation setArgument: &selector atIndex: 3];
+	[invocation retainArguments];
+	NSArray* modes = [NSArray arrayWithObject: NSDefaultRunLoopMode];
+	[[NSRunLoop currentRunLoop] performSelector: @selector (invoke) target: invocation
+									   argument: nil order: NSUIntegerMax modes: modes];
+}
+
+- (void) displayHostPanel2: (BXHostPanel *) hostPanel
+{
+	[hostPanel makeKeyAndOrderFront: nil];
+	[hostPanel center];
+	[NSApp runModalForWindow: hostPanel];
+}
+
+- (void) displayHostPanel: (BXHostPanel *) hostPanel
+{
+	//We need to schedule this or else we'll be filling up the stack.
+	NSArray* modes = [NSArray arrayWithObject: NSDefaultRunLoopMode];
+	[[NSRunLoop currentRunLoop] performSelector: @selector (displayHostPanel2:) target: self
+									   argument: hostPanel order: NSUIntegerMax modes: modes];
+}
+
+- (void) endHostPanel: (BXHostPanel *) hostPanel
+{
+	[NSApp stopModal];
+	[hostPanel orderOut: nil];
+	[super endHostPanel: hostPanel];
+}
+
+- (void) displayAuthenticationPanel2: (BXAuthenticationPanel *) authenticationPanel
+{
+	[authenticationPanel makeKeyAndOrderFront: nil];
+	[authenticationPanel center];
+	[NSApp runModalForWindow: authenticationPanel];
+}
+
+- (void) displayAuthenticationPanel: (BXAuthenticationPanel *) authenticationPanel
+{
+	//We need to schedule this or else we'll be filling up the stack.
+	NSArray* modes = [NSArray arrayWithObject: NSDefaultRunLoopMode];
+	[[NSRunLoop currentRunLoop] performSelector: @selector (displayAuthenticationPanel2:) target: self
+									   argument: authenticationPanel order: NSUIntegerMax modes: modes];
+}
+
+- (void) endAuthenticationPanel: (BXAuthenticationPanel *) authenticationPanel
+{
+	[NSApp stopModal];
+	[authenticationPanel orderOut: nil];
+	[super endAuthenticationPanel: authenticationPanel];
+}
+@end
 
 
 /**
@@ -43,238 +236,380 @@
  * \note Presently one is created automatically in BXDatabaseContext::connect:.
  * \ingroup baseten_appkit
  */
-@implementation BXNetServiceConnector 
-
+@implementation BXNetServiceConnector
 - (void) dealloc
 {
-	[[databaseContext notificationCenter] removeObserver: self];
+	if (mHost)
+	{
+		CFRelease (mHost);
+		mHost = NULL;
+	}
+	
+	[mHostPanel release];
 	[mAuthenticationPanel release];
-    [mPanel release];
+	[mConnectorImpl release];
 	[super dealloc];
 }
 
-- (void) awakeFromNib
+- (void) finalize
 {
-    [self setDatabaseContext: databaseContext];
+	if (mHost)
+	{
+		CFRelease (mHost);
+		mHost = NULL;
+	}
+	
+	[super finalize];
+}
+
+- (BXHostPanel *) hostPanel
+{
+	if (! mHostPanel)
+	{
+		mHostPanel = [[BXHostPanel hostPanel] retain];
+		[mHostPanel setDelegate: self];
+	}
+	
+	return mHostPanel;
+}
+
+- (BXAuthenticationPanel *) authenticationPanel
+{
+	if (! mAuthenticationPanel)
+	{
+		mAuthenticationPanel = [[BXAuthenticationPanel authenticationPanel] retain];
+		[mAuthenticationPanel setDelegate: self];
+	}
+	
+	return mAuthenticationPanel;
+}
+
+- (void) endPanelUnless: (enum BXNSConnectorCurrentPanel) panel
+{
+	if (panel != mCurrentPanel)
+	{
+		switch (mCurrentPanel)
+		{
+			case kBXNSConnectorHostPanel:
+				[mConnectorImpl endHostPanel: [self hostPanel]];
+				break;
+				
+			case kBXNSConnectorAuthenticationPanel:
+				[mConnectorImpl endAuthenticationPanel: [self authenticationPanel]];
+				break;
+				
+			case kBXNSConnectorNoPanel:
+			default:
+				break;
+		}
+		
+		mCurrentPanel = kBXNSConnectorNoPanel;
+	}
+}
+
+- (void) setDatabaseContext: (BXDatabaseContext *) context
+{
+	NSNotificationCenter* nc = nil;
+	
+	if (nil != context)
+	{
+		nc = [context notificationCenter];
+		[nc removeObserver: self name: kBXConnectionFailedNotification object: context];
+		[nc removeObserver: self name: kBXConnectionSuccessfulNotification object: context];
+	}
+	
+	if (nil != context)
+	{
+		mContext = context;
+		nc = [mContext notificationCenter];
+		[nc addObserver: self selector: @selector (endConnecting:) 
+				   name: kBXConnectionFailedNotification object: mContext];
+		[nc addObserver: self selector: @selector (endConnecting:) 
+				   name: kBXConnectionSuccessfulNotification object: mContext];    
+	}
+}
+
+- (NSWindow *) modalWindow
+{
+	return mModalWindow;
+}
+
+- (void) setModalWindow: (NSWindow *) window
+{
+	mModalWindow = window;
+}
+
+- (void) setHostName: (NSString *) string
+{
+	if (mHostName != string)
+	{
+		[mHostName release];
+		mHostName = [string retain];
+	}
 }
 
 - (IBAction) connect: (id) sender
 {	
-	mShouldStoreCredentials = NO;
+	mPort = -1;
+	mCurrentPanel = kBXNSConnectorNoPanel;
+	[mContext setStoresURICredentials: NO];
 	
-	if (nil != [[databaseContext databaseURI] host])
+	if (mConnectorImpl)
 	{
-		[self continueFromDatabaseSelection: nil returnCode: NSOKButton];
+		[mConnectorImpl release];
+		mConnectorImpl = nil;
+	}
+	
+	if (mModalWindow)
+		mConnectorImpl = [[BXWindowModalNSConnectorImplementation alloc] initWithConnector: self];
+	else
+		mConnectorImpl = [[BXApplicationModalNSConnectorImplementation alloc] initWithConnector: self];
+	
+	[mConnectorImpl beginConnectionAttempt];
+	
+	//If we have a host, try to reach it. Otherwise, display the panel.
+	NSString* host = [[mContext databaseURI] host];
+	if (0 < [host length])
+	{
+		[self setHostName: host];
+		[self checkHostReachability: host];
 	}
 	else
 	{
-		BXConnectionPanel* panel = [BXConnectionPanel connectionPanel];
-		[self setPanel: panel];
-		
-		[panel setLeftOpenOnContinue: YES];
-		[panel setReleasedWhenClosed: NO];
-		[panel setDatabaseContext: databaseContext];
-		
-		if (nil == modalWindow)
-		{
-			SEL selector = @selector (connectionPanelDidEnd:returnCode:contextInfo:);
-			NSMethodSignature* signature = [self methodSignatureForSelector: selector];
-			
-			NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
-			[invocation setTarget: self];
-			[invocation setSelector: selector];
-			
-			[panel setDidEndInvocation: invocation];
-			[panel makeKeyAndOrderFront: nil];
-		}
-		else
-		{
-			[panel beginSheetModalForWindow: modalWindow modalDelegate: self 
-							 didEndSelector: @selector (connectionPanelDidEnd:returnCode:contextInfo:) 
-								contextInfo: NULL];
-		}
+		mCurrentPanel = kBXNSConnectorHostPanel;
+		[mConnectorImpl displayHostPanel: [self hostPanel]];
 	}
 }
 
-- (void) connectionPanelDidEnd: (BXConnectionPanel *) panel returnCode: (int) returnCode 
-				   contextInfo: (void *) contextInfo
-{	
-	[self continueFromDatabaseSelection: panel returnCode: returnCode];
+- (void) hostPanelEndPanel: (id) panel
+{
+	mCurrentPanel = kBXNSConnectorNoPanel;
+	[mConnectorImpl endHostPanel: panel];
+	[self endConnectionAttempt];
 }
 
-- (void) continueFromDatabaseSelection: (BXConnectionPanel *) panel returnCode: (int) returnCode
+- (void) hostPanelCancel: (id) panel
 {
-	if (NSOKButton == returnCode)
+	if (mHost)
 	{
-        if ([databaseContext usesKeychain])
-            [databaseContext fetchPasswordFromKeychain];
-		
-		if (0 < [[[databaseContext databaseURI] user] length])
-		{
-			[databaseContext setConnectionSetupManager: self];
-			[databaseContext connectAsync];
-		}
-		else
-		{
-			if (modalWindow != panel)
-				[panel end];
-			[self displayAuthenticationPanel];
-		}
-    }
-    else
-    {
-		[databaseContext disconnect];
-		[databaseContext BXConnectionSetupManagerFinishedAttempt];
-        [panel end];
-    }
+		CFHostCancelInfoResolution (mHost, kCFHostReachability);
+		CFRelease (mHost);
+		mHost = nil;
+	}
+	else
+	{
+		[mContext disconnect];
+	}
 }
 
-- (void) displayAuthenticationPanel
+- (void) hostPanel: (id) panel connectToHost: (NSString *) host port: (NSInteger) port
 {
-    if (nil == mAuthenticationPanel)
-        [self setAuthenticationPanel: [BXAuthenticationPanel authenticationPanel]];
-    
-    [self setPanel: mAuthenticationPanel];
+	[self setHostName: host];
+	mPort = port;
+	[self checkHostReachability: host];
+}
+
+static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, const CFStreamError *error, void *info)
+{
+	[(id) info reachabilityCheckDidComplete: error];
+}
+
+- (void) checkHostReachability: (NSString *) name
+{
+	mHost = CFHostCreateWithName (CFAllocatorGetDefault (), (CFStringRef) name);
+	CFHostClientContext ctx = {
+		0,
+		self,
+		NULL,
+		NULL,
+		NULL
+	};
+	CFHostSetClient (mHost, &HostClientCallback, &ctx);
+	CFHostScheduleWithRunLoop (mHost, CFRunLoopGetCurrent (), (CFStringRef) [mConnectorImpl runLoopMode]);
 	
-	NSURL* databaseURI = [databaseContext databaseURI];
-	[mAuthenticationPanel setUsername: [databaseURI user]];
-	[mAuthenticationPanel setPassword: [databaseURI password]];
-    [mAuthenticationPanel setLeftOpenOnContinue: YES];
-	[mAuthenticationPanel beginSheetModalForWindow: modalWindow modalDelegate: self
-									didEndSelector: @selector (authenticationPanelDidEnd:returnCode:contextInfo:)
-									   contextInfo: NULL];
+	CFStreamError error = {};
+	if (! CFHostStartInfoResolution (mHost, kCFHostReachability, &error))
+		[self reachabilityCheckDidComplete: &error];
 }
 
-- (void) authenticationPanelDidEnd: (NSWindow *) panel returnCode: (int) returnCode
-					   contextInfo: (void *) contextInfo
-{
-	if (NSOKButton == returnCode)
+- (void) reachabilityCheckDidComplete: (const CFStreamError *) error
+{	
+	BOOL haveError = YES;
+	if (! (error && error->domain))
 	{
-		BXAssertVoidReturn (nil != databaseContext, @"Expected databaseContext not to be nil.");
-
-		mShouldStoreCredentials = [mAuthenticationPanel shouldStorePasswordInKeychain];
-
-		NSURL* databaseURI = [databaseContext databaseURI];
-		databaseURI = [databaseURI BXURIForHost: nil
-									   database: nil
-									   username: [mAuthenticationPanel username]
-									   password: [mAuthenticationPanel password]];
-		[databaseContext setDatabaseURI: databaseURI];
-		[databaseContext setConnectionSetupManager: self];
-		[databaseContext connectAsync];
+		CFDataRef reachability = CFHostGetReachability (mHost, NULL);
+		if (reachability)
+		{
+			SCNetworkConnectionFlags required = kSCNetworkFlagsReachable | kSCNetworkFlagsConnectionAutomatic;
+			SCNetworkConnectionFlags actual = 0;
+			memcpy (&actual, CFDataGetBytePtr (reachability), sizeof (SCNetworkConnectionFlags));
+		
+			//Any flag in "required" will suffice. (Hence not 'required == (required & actual)'.)
+			if (required & actual)
+				haveError = NO;
+		}
 	}
-    else
-    {
-        [mAuthenticationPanel end];
-        [self setAuthenticationPanel: nil];
-		[databaseContext disconnect];
-		[databaseContext BXConnectionSetupManagerFinishedAttempt];
-    }
+	
+	if (haveError)
+	{
+		NSString* message = nil;
+		if (error->domain == kCFStreamErrorDomainNetDB)
+		{
+			message = @"The server wasn't found.";
+		}
+		else if (error->domain == kCFStreamErrorDomainSystemConfiguration)
+		{
+			message = @"The server wasn't found. Network might be unreachable.";
+		}
+		else
+		{
+			message = @"The server wasn't found.";
+		}
+		
+		//FIXME: localization.
+		
+		if (mHost)
+		{
+			CFRelease (mHost);
+			mHost = nil;
+		}		
+
+		[[self hostPanel] setMessage: message];
+		if (kBXNSConnectorHostPanel == mCurrentPanel)
+			[mHostPanel endConnecting];
+		else
+		{
+			[self endPanelUnless: kBXNSConnectorHostPanel];
+			mCurrentPanel = kBXNSConnectorHostPanel;
+			[mConnectorImpl displayHostPanel: [self hostPanel]];
+		}
+	}
+	else
+	{
+		if (mHost)
+		{
+			CFRelease (mHost);
+			mHost = nil;
+		}		
+		
+		//Complete the database URI. If we're allowed to use the Keychain, try to fetch some credentials.
+		//If none are found, display the authentication panel. Otherwise connect.
+		NSURL* databaseURI = [mContext databaseURI];
+		databaseURI = [databaseURI BXURIForHost: mHostName
+										   port: (-1 == mPort ? nil : [NSNumber numberWithInteger: mPort])
+									   database: nil 
+									   username: nil 
+									   password: nil];
+		[mContext setDatabaseURI: databaseURI];
+				
+		if ([mContext usesKeychain])
+            [mContext fetchPasswordFromKeychain];
+		
+		if (0 < [[[mContext databaseURI] user] length])
+			[mContext connectAsync];
+		else
+		{
+			[self endPanelUnless: kBXNSConnectorAuthenticationPanel];			
+			mCurrentPanel = kBXNSConnectorAuthenticationPanel;
+			[mConnectorImpl displayAuthenticationPanel: [self authenticationPanel]];
+		}		
+	}	
 }
 
-- (void) BXDatabaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust
+- (void) authenticationPanelCancel: (id) panel
 {
-    [mPanel end];
-    [self setPanel: nil];
+	[mContext disconnect];
+}
 
-	[context displayPanelForTrust: trust modalWindow: modalWindow];
+- (void) authenticationPanelEndPanel: (id) panel
+{
+	NSURL* databaseURI = [mContext databaseURI];
+	databaseURI = [databaseURI BXURIForHost: nil database: nil username: @"" password: @""];
+	[mContext setDatabaseURI: databaseURI];
+	
+	[mConnectorImpl endAuthenticationPanel: panel];
+	mCurrentPanel = kBXNSConnectorHostPanel;
+	[mConnectorImpl displayHostPanel: [self hostPanel]];
+}
+
+- (void) authenticationPanel: (id) panel gotUsername: (NSString *) username password: (NSString *) password
+{
+	[mContext setStoresURICredentials: [panel shouldStorePasswordInKeychain]];
+	NSURL* databaseURI = [mContext databaseURI];
+	databaseURI = [databaseURI BXURIForHost: nil database: nil username: username password: password];
+	
+	[mContext setDatabaseURI: databaseURI];
+	[mContext connectAsync];
+}
+
+- (void) databaseContext: (BXDatabaseContext *) context displayPanelForTrust: (SecTrustRef) trust
+{
+	[self endPanelUnless: kBXNSConnectorNoPanel];
+	[context displayPanelForTrust: trust modalWindow: mModalWindow];
 }
 
 - (void) endConnecting: (NSNotification *) notification
-{    
-	NSDictionary* userInfo = [notification userInfo];
-	NSError* error = [userInfo objectForKey: kBXErrorKey];
-	if (nil != error)
-    {
-        if ([[error domain] isEqualToString: kBXErrorDomain] &&
-            kBXErrorAuthenticationFailed == [error code])
-        {
-            if (mPanel != mAuthenticationPanel && [mPanel isVisible])
-            {
-                [mPanel end];
-                [self setPanel: nil];
-            }
-			if (NO == [mAuthenticationPanel isVisible])
-				[self displayAuthenticationPanel];
-            
-            [mAuthenticationPanel setAuthenticating: NO];
-            //FIXME: localization
-            [mAuthenticationPanel setMessage: @"Authentication failed"];            
-        }
-        else
-        {
-            [mPanel end];
-            [self setPanel: nil];
-            [self setAuthenticationPanel: nil];
-            
-            NSAlert* alert = [NSAlert alertWithError: error];
-            [alert beginSheetModalForWindow: nil modalDelegate: self 
-							 didEndSelector: @selector (connectionSetupAlertDidEnd:returnCode:contextInfo:) 
-								contextInfo: NULL];
-			[databaseContext BXConnectionSetupManagerFinishedAttempt];
-        }
-    }
-    else
-    {        
-        [mPanel end];
-        [self setPanel: nil];
+{
+	if ([[notification name] isEqualToString: kBXConnectionSuccessfulNotification])
+	{
+		[self endPanelUnless: kBXNSConnectorNoPanel];
+		[self endConnectionAttempt];
+	}
+	else
+	{	
+		NSDictionary* userInfo = [notification userInfo];
+		NSError* error = [userInfo objectForKey: kBXErrorKey];
+		BOOL willContinue = NO;
 		
-		if (mShouldStoreCredentials)
-			[databaseContext storeURICredentials];
-    }
+		if ([[error domain] isEqualToString: kBXErrorDomain])
+		{
+			switch ([error code])
+			{
+				case kBXErrorAuthenticationFailed:
+				{
+					//FIXME: localization
+					[[self authenticationPanel] setMessage: @"Authentication failed."];
+
+					if (kBXNSConnectorAuthenticationPanel == mCurrentPanel)
+						[mAuthenticationPanel setAuthenticating: NO];
+					else
+					{
+						[self endPanelUnless: kBXNSConnectorAuthenticationPanel];
+						mCurrentPanel = kBXNSConnectorAuthenticationPanel;
+						[mConnectorImpl displayAuthenticationPanel: [self authenticationPanel]];
+					}					
+					
+					willContinue = YES;
+					break;
+				}
+					
+				default:
+					break;
+			}
+		}
+		
+		if (! willContinue)
+		{
+			[self endPanelUnless: kBXNSConnectorNoPanel];
+			[mConnectorImpl presentError: error didEndSelector: @selector (recoveredFromConnectionError:)];
+		}
+	}
 }
 
-- (void) connectionSetupAlertDidEnd: (NSAlert *) alert returnCode: (int) returnCode contextInfo: (void *) contextInfo
+- (void) recoveredFromConnectionError: (BOOL) didRecover
 {
-	//FIXME: userinfo?
-	NSNotification* notification = [NSNotification notificationWithName: kBXConnectionSetupAlertDidEndNotification object: databaseContext];
-	[[databaseContext internalDelegate] databaseContextConnectionFailureAlertDismissed: databaseContext];
-	[[databaseContext notificationCenter] postNotification: notification];
+	if (didRecover)
+		[self endConnectionAttempt];
+	else if (kBXNSConnectorHostPanel != mCurrentPanel)
+	{
+		mCurrentPanel = kBXNSConnectorHostPanel;
+		[mConnectorImpl displayHostPanel: [self hostPanel]];
+	}
 }
 
-- (void) setDatabaseContext: (BXDatabaseContext *) aContext
+- (void) endConnectionAttempt
 {
-    NSNotificationCenter* nc = nil;
-    
-    if (nil != databaseContext)
-    {
-        nc = [databaseContext notificationCenter];
-        [nc removeObserver: self name: kBXConnectionFailedNotification object: databaseContext];
-        [nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
-    }
-    
-    if (nil != aContext)
-    {
-		databaseContext = aContext;
-        nc = [databaseContext notificationCenter];
-        [nc addObserver: self selector: @selector (endConnecting:) 
-                   name: kBXConnectionFailedNotification object: databaseContext];
-        [nc addObserver: self selector: @selector (endConnecting:) 
-                   name: kBXConnectionSuccessfulNotification object: databaseContext];    
-    }
+	[mConnectorImpl endConnectionAttempt];
+	[mContext connectionSetupManagerFinishedAttempt];
 }
-
-- (void) setPanel: (BXPanel *) aPanel
-{
-    if (mPanel != aPanel)
-    {
-        [mPanel autorelease];
-        mPanel = [aPanel retain];
-    }
-}
-
-- (void) setAuthenticationPanel: (BXAuthenticationPanel *) aPanel
-{
-    if (mAuthenticationPanel != aPanel)
-    {
-        [mAuthenticationPanel release];
-        mAuthenticationPanel = [aPanel retain];
-    }
-}
-
-- (void) setModalWindow: (NSWindow *) aWindow
-{
-	modalWindow = aWindow;
-}
-
 @end

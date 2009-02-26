@@ -2,7 +2,7 @@
 // PGTSACLItem.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -41,8 +41,4 @@
 - (enum PGTSACLItemPrivilege) privileges;
 - (PGTSRoleDescription *) role;
 - (PGTSRoleDescription *) grantingRole;
-
-- (void) setPrivileges: (enum PGTSACLItemPrivilege) privileges;
-- (void) setRole: (PGTSRoleDescription *) aRole;
-- (void) setGrantingRole: (PGTSRoleDescription *) aGrantingRole;
 @end

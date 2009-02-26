@@ -2,7 +2,7 @@
 // PGTSIndexDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -29,34 +29,19 @@
 #import <Foundation/Foundation.h>
 #import "PGTSAbstractClassDescription.h"
 
-@class PGTSTableDescription;
 
-
-@protocol PGTSIndexDescription
-- (NSSet *) fields;
-- (PGTSTableDescription *) table;
-@end
-
-
-@interface PGTSIndexDescriptionProxy : PGTSAbstractClassDescriptionProxy <PGTSIndexDescription>
+@interface PGTSIndexDescription : PGTSAbstractClassDescription
 {
-	NSSet* mFields;
-}
-@end
-
-
-@interface PGTSIndexDescription : PGTSAbstractClassDescription <PGTSIndexDescription>
-{
-    PGTSTableDescription* mTable; //Weak
-    NSSet* mFields;
+    NSSet* mColumns;
     BOOL mIsPrimaryKey;
     BOOL mIsUnique;
 }
+- (NSSet *) columns;
 - (BOOL) isUnique;
 - (BOOL) isPrimaryKey;
 
-- (void) setFields: (NSSet *) aSet;
-- (void) setUnique: (BOOL) aBool;
-- (void) setPrimaryKey: (BOOL) aBool;
-- (void) setTable: (PGTSTableDescription *) aTable;
+//Thread un-safe methods.
+- (void) setColumns: (NSSet *) columns;
+- (void) setUnique: (BOOL) isUnique;
+- (void) setPrimaryKey: (BOOL) isPrimaryKey;
 @end

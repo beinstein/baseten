@@ -35,9 +35,9 @@
 #import <BaseTen/postgresql/libpq-fe.h>
 
 
-volatile static int gIdentifier = 0;
+volatile static NSInteger gIdentifier = 0;
 //Synchronization should happen in caller.
-static int
+static NSInteger
 NextIdentifier ()
 {
 	gIdentifier++;
@@ -72,7 +72,7 @@ NextIdentifier ()
 {
 }
 
-- (int) identifier
+- (NSInteger) identifier
 {
 	return 0;
 }
@@ -157,7 +157,7 @@ NextIdentifier ()
 	mDelegate = anObject;
 }
 
-- (int) identifier
+- (NSInteger) identifier
 {
 	return mIdentifier;
 }
@@ -205,6 +205,8 @@ NextIdentifier ()
         retval = [PGTSResultSet resultWithPGresult: result connection: connection];
         [retval setIdentifier: mIdentifier];
 		[retval setUserInfo: mUserInfo];
+		
+		[connection logIfNeeded: retval];
         [mDelegate performSelector: mCallback withObject: retval];
     }
     else

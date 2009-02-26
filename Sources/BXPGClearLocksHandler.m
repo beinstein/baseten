@@ -44,7 +44,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 @implementation BXPGClearLocksHandler
 + (NSString *) notificationName
 {
-	return @"baseten.ClearedLocks";
+	return @"baseten_unlocked_locks";
 }
 
 - (void) handleNotification: (PGTSNotification *) notification
@@ -66,7 +66,7 @@ bx_error_during_clear_notification (id self, NSError* error)
     NSString* query = 
 	@"SELECT baseten_lock_relid, "
 	@"   max (baseten_lock_timestamp) AS last_date, "
-	@"   baseten.locktablename (baseten_lock_relid) AS lock_table_name "
+	@"   baseten.lock_table (baseten_lock_relid) AS lock_table_name "
 	@" FROM baseten.lock "
 	@" WHERE baseten_lock_cleared = true "
 	@"  AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp " 
@@ -104,12 +104,12 @@ bx_error_during_clear_notification (id self, NSError* error)
 			@" AND baseten_lock_timestamp > COALESCE ($2, '-infinity')::timestamp ";
 						
 			//Primary key field names.
-			NSArray* pkeyfnames = (id) [[[[[table primaryKey] fields] allObjects] PGTSCollect] quotedName];
+			NSArray* pkeyfnames = (id) [[[[table primaryKey] columns] PGTSCollect] quotedName: mConnection];
 			NSString* pkeystr = [pkeyfnames componentsJoinedByString: @", "];
 			
 			//Table names.
 			NSString* lockTableName = [res valueForKey: @"lock_table_name"];
-			NSString* tableName = [table schemaQualifiedName];
+			NSString* tableName = [table schemaQualifiedName: mConnection];
 			
 			query = [NSString stringWithFormat: queryFormat, pkeystr, lockTableName, tableName];
 		}

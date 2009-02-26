@@ -37,35 +37,39 @@
 @class BXPGDatabaseDescription;
 @class BXPGQueryBuilder;
 @class PGTSConnection;
-@class PGTSTableDescription;
-@class PGTSFieldDescription;
+@class BXPGTableDescription;
+@class PGTSColumnDescription;
 @class PGTSQuery;
+@class PGTSResultSet;
 
 
-BX_EXPORT NSNumber* BXPGCopyCurrentVersionNumber ();
-BX_EXPORT NSNumber* BXPGCopyCurrentCompatibilityVersionNumber ();
 BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prependAlias);
+
+
+@interface BXPGVersion : NSObject
+{
+}
++ (NSNumber *) currentVersionNumber;
++ (NSNumber *) currentCompatibilityVersionNumber;
+@end
+
 
 
 @interface BXPGInterface : NSObject <BXInterface> 
 {
     BXDatabaseContext* mContext; //Weak
-	NSMutableDictionary* mForeignKeys;
 	BXPGTransactionHandler* mTransactionHandler;
-	NSNumber* mFrameworkCompatVersion;
 	BXPGQueryBuilder* mQueryBuilder;
 	
 	NSMutableSet* mLockedObjects;
 	BOOL mLocking;
 }
 
-- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error;
-- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity 
-							   inDatabase: (BXPGDatabaseDescription *) database 
-									error: (NSError **) error;
+- (BXPGTableDescription *) tableForEntity: (BXEntityDescription *) entity;
+- (BXPGTableDescription *) tableForEntity: (BXEntityDescription *) entity 
+							   inDatabase: (BXPGDatabaseDescription *) database;
 
 - (BXDatabaseContext *) databaseContext;
-- (BOOL) fetchForeignKeys: (NSError **) outError;
 - (void) setTransactionHandler: (BXPGTransactionHandler *) handler;
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
 					returningFaults: (BOOL) returnFaults class: (Class) aClass forUpdate: (BOOL) forUpdate error: (NSError **) error;
@@ -99,10 +103,11 @@ BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prepen
 - (FILE *) traceFile;
 - (void) connection: (PGTSConnection *) connection sentQueryString: (const char *) queryString;
 - (void) connection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query;
+- (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) res;
 @end
 
 
 @interface BXPGInterface (Visitor) <PGTSQueryVisitor>
-- (void) addAttributeFor: (PGTSFieldDescription *) field into: (NSMutableDictionary *) attrs 
+- (void) addAttributeFor: (PGTSColumnDescription *) field into: (NSMutableDictionary *) attrs 
 				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey;
 @end

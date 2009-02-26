@@ -2,7 +2,7 @@
 // PGTSDatabaseDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -28,51 +28,46 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/postgresql/libpq-fe.h>
-#import "PGTSAbstractDescription.h"
+#import <BaseTen/PGTSAbstractDescription.h>
+#import <BaseTen/PGTSOids.h>
+#import <BaseTen/PGTSCollections.h>
 
-
+@class PGTSSchemaDescription;
 @class PGTSTableDescription;
 @class PGTSTypeDescription;
 @class PGTSRoleDescription;
 @class PGTSResultSet;
 
 
-@protocol PGTSDatabaseDescription <NSObject>
-- (PGTSTableDescription *) tableWithOid: (Oid) anOid;
-- (PGTSTableDescription *) table: (NSString *) tableName inSchema: (NSString *) schemaName;
+@interface PGTSDatabaseDescription : NSObject <NSCopying>
+{
+	PGTS_OidMap* mSchemasByOid;
+	PGTS_OidMap* mTablesByOid;
+	PGTS_OidMap* mTypesByOid;
+	PGTS_OidMap* mRolesByOid;	
+	NSDictionary* mSchemasByName;
+	NSDictionary* mRolesByName;
+	NSLock* mSchemaLock;
+	NSLock* mRoleLock;
+}
+- (PGTSSchemaDescription *) schemaWithOid: (Oid) anOid;
+- (PGTSSchemaDescription *) schemaNamed: (NSString *) name;
+- (NSDictionary *) schemasByName;
+
 - (PGTSTypeDescription *) typeWithOid: (Oid) anOid;
-- (NSSet *) typesWithOids: (const Oid *) oidVector;
-- (NSSet *) tablesWithOids: (NSArray *) oidArray;
+- (NSArray *) typesWithOids: (const Oid *) oidVector;
+
+- (id) tableWithOid: (Oid) anOid;
+- (NSArray *) tablesWithOids: (const Oid *) oidVector;
+- (id) table: (NSString *) tableName inSchema: (NSString *) schemaName;
+
+- (PGTSRoleDescription *) roleWithOid: (Oid) anOid;
 - (PGTSRoleDescription *) roleNamed: (NSString *) name;
-- (PGTSRoleDescription *) roleNamed: (NSString *) name oid: (Oid) oid;
-@end
 
 
-@interface PGTSDatabaseDescriptionProxy : PGTSAbstractDescriptionProxy <PGTSDatabaseDescription>
-{
-	NSMutableDictionary* mTables;
-	NSMutableDictionary* mSchemas;
-	//FIXME: roles?
-}
-
-//FIXME: private.
-- (void) updateTableCache: (id) table;
-@end
-
-
-@interface PGTSDatabaseDescription : PGTSAbstractDescription <PGTSDatabaseDescription>
-{
-    NSMutableDictionary* mTables;
-    NSMutableDictionary* mTypes;
-    NSMutableDictionary* mSchemas;
-    NSMutableDictionary* mRoles;
-}
-
-+ (id) databaseForConnection: (PGTSConnection *) connection;
-- (id) proxyForConnection: (PGTSConnection *) connection;
-- (BOOL) schemaExists: (NSString *) schemaName;
-
-//FIXME: protected
-- (void) updateTableCache: (id) table;
-- (void) handleResult: (PGTSResultSet *) res forTable: (PGTSTableDescription *) desc;
+//Thread un-safe methods.
+- (void) addTable: (PGTSTableDescription *) table;
+- (void) addSchema: (PGTSSchemaDescription *) schema;
+- (void) addType: (PGTSTypeDescription *) type;
+- (void) addRole: (PGTSRoleDescription *) role;
 @end

@@ -58,17 +58,35 @@ PrimaryRelation (BXPGPrimaryRelationFromItem* fromItem)
 }
 
 
-NSArray*
-BXPGConditions (NSString* srcAlias, NSString* dstAlias, NSSet* fieldNamePairs)
+struct condition_st
 {
-	NSMutableArray* conditions = [NSMutableArray arrayWithCapacity: [fieldNamePairs count]];
-	BXEnumerate (currentPair, e, [fieldNamePairs objectEnumerator])
-	{
-		NSString* condition = [NSString stringWithFormat: @"%@.\"%@\" = %@.\"%@\"",
-							   srcAlias, [currentPair objectAtIndex: 0], dstAlias, [currentPair objectAtIndex: 1]];
-		[conditions addObject: condition];
-	}
-	return conditions;
+	__strong NSString* c_src_alias;
+	__strong NSString* c_dst_alias;
+	__strong NSMutableArray* c_conditions;
+};
+
+
+static void
+ConditionsCallback (NSString* srcName, NSString* dstName, void* ctx)
+{
+	struct condition_st* cst = (struct condition_st*) ctx;
+	NSString* condition = [NSString stringWithFormat: @"%@.\"%@\" = %@.\"%@\"",
+						   cst->c_src_alias, srcName, cst->c_dst_alias, dstName];
+	[cst->c_conditions addObject: condition];
+}
+
+
+NSArray*
+BXPGConditions (NSString* alias1, NSString* alias2, id <BXForeignKey> fkey, BOOL reverseNames)
+{
+	NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [fkey numberOfColumns]];
+	struct condition_st cst = {alias1, alias2, retval};
+	if (reverseNames)
+		[fkey iterateReversedColumnNames: &ConditionsCallback context: &cst];
+	else
+		[fkey iterateColumnNames: &ConditionsCallback context: &cst];
+	
+	return retval;
 }
 
 
@@ -251,9 +269,9 @@ ImplicitInnerJoin (BXEntityDescription* dstEntity, NSString* dstAlias)
 }
 
 static NSString*
-LeftJoin (BXEntityDescription* dstEntity, NSString* srcAlias, NSString* dstAlias, NSSet* fieldNamePairs)
+LeftJoin (BXEntityDescription* dstEntity, NSString* srcAlias, NSString* dstAlias, id <BXForeignKey> fkey, BOOL reverseNames)
 {
-	NSArray* conditions = BXPGConditions (srcAlias, dstAlias, fieldNamePairs);
+	NSArray* conditions = BXPGConditions (srcAlias, dstAlias, fkey, reverseNames);
 	NSString* retval =  [NSString stringWithFormat: @"LEFT JOIN \"%@\".\"%@\" %@ ON (%@)", 
 						 [dstEntity schemaName], [dstEntity name], dstAlias, 
 						 [conditions componentsJoinedByString: @", "]];
@@ -263,11 +281,7 @@ LeftJoin (BXEntityDescription* dstEntity, NSString* srcAlias, NSString* dstAlias
 - (NSString *) visitSimpleRelationship: (BXPGRelationshipFromItem *) fromItem
 {
 	BXRelationshipDescription* relationship = [fromItem relationship];
-	BXForeignKey* fkey = [relationship foreignKey];
-	NSSet* fieldNames = [fkey fieldNames];
-	if (! [relationship isInverse])
-		fieldNames = (id) [[fieldNames PGTSCollect] PGTSReverse];
-	
+	id <BXForeignKey> fkey = [relationship foreignKey];	
 	BXEntityDescription* dstEntity = [relationship destinationEntity];
 	NSString* dst = [fromItem alias];
 	NSString* retval = nil;	
@@ -279,7 +293,7 @@ LeftJoin (BXEntityDescription* dstEntity, NSString* srcAlias, NSString* dstAlias
 	else
 	{
 		NSString* src = [[fromItem previous] alias];
-		retval = LeftJoin (dstEntity, src, dst, fieldNames);
+		retval = LeftJoin (dstEntity, src, dst, fkey, ! [relationship isInverse]);
 	}
 	return retval;
 }
@@ -287,8 +301,6 @@ LeftJoin (BXEntityDescription* dstEntity, NSString* srcAlias, NSString* dstAlias
 - (NSString *) visitManyToManyRelationship: (BXPGHelperTableRelationshipFromItem *) fromItem
 {	
 	BXManyToManyRelationshipDescription* relationship = [fromItem relationship];
-	BXForeignKey* dstFkey = [relationship dstForeignKey];
-	NSSet* dstFields = [dstFkey fieldNames];
 	
 	BXEntityDescription* helperEntity = [relationship helperEntity];
 	BXEntityDescription* dstEntity = [relationship destinationEntity];
@@ -303,13 +315,12 @@ LeftJoin (BXEntityDescription* dstEntity, NSString* srcAlias, NSString* dstAlias
 	}
 	else
 	{
-		BXForeignKey* srcFkey = [relationship srcForeignKey];
-		NSSet* srcFields = (id) [[[srcFkey fieldNames] PGTSCollect] PGTSReverse];
-		NSString* srcAlias = [[fromItem previous] alias];
-		
-		join1 = LeftJoin (helperEntity, srcAlias, helperAlias, srcFields);
+		id <BXForeignKey> srcFkey = [relationship foreignKey];
+		NSString* srcAlias = [[fromItem previous] alias];		
+		join1 = LeftJoin (helperEntity, srcAlias, helperAlias, srcFkey, YES);
 	}
-	NSString* join2 = LeftJoin (dstEntity, helperAlias, dstAlias, dstFields);
+	id <BXForeignKey> dstFkey = [relationship dstForeignKey];
+	NSString* join2 = LeftJoin (dstEntity, helperAlias, dstAlias, dstFkey, NO);
 	return [NSString stringWithFormat: @"%@ %@", join1, join2];
 }
 @end

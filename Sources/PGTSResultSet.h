@@ -30,6 +30,9 @@
 #import <BaseTen/postgresql/libpq-fe.h>
 
 
+@class PGTSConnection;
+
+
 @interface PGTSResultSet : NSObject
 {
 }
@@ -60,11 +63,12 @@
 - (NSDictionary *) currentRowAsDictionary;
 - (void) goBeforeFirstRow;
 - (BOOL) goToRow: (int) aRow;
+- (void) goBeforeFirstRowWithValue: (id) value forKey: (NSString *) columnName;
 - (int) count;
 - (unsigned long long) numberOfRowsAffectedByCommand;
 - (BOOL) advanceRow;
-- (int) identifier;
-- (void) setIdentifier: (int) anIdentifier;
+- (NSInteger) identifier;
+- (void) setIdentifier: (NSInteger) anIdentifier;
 - (NSError *) error;
 - (NSString *) errorString;
 - (void) setUserInfo: (id) userInfo;

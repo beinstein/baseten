@@ -20,12 +20,16 @@
 			<dict>
 				<key>mCredentialFieldMatrix</key>
 				<string>NSMatrix</string>
+				<key>mDelegate</key>
+				<string>id</string>
 				<key>mMessageTextField</key>
 				<string>NSTextField</string>
 				<key>mPasswordAuthenticationView</key>
 				<string>NSView</string>
 				<key>mPasswordField</key>
 				<string>NSSecureTextFieldCell</string>
+				<key>mProgressIndicator</key>
+				<string>NSProgressIndicator</string>
 				<key>mRememberInKeychainButton</key>
 				<string>NSButton</string>
 				<key>mUsernameField</key>

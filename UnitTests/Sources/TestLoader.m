@@ -31,6 +31,9 @@
 #import <BaseTen/BaseTen.h>
 #import "MKCSenTestCaseAdditions.h"
 
+#import "BXDatabaseContextTests.h"
+#import "PGTSMetadataTests.h"
+
 #import "ConnectTest.h"
 #import "EntityTests.h"
 #import "ObjectIDTests.h"
@@ -59,6 +62,11 @@
 	NSArray* testClasses = [NSArray arrayWithObjects:
 							[KeyPathComponentTest class],
 							[PredicateTests class],
+							
+							[BXDatabaseContextTests class],
+							
+							[PGTSMetadataTests class],
+							
 							[ConnectTest class],
 							[EntityTests class],
 							//[ObjectTests class], //FIXME: enable this. It still requires a modified OCMock, though.

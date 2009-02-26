@@ -2,7 +2,7 @@
 // BXPGDatabaseDescription.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -27,7 +27,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTSDatabaseDescription.h"
+#import <BaseTen/PGTSDatabaseDescription.h>
+#import <BaseTen/PGTSCollections.h>
+
+
+@class BXPGForeignKeyDescription;
 
 
 @interface BXPGDatabaseDescription : PGTSDatabaseDescription
@@ -35,11 +39,15 @@
 	NSNumber* mSchemaVersion;
 	NSNumber* mSchemaCompatibilityVersion;
 	BOOL mHasBaseTenSchema;
+	PGTS_OidMap* mForeignKeysByConoid;
 }
 - (BOOL) hasBaseTenSchema;
 - (NSNumber *) schemaVersion;
 - (NSNumber *) schemaCompatibilityVersion;
+- (BXPGForeignKeyDescription *) foreignKeyWithOid: (Oid) oid;
 
-- (BOOL) checkBaseTenSchema: (NSError **) outError;
-- (BOOL) checkSchemaVersions: (NSError **) outError;
+- (void) setSchemaVersion: (NSNumber *) number;
+- (void) setSchemaCompatibilityVersion: (NSNumber *) number;
+- (void) setHasBaseTenSchema: (BOOL) aBool;
+- (void) addForeignKey: (BXPGForeignKeyDescription *) fkey;
 @end

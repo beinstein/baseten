@@ -45,6 +45,12 @@
 
 - (NSURL *) BXURIForHost: (NSString *) host database: (NSString *) dbName username: (NSString *) username password: (id) password
 {
+	return [self BXURIForHost: host port: nil database: dbName username: username password: password];
+}
+
+- (NSURL *) BXURIForHost: (NSString *) host port: (NSNumber *) port database: (NSString *) dbName username: (NSString *) username password: (id) password
+{
+	//FIXME: shouldn't we allow empty scheme?
 	NSString* scheme = [self scheme];
 	NSURL* retval = nil;
 	
@@ -81,7 +87,8 @@
 			}
 		}
 		
-		NSNumber* port = [self port];
+		if (! port)
+			port = [self port];
 		if (port) [URLString appendFormat: @":%@", port];
 	
 		if (nil != dbName)

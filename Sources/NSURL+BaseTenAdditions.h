@@ -33,4 +33,9 @@
 				database: (NSString *) dbName 
 				username: (NSString *) username 
 				password: (id) password;
+- (NSURL *) BXURIForHost: (NSString *) host 
+					port: (NSNumber *) port 
+				database: (NSString *) dbName 
+				username: (NSString *) username 
+				password: (id) password;
 @end

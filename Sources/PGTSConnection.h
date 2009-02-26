@@ -36,6 +36,7 @@
 @class PGTSResultSet;
 @class PGTSConnector;
 @class PGTSQueryDescription;
+@class PGTSMetadataContainer;
 @class PGTSDatabaseDescription;
 @class PGTSNotification;
 @class PGTSQuery;
@@ -60,6 +61,7 @@
 #endif
 - (void) PGTSConnection: (PGTSConnection *) connection sentQueryString: (const char *) queryString;
 - (void) PGTSConnection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query;
+- (void) PGTSConnection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) res;
 @end
 
 
@@ -78,7 +80,7 @@ enum PGTSConnectionError
 	PGconn* mConnection;
 	NSMutableArray* mQueue;
 	id mConnector;
-    PGTSDatabaseDescription* mDatabase;
+    PGTSMetadataContainer* mMetadataContainer;
     NSMutableDictionary* mPGTypes;
 	id <PGTSCertificateVerificationDelegate> mCertificateVerificationDelegate; //Weak
     
@@ -104,7 +106,7 @@ enum PGTSConnectionError
 - (id <PGTSConnectionDelegate>) delegate;
 - (void) setDelegate: (id <PGTSConnectionDelegate>) anObject;
 - (PGTSDatabaseDescription *) databaseDescription;
-- (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc;
+- (void) reloadDatabaseDescription;
 - (id) deserializationDictionary;
 - (NSError *) connectionError;
 - (NSString *) errorString;
@@ -121,6 +123,8 @@ enum PGTSConnectionError
 
 - (BOOL) logsQueries;
 - (void) setLogsQueries: (BOOL) flag;
+
+- (void) logIfNeeded: (PGTSResultSet *) res;
 @end
 
 

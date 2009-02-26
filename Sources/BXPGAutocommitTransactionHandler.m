@@ -145,7 +145,7 @@
 		
 		NSString* query = @"COMMIT";
 		if ([[mInterface databaseContext] sendsLockQueries])
-			query = @"COMMIT; SELECT baseten.ClearLocks ();";
+			query = @"COMMIT; SELECT baseten.lock_unlock ();";
 		PGTSResultSet* res = [mConnection executeQuery: query];
 		*outError = [res error];
 		
@@ -177,7 +177,7 @@
 	{
 		NSString* query = @"ROLLBACK";
 		if ([[mInterface databaseContext] sendsLockQueries])
-			query = @"ROLLBACK; SELECT baseten.ClearLocks ();";
+			query = @"ROLLBACK; SELECT baseten.lock_unlock ();";
 		PGTSResultSet* res = [mConnection executeQuery: query];
 		if ([res querySucceeded])
 			retval = YES;

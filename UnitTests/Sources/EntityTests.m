@@ -83,7 +83,7 @@
 	MKCAssertNotNil ([entity primaryKeyFields]);	
 }
 
-- (void) testLazyValidation
+- (void) testSharing
 {
 	NSError* error = nil;
 	NSString* entityName = @"mtocollectiontest1";
@@ -92,14 +92,24 @@
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	
 	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [ctx databaseURI]];
-	MKCAssertFalse ([ctx2 isConnected]);
 	BXEntityDescription* entity2 = [ctx2 entityForTable: entityName inSchema: schemaName error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	MKCAssertTrue (entity == entity2);
+}
+
+- (void) testExclusion
+{
+	[ctx connectSync: NULL];
 	
-	//Now the entity should be validated lazily
-	MKCAssertFalse ([ctx2 isConnected]);
-	STAssertNil (error, [error description]);
+	BXEntityDescription* entity = [ctx entityForTable: @"test" error: NULL];
+	MKCAssertNotNil (entity);
+	
+	BXAttributeDescription* attr = [[entity attributesByName] objectForKey: @"xmin"];
+	MKCAssertTrue ([attr isExcluded]);
+	attr = [[entity attributesByName] objectForKey: @"id"];
+	MKCAssertFalse ([attr isExcluded]);
+	attr = [[entity attributesByName] objectForKey: @"value"];
+	MKCAssertFalse ([attr isExcluded]);
 }
 
 - (void) testHash
@@ -142,4 +152,15 @@
     MKCAssertFalse ([container2 containsObject: e2]);    
 }
 
+- (void) testViewPkey
+{
+	NSError* error = nil;
+	[ctx connectIfNeeded: &error];
+	BXEntityDescription* entity = [ctx entityForTable: @"test_v" error: &error];
+	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
+	
+	NSArray* pkeyFields = [entity primaryKeyFields];
+	MKCAssertTrue (1 == [pkeyFields count]);
+	MKCAssertEqualObjects (@"id", [[pkeyFields lastObject] name]);
+}
 @end

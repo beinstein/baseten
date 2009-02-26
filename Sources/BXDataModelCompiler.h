@@ -55,5 +55,4 @@
 - (void) compileDataModel;
 
 - (void) setCompiledModelURL: (NSURL *) aFileURL;
-
 @end

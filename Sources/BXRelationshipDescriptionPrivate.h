@@ -35,13 +35,11 @@
 @interface BXRelationshipDescription (PrivateMethods)
 - (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) entity 
   destinationEntity: (BXEntityDescription *) destinationEntity;
-- (BXForeignKey *) foreignKey;
-- (void) removeDestinationEntity;
-- (void) setForeignKey: (BXForeignKey *) aKey;
+- (id <BXForeignKey>) foreignKey;
+- (void) setForeignKey: (id <BXForeignKey>) aKey;
 - (BOOL) isInverse;
 - (void) setIsInverse: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
-- (void) setDeleteRule: (NSDeleteRule) aRule;
 
 //Remember to override these in subclasses.
 - (id) registeredTargetFor: (BXDatabaseObject *) databaseObject fireFault: (BOOL) fireFault;

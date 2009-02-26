@@ -105,7 +105,7 @@
         MKCAssertTrue (1 == [res count]);
     
         BXDatabaseObject* object = [res objectAtIndex: 0];
-		MKCAssertTrue ([object isFaultKey: [oneEntity name]]);
+		MKCAssertEquals (1, [object isFaultKey: [oneEntity name]]);
 		
         BXDatabaseObject* foreignObject = [object primitiveValueForKey: [oneEntity name]];
 

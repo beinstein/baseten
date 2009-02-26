@@ -2,7 +2,7 @@
 // BXDatabaseContext.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -48,10 +48,11 @@
 
 @protocol BXInterface;
 @protocol BXObjectAsynchronousLocking;
-@protocol BXConnectionSetupManager;
+@protocol BXConnector;
 @class BXDatabaseObject;
 @class BXEntityDescription;
 @class BXDatabaseObjectID;
+@class BXDatabaseObjectModel;
 @class NSEntityDescription;
 
 
@@ -62,15 +63,12 @@
     id										mObjects;
     NSMutableDictionary*                    mModifiedObjectIDs;
     NSUndoManager*							mUndoManager;
-	NSMutableSet*							mLazilyValidatedEntities;
 	NSMutableIndexSet*						mUndoGroupingLevels;
-	BXHiddenId <BXConnectionSetupManager>	mConnectionSetupManager;
+	BXHiddenId <BXConnector>				mConnectionSetupManager;
+	BXDatabaseObjectModel*					mObjectModel;
 	
     SecKeychainItemRef                      mKeychainPasswordItem;
     NSNotificationCenter*                   mNotificationCenter;
-    NSMutableSet*                           mEntities;
-    NSMutableSet*                           mRelationships;
-	NSMutableDictionary*					mEntitiesBySchema;
 	id <BXDatabaseContextDelegate>			mDelegateProxy;
 	NSError*								mLastConnectionError;
 	
@@ -86,6 +84,7 @@
 	BOOL									mRetryingConnection;
     BOOL									mRetainRegisteredObjects;
 	BOOL									mUsesKeychain;
+	BOOL									mShouldStoreURICredentials;
 	BOOL									mCanConnect;
 	BOOL									mDidDisconnect;
 	BOOL									mConnectsOnAwake;
@@ -130,7 +129,8 @@
 
 - (BOOL) usesKeychain;
 - (void) setUsesKeychain: (BOOL) usesKeychain;
-- (void) storeURICredentials;
+- (BOOL) storesURICredentials;
+- (void) setStoresURICredentials: (BOOL) shouldStore;
 
 - (BOOL) canConnect;
 

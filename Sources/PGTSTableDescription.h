@@ -2,7 +2,7 @@
 // PGTSTableDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,51 +27,34 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTSAbstractClassDescription.h"
+#import <BaseTen/PGTSAbstractClassDescription.h>
+#import <BaseTen/PGTSCollections.h>
 
 
-@class PGTSFieldDescription;
+@class PGTSColumnDescription;
 @class PGTSDatabaseDescription;
 @class PGTSIndexDescription;
 @class PGTSResultSet;
+@class PGTSSchemaDescription;
+@class PGTSConnection;
 
 
-@protocol PGTSTableDescription
-- (NSArray *) uniqueIndexes;
+@interface PGTSTableDescription : PGTSAbstractClassDescription
+{
+	PGTS_IndexMap* mColumnsByIndex;
+	PGTS_IdList* mUniqueIndexes;
+
+	NSDictionary* mColumnsByName;
+	NSLock* mColumnLock;
+}
+- (NSString *) schemaQualifiedName: (PGTSConnection *) connection;
+- (NSString *) schemaName;
+
 - (PGTSIndexDescription *) primaryKey;
-- (PGTSFieldDescription *) fieldAtIndex: (int) anIndex;
-- (NSDictionary *) fields;
-//- (NSSet *) foreignKeys;
-//- (NSSet *) referencingForeignKeys;
-@end
+- (PGTSColumnDescription *) columnAtIndex: (int) anIndex;
+- (NSDictionary *) columns;
 
-
-@interface PGTSTableDescriptionProxy : PGTSAbstractClassDescriptionProxy <PGTSTableDescription>
-{
-	NSMutableDictionary* mFields;
-    NSMutableArray* mUniqueIndexes;
-    NSMutableSet* mForeignKeys;
-    NSMutableSet* mReferencingForeignKeys;
-    NSArray* mRelationOidsBasedOn;
-}
-@end
-
-
-@interface PGTSTableDescription : PGTSAbstractClassDescription <PGTSTableDescription>
-{
-    NSMutableDictionary* mFields;
-	NSMutableDictionary* mFieldIndexes;
-    NSArray* mUniqueIndexes;
-    NSMutableSet* mForeignKeys;
-    NSMutableSet* mReferencingForeignKeys;
-    NSArray* mRelationOidsBasedOn;
-
-    BOOL mHasForeignKeys;
-    BOOL mHasReferencingForeignKeys;
-}
-
-- (void) setUniqueIndexes: (NSArray *) anArray;
-
-//- (NSSet *) foreignKeySetWithResult: (PGTSResultSet *) res selfAsSource: (BOOL) selfAsSource;
-- (NSArray *) relationOidsBasedOn;
+//Thread un-safe methods.
+- (void) addIndex: (PGTSIndexDescription *) anIndex;
+- (void) addColumn: (PGTSColumnDescription *) aColumn;
 @end

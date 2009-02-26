@@ -188,6 +188,10 @@
 {
 }
 
+- (void) PGTSConnection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) res
+{
+}
+
 - (void) PGTSConnection: (PGTSConnection *) connection networkStatusChanged: (SCNetworkConnectionFlags) newFlags
 {
 }

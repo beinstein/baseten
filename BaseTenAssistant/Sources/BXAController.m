@@ -313,19 +313,10 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (BOOL) checkBaseTenSchema: (NSError **) error
 {
-	NSError* localError = nil;
 	[self willChangeValueForKey: @"hasBaseTenSchema"];
 	BXPGDatabaseDescription* db = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] databaseDescription];
-	BOOL retval = [db checkBaseTenSchema: &localError];
+	BOOL retval = [db hasBaseTenSchema];
 	[self didChangeValueForKey: @"hasBaseTenSchema"];
-
-	if (! retval)
-	{
-		if (error)
-			*error = localError;
-		else
-			[NSApp presentError: localError modalForWindow: mMainWindow delegate: nil didPresentSelector: NULL contextInfo: NULL];
-	}
 	
 	return retval;
 }
@@ -1380,33 +1371,8 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	
 	NSModalSession session = [NSApp beginModalSessionForWindow: mMainWindow];
 	
-	BXPGTransactionHandler* transactionHandler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
-	[transactionHandler refreshDatabaseDescription];
-	
-	ok = [self checkBaseTenSchema: &error];
-
-	NSDictionary* entities = nil;
-	if (ok)
-	{
-		entities = [mContext entitiesBySchemaAndName: YES error: &error];
-		
-		[self setProgressMin: 0.0 max: (double) [entities count]];
-		for (NSArray* entityDict in [entities objectEnumerator])
-		{
-			for (BXEntityDescription* entity in [entityDict objectEnumerator])
-			{				
-				[self advanceProgress];
-				[entity setValidated: NO];
-				[mContext validateEntity: entity error: &error];
-				
-				if (error || NSRunContinuesResponse != [NSApp runModalSession: session])
-				{
-					ok = NO;
-					break;
-				}				
-			}
-		}
-	}
+	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: &error];
+	[self setProgressMin: 1.0 max: 1.0];
 	
 	[NSApp endModalSession: session];
 	[self hideProgressPanel];

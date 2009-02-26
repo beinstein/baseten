@@ -29,9 +29,9 @@
 
 #import "BXLogger.h"
 #import <dlfcn.h>
-#include <unistd.h>
+#import <unistd.h>
 
-volatile enum BXLogLevel BXLogLevel = kBXLogLevelWarning;
+enum BXLogLevel BXLogLevel = kBXLogLevelWarning;
 
 
 void BXSetLogLevel (enum BXLogLevel level)

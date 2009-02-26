@@ -31,12 +31,14 @@
 #import "PGTSDeleteRule.h"
 #import "PGTSConstants.h"
 #import "PGTSOids.h"
+#import "PGTSMetadataStorage.h"
 
 #import "BaseTen.h"
 #import "BXRelationshipDescription.h"
 #import "BXOneToOneRelationshipDescription.h"
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXForeignKey.h"
+#import "BXDatabaseObjectModel.h"
 
 #import "BXPGInterface.h"
 #import "BXPGLockHandler.h"
@@ -50,8 +52,10 @@
 #import "BXPGTableDescription.h"
 #import "BXPGQueryBuilder.h"
 #import "BXPGFromItem.h"
-#import "BXLocalizedString.h"
+#import "BXPGEFMetadataContainer.h"
+#import "BXPGForeignKeyDescription.h"
 
+#import "BXLocalizedString.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
 
@@ -291,6 +295,8 @@ ErrorUserInfo (NSString* localizedName, NSString* localizedError, BXDatabaseCont
 }
 
 
+//Saved for later use.
+#if 0
 /**
  * \internal
  * \brief Create a database error.
@@ -307,6 +313,7 @@ DatabaseError (NSInteger errorCode, NSString* localizedError, BXDatabaseContext*
 		[userInfo setObject: entity	forKey: kBXEntityDescriptionKey];
 	return [NSError errorWithDomain: kBXErrorDomain code: errorCode userInfo: userInfo];		
 }
+#endif
 
 
 static NSError*
@@ -404,7 +411,11 @@ bx_error_during_rollback (id self, NSError* error)
     if (NO == tooLate)
     {
         tooLate = YES;
-        [BXDatabaseContext setInterfaceClass: [self class] forScheme: @"pgsql"];        
+        [BXDatabaseContext setInterfaceClass: self forScheme: @"pgsql"];
+		
+		//Ensure that PGTSConnection gets initialized.
+		[PGTSConnection class];
+		[[PGTSMetadataStorage defaultStorage] setContainerClass: [BXPGEFMetadataContainer class]];
     }
 }
 
@@ -438,10 +449,8 @@ bx_error_during_rollback (id self, NSError* error)
 
 - (void) dealloc
 {
-	[mForeignKeys release];
 	[mTransactionHandler release];
 	[mLockedObjects release];
-	[mFrameworkCompatVersion release];
 	[mQueryBuilder release];
 	[super dealloc];
 }
@@ -456,6 +465,12 @@ bx_error_during_rollback (id self, NSError* error)
 - (BOOL) isSSLInUse
 {
 	return [mTransactionHandler isSSLInUse];
+}
+
+
+- (NSNumber *) defaultPort
+{
+	return [NSNumber numberWithInteger: 5432];
 }
 
 
@@ -547,7 +562,7 @@ error:
 	
 	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
-	if (! [self validateEntity: entity error: error]) goto error;
+	if (! [entity isValidated]) goto error; //FIXME: set the error.
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 		
@@ -602,7 +617,7 @@ error:
 	Expect (error);
     NSArray* retval = nil;
 	if (! [mTransactionHandler canSend: error]) goto error;
-	PGTSTableDescription* table = [self tableForEntity: entity error: error];
+	PGTSTableDescription* table = [self tableForEntity: entity];
 	if (! table) goto error; //FIXME: set the error.
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
@@ -691,7 +706,7 @@ error:
 		[mTransactionHandler checkSuperEntities: entity];
 		NSArray* objectIDs = ObjectIDs (entity, res);
 
-		NSDictionary* values = (id) [[valueDict PGTSKeyCollect] name];
+		NSDictionary* values = (id) [[valueDict PGTSKeyCollectDK] name];
 		if (objectID)
 		{
 			BXDatabaseObject* object = [mContext registeredObjectWithID: objectID];
@@ -768,8 +783,8 @@ error:
 	
 	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
-	PGTSTableDescription* table = [self tableForEntity: entity error: error];
-	if (! table) goto error;
+	PGTSTableDescription* table = [self tableForEntity: entity];
+	if (! table) goto error; //FIXME: set the error.
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
@@ -808,263 +823,220 @@ error:
 }
 
 
-- (NSDictionary *) relationshipsForEntity: (BXEntityDescription *) entity
-									error: (NSError **) error
-{    
-	Expect (entity);
-	Expect (error);
-    
-	NSMutableDictionary* retval = [NSMutableDictionary dictionary];
-	if (! [mTransactionHandler canSend: error])
-		goto bail;
-	
-	PGTSConnection* connection = [mTransactionHandler connection];
-
-	if ([(id) [connection databaseDescription] hasBaseTenSchema] && [self fetchForeignKeys: error])
-	{
-		NSString* queryFormat = @"SELECT * FROM baseten.%@ WHERE srcnspname = $1 AND srcrelname = $2";
-		NSString* views [4] = {@"onetomany", @"onetoone", @"manytomany", @"relationship_v"};
-		
-		//Relationships between views and between tables and views are stored in a different place.
-		//If given entity is a view, we only need to check those.
-		int i = 0;
-		if ([entity isView])
-			i = 3;
-		
-		while (i < 4)
-		{
-			NSString* queryString = [NSString stringWithFormat: queryFormat, views [i]];
-			PGTSResultSet* res = [connection executeQuery: queryString parameters:
-								  [entity schemaName], [entity name]];
-			if (! [res querySucceeded])
-			{
-				*error = [res error];
-				retval = nil;
-				break;
-			}
-			
-			while ([res advanceRow])
-			{
-				id rel = nil;
-				NSString* name = [res valueForKey: @"name"];
-				NSString* inverseName = [res valueForKey: @"inversename"];
-				BXEntityDescription* dst = [mContext entityForTable: [res valueForKey: @"dstrelname"] 
-														   inSchema: [res valueForKey: @"dstnspname"]
-												validateImmediately: NO
-															  error: error];
-				if (nil != *error) goto bail;
-				
-				int kind = i;
-				if (kind == 3)
-				{
-					if ([[res valueForKey: @"ismanytomany"] boolValue])
-						kind = 2;
-					else if ([[res valueForKey: @"istoone"] boolValue])
-						kind = 1;
-					else
-						kind = 0;
-				}
-				
-				switch (kind)
-				{
-						//One-to-many
-					case 0:
-					{
-						rel = [[[BXRelationshipDescription alloc] initWithName: name 
-																		entity: entity
-															 destinationEntity: dst] autorelease];
-						//Fall through
-					}
-						
-						//One-to-one
-					case 1:
-					{
-						if (nil == rel)
-						{
-							rel = [[[BXOneToOneRelationshipDescription alloc] initWithName: name 
-																					entity: entity
-																		 destinationEntity: dst] autorelease];
-						}
-						
-						[rel setIsInverse: [[res valueForKey: @"isinverse"] boolValue]];						
-						[rel setForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
-						
-						//We only have a delete rule for the foreign key's source table.
-						//If it isn't also the relationship's source table, we have no way of controlling deletion.
-						[(BXRelationshipDescription *) rel setDeleteRule: ([rel isInverse] ? NSNullifyDeleteRule : [[rel foreignKey] deleteRule])];
-						
-						break;
-					}
-						
-						//Many-to-many
-					case 2:
-					{
-						BXEntityDescription* helper = [mContext entityForTable: [res valueForKey: @"helperrelname"] 
-																	  inSchema: [res valueForKey: @"helpernspname"] 
-														   validateImmediately: NO
-																		 error: error];
-						if (nil != *error) goto bail;
-						
-						rel = [[[BXManyToManyRelationshipDescription alloc] initWithName: name 
-																				  entity: entity
-																	   destinationEntity: dst] autorelease];
-						
-						[rel setSrcForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"conoid"]]];
-						[rel setDstForeignKey: [mForeignKeys objectForKey: [res valueForKey: @"dstconoid"]]];
-						
-						
-						//The helper entity may get changed by trigger if rows are deleted from source
-						//and destination entities.
-						[helper setGetsChangedByTriggers: YES];						
-						
-						[rel setHelperEntity: helper];
-						break;
-					}
-						
-					default:
-						break;
-				}
-				
-				if (nil != rel)
-				{
-					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.
-					[rel setOptional: YES];					
-					[rel setInverseName: inverseName];
-					[retval setObject: rel forKey: [rel name]];
-				}
-			}
-			i++;
-		}
-	}
-	
-bail:
-    return retval;
+- (void) reloadDatabaseMetadata
+{
+	[mTransactionHandler reloadDatabaseMetadata];
 }
 
 
-- (BOOL) fetchForeignKeys: (NSError **) outError
+- (void) prepareForEntityValidation
 {
-	ExpectR (outError, NO);
-	BOOL retval = NO;
-	if (mForeignKeys)
-		retval = YES;
-	else if ([mTransactionHandler canSend: outError] && [[mTransactionHandler databaseDescription] hasBaseTenSchema])
+	//Warm-up the cache by ensuring that an entity exists for each table.
+	BXDatabaseObjectModel* objectModel = [mContext databaseObjectModel];
+	BXEnumerate (schema, e, [[[mTransactionHandler databaseDescription] schemasByName] objectEnumerator])
 	{
-		NSString* query = @"SELECT * from baseten.foreignkey";
-		PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
-		if (! [res querySucceeded])
+		BXEnumerate (table, e, [[schema allTables] objectEnumerator])
 		{
-			*outError = [res error];
-		}
-		else
-		{
-			retval = YES;
-			mForeignKeys = [[NSMutableDictionary alloc] init];
-			while (([res advanceRow]))
-			{
-				BXForeignKey* key = [[[BXForeignKey alloc] initWithName: [res valueForKey: @"name"]] autorelease];
-				
-				NSArray* srcFNames = [res valueForKey: @"srcfnames"];
-				NSArray* dstFNames = [res valueForKey: @"dstfnames"];
-				BXAssertValueReturn ([srcFNames count] == [dstFNames count], NO,
-									  @"Expected array counts to match. Row: %@.", 
-									  [res currentRowAsDictionary]);
-				
-				for (unsigned int i = 0, count = [srcFNames count]; i < count; i++)
-					[key addSrcFieldName: [srcFNames objectAtIndex: i] dstFieldName: [dstFNames objectAtIndex: i]];
-				
-				NSDeleteRule deleteRule = NSDenyDeleteRule;
-				enum PGTSDeleteRule pgDeleteRule = PGTSDeleteRule ([[res valueForKey: @"deltype"] characterAtIndex: 0]);
-				switch (pgDeleteRule)
-				{
-					case kPGTSDeleteRuleUnknown:
-					case kPGTSDeleteRuleNone:
-					case kPGTSDeleteRuleNoAction:
-					case kPGTSDeleteRuleRestrict:
-						deleteRule = NSDenyDeleteRule;
-						break;
-						
-					case kPGTSDeleteRuleCascade:
-						deleteRule = NSCascadeDeleteRule;
-						break;
-						
-					case kPGTSDeleteRuleSetNull:
-					case kPGTSDeleteRuleSetDefault:
-						deleteRule = NSNullifyDeleteRule;
-						break;
-						
-					default:
-						break;
-				}
-				[key setDeleteRule: deleteRule];
-				
-				[mForeignKeys setObject: key forKey: [res valueForKey: @"conoid"]];
-			}
+			[objectModel entityForTable: [table name] inSchema: [table schemaName] error: NULL];
 		}
 	}
+}
+	
+	
+- (PGTSResultSet *) relationships
+{
+	NSString* query = 
+	@"SELECT "
+	@"	conoid, "
+    @"	dstconoid, "
+    @"	name, "
+    @"	inversename, "
+    @"	kind, "
+    @"	isinverse, "
+    @"	srcoid, "
+	@"	dstnspname, "
+	@"	dstrelname, "
+	@"	helpernspname, "
+	@"	helperrelname "
+	@"FROM baseten.relationship "
+	@"ORDER BY srcoid, dstoid ASC ";
+	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
+	return res;
+}
+
+
+- (BOOL) validateEntities: (NSArray *) entities error: (NSError **) outError
+{
+	BOOL retval = NO;
+	PGTSResultSet* relationships = nil;
+	BXDatabaseObjectModel* objectModel = [mContext databaseObjectModel];
+	NSDictionary* classDict = [[mTransactionHandler connection] deserializationDictionary];
+
+	NSMutableDictionary* currentAttributes = [NSMutableDictionary dictionary];
+	NSMutableDictionary* currentRelationships = [NSMutableDictionary dictionary];
+	
+	BXPGDatabaseDescription* database = [mTransactionHandler databaseDescription];
+	NSNumber* currentCompatVersion = [BXPGVersion currentCompatibilityVersionNumber];
+	BOOL haveBaseTenSchema = ([currentCompatVersion isEqualToNumber: [database schemaCompatibilityVersion]]);
+	
+	BXEnumerate (entity, e, [entities objectEnumerator])
+	{
+		if ([entity beginValidation])
+		{
+			BXPGTableDescription* table = [self tableForEntity: entity];
+			
+			//Entity
+			{
+				if ('v' == [table kind])
+					[entity setIsView: YES];
+				
+				if ([table isEnabled])
+				{
+					[entity setEnabled: YES];
+					[entity setHasCapability: kBXEntityCapabilityAutomaticUpdate to: YES];
+					[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
+				}
+			}
+			
+			//Attributes
+			{
+				[currentAttributes removeAllObjects];
+				NSDictionary* columns = [table columns];
+				NSSet* pkeyColumns = [[table primaryKey] columns];
+				BXEnumerate (column, e, [columns objectEnumerator])
+				{
+					NSString* name = [column name];
+					BXAttributeDescription* attr = [BXAttributeDescription attributeWithName: name entity: entity];
+					
+					//Primary key
+					BOOL isPkey = [pkeyColumns containsObject: column];
+					if (isPkey)
+						[attr setPrimaryKey: YES];					
+					BOOL isOptional = (! ([column isNotNull] || isPkey));
+					[attr setOptional: isOptional];
+					
+					//Optionality
+					NSString* typeName = [[(PGTSColumnDescription *) column type] name];
+					[attr setDatabaseTypeName: typeName];
+					[attr setAttributeValueClass: [classDict objectForKey: typeName] ?: [NSData class]];
+					
+					//Internal fields are excluded by default.
+					NSInteger idx = [column index];
+					if (idx <= 0)
+						[attr setExcluded: YES];					
+					
+					[currentAttributes setObject: attr forKey: name];
+				}
+				[(BXEntityDescription *) entity setAttributes: currentAttributes];
+			}
+			
+			//Relationships
+			if (haveBaseTenSchema)
+			{
+				[currentRelationships removeAllObjects];
+				
+				if (! relationships)
+					relationships = [self relationships];
+				
+				Oid oid = [table oid];
+				[relationships goBeforeFirstRowWithValue: PGTSOidAsObject (oid) forKey: @"srcoid"];
+				while ([relationships advanceRow] && oid == [[relationships valueForKey: @"srcoid"] PGTSOidValue])
+				{
+					const unichar kind = [[relationships valueForKey: @"kind"] characterAtIndex: 0];
+					
+					id rel = nil;
+					NSString* name = [relationships valueForKey: @"name"];
+					NSString* dstrelname = [relationships valueForKey: @"dstrelname"];
+					NSString* dstnspname = [relationships valueForKey: @"dstnspname"];
+					BXEntityDescription* dstEntity = [objectModel entityForTable: dstrelname inSchema: dstnspname error: NULL];
+					switch (kind)
+					{
+						case 't':
+							rel = [[[BXRelationshipDescription alloc] initWithName: name 
+																			entity: entity 
+																 destinationEntity: dstEntity] autorelease];
+							break;
+							
+						case 'o':
+							rel = [[[BXOneToOneRelationshipDescription alloc] initWithName: name 
+																					entity: entity 
+																		 destinationEntity: dstEntity] autorelease];
+							break;
+							
+						case 'm':
+							rel = [[[BXManyToManyRelationshipDescription alloc] initWithName: name 
+																					  entity: entity 
+																		   destinationEntity: dstEntity] autorelease];
+							break;
+							
+						default:
+							break;
+					}
+										
+					//Foreign key
+					Oid conoid = [[relationships valueForKey: @"conoid"] PGTSOidValue];
+					BXPGForeignKeyDescription* fkey = [database foreignKeyWithOid: conoid];
+					[rel setForeignKey: fkey];
+
+					//Inverse name
+					[rel setInverseName: [relationships valueForKey: @"inversename"]];
+					
+					//Inversity					
+					[rel setIsInverse: [[relationships valueForKey: @"isinverse"] boolValue]];
+					
+					//Optionality
+					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.
+					[rel setOptional: YES];
+					
+					//FIXME: delete rule.
+
+					if ('m' == kind)
+					{
+						Oid dstconoid = [[relationships valueForKey: @"dstconoid"] PGTSOidValue];
+						BXPGForeignKeyDescription* dstFkey = [database foreignKeyWithOid: dstconoid];
+						[rel setDstForeignKey: dstFkey];
+						
+						NSString* helperrelname = [relationships valueForKey: @"helperrelname"];
+						NSString* helpernspname = [relationships valueForKey: @"helpernspname"];
+						BXEntityDescription* helper = [objectModel entityForTable: helperrelname inSchema: helpernspname error: NULL];
+						
+						//The helper entity may get changed by trigger if rows are deleted from source
+						//and destination entities.
+						[helper setGetsChangedByTriggers: YES];                                         
+						[rel setHelperEntity: helper];
+					}
+					
+					[currentRelationships setObject: rel forKey: name];
+				}
+				
+				[entity setRelationships: currentRelationships];
+			}
+			
+			[entity setValidated: YES];
+			[entity endValidation];
+		}
+	}
+	
+	retval = YES;
+	
+//bail:
 	return retval;
 }
 
 
-- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
+- (BXPGTableDescription *) tableForEntity: (BXEntityDescription *) entity
 {
-	return (nil != [self tableForEntity: entity error: error]);
+	return [self tableForEntity: entity inDatabase: [mTransactionHandler databaseDescription]];
 }
 
 
-- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity error: (NSError **) error
-{
-	return [self tableForEntity: entity inDatabase: [mTransactionHandler databaseDescription] error: error];
-}
-
-
-- (PGTSTableDescription *) tableForEntity: (BXEntityDescription *) entity 
+- (BXPGTableDescription *) tableForEntity: (BXEntityDescription *) entity 
 							   inDatabase: (BXPGDatabaseDescription *) database 
-									error: (NSError **) error
 {
 	ExpectR (entity, NO);
-	ExpectR (error, NO);
 	ExpectR (database, NO);
-	
-	BXPGTableDescription* table = nil;
-	if (! [mTransactionHandler canSend: error])
-		goto bail;	
-	
-	table = (id) [database table: [entity name] inSchema: [entity schemaName]];
-	if (table)
-	{
-		if (! [entity isValidated])
-		{
-			[entity setValidated: YES];
-			
-			//If attributes exists, it only contains primary key fields but we haven't received them from the database.
-			NSMutableDictionary* attributes = ([[[entity attributesByName] mutableCopy] autorelease] ?: [NSMutableDictionary dictionary]);
-			
-			//While we're at it, set the fields as well as the primary key.
-			NSSet* pkey = [[table primaryKey] fields];
-			[[[table fields] PGTSVisit: self] addAttributeFor: nil into: attributes entity: entity primaryKeyFields: pkey];
-			[entity setAttributes: attributes];
-			
-			if ('v' == [table kind])
-				[entity setIsView: YES];
-			
-			if ([table isEnabled])
-			{
-				[entity setEnabled: YES];
-				[entity setHasCapability: kBXEntityCapabilityAutomaticUpdate to: YES];
-				[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
-			}
-		}
-	}
-	else
-	{
-		NSString* errorFormat = BXLocalizedString (@"tableNotFound", @"Table %@ was not found in schema %@.", @"Error message for fetch");
-		NSString* localizedError = [NSString stringWithFormat: errorFormat, [entity name], [entity schemaName]];
-		*error = DatabaseError (kBXErrorNoTableForEntity, localizedError, mContext, entity);
-	}
-	
-bail:
-	return table;
+
+	return [database table: [entity name] inSchema: [entity schemaName]];
 }
 
 
@@ -1422,69 +1394,14 @@ error:
 	}
 	else
 	{
-		PGTSTableDescription* table = [self tableForEntity: entity error: error];
+		PGTSTableDescription* table = [self tableForEntity: entity];
 		if (table)
 		{
-			NSDictionary* fields = [table fields];
-			defaultValue = [[fields objectForKey: name] defaultValue];
+			NSDictionary* columns = [table columns];
+			defaultValue = [[columns objectForKey: name] defaultValue];
 		}
 	}
 	return defaultValue;
-}
-
-- (NSDictionary *) entitiesBySchemaAndName: (NSError **) error
-{
-	Expect (error);
-	NSMutableDictionary* retval = nil;
-	if (! [mTransactionHandler canSend: error]) goto error;
-	
-	NSString* query = @"SELECT c.oid "
-    " FROM pg_class c, pg_namespace n "
-    " WHERE c.relnamespace = n.oid "
-    " AND (c.relkind = 'r' OR c.relkind = 'v') "
-    " AND n.nspname NOT IN ('baseten', 'pg_catalog', 'information_schema', 'pg_toast', 'pg_temp_1', 'pg_temp_2')";
-	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
-	if (! [res querySucceeded])
-	{
-		*error = [res error];
-		goto error;
-	}
-	else
-	{
-		NSMutableArray* oids = [NSMutableArray arrayWithCapacity: [res count]];
-		while ([res advanceRow])
-			[oids addObject: [res valueForKey: @"oid"]];
-		
-		//Warm up the cache.
-		NSSet* tables = [[mTransactionHandler databaseDescription] tablesWithOids: oids];
-		retval = [NSMutableDictionary dictionary];
-		BXEnumerate (currentTable, e, [tables objectEnumerator])
-		{
-			NSString* tableName = [currentTable name];
-			NSString* schemaName = [currentTable schemaName];
-			BXEntityDescription* entity = [mContext entityForTable: tableName
-														  inSchema: schemaName
-															 error: error];
-            if (! entity)
-            {
-                retval = nil;
-                goto error;
-            }
-			
-			//FIXME: hackish; we should track all changes in PGTSTableDescriptions perhaps by using NSKVO.
-			[entity setEnabled: [currentTable isEnabled]];
-			
-			NSMutableDictionary* schema = [retval objectForKey: schemaName];
-			if (! schema)
-			{
-				schema = [NSMutableDictionary dictionary];
-				[retval setObject: schema forKey: schemaName];
-			}
-			[schema setObject: entity forKey: tableName];
-		}
-	}
-error:
-	return retval;
 }
 
 - (BOOL) canProcessEntities
@@ -1502,7 +1419,7 @@ error:
 	if (! [mTransactionHandler canSend: outError])
 		goto error;
 	
-	NSString* query = [NSString stringWithFormat: @"DELETE FROM baseten.viewprimarykey WHERE nspname = $1 AND relname = $2"];
+	NSString* query = [NSString stringWithFormat: @"DELETE FROM baseten.view_pkey WHERE nspname = $1 AND relname = $2"];
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query parameters: [viewEntity schemaName], [viewEntity name]];
 	if ([res querySucceeded])
 	{
@@ -1537,9 +1454,9 @@ error:
 		{
 			NSString* queryFormat = nil;
 			if (shouldAdd)
-				queryFormat = @"INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ($1, $2, $3)";
+				queryFormat = @"INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ($1, $2, $3)";
 			else
-				queryFormat = @"DELETE FROM baseten.viewprimarykey WHERE nspname = $1 AND relname = $2 AND attname = $3";
+				queryFormat = @"DELETE FROM baseten.view_pkey WHERE nspname = $1 AND relname = $2 AND attname = $3";
 			
 			PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: queryFormat parameters: 
 								  [entity schemaName], [entity name], [currentAttribute name]];
@@ -1571,7 +1488,7 @@ bail:
 	{
 		if ([currentEntity isEnabled] != shouldEnable)
 		{
-			PGTSTableDescription* table = [self tableForEntity: currentEntity error: outError];
+			PGTSTableDescription* table = [self tableForEntity: currentEntity];
 			if (table)
 				[oids addObject: PGTSOidAsObject ([table oid])];
 			else
@@ -1585,13 +1502,13 @@ bail:
 		if (shouldEnable)
 		{
 			query =
-			@"SELECT baseten.prepareformodificationobserving ($1 [s]) "
+			@"SELECT baseten.enable ($1 [s]) "
 			"  FROM generate_series (1, array_upper ($1::OID[], 1)) AS s";
 		}
 		else
 		{
 			query =
-			@"SELECT baseten.cancelmodificationobserving ($1 [s]) "
+			@"SELECT baseten.disable ($1 [s]) "
 			"  FROM generate_series (1, array_upper ($1::OID[], 1)) AS s";
 		}
 		
@@ -1635,9 +1552,7 @@ bail:
 
 - (NSNumber *) frameworkCompatibilityVersion
 {
-	if (! mFrameworkCompatVersion)
-		mFrameworkCompatVersion = BXPGCopyCurrentCompatibilityVersionNumber ();
-	return mFrameworkCompatVersion;
+	return [BXPGVersion currentCompatibilityVersionNumber];
 }
 
 - (BOOL) checkSchemaCompatibility: (NSError **) outError;
@@ -1701,8 +1616,13 @@ bail:
 
 - (void) connection: (PGTSConnection *) connection sentQuery: (PGTSQuery *) query
 {
-	printf ("QUERY (%p) ", connection);
+	printf ("QUERY  (%p) ", connection);
 	[query visitQuery: self];
+}
+
+- (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) res
+{
+	printf ("RESULT (%p) ok: %d tuples: %d\n", connection, [res querySucceeded], [res count]);
 }
 @end
 
@@ -1727,7 +1647,7 @@ bail:
 	return nil;
 }
 
-- (void) addAttributeFor: (PGTSFieldDescription *) field into: (NSMutableDictionary *) attrs 
+- (void) addAttributeFor: (PGTSColumnDescription *) field into: (NSMutableDictionary *) attrs 
 				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey
 {
 	NSString* name = [field name];

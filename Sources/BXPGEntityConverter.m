@@ -145,7 +145,7 @@ ImportError (NSString* message, NSString* reason)
 	PGTSDatabaseDescription* database = [connection databaseDescription];
 	entityArray = [self sortedEntities: entityArray errors: errors];
 	
-	if (! [database schemaExists: schemaName])
+	if (! [database schemaNamed: schemaName])
 		[retval addObject: [NSString stringWithFormat: @"CREATE SCHEMA \"%@\";", schemaName]];
 	
 	BXEnumerate (currentEntity, e, [entityArray objectEnumerator])

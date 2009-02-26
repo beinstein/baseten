@@ -2,7 +2,7 @@
 // PGTSAbstractClassDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -28,42 +28,28 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/postgresql/libpq-fe.h>
-#import "PGTSAbstractObjectDescription.h"
-#import "PGTSConstants.h"
+#import <BaseTen/PGTSSchemaObjectDescription.h>
+#import <BaseTen/PGTSConstants.h>
+#import <BaseTen/PGTSOids.h>
+
 
 @class PGTSRoleDescription;
 @class PGTSACLItem;
 
 
-@interface PGTSAbstractClassDescriptionProxy : PGTSAbstractObjectDescriptionProxy
+@interface PGTSAbstractClassDescription : PGTSSchemaObjectDescription
 {
-}
-@end
-
-
-//FIXME: owner and ACL items need thread safety.
-@interface PGTSAbstractClassDescription : PGTSAbstractObjectDescription
-{
-    Oid mSchemaOid;
-    NSString* mSchemaName;
-    id mACLItems;
-    PGTSRoleDescription* mOwner;
+    PGTS_OidMap* mACLItemsByRoleOid;
     char mRelkind;
 }
-- (void) setSchemaOid: (Oid) anOid;
-- (void) setSchemaName: (NSString *) anString;
-- (void) addACLItem: (PGTSACLItem *) item;
-- (PGTSRoleDescription *) owner;
-- (void) setOwner: (PGTSRoleDescription *) anOwner;
-- (void) setKind: (char) kind;
-- (NSString *) name;
-- (Oid) schemaOid;
-- (NSString *) schemaName;
-- (NSString *) schemaQualifiedName;
+//- (NSString *) qualifiedName;
+- (char) kind;
+//- (NSArray *) ACL;
 - (BOOL) role: (PGTSRoleDescription *) aRole 
  hasPrivilege: (enum PGTSACLItemPrivilege) aPrivilege;
-- (NSArray *) ACLItems;
-- (char) kind;
 
-- (void) fetchFromDatabase;
+//Thread un-safe methods.
+- (void) setKind: (char) relkind;
+- (void) setACL: (NSArray *) ACL;
+- (void) addACLItem: (PGTSACLItem *) ACLItem;
 @end

@@ -2,7 +2,7 @@
 // BXPanel.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -29,19 +29,7 @@
 #import <Cocoa/Cocoa.h>
 
 
-@interface BXPanel : NSPanel 
+@interface BXPanel : NSPanel
 {
-    id							mPanelDelegate;
-	NSInvocation*				mDidEndInvocation;
-    BOOL                        mLeftOpenOnContinue;
 }
-
-- (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
-				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo;
-- (void) setLeftOpenOnContinue: (BOOL) aBool;
-
-- (IBAction) continue: (id) sender;
-- (void) continueWithReturnCode: (int) returnCode;
-- (void) end;
-- (void) setDidEndInvocation: (NSInvocation *) invocation;
 @end

@@ -2,7 +2,7 @@
 // BXAuthenticationPanel.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -31,9 +31,8 @@
 
 
 __strong static NSNib* gAuthenticationViewNib = nil;
-__strong static NSArray* gManuallyNotifiedKeys = nil;
-
-const float kSizeDiff = 25.0;
+__strong static NSString* kNSKVOContext = @"kNSKVOContext";
+static const CGFloat kSizeDiff = 25.0;
 
 
 @implementation BXAuthenticationPanel
@@ -47,20 +46,7 @@ const float kSizeDiff = 25.0;
         tooLate = YES;
         gAuthenticationViewNib = [[NSNib alloc] initWithNibNamed: @"AuthenticationView" 
                                                           bundle: [NSBundle bundleForClass: self]];
-        gManuallyNotifiedKeys = [[NSArray alloc] initWithObjects: 
-								 @"isAuthenticating", 
-								 @"username", 
-								 @"shouldStorePasswordInKeychain",
-								 nil];
     }
-}
-
-+ (BOOL) automaticallyNotifiesObserversForKey: (NSString *) aKey
-{
-    BOOL rval = NO;
-    if (NO == [gManuallyNotifiedKeys containsObject: aKey])
-        rval = [super automaticallyNotifiesObserversForKey: aKey];
-    return rval;
 }
 
 + (id) authenticationPanel
@@ -76,10 +62,15 @@ const float kSizeDiff = 25.0;
                                    backing: bufferingType defer: deferCreation]))
     {
         [gAuthenticationViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
-		NSSize contentSize = [mPasswordAuthenticationView frame].size;
-        contentSize.height -= kSizeDiff;
-		[self setContentSize: contentSize];
+		NSRect contentFrame = [mPasswordAuthenticationView frame];
+        contentFrame.size.height -= kSizeDiff;
 		[self setContentView: mPasswordAuthenticationView];
+		NSRect windowFrame = [self frameRectForContentRect: contentFrame];
+		[self setFrame: windowFrame display: NO];
+		[self setMinSize: windowFrame.size];
+		[self addObserver: self forKeyPath: @"message" 
+				  options: NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew 
+				  context: kNSKVOContext];
     }
     return self;
 }
@@ -87,8 +78,22 @@ const float kSizeDiff = 25.0;
 - (void) dealloc
 {
     [mPasswordAuthenticationView release];
+	[mUsernameField release];
+	[mPasswordField release];
+	[mRememberInKeychainButton release];
+	[mMessageTextField release];
+	[mCredentialFieldMatrix release];
+	[mProgressIndicator release];
+	
 	[mUsername release];
+	[mPassword release];
+	[mMessage release];
     [super dealloc];
+}
+
+- (void) setDelegate: (id <BXAuthenticationPanelDelegate>) object
+{
+	mDelegate = object;
 }
 
 - (BOOL) isAuthenticating
@@ -98,12 +103,7 @@ const float kSizeDiff = 25.0;
 
 - (void) setAuthenticating: (BOOL) aBool
 {
-	if (aBool != mIsAuthenticating)
-	{
-		[self willChangeValueForKey: @"isAuthenticating"];
-		mIsAuthenticating = aBool;
-		[self didChangeValueForKey: @"isAuthenticating"];		
-	}
+	mIsAuthenticating = aBool;
 }
 
 - (BOOL) shouldStorePasswordInKeychain
@@ -113,12 +113,7 @@ const float kSizeDiff = 25.0;
 
 - (void) setShouldStorePasswordInKeychain: (BOOL) aBool
 {
-	if (aBool != mShouldStorePasswordInKeychain)
-	{
-		[self willChangeValueForKey: @"shouldStorePasswordInKeychain"];
-		mShouldStorePasswordInKeychain = aBool;
-		[self didChangeValueForKey: @"shouldStorePasswordInKeychain"];
-	}
+	mShouldStorePasswordInKeychain = aBool;
 }
 
 - (NSString *) username
@@ -137,81 +132,103 @@ const float kSizeDiff = 25.0;
 	return retval;
 }
 
+- (NSString *) message
+{
+	NSString* retval = mMessage;
+	if (0 == [retval length])
+		retval = nil;
+	return retval;
+}
+
 - (void) setUsername: (NSString *) aString
 {
-	if (mUsername != aString && ![mUsername isEqualToString: aString])
+	if (mUsername != aString)
 	{
-		[self willChangeValueForKey: @"username"];
 		[mUsername release];
 		mUsername = [aString retain];
-		[self didChangeValueForKey: @"username"];
 	}
 }
 
 - (void) setPassword: (NSString *) aString
 {
-	if (mPassword != aString && ![mPassword isEqualToString: aString])
+	if (mPassword != aString)
 	{
-		[self willChangeValueForKey: @"password"];
 		[mPassword release];
 		mPassword = [aString retain];
-		[self didChangeValueForKey: @"password"];
 	}
 }
 
 - (void) setMessage: (NSString *) aString
 {
-    id oldValue = [mMessageTextField objectValue];
-    if (nil != oldValue && 0 == [oldValue length])
-        oldValue = nil;
+	if (mMessage != aString)
+	{
+		[mMessage release];
+		mMessage = [aString retain];
+	}
+}
 
-    BOOL change = NO;
-    NSRect frame = [self frame];
-    if (nil == oldValue && nil != aString)
-    {
-        frame.origin.y -= kSizeDiff;
-        frame.size.height += kSizeDiff;
-        change = YES;
-    }
-    else if (nil != oldValue && nil == aString)
-    {
-        frame.origin.y += kSizeDiff;
-        frame.size.height -= kSizeDiff;
-        change = YES;
-    }
-    
-    if (change)
+- (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object change: (NSDictionary *) change context: (void *) context
+{
+    if (kNSKVOContext == context) 
 	{
 		BOOL isVisible = [self isVisible];
-        [self setFrame: frame display: isVisible animate: isVisible];
+		NSRect frame = [self frame];
+		id oldMessage = [change objectForKey: NSKeyValueChangeOldKey];
+		id newMessage = [change objectForKey: NSKeyValueChangeNewKey];
+		if ([NSNull null] == oldMessage)
+			oldMessage = nil;
+		if ([NSNull null] == newMessage)
+			newMessage = nil;
+				
+		if (![oldMessage length] && [newMessage length])
+		{
+			frame.size.height += kSizeDiff;
+			frame.origin.y -= kSizeDiff;
+		}
+		else if ([oldMessage length] && ![newMessage length])
+		{
+			frame.size.height -= kSizeDiff;
+			frame.origin.y += kSizeDiff;
+		}
+		
+		[self setFrame: frame display: isVisible animate: isVisible];
 	}
-    
-	[mMessageTextField setObjectValue: aString];
-    [self makeFirstResponder: mCredentialFieldMatrix];
+	else 
+	{
+		[super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
+	}
 }
 
-- (void) end
-{
-	[super end];
-	[self setAuthenticating: NO];
-}
 @end
 
 
 @implementation BXAuthenticationPanel (IBActions)
 - (IBAction) authenticate: (id) sender
 {
-	[self makeFirstResponder: self];
-
+	[mDelegate authenticationPanel: self gotUsername: mUsername password: mPassword];
 	[self setAuthenticating: YES];
-    [self continueWithReturnCode: NSOKButton];
 	[self setPassword: nil];
+}
+
+- (void) cancelAuthentication2
+{
+	if (mIsAuthenticating)
+	{
+		[mDelegate authenticationPanelCancel: self];
+		[self setAuthenticating: NO];
+	}
+	else
+	{
+		[mDelegate authenticationPanelEndPanel: self];
+	}
 }
 
 - (IBAction) cancelAuthentication: (id) sender
 {
-	[self setAuthenticating: NO];
-    [self continueWithReturnCode: NSCancelButton];
-	[self setPassword: nil];
+	//This is required, if we don't want the cancel button to stay highlighted.
+	//Tested with NSButtons as well as a matrix of NSButtonCells.
+	NSRunLoop* rl = [NSRunLoop currentRunLoop];
+	NSArray* modes = [NSArray arrayWithObjects: NSDefaultRunLoopMode, NSModalPanelRunLoopMode, nil];
+	[rl performSelector: @selector (cancelAuthentication2) target: self argument: nil order: NSUIntegerMax modes: modes];
 }
 @end

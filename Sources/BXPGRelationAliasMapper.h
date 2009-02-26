@@ -38,9 +38,10 @@
 @class BXPGRelationshipFromItem;
 @class BXPGHelperTableRelationshipFromItem;
 @class BXManyToManyRelationshipDescription;
+@protocol BXForeignKey;
 
 
-BX_EXPORT NSArray* BXPGConditions (NSString* srcAlias, NSString* dstAlias, NSSet* fieldNamePairs);
+BX_EXPORT NSArray* BXPGConditions (NSString* alias1, NSString* alias2, id <BXForeignKey> fkey, BOOL reverseNames);
 
 
 @protocol BXPGFromItemVisitor <NSObject>

@@ -2,7 +2,7 @@
 // BXAuthenticationPanel.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -31,28 +31,40 @@
 
 @class BXDatabaseContext;
 
+
+@protocol BXAuthenticationPanelDelegate <NSObject>
+- (void) authenticationPanelCancel: (id) panel;
+- (void) authenticationPanelEndPanel: (id) panel;
+- (void) authenticationPanel: (id) panel gotUsername: (NSString *) username password: (NSString *) password;
+@end
+
+
 @interface BXAuthenticationPanel : BXPanel 
-{
+{	
 	//Retained
-	NSString*						mUsername;
-	NSString*						mPassword;
+	NSString*							mUsername;
+	NSString*							mPassword;
+	NSString*							mMessage;
 	
     //Top-level objects
-    IBOutlet NSView*                mPasswordAuthenticationView;
+    IBOutlet NSView*                	mPasswordAuthenticationView;
     
-    IBOutlet NSTextFieldCell*       mUsernameField;
-    IBOutlet NSSecureTextFieldCell* mPasswordField;
-    IBOutlet NSButton*              mRememberInKeychainButton;
-	IBOutlet NSTextField*			mMessageTextField;
-    IBOutlet NSMatrix*              mCredentialFieldMatrix;
-        
-    BOOL                            mIsAuthenticating;
-	BOOL							mShouldStorePasswordInKeychain;
+    IBOutlet NSTextFieldCell*       	mUsernameField;
+    IBOutlet NSSecureTextFieldCell*		mPasswordField;
+    IBOutlet NSButton*              	mRememberInKeychainButton;
+	IBOutlet NSTextField*				mMessageTextField;
+    IBOutlet NSMatrix*              	mCredentialFieldMatrix;
+	IBOutlet NSProgressIndicator*		mProgressIndicator;
+
+	id <BXAuthenticationPanelDelegate>	mDelegate;
+
+    BOOL                            	mIsAuthenticating;
+	BOOL								mShouldStorePasswordInKeychain;
+	BOOL								mMessageFieldHasContent;
 }
 
 + (id) authenticationPanel;
-- (BOOL) isAuthenticating;
-- (void) setAuthenticating: (BOOL) aBool;
+
 - (BOOL) shouldStorePasswordInKeychain;
 - (void) setShouldStorePasswordInKeychain: (BOOL) aBool;
 - (NSString *) username;
@@ -60,7 +72,8 @@
 - (NSString *) password;
 - (void) setPassword: (NSString *) aString;
 - (void) setMessage: (NSString *) aString;
-
+- (void) setAuthenticating: (BOOL) aBool;
+- (void) setDelegate: (id <BXAuthenticationPanelDelegate>) object;
 @end
 
 

@@ -49,21 +49,21 @@
 
 - (id) transformedValue: (NSValue *) objectStatus
 {
-    BOOL rval = NO;
+    BOOL isEditable = NO;
     enum BXObjectLockStatus status = kBXObjectNoLockStatus;
     [objectStatus getValue: &status];
     
     switch (status)
     {
         case kBXObjectNoLockStatus:
-            rval = YES;
+            isEditable = YES;
         case kBXObjectLockedStatus:
         case kBXObjectDeletedStatus:
         default:
             break;
     }
     
-    return [NSNumber numberWithBool: rval];
+    return [NSNumber numberWithBool: isEditable];
 }
 
 @end

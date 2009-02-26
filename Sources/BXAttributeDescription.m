@@ -66,6 +66,7 @@
 	{
 		[self setPrimaryKey: [decoder decodeBoolForKey: @"isPrimaryKey"]];
 		[self setExcluded: [decoder decodeBoolForKey: @"isExcluded"]];
+		mRelationshipsUsing = PGTSSetCreateMutableStrongRetainingForNSRD ();
 	}
 	return self;
 }
@@ -128,6 +129,15 @@
  * \name Creating an attribute description
  */
 //@{
+- (id) initWithName: (NSString *) name entity: (BXEntityDescription *) entity
+{
+	if ((self = [super initWithName: name entity: entity]))
+	{
+		mRelationshipsUsing = PGTSSetCreateMutableStrongRetainingForNSRD ();
+	}
+	return self;
+}
+
 /**
  * \internal
  * \brief Create an attribute description.
@@ -191,28 +201,36 @@
 
 - (void) addDependentRelationship: (BXRelationshipDescription *) rel
 {
-	BXEntityDescription* entity = [self entity];
-	ExpectV ([rel destinationEntity]);
-	if ([[rel entity] isEqual: entity])
+	ExpectV (mRelationshipsUsing);
+	@synchronized (mRelationshipsUsing)
 	{
-		if (! mRelationshipsUsing)
-			mRelationshipsUsing = PGTSSetCreateMutableStrongRetainingForNSRD ();
-
-		[mRelationshipsUsing addObject: rel];
-	}
-	else
-	{
-		BXLogError (@"Tried to add a relationship doesn't correspond to current attribute. Attribute: %@ relationship: %@", self, rel);
-	}
+		ExpectV ([rel destinationEntity]);
+		if ([[rel entity] isEqual: [self entity]])
+		{
+			[mRelationshipsUsing addObject: rel];
+		}
+		else
+		{
+			BXLogError (@"Tried to add a relationship doesn't correspond to current attribute. Attribute: %@ relationship: %@", self, rel);
+		}
+	}	
 }
 
 - (void) removeDependentRelationship: (BXRelationshipDescription *) rel
 {
-	[mRelationshipsUsing removeObject: rel];
+	@synchronized (mRelationshipsUsing)
+	{
+		[mRelationshipsUsing removeObject: rel];
+	}
 }
 
 - (NSSet *) dependentRelationships
 {
-	return mRelationshipsUsing;
+	id retval = nil;
+	@synchronized (mRelationshipsUsing)
+	{
+		retval = [[mRelationshipsUsing copy] autorelease];
+	}
+	return retval;
 }
 @end

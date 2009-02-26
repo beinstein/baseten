@@ -44,123 +44,26 @@
 #import "NSURL+BaseTenAdditions.h"
 
 
-static id gEntities;
-
-
 /**
  * An entity description contains information about a specific table
  * in a given database.
  * Only one entity description instance is created for a combination of a database
  * URI, a schema and a table.
  *
- * \note This class is not thread-safe, i.e. 
- *       if methods of an BXEntityDescription instance will be called from 
- *       different threads the result is undefined.
+ * \note This class is thread-safe.
  * \ingroup descriptions
  */
 @implementation BXEntityDescription
-+ (void) initialize
-{
-    static BOOL tooLate = NO;
-    if (NO == tooLate)
-    {
-        tooLate = YES;
-        gEntities = PGTSDictionaryCreateMutableWeakNonretainedObjects ();
-    }
-}
-
-- (id) init
-{
-	BXLogError (@"This initializer should not have been called.");
-    [self release];
-    return nil;
-}
-
-- (id) initWithName: (NSString *) aName
-{
-	BXLogError (@"This initializer should not have been called (name: %@).", aName);
-    [self release];
-    return nil;
-}
-
-/** 
- * \internal
- * \note Override -dealloc2 in subclasses instead! 
- */
 - (void) dealloc
 {
-	@synchronized (gEntities)
-	{
-		[gEntities removeObjectForKey: [self entityKey]];
-	}
-	
-	@synchronized (mAttributes)
-	{
-		BXEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
-		{
-			[currentAttribute setEntity: nil];
-			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
-		}
-	}
-    
-    @synchronized (mRelationships)
-    {
-        BXEnumerate (currentRel, e, [mRelationships objectEnumerator])
-        {
-            [currentRel setEntity: nil];
-			[currentRel removeAttributeDependency];
-			BXRelationshipDescription* inverse = [(BXRelationshipDescription *) currentRel inverseRelationship];
-            [inverse removeDestinationEntity];
-			[inverse removeAttributeDependency];
-			[[currentRel class] unregisterProperty: currentRel entity: self];
-        }
-    }
-    
-    NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-	NSNotification* n = [BXWeakNotification notificationWithName: 
-						 kBXEntityDescriptionWillDeallocNotification object: self];
-	[nc postNotification: n];
-    
-	[self dealloc2];
-	[super dealloc];
-}
-
-/** 
- * \internal
- * \brief Deallocation helper.
- *
- * Subclasses should override this instead of dealloc and then call 
- * super's implementation of dealloc2. This is because BXEntityDescriptions 
- * will be stored into a non-retaining collection on creation and removed from 
- * it on dealloc.
- */
-- (void) dealloc2
-{
 	[mDatabaseURI release];
-	mDatabaseURI = nil;
-	
 	[mSchemaName release];
-	mSchemaName = nil;
-
 	[mAttributes release];
-	mAttributes = nil;
-
 	[mValidationLock release];
-	mValidationLock = nil;
-
 	[mObjectIDs release];
-	mObjectIDs = nil;
-	
 	[mRelationships release];
-	mRelationships = nil;
-	    
-    [mSuperEntities release];
-    mSuperEntities = nil;
-    
-    [mSubEntities release];
-    mSubEntities = nil;
 	
-    [[NSNotificationCenter defaultCenter] removeObserver: self];
+	[super dealloc];
 }
 
 /** 
@@ -176,24 +79,23 @@ static id gEntities;
  */
 - (NSURL *) databaseURI
 {
-    return mDatabaseURI;
+    return [[mDatabaseURI retain] autorelease];
 }
 
 - (id) initWithCoder: (NSCoder *) decoder
 {
-    NSURL* databaseURI = [decoder decodeObjectForKey: @"databaseURI"];
-    NSString* schemaName = [decoder decodeObjectForKey: @"schemaName"];
     NSString* name = [decoder decodeObjectForKey: @"name"];
-    id rval = [[[self class] entityWithDatabaseURI: databaseURI table: name inSchema: schemaName] retain];
-    
-    Class cls = NSClassFromString ([decoder decodeObjectForKey: @"databaseObjectClassName"]);
-    if (Nil != cls)
-        [rval setDatabaseObjectClass: cls];
-		
-	[self setAttributes: [decoder decodeObjectForKey: @"attributes"]];
-	//FIXME: relationships as well?
- 	        
-    return rval;
+	NSString* schemaName = [decoder decodeObjectForKey: @"schemaName"];
+	NSURL* databaseURI = [decoder decodeObjectForKey: @"databaseURI"];
+
+	if ((self = [self initWithDatabaseURI: databaseURI table: name inSchema: schemaName]))
+	{
+		Class cls = NSClassFromString ([decoder decodeObjectForKey: @"databaseObjectClassName"]);
+		if (Nil != cls)
+			[self setDatabaseObjectClass: cls];
+		[self setAttributes: [decoder decodeObjectForKey: @"attributes"]];
+	}
+	return self;
 }
 
 - (void) encodeWithCoder: (NSCoder *) encoder
@@ -204,6 +106,7 @@ static id gEntities;
     [encoder encodeObject: NSStringFromClass (mDatabaseObjectClass) forKey: @"databaseObjectClassName"];
 	[encoder encodeObject: mAttributes forKey: @"attributes"];
 	//FIXME: relationships as well?
+	[super encodeWithCoder: encoder];
 }
 
 /** 
@@ -214,27 +117,24 @@ static id gEntities;
     return [self retain];
 }
 
-- (BOOL) isEqual: (id) anObject
+- (BOOL) isEqual: (BXEntityDescription *) desc
 {
     BOOL retval = NO;
     
-    if (self == anObject)
+    if (self == desc)
         retval = YES;
-    else if ([anObject isKindOfClass: [self class]] && [super isEqual: anObject])
-	{
+    else if ([super isEqual: desc])
+	{		
+		NSString* s1 = [self schemaName];
+		NSString* s2 = [desc schemaName];
 		
-		BXEntityDescription* aDesc = (BXEntityDescription *) anObject;
-        
-		BXAssertValueReturn (nil != mName && nil != mSchemaName && nil != mDatabaseURI, NO, 
-							   @"Properties should not be nil in -isEqual:.");
-		BXAssertValueReturn (nil != aDesc->mName && nil != aDesc->mSchemaName && nil != aDesc->mDatabaseURI, NO, 
-							   @"Properties should not be nil in -isEqual:.");
-		
-		
-		if (![mSchemaName isEqualToString: aDesc->mSchemaName])
+		if (! [s1 isEqualToString: s2])
 			goto bail;
 		
-		if (![mDatabaseURI isEqual: aDesc->mDatabaseURI])
+		NSURL* u1 = [self databaseURI];
+		NSURL* u2 = [self databaseURI];
+		
+		if (! [u1 isEqual: u2])
 			goto bail;
 			
 		retval = YES;
@@ -245,11 +145,6 @@ bail:
 
 - (unsigned int) hash
 {
-    if (0 == mHash)
-    {
-        //We use a real hash function with the URI.
-        mHash = ([super hash] ^ [mSchemaName hash] ^ [mDatabaseURI BXHash]);
-    }
     return mHash;
 }
 
@@ -271,16 +166,19 @@ bail:
  */
 - (void) setDatabaseObjectClass: (Class) cls
 {
-    if (YES == [cls isSubclassOfClass: [BXDatabaseObject class]])
+	if (YES == [cls isSubclassOfClass: [BXDatabaseObject class]])
 	{
-        mDatabaseObjectClass = cls;
+		@synchronized (self)
+		{
+			mDatabaseObjectClass = cls;
+		}
 	}
-    else
-    {
-        NSString* reason = [NSString stringWithFormat: @"Expected %@ to be a subclass of BXDatabaseObject.", cls];
-        [NSException exceptionWithName: NSInternalInconsistencyException
-                                reason: reason userInfo: nil];
-    }
+	else
+	{
+		NSString* reason = [NSString stringWithFormat: @"Expected %@ to be a subclass of BXDatabaseObject.", cls];
+		[NSException exceptionWithName: NSInternalInconsistencyException
+								reason: reason userInfo: nil];
+	}
 }
 
 /**
@@ -289,44 +187,12 @@ bail:
  */
 - (Class) databaseObjectClass
 {
-    return mDatabaseObjectClass;
-}
-
-/**
- * \brief Set the primary key fields for this entity.
- *
- * Normally the database context determines the primary key, when
- * an entity is used in a database query. However, when an entity is a view, the fields
- * may need to be set manually before using the entity in a query.
- * \param   anArray     An NSArray of NSStrings.
- * \internal
- * \note BXAttributeDescriptions should only be created here and in -[BXInterface validateEntity:]
- */
-- (void) setPrimaryKeyFields: (NSArray *) anArray
-{
-	if (nil != anArray)
+	id retval = nil;
+	@synchronized (self)
 	{
-		NSMutableDictionary* attributes = [[mAttributes mutableCopy] autorelease];
-		BXEnumerate (currentField, e, [anArray objectEnumerator])
-		{
-			BXAttributeDescription* attribute = nil;
-			if ([currentField isKindOfClass: [BXAttributeDescription class]])
-			{
-				BXAssertVoidReturn ([currentField entity] == self, 
-									  @"Expected to receive only attributes in which entity is self (self: %@ currentField: %@).",
-									  self, currentField);
-				attribute = currentField;
-			}
-			else if ([currentField isKindOfClass: [NSString class]])
-			{
-                attribute = [BXAttributeDescription attributeWithName: currentField entity: self];
-			}
-			[attribute setPrimaryKey: YES];
-			[attribute setOptional: NO];
-			[attributes setObject: attribute forKey: [attribute name]];
-		}
-		[self setAttributes: attributes];
+	    retval = mDatabaseObjectClass;
 	}
+	return retval;
 }
 
 /**
@@ -384,18 +250,16 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity
 {
-    BXAssertValueReturn ([anotherEntity isKindOfClass: [BXEntityDescription class]], NSOrderedSame, 
-					 @"Entity descriptions can only be compared with other similar objects for now.");
-    NSComparisonResult rval = NSOrderedSame;
+    NSComparisonResult retval = NSOrderedSame;
     if (self != anotherEntity)
     {
-        rval = [mSchemaName caseInsensitiveCompare: [anotherEntity schemaName]];
-        if (NSOrderedSame == rval)
+        retval = [[self schemaName] caseInsensitiveCompare: [anotherEntity schemaName]];
+        if (NSOrderedSame == retval)
         {
-            rval = [mName caseInsensitiveCompare: [anotherEntity name]];
+            retval = [[self name] caseInsensitiveCompare: [anotherEntity name]];
         }
     }
-    return rval;
+    return retval;
 }
 
 /** 
@@ -407,7 +271,7 @@ FilterPkeyAttributes (id attribute, void* arg)
  */
 - (NSDictionary *) attributesByName
 {
-	return mAttributes;
+	return [[mAttributes retain] autorelease];
 }
 
 /**
@@ -415,6 +279,8 @@ FilterPkeyAttributes (id attribute, void* arg)
  *
  * The entity will be validated after a database connection has been made. Afterwards, 
  * #fields, #primaryKeyFields, #attributesByName and #relationshipsByName return meaningful values.
+ *
+ * \note To call this safely, mValidationLock should be acquired first. Our validation methods do this, though.
  */
 - (BOOL) isValidated
 {
@@ -429,7 +295,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
 	if (! [self hasCapability: kBXEntityCapabilityRelationships])
 		[NSException raise: NSInvalidArgumentException format: @"Entity %@ doesn't have relationship capability. (BaseTen enabling is required for this.)", self];
-	return [[mRelationships copy] autorelease];
+	return [[mRelationships retain] autorelease];
 }
 
 
@@ -468,10 +334,6 @@ FilterPkeyAttributes (id attribute, void* arg)
         {
             [mSuperEntities addObject: currentEntity];
             [currentEntity addSubEntity: self];
-            [[NSNotificationCenter defaultCenter] addObserver: self
-                                                     selector: @selector (superEntityWillDealloc:)
-                                                         name: kBXEntityDescriptionWillDeallocNotification
-                                                       object: currentEntity];
         }
     }
 }
@@ -483,10 +345,6 @@ FilterPkeyAttributes (id attribute, void* arg)
         //FIXME: We only implement cascading notifications from "root tables" to 
         //inheriting tables and not vice-versa.
         [mSubEntities addObject: entity];
-        [[NSNotificationCenter defaultCenter] addObserver: self
-                                                 selector: @selector (subEntityWillDealloc:)
-                                                     name: kBXEntityDescriptionWillDeallocNotification
-                                                   object: entity];        
     }
 }
 
@@ -532,51 +390,6 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 
 @implementation BXEntityDescription (PrivateMethods)
-
-- (NSURL *) entityKey
-{
-	return [[self class] entityKeyForDatabaseURI: mDatabaseURI schema: mSchemaName table: mName];
-}
-
-+ (NSURL *) entityKeyForDatabaseURI: (NSURL *) databaseURI schema: (NSString *) schemaName table: (NSString *) tableName
-{
-    databaseURI = [databaseURI BXURIForHost: nil database: nil username: @"" password: @""];
-	return [NSURL URLWithString: [NSString stringWithFormat: @"%@/%@", schemaName, tableName] relativeToURL: databaseURI];
-}
-
-/**
- * \internal
- * \name Retrieving an entity description
- */
-//@{
-/**
- * \internal
- * \brief Create the entity.
- * \param       anURI   The database URI
- * \param       tName   Table name
- * \param       sName   Schema name
- */
-+ (id) entityWithDatabaseURI: (NSURL *) anURI table: (NSString *) tName inSchema: (NSString *) sName
-{
-	id retval = nil;
-	@synchronized (gEntities)
-	{
-		if (nil == sName)
-			sName = @"public";
-		
-		NSURL* uri = [self entityKeyForDatabaseURI: anURI schema: sName table: tName];
-		
-		retval = [gEntities objectForKey: uri];
-		if (nil == retval)
-		{
-			retval = [[[self alloc] initWithDatabaseURI: anURI table: tName inSchema: sName] autorelease];
-			[gEntities setObject: retval forKey: uri];
-		}		
-	}
-	
-	return retval;
-}
-
 /**
  * \internal
  * \brief The designated initializer.
@@ -596,15 +409,27 @@ FilterPkeyAttributes (id attribute, void* arg)
         mDatabaseObjectClass = [BXDatabaseObject class];
         mDatabaseURI = [anURI copy];
         mSchemaName = [sName copy];
-		mRelationships = [[NSMutableDictionary alloc] init];
 		
 		mObjectIDs = PGTSSetCreateMutableWeakNonretaining ();
         mSuperEntities = PGTSSetCreateMutableWeakNonretaining ();
         mSubEntities = PGTSSetCreateMutableWeakNonretaining ();
 		
 		mValidationLock = [[NSLock alloc] init];
+		mHash = ([super hash] ^ [mSchemaName hash] ^ [mDatabaseURI BXHash]);
     }
     return self;
+}
+
+- (id) init
+{
+	[self doesNotRecognizeSelector: _cmd];
+    return nil;
+}
+
+- (id) initWithName: (NSString *) aName
+{
+	[self doesNotRecognizeSelector: _cmd];
+    return nil;
 }
 //@}
 
@@ -628,33 +453,13 @@ FilterPkeyAttributes (id attribute, void* arg)
 	}
 }
 
+//Not thread-safe.
 - (void) setAttributes: (NSDictionary *) attributes
 {
 	if (attributes != mAttributes)
 	{
-		BXEnumerate (currentAttribute, e, [mAttributes objectEnumerator])
-			[[currentAttribute class] unregisterProperty: currentAttribute entity: self];
-		
 		[mAttributes release];
 		mAttributes = [attributes copy];
-	}
-}
-
-- (void) setDatabaseURI: (NSURL *) anURI
-{
-	//In case we really modify the URI, remove self from collections and have the hash calculated again.
-	if (anURI != mDatabaseURI && NO == [anURI isEqual: mDatabaseURI])
-	{
-		@synchronized (gEntities)
-		{
-			[gEntities removeObjectForKey: [self entityKey]];
-			mHash = 0;
-			
-			[mDatabaseURI release];
-			mDatabaseURI = [anURI retain];
-			
-			[gEntities setObject: self forKey: [self entityKey]];
-		}
 	}
 }
 
@@ -666,22 +471,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 - (NSArray *) attributes: (NSArray *) strings
 {
-	NSMutableArray* rval = nil;
-	if (0 < [strings count])
-	{
-		rval = [NSMutableArray arrayWithCapacity: [strings count]];
-		BXEnumerate (currentField, e, [strings objectEnumerator])
-		{
-			if ([currentField isKindOfClass: [NSString class]])
-				currentField = [mAttributes objectForKey: currentField];
-			BXAssertValueReturn ([currentField isKindOfClass: [BXAttributeDescription class]], nil, 
-								   @"Expected to receive NSStrings or BXAttributeDescriptions (%@ was a %@).",
-								   currentField, [currentField class]);
-			
-			[rval addObject: currentField];
-		}
-	}
-	return rval;
+	return [mAttributes objectsForKeys: strings notFoundMarker: [NSNull null]];
 }
 
 - (void) setValidated: (BOOL) flag
@@ -700,49 +490,14 @@ FilterPkeyAttributes (id attribute, void* arg)
 		mFlags &= ~kBXEntityIsView;
 }
 
+//Not thread-safe.
 - (void) setRelationships: (NSDictionary *) aDict
 {
-    @synchronized (mRelationships)
-    {
-		BXEnumerate (currentRel, e, [mRelationships objectEnumerator])
-			[[currentRel class] unregisterProperty: currentRel entity: self];
-
-		[mRelationships removeAllObjects];
-		[mRelationships addEntriesFromDictionary: aDict];
-    }
-}
-
-- (NSLock *) validationLock
-{
-	return mValidationLock;
-}
-
-- (void) removeRelationship: (BXRelationshipDescription *) aRelationship;
-{
-    @synchronized (mRelationships)
-    {
-        //FIXME: this is a bit bad but there seems to be an over-retain for BXEntityDescription somewhere.
-        [self setValidated: NO];
-        
-		[[aRelationship class] unregisterProperty: aRelationship entity: self];
-        [mRelationships removeObjectForKey: [aRelationship name]];
-    }
-}
-
-- (void) superEntityWillDealloc: (NSNotification *) n
-{
-    @synchronized (mSuperEntities)
-    {
-        [mSuperEntities removeObject: [n object]];
-    }
-}
-
-- (void) subEntityWillDealloc: (NSNotification *) n
-{
-    @synchronized (mSubEntities)
-    {
-        [mSubEntities removeObject: [n object]];
-    }
+	if (mRelationships != aDict)
+	{
+		[mRelationships release];
+		mRelationships = [aDict copy];
+	}
 }
 
 - (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag
@@ -777,9 +532,24 @@ InverseToOneRelationships (id arg)
 	return [mRelationships PGTSValueSelectFunction: &InverseToOneRelationships];
 }
 
-
-+ (id) cachedEntities
+- (BOOL) beginValidation
 {
-	return gEntities;
+	BOOL locked = [mValidationLock tryLock];
+	if (locked && [self isValidated])
+	{
+		[mValidationLock unlock];
+		locked = NO;
+	}
+	return locked;
+}
+
+- (void) endValidation
+{
+	if ([self hasCapability: kBXEntityCapabilityRelationships])
+	{
+		BXEnumerate (currentRelationship, e, [[self relationshipsByName] objectEnumerator])
+			[currentRelationship makeAttributeDependency];
+	}
+	[mValidationLock unlock];
 }
 @end

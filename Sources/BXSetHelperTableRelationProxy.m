@@ -62,6 +62,22 @@
 	[self setFilterPredicate: [relationship filterPredicateFor: databaseObject]];
 }
 
+
+struct set_pkf_st 
+{
+	__strong id s_object;
+	__strong NSMutableDictionary* s_pkf_dict;
+};
+
+
+static void
+SetPkeyFValues (NSString* helperFName, NSString* fName, void* ctx)
+{
+	struct set_pkf_st* sps = (struct set_pkf_st *) ctx;
+	[sps->s_pkf_dict setObject: [sps->s_object primitiveValueForKey: helperFName] forKey: fName];
+}
+
+
 - (NSArray *) objectIDsFromHelperObjectIDs: (NSArray *) ids others: (NSMutableArray *) others
 {
 	
@@ -80,8 +96,8 @@
 	
 	id filtered [2] = {filteredObjects, otherObjects};
 	id target [2] = {retval, others};
-	NSSet* fieldNames = [[(BXManyToManyRelationshipDescription *) mRelationship dstForeignKey] fieldNames];
-	NSMutableDictionary* pkeyFValues = [NSMutableDictionary dictionaryWithCapacity: [fieldNames count]];
+	id <BXForeignKey> dstFkey = [(BXManyToManyRelationshipDescription *) mRelationship dstForeignKey];
+	NSMutableDictionary* pkeyFValues = [NSMutableDictionary dictionaryWithCapacity: [dstFkey numberOfColumns]];
 
 	for (int i = 0; i < count; i++)
 	{
@@ -91,13 +107,8 @@
 			BXEnumerate (currentObject, e, [filtered [i] objectEnumerator])
 			{
 				[pkeyFValues removeAllObjects];
-				BXEnumerate (currentFieldArray, e, [fieldNames objectEnumerator])
-				{
-					NSString* helperFName = [currentFieldArray objectAtIndex: 0];
-					NSString* fName = [currentFieldArray objectAtIndex: 1];
-					
-					[pkeyFValues setObject: [currentObject primitiveValueForKey: helperFName] forKey: fName];
-				}
+				struct set_pkf_st ctx = {currentObject, pkeyFValues};
+				[dstFkey iterateColumnNames: &SetPkeyFValues context: &ctx];
 				BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: [mRelationship destinationEntity] 
 															   primaryKeyFields: pkeyFValues];
 				[target [i] addObject: objectID];				

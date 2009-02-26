@@ -54,6 +54,7 @@ int main (int argc, const char * argv [])
 		BXDatabaseContext* context = [BXDatabaseContext contextWithDatabaseURI: databaseURI];
 		
 		// Try to connect. Since we don't have a run loop, we call -connectSync: which blocks.
+		NSTimeInterval t1 = [NSDate timeIntervalSinceReferenceDate];
 		if (! [context connectSync: &error])
 		{
 			NSLog (@"Error connecting to the database: %@", [error localizedRecoverySuggestion]);
@@ -63,7 +64,11 @@ int main (int argc, const char * argv [])
 		{
 			// Get all entities in all schemas. Normally we would use -entityForTable:error: or -entityForTable:inSchema:error:
 			// to get a specific entity, but for introspection, this method is more suitable.
-			NSDictionary* schemas = [context entitiesBySchemaAndName: YES error: &error];
+			NSDictionary* schemas = [context entitiesBySchemaAndName: NO error: &error];
+
+			NSTimeInterval t2 = [NSDate timeIntervalSinceReferenceDate];
+			printf ("Connecting to the database took about %f seconds.\n", t2 - t1);
+			
 			if (! schemas)
 			{
 				NSLog (@"Error fetching entities: %@", [error localizedRecoverySuggestion]);

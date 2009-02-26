@@ -30,15 +30,16 @@
 #import <CoreData/CoreData.h>
 #import <BaseTen/BXPropertyDescription.h>
 
-@class BXForeignKey;
 
-@interface BXRelationshipDescription : BXPropertyDescription <NSMutableCopying>
+@protocol BXForeignKey;
+
+
+@interface BXRelationshipDescription : BXPropertyDescription
 {
     BXEntityDescription* mDestinationEntity; //Weak
 
-	BXForeignKey* mForeignKey;
+	id <BXForeignKey> mForeignKey;
 	NSString* mInverseName;
-	NSDeleteRule mDeleteRule;
 	BOOL mIsInverse;
 }
 

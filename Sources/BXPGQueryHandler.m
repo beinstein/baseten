@@ -99,12 +99,8 @@ NSString* kBXPGExceptionInternalInconsistency = @"kBXPGExceptionInternalInconsis
 	NSString* src = [[fromItem previous] alias];
 	NSString* dst = [fromItem alias];
 
-	BXForeignKey* fkey = [relationship foreignKey];
-	NSSet* fieldNames = [fkey fieldNames];
-	if (! [relationship isInverse])
-		fieldNames = (id) [[fieldNames PGTSCollect] PGTSReverse];
-
-	id retval = BXPGConditions (src, dst, fieldNames);
+	id <BXForeignKey> fkey = [relationship foreignKey];
+	id retval = BXPGConditions (src, dst, fkey, ! [relationship isInverse]);
 	return retval;
 }
 
@@ -113,9 +109,8 @@ NSString* kBXPGExceptionInternalInconsistency = @"kBXPGExceptionInternalInconsis
 	BXManyToManyRelationshipDescription* relationship = [fromItem relationship];
 	NSString* srcAlias = [[fromItem previous] alias];
 	NSString* dstAlias = [fromItem alias];
-	BXForeignKey* fkey = [relationship foreignKey];
-	NSSet* fieldNames = (id) [[[fkey fieldNames] PGTSCollect] PGTSReverse];
-	id retval = BXPGConditions (srcAlias, dstAlias, fieldNames);
+	id <BXForeignKey> fkey = [relationship foreignKey];
+	id retval = BXPGConditions (srcAlias, dstAlias, fkey, YES);
 	return retval;
 }
 @end

@@ -32,6 +32,7 @@
 #import "BXManyToManyRelationshipDescription.h"
 #import "BXPGAdditions.h"
 #import "BXEnumerate.h"
+#import "BXLogger.h"
 
 
 @implementation BXPGExpressionVisitor
@@ -81,8 +82,8 @@
 
 - (NSString *) beginWithKeyPath: (NSArray *) components
 {		
-	NSAssert ([self relationAliasMapper], @"Expected to have a relation alias mapper.");
-	NSAssert ([[self relationAliasMapper] primaryRelation], @"Expected to have a primary relation."); //FIXME: replace with our custom assertion.
+	BXAssertValueReturn ([self relationAliasMapper], nil, @"Expected to have a relation alias mapper.");
+	BXAssertValueReturn ([[self relationAliasMapper] primaryRelation], nil, @"Expected to have a primary relation.");
 	
 	[self reset];
 	[self setComponents: components];

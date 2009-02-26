@@ -35,18 +35,13 @@
 #import "PGTSConstants.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSTableDescription.h"
-#import "PGTSFieldDescription.h"
+#import "PGTSColumnDescription.h"
 #import "PGTSTypeDescription.h"
 #import "PGTSFoundationObjects.h"
 #import "PGTSAdditions.h"
 #import "PGTSScannedMemoryAllocator.h"
 #import "PGTSCollections.h"
-
-//FIXME: enable (some of) these.
-#if 0
-#import "PGTSResultSetPrivate.h"
-#import "PGTSResultRow.h"
-#endif
+#import "BXLogger.h"
 
 
 typedef std::tr1::unordered_map <NSString*, int, 
@@ -137,7 +132,7 @@ ErrorUserInfoKey (char fieldCode)
 	int mCurrentRow;
     int mFields;
     int mTuples;
-    int mIdentifier;
+    NSInteger mIdentifier;
     FieldIndexMap* mFieldIndices;
     FieldClassMap* mFieldClasses;
     Class mRowClass;
@@ -174,22 +169,17 @@ ErrorUserInfoKey (char fieldCode)
     return mConnection;
 }
 
-- (void) freeSTLTypes
+- (void) dealloc
 {
+	PQclear (mResult);
     delete mFieldClasses;
-    FieldIndexMap::iterator iterator = mFieldIndices->begin ();
+    FieldIndexMap::const_iterator iterator = mFieldIndices->begin ();
     while (mFieldIndices->end () != iterator)
     {
 		[iterator->first autorelease];
         iterator++;
     }
     delete mFieldIndices;
-}
-
-- (void) dealloc
-{
-	PQclear (mResult);
-    [self freeSTLTypes];
     [mConnection release];
     [super dealloc];
 }
@@ -197,7 +187,8 @@ ErrorUserInfoKey (char fieldCode)
 - (void) finalize
 {
 	PQclear (mResult);
-    [self freeSTLTypes];
+    delete mFieldClasses;
+    delete mFieldIndices;
     [super finalize];
 }
 
@@ -261,16 +252,20 @@ ErrorUserInfoKey (char fieldCode)
 {
 	mKnowsFieldClasses = YES;
     
+#if 0
 	Oid* oidVector = (Oid *) calloc (mFields + 1, sizeof (Oid));
 	for (int i = 0; i < mFields; i++)
 		oidVector [i] = PQftype (mResult, i);
 	oidVector [mFields] = InvalidOid;
+#endif
 
 	PGTSDatabaseDescription* db = [mConnection databaseDescription];
+#if 0
 	//Warm-up the cache.
 	[db typesWithOids: oidVector];
 	free (oidVector);
 	oidVector = NULL;
+#endif
 	
     NSDictionary* deserializationDictionary = [mConnection deserializationDictionary];
     for (int i = 0; i < mFields; i++)
@@ -321,12 +316,12 @@ ErrorUserInfoKey (char fieldCode)
 	return retval;
 }
 
-- (int) identifier
+- (NSInteger) identifier
 {
     return mIdentifier;
 }
 
-- (void) setIdentifier: (int) anIdentifier
+- (void) setIdentifier: (NSInteger) anIdentifier
 {
     mIdentifier = anIdentifier;
 }
@@ -386,7 +381,7 @@ ErrorUserInfoKey (char fieldCode)
 
 - (void) setValuesFromRow: (int) rowIndex target: (id) targetObject nullPlaceholder: (id) nullPlaceholder
 {
-    FieldIndexMap::iterator iterator = mFieldIndices->begin ();
+    FieldIndexMap::const_iterator iterator = mFieldIndices->begin ();
     while (mFieldIndices->end () != iterator)
     {
         NSString* fieldname = iterator->first;
@@ -431,6 +426,45 @@ ErrorUserInfoKey (char fieldCode)
 		retval = YES;
 	}
 	return retval;
+}
+
+- (void) goBeforeFirstRowWithValue: (id) value forKey: (NSString *) columnName low: (const int) low high: (const int) high
+{
+	int mid = round (low / 2.0 + high / 2.0);
+	if (mid == high)
+		[self goToRow: low];
+	else
+	{
+		//Tail recursion.
+		id currentValue = [self valueForKey: columnName row: mid];
+		switch ([currentValue compare: value])
+		{
+			case NSOrderedAscending:
+				[self goBeforeFirstRowWithValue: value forKey: columnName low: mid high: high];
+				break;
+				
+			case NSOrderedSame:
+			case NSOrderedDescending:
+				[self goBeforeFirstRowWithValue: value forKey: columnName low: low high: mid];
+				break;
+												
+			default: 
+				[NSException raise: NSInternalInconsistencyException format: nil];
+				break;
+		}
+	}
+}
+
+- (void) goBeforeFirstRowWithValue: (id) value forKey: (NSString *) columnName
+{
+	if (! mKnowsFieldClasses && mDeterminesFieldClassesFromDB)
+        [self fetchFieldDescriptions];
+
+	//low is -1 because the first row might apply and -advanceRow will probably will be called after this method.
+	//high is mTuples (instead of mTuples - 1) in case even the last row doesn't apply and we set it to current.
+	[self goBeforeFirstRowWithValue: value forKey: columnName low: -1 high: mTuples];
+	ExpectV (mCurrentRow == -1 || NSOrderedAscending == [[self valueForKey: columnName row: mCurrentRow] compare: value]);
+	ExpectV (mCurrentRow == mTuples - 1 || NSOrderedAscending != [[self valueForKey: columnName row: mCurrentRow + 1] compare: value]);
 }
 
 - (int) count
@@ -504,7 +538,7 @@ ErrorUserInfoKey (char fieldCode)
     id retval = nil;
     if (! ((columnIndex < mFields) && (rowIndex < mTuples)))
     {
-        @throw [NSException exceptionWithName: kPGTSFieldNotFoundException reason: nil userInfo: nil];
+		[NSException raise: kPGTSFieldNotFoundException format: nil];
     }
     
     if (! PQgetisnull (mResult, rowIndex, columnIndex))
@@ -526,7 +560,7 @@ ErrorUserInfoKey (char fieldCode)
 
 - (id) valueForKey: (NSString *) aName row: (int) rowIndex
 {
-    FieldIndexMap::iterator iter = mFieldIndices->find (aName);
+    FieldIndexMap::const_iterator iter = mFieldIndices->find (aName);
     if (mFieldIndices->end () == iter)
     {
         @throw [NSException exceptionWithName: kPGTSFieldNotFoundException reason: nil 
@@ -571,13 +605,12 @@ ErrorUserInfoKey (char fieldCode)
 			PG_DIAG_CONTEXT,
 			PG_DIAG_SOURCE_FILE,
 			PG_DIAG_SOURCE_LINE,
-			PG_DIAG_SOURCE_FUNCTION,
-			'\0'
+			PG_DIAG_SOURCE_FUNCTION
 		};
 		
 		NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity: (sizeof (fields)) / sizeof (char)];
 		
-		for (int i = 0; '\0' != fields [i]; i++)
+		for (int i = 0, count = sizeof (fields) / sizeof (* fields); i < count; i++)
 		{
 			char* value = PQresultErrorField (result, fields [i]);
 			if (! value) continue;

@@ -13,6 +13,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		539B34640F39FDBE0057E0BE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 539FD5A10EE98DB400A188F0 /* BaseTen.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535443BB0D634A47002A6C47;
+			remoteInfo = "BaseTen Framework + GC";
+		};
 		539FD5AB0EE98DB500A188F0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 539FD5A10EE98DB400A188F0 /* BaseTen.xcodeproj */;
@@ -129,6 +136,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				539B34650F39FDBE0057E0BE /* PBXTargetDependency */,
 			);
 			name = Introspection;
 			productInstallPath = "$(HOME)/bin";
@@ -193,6 +201,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		539B34650F39FDBE0057E0BE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTen Framework + GC";
+			targetProxy = 539B34640F39FDBE0057E0BE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1DEB927508733DD40010E9CD /* Debug */ = {

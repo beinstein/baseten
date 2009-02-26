@@ -23,7 +23,7 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: MKCPolishedHeaderView.h 246 2008-03-04 11:53:29Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
 #import <Cocoa/Cocoa.h>

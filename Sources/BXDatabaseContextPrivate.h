@@ -2,7 +2,7 @@
 // BXDatabaseContextPrivate.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -33,7 +33,6 @@
 /* Moved from the context. */
 - (BOOL) executeDeleteFromEntity: (BXEntityDescription *) anEntity withPredicate: (NSPredicate *) predicate 
                            error: (NSError **) error;
-- (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 
 /* Especially these need some attention before moving to a public header. */
 - (void) lockObject: (BXDatabaseObject *) object key: (id) key status: (enum BXObjectLockStatus) status
@@ -64,16 +63,15 @@
 - (void) BXDatabaseObjectWillDealloc: (BXDatabaseObject *) anObject;
 - (BOOL) registerObject: (BXDatabaseObject *) anObject;
 - (void) unregisterObject: (BXDatabaseObject *) anObject;
-- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject;
+- (void) setConnectionSetupManager: (id <BXConnector>) anObject;
 - (void) faultKeys: (NSArray *) keys inObjectsWithIDs: (NSArray *) ids;
 - (void) setCanConnect: (BOOL) aBool;
-- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName 
-                     validateImmediately: (BOOL) validateImmediately error: (NSError **) error;
-- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error;
-- (BOOL) iterateValidationQueue: (NSError **) error;
 - (BOOL) checkErrorHandling;
 - (void) setLastConnectionError: (NSError *) anError;
-- (NSSet *) entities;
+- (BXDatabaseObjectModel *) databaseObjectModel;
+
+- (void) setDatabaseObjectModel: (BXDatabaseObjectModel *) model;
+- (void) setDatabaseInterface: (id <BXInterface>) interface;
 @end
 
 
@@ -102,5 +100,5 @@
 
 
 @interface BXDatabaseContext (Callbacks)
-- (void) BXConnectionSetupManagerFinishedAttempt;
+- (void) connectionSetupManagerFinishedAttempt;
 @end

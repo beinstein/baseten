@@ -129,6 +129,8 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 					   succeeded: (BOOL) didSucceed userInfo: (id) userInfo;
 - (void) forwardResult: (id) result;
 
+- (void) reloadDatabaseMetadata;
+
 /**
  * \internal
  * \brief Begins a transaction.

@@ -34,6 +34,7 @@
 {
 	BOOL mIsEnabled;
 }
-- (void) setEnabled: (BOOL) aBool;
 - (BOOL) isEnabled;
+
+- (void) setEnabled: (BOOL) aBool;
 @end

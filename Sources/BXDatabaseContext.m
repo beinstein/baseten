@@ -2,7 +2,7 @@
 // BXDatabaseContext.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -31,7 +31,6 @@
 #import <string.h>
 #import <pthread.h>
 
-#import "PGTS.h"
 #import "PGTSCFScannedMemoryAllocator.h"
 #import "PGTSCollections.h"
 #import "PGTSHOM.h"
@@ -62,6 +61,8 @@
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXEnumerate.h"
 #import "BXLocalizedString.h"
+#import "BXDatabaseObjectModel.h"
+#import "BXDatabaseObjectModelStorage.h"
 
 #import "NSURL+BaseTenAdditions.h"
 
@@ -123,7 +124,6 @@ AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescripti
 												entity: NULL
 												schema: NULL
 									  primaryKeyFields: &pkeyFields];
-			//FIXME: C function logging.
 			BXAssertVoidReturn (parsed, @"Expected object URI to be parseable.");
 			if (! parsed) break;
 			
@@ -269,8 +269,6 @@ ModTypeToObject (enum BXModificationType value)
 		mSendsLockQueries = YES;
 		mUsesKeychain = YES;
 		
-		mEntities = [[NSMutableSet alloc] init];
-		mRelationships = [[NSMutableSet alloc] init];
 		mDelegateProxy = [[BXDelegateProxy alloc] initWithDelegateDefaultImplementation:
 						  [[[BXDatabaseContextDelegateDefaultImplementation alloc] init] autorelease]];
     }
@@ -286,18 +284,15 @@ ModTypeToObject (enum BXModificationType value)
         [mObjects makeObjectsPerformSelector:@selector (release) withObject:nil];
     [mObjects makeObjectsPerformSelector: @selector (BXDatabaseContextWillDealloc) withObject: nil];
     
+	[mObjectModel release];
     [mDatabaseInterface release];
     [mDatabaseURI release];
     [mObjects release];
     [mModifiedObjectIDs release];
     [mUndoManager release];
-	[mLazilyValidatedEntities release];
 	[mUndoGroupingLevels release];
 	[mConnectionSetupManager release];
     [mNotificationCenter release];
-    [mEntities release];
-	[mEntitiesBySchema release];
-    [mRelationships release];
 	[mDelegateProxy release];
 	[mLastConnectionError release];
     
@@ -345,12 +340,21 @@ ModTypeToObject (enum BXModificationType value)
  */
 - (void) setDatabaseURI: (NSURL *) uri
 {
-	[self setDatabaseURIInternal: uri];
 	[self setKeychainPasswordItem: NULL];
-	[mEntities removeAllObjects];
+	[self setDatabaseObjectModel: nil];
+
+	if (! [[uri scheme] isEqual: [mDatabaseURI scheme]])
+	{
+		[self setDatabaseInterface: nil];
+		[self databaseInterface];
+	}
+
+	[self setDatabaseURIInternal: uri];
 
 	if (0 < [[uri host] length])
 	{
+		[self databaseObjectModel];
+
 		[[self internalDelegate] databaseContextGotDatabaseURI: self];
 		NSNotificationCenter* nc = [self notificationCenter];
 		[nc postNotificationName: kBXGotDatabaseURINotification object: self];	
@@ -833,7 +837,18 @@ ModTypeToObject (enum BXModificationType value)
 	mUsesKeychain = usesKeychain;
 }
 
+- (BOOL) storesURICredentials
+{
+	return mShouldStoreURICredentials;
+}
+
+- (void) setStoresURICredentials: (BOOL) shouldStore
+{
+	mShouldStoreURICredentials = shouldStore;
+}
+
 /**
+ * \internal
  * \brief Store login credentials from the database URI to the default keychain.
  */
 - (void) storeURICredentials
@@ -1117,8 +1132,7 @@ ModTypeToObject (enum BXModificationType value)
 		if (! [self connectSync: &localError])
 			goto error;
 		
-		if (! [self validateEntity: [anID entity] error: &localError])
-			goto error;
+		//FIXME: check the entity.
 		
 		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
 										 withPredicate: [anID predicate] returningFaults: NO error: &localError];
@@ -1626,17 +1640,17 @@ ModTypeToObject (enum BXModificationType value)
 	{
 		NSError* localError = nil;
 
+		if (mShouldStoreURICredentials)
+			[self storeURICredentials];
+
 		//Strip password from the URI
 		NSURL* newURI = [mDatabaseURI BXURIForHost: nil database: nil username: nil password: @""];
 		[self setDatabaseURIInternal: newURI];
-		
-        //This might have changed during connection.
-        BXEnumerate (currentEntity, e, [[mLazilyValidatedEntities allObjects] objectEnumerator])
-            [currentEntity setDatabaseURI: mDatabaseURI];
-		
+				
 		NSNotification* notification = nil;
-		if ([self iterateValidationQueue: &localError])
+		if ([mObjectModel contextConnectedUsingDatabaseInterface: mDatabaseInterface error: &localError])
 		{
+			[mObjectModel setCanCreateEntityDescriptions: NO];
 			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification object: self userInfo: nil];
 			if (async)
 				[mDelegateProxy databaseContextConnectionSucceeded: self];
@@ -1666,7 +1680,7 @@ ModTypeToObject (enum BXModificationType value)
 	{
 		if ([NSNull null] != currentObject)
 		{
-			id targets = [[rels PGTSKeyCollect] registeredTargetFor: currentObject fireFault: shouldFire]; 
+			id targets = [[rels PGTSCollectDK] registeredTargetFor: currentObject fireFault: shouldFire]; 
 			if (targets)
 				[targetsByObject setObject: targets forKey: currentObject];
 		}
@@ -1685,43 +1699,49 @@ ModTypeToObject (enum BXModificationType value)
 		BXEnumerate (entity, e, [idsByEntity keyEnumerator])
 		{
 			NSArray* objectIDs = [idsByEntity objectForKey: entity];
-			NSArray* objects = [self registeredObjectsWithIDs: objectIDs nullObjects: NO];
+			NSArray* objects = [self registeredObjectsWithIDs: objectIDs nullObjects: YES];
 			
-			if (0 < [objects count])
+			id rels = [entity inverseToOneRelationships];
+			NSDictionary* oldTargets = nil;
+			NSDictionary* newTargets = nil;
+			if (0 < [rels count])
 			{
-				id rels = [entity inverseToOneRelationships];
-				NSDictionary* oldTargets = nil;
-				NSDictionary* newTargets = nil;
-				if (0 < [rels count])
+				oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
+				newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+				BXEnumerate (currentObject, e, [objects objectEnumerator])
 				{
-					oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
-					newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
-					BXEnumerate (currentObject, e, [objects objectEnumerator])
+					if ([NSNull null] != currentObject)
 						[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				}
-				
-				//Fault the objects and send the notifications
-				if (shouldFault)
+			}
+			
+			//Fault the objects and send the notifications
+			if (shouldFault)
+			{
+				BXEnumerate (currentObject, e, [objects objectEnumerator])
 				{
-					BXEnumerate (currentObject, e, [objects objectEnumerator])
+					if ([NSNull null] != currentObject)
 						[currentObject removeFromCache: nil postingKVONotifications: YES];
 				}
-				
-				NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-										  objectIDs, kBXObjectIDsKey,
-										  objects, kBXObjectsKey,
-										  self, kBXDatabaseContextKey,
-										  nil];
-				
-				[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
-				if (0 < [rels count])
+			}
+			
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  objectIDs, kBXObjectIDsKey,
+									  objects, kBXObjectsKey,
+									  self, kBXDatabaseContextKey,
+									  nil];
+			
+			[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
+			if (0 < [rels count])
+			{
+				BXEnumerate (currentObject, e, [objects objectEnumerator])
 				{
-					BXEnumerate (currentObject, e, [objects objectEnumerator])
+					if ([NSNull null] != currentObject)
 						[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				}
-				
-				[nc postNotificationName: kBXUpdateNotification object: entity userInfo: userInfo];
 			}
+			
+			[nc postNotificationName: kBXUpdateNotification object: entity userInfo: userInfo];
 		}
     }
 }
@@ -1920,10 +1940,10 @@ ModTypeToObject (enum BXModificationType value)
 			
 		case kBXCertificatePolicyDisplayTrustPanel:
 			//These are in BaseTenAppKit framework.
-			if (nil == mConnectionSetupManager)
+			if (! mConnectionSetupManager)
 				[self displayPanelForTrust: trust];
 			else
-				[mConnectionSetupManager BXDatabaseContext: self displayPanelForTrust: trust];
+				[mConnectionSetupManager databaseContext: self displayPanelForTrust: trust];
 			
 			break;
 			
@@ -1977,12 +1997,23 @@ ModTypeToObject (enum BXModificationType value)
  * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
  *       the database name before entities may be received.
  */
-- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error
+- (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName error: (NSError **) outError
 {
-    return [self entityForTable: tableName
-                       inSchema: schemaName
-            validateImmediately: [self isConnected]
-                          error: error];
+	NSError* localError = nil;
+	id retval = [mObjectModel entityForTable: name inSchema: schemaName error: &localError];
+	
+	//FIXME: should this be here or in the object model?
+	if (! retval && ! localError)
+	{
+		NSString* errorFormat = BXLocalizedString (@"tableNotFound", @"Table %@ was not found in schema %@.", @"Error message for getting an entity description.");
+		NSString* localizedError = [NSString stringWithFormat: errorFormat, name, schemaName];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localizedError forKey: NSLocalizedFailureReasonErrorKey];
+		localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
+	}
+	
+	BXHandleError (outError, localError);
+	
+	return retval;
 }
 
 /** 
@@ -1990,11 +2021,9 @@ ModTypeToObject (enum BXModificationType value)
  * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
  *       the database name before entities may be received.
  */
-- (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error
+- (BXEntityDescription *) entityForTable: (NSString *) name error: (NSError **) outError
 {
-    return [self entityForTable: tableName
-                       inSchema: nil
-                          error: error];
+	return [self entityForTable: name inSchema: @"public" error: outError];
 }
 
 /**
@@ -2008,16 +2037,13 @@ ModTypeToObject (enum BXModificationType value)
  *         Each of them will have NSStrings corresponding to relation names as keys and BXEntityDescriptions
  *         as objects.
  */
-- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error
+- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) outError
 {
-	if (reload || !mEntitiesBySchema)
-	{
-		NSError* localError = nil;
-		[mEntitiesBySchema release];
-		mEntitiesBySchema = [[mDatabaseInterface entitiesBySchemaAndName: &localError] retain];
-		BXHandleError (error, localError);
-	}
-	return mEntitiesBySchema;
+	NSError* localError = nil;
+	NSDictionary* retval = [mObjectModel entitiesBySchemaAndName: mDatabaseInterface reload: reload error: &localError];
+	[mObjectModel setCanCreateEntityDescriptions: NO];
+	BXHandleError (outError, localError);
+	return retval;
 }
 //@}
 
@@ -2126,9 +2152,10 @@ ModTypeToObject (enum BXModificationType value)
 			if (BASETEN_BEGIN_FETCH_ENABLED ())
 				BASETEN_BEGIN_FETCH ();
 							
+			Class databaseObjectClass = [entity databaseObjectClass];
 			retval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
 											   returningFaults: returnFaults 
-														 class: [entity databaseObjectClass] 
+														 class: databaseObjectClass
 														 error: &localError];
 			
 			if (BASETEN_END_FETCH_ENABLED ())
@@ -2358,9 +2385,18 @@ ModTypeToObject (enum BXModificationType value)
 	return rval;
 }
 
+- (void) setDatabaseInterface: (id <BXInterface>) interface
+{
+	if (interface != mDatabaseInterface)
+	{
+		[mDatabaseInterface release];
+		mDatabaseInterface  = [interface retain];
+	}
+}
+
 - (id <BXInterface>) databaseInterface
 {
-	if (nil == mDatabaseInterface)
+	if (nil == mDatabaseInterface && mDatabaseURI)
 	{
 		mDatabaseInterface = [[[[self class] interfaceClassForScheme: 
             [mDatabaseURI scheme]] alloc] initWithContext: self];
@@ -2423,7 +2459,7 @@ ModTypeToObject (enum BXModificationType value)
     }
 }
 
-- (void) setConnectionSetupManager: (id <BXConnectionSetupManager>) anObject
+- (void) setConnectionSetupManager: (id <BXConnector>) anObject
 {
 	if (mConnectionSetupManager != anObject)
 	{
@@ -2478,150 +2514,6 @@ ModTypeToObject (enum BXModificationType value)
 	}
 }
 
-- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName 
-                     validateImmediately: (BOOL) validateImmediately error: (NSError **) error
-{
-    NSError* localError = nil;
-    BXEntityDescription* retval = nil;
-    if (! [self checkDatabaseURI: &localError])
-		goto error;
-	
-	if (! ([mDatabaseURI host] && [mDatabaseURI path]))
-	{
-		NSString* reason = BXLocalizedString (@"incompleteURI", @"A host name and a database name are needed in the database URI.", @"Error description");
-		NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								  title, NSLocalizedDescriptionKey,
-								  title, NSLocalizedFailureReasonErrorKey, 
-								  reason, NSLocalizedRecoverySuggestionErrorKey, 
-								  self, kBXDatabaseContextKey,
-								  nil];
-		localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorIncompleteDatabaseURI userInfo: userInfo];
-		goto error;
-	}
-	
-    {
-        retval = [BXEntityDescription entityWithDatabaseURI: mDatabaseURI
-													  table: tableName
-												   inSchema: schemaName];
-		[mEntities addObject: retval];
-        
-        if (! [retval isValidated])
-        {
-            if (validateImmediately)
-            {
-				if ([self connectSync: &localError])
-                    [self validateEntity: retval error: &localError];
-				
-				if (! localError)
-	                [self iterateValidationQueue: &localError];
-            }
-            else
-            {
-                //Return an entity which will be validated later.
-                if (nil == mLazilyValidatedEntities)
-                    mLazilyValidatedEntities = [[NSMutableSet alloc] init];
-                
-                [mLazilyValidatedEntities addObject: retval];            
-            }
-        }
-    }
-    
-error:
-    BXHandleError (error, localError);
-    if (nil != localError)
-        retval = nil;
-    
-    return retval;
-}
-
-- (BOOL) iterateValidationQueue: (NSError **) error
-{
-    BXAssertValueReturn (NULL != error, NO, @"Expected error to be set.");
-	NSMutableSet* allEntities = [NSMutableSet set];
-    while (0 < [mLazilyValidatedEntities count])
-    {
-        NSSet* entities = [[mLazilyValidatedEntities copy] autorelease];
-		[allEntities unionSet: entities];
-        [mLazilyValidatedEntities removeAllObjects];
-		NSUInteger i = [entities count];
-        BXEnumerate (currentEntity, e, [entities objectEnumerator])
-        {
-			i--;
-			[[self internalDelegate] databaseContext: self validatingEntity: currentEntity 
-										entitiesLeft: i + [mLazilyValidatedEntities count]];
-            if (! [self validateEntity: currentEntity error: error]) //FIXME: possible bottleneck.
-            {
-                //Remember the remaining objects.
-                [mLazilyValidatedEntities addObjectsFromArray: [e allObjects]];
-                return NO;
-            }
-        }
-    }
-	
-	BXEnumerate (currentEntity, e, [allEntities objectEnumerator])
-	{
-		if ([currentEntity hasCapability: kBXEntityCapabilityRelationships])
-		{
-			BXEnumerate (currentRelationship, e, [[currentEntity relationshipsByName] objectEnumerator])
-				[currentRelationship makeAttributeDependency];
-		}
-	}
-	
-	return YES;
-}
-
-- (NSSet *) relationshipsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error
-{
-	NSError* localError = nil;
-	id relationships = nil;
-	if ([self checkDatabaseURI: &localError])
-	{		
-		if ([self connectSync: &localError])
-			relationships = [mDatabaseInterface relationshipsForEntity: anEntity error: &localError];
-		BXHandleError (NULL, localError);
-	}
-	return relationships;
-}
-
-- (BOOL) validateEntity: (BXEntityDescription *) entity error: (NSError **) error
-{
-	//This should be safe even with multiple threads.
-
-	ExpectR (error, NO);
-	BOOL retval = NO;
-	if ([entity isValidated])
-		retval = YES;
-	else
-	{
-		NSLock* lock = [entity validationLock];
-		[lock lock];
-		//Check again in case someone else had the lock.
-		if (! [entity isValidated])
-		{
-			if ([mDatabaseInterface validateEntity: entity error: error])
-			{
-				if (! [entity hasCapability: kBXEntityCapabilityRelationships])
-					retval = YES;
-				else
-				{
-					[entity setRelationships: nil];
-					NSDictionary* relationships = [mDatabaseInterface relationshipsForEntity: entity error: error];
-					if (! *error)
-					{
-						retval = YES;
-						[entity setRelationships: relationships];
-						[mRelationships addObjectsFromArray: [[entity relationshipsByName] allValues]];
-					}
-				}			
-			}
-		}
-		
-		[lock unlock];
-	}
-	return retval;
-}
-
 - (BOOL) checkURIScheme: (NSURL *) url error: (NSError **) error
 {
 	//FIXME: set error instead of raising an exception.
@@ -2669,9 +2561,27 @@ error:
 	}
 }
 
-- (NSSet *) entities
+- (void) setDatabaseObjectModel: (BXDatabaseObjectModel *) model
 {
-	return mEntities;
+	if (model != mObjectModel)
+	{
+		[mObjectModel release];
+		mObjectModel = [model retain];
+	}
+}
+
+- (BXDatabaseObjectModel *) databaseObjectModel
+{
+	if (! mObjectModel && mDatabaseURI)
+	{
+		NSNumber* port = [mDatabaseURI port];
+		if (! port)
+			port = [mDatabaseInterface defaultPort];
+		
+		NSURL* key = [mDatabaseURI BXURIForHost: nil port: port database: nil username: @"" password: @""];
+		[self setDatabaseObjectModel: [[BXDatabaseObjectModelStorage defaultStorage] objectModelForURI: key]];
+	}
+	return mObjectModel;
 }
 @end
 
@@ -2858,7 +2768,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 
 
 @implementation BXDatabaseContext (Callbacks)
-- (void) BXConnectionSetupManagerFinishedAttempt
+- (void) connectionSetupManagerFinishedAttempt
 {
 	if (NO == [self isConnected])
 		[self setCanConnect: YES];

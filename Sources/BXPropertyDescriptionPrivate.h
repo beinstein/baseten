@@ -23,14 +23,11 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
-// $Id: BXPropertyDescription.h 84 2007-01-12 11:38:38Z tuukka.norri@karppinen.fi $
+// $Id$
 //
 
 @interface BXPropertyDescription (PrivateMethods)
-+ (BOOL) registerProperty: (id) aProperty entity: (BXEntityDescription *) entity;
-+ (void) unregisterProperty: (id) aProperty entity: (BXEntityDescription *) entity;
-- (void) setEntity: (BXEntityDescription *) anEntity;
-- (void) setOptional: (BOOL) aBool;
 - (id) initWithName: (NSString *) aName entity: (BXEntityDescription *) anEntity;
 - (NSString *) qualifiedName;
+- (void) setOptional: (BOOL) optional;
 @end

@@ -30,6 +30,7 @@
 #import "BXEntityDescriptionPrivate.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "PGTSScannedMemoryAllocator.h"
+#import "PGTSHOM.h"
 #import <tr1/unordered_map>
 
 typedef std::tr1::unordered_map <unichar, NSMutableArray*,
@@ -39,7 +40,53 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 	ChangeMap;
 
 
+@interface PGTSColumnDescription (BXPGModificationHandlerAdditions)
+- (NSString *) columnDefinition;
+@end
+
+
+@implementation PGTSColumnDescription (BXPGModificationHandlerAdditions)
+- (NSString *) columnDefinition
+{
+	NSString* retval = nil;
+	PGTSTypeDescription* type = [self type];
+	NSString* schemaName = [[type schema] name];
+	if (schemaName)
+		retval = [NSString stringWithFormat: @"\"%@\" \"%@\".\"%@\"", [self name], schemaName, [type name]];
+	else
+		retval = [NSString stringWithFormat: @"\"%@\" \"%@\"", [self name], [type name]];
+		
+	return retval;
+}
+@end
+
+
 @implementation BXPGModificationHandler
+- (void) dealloc
+{
+	[mQueryString release];
+	[super dealloc];
+}
+
+- (void) prepare
+{
+	[super prepare];
+	
+	BXPGTableDescription* rel = [mInterface tableForEntity: mEntity];
+	PGTSIndexDescription* pkey = [rel primaryKey];
+	NSArray* columns = [[[pkey columns] allObjects] sortedArrayUsingSelector: @selector (indexCompare:)];
+	NSString* pkeyString = [(id) [[columns PGTSCollect] columnDefinition] componentsJoinedByString: @", "];
+	
+	NSString* queryFormat = 
+	@"SELECT * FROM \"baseten\".modification ($1, $2, $3, $4) "
+	@"AS m ( "
+	@"\"baseten_modification_type\" character (1), "
+	@"\"baseten_modification_timestamp\" timestamp (6) without time zone, "
+	@"\"baseten_modification_insert_timestamp\" timestamp (6) without time zone, "
+	@"%@)";
+    mQueryString = [[NSString alloc] initWithFormat: queryFormat, pkeyString];
+}
+
 - (void) handleNotification: (PGTSNotification *) notification
 {
 	int backendPID = [mEntity getsChangedByTriggers] ? 0 : [mConnection backendPID];
@@ -52,8 +99,9 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
     //pgts_modification_timestamp should be included in the query.	
 	BOOL isIdle = (PQTRANS_IDLE == [mConnection transactionStatus]);
 	
-    NSString* query = [NSString stringWithFormat: @"SELECT * FROM %@ ($1, COALESCE ($2, '-infinity')::timestamp, $3)", mTableName];
-	PGTSResultSet* res = [mConnection executeQuery: query parameters: [NSNumber numberWithBool: isIdle], mLastCheck, [NSNumber numberWithInt: backendPID]];
+	PGTSResultSet* res = [mConnection executeQuery: mQueryString 
+										parameters: PGTSOidAsObject (mOid), [NSNumber numberWithBool: isIdle], mLastCheck, [NSNumber numberWithInt: backendPID]];
+	BXAssertVoidReturn ([res querySucceeded], @"Expected query to succeed: %@", [res error]);
 	
 	//Update the timestamp.
 	while ([res advanceRow]) 
@@ -78,7 +126,7 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 	}
 	
 	//Send changes.
-	ChangeMap::iterator iterator = changes->begin ();
+	ChangeMap::const_iterator iterator = changes->begin ();
     while (changes->end () != iterator)
     {
 		unichar type = iterator->first;
@@ -103,7 +151,12 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
         iterator++;
     }
 	
-	//Contents are already autoreleased.
+	//Contents have already been autoreleased.
 	delete changes;
+}
+
+- (void) setOid: (Oid) oid
+{
+	mOid = oid;
 }
 @end

@@ -2,7 +2,7 @@
 // PGTSTypeDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,13 +27,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGTSAbstractClassDescription.h"
+#import "PGTSSchemaObjectDescription.h"
 
 
-@class PGTSDatabaseDescription;
 
-
-@interface PGTSTypeDescription : PGTSAbstractClassDescription 
+@interface PGTSTypeDescription : PGTSSchemaObjectDescription 
 {
     Oid mElementOid;
     unsigned int mElementCount;
@@ -42,7 +40,10 @@
 }
 - (Oid) elementOid;
 - (char) delimiter;
-- (void) setElementOid: (Oid) elementOid;
-- (void) setDelimiter: (char) delimiter;
 - (char) kind;
+
+//Thread un-safe methods.
+- (void) setElementOid: (Oid) anOid;
+- (void) setDelimiter: (char) delimiter;
+- (void) setKind: (char) kind;
 @end

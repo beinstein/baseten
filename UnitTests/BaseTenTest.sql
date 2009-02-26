@@ -1,42 +1,48 @@
+\unset ON_ERROR_ROLLBACK
+\set ON_ERROR_STOP
+
+
 DROP DATABASE IF EXISTS basetentest;
 CREATE DATABASE basetentest ENCODING 'UNICODE';
 \connect basetentest
+
 
 \i ../BaseTenModifications.sql
 
 
 BEGIN TRANSACTION;
-DROP ROLE baseten_test_user;
-COMMIT;
 
-BEGIN TRANSACTION;
-CREATE ROLE baseten_test_user WITH 
-    NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN IN ROLE basetenuser;
-COMMIT;
+CREATE FUNCTION prepare () RETURNS VOID AS $$
+    BEGIN
+        PERFORM rolname FROM pg_roles WHERE rolname = 'baseten_test_user';
+        IF FOUND THEN
+            DROP ROLE baseten_test_user;
+        END IF;
 
+        CREATE ROLE baseten_test_user WITH 
+            NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN IN ROLE basetenuser;
+        REVOKE ALL PRIVILEGES ON DATABASE basetentest FROM baseten_test_user;
+    END;
+$$ VOLATILE LANGUAGE plpgsql;
+SELECT prepare ();
+DROP FUNCTION prepare ();
 
-BEGIN TRANSACTION;
-REVOKE ALL PRIVILEGES ON DATABASE basetentest FROM baseten_test_user;
-COMMIT;
-
-
-BEGIN TRANSACTION;
 
 CREATE TABLE test (
     id SERIAL PRIMARY KEY,
     value VARCHAR (255)
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test' AND n.nspname = 'public' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test' AND n.nspname = 'public' AND c.relnamespace = n.oid;
 
 CREATE VIEW test_v AS SELECT * FROM test;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('public', 'test_v', 'id');
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test_v' AND n.nspname = 'public' AND c.relnamespace = n.oid;
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('public', 'test_v', 'id');
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test_v' AND n.nspname = 'public' AND c.relnamespace = n.oid;
 
 CREATE TABLE "Pkeytest" (
     "Id" INTEGER PRIMARY KEY,
     value VARCHAR (255)
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'Pkeytest' AND n.nspname = 'public' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'Pkeytest' AND n.nspname = 'public' AND c.relnamespace = n.oid;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON test TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON test_v TO baseten_test_user;
@@ -62,30 +68,30 @@ CREATE TABLE test1 (
     id SERIAL PRIMARY KEY,
     value VARCHAR (255)
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW test1_v AS SELECT * FROM test1;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'test1_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'test1_v', 'id');
 CREATE RULE "insert_test1" AS ON INSERT TO test1_v DO INSTEAD 
     INSERT INTO test1 (value) VALUES (NEW.value) RETURNING *;
 CREATE RULE "update_test1" AS ON UPDATE TO test1_v DO INSTEAD 
     UPDATE test1 SET id = NEW.id, value = NEW.value WHERE id = OLD.id;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE TABLE test2 (
     id SERIAL PRIMARY KEY,
     value VARCHAR (255),
     fkt1id INTEGER CONSTRAINT fkt1 REFERENCES test1 (id) ON UPDATE CASCADE ON DELETE SET NULL
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW test2_v AS SELECT * FROM test2;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'test2_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'test2_v', 'id');
 CREATE RULE "insert_test2" AS ON INSERT TO test2_v DO INSTEAD
     INSERT INTO test2 (value, fkt1id) VALUES (NEW.value, NEW.fkt1id) RETURNING *;
 CREATE RULE "update_test2" AS ON UPDATE TO test2_v DO INSTEAD 
     UPDATE test2 SET id = NEW.id, value = NEW.value, fkt1id = NEW.fkt1id WHERE id = OLD.id RETURNING *;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'test2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 GRANT USAGE ON SEQUENCE test1_id_seq TO PUBLIC;
 GRANT USAGE ON SEQUENCE test2_id_seq TO PUBLIC;
@@ -109,12 +115,12 @@ CREATE TABLE ototest2 (
     id INTEGER PRIMARY KEY,
     r1 INTEGER UNIQUE CONSTRAINT foo REFERENCES ototest1 (id)
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname IN ('ototest1', 'ototest2') AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname IN ('ototest1', 'ototest2') AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW ototest1_v AS SELECT * FROM ototest1;
 CREATE VIEW ototest2_v AS SELECT * FROM ototest2;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'ototest1_v', 'id');
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'ototest2_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'ototest1_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'ototest2_v', 'id');
 CREATE RULE "insert_ototest1" AS ON INSERT TO ototest1_v DO INSTEAD
     INSERT INTO ototest1 DEFAULT VALUES RETURNING *;
 CREATE RULE "insert_ototest2" AS ON INSERT TO ototest2_v DO INSTEAD
@@ -123,8 +129,8 @@ CREATE RULE "update_ototest1" AS ON UPDATE TO ototest1_v DO INSTEAD
     UPDATE ototest1 SET id = NEW.id WHERE id = OLD.id RETURNING *;
 CREATE RULE "update_ototest2" AS ON UPDATE TO ototest2_v DO INSTEAD 
     UPDATE ototest2 SET id = NEW.id, r1 = NEW.r1 WHERE id = OLD.id RETURNING *;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'ototest1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'ototest2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'ototest1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'ototest2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1 TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON ototest1_v TO baseten_test_user;
@@ -144,37 +150,37 @@ CREATE TABLE mtmtest1 (
     value1 VARCHAR (255)
 );
 GRANT USAGE ON SEQUENCE mtmtest1_id_seq TO PUBLIC;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW mtmtest1_v AS SELECT * FROM mtmtest1;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'mtmtest1_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'mtmtest1_v', 'id');
 CREATE RULE "insert_mtmtest1" AS ON INSERT TO mtmtest1_v DO INSTEAD
     INSERT INTO mtmtest1 (value1) VALUES (NEW.value1) RETURNING *;
 CREATE RULE "update_mtmtest1" AS ON UPDATE TO mtmtest1_v DO INSTEAD 
     UPDATE mtmtest1 SET id = NEW.id, value1 = NEW.value1 WHERE id = OLD.id;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE TABLE mtmtest2 (
     id SERIAL PRIMARY KEY,
     value2 VARCHAR (255)
 );
 GRANT USAGE ON SEQUENCE mtmtest2_id_seq TO PUBLIC;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW mtmtest2_v AS SELECT * FROM mtmtest2;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'mtmtest2_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'mtmtest2_v', 'id');
 CREATE RULE "insert_mtmtest2" AS ON INSERT TO mtmtest2_v DO INSTEAD
     INSERT INTO mtmtest2 (value2) VALUES (NEW.value2) RETURNING *;
 CREATE RULE "update_mtmtest2" AS ON UPDATE TO mtmtest2_v DO INSTEAD 
     UPDATE mtmtest2 SET id = NEW.id, value2 = NEW.value2 WHERE id = OLD.id;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmtest2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE TABLE mtmrel1 (
     id1 INTEGER CONSTRAINT foreignobject REFERENCES mtmtest1 (id),
     id2 INTEGER CONSTRAINT object REFERENCES mtmtest2 (id),
     PRIMARY KEY (id1, id2)
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmrel1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtmrel1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON mtmtest1 TO baseten_test_user;
@@ -207,29 +213,29 @@ INSERT INTO mtmrel1 (id1, id2) VALUES (4, 4);
 CREATE TABLE mtocollectiontest1 (
     id SERIAL PRIMARY KEY
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest1' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW mtocollectiontest1_v AS SELECT * FROM mtocollectiontest1;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'mtocollectiontest1_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'mtocollectiontest1_v', 'id');
 CREATE RULE "insert_mtocollectiontest1" AS ON INSERT TO mtocollectiontest1_v DO INSTEAD
     INSERT INTO mtocollectiontest1 DEFAULT VALUES RETURNING *;
 CREATE RULE "update_mtocollectiontest1" AS ON UPDATE TO mtocollectiontest1_v DO INSTEAD 
     UPDATE mtocollectiontest1 SET id = NEW.id WHERE id = OLD.id;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest1_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE TABLE mtocollectiontest2 (
     id SERIAL PRIMARY KEY,
     mid INTEGER CONSTRAINT m REFERENCES mtocollectiontest1 (id)
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest2' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 CREATE VIEW mtocollectiontest2_v AS SELECT * FROM mtocollectiontest2;
-INSERT INTO baseten.viewprimarykey (nspname, relname, attname) VALUES ('Fkeytest', 'mtocollectiontest2_v', 'id');
+INSERT INTO baseten.view_pkey (nspname, relname, attname) VALUES ('Fkeytest', 'mtocollectiontest2_v', 'id');
 CREATE RULE "insert_mtocollectiontest2" AS ON INSERT TO mtocollectiontest2_v DO INSTEAD
     INSERT INTO mtocollectiontest2 DEFAULT VALUES RETURNING *;
 CREATE RULE "update_mtocollectiontest2" AS ON UPDATE TO mtocollectiontest2_v DO INSTEAD 
     UPDATE mtocollectiontest2 SET id = NEW.id, mid = NEW.mid WHERE id = OLD.id RETURNING *;
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'mtocollectiontest2_v' AND n.nspname = 'Fkeytest' AND c.relnamespace = n.oid;
 
 GRANT USAGE ON mtocollectiontest1_id_seq TO PUBLIC;
 GRANT USAGE ON mtocollectiontest2_id_seq TO PUBLIC;
@@ -260,14 +266,14 @@ INSERT INTO multicolumnpkey (id1, id2, value1) VALUES (1, 1, 'thevalue1');
 INSERT INTO multicolumnpkey (id1, id2, value1) VALUES (1, 2, 'thevalue2');
 INSERT INTO multicolumnpkey (id1, id2, value1) VALUES (2, 3, 'thevalue3');
 ALTER TABLE ONLY multicolumnpkey ADD CONSTRAINT multicolumnpkey_pkey PRIMARY KEY (id1, id2);
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'multicolumnpkey' AND n.nspname = 'public' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'multicolumnpkey' AND n.nspname = 'public' AND c.relnamespace = n.oid;
 
 -- Update and delete by entity & predicate
 CREATE TABLE updatetest (
     id SERIAL PRIMARY KEY,
     value1 INTEGER
 );
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'updatetest' AND n.nspname = 'public' AND c.relnamespace = n.oid;
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname = 'updatetest' AND n.nspname = 'public' AND c.relnamespace = n.oid;
 GRANT SELECT, INSERT, UPDATE, DELETE ON updatetest TO baseten_test_user;
 GRANT USAGE ON SEQUENCE updatetest_id_seq TO baseten_test_user;
 
@@ -290,7 +296,7 @@ CREATE TABLE person_address (
 ALTER TABLE ONLY person ADD CONSTRAINT person_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY person_address ADD CONSTRAINT person_address_pkey PRIMARY KEY (id);
 ALTER TABLE ONLY person ADD CONSTRAINT person_address_fkey FOREIGN KEY (address) REFERENCES person_address(id);
-SELECT baseten.PrepareForModificationObserving (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname IN ('person', 'person_address') 
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n WHERE c.relname IN ('person', 'person_address') 
     AND n.nspname = 'public' AND c.relnamespace = n.oid;
 GRANT SELECT, INSERT, UPDATE, DELETE ON person TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON person_address TO baseten_test_user;
@@ -303,7 +309,7 @@ INSERT INTO person VALUES (1, 'nzhuk', 1, 1);
 
 
 CREATE TABLE ♨ (id SERIAL PRIMARY KEY, value VARCHAR (255));
-SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n
 	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname = '♨';
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON ♨ TO baseten_test_user;
@@ -320,7 +326,7 @@ CREATE TABLE datetest (
 );
 GRANT SELECT, INSERT, UPDATE, DELETE ON datetest TO baseten_test_user;
 GRANT USAGE ON SEQUENCE datetest_id_seq TO baseten_test_user;
-SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n
 	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname = 'datetest';
 INSERT INTO datetest DEFAULT VALUES;
 INSERT INTO datetest DEFAULT VALUES;
@@ -336,13 +342,13 @@ CREATE TABLE fkeytest_add_rel (
     fid INTEGER NOT NULL REFERENCES fkeytest_add (id),
     value VARCHAR (255)
 );
-SELECT baseten.prepareformodificationobserving (c.oid) FROM pg_class c, pg_namespace n
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n
 	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname IN ('fkeytest_add', 'fkeytest_add_rel');
 INSERT INTO fkeytest_add (id, value) VALUES (1, 'fkeytest_add');
 GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add_rel TO baseten_test_user;
 
-SELECT baseten.refreshcaches ();
+SELECT baseten.refresh_caches ();
 
 COMMIT;
 

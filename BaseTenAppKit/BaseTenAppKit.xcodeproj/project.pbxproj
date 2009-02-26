@@ -7,38 +7,40 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5302F39F0F536C4500105ECD /* BXAuthenticationPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */; };
+		53174ED10F52073600551EBC /* BXConnectUsingBonjourViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53174ECD0F52073600551EBC /* BXConnectUsingBonjourViewController.m */; };
+		53174ED20F52073600551EBC /* BXConnectUsingBonjourViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53174ECE0F52073600551EBC /* BXConnectUsingBonjourViewController.h */; };
+		53174ED30F52073600551EBC /* BXConnectByHostnameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53174ECF0F52073600551EBC /* BXConnectByHostnameViewController.m */; };
+		53174ED40F52073600551EBC /* BXConnectByHostnameViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53174ED00F52073600551EBC /* BXConnectByHostnameViewController.h */; };
+		53174EFF0F5209E300551EBC /* BXHostPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53174EFD0F5209E300551EBC /* BXHostPanel.m */; };
+		53174F000F5209E300551EBC /* BXHostPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53174EFE0F5209E300551EBC /* BXHostPanel.h */; };
+		53174F110F5212D200551EBC /* ConnectUsingBonjourView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53174F0D0F5212D200551EBC /* ConnectUsingBonjourView.nib */; };
+		53174F120F5212D200551EBC /* ConnectByHostnameView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53174F0F0F5212D200551EBC /* ConnectByHostnameView.nib */; };
+		53174F670F52182700551EBC /* BXConnectionViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53174F650F52182700551EBC /* BXConnectionViewController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53174F680F52182700551EBC /* BXConnectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53174F660F52182700551EBC /* BXConnectionViewController.m */; };
+		532861C30F54DB6D00F294A0 /* MessageView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 532861C10F54DB6D00F294A0 /* MessageView.nib */; };
 		5354445D0D634D9C002A6C47 /* BXSynchronizedArrayController.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E484A0A14B7BA00A22080 /* BXSynchronizedArrayController.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5354445E0D634D9C002A6C47 /* BaseTenAppKit.h in Headers */ = {isa = PBXBuildFile; fileRef = 537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5354445F0D634D9C002A6C47 /* BXObjectStatusToColorTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364C8C90A222FA600AD8AAF /* BXObjectStatusToColorTransformer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		535444600D634D9C002A6C47 /* BXAppKitFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */; };
 		535444610D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53726D830A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.h */; };
 		535444620D634D9C002A6C47 /* NSController+BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535444630D634D9C002A6C47 /* BXController.h in Headers */ = {isa = PBXBuildFile; fileRef = 53438E540A384FE500BEDCFF /* BXController.h */; };
 		535444640D634D9C002A6C47 /* BXControllerProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535444650D634D9C002A6C47 /* BXDatabaseContextAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		535444660D634D9C002A6C47 /* BXConnectionViewManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E906A60B84686E008CEA4B /* BXConnectionViewManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		535444670D634D9C002A6C47 /* BXConnectionPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E906590B845A30008CEA4B /* BXConnectionPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535444680D634D9C002A6C47 /* BXAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9BABC0B90949200DDB9BE /* BXAuthenticationPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		535444690D634D9C002A6C47 /* BXPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 53E9BB080B909EA000DDB9BE /* BXPanel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5354446A0D634D9C002A6C47 /* BXNetServiceConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */; };
-		5354446B0D634D9C002A6C47 /* BXAppKitAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5354446D0D634D9C002A6C47 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C1666FE841158C02AAC07 /* InfoPlist.strings */; };
 		5354446E0D634D9C002A6C47 /* BaseTen.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */; };
-		5354446F0D634D9C002A6C47 /* ConnectionView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53E906610B845BBB008CEA4B /* ConnectionView.nib */; };
 		535444700D634D9C002A6C47 /* AuthenticationView.nib in Resources */ = {isa = PBXBuildFile; fileRef = 53E907730B849F07008CEA4B /* AuthenticationView.nib */; };
 		535444720D634D9C002A6C47 /* BXSynchronizedArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E484B0A14B7BA00A22080 /* BXSynchronizedArrayController.m */; };
 		535444730D634D9C002A6C47 /* BXObjectStatusToColorTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364C8CA0A222FA600AD8AAF /* BXObjectStatusToColorTransformer.m */; };
-		535444740D634D9C002A6C47 /* BXAppKitFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */; };
 		535444750D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 53726D840A30E4A30086BB60 /* BXObjectStatusToEditableTransformer.m */; };
 		535444760D634D9C002A6C47 /* NSController+BXAppKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */; };
 		535444770D634D9C002A6C47 /* BXController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53438E550A384FE500BEDCFF /* BXController.m */; };
 		535444780D634D9C002A6C47 /* BXDatabaseContextAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */; };
-		535444790D634D9C002A6C47 /* BXConnectionViewManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E906A70B84686E008CEA4B /* BXConnectionViewManager.m */; };
-		5354447A0D634D9C002A6C47 /* BXConnectionPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9065A0B845A30008CEA4B /* BXConnectionPanel.m */; };
-		5354447B0D634D9C002A6C47 /* BXAuthenticationPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */; };
 		5354447C0D634D9C002A6C47 /* BXPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9BB090B909EA000DDB9BE /* BXPanel.m */; };
 		5354447D0D634D9C002A6C47 /* BXNetServiceConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */; };
-		5354447E0D634D9C002A6C47 /* BXAppKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */; };
 		535444800D634D9C002A6C47 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7B1FEA5585E11CA2CBB /* Cocoa.framework */; };
 		535444820D634D9C002A6C47 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531650C30B72040700785454 /* SecurityInterface.framework */; };
 		53ED303F0E1ACBA80095BE8B /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5354443E0D634CA4002A6C47 /* BaseTen.framework */; };
@@ -82,10 +84,19 @@
 		32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit_Prefix.pch; path = Sources/BaseTenAppKit_Prefix.pch; sourceTree = "<group>"; };
 		5303D5FF0A39E6CD00917C22 /* BXControllerProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXControllerProtocol.h; path = Sources/BXControllerProtocol.h; sourceTree = "<group>"; };
 		531650C30B72040700785454 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = /System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<absolute>"; };
+		53174ECD0F52073600551EBC /* BXConnectUsingBonjourViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXConnectUsingBonjourViewController.m; path = Sources/BXConnectUsingBonjourViewController.m; sourceTree = "<group>"; };
+		53174ECE0F52073600551EBC /* BXConnectUsingBonjourViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConnectUsingBonjourViewController.h; path = Sources/BXConnectUsingBonjourViewController.h; sourceTree = "<group>"; };
+		53174ECF0F52073600551EBC /* BXConnectByHostnameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXConnectByHostnameViewController.m; path = Sources/BXConnectByHostnameViewController.m; sourceTree = "<group>"; };
+		53174ED00F52073600551EBC /* BXConnectByHostnameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConnectByHostnameViewController.h; path = Sources/BXConnectByHostnameViewController.h; sourceTree = "<group>"; };
+		53174EFD0F5209E300551EBC /* BXHostPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXHostPanel.m; path = Sources/BXHostPanel.m; sourceTree = "<group>"; };
+		53174EFE0F5209E300551EBC /* BXHostPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXHostPanel.h; path = Sources/BXHostPanel.h; sourceTree = "<group>"; };
+		53174F0E0F5212D200551EBC /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ConnectUsingBonjourView.nib; sourceTree = "<group>"; };
+		53174F100F5212D200551EBC /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ConnectByHostnameView.nib; sourceTree = "<group>"; };
+		53174F650F52182700551EBC /* BXConnectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConnectionViewController.h; path = Sources/BXConnectionViewController.h; sourceTree = "<group>"; };
+		53174F660F52182700551EBC /* BXConnectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXConnectionViewController.m; path = Sources/BXConnectionViewController.m; sourceTree = "<group>"; };
+		532861C20F54DB6D00F294A0 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MessageView.nib; sourceTree = "<group>"; };
 		532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXNetServiceConnector.h; path = Sources/BXNetServiceConnector.h; sourceTree = "<group>"; };
 		532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXNetServiceConnector.m; path = Sources/BXNetServiceConnector.m; sourceTree = "<group>"; };
-		5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitFunctions.h; path = Sources/BXAppKitFunctions.h; sourceTree = "<group>"; };
-		5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAppKitFunctions.m; path = Sources/BXAppKitFunctions.m; sourceTree = "<group>"; };
 		53438E290A384EE600BEDCFF /* NSController+BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSController+BXAppKitAdditions.h"; path = "Sources/NSController+BXAppKitAdditions.h"; sourceTree = "<group>"; };
 		53438E2A0A384EE600BEDCFF /* NSController+BXAppKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSController+BXAppKitAdditions.m"; path = "Sources/NSController+BXAppKitAdditions.m"; sourceTree = "<group>"; };
 		53438E540A384FE500BEDCFF /* BXController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXController.h; path = Sources/BXController.h; sourceTree = "<group>"; };
@@ -105,15 +116,8 @@
 		537E48D10A14BFE800A22080 /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
 		537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseTenAppKit.h; path = Sources/BaseTenAppKit.h; sourceTree = "<group>"; };
 		53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTen.icns; path = ../Resources/BaseTen.icns; sourceTree = SOURCE_ROOT; };
-		53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAppKitAdditions.h; path = Sources/BXAppKitAdditions.h; sourceTree = "<group>"; };
-		53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAppKitAdditions.m; path = Sources/BXAppKitAdditions.m; sourceTree = "<group>"; };
 		53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextAdditions.h; path = Sources/BXDatabaseContextAdditions.h; sourceTree = "<group>"; };
 		53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextAdditions.m; path = Sources/BXDatabaseContextAdditions.m; sourceTree = "<group>"; };
-		53E906590B845A30008CEA4B /* BXConnectionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConnectionPanel.h; path = Sources/BXConnectionPanel.h; sourceTree = "<group>"; };
-		53E9065A0B845A30008CEA4B /* BXConnectionPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXConnectionPanel.m; path = Sources/BXConnectionPanel.m; sourceTree = "<group>"; };
-		53E906620B845BBB008CEA4B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/ConnectionView.nib; sourceTree = "<group>"; };
-		53E906A60B84686E008CEA4B /* BXConnectionViewManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConnectionViewManager.h; path = Sources/BXConnectionViewManager.h; sourceTree = "<group>"; };
-		53E906A70B84686E008CEA4B /* BXConnectionViewManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXConnectionViewManager.m; path = Sources/BXConnectionViewManager.m; sourceTree = "<group>"; };
 		53E907740B849F07008CEA4B /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/AuthenticationView.nib; sourceTree = "<group>"; };
 		53E9BABC0B90949200DDB9BE /* BXAuthenticationPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAuthenticationPanel.h; path = Sources/BXAuthenticationPanel.h; sourceTree = "<group>"; };
 		53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAuthenticationPanel.m; path = Sources/BXAuthenticationPanel.m; sourceTree = "<group>"; };
@@ -154,7 +158,6 @@
 				2B8B5E3B0B20185100EF04F3 /* xcconfig */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
 				034768DFFF38A50411DB9C8B /* Products */,
-				53F137CB0EB074C400D0F517 /* WaitForNetworkWindow.nib */,
 			);
 			name = CocoaFramework;
 			sourceTree = "<group>";
@@ -172,8 +175,11 @@
 		089C1665FE841158C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				53E906610B845BBB008CEA4B /* ConnectionView.nib */,
+				53F137CB0EB074C400D0F517 /* WaitForNetworkWindow.nib */,
+				53174F0D0F5212D200551EBC /* ConnectUsingBonjourView.nib */,
+				53174F0F0F5212D200551EBC /* ConnectByHostnameView.nib */,
 				53E907730B849F07008CEA4B /* AuthenticationView.nib */,
+				532861C10F54DB6D00F294A0 /* MessageView.nib */,
 				53AE2CB70B1721F2000E6EF1 /* BaseTen.icns */,
 				8DC2EF5A0486A6940098B216 /* Info.plist */,
 				089C1666FE841158C02AAC07 /* InfoPlist.strings */,
@@ -186,10 +192,8 @@
 			children = (
 				53D0D1590B6F896200D2D101 /* BXDatabaseContextAdditions.h */,
 				53D0D15A0B6F896200D2D101 /* BXDatabaseContextAdditions.m */,
-				532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */,
-				532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */,
 				531060190B905E44009329AD /* NSController Subclasses */,
-				5310601A0B905E59009329AD /* Panels */,
+				5310601A0B905E59009329AD /* Connection views and panels */,
 				53726DAD0A30E8FD0086BB60 /* Transformers */,
 			);
 			name = Classes;
@@ -210,10 +214,6 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				53BC738F0B9872D800E16D31 /* BXAppKitAdditions.h */,
-				53BC73900B9872D800E16D31 /* BXAppKitAdditions.m */,
-				5340251B0A2C49FB0016E8D2 /* BXAppKitFunctions.h */,
-				5340251C0A2C49FC0016E8D2 /* BXAppKitFunctions.m */,
 				537E4A6D0A14C82200A22080 /* BaseTenAppKit.h */,
 				32DBCF5E0370ADEE00C91783 /* BaseTenAppKit_Prefix.pch */,
 			);
@@ -234,19 +234,25 @@
 			name = "NSController Subclasses";
 			sourceTree = "<group>";
 		};
-		5310601A0B905E59009329AD /* Panels */ = {
+		5310601A0B905E59009329AD /* Connection views and panels */ = {
 			isa = PBXGroup;
 			children = (
-				53E906A60B84686E008CEA4B /* BXConnectionViewManager.h */,
-				53E906A70B84686E008CEA4B /* BXConnectionViewManager.m */,
+				532D60DF0B944D8C0028E90B /* BXNetServiceConnector.h */,
+				532D60E00B944D8C0028E90B /* BXNetServiceConnector.m */,
+				53174F650F52182700551EBC /* BXConnectionViewController.h */,
+				53174F660F52182700551EBC /* BXConnectionViewController.m */,
+				53174ED00F52073600551EBC /* BXConnectByHostnameViewController.h */,
+				53174ECF0F52073600551EBC /* BXConnectByHostnameViewController.m */,
+				53174ECE0F52073600551EBC /* BXConnectUsingBonjourViewController.h */,
+				53174ECD0F52073600551EBC /* BXConnectUsingBonjourViewController.m */,
 				53E9BB080B909EA000DDB9BE /* BXPanel.h */,
 				53E9BB090B909EA000DDB9BE /* BXPanel.m */,
-				53E906590B845A30008CEA4B /* BXConnectionPanel.h */,
-				53E9065A0B845A30008CEA4B /* BXConnectionPanel.m */,
+				53174EFE0F5209E300551EBC /* BXHostPanel.h */,
+				53174EFD0F5209E300551EBC /* BXHostPanel.m */,
 				53E9BABC0B90949200DDB9BE /* BXAuthenticationPanel.h */,
 				53E9BABD0B90949200DDB9BE /* BXAuthenticationPanel.m */,
 			);
-			name = Panels;
+			name = "Connection views and panels";
 			sourceTree = "<group>";
 		};
 		53726DAD0A30E8FD0086BB60 /* Transformers */ = {
@@ -280,18 +286,18 @@
 				5354445D0D634D9C002A6C47 /* BXSynchronizedArrayController.h in Headers */,
 				5354445E0D634D9C002A6C47 /* BaseTenAppKit.h in Headers */,
 				5354445F0D634D9C002A6C47 /* BXObjectStatusToColorTransformer.h in Headers */,
-				535444600D634D9C002A6C47 /* BXAppKitFunctions.h in Headers */,
 				535444610D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.h in Headers */,
 				535444620D634D9C002A6C47 /* NSController+BXAppKitAdditions.h in Headers */,
 				535444630D634D9C002A6C47 /* BXController.h in Headers */,
 				535444640D634D9C002A6C47 /* BXControllerProtocol.h in Headers */,
 				535444650D634D9C002A6C47 /* BXDatabaseContextAdditions.h in Headers */,
-				535444660D634D9C002A6C47 /* BXConnectionViewManager.h in Headers */,
-				535444670D634D9C002A6C47 /* BXConnectionPanel.h in Headers */,
 				535444680D634D9C002A6C47 /* BXAuthenticationPanel.h in Headers */,
 				535444690D634D9C002A6C47 /* BXPanel.h in Headers */,
 				5354446A0D634D9C002A6C47 /* BXNetServiceConnector.h in Headers */,
-				5354446B0D634D9C002A6C47 /* BXAppKitAdditions.h in Headers */,
+				53174ED20F52073600551EBC /* BXConnectUsingBonjourViewController.h in Headers */,
+				53174ED40F52073600551EBC /* BXConnectByHostnameViewController.h in Headers */,
+				53174F000F5209E300551EBC /* BXHostPanel.h in Headers */,
+				53174F670F52182700551EBC /* BXConnectionViewController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -374,9 +380,11 @@
 			files = (
 				5354446D0D634D9C002A6C47 /* InfoPlist.strings in Resources */,
 				5354446E0D634D9C002A6C47 /* BaseTen.icns in Resources */,
-				5354446F0D634D9C002A6C47 /* ConnectionView.nib in Resources */,
 				535444700D634D9C002A6C47 /* AuthenticationView.nib in Resources */,
 				53F137CD0EB074C400D0F517 /* WaitForNetworkWindow.nib in Resources */,
+				53174F110F5212D200551EBC /* ConnectUsingBonjourView.nib in Resources */,
+				53174F120F5212D200551EBC /* ConnectByHostnameView.nib in Resources */,
+				532861C30F54DB6D00F294A0 /* MessageView.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,17 +415,17 @@
 			files = (
 				535444720D634D9C002A6C47 /* BXSynchronizedArrayController.m in Sources */,
 				535444730D634D9C002A6C47 /* BXObjectStatusToColorTransformer.m in Sources */,
-				535444740D634D9C002A6C47 /* BXAppKitFunctions.m in Sources */,
 				535444750D634D9C002A6C47 /* BXObjectStatusToEditableTransformer.m in Sources */,
 				535444760D634D9C002A6C47 /* NSController+BXAppKitAdditions.m in Sources */,
 				535444770D634D9C002A6C47 /* BXController.m in Sources */,
 				535444780D634D9C002A6C47 /* BXDatabaseContextAdditions.m in Sources */,
-				535444790D634D9C002A6C47 /* BXConnectionViewManager.m in Sources */,
-				5354447A0D634D9C002A6C47 /* BXConnectionPanel.m in Sources */,
-				5354447B0D634D9C002A6C47 /* BXAuthenticationPanel.m in Sources */,
 				5354447C0D634D9C002A6C47 /* BXPanel.m in Sources */,
 				5354447D0D634D9C002A6C47 /* BXNetServiceConnector.m in Sources */,
-				5354447E0D634D9C002A6C47 /* BXAppKitAdditions.m in Sources */,
+				53174ED10F52073600551EBC /* BXConnectUsingBonjourViewController.m in Sources */,
+				53174ED30F52073600551EBC /* BXConnectByHostnameViewController.m in Sources */,
+				53174EFF0F5209E300551EBC /* BXHostPanel.m in Sources */,
+				53174F680F52182700551EBC /* BXConnectionViewController.m in Sources */,
+				5302F39F0F536C4500105ECD /* BXAuthenticationPanel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,12 +448,28 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		53E906610B845BBB008CEA4B /* ConnectionView.nib */ = {
+		53174F0D0F5212D200551EBC /* ConnectUsingBonjourView.nib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				53E906620B845BBB008CEA4B /* English */,
+				53174F0E0F5212D200551EBC /* English */,
 			);
-			name = ConnectionView.nib;
+			name = ConnectUsingBonjourView.nib;
+			sourceTree = "<group>";
+		};
+		53174F0F0F5212D200551EBC /* ConnectByHostnameView.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				53174F100F5212D200551EBC /* English */,
+			);
+			name = ConnectByHostnameView.nib;
+			sourceTree = "<group>";
+		};
+		532861C10F54DB6D00F294A0 /* MessageView.nib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				532861C20F54DB6D00F294A0 /* English */,
+			);
+			name = MessageView.nib;
 			sourceTree = "<group>";
 		};
 		53E907730B849F07008CEA4B /* AuthenticationView.nib */ = {

@@ -36,10 +36,11 @@
 #import "PGTSAbstractObjectDescription.h"
 #import "PGTSAbstractClassDescription.h"
 #import "PGTSDatabaseDescription.h"
+#import "PGTSSchemaDescription.h"
 #import "PGTSTypeDescription.h"
 #import "PGTSTableDescription.h"
 #import "PGTSIndexDescription.h"
-#import "PGTSFieldDescription.h"
+#import "PGTSColumnDescription.h"
 
 #import "NSExpression+PGTSAdditions.h"
 #import "NSPredicate+PGTSAdditions.h"

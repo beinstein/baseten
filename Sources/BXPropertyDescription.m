@@ -32,38 +32,11 @@
 #import "BXLogger.h"
 
 
-__strong static id gProperties = nil;
-
-
 /**
  * \brief A superclass for various description classes.
  * \ingroup descriptions
  */
 @implementation BXPropertyDescription
-
-/** 
- * \internal
- * \note Override dealloc2 in subclasses instead! 
- */
-- (void) dealloc
-{
-	[[self class] unregisterProperty: self entity: mEntity];
-	[self dealloc2];
-	[super dealloc];
-}
-
-/**
- * \internal
- * \brief Deallocation helper.
- *
- * Subclasses should override this instead of dealloc and then call 
- * super's implementation of dealloc2. This is because BXPropertyDescriptions 
- * will be stored into a non-retaining collection on creation and removed from 
- * it on dealloc.
- */
-- (void) dealloc2
-{
-}
 
 /** \brief Entity for this property. */
 - (BXEntityDescription *) entity
@@ -77,22 +50,22 @@ __strong static id gProperties = nil;
     return [self retain];
 }
 
+//FIXME: need we this?
+#if 0
 - (id) mutableCopyWithZone: (NSZone *) zone
 {
 	id retval = [[[self class] allocWithZone: zone] initWithName: mName entity: mEntity];
 	//Probably best not to set flags?
 	return retval;
 }
+#endif
 
-//FIXME: should we have init2... as well?
 - (id) initWithCoder: (NSCoder *) decoder
 {
 	if ((self = [super initWithCoder: decoder]))
 	{
-		[self setEntity: [decoder decodeObjectForKey: @"entity"]];
+		mEntity = [decoder decodeObjectForKey: @"entity"];
 		[self setOptional: [decoder decodeBoolForKey: @"isOptional"]];
-		BXAssertLog ([[self class] registerProperty: self entity: mEntity], 
-					   @"Expected to have only single instance of property %@.", self);
 	}
 	return self;
 }
@@ -106,10 +79,6 @@ __strong static id gProperties = nil;
 
 - (unsigned int) hash
 {
-	if (0 == mHash)
-	{
-		mHash = [super hash] ^ [mEntity hash];
-	}
 	return mHash;
 }
 
@@ -134,16 +103,14 @@ __strong static id gProperties = nil;
 
 - (NSComparisonResult) caseInsensitiveCompare: (BXPropertyDescription *) anotherObject
 {
-    BXAssertValueReturn ([anotherObject isKindOfClass: [BXPropertyDescription class]], NSOrderedSame,
-						   @"Property descriptions can only be compared with other similar objects for now.");
-    NSComparisonResult rval = NSOrderedSame;
+    NSComparisonResult retval = NSOrderedSame;
     if (self != anotherObject)
     {
-        rval = [mEntity caseInsensitiveCompare: [anotherObject entity]];
-        if (NSOrderedSame == rval)
-            rval = [mName caseInsensitiveCompare: [anotherObject name]];
+        retval = [[self entity] caseInsensitiveCompare: [anotherObject entity]];
+        if (NSOrderedSame == retval)
+            retval = [[self name] caseInsensitiveCompare: [anotherObject name]];
     }
-    return rval;
+    return retval;
 }
 
 /** \brief Whether the property is optional. */
@@ -160,43 +127,12 @@ __strong static id gProperties = nil;
 
 
 @implementation BXPropertyDescription (PrivateMethods)
-
-+ (void) initialize
+- (void) setOptional: (BOOL) optional
 {
-	static BOOL tooLate = NO;
-	if (!tooLate)
-	{
-		tooLate = YES;
-		gProperties = [[NSMutableSet alloc] init];
-	}
-}
-
-+ (BOOL) registerProperty: (id) aProperty entity: (BXEntityDescription *) entity
-{
-	BOOL retval = NO;
-
-	@synchronized (gProperties)
-	{
-		if (! [gProperties containsObject: aProperty])
-		{
-			retval = YES;
-			//FIXME: testing.
-			//[gProperties addObject: aProperty];
-		}
-	}
-
-	BXLogDebug (@"Called registerProperty: %@ entity: %@", [aProperty qualifiedName], entity);
-
-	return retval;
-}
-
-+ (void) unregisterProperty: (id) aProperty entity: (BXEntityDescription *) entity
-{
-	BXLogDebug (@"Called unregisterProperty: %@ entity: %@", [aProperty qualifiedName], entity);
-	@synchronized (gProperties)
-	{
-		[gProperties removeObject: aProperty];
-	}
+	if (optional)
+		mFlags |= kBXPropertyOptional;
+	else
+		mFlags &= ~kBXPropertyOptional;	
 }
 
 /**
@@ -207,32 +143,16 @@ __strong static id gProperties = nil;
 {
     if ((self = [super initWithName: aName]))
     {
-		[self setEntity: anEntity];
-		//Check only since only our code is supposed to create new properties.
-		BXAssertLog ([[self class] registerProperty: self entity: mEntity], 
-					 @"Expected to have only single instance of property %@.", self);
+		mEntity = anEntity;
+		mHash = [super hash] ^ [mEntity hash];
 	}
 	return self;
 }
 
 - (id) initWithName: (NSString *) name
 {
-	BXLogError (@"This initializer should not have been called (name: %@).", name);
-    [self release];
+	[self doesNotRecognizeSelector: _cmd];
     return nil;
-}
-
-- (void) setEntity: (BXEntityDescription *) anEntity
-{
-	mEntity = anEntity; //Weak
-}
-
-- (void) setOptional: (BOOL) aBool
-{
-	if (aBool)
-		mFlags |= kBXPropertyOptional;
-	else
-		mFlags &= ~kBXPropertyOptional;
 }
 
 - (NSString *) qualifiedName

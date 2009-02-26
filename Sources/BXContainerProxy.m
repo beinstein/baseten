@@ -96,6 +96,7 @@
 	return [self retain];
 }
 
+//FIXME: need we this?
 #if 0
 - (id) mutableCopyWithZone: (NSZone *) aZone
 {
@@ -232,7 +233,7 @@
     NSMutableArray *addedObjects = nil, *removedObjects = nil;
     [self filterObjectsForUpdate: objects added: &addedObjects removed: &removedObjects];        
 
-	//Remove redundant objects
+	//Remove redundant objects.
 	BXEnumerate (currentObject, e, [[[addedObjects copy] autorelease] objectEnumerator])
 	{
 		if ([mContainer containsObject: currentObject])

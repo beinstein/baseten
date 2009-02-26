@@ -44,6 +44,8 @@
 #import "PGTSProbes.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "PGTSMetadataStorage.h"
+#import "PGTSMetadataContainer.h"
 
 
 @interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
@@ -99,6 +101,8 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
             }
 			kPGTSConnectionDictionaryKeys = keys;
 		}
+		
+		[[PGTSMetadataStorage defaultStorage] setContainerClass: [PGTSEFMetadataContainer class]];
 	}
 }
 
@@ -116,6 +120,8 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 - (void) freeCFTypes
 {
 	//Don't release the connection. Delegate will handle it.
+	
+	//NSLog (@"removing socket: %p socketSource: %p", mSocket, mSocketSource);
 
 	if (mReachability)
 	{
@@ -150,7 +156,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
     [self disconnect];
 	[mQueue release];
 	[self setConnector: nil];
-    [mDatabase release];
+    [mMetadataContainer release];
 	[mPGTypes release];
     [self freeCFTypes];
 	[super dealloc];
@@ -165,9 +171,8 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 
 - (BOOL) connectUsingClass: (Class) connectorClass connectionString: (NSString *) connectionString
 {
-	PGTSConnector* connector = [[connectorClass alloc] init];
+	PGTSConnector* connector = [[[connectorClass alloc] init] autorelease];
 	[self setConnector: connector];
-	[connector release];
 	
 	[connector setConnection: mConnection]; //For resetting.
 	[connector setDelegate: self];
@@ -312,22 +317,26 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
     mDelegate = anObject;
 }
 
-- (PGTSDatabaseDescription *) databaseDescription
+- (void) reloadDatabaseDescription
 {
-    if (! mDatabase)
-    {
-		mDatabase = [[PGTSDatabaseDescription databaseForConnection: self] retain];
-    }
-    return mDatabase;
+	if (mMetadataContainer)
+		[mMetadataContainer reloadUsingConnection: self];
+	else
+		[self databaseDescription];
 }
 
-- (void) setDatabaseDescription: (PGTSDatabaseDescription *) aDesc
+- (PGTSDatabaseDescription *) databaseDescription
 {
-    if (mDatabase != aDesc)
+    if (! mMetadataContainer)
     {
-        [mDatabase release];
-		mDatabase = [[aDesc proxyForConnection: self] retain];
+		NSString* keyFormat = [NSString stringWithFormat: @"//%s@%s:%s/%s",
+							   PQuser (mConnection), PQhost (mConnection), PQport (mConnection), PQdb (mConnection)];
+		NSURL* metadataKey = [NSURL URLWithString: keyFormat];
+		
+		mMetadataContainer = [[[PGTSMetadataStorage defaultStorage] metadataContainerForURI: metadataKey] retain];
+		[mMetadataContainer prepareForConnection: self];
     }
+    return [mMetadataContainer databaseDescription];
 }
 
 - (id) deserializationDictionary
@@ -453,6 +462,13 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	mLogsQueries = flag;
 }
 
+- (void) logIfNeeded: (PGTSResultSet *) res
+{
+	if (mLogsQueries)
+		[mDelegate PGTSConnection: self receivedResultSet: res];
+}
+
+
 - (SSL *) SSLStruct
 {
 	return (SSL *) PQgetssl (mConnection);
@@ -534,6 +550,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
 	CFSocketSetSocketFlags (mSocket, flags);
 	mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
+	//NSLog (@"created socket: %p socketSource: %p", mSocket, mSocketSource);
 	
 	BXAssertLog (mSocket, @"Expected source to have been created.");
 	BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");

@@ -2,7 +2,7 @@
 // PGTSAbstractDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -29,55 +29,41 @@
 #import <Foundation/Foundation.h>
 
 
-@class PGTSConnection;
-@class PGTSAbstractDescription;
 @class PGTSDatabaseDescription;
 
 
-inline
-id PGTSNilReturn (id anObject)
+@interface PGTSAbstractDescription : NSObject <NSCopying>
 {
-	return [NSNull null] == anObject ? nil : anObject;
-}
-
-
-@protocol PGTSDescription
-- (PGTSDatabaseDescription *) database;
-- (PGTSConnection *) connection;
-@end
-
-
-@interface PGTSAbstractDescriptionProxy : NSProxy <PGTSDescription>
-{
-	PGTSConnection* mConnection; //Weak; connection owns self.
-	PGTSAbstractDescription* mDescription;
-	id mInvocationRecorder;
-}
-- (id) initWithConnection: (PGTSConnection *) connection
-			  description: (PGTSAbstractDescription *) anObject;
-- (id) performSynchronizedAndReturnObject;
-- (void) performSynchronizedOnDescription: (NSInvocation *) invocation;
-- (id) performSynchronizedAndReturnProxies;
-- (id) invocationRecorder;
-@end
-
-
-@interface PGTSAbstractDescription : NSObject <NSCopying, PGTSDescription>
-{
-    PGTSConnection* mConnection; //Weak
-	PGTSAbstractDescriptionProxy* mProxy; //Weak;
-	
     NSString* mName;
     unsigned int mHash;
 }
-
 + (BOOL) accessInstanceVariablesDirectly;
 - (NSString *) name;
-- (void) setName: (NSString *) aString;
-- (id) proxy;
-- (Class) proxyClass;
 
-//FIXME: these are private.
-- (void) setConnection: (PGTSConnection *) aConnection;
-- (void) setDescriptionProxy: (PGTSAbstractDescriptionProxy *) aProxy;
+//Thread un-safe methods.
+- (void) setName: (NSString *) aName;
 @end
+
+
+#if defined (__cplusplus)
+#import <BaseTen/PGTSCollections.h>
+#import <BaseTen/PGTSOids.h>
+namespace PGTS 
+{
+	//FIXME: this isn't very good but apparently partial function template specialization isn't easy.
+	template <typename T> NSMutableDictionary*
+	CreateCFMutableDictionaryWithNames (T *map)
+	{
+		NSMutableDictionary* retval = [[NSMutableDictionary alloc] initWithCapacity: map->size ()];
+		for (typename T::const_iterator it = map->begin (), end = map->end (); end != it; it++)
+		{
+			id currentObject = it->second;
+			[retval setObject: currentObject forKey: [currentObject name]];
+		}
+		
+		return retval;				
+	}
+	
+	void InsertConditionally (IdMap* map, PGTSAbstractDescription* description);
+}
+#endif

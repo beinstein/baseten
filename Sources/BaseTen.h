@@ -26,12 +26,6 @@
 // $Id$
 //
 
-//FIXME: this doesn't seem to work.
-#if 0 && MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define NSUInteger unsigned int
-#define NSInteger int
-#endif
-
 
 #import <BaseTen/BXConstants.h>
 #import <BaseTen/BXDatabaseContext.h>
@@ -46,12 +40,12 @@
 /*
  * Helpful breakpoints:
  *
- * _log4AssertionDebug
+ * BXHandleError2
+ * BXAssertionDebug
  * bx_error_during_rollback
  * bx_error_during_clear_notification
  * bx_test_failed
  * pgts_unrecognized_selector
- * BXHandleError2
  *
  */
 

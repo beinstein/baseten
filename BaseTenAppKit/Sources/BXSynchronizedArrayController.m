@@ -388,6 +388,25 @@ IsKindOfClass (id self, Class class)
 								  withFieldValues: fieldValues error: outError];
 }
 
+
+struct value_dictionary_st
+{
+	__strong BXDatabaseObject* vd_object;
+	__strong NSDictionary* vd_attrs;
+	__strong NSMutableDictionary* vd_values;
+};
+
+
+static void
+ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
+{
+	struct value_dictionary_st* ctx = (struct value_dictionary_st *) ctxPtr;
+	BXAttributeDescription* attr = [ctx->vd_attrs objectForKey: srcKey];
+	id value = [ctx->vd_object primitiveValueForKey: dstKey] ?: [NSNull null];
+	[ctx->vd_values setObject: value forKey: attr];
+}
+
+
 - (NSDictionary *) valuesForBoundRelationship
 {
 	NSDictionary* retval = nil;
@@ -399,8 +418,10 @@ IsKindOfClass (id self, Class class)
 		id boundObject = [observedObject valueForKeyPath: [bindingInfo objectForKey: NSObservedKeyPathKey]];
 		if ([boundObject BXIsRelationshipProxy] && ![[boundObject relationship] isOptional])
 		{
-			retval = [[[boundObject relationship] foreignKey] srcDictionaryFor: mEntityDescription 
-														   valuesFromDstObject: [boundObject owner]];
+			NSDictionary* attrs = [mEntityDescription attributesByName];
+			NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [attrs count]];
+			struct value_dictionary_st ctx = {[boundObject owner], attrs, values};
+			[[boundObject relationship] iterateForeignKey: &ValueDictionary context: &ctx];
 		}
 	}
 	return retval;

@@ -33,6 +33,9 @@
 
 @interface BXPGModificationHandler : BXPGTableNotificationHandler
 {
+	NSString* mQueryString;
+	Oid mOid;
 }
 - (void) checkModifications: (int) backendPID;
+- (void) setOid: (Oid) oid;
 @end

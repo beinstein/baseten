@@ -63,10 +63,27 @@ HOMTrampoline (id self, SEL callback, id userInfo)
 }
 
 
-static void
-CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
+static id
+KeyTrampoline (id self, SEL callback, id userInfo)
 {
-	BXEnumerate (currentObject, e, [self objectEnumerator])
+	id retval = nil;
+	if (0 < [self count])
+	{
+		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
+		[recorder setCallback: callback];
+		[recorder setCallbackTarget: self];
+		[recorder setTarget: [[self keyEnumerator] nextObject]];
+		retval = [recorder record];
+	}
+	return retval;
+}
+
+
+static void
+CollectAndPerform (id self, id retval, NSInvocation* invocation, NSEnumerator* e)
+{
+	id currentObject = nil;
+	while ((currentObject = [e nextObject]))
 	{
 		[invocation invokeWithTarget: currentObject];
 		id collected = nil;
@@ -79,15 +96,32 @@ CollectAndPerformSetArray (id self, id retval, NSInvocation* invocation)
 
 
 static void
-CollectAndPerformKeysSetArray (id self, id retval, NSInvocation* invocation)
+CollectAndPerformD (id self, NSMutableDictionary* retval, NSInvocation* invocation, NSEnumerator* e)
 {
-	BXEnumerate (currentObject, e, [self objectEnumerator])
+	id currentObject = nil;
+	while ((currentObject = [e nextObject]))
 	{
 		[invocation invokeWithTarget: currentObject];
 		id collected = nil;
 		[invocation getReturnValue: &collected];
-		if (! collected) collected = [NSNull null];
-		[retval setObject: collected forKey: currentObject];
+		if (collected)
+			[retval setObject: currentObject forKey: collected];
+	}
+	[invocation setReturnValue: &retval];
+}
+
+
+static void
+CollectAndPerformDK (id self, NSMutableDictionary* retval, NSInvocation* invocation, NSEnumerator* e)
+{
+	id currentObject = nil;
+	while ((currentObject = [e nextObject]))
+	{
+		[invocation invokeWithTarget: currentObject];
+		id collected = nil;
+		[invocation getReturnValue: &collected];
+		if (collected)
+			[retval setObject: collected forKey: currentObject];
 	}
 	[invocation setReturnValue: &retval];
 }
@@ -148,9 +182,19 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return [self PGTSCollectReturning: [NSMutableSet class]];
 }
 
-- (id) PGTSKeyCollect
+- (id) PGTSCollectReturning: (Class) aClass
 {
-	return HOMTrampoline (self, @selector (PGTSKeyCollect:userInfo:), nil);
+	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
+}
+
+- (id) PGTSCollectD
+{
+	return HOMTrampoline (self, @selector (PGTSCollectD:userInfo:), nil);
+}
+
+- (id) PGTSCollectDK
+{
+	return HOMTrampoline (self, @selector (PGTSCollectDK:userInfo:), nil);
 }
 
 - (id) PGTSSelectFunction: (int (*)(id)) fptr
@@ -168,13 +212,19 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 - (void) PGTSCollect: (NSInvocation *) invocation userInfo: (Class) retclass
 {
 	id retval = [[[retclass alloc] initWithCapacity: [self count]] autorelease];
-	CollectAndPerformSetArray (self, retval, invocation);
+	CollectAndPerform (self, retval, invocation, [self objectEnumerator]);
 }
 
-- (void) PGTSKeyCollect: (NSInvocation *) invocation userInfo: (id) ignored
+- (void) PGTSCollectD: (NSInvocation *) invocation userInfo: (id) ignored
 {
 	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
-	CollectAndPerformKeysSetArray (self, retval, invocation);
+	CollectAndPerformD (self, retval, invocation, [self objectEnumerator]);
+}
+
+- (void) PGTSCollectDK: (NSInvocation *) invocation userInfo: (id) ignored
+{
+	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
+	CollectAndPerformDK (self, retval, invocation, [self objectEnumerator]);
 }
 
 - (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) anObject
@@ -185,11 +235,6 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 - (void) PGTSVisit: (NSInvocation *) invocation userInfo: (id) userInfo
 {
 	Visit (invocation, [self objectEnumerator]);
-}
-
-- (id) PGTSCollectReturning: (Class) aClass
-{
-	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
 }
 
 - (id) PGTSDo
@@ -220,14 +265,19 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return [self PGTSCollectReturning: [NSMutableArray class]];
 }
 
-- (id) PGTSKeyCollect
-{
-	return HOMTrampoline (self, @selector (PGTSKeyCollect:userInfo:), nil);
-}
-
 - (id) PGTSCollectReturning: (Class) aClass
 {
 	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
+}
+
+- (id) PGTSCollectD
+{
+	return HOMTrampoline (self, @selector (PGTSCollectD:userInfo:), nil);
+}
+
+- (id) PGTSCollectDK
+{
+	return HOMTrampoline (self, @selector (PGTSCollectDK:userInfo:), nil);
 }
 
 - (id) PGTSDo
@@ -255,13 +305,19 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 - (void) PGTSCollect: (NSInvocation *) invocation userInfo: (Class) retclass
 {
 	id retval = [[[retclass alloc] initWithCapacity: [self count]] autorelease];
-	CollectAndPerformSetArray (self, retval, invocation);
+	CollectAndPerform (self, retval, invocation, [self objectEnumerator]);
 }
 
-- (void) PGTSKeyCollect: (NSInvocation *) invocation userInfo: (id) ignored
+- (void) PGTSCollectD: (NSInvocation *) invocation userInfo: (id) ignored
 {
 	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
-	CollectAndPerformKeysSetArray (self, retval, invocation);
+	CollectAndPerformD (self, retval, invocation, [self objectEnumerator]);
+}
+
+- (void) PGTSCollectDK: (NSInvocation *) invocation userInfo: (id) ignored
+{
+	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
+	CollectAndPerformDK (self, retval, invocation, [self objectEnumerator]);
 }
 
 - (void) PGTSDo: (NSInvocation *) invocation userInfo: (id) userInfo
@@ -284,7 +340,27 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 
 - (id) PGTSCollect
 {
-	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), nil);
+	return [self PGTSCollectReturning: [NSMutableArray class]];
+}
+
+- (id) PGTSCollectReturning: (Class) aClass
+{
+	return HOMTrampoline (self, @selector (PGTSCollect:userInfo:), aClass);
+}
+
+- (id) PGTSCollectD
+{
+	return HOMTrampoline (self, @selector (PGTSCollectD:userInfo:), nil);
+}
+
+- (id) PGTSCollectDK
+{
+	return HOMTrampoline (self, @selector (PGTSCollectDK:userInfo:), nil);
+}
+
+- (id) PGTSKeyCollectDK
+{
+	return KeyTrampoline (self, @selector (PGTSKeyCollectDK:userInfo:), nil);
 }
 
 - (id) PGTSDo
@@ -297,30 +373,35 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return VisitorTrampoline (self, visitor, @selector (PGTSVisit:userInfo:), nil);
 }
 
-- (void) PGTSCollect: (NSInvocation *) invocation userInfo: (id) userInfo
+- (void) PGTSCollect: (NSInvocation *) invocation userInfo: (Class) retclass
 {
-	id retval = [[self mutableCopy] autorelease];
-	BXEnumerate (currentKey, e, [self keyEnumerator])
-	{
-		[invocation invokeWithTarget: [self objectForKey: currentKey]];
-		id collected = nil;
-		[invocation getReturnValue: &collected];
-		if (! collected) collected = [NSNull null];
-		[retval setObject: collected forKey: currentKey];
-	}
-	[invocation setReturnValue: &retval];	
+	id retval = [[[retclass alloc] initWithCapacity: [self count]] autorelease];
+	CollectAndPerform (self, retval, invocation, [self objectEnumerator]);
 }
 
-- (void) PGTSKeyCollect: (NSInvocation *) invocation userInfo: (id) userInfo
+- (void) PGTSCollectD: (NSInvocation *) invocation userInfo: (id) ignored
 {
-	id retval = [NSMutableDictionary dictionaryWithCapacity: [self count]];
+	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
+	CollectAndPerformD (self, retval, invocation, [self objectEnumerator]);
+}
+
+- (void) PGTSCollectDK: (NSInvocation *) invocation userInfo: (id) ignored
+{
+	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
+	CollectAndPerformDK (self, retval, invocation, [self objectEnumerator]);
+}
+
+- (void) PGTSKeyCollectDK: (NSInvocation *) invocation userInfo: (id) ignored
+{
+	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
 	BXEnumerate (currentKey, e, [self keyEnumerator])
 	{
-		id collected = nil;
+		id value = [self objectForKey: currentKey];
+		id newKey = nil;
 		[invocation invokeWithTarget: currentKey];
-		[invocation getReturnValue: &collected];
-		if (collected)
-			[retval setObject: [self objectForKey: currentKey] forKey: collected];
+		[invocation getReturnValue: &newKey];
+		if (newKey)
+			[retval setObject: value forKey: newKey];
 	}
 	[invocation setReturnValue: &retval];
 }
@@ -345,19 +426,5 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 {
 	id retval = [NSMutableArray arrayWithCapacity: [self count]];
 	return SelectFunction2 (self, retval, fptr, arg);
-}
-
-- (id) PGTSKeyCollect
-{
-	id retval = nil;
-	if (0 < [self count])
-	{
-		PGTSCallbackInvocationRecorder* recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
-		[recorder setCallback: @selector (PGTSKeyCollect:userInfo:)];
-		[recorder setCallbackTarget: self];
-		[recorder setTarget: [[self allKeys] PGTSAny]];
-		retval = [recorder record];
-	}
-	return retval;
 }
 @end

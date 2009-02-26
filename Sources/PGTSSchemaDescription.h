@@ -2,7 +2,7 @@
 // PGTSSchemaDescription.h
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -28,16 +28,22 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/postgresql/libpq-fe.h>
-#import "PGTSAbstractDescription.h"
+#import <BaseTen/PGTSAbstractObjectDescription.h>
+#import <BaseTen/PGTSCollections.h>
 
 
 @class PGTSTableDescription;
-@class PGTSTypeDescription;
-@class PGTSConnectionPoolItem;
 
 
-@interface PGTSSchemaDescription : PGTSAbstractDescription 
+@interface PGTSSchemaDescription : PGTSAbstractObjectDescription 
 {
+	PGTS_IdMap* mTablesByName;
+	NSArray* mAllTables;
+	NSLock* mTableLock;
 }
+- (PGTSTableDescription *) tableNamed: (NSString *) name;
+- (NSArray *) allTables;
 
+//Thread un-safe methods.
+- (void) addTable: (PGTSTableDescription *) table;
 @end

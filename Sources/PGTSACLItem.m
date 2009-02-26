@@ -2,7 +2,7 @@
 // PGTSACLItem.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,12 +27,14 @@
 //
 
 #import "PGTSACLItem.h"
-#import "PGTSRoleDescription.h"
-#import "PGTSResultSet.h"
-#import "PGTSTypeDescription.h"
 #import "PGTSConnection.h"
+#import "PGTSResultSet.h"
+#import "PGTSConstants.h"
 #import "PGTSDatabaseDescription.h"
 #import "BXLogger.h"
+
+
+@class PGTSTypeDescription;
 
 
 @implementation PGTSACLItem
@@ -60,7 +62,8 @@
 
 - (void) setRole: (PGTSRoleDescription *) aRole
 {
-    if (mRole != aRole) {
+    if (mRole != aRole) 
+	{
         [mRole release];
         mRole = [aRole retain];
     }
@@ -73,7 +76,8 @@
 
 - (void) setGrantingRole: (PGTSRoleDescription *) aGrantingRole
 {
-    if (mGrantingRole != aGrantingRole) {
+    if (mGrantingRole != aGrantingRole) 
+	{
         [mGrantingRole release];
         mGrantingRole = [aGrantingRole retain];
     }
@@ -181,5 +185,4 @@
     
     return retval;    
 }
-
 @end

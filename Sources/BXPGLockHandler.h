@@ -34,6 +34,9 @@
 @interface BXPGLockHandler : BXPGTableNotificationHandler
 {
 	NSString* mLockFunctionName;
+	NSString* mLockTableName;
 }
+- (void) setLockTableName: (NSString *) aName;
+- (void) setLockFunctionName: (NSString *) name;
 - (NSString *) lockFunctionName;
 @end

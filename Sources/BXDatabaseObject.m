@@ -158,7 +158,7 @@ ParseSelector (SEL aSelector, NSString** key)
 + (void) initialize
 {
     static BOOL tooLate = NO;
-    if (NO == tooLate)
+    if (! tooLate)
     {
         tooLate = YES; 
     }
@@ -166,13 +166,13 @@ ParseSelector (SEL aSelector, NSString** key)
 
 - (NSString *) description
 {
-    NSString* rval = nil;
+    NSString* retval = nil;
     @synchronized (mValues)
     {
-        rval = [NSString stringWithFormat: @"%@ (%p) \n\t\tURI: %@ \n\t\tisFault: %d \n\t\tentity: %@", 
-            [self class], self, [[self objectID] URIRepresentation], [self isFaultKey: nil], [[mObjectID entity] name]];
+        retval = [NSString stringWithFormat: @"<%@ (%p) %@ fault: %d>", 
+				[self class], self, [[self objectID] URIRepresentation], [self isFaultKey: nil]];
     }
-    return rval;
+    return retval;
 }
 
 /** 
@@ -580,9 +580,9 @@ ParseSelector (SEL aSelector, NSString** key)
 				id newTargets = nil;
 				if (0 < [rels count])
 				{
-					oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+					oldTargets = [[rels PGTSCollectDK] registeredTargetFor: self fireFault: NO];
 					[self setCachedValue: aVal forKey: aKey];
-					newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+					newTargets = [[rels PGTSCollectDK] registeredTargetFor: self fireFault: NO];
 					[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				}
 				
@@ -658,9 +658,9 @@ ParseSelector (SEL aSelector, NSString** key)
 	id newTargets = nil;
 	if (0 < [rels count])
 	{
-		oldTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+		oldTargets = [[rels PGTSCollectDK] registeredTargetFor: self fireFault: NO];
 		[self setCachedValuesForKeysWithDictionary: aDict];
-		newTargets = [[rels PGTSKeyCollect] registeredTargetFor: self fireFault: NO];
+		newTargets = [[rels PGTSCollectDK] registeredTargetFor: self fireFault: NO];
 		[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 	}
 		
@@ -698,30 +698,30 @@ ParseSelector (SEL aSelector, NSString** key)
  */
 - (int) isFaultKey: (NSString *) aKey
 {
-    int rval = -1; //Unknown key
+    int retval = -1; //Unknown key
     if (nil == aKey)
     {
-        rval = 0;
+        retval = 0;
         NSArray* knownKeys = [[self cachedValues] allKeys];
         BXEnumerate (currentProp, e, [[[mObjectID entity] fields] objectEnumerator])
         {
             if (NO == [knownKeys containsObject: [currentProp name]])
             {
-                rval = 1;
+                retval = 1;
                 break;
             }
         }
     }
     else if (nil != [self cachedValueForKey: aKey])
     {
-        rval = 0;
+        retval = 0;
     }
-    else if ([[[[mObjectID entity] fields] valueForKey: @"name"] containsObject: aKey])
+    else if (kBXDatabaseObjectUnknownKey != [self keyType: aKey])
     {
         //Fault since the key is known but doensn't have a cached value
-        rval = 1;
+        retval = 1;
     }
-    return rval;
+    return retval;
 }
 
 /**
@@ -895,7 +895,7 @@ ParseSelector (SEL aSelector, NSString** key)
         entity = [mObjectID entity];
 	
     //Object ID
-    NSArray* pkeyFNames = [[entity primaryKeyFields] valueForKey: @"name"];
+    NSArray* pkeyFNames = (id) [[[entity primaryKeyFields] PGTSCollect] name];
     NSArray* pkeyFValues = nil;
     
     @synchronized (mValues)
@@ -1270,12 +1270,10 @@ ParseSelector (SEL aSelector, NSString** key)
 		{
 			BXDatabaseObject* oldTarget = [oldTargets objectForKey: currentRelationship];
 			BXDatabaseObject* newTarget = [newTargets objectForKey: currentRelationship];
-			if (oldTarget && newTarget)
-			{
-				NSString* inverseName = [inverse name];
-				callback (oldTarget, inverseName);
-				callback (newTarget, inverseName);
-			}
+
+			NSString* inverseName = [inverse name];
+			callback (oldTarget, inverseName);
+			callback (newTarget, inverseName);
 		}
 	}	
 }

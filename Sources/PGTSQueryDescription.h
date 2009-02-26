@@ -39,7 +39,7 @@
 - (void) setCallback: (SEL) aSel;
 - (id) delegate;
 - (void) setDelegate: (id) anObject;
-- (int) identifier;
+- (NSInteger) identifier;
 - (PGTSQuery *) query;
 - (void) setQuery: (PGTSQuery *) aQuery;
 - (void) setUserInfo: (id) userInfo;
@@ -57,7 +57,7 @@
 {
 	SEL mCallback;
 	id mDelegate; //Weak
-	int mIdentifier;
+	NSInteger mIdentifier;
 	PGTSQuery* mQuery;
 	id mUserInfo;
 	BOOL mSent;

@@ -6,6 +6,22 @@
 	objectVersion = 42;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		53A0DAD40F4B6DDC00434E4E /* Coverage */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 53A0DADE0F4B6E6E00434E4E /* Build configuration list for PBXAggregateTarget "Coverage" */;
+			buildPhases = (
+				53A0DADB0F4B6E0200434E4E /* Run Unit Tests */,
+				53A0DADD0F4B6E2D00434E4E /* Generate Coverage Report */,
+			);
+			dependencies = (
+				53A0DAD90F4B6DE500434E4E /* PBXTargetDependency */,
+			);
+			name = Coverage;
+			productName = "Run unit tests";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		5317CEB20D1ACB0900A48792 /* UndoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B2C1390BE88608002B66B1 /* UndoTests.m */; };
 		5317CEB40D1ACB0B00A48792 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
@@ -14,12 +30,14 @@
 		5317CEB70D1ACB0E00A48792 /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
 		5317CEB80D1ACB0E00A48792 /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
 		5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
-		5317CEBB0D1ACB1000A48792 /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
 		5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
 		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
 		535627B90E6E805D002EA3FD /* PredicateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535627B80E6E805D002EA3FD /* PredicateTests.m */; };
+		536C463A0F2E1CED003A8231 /* PGTSMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */; };
+		5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
+		53A0DAF80F4B754100434E4E /* CreateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD96760A5C1DC3001C950C /* CreateTests.m */; };
 		53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
 		53C98A140CF0803A00D6A0A7 /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
 		53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */; };
@@ -42,6 +60,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = 535444130D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
+		};
+		53A0DAD80F4B6DE500434E4E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 530A43530A5C0DC500A4722B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 530A438B0A5C0FD000A4722B;
+			remoteInfo = UnitTests;
 		};
 		53A59ACE0E34DFD20026D7E1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -79,8 +104,12 @@
 		535717AC0CDE69C60084DD92 /* ObjectTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectTests.h; path = Sources/ObjectTests.h; sourceTree = "<group>"; };
 		535717AD0CDE69C60084DD92 /* ObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectTests.m; path = Sources/ObjectTests.m; sourceTree = "<group>"; };
 		535717B50CDE6B2F0084DD92 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = /Library/Frameworks/OCMock.framework; sourceTree = "<absolute>"; };
+		536C46380F2E1CED003A8231 /* PGTSMetadataTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSMetadataTests.h; path = Sources/PGTSMetadataTests.h; sourceTree = "<group>"; };
+		536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSMetadataTests.m; path = Sources/PGTSMetadataTests.m; sourceTree = "<group>"; };
 		5373A65C0A6D3F9A0036424B /* ModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModificationTests.h; path = Sources/ModificationTests.h; sourceTree = "<group>"; };
 		5373A65D0A6D3F9A0036424B /* ModificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ModificationTests.m; path = Sources/ModificationTests.m; sourceTree = "<group>"; };
+		5375C2500F3BAD88002CBF78 /* BXDatabaseContextTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextTests.h; path = Sources/BXDatabaseContextTests.h; sourceTree = "<group>"; };
+		5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextTests.m; path = Sources/BXDatabaseContextTests.m; sourceTree = "<group>"; };
 		539C4F5C0C4E389700080667 /* PropagatedModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PropagatedModificationTests.h; path = Sources/PropagatedModificationTests.h; sourceTree = "<group>"; };
 		539C4F5D0C4E389700080667 /* PropagatedModificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PropagatedModificationTests.m; path = Sources/PropagatedModificationTests.m; sourceTree = "<group>"; };
 		539C51280C4E4EE000080667 /* ForeignKeyModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForeignKeyModificationTests.h; path = Sources/ForeignKeyModificationTests.h; sourceTree = "<group>"; };
@@ -103,6 +132,13 @@
 		53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTOCollectionTest.m; path = Sources/MTOCollectionTest.m; sourceTree = "<group>"; };
 		53EAD1B40A668733008F3CE5 /* ForeignKeyTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForeignKeyTests.h; path = Sources/ForeignKeyTests.h; sourceTree = "<group>"; };
 		53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ForeignKeyTests.m; path = Sources/ForeignKeyTests.m; sourceTree = "<group>"; };
+		989B4E7A0F45D73200CE048A /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
+		989B4E7B0F45D73200CE048A /* coverage-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "coverage-gc.xcconfig"; sourceTree = "<group>"; };
+		989B4E7C0F45D73200CE048A /* coverage-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "coverage-non-gc.xcconfig"; sourceTree = "<group>"; };
+		989B4E7D0F45D73200CE048A /* debug-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "debug-gc.xcconfig"; sourceTree = "<group>"; };
+		989B4E7E0F45D73200CE048A /* debug-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "debug-non-gc.xcconfig"; sourceTree = "<group>"; };
+		989B4E7F0F45D73200CE048A /* release-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-gc.xcconfig"; sourceTree = "<group>"; };
+		989B4E800F45D73200CE048A /* release-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-non-gc.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +168,7 @@
 				539C4FA20C4E39F700080667 /* Disabled tests */,
 				53BD96D30A5C2506001C950C /* Dependencies */,
 				530A438D0A5C0FD000A4722B /* Products */,
+				989B4E790F45D73200CE048A /* xcconfig */,
 				530A438E0A5C0FD000A4722B /* UnitTests-Info.plist */,
 			);
 			sourceTree = "<group>";
@@ -161,11 +198,22 @@
 				53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */,
 				535627B70E6E805D002EA3FD /* PredicateTests.h */,
 				535627B80E6E805D002EA3FD /* PredicateTests.m */,
+				5375C2500F3BAD88002CBF78 /* BXDatabaseContextTests.h */,
+				5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */,
 			);
 			name = "Tests not requiring a connection";
 			sourceTree = "<group>";
 		};
 		5357179C0CDE69950084DD92 /* Tests requiring a connection */ = {
+			isa = PBXGroup;
+			children = (
+				536C46370F2E1CC7003A8231 /* PGTS */,
+				536C46360F2E1CC0003A8231 /* BaseTen */,
+			);
+			name = "Tests requiring a connection";
+			sourceTree = "<group>";
+		};
+		536C46360F2E1CC0003A8231 /* BaseTen */ = {
 			isa = PBXGroup;
 			children = (
 				530A439D0A5C114E00A4722B /* ConnectTest.h */,
@@ -195,7 +243,16 @@
 				53CC514E0EC45F0B003D33BF /* ToOneChangeNotificationTests.h */,
 				53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */,
 			);
-			name = "Tests requiring a connection";
+			name = BaseTen;
+			sourceTree = "<group>";
+		};
+		536C46370F2E1CC7003A8231 /* PGTS */ = {
+			isa = PBXGroup;
+			children = (
+				536C46380F2E1CED003A8231 /* PGTSMetadataTests.h */,
+				536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */,
+			);
+			name = PGTS;
 			sourceTree = "<group>";
 		};
 		539C4FA20C4E39F700080667 /* Disabled tests */ = {
@@ -217,6 +274,21 @@
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
+		};
+		989B4E790F45D73200CE048A /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				989B4E7A0F45D73200CE048A /* common.xcconfig */,
+				989B4E7B0F45D73200CE048A /* coverage-gc.xcconfig */,
+				989B4E7C0F45D73200CE048A /* coverage-non-gc.xcconfig */,
+				989B4E7D0F45D73200CE048A /* debug-gc.xcconfig */,
+				989B4E7E0F45D73200CE048A /* debug-non-gc.xcconfig */,
+				989B4E7F0F45D73200CE048A /* release-gc.xcconfig */,
+				989B4E800F45D73200CE048A /* release-non-gc.xcconfig */,
+			);
+			name = xcconfig;
+			path = ../xcconfig;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 
@@ -259,6 +331,7 @@
 			projectRoot = "";
 			targets = (
 				530A438B0A5C0FD000A4722B /* UnitTests */,
+				53A0DAD40F4B6DDC00434E4E /* Coverage */,
 			);
 		};
 /* End PBXProject section */
@@ -297,6 +370,39 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		53A0DADB0F4B6E0200434E4E /* Run Unit Tests */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Unit Tests";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "TEST_BUNDLE=\"$BUILT_PRODUCTS_DIR/UnitTests.octest\"\n\necho \"[Unit tests] Running unit tests from $TEST_BUNDLE...\"\necho \"[Unit tests] $DEVELOPER_DIR/Tools/otest -SenTest BXTestLoader $TEST_BUNDLE\"\n\n\"$DEVELOPER_DIR/Tools/otest\" -SenTest BXTestLoader \"$TEST_BUNDLE\"\n";
+			showEnvVarsInLog = 0;
+		};
+		53A0DADD0F4B6E2D00434E4E /* Generate Coverage Report */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate Coverage Report";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ \"${CONFIGURATION}\" != 'Coverage' ]; then\n\texit\nfi\n\n# Settings\nGCOVRUNNER=\"$PROJECT_DIR/../Tools/gcovRunner.php\"\nREPORT_DIR=\"$PROJECT_DIR/../Coverage/UnitTests/`date +'%d-%m-%Y_%H-%M-%S'`\"\nREPORT_SUMMARY_FILE=\"$REPORT_DIR/Coverage-summary.txt\"\nREPORT_DETAILED_DIR=\"$REPORT_DIR/detailed-reports\"\n\nif [ -d \"$OBJROOT/BaseTen.build/$CONFIGURATION\" ]\nthen\n\tBASETEN_BUILD_DIR=\"$OBJROOT\" # Global build directories\nelse\n\tBASETEN_BUILD_DIR=\"$PROJECT_DIR/../build\" # Per-project build directories\nfi\n\nOBJECT_FILES_DIR=\"$BASETEN_BUILD_DIR/BaseTen.build/${CONFIGURATION}/BaseTen Framework + GC.build/Objects-$CURRENT_VARIANT/$CURRENT_ARCH\"\n# /Settings\n\necho \"[Coverage] Using object files from '$OBJECT_FILES_DIR'.\"\necho \"[Coverage] Creating coverage report summary '$REPORT_SUMMARY_FILE'.\"\n\nmkdir -p \"$REPORT_DIR\"\nmkdir -p \"$REPORT_DETAILED_DIR\"\n\nphp \"$GCOVRUNNER\" 'txt' \"$PROJECT_DIR/../Sources\" \"$OBJECT_FILES_DIR\" > \"$REPORT_SUMMARY_FILE\" 2> /dev/null\n\necho \"[Coverage] Copying detailed coverage reports from '$OBJECT_FILES_DIR' to '$REPORT_DETAILED_DIR'.\"\nfind \"$OBJECT_FILES_DIR\" -name '*.gcov' -exec cp '{}' \"$REPORT_DETAILED_DIR\" \\;\n\necho \"[Coverage] Appending '.txt' file extension to files in '$REPORT_DETAILED_DIR'.\"\npushd \"$REPORT_DETAILED_DIR\"\nfor f in *.gcov; do mv $f `basename $f`.txt; done\npopd\n\necho \"[Coverage] Coverage reports created at '$REPORT_DIR'.\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		530A43880A5C0FD000A4722B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -312,18 +418,25 @@
 				5317CEB70D1ACB0E00A48792 /* ModificationTests.m in Sources */,
 				5317CEB80D1ACB0E00A48792 /* ForeignKeyTests.m in Sources */,
 				5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */,
-				5317CEBB0D1ACB1000A48792 /* CreateTests.m in Sources */,
 				5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */,
 				53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */,
 				535627B90E6E805D002EA3FD /* PredicateTests.m in Sources */,
 				53DAA0590E6EEB46001DC1D9 /* KeyPathComponentTest.m in Sources */,
 				53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */,
+				536C463A0F2E1CED003A8231 /* PGTSMetadataTests.m in Sources */,
+				5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */,
+				53A0DAF80F4B754100434E4E /* CreateTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		53A0DAD90F4B6DE500434E4E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 530A438B0A5C0FD000A4722B /* UnitTests */;
+			targetProxy = 53A0DAD80F4B6DE500434E4E /* PBXContainerItemProxy */;
+		};
 		53D03BB90DE82987002D14C4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "BaseTen Framework + GC";
@@ -410,6 +523,77 @@
 			};
 			name = Release;
 		};
+		53A0DAD50F4B6DDC00434E4E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				PRODUCT_NAME = "Run unit tests";
+			};
+			name = Debug;
+		};
+		53A0DAD60F4B6DDC00434E4E /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Run unit tests";
+			};
+			name = Coverage;
+		};
+		53A0DAD70F4B6DDC00434E4E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				PRODUCT_NAME = "Run unit tests";
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+		989B4E810F45D73C00CE048A /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 989B4E7B0F45D73200CE048A /* coverage-gc.xcconfig */;
+			buildSettings = {
+			};
+			name = Coverage;
+		};
+		989B4E820F45D73C00CE048A /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUG_BUILD = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				FRAMEWORK_SEARCH_PATHS = (
+					"../build/$(BUILD_STYLE)",
+					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
+				);
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DEBUGGING_SYMBOLS = full;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_ENABLE_SYMBOL_SEPARATION = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
+				INFOPLIST_FILE = "UnitTests-Info.plist";
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
+				OTHER_LDFLAGS = "-lgcov";
+				PREBINDING = NO;
+				PRODUCT_NAME = UnitTests;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+				WARNING_CFLAGS = "-Wall";
+				WRAPPER_EXTENSION = octest;
+				ZERO_LINK = NO;
+			};
+			name = Coverage;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -417,6 +601,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				530A43550A5C0DC500A4722B /* Debug */,
+				989B4E810F45D73C00CE048A /* Coverage */,
 				530A43560A5C0DC500A4722B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -426,7 +611,18 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				530A43900A5C0FD200A4722B /* Debug */,
+				989B4E820F45D73C00CE048A /* Coverage */,
 				530A43910A5C0FD200A4722B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53A0DADE0F4B6E6E00434E4E /* Build configuration list for PBXAggregateTarget "Coverage" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53A0DAD50F4B6DDC00434E4E /* Debug */,
+				53A0DAD60F4B6DDC00434E4E /* Coverage */,
+				53A0DAD70F4B6DDC00434E4E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

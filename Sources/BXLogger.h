@@ -49,6 +49,10 @@
 	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return; }} while (0)
 #define BXAssertValueReturn(assertion, retval, message, ...) \
 	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return (retval); }} while (0)
+//C function variants.
+#define BXCAssertLog(...) BXCAssertLog(__VA_ARGS__)
+#define BXCAssertValueReturn(...) BXAssertValueReturn(__VA_ARGS__)
+#define BXCAssertVoidReturn(...) BXAssertVoidReturn(__VA_ARGS__)
 
 
 #define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to evaluate to true.");
@@ -71,7 +75,7 @@ enum BXLogLevel
 };
 
 //Do not use outside this file in case we decide to change the implementation.
-BX_EXPORT volatile enum BXLogLevel BXLogLevel;
+BX_EXPORT enum BXLogLevel BXLogLevel;
 
 
 BX_EXPORT void BXSetLogLevel (enum BXLogLevel level);

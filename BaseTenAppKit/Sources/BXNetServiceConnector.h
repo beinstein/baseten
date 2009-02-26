@@ -2,7 +2,7 @@
 // BXNetServiceConnector.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,28 +26,61 @@
 // $Id$
 //
 
-@class BXPanel;
-@class BXAuthenticationPanel;
 
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXConnectionSetupManagerProtocol.h>
+#import <BaseTenAppKit/BXHostPanel.h>
+#import <BaseTenAppKit/BXAuthenticationPanel.h>
+@class BXAuthenticationPanel;
+@class BXNetServiceConnector;
+@class BXDatabaseContext;
 
 
-@class BXConnectionPanel;
-
-@interface BXNetServiceConnector : NSObject <BXConnectionSetupManager>
+enum BXNSConnectorCurrentPanel
 {
-	IBOutlet BXDatabaseContext* databaseContext;	//Weak
-	IBOutlet NSWindow* modalWindow;					//Weak
-	
-	BXAuthenticationPanel* mAuthenticationPanel;
-    BXPanel* mPanel;
-	
-	BOOL mShouldStoreCredentials;
+	kBXNSConnectorNoPanel = 0,
+	kBXNSConnectorHostPanel,
+	kBXNSConnectorAuthenticationPanel
+};
+
+
+@protocol BXNSConnectorImplementation <NSObject>
+- (void) beginConnectionAttempt;
+- (void) endConnectionAttempt;
+- (NSString *) runLoopMode;
+- (void) presentError: (NSError *) error didEndSelector: (SEL) selector;
+- (void) displayHostPanel: (BXHostPanel *) hostPanel;
+- (void) endHostPanel: (BXHostPanel *) hostPanel;
+- (void) displayAuthenticationPanel: (BXAuthenticationPanel *) authenticationPanel;
+- (void) endAuthenticationPanel: (BXAuthenticationPanel *) authenticationPanel;
+@end
+
+
+@interface BXNSConnectorImplementation : NSObject
+{
+	BXNetServiceConnector* mConnector;
 }
-- (void) displayAuthenticationPanel;
-- (void) setPanel: (BXPanel *) aPanel;
-- (void) setAuthenticationPanel: (BXAuthenticationPanel *) aPanel;
-- (void) continueFromDatabaseSelection: (BXConnectionPanel *) panel returnCode: (int) returnCode;
+- (id) initWithConnector: (BXNetServiceConnector *) connector;
+@end
+
+
+@interface BXNetServiceConnector : NSObject <BXConnector, BXHostPanelDelegate, BXAuthenticationPanelDelegate>
+{
+	NSWindow* mModalWindow; //Weak
+	BXDatabaseContext* mContext; //Weak
+	BXNSConnectorImplementation <BXNSConnectorImplementation> *mConnectorImpl;
+	
+	BXHostPanel* mHostPanel;
+	BXAuthenticationPanel* mAuthenticationPanel;
+	enum BXNSConnectorCurrentPanel mCurrentPanel;
+	
+	CFHostRef mHost;
+	NSString* mHostName;
+	NSInteger mPort;
+}
+- (void) checkHostReachability: (NSString *) name;
+- (void) reachabilityCheckDidComplete: (const CFStreamError *) error;
+- (NSWindow *) modalWindow;
+- (void) endConnectionAttempt;
 @end

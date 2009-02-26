@@ -50,24 +50,22 @@ enum BXEntityFlag
     NSString*               mSchemaName;
     Class                   mDatabaseObjectClass;
 	NSDictionary*			mAttributes;
+    NSDictionary*			mRelationships;
 	NSLock*					mValidationLock;
 
     id                      mObjectIDs;    
-    id						mRelationships;
     id                      mSuperEntities;
     id                      mSubEntities;
     enum BXEntityFlag       mFlags;
 	enum BXEntityCapability mCapabilities;
 }
 
-- (void) dealloc2;
 - (NSURL *) databaseURI;
 - (NSString *) schemaName;
-- (BOOL) isEqual: (id) anObject;
+- (BOOL) isEqual: (BXEntityDescription *) desc;
 - (unsigned int) hash;
 - (void) setDatabaseObjectClass: (Class) cls;
 - (Class) databaseObjectClass;
-- (void) setPrimaryKeyFields: (NSArray *) anArray;
 - (NSDictionary *) attributesByName;
 - (NSArray *) primaryKeyFields;
 - (NSArray *) fields;

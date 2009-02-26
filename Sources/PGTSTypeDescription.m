@@ -2,7 +2,7 @@
 // PGTSTypeDescription.m
 // BaseTen
 //
-// Copyright (C) 2006 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -27,9 +27,6 @@
 //
 
 #import "PGTSTypeDescription.h"
-#import "PGTSResultSet.h"
-#import "PGTSConnection.h"
-#import "PGTSAdditions.h"
 
 
 /** 
@@ -47,37 +44,6 @@
         mDelimiter = '\0';
     }
     return self;
-}
-
-- (NSString *) description
-{
-	id retval = nil;
-	@synchronized (self)
-	{
-    	retval = [NSString stringWithFormat: @"%@ (%p) oid: %u sOid: %u sName: %@ t: %@ eOid: %u d: %c", 
-				  [self class], self, mOid, mSchemaOid, mSchemaName, mName, mElementOid, mDelimiter];
-	}
-	return retval;
-}
-
-- (Class) proxyClass
-{
-	return Nil;
-}
-
-- (id) proxy
-{
-	return self;
-}
-
-- (NSString *) name
-{
-	id retval = nil;
-	@synchronized (self)
-	{
-	    retval = [[mName copy] autorelease];
-	}
-	return retval;
 }
 
 //These are set once and never changed.

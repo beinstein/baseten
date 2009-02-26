@@ -27,21 +27,35 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BXPGInterface.h"
 
 divert(-1)
 include(`Resources/BaseTenModifications.sql.m4')
 divert(0)dnl
 
 
-NSNumber*
-BXPGCopyCurrentVersionNumber ()
+@implementation BXPGVersion
+__strong static NSDecimalNumber* gCurrentVersion = nil;
+__strong static NSDecimalNumber* gCurrentCompatVersion = nil;
+
++ (void) initialize
 {
-    return [[NSDecimalNumber alloc] initWithString: @"_bx_version_"];
+	static BOOL tooLate = NO;
+	if (! tooLate)
+	{
+		tooLate = YES;
+		gCurrentVersion = [[NSDecimalNumber alloc] initWithString: @"_bx_version_"];
+		gCurrentCompatVersion = [[NSDecimalNumber alloc] initWithString: @"_bx_compat_version_"];
+	}
 }
 
-
-NSNumber*
-BXPGCopyCurrentCompatibilityVersionNumber ()
++ (NSNumber *) currentVersionNumber
 {
-    return [[NSDecimalNumber alloc] initWithString: @"_bx_compat_version_"];
+	return gCurrentVersion;
 }
+
++ (NSNumber *) currentCompatibilityVersionNumber
+{
+	return gCurrentCompatVersion;
+}
+@end

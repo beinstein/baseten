@@ -2,7 +2,7 @@
 // BXDatabaseContextAdditions.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -63,9 +63,18 @@
 	SFCertificateTrustPanel* panel = [SFCertificateTrustPanel sharedCertificateTrustPanel];
 	NSBundle* appKitBundle = [NSBundle bundleWithPath: @"/System/Library/Frameworks/AppKit.framework"];
 	[panel setAlternateButtonTitle: [appKitBundle localizedStringForKey: @"Cancel" value: @"Cancel" table: @"Common"]];
-	[panel beginSheetForWindow: aWindow modalDelegate: self 
-				didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
-				   contextInfo: trust trust: trust message: nil];
+	
+	if (aWindow)
+	{
+		[panel beginSheetForWindow: aWindow modalDelegate: self 
+					didEndSelector: @selector (certificateTrustSheetDidEnd:returnCode:contextInfo:)
+					   contextInfo: trust trust: trust message: nil];
+	}
+	else
+	{
+		NSInteger status = [panel runModalForTrust: trust message: nil];
+		[self certificateTrustSheetDidEnd: nil returnCode: status contextInfo: trust];
+	}
 }
 
 - (void) certificateTrustSheetDidEnd: (NSWindow *) sheet returnCode: (int) returnCode contextInfo: (void *) trust
@@ -87,7 +96,7 @@
 	}
 }
 
-- (id <BXConnectionSetupManager>) copyDefaultConnectionSetupManager
+- (id <BXConnector>) copyDefaultConnectionSetupManager
 {
 	return [[BXNetServiceConnector alloc] init];
 }

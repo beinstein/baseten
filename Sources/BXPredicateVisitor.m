@@ -57,7 +57,7 @@ enum ComparisonType
 };
 
 
-struct RelationshipContext
+struct relationship_callback_st
 {
 	BXDatabaseObject* rc_object;
 	BXPGConstantParameterMapper* rc_mapper;
@@ -755,7 +755,7 @@ end:
 static void
 RelationshipCallback (NSString* srcKey, NSString* dstKey, void* contextPointer)
 {
-	struct RelationshipContext* ctx = (struct RelationshipContext *) contextPointer;
+	struct relationship_callback_st* ctx = (struct relationship_callback_st *) contextPointer;
 	id value = [ctx->rc_object primitiveValueForKey: dstKey];
 	NSString* parameterName = [ctx->rc_mapper addParameter: value];
 	//FIXME: check the operator, if we wanted to support others than equality. (Would we?)
@@ -801,7 +801,7 @@ NormalizeForIdentityTest (BXPGExpressionValueType** lval, BXPGExpressionValueTyp
 				BXRelationshipDescription* relationship = [[lval value] lastObject];
 				BXPGFromItem* fromItem = [mAliasMapper previousFromItem];
 				NSMutableArray* components = [NSMutableArray array];
-				struct RelationshipContext ctx = {[rval value], mParameterMapper, [fromItem alias], components};
+				struct relationship_callback_st ctx = {[rval value], mParameterMapper, [fromItem alias], components};
 				[relationship iterateForeignKey: &RelationshipCallback context: &ctx];	
 				
 				if (1 == [components count])

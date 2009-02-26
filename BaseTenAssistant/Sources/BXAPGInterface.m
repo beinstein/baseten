@@ -82,6 +82,10 @@ LogSocketCallback (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef a
 	[mController logAppend: @"\n"];
 }
 
+- (void) connection: (PGTSConnection *) connection receivedResultSet: (PGTSResultSet *) res
+{
+}
+
 - (BOOL) logsQueries
 {
 	return YES;

@@ -1,5 +1,8 @@
 How To Run the Unit Tests
-=====================
+=========================
+0. The SQL script will try to drop and recreate a database called basetentest
+   and drop and recreate a user called baseten_test_user. Also, it will load
+   BaseTenModifications.sql. Please read the scripts before running them.
 1. Create the test database. A command like this should work:
    psql -f BaseTenTest.sql
 2. Build the tests. A shell script phase at the end of the target will run them.

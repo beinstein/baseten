@@ -68,8 +68,8 @@
     MKCAssertNotNil (entity);
     
     BXDatabaseObject* object = [context createObjectForEntity: entity withFieldValues: nil error: &error];
-    MKCAssertNotNil (object);
     STAssertNil (error, [error description]);
+    MKCAssertNotNil (object);
     [context rollback];
     [pool release];
 }

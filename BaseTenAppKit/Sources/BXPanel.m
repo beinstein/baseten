@@ -2,7 +2,7 @@
 // BXPanel.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,99 +26,19 @@
 // $Id$
 //
 
+
 #import "BXPanel.h"
-#import <BaseTen/BXLogger.h>
 
 
 @implementation BXPanel
-
 - (id) initWithContentRect: (NSRect) contentRect styleMask: (unsigned int) styleMask
-                   backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
+				   backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
 {
-    if ((self = [super initWithContentRect: contentRect styleMask: styleMask 
-                                   backing: bufferingType defer: deferCreation]))
-    {
+	if ((self = [super initWithContentRect: contentRect styleMask: styleMask
+								   backing: bufferingType defer: deferCreation]))
+	{
 		[self setHidesOnDeactivate: NO];
 	}
 	return self;
 }
-		
-- (void) dealloc
-{
-    [mDidEndInvocation release];
-    [super dealloc];
-}
-
-- (void) beginSheetModalForWindow: (NSWindow *) docWindow modalDelegate: (id) modalDelegate 
-				   didEndSelector: (SEL) didEndSelector contextInfo: (void *) contextInfo
-{	    
-	mPanelDelegate = modalDelegate;
-    if (NULL != didEndSelector)
-    {
-		NSMethodSignature* signature = [mPanelDelegate methodSignatureForSelector: didEndSelector];
-        BXAssertVoidReturn (5 == [signature numberOfArguments], @"Expected number of arguments to be 5, was %d",
-							  [signature numberOfArguments]);
-        
-		NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: signature];
-		[invocation setSelector: didEndSelector];
-		[invocation setTarget: mPanelDelegate];
-        //Return code is not yet known.
-		[invocation setArgument: &contextInfo atIndex: 4];
-        [self setDidEndInvocation: invocation];
-    }
-        
-	[NSApp beginSheet: self modalForWindow: docWindow modalDelegate: self 
-	   didEndSelector: @selector (sheetDidEnd:returnCode:contextInfo:) 
-		  contextInfo: NULL];
-}
-
-- (void) setLeftOpenOnContinue: (BOOL) aBool
-{
-    mLeftOpenOnContinue = aBool;
-}
-
-- (IBAction) continue: (id) sender
-{
-    [self continueWithReturnCode: [sender tag]];
-}
-
-- (void) sheetDidEnd: (BXPanel *) panel returnCode: (int) returnCode contextInfo: (void *) contextInfo
-{
-    if (NO == mLeftOpenOnContinue)
-        [self continueWithReturnCode: returnCode];
-}
-
-- (void) continueWithReturnCode: (int) returnCode;
-{
-    if (NULL != mDidEndInvocation)
-	{		
-		[mDidEndInvocation setArgument: &returnCode atIndex: 3];
-		[[NSRunLoop currentRunLoop] performSelector: @selector (invoke) target: mDidEndInvocation
-										   argument: nil order: UINT_MAX
-											  modes: [NSArray arrayWithObject: NSDefaultRunLoopMode]];
-	}
-    
-    if (NO == mLeftOpenOnContinue)
-        [self end];
-}
-
-- (void) end
-{
-    [self setDidEndInvocation: nil];
-    [NSApp endSheet: self];
-    //Try to be cautious since we might get released when closed
-    [[self retain] autorelease];
-    [self orderOut: nil];    
-}
-
-- (void) setDidEndInvocation: (NSInvocation *) invocation
-{
-    if (mDidEndInvocation != invocation)
-    {
-        [mDidEndInvocation release];
-        mDidEndInvocation = [invocation retain];
-		[mDidEndInvocation setArgument: &self atIndex: 2];
-    }
-}
-
 @end

@@ -57,15 +57,11 @@
 	return nil;
 }
 
-/** 
- * \internal
- * \brief Deallocation helper. 
- */
-- (void) dealloc2
+- (void) dealloc
 {
 	[mForeignKey release];
 	[mInverseName release];
-	[super dealloc2];
+	[super dealloc];
 }
 
 - (NSString *) description
@@ -102,8 +98,9 @@
  */
 - (NSDeleteRule) deleteRule
 {
-	//See relationship creation in BXPGInterface.
-	return mDeleteRule;
+	//We only have a delete rule for the foreign key's source table.
+	//If it isn't also the relationship's source table, we have no way of controlling deletion.
+	return ([self isInverse] ? NSNullifyDeleteRule : [mForeignKey deleteRule]);
 }
 
 /**
@@ -118,11 +115,13 @@
 {
 	BOOL retval = NO;
 	//Foreign keys and destination entities needn't be compared, because relationship names are unique in their entities.
-	if (anObject == self || ([super isEqual: anObject] && [anObject isKindOfClass: [self class]]))
+	if (anObject == self || ([super isEqual: anObject]))
 		retval = YES;
     return retval;	
 }
 
+//FIXME: need we this?
+#if 0
 - (id) mutableCopyWithZone: (NSZone *) zone
 {
 	BXRelationshipDescription* retval = [super mutableCopyWithZone: zone];
@@ -134,6 +133,7 @@
 	
 	return retval;
 }
+#endif
 
 - (enum BXPropertyKind) propertyKind
 {
@@ -158,12 +158,6 @@
 	return self;
 }
 
-- (void) removeDestinationEntity
-{
-	[[self entity] removeRelationship: self];
-	mDestinationEntity = nil;
-}
-
 
 struct rel_attr_st
 {
@@ -180,6 +174,7 @@ RemoveRelFromAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	NSDictionary* attributes = ctx->ra_attrs;
 	
 	BXAttributeDescription* attr = [attributes objectForKey: srcKey];
+	ExpectV (attr);
 	[attr removeDependentRelationship: self];
 }
 
@@ -192,6 +187,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	NSDictionary* attributes = ctx->ra_attrs;
 	
 	BXAttributeDescription* attr = [attributes objectForKey: srcKey];
+	ExpectV (attr);
 	[attr addDependentRelationship: self];
 }
 
@@ -201,7 +197,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	if ([self isInverse] && ![self isToMany])
 	{
 		struct rel_attr_st ctx = {self, [[self entity] attributesByName]};
-		[self iterateForeignKey: &RemoveRelFromAttribute context: &ctx];
+		[[self foreignKey] iterateColumnNames: &RemoveRelFromAttribute context: &ctx];
 	}
 }
 
@@ -211,12 +207,12 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	if ([self isInverse] && ![self isToMany])
 	{
 		struct rel_attr_st ctx = {self, [[self entity] attributesByName]};
-		[self iterateForeignKey: &AddRelToAttribute context: &ctx];
+		[[self foreignKey] iterateColumnNames: &AddRelToAttribute context: &ctx];
 	}
 }
 
 
-- (void) setForeignKey: (BXForeignKey *) aKey
+- (void) setForeignKey: (id <BXForeignKey>) aKey
 {
 	if (mForeignKey != aKey)
 	{
@@ -321,7 +317,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 
 	BXDatabaseObject* retval = nil;
 	BXEntityDescription* entity = [self destinationEntity];
-	BXDatabaseObjectID* objectID = [mForeignKey objectIDForDstEntity: entity fromObject: databaseObject fireFault: fireFault];
+	BXDatabaseObjectID* objectID = BXFkeyDstObjectID (mForeignKey, entity, databaseObject, fireFault);
 	if (objectID)
 	{
 		BXDatabaseContext* ctx = [databaseObject databaseContext];
@@ -394,7 +390,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
     if (mIsInverse)
     {		
     	NSPredicate* predicate = [[databaseObject objectID] predicate];
-    	NSDictionary* values = [mForeignKey srcDictionaryFor: [self entity] valuesFromDstObject: target];
+		NSDictionary* values = BXFkeySrcDictionary (mForeignKey, [self entity], target);
 		
 		BXDatabaseObject* oldTarget = nil;
 		if (inverseName)
@@ -439,7 +435,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 		NSPredicate* predicate = nil;
     	if ((predicate = [self predicateForRemoving: target databaseObject: databaseObject]))
     	{
-    		NSDictionary* values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: nil];
+			NSDictionary* values = BXFkeySrcDictionary (mForeignKey, [self destinationEntity], nil);
     		[[databaseObject databaseContext] executeUpdateObject: nil
     														entity: [self destinationEntity]
     													 predicate: predicate 
@@ -452,7 +448,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 		
 		if ((predicate = [self predicateForAdding: target databaseObject: databaseObject]))
 		{
-			NSDictionary* values = [mForeignKey srcDictionaryFor: [self destinationEntity] valuesFromDstObject: databaseObject];
+			NSDictionary* values = BXFkeySrcDictionary (mForeignKey, [self destinationEntity], databaseObject);
 			[[databaseObject databaseContext] executeUpdateObject: nil
 														   entity: [self destinationEntity]
 														predicate: predicate 
@@ -477,27 +473,17 @@ bail:
 	return retval;
 }
 
-- (BXForeignKey *) foreignKey
+- (id <BXForeignKey>) foreignKey
 {
 	return mForeignKey;
 }
 
-- (void) setDeleteRule: (NSDeleteRule) aRule
-{
-	mDeleteRule = aRule;
-}
-
 - (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx
 {
-	NSUInteger i = 1, j = 0;
 	if ([self isInverse])
-	{
-		i = 0;
-		j = 1;
-	}
-	
-	BXEnumerate (currentFieldPair, e, [[[self foreignKey] fieldNames] objectEnumerator])
-		callback ([currentFieldPair objectAtIndex: i], [currentFieldPair objectAtIndex: j], ctx);
+		[[self foreignKey] iterateColumnNames: callback context: ctx];
+	else
+		[[self foreignKey] iterateReversedColumnNames: callback context: ctx];
 }
 @end
 

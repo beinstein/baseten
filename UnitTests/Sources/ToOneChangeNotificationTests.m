@@ -28,6 +28,7 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXAttributeDescriptionPrivate.h>
 #import "ToOneChangeNotificationTests.h"
 #import "TestLoader.h"
 #import "MKCSenTestCaseAdditions.h"
@@ -50,6 +51,29 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 	mReceivedForA = 0;
 	mReceivedForB1 = 0;
 	mReceivedForB2 = 0;
+	
+	[mContext connectSync: NULL];
+	mTest1 = [[mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: NULL] retain];
+	mTest2 = [[mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: NULL] retain];
+}
+
+
+- (void) tearDown
+{
+	[mTest1 release];
+	[mTest2 release];
+	[super tearDown];
+}
+
+
+- (void) testAttributeDependency
+{
+	NSDictionary* attributes = [mTest2 attributesByName];
+	MKCAssertNotNil (attributes);
+	BXAttributeDescription* attr = [attributes objectForKey: @"fkt1id"];
+	MKCAssertNotNil (attr);
+	NSSet* deps = [attr dependentRelationships];
+	MKCAssertTrue (0 < [deps count]);
 }
 
 
@@ -77,10 +101,8 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 - (void) testOneToMany
 {
 	NSPredicate* p = [NSPredicate predicateWithFormat: @"id == 2"];
-	BXEntityDescription* test1 = [mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: NULL];
-	BXEntityDescription* test2 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: NULL];
-	NSArray* r1 = [mContext executeFetchForEntity: test1 withPredicate: p error: NULL];
-	NSArray* r2 = [mContext executeFetchForEntity: test2 withPredicate: p error: NULL];
+	NSArray* r1 = [mContext executeFetchForEntity: mTest1 withPredicate: p error: NULL];
+	NSArray* r2 = [mContext executeFetchForEntity: mTest2 withPredicate: p error: NULL];
 	
 	mA = [r2 objectAtIndex: 0];
 	mB1 = [mA primitiveValueForKey: @"test1"];
