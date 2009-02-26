@@ -298,7 +298,7 @@
 		53877EEB0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53877EE90E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h */; };
 		53877EEC0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877EEA0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m */; };
 		538A82C50E1D16DB0025B3C8 /* psqlscan.l in Sources */ = {isa = PBXBuildFile; fileRef = 538A80BB0E1D0FA00025B3C8 /* psqlscan.l */; };
-		538A82C80E1D172A0025B3C8 /* SQLParser in Frameworks */ = {isa = PBXBuildFile; fileRef = 538A82C10E1D16AC0025B3C8 /* SQLParser */; };
+		538A82C80E1D172A0025B3C8 /* SQLParser.o in Frameworks */ = {isa = PBXBuildFile; fileRef = 538A82C10E1D16AC0025B3C8 /* SQLParser.o */; };
 		538A83160E1D1EE00025B3C8 /* BXPGSQLScanner.m in Sources */ = {isa = PBXBuildFile; fileRef = 538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */; };
 		538A832A0E1D1FCE0025B3C8 /* common.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82DA0E1D19920025B3C8 /* common.c */; };
 		538A832C0E1D20090025B3C8 /* variables.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82B60E1D151D0025B3C8 /* variables.c */; };
@@ -310,7 +310,7 @@
 		538A83860E1D2ACD0025B3C8 /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82B90E1D15BB0025B3C8 /* print.c */; };
 		538A83870E1D2ACE0025B3C8 /* prompt.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A83050E1D1DD30025B3C8 /* prompt.c */; };
 		538A83880E1D2ACF0025B3C8 /* stringutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82F80E1D1C1B0025B3C8 /* stringutils.c */; };
-		538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */; };
+		538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5390DE590E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */; };
 		53915F9E0E3FD22D0098B419 /* libpq_additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53915F9C0E3FD22D0098B419 /* libpq_additions.h */; };
 		53915F9F0E3FD22D0098B419 /* libpq_additions.c in Sources */ = {isa = PBXBuildFile; fileRef = 53915F9D0E3FD22D0098B419 /* libpq_additions.c */; };
@@ -756,7 +756,7 @@
 		538A80C30E1D10670025B3C8 /* print.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = print.h; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/bin/psql/print.h"; sourceTree = BUILT_PRODUCTS_DIR; };
 		538A82B60E1D151D0025B3C8 /* variables.c */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.c; name = variables.c; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/bin/psql/variables.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		538A82B90E1D15BB0025B3C8 /* print.c */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.c; name = print.c; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/bin/psql/print.c"; sourceTree = BUILT_PRODUCTS_DIR; };
-		538A82C10E1D16AC0025B3C8 /* SQLParser */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "compiled.mach-o.objfile"; path = SQLParser; sourceTree = BUILT_PRODUCTS_DIR; };
+		538A82C10E1D16AC0025B3C8 /* SQLParser.o */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.objfile"; includeInIndex = 0; path = SQLParser.o; sourceTree = BUILT_PRODUCTS_DIR; };
 		538A82D80E1D183C0025B3C8 /* psqlscan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = psqlscan.h; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/bin/psql/psqlscan.h"; sourceTree = BUILT_PRODUCTS_DIR; };
 		538A82DA0E1D19920025B3C8 /* common.c */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.c; name = common.c; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/bin/psql/common.c"; sourceTree = BUILT_PRODUCTS_DIR; };
 		538A82E30E1D1B1F0025B3C8 /* path.c */ = {isa = PBXFileReference; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.c.c; name = path.c; path = "BaseTen-PostgreSQL/postgresql-8.3.3/src/port/path.c"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -876,7 +876,7 @@
 				5354440C0D634A47002A6C47 /* Security.framework in Frameworks */,
 				538678D40DE31BA0000C9A78 /* IOKit.framework in Frameworks */,
 				538679880DE31C1D000C9A78 /* libstdc++.6.dylib in Frameworks */,
-				538A82C80E1D172A0025B3C8 /* SQLParser in Frameworks */,
+				538A82C80E1D172A0025B3C8 /* SQLParser.o in Frameworks */,
 				537920580E3F519000423965 /* CoreData.framework in Frameworks */,
 				53D69A880EAE072A00C4C22D /* SystemConfiguration.framework in Frameworks */,
 				5354F9410F00537200422613 /* AppKit.framework in Frameworks */,
@@ -897,7 +897,7 @@
 			isa = PBXGroup;
 			children = (
 				535444130D634A47002A6C47 /* BaseTen.framework */,
-				538A82C10E1D16AC0025B3C8 /* SQLParser */,
+				538A82C10E1D16AC0025B3C8 /* SQLParser.o */,
 				534EE22F0E53213300B079B0 /* libBaseTen.a */,
 			);
 			name = Products;
@@ -1693,7 +1693,7 @@
 			);
 			name = "SQL Parser";
 			productName = "SQL Parser";
-			productReference = 538A82C10E1D16AC0025B3C8 /* SQLParser */;
+			productReference = 538A82C10E1D16AC0025B3C8 /* SQLParser.o */;
 			productType = "com.apple.product-type.objfile";
 		};
 /* End PBXNativeTarget section */
