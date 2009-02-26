@@ -72,7 +72,7 @@
 		533BAACB0F2C000A0030CD05 /* PGTSDatabaseDescription.mm in Sources */ = {isa = PBXBuildFile; fileRef = 533BAAC90F2C000A0030CD05 /* PGTSDatabaseDescription.mm */; };
 		533BAACC0F2C000A0030CD05 /* PGTSTableDescription.mm in Sources */ = {isa = PBXBuildFile; fileRef = 533BAACA0F2C000A0030CD05 /* PGTSTableDescription.mm */; };
 		533F88410F35482000041C02 /* BXForeignKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 536892570F30B9E800AAC65D /* BXForeignKey.m */; };
-		5348B7060F57547F00B2655E /* BXCoreDataCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */; };
+		5348B7060F57547F00B2655E /* BXCoreDataCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5348B7070F5754B100B2655E /* BXCoreDataCompatibility.h in Copy Headers */ = {isa = PBXBuildFile; fileRef = 5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */; };
 		5348B7110F575A3C00B2655E /* BXKeyPathParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */; };
 		5348B7130F575A3F00B2655E /* BXURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 5354F7DD0F00417400422613 /* BXURLEncoding.m */; };
@@ -310,6 +310,7 @@
 		538A83860E1D2ACD0025B3C8 /* print.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82B90E1D15BB0025B3C8 /* print.c */; };
 		538A83870E1D2ACE0025B3C8 /* prompt.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A83050E1D1DD30025B3C8 /* prompt.c */; };
 		538A83880E1D2ACF0025B3C8 /* stringutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 538A82F80E1D1C1B0025B3C8 /* stringutils.c */; };
+		538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */; };
 		5390DE590E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */; };
 		53915F9E0E3FD22D0098B419 /* libpq_additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 53915F9C0E3FD22D0098B419 /* libpq_additions.h */; };
 		53915F9F0E3FD22D0098B419 /* libpq_additions.c in Sources */ = {isa = PBXBuildFile; fileRef = 53915F9D0E3FD22D0098B419 /* libpq_additions.c */; };
@@ -351,6 +352,7 @@
 		53B24CFA0E223C8C007AED76 /* BXPGTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF80E223C8C007AED76 /* BXPGTableDescription.h */; };
 		53B24CFB0E223C8C007AED76 /* BXPGTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF90E223C8C007AED76 /* BXPGTableDescription.m */; };
 		53C6BA8D0E7148B6000E509D /* NSAttributeDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */; };
+		53C7113B0F57636E00C6481F /* BXOpenSSLCompatibility.h in Copy Headers */ = {isa = PBXBuildFile; fileRef = 538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */; };
 		53CE796B0E87F29C00D5A310 /* BXPGQueryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CE79690E87F29C00D5A310 /* BXPGQueryHandler.h */; };
 		53CE796C0E87F29C00D5A310 /* BXPGQueryHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CE796A0E87F29C00D5A310 /* BXPGQueryHandler.m */; };
 		53CE94050E64119500063193 /* BXPGExpressionVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CE94030E64119500063193 /* BXPGExpressionVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -515,6 +517,7 @@
 			dstSubfolderSpec = 16;
 			files = (
 				53E3AEE70E55B8E3001A99B5 /* postgresql in Copy Headers */,
+				53C7113B0F57636E00C6481F /* BXOpenSSLCompatibility.h in Copy Headers */,
 				5348B7DC0F575DA900B2655E /* PGTSMetadataContainer.h in Copy Headers */,
 				5348B7070F5754B100B2655E /* BXCoreDataCompatibility.h in Copy Headers */,
 				53E3AEC10E55B7AB001A99B5 /* BXInvocation.h in Copy Headers */,
@@ -768,6 +771,7 @@
 		538A83140E1D1EE00025B3C8 /* BXPGSQLScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLScanner.h; path = Sources/BXPGSQLScanner.h; sourceTree = "<group>"; };
 		538A83150E1D1EE00025B3C8 /* BXPGSQLScanner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLScanner.m; path = Sources/BXPGSQLScanner.m; sourceTree = "<group>"; };
 		538A83CC0E1D85420025B3C8 /* sql_parser.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; name = sql_parser.exp; path = Resources/sql_parser.exp; sourceTree = "<group>"; };
+		538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXOpenSSLCompatibility.h; path = Sources/BXOpenSSLCompatibility.h; sourceTree = "<group>"; };
 		5390DE580E32B788003980BE /* BXPGCurrentCompatVersion.m.m4 */ = {isa = PBXFileReference; explicitFileType = sourcecode; fileEncoding = 4; name = BXPGCurrentCompatVersion.m.m4; path = Sources/BXPGCurrentCompatVersion.m.m4; sourceTree = "<group>"; };
 		53915F9C0E3FD22D0098B419 /* libpq_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = libpq_additions.h; path = Sources/libpq_additions.h; sourceTree = "<group>"; };
 		53915F9D0E3FD22D0098B419 /* libpq_additions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = libpq_additions.c; path = Sources/libpq_additions.c; sourceTree = "<group>"; };
@@ -1056,6 +1060,7 @@
 			isa = PBXGroup;
 			children = (
 				5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */,
+				538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */,
 				5354F87A0F004A6600422613 /* BXExport.h */,
 				536C9D5F0EFD94D10041422F /* BXEnumerate.h */,
 				535661D70F02603600920008 /* BXLocalizedString.h */,
@@ -1625,6 +1630,7 @@
 				535736CB0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.h in Headers */,
 				534BE4680F34F7130098951C /* BXForeignKey.h in Headers */,
 				5348B7060F57547F00B2655E /* BXCoreDataCompatibility.h in Headers */,
+				538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

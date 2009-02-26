@@ -29,7 +29,7 @@
 #import "PGTSCertificateVerificationDelegate.h"
 #import "BXSafetyMacros.h"
 #import <Security/Security.h>
-#import <openssl/ssl.h>
+#import "BXOpenSSLCompatibility.h"
 
 
 __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = nil;

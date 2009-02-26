@@ -29,8 +29,7 @@
 #import <CoreFoundation/CoreFoundation.h>
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
-#import <openssl/pqueue.h>
-#import <openssl/ssl.h>
+#import <BaseTen/BXOpenSSLCompatibility.h>
 #import <BaseTen/postgresql/libpq-fe.h>
 #import <BaseTen/PGTSCertificateVerificationDelegate.h>
 @class PGTSConnection;

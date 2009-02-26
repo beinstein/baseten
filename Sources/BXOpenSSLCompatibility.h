@@ -1,11 +1,11 @@
 //
-// libpq_additions.c
+// BXOpenSSLCompatibility.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+// by visiting http://basetenframework.org/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -26,12 +26,11 @@
 // $Id$
 //
 
-#import "BXOpenSSLCompatibility.h"
-#import "libpq_additions.h"
-#import "postgresql/postgresql/internal/libpq-int.h"
+#import <TargetConditionals.h>
 
-const char* 
-pq_ssl_mode (const PGconn* connection)
-{
-	return connection->sslmode;
-}
+#ifdef TARGET_OS_IPHONE
+#import <openssl/pqueue.h>
+#import <openssl/ssl.h>
+#else
+#import <openssl/ssl.h>
+#endif
