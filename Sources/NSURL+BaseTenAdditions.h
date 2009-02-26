@@ -27,6 +27,8 @@
 //
 
 
+#import <Foundation/Foundation.h>
+
 @interface NSURL (BaseTenAdditions)
 - (unsigned int) BXHash;
 - (NSURL *) BXURIForHost: (NSString *) host 

@@ -27,7 +27,6 @@
 //
 
 #import <CoreFoundation/CoreFoundation.h>
-#import <AppKit/AppKit.h>
 #import <BaseTen/postgresql/libpq-fe.h>
 
 #import "PGTSConnection.h"

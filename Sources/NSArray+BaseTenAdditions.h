@@ -27,6 +27,8 @@
 //
 
 
+#import <Foundation/Foundation.h>
+
 @interface NSArray (BaseTenAdditions)
 - (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
 											others: (NSMutableArray *) otherArray

@@ -27,6 +27,7 @@
 //
 
 #import "PGTSTableDescription.h"
+#import "PGTSColumnDescription.h"
 #import "PGTSCollections.h"
 #import "PGTSScannedMemoryAllocator.h"
 #import "BXLogger.h"

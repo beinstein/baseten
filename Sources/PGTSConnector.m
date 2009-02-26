@@ -72,7 +72,9 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 	if (! tooLate)
 	{
 		tooLate = YES;
+#ifdef USE_SSL
 		SSLConnectionExIndex ();
+#endif
 	}
 }
 

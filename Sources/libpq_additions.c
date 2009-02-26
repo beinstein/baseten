@@ -26,6 +26,7 @@
 // $Id$
 //
 
+#import <openssl/pqueue.h>
 #import "libpq_additions.h"
 #import "postgresql/postgresql/internal/libpq-int.h"
 

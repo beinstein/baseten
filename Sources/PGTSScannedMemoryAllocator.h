@@ -31,6 +31,7 @@
 #define PGTS_SCANNED_MEMORY_ALLOCATOR_H
 
 #import <Foundation/Foundation.h>
+#import <objc/objc-auto.h>
 #import <new>
 #import <limits>
 
@@ -69,10 +70,14 @@ namespace PGTS
 		{
 			void* p = NULL;
 			
+#if defined (OBJC_NO_GC)
+			p = malloc (n * sizeof (T));
+#else
 			if (scanned_memory_allocator_env::allocate_scanned)
 				p = NSAllocateCollectable (n * sizeof (T), NSScannedOption | NSCollectorDisabledOption);
 			else
 				p = malloc (n * sizeof (T));
+#endif
 			
 			if (! p)
 				throw std::bad_alloc ();

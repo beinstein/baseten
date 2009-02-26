@@ -28,6 +28,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Security/Security.h>
+#import <openssl/pqueue.h>
 #import <openssl/ssl.h>
 #import "PGTSCertificateVerificationDelegateProtocol.h"
 

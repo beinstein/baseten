@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import <BaseTen/BXCoreDataCompatibility.h>
 #import <BaseTen/PGTSAbstractObjectDescription.h>
 #import <BaseTen/BXForeignKey.h>
 #import <pthread.h>

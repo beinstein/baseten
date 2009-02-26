@@ -1,8 +1,8 @@
 //
-// BXRelationshipDescription.h
+// BXCoreDataCompatibility.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,25 +26,31 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <BaseTen/BXCoreDataCompatibility.h>
-#import <BaseTen/BXPropertyDescription.h>
+#import <TargetConditionals.h>
 
+#ifndef TARGET_OS_IPHONE
+#import <CoreData/CoreData.h>
+#else
 
-@protocol BXForeignKey;
+typedef enum {
+	NSNoActionDeleteRule,
+	NSNullifyDeleteRule,
+	NSCascadeDeleteRule,
+	NSDenyDeleteRule
+} NSDeleteRule;
 
-
-@interface BXRelationshipDescription : BXPropertyDescription
-{
-    BXEntityDescription* mDestinationEntity; //Weak
-
-	id <BXForeignKey> mForeignKey;
-	NSString* mInverseName;
-	BOOL mIsInverse;
-}
-
-- (BXEntityDescription *) destinationEntity;
-- (BXRelationshipDescription *) inverseRelationship;
-- (NSDeleteRule) deleteRule;
-- (BOOL) isToMany;
-@end
+typedef enum {
+    NSUndefinedAttributeType = 0,
+    NSInteger16AttributeType = 100,
+    NSInteger32AttributeType = 200,
+    NSInteger64AttributeType = 300,
+    NSDecimalAttributeType = 400,
+    NSDoubleAttributeType = 500,
+    NSFloatAttributeType = 600,
+    NSStringAttributeType = 700,
+    NSBooleanAttributeType = 800,
+    NSDateAttributeType = 900,
+    NSBinaryDataAttributeType = 1000,
+    NSTransformableAttributeType = 1800    
+} NSAttributeType;
+#endif

@@ -26,6 +26,9 @@
 // $Id$
 //
 
+
+#import <Foundation/Foundation.h>
+
 @class PGTSMetadataContainer;
 
 @interface PGTSMetadataStorage : NSObject

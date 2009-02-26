@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
+#import <BaseTen/BXCoreDataCompatibility.h>
 #import <BaseTen/BXExport.h>
 
 @class BXEntityDescription;

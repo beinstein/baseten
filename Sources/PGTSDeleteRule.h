@@ -27,5 +27,6 @@
 //
 
 #import <BaseTen/BXExport.h>
+#import <Foundation/Foundation.h>
 
 PGTS_EXPORT enum PGTSDeleteRule PGTSDeleteRule (const unichar rule);
