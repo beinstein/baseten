@@ -142,6 +142,7 @@ struct BXTrustResult
 - (void) handledTrust: (SecTrustRef) trust accepted: (BOOL) accepted;
 - (BOOL) isSSLInUse;
 - (NSNumber *) defaultPort;
+- (BOOL) usedPassword;
 
 - (void) reloadDatabaseMetadata;
 - (void) prepareForEntityValidation;

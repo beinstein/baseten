@@ -860,9 +860,9 @@ ModTypeToObject (enum BXModificationType value)
     NSNumber* portObject = [mDatabaseURI port];
     UInt16 port = (portObject ? [portObject unsignedShortValue] : 5432U);
     
-    NSString* password = [mDatabaseURI password];
-    const char* tempPassword = [password UTF8String];
-    char* passwordData = strdup (tempPassword ?: "");
+    const char* password = [[mDatabaseURI password] UTF8String];
+	if (! (password && [mDatabaseInterface usedPassword]))
+    	password = "";
     
 	SecKeychainItemRef item = NULL;
 
@@ -875,22 +875,20 @@ ModTypeToObject (enum BXModificationType value)
 												 strlen (path), path,
 												 port,
 												 0, kSecAuthenticationTypeDefault,
-												 strlen (passwordData), passwordData, 
+												 strlen (password), password, 
 												 &item);
 		[self setKeychainPasswordItem: item];
 	}
 	
 	if (errSecDuplicateItem == status || (NULL == item && NULL != mKeychainPasswordItem))
 	{
-		status = SecKeychainItemModifyAttributesAndData (mKeychainPasswordItem, NULL, strlen (passwordData), passwordData);
+		status = SecKeychainItemModifyAttributesAndData (mKeychainPasswordItem, NULL, strlen (password), password);
 	}
 	
 	if (noErr == status)
 	{
 		[self setKeychainPasswordItem: NULL];
 	}
-	
-    free (passwordData);
 }
 //@}
 

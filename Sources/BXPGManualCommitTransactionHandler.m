@@ -292,6 +292,11 @@
 		[mInterface connectionLost: self error: error];
 	}
 }
+
+- (BOOL) usedPassword
+{
+	return [super usedPassword] || [mNotifyConnection usedPassword];
+}
 @end
 
 

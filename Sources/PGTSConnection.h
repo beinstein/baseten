@@ -112,6 +112,7 @@ enum PGTSConnectionError
 - (NSString *) errorString;
 - (ConnStatusType) connectionStatus;
 - (PGTransactionStatusType) transactionStatus;
+- (BOOL) usedPassword;
 - (PGconn *) pgConnection;
 - (int) backendPID;
 - (SSL *) SSLStruct;

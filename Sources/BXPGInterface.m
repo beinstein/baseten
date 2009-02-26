@@ -1584,6 +1584,11 @@ bail:
 {
 	return [mTransactionHandler logsQueries];
 }
+
+- (BOOL) usedPassword
+{
+	return [mTransactionHandler usedPassword];
+}
 @end
 
 

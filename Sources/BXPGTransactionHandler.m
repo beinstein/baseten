@@ -727,6 +727,11 @@ ConnectionString (NSDictionary* connectionDict)
 	}
 	return retval;
 }
+
+- (BOOL) usedPassword
+{
+	return [mConnection usedPassword];
+}
 @end
 
 

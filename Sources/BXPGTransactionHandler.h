@@ -81,6 +81,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 - (BOOL) connectSync: (NSError **) outError;
 - (void) disconnect;
 - (BOOL) connected;
+- (BOOL) usedPassword;
 
 - (BOOL) canSend: (NSError **) outError;
 

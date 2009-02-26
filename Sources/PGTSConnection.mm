@@ -525,6 +525,11 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	}
 	return retval;
 }
+
+- (BOOL) usedPassword
+{
+	return (PQconnectionUsedPassword (mConnection) ? YES : NO);
+}
 @end
 
 
