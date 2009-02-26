@@ -28,14 +28,12 @@
 
 #import <BaseTenAppKit/BXSynchronizedArrayController.h>
 #import <BaseTenAppKit/BXObjectStatusToColorTransformer.h>
-#import <BaseTenAppKit/BXConnectionPanel.h>
-#import <BaseTenAppKit/BXAuthenticationPanel.h>
 
 /**
  * \defgroup baseten_appkit BaseTenAppKit
  * BaseTenAppKit is a separate framework with AppKit bindings.
  * It contains a subclass of NSArrayController, namely 
- * BXArrayController, generic connection panels for use with
+ * BXSynchronizedArrayController, generic connection panels for use with
  * Bonjour and manually entered addresses and value transformers.
  */
 
