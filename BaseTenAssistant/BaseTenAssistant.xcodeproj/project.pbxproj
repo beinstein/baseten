@@ -20,6 +20,7 @@
 		227A5F4C0E4C5B9D0009CC08 /* BXAInspectorPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */; };
 		227A5F4F0E4C5E300009CC08 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */; };
 		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */; };
+		5312A7970F584C560097DAA4 /* BaseTen Assistant Help in Resources */ = {isa = PBXBuildFile; fileRef = 5312A74C0F584C560097DAA4 /* BaseTen Assistant Help */; };
 		531C016C0E32AEC300E43208 /* BXACurrentVersion.m.m4 in Sources */ = {isa = PBXBuildFile; fileRef = 531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
@@ -185,6 +186,7 @@
 		2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = SetupApplication_Prefix.pch; path = Sources/SetupApplication_Prefix.pch; sourceTree = "<group>"; };
 		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql.m4; path = ../Resources/BaseTenModifications.sql.m4; sourceTree = SOURCE_ROOT; };
 		530D557B0E489F0A006BDEB2 /* InterfaceBuilderPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = InterfaceBuilderPlugin.xcodeproj; path = ../InterfaceBuilderPlugin/InterfaceBuilderPlugin.xcodeproj; sourceTree = SOURCE_ROOT; };
+		5312A74D0F584C560097DAA4 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/BaseTen Assistant Help"; sourceTree = "<group>"; };
 		531C016B0E32AEC300E43208 /* BXACurrentVersion.m.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BXACurrentVersion.m.m4; path = Sources/BXACurrentVersion.m.m4; sourceTree = "<group>"; };
 		531DCAB70B52818E00200097 /* MKCAlternativeDataCellColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCAlternativeDataCellColumn.h; path = Sources/MKCAlternativeDataCellColumn.h; sourceTree = "<group>"; };
 		531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAlternativeDataCellColumn.m; path = Sources/MKCAlternativeDataCellColumn.m; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 			isa = PBXGroup;
 			children = (
 				227A5CD50E4BBEBF0009CC08 /* Icons */,
+				5312A74C0F584C560097DAA4 /* BaseTen Assistant Help */,
 				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */,
 				227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */,
 				532F429E0D69B70F009FEDCD /* Import.xib */,
@@ -567,6 +570,7 @@
 				227A5CB90E4BBCBB0009CC08 /* Help32.tiff in Resources */,
 				227A5CD40E4BBEA90009CC08 /* GetInfoWindow.xib in Resources */,
 				227A5F4F0E4C5E300009CC08 /* InspectorPanel.xib in Resources */,
+				5312A7970F584C560097DAA4 /* BaseTen Assistant Help in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -671,6 +675,14 @@
 				227A5F4E0E4C5E300009CC08 /* English */,
 			);
 			name = InspectorPanel.xib;
+			sourceTree = "<group>";
+		};
+		5312A74C0F584C560097DAA4 /* BaseTen Assistant Help */ = {
+			isa = PBXVariantGroup;
+			children = (
+				5312A74D0F584C560097DAA4 /* English */,
+			);
+			name = "BaseTen Assistant Help";
 			sourceTree = "<group>";
 		};
 		532F429A0D69B70F009FEDCD /* MainMenu.xib */ = {
