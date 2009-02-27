@@ -300,7 +300,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	}
 		
 	{
-		mInspectorButtonCell = [[MKCForcedSizeToFitButtonCell alloc] initTextCell: @"Setup..."];
+		mInspectorButtonCell = [[MKCForcedSizeToFitButtonCell alloc] initTextCell: @"Setup…"];
 		[mInspectorButtonCell setButtonType: NSMomentaryPushInButton];
 		[mInspectorButtonCell setBezelStyle: NSRoundedBezelStyle];
 		[mInspectorButtonCell setControlSize: NSMiniControlSize];
@@ -1055,6 +1055,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 {
 	[self hideProgressPanel];
 	
+	[[mContext databaseInterface] reloadDatabaseMetadata];
 	BOOL status = [self checkBaseTenSchema: NULL];
 	
 	InvokeRecoveryInvocation (userInfo, status);

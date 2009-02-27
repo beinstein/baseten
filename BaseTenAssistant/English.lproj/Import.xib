@@ -2,14 +2,14 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9F33</string>
+		<string key="IBDocument.SystemVersion">9G55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">670</string>
-		<string key="IBDocument.AppKitVersion">949.34</string>
-		<string key="IBDocument.HIToolboxVersion">352.00</string>
+		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="5"/>
 			<integer value="338"/>
+			<integer value="6"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1239,26 +1239,6 @@
 					<int key="connectionID">325</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: schemaName</string>
-						<reference key="source" ref="415892109"/>
-						<reference key="destination" ref="1036962592"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="415892109"/>
-							<reference key="NSDestination" ref="1036962592"/>
-							<string key="NSLabel">value: schemaName</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">schemaName</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSContinuouslyUpdatesValue</string>
-								<reference key="NS.object.0" ref="9"/>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">329</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">mLeftHeaderView</string>
 						<reference key="source" ref="1036962592"/>
@@ -1453,6 +1433,35 @@
 						<reference key="destination" ref="822215587"/>
 					</object>
 					<int key="connectionID">406</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: schemaName</string>
+						<reference key="source" ref="415892109"/>
+						<reference key="destination" ref="1036962592"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="415892109"/>
+							<reference key="NSDestination" ref="1036962592"/>
+							<string key="NSLabel">value: schemaName</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">schemaName</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMutableArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSContinuouslyUpdatesValue</string>
+									<string>NSNullPlaceholder</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<integer value="1"/>
+									<string>public</string>
+								</object>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">407</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -2192,9 +2201,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{446, 191}, {400, 350}}</string>
+					<string>{{227, 170}, {400, 350}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{446, 191}, {400, 350}}</string>
+					<string>{{227, 170}, {400, 350}}</string>
 					<integer value="0" id="8"/>
 					<reference ref="8"/>
 					<reference ref="9"/>
@@ -2223,9 +2232,9 @@
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{446, 421}, {400, 411}}</string>
+					<string>{{405, 421}, {400, 411}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{446, 421}, {400, 411}}</string>
+					<string>{{405, 421}, {400, 411}}</string>
 					<reference ref="9"/>
 					<string>{{452, 450}, {400, 352}}</string>
 					<reference ref="9"/>
@@ -2267,7 +2276,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">406</int>
+			<int key="maxID">407</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -2277,7 +2286,7 @@
 					<string key="superclassName">MKCImageAndTextCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/BXAFieldCell.h</string>
+						<string key="minorKey">Sources/BXAFieldCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2337,7 +2346,7 @@
 					</object>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/BXAImportController.h</string>
+						<string key="minorKey">Sources/BXAImportController.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2353,7 +2362,7 @@
 					<string key="superclassName">NSTextFieldCell</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/MKCImageAndTextCell.h</string>
+						<string key="minorKey">Sources/MKCImageAndTextCell.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
@@ -2361,19 +2370,19 @@
 					<string key="superclassName">NSTableHeaderView</string>
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/MKCPolishedHeaderView.h</string>
+						<string key="minorKey">Sources/MKCPolishedHeaderView.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSTextField</string>
-					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="391357005">
+					<object class="IBClassDescriptionSource" key="sourceIdentifier" id="674569234">
 						<string key="majorKey">IBProjectSource</string>
-						<string key="minorKey">Source/Additions.h</string>
+						<string key="minorKey">Sources/Additions.h</string>
 					</object>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSTextFieldCell</string>
-					<reference key="sourceIdentifier" ref="391357005"/>
+					<reference key="sourceIdentifier" ref="674569234"/>
 				</object>
 				<object class="IBPartialClassDescription">
 					<string key="className">NSWindow</string>
@@ -2381,7 +2390,7 @@
 						<string key="NS.key.0">MKCToggle:</string>
 						<string key="NS.object.0">id</string>
 					</object>
-					<reference key="sourceIdentifier" ref="391357005"/>
+					<reference key="sourceIdentifier" ref="674569234"/>
 				</object>
 			</object>
 		</object>
