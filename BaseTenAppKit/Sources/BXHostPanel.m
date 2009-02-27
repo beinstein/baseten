@@ -33,7 +33,7 @@
 
 
 @implementation BXHostPanel
-__strong static NSString* kNSKVOContext = @"kNSKVOContext";
+__strong static NSString* kNSKVOContext = @"kBXHostPanelNSKVOContext";
 __strong static NSNib* gNib = nil;
 
 + (void) initialize

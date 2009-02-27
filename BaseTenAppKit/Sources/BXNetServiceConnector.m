@@ -500,7 +500,7 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 									   database: nil 
 									   username: nil 
 									   password: nil];
-		[mContext setDatabaseURI: databaseURI];
+		[mContext setDatabaseURIInternal: databaseURI];
 				
 		if ([mContext usesKeychain])
             [mContext fetchPasswordFromKeychain];
@@ -525,7 +525,7 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 {
 	NSURL* databaseURI = [mContext databaseURI];
 	databaseURI = [databaseURI BXURIForHost: nil database: nil username: @"" password: @""];
-	[mContext setDatabaseURI: databaseURI];
+	[mContext setDatabaseURIInternal: databaseURI];
 	
 	[mConnectorImpl endAuthenticationPanel: panel];
 	mCurrentPanel = kBXNSConnectorHostPanel;
@@ -538,7 +538,7 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 	NSURL* databaseURI = [mContext databaseURI];
 	databaseURI = [databaseURI BXURIForHost: nil database: nil username: username password: password];
 	
-	[mContext setDatabaseURI: databaseURI];
+	[mContext setDatabaseURIInternal: databaseURI];
 	[mContext connectAsync];
 }
 

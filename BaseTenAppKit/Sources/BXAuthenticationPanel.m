@@ -31,7 +31,7 @@
 
 
 __strong static NSNib* gAuthenticationViewNib = nil;
-__strong static NSString* kNSKVOContext = @"kNSKVOContext";
+__strong static NSString* kNSKVOContext = @"kBXAuthenticationPanelNSKVOContext";
 static const CGFloat kSizeDiff = 25.0;
 
 

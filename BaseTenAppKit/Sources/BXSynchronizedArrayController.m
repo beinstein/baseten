@@ -41,8 +41,6 @@
 #import "BXObjectStatusToEditableTransformer.h"
 
 
-#define LOG_POSITION() fprintf( stderr, "Now at %s:%d\n", __FILE__, __LINE__ )
-
 //FIXME: Handle locks
 
 
@@ -100,6 +98,8 @@
 		[self exposeBinding: @"modalWindow"];
 		[self exposeBinding: @"selectedObjects"];
         
+		[self setKeys: [NSArray arrayWithObject: @"selectedObjects"] triggerChangeNotificationsForDependentKey: @"selectedObjectIDs"];
+		
 		[BXDatabaseContext loadedAppKitFramework];
 	}
 }
@@ -436,13 +436,6 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 	}
 }
 
-
-//FIXME: perhaps this should be changed to use the 10.4-compatible API?
-+ (NSSet *) keyPathsForValuesAffectingSelectedObjectIDs
-{
-	return [NSSet setWithObject: @"selectedObjects"];
-}
-
 - (NSArray *) selectedObjectIDs
 {
 	return (id) [[[self selectedObjects] PGTSCollect] objectID];
@@ -469,14 +462,14 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 
 - (BOOL) isEditable
 {
-    BOOL rval = [super isEditable];
+    BOOL retval = [super isEditable];
 #if 0
-    if (YES == rval)
+    if (YES == retval)
     {
-        rval = [[[self selection] status] ];
+        retval = [[[self selection] status] ];
     }
 #endif
-    return rval;
+    return retval;
 }
 
 - (void) fetch: (id) sender
@@ -524,7 +517,7 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
         [self BXHandleError: error];
     else
     {    
-        //The returned object should have retain count of 1
+        //The returned object should have retain count of 1.
         [object retain];
     }
     mChanging = NO;

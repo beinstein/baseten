@@ -132,10 +132,11 @@
  */
 - (void) BXHandleError: (NSError *) error
 {
-    [[NSAlert alertWithError: error] beginSheetModalForWindow: [self BXWindow] 
-                                                modalDelegate: self 
-                                               didEndSelector: NULL 
-                                                  contextInfo: NULL];
+	NSWindow* window = [self BXWindow];
+	if (window && ![window attachedSheet])
+		[NSApp presentError: error modalForWindow: window delegate: nil didPresentSelector: NULL contextInfo: NULL];
+	else
+		[NSApp presentError: error];
 }
 
 @end
