@@ -295,8 +295,6 @@ ErrorUserInfo (NSString* localizedName, NSString* localizedError, BXDatabaseCont
 }
 
 
-//Saved for later use.
-#if 0
 /**
  * \internal
  * \brief Create a database error.
@@ -313,7 +311,6 @@ DatabaseError (NSInteger errorCode, NSString* localizedError, BXDatabaseContext*
 		[userInfo setObject: entity	forKey: kBXEntityDescriptionKey];
 	return [NSError errorWithDomain: kBXErrorDomain code: errorCode userInfo: userInfo];		
 }
-#endif
 
 
 static NSError*
@@ -326,6 +323,16 @@ PredicateNotAllowedError (BXDatabaseContext* context, NSPredicate* predicate)
 	NSMutableDictionary* userInfo = ErrorUserInfo (title, error, context);
 	[userInfo setObject: predicate forKey: kBXPredicateKey];
 	return [NSError errorWithDomain: kBXErrorDomain code: kBXErrorPredicateNotAllowedForUpdateDelete userInfo: userInfo];
+}
+
+
+static NSError*
+TableNotFoundError (BXDatabaseContext* context, BXEntityDescription* entity)
+{
+	NSString* errorFormat = BXLocalizedString (@"relationNotFound", @"Relation %@ was not found in schema %@.", @"Error message for getting or using an entity description.");
+	NSString* errorMessage = [NSString stringWithFormat: errorFormat, [entity name], [entity schemaName]];
+	NSError* retval = DatabaseError (kBXErrorNoTableForEntity, errorMessage, context, entity);
+	return retval;
 }
 
 
@@ -562,7 +569,11 @@ error:
 	
 	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
-	if (! [entity isValidated]) goto error; //FIXME: set the error.
+	if (! [entity isValidated])
+	{
+		*error = TableNotFoundError (mContext, entity);
+		goto error;
+	}
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 		
@@ -617,8 +628,13 @@ error:
 	Expect (error);
     NSArray* retval = nil;
 	if (! [mTransactionHandler canSend: error]) goto error;
+	if (! [entity isValidated])
+	{
+		*error = TableNotFoundError (mContext, entity);
+		goto error;
+	}	
 	PGTSTableDescription* table = [self tableForEntity: entity];
-	if (! table) goto error; //FIXME: set the error.
+	Expect (table);
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
@@ -783,8 +799,13 @@ error:
 	
 	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
+	if (! [entity isValidated])
+	{
+		*error = TableNotFoundError (mContext, entity);
+		goto error;
+	}
 	PGTSTableDescription* table = [self tableForEntity: entity];
-	if (! table) goto error; //FIXME: set the error.
+	Expect (table);
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
 	
@@ -884,6 +905,11 @@ error:
 		if ([entity beginValidation])
 		{
 			BXPGTableDescription* table = [self tableForEntity: entity];
+			if (! table)
+			{
+				//Entity has been created before connecting but it doesn't exist.
+				continue;
+			}
 			
 			//Entity
 			{

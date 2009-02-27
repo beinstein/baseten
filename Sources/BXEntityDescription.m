@@ -150,7 +150,8 @@ bail:
 
 - (NSString *) description
 {
-    return [NSString stringWithFormat: @"<%@ %@ (%p)>", mDatabaseURI, [self name], self];
+    return [NSString stringWithFormat: @"<%@ %@ (%p) validated: %d enabled: %d>", 
+			mDatabaseURI, [self name], self, [self isValidated], [self isEnabled]];
 }
 
 /**

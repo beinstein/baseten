@@ -1998,12 +1998,12 @@ ModTypeToObject (enum BXModificationType value)
 - (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName error: (NSError **) outError
 {
 	NSError* localError = nil;
-	id retval = [mObjectModel entityForTable: name inSchema: schemaName error: &localError];
+	id retval = [mObjectModel entityForTable: name inSchema: schemaName ?: @"public" error: &localError];
 	
 	//FIXME: should this be here or in the object model?
 	if (! retval && ! localError)
 	{
-		NSString* errorFormat = BXLocalizedString (@"tableNotFound", @"Table %@ was not found in schema %@.", @"Error message for getting an entity description.");
+		NSString* errorFormat = BXLocalizedString (@"relationNotFound", @"Relation %@ was not found in schema %@.", @"Error message for getting or using an entity description.");
 		NSString* localizedError = [NSString stringWithFormat: errorFormat, name, schemaName];
 		NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localizedError forKey: NSLocalizedFailureReasonErrorKey];
 		localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
@@ -2021,7 +2021,7 @@ ModTypeToObject (enum BXModificationType value)
  */
 - (BXEntityDescription *) entityForTable: (NSString *) name error: (NSError **) outError
 {
-	return [self entityForTable: name inSchema: @"public" error: outError];
+	return [self entityForTable: name inSchema: nil error: outError];
 }
 
 /**

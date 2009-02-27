@@ -1177,7 +1177,7 @@ DECLARE
 BEGIN
 	PERFORM "baseten".observing_compatible_ex (relid);
 	nname := "baseten".mod_notification (relid);
-	RAISE NOTICE 'Observing: %', nname;
+	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
 	retval := (relid, nname, null::TEXT, null::TEXT);
@@ -1218,7 +1218,7 @@ BEGIN
 	END;
 
 	nname := "baseten".lock_notification (relid);
-	RAISE NOTICE 'Observing: %', nname;
+	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
 	retval := (relid, nname, "baseten".lock_fn (relid), "baseten".lock_table (relid));
@@ -1602,7 +1602,7 @@ BEGIN
 		'ORDER BY "baseten_modification_timestamp" DESC, "baseten_modification_insert_timestamp" DESC';
 	
 	-- FIXME: for debugging
-	RAISE NOTICE 'Modifications: %', query;
+	--RAISE NOTICE 'Modifications: %', query;
 	
 	FOR retval IN EXECUTE query
 	LOOP

@@ -1186,6 +1186,10 @@ ParseSelector (SEL aSelector, NSString** key)
 	{
 		retval = kBXDatabaseObjectForeignKey;
 	}
+	else
+	{
+		//Unknown key.
+	}
 
     return retval;
 }

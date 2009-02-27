@@ -67,16 +67,17 @@
 
 - (NSMethodSignature *) methodSignatureForSelector: (SEL) aSelector
 {
-    NSMethodSignature* rval = nil;
-    if (YES == mIsMutable)
-        rval = [mContainer methodSignatureForSelector: aSelector];
+	Expect (mContainer);
+    NSMethodSignature* retval = nil;
+    if (mIsMutable)
+        retval = [mContainer methodSignatureForSelector: aSelector];
     else
     {
         //Only allow the non-mutating methods
 		BXAssertLog (Nil != mNonMutatingClass, @"Expected mimiced class to be set.");
-        rval = [mNonMutatingClass instanceMethodSignatureForSelector: aSelector];
+        retval = [mNonMutatingClass instanceMethodSignatureForSelector: aSelector];
     }
-    return rval;
+    return retval;
 }
 
 - (void) forwardInvocation: (NSInvocation *) anInvocation
@@ -88,7 +89,6 @@
 {
     return [mContainer isEqual: anObject];
 }
-
 
 - (id) copyWithZone: (NSZone *) aZone
 {

@@ -43,7 +43,10 @@
 {
     if ((self = [super BXInitWithArray: anArray]))
     {
-        mContainer = [[NSCountedSet alloc] initWithArray: anArray];
+		if (anArray)
+	        mContainer = [[NSCountedSet alloc] initWithArray: anArray];
+		else
+			mContainer = [[NSCountedSet alloc] init];
         mNonMutatingClass = [NSSet class];
     }
     return self;
