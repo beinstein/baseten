@@ -1995,6 +1995,8 @@ ModTypeToObject (enum BXModificationType value)
 //@{
 /** 
  * \brief Entity for a table in the given schema.
+ * \note Unlike PostgreSQL, leaving \em schemaName unspecified does not cause the search path to be used but 
+ *       instead will search the \em public schema.
  * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
  *       the database name before entities may be received.
  */
@@ -2018,7 +2020,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /** 
- * \brief Entity for a table in the default schema 
+ * \brief Entity for a table in the schema \em public
  * \note Entities are associated with a database URI. Thus the database context needs an URI containing a host and 
  *       the database name before entities may be received.
  */
@@ -2650,7 +2652,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 
     //FIXME: For some reason we can't look for only non-invalid items
 #if 0
-    Boolean allowNegative = FALSE;
+    Boolean allowNegative = false;
     AddKeychainAttribute (kSecNegativeItemAttr, &allowNegative, sizeof (Boolean), attributeBuffer);
 #endif
     
