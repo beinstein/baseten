@@ -30,7 +30,7 @@
 #import "BXConstants.h"
 
 /**
- * A BaseTen-specific exception.
+ * \brief A BaseTen-specific exception.
  * \ingroup baseten
  */
 @implementation BXException

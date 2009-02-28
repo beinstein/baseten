@@ -150,8 +150,6 @@
  */
 - (enum BXSSLMode) SSLModeForDatabaseContext: (BXDatabaseContext *) ctx;
 
-//FIXME: documentation needed.
-- (void) databaseContext: (BXDatabaseContext *) ctx validatingEntity: (BXEntityDescription *) entity entitiesLeft: (NSUInteger) count;
 - (void) databaseContextGotDatabaseURI: (BXDatabaseContext *) ctx;
 
 /**

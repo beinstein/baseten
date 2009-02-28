@@ -58,6 +58,7 @@ BX_EXPORT NSString* const kBXConnectionSetupAlertDidEndNotification;
 BX_EXPORT NSString* const kBXGotDatabaseURINotification;
 BX_EXPORT NSString* const kBXAttributeKey;
 BX_EXPORT NSString* const kBXUnknownPredicatesKey;
+BX_EXPORT NSString* const kBXRelationshipKey;
 BX_EXPORT NSString* const kBXRelationshipsKey;
 BX_EXPORT NSString* const kBXPredicateKey;
 BX_EXPORT NSString* const kBXOwnerObjectVariableName;
@@ -83,7 +84,8 @@ enum BXError
 	kBXErrorUnknown,
 	kBXErrorIncompleteDatabaseURI,
 	kBXErrorPredicateNotAllowedForUpdateDelete,
-	kBXErrorGenericNetworkError
+	kBXErrorGenericNetworkError,
+	kBXErrorObjectAlreadyDeleted
 };
 
 enum BXModificationType

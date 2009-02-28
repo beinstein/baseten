@@ -33,7 +33,8 @@
 /**
  * \brief An abstract superclass for various description classes.
  *
- * \note This class is thread-safe.
+ * \note This class's documented methods are thread-safe. Creating objects, however, is not.
+ * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  * \ingroup descriptions
  */
 @implementation BXAbstractDescription

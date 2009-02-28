@@ -544,7 +544,6 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	[self execQuery: "SET standard_conforming_strings TO true"];
 	[self execQuery: "SET datestyle TO 'ISO, YMD'"];
 	PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
-	//FIXME: set other things as well?
 	
 	//Create a runloop source to receive data asynchronously.
 	CFSocketContext context = {0, self, NULL, NULL, NULL};

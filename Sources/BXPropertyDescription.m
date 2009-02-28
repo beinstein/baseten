@@ -34,6 +34,8 @@
 
 /**
  * \brief A superclass for various description classes.
+ * \note This class's documented methods are thread-safe. Creating objects, however, is not.
+ * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  * \ingroup descriptions
  */
 @implementation BXPropertyDescription
@@ -119,6 +121,7 @@
 	return (mFlags & kBXPropertyOptional ? YES : NO);
 }
 
+/** \brief The property's subtype. */
 - (enum BXPropertyKind) propertyKind
 {
 	return kBXPropertyNoKind;

@@ -47,6 +47,7 @@
  * \brief A description for one-to-many relationships and a superclass for others.
  *
  * Relationships between entities are defined with foreign keys in the database.
+ * \note This class's documented methods are thread-safe. Creating objects, however, is not.
  * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  * \ingroup descriptions
  */
@@ -82,8 +83,6 @@
 
 /**
  * \brief Inverse relationship for this relationship.
- *
- * In BaseTen, inverse relationships always exist.
  */
 - (BXRelationshipDescription *) inverseRelationship
 {
@@ -226,6 +225,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	mIsInverse = aBool;
 }
 
+/** \brief Whether this relationship is inverse. */
 - (BOOL) isInverse
 {
 	return mIsInverse;
@@ -420,8 +420,7 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
     else
     {
     	//First remove old objects from the relationship, then add new ones.
-    	//FIXME: this could be configurable by the user unless we want to look for
-    	//       non-empty or maximum size constraints, which are likely CHECK clauses.
+    	//FIXME: this could be configurable by the user unless we want to look for non-empty or maximum size constraints, which are likely CHECK clauses.
     	//FIXME: these should be inside a transaction. Use the undo manager?
 		
 		BXDatabaseObject* oldTarget = nil;

@@ -74,6 +74,7 @@
 	
 	/** \brief An NSWindow to which sheets are attached. \see -modalWindow */
 	IBOutlet NSWindow*						modalWindow;
+	/** \brief The context's delegate. \see -delegate */
 	IBOutlet id	<BXDatabaseContextDelegate>	delegate;
 	
 	enum BXConnectionErrorHandlingState		mConnectionErrorHandlingState;

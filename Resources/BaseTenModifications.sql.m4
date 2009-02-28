@@ -1068,7 +1068,7 @@ GRANT EXECUTE ON FUNCTION "baseten".lock_notification (OID) TO basetenread;
 -- Removes tracked modifications which are older than 5 minutes and set the modification timestamps 
 -- that have been left to null values from the last commit. Since the rows that have the same 
 -- backend PID as the current process might not yet be visible to other transactions. 
--- FIXME: If we knew the current transaction status, the WHERE clause could be rewritten as:
+-- FIXME: If we knew the current transaction status, the WHERE clause could be rewritten as follows:
 -- WHERE "baseten_modification_timestamp" IS NULL 
 --	   AND ("baseten_modification_backend_pid" != pg_backend_pid () OR pg_xact_status = 'IDLE');
 -- Also, if the connection is not autocommitting, we might end up doing some unnecessary work.

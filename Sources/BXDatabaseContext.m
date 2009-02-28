@@ -837,11 +837,13 @@ ModTypeToObject (enum BXModificationType value)
 	mUsesKeychain = usesKeychain;
 }
 
+/** \brief Whether a known-to-work password will be stored into the default keychain. */
 - (BOOL) storesURICredentials
 {
 	return mShouldStoreURICredentials;
 }
 
+/** \brief Set whether a known-to-work password should be stored into the default keychain. */
 - (void) setStoresURICredentials: (BOOL) shouldStore
 {
 	mShouldStoreURICredentials = shouldStore;
@@ -959,16 +961,19 @@ ModTypeToObject (enum BXModificationType value)
 	mConnectionErrorHandlingState = (shouldAllow ? kBXConnectionErrorNone : kBXConnectionErrorNoReconnect);
 }
 
+/** \brief Whether SSL is currently in use. */
 - (BOOL) isSSLInUse
 {
 	return [mDatabaseInterface isSSLInUse];
 }
 
+/** \brief Whether queries are logged to stdout. */
 - (BOOL) logsQueries
 {
 	return [mDatabaseInterface logsQueries];
 }
 
+/** \brief Set whether queries are logged to stdout. */
 - (void) setLogsQueries: (BOOL) shouldLog
 {
 	[mDatabaseInterface setLogsQueries: shouldLog];
@@ -1130,8 +1135,6 @@ ModTypeToObject (enum BXModificationType value)
 		if (! [self connectSync: &localError])
 			goto error;
 		
-		//FIXME: check the entity.
-		
 		NSArray* objects = [self executeFetchForEntity: (BXEntityDescription *) [anID entity] 
 										 withPredicate: [anID predicate] returningFaults: NO error: &localError];
 		if (localError) goto error;
@@ -1281,7 +1284,7 @@ ModTypeToObject (enum BXModificationType value)
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
  * \return                      An NSArray that reflects the state of the database at query 
- *                              execution time, or an automatically updating NSArray proxy.
+ *                              execution time, or a BXArrayProxy.
  */
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     returningFaults: (BOOL) returnFaults updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
@@ -1305,7 +1308,7 @@ ModTypeToObject (enum BXModificationType value)
  * \param       error           If an error occurs, this pointer is set to an NSError instance.
  *                              May be NULL.
  * \return                      An NSArray that reflects the state of the database at query 
- *                              execution time, or an automatically updating NSArray proxy.
+ *                              execution time, or a BXArrayProxy.
  */
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
                     excludingFields: (NSArray *) excludedFields updateAutomatically: (BOOL) shouldUpdate error: (NSError **) error
@@ -2584,6 +2587,7 @@ ModTypeToObject (enum BXModificationType value)
 @end
 
 
+//FIXME: move these elsewhere.
 @implementation BXDatabaseContext (Keychain)
 
 static SecKeychainAttribute

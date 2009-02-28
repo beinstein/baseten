@@ -29,6 +29,7 @@
 #import "BXPGCertificateVerificationDelegate.h"
 #import "BXDatabaseContextPrivate.h"
 #import "BXSafetyMacros.h"
+#import "BXLogger.h"
 #import <openssl/x509.h>
 
 
@@ -101,6 +102,7 @@ end:
 		else
 		{
 			//FIXME: create an error indicating that the certificates have changed.
+			BXLogError (@"Certificates seem to have changed between connection attempts?");
 			retval = NO;
 		}
 	}

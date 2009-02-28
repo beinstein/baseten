@@ -462,6 +462,7 @@ ConnectionString (NSDictionary* connectionDict)
 		default:
 			[self sendPlaceholderResultTo: delegate callback: callback succeeded: NO userInfo: userInfo];
 			//FIXME: set an error.
+			BXLogError (@"Transaction status had a strange value: %d", status);
 			break;
 	}
 }
@@ -492,6 +493,7 @@ ConnectionString (NSDictionary* connectionDict)
 			
 		default:
 			//FIXME: set an error.
+			BXLogError (@"Transaction status had a strange value: %d", status);
 			break;
 	}
 	return retval;

@@ -41,6 +41,8 @@
 
 /**
  * \brief An attribute description contains information about a column in a specific entity.
+ * \note This class's documented methods are thread-safe. Creating objects, however, is not.
+ * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  * \ingroup descriptions
  */
 @implementation BXAttributeDescription
@@ -116,6 +118,7 @@
 	return kBXPropertyKindAttribute;
 }
 
+/** \brief Whether this attribute is an array or not. */
 - (BOOL) isArray
 {
 	return (kBXPropertyIsArray & mFlags ? YES : NO);

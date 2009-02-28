@@ -119,6 +119,7 @@
 		{
 			retval = NO;
 			//FIXME: handle the error.
+			BXLogError (@"Transaction status had a strange value: %d", status);
 		}
 	}
 	return retval;
@@ -406,6 +407,7 @@
 	else 
 	{
 		//FIXME: set the error.
+		BXLogError (@"Transaction status had a strange value: %d", status);
 	}
 	return retval;
 }

@@ -45,12 +45,13 @@
 
 
 /**
- * An entity description contains information about a specific table
- * in a given database.
+ * \brief An entity description contains information about a specific table or view in a given database.
+ *
  * Only one entity description instance is created for a combination of a database
  * URI, a schema and a table.
  *
- * \note This class is thread-safe.
+ * \note This class's documented methods are thread-safe. Creating objects, however, is not.
+ * \note For this class to work in non-GC applications, the corresponding database context must be retained as well.
  * \ingroup descriptions
  */
 @implementation BXEntityDescription
@@ -201,7 +202,12 @@ bail:
  */
 - (NSArray *) objectIDs
 {
-	return [mObjectIDs allObjects];
+	id retval = nil;
+	@synchronized (mObjectIDs)
+	{
+		retval = [mObjectIDs allObjects];
+	}
+	return retval;
 }
 
 static int
@@ -281,8 +287,9 @@ FilterPkeyAttributes (id attribute, void* arg)
  * The entity will be validated after a database connection has been made. Afterwards, 
  * #fields, #primaryKeyFields, #attributesByName and #relationshipsByName return meaningful values.
  *
- * \note To call this safely, mValidationLock should be acquired first. Our validation methods do this, though.
+ * \note To call this safely, \em mValidationLock should be acquired first. Our validation methods do this, though.
  */
+//FIXME: should we have a separate variable for validation status?
 - (BOOL) isValidated
 {
 	return (mFlags & kBXEntityIsValidated) ? YES : NO;
@@ -299,12 +306,14 @@ FilterPkeyAttributes (id attribute, void* arg)
 	return [[mRelationships retain] autorelease];
 }
 
-
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability
 {
 	return (mCapabilities & aCapability ? YES : NO);
 }
 
+/** 
+ * \brief Whether this entity is marked as a view or not. 
+ */
 - (BOOL) isEnabled
 {
 	return (mFlags & kBXEntityIsEnabled) ? YES : NO;
@@ -326,8 +335,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
     @synchronized (mSuperEntities)
     {
-        //FIXME: We only implement cascading notifications from "root tables" to 
-        //inheriting tables and not vice-versa.
+        //FIXME: We only implement cascading notifications from "root tables" to inheriting tables and not vice-versa.
         //FIXME: only single entity supported for now.
         BXAssertVoidReturn (0 == [mSuperEntities count], @"Expected inheritance/dependant relations not to have been set.");
         BXAssertVoidReturn (1 == [entities count], @"Multiple inheritance/dependant relations is not supported.");
@@ -343,8 +351,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 {
     @synchronized (mSubEntities)
     {
-        //FIXME: We only implement cascading notifications from "root tables" to 
-        //inheriting tables and not vice-versa.
+        //FIXME: We only implement cascading notifications from "root tables" to inheriting tables and not vice-versa.
         [mSubEntities addObject: entity];
     }
 }

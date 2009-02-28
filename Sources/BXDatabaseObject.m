@@ -83,6 +83,7 @@ ColonCount (const char* start)
 }
 
 /**
+ * \internal
  * \brief Is the given selector a setter or a getter?
  * \return 2 if setter, 1 if getter, 0 if neither
  */
@@ -120,6 +121,45 @@ ParseSelector (SEL aSelector, NSString** key)
         }
     }
     return rval;
+}
+
+
+static NSMutableDictionary*
+ErrorUserInfo (NSString* localizedName, NSString* localizedError, BXDatabaseObject* object, BXAttributeDescription* attr, BXRelationshipDescription* rel)
+{
+	NSMutableDictionary* userInfo = [NSMutableDictionary dictionary];
+	if (localizedError)
+	{
+		[userInfo setObject: localizedError forKey: NSLocalizedFailureReasonErrorKey];
+		[userInfo setObject: localizedError forKey: NSLocalizedRecoverySuggestionErrorKey];
+	}
+
+	if (localizedName)
+		[userInfo setObject: localizedName forKey: NSLocalizedDescriptionKey];
+
+	if (object)
+		[userInfo setObject: object forKey: kBXObjectKey];
+	
+	if (attr)
+		[userInfo setObject: attr forKey: kBXAttributeKey];
+	
+	if (rel)
+		[userInfo setObject: rel forKey: kBXRelationshipKey];
+	
+	return userInfo;
+}
+
+
+static NSError*
+DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localizedError, BXDatabaseObject* object, BXAttributeDescription* attr, BXRelationshipDescription* rel)
+{
+	ExpectCR (localizedTitle, nil);
+	ExpectCR (localizedError, nil);
+	NSMutableDictionary* userInfo = ErrorUserInfo (localizedTitle, localizedError, object, attr, rel);
+	NSError* retval = [NSError errorWithDomain: kBXErrorDomain 
+										  code: kBXErrorNullConstraintNotSatisfied
+									  userInfo: userInfo];
+	return retval;
 }
 
 
@@ -269,8 +309,13 @@ ParseSelector (SEL aSelector, NSString** key)
 	BOOL retval = NO;
 	if ([self isDeleted])
 	{
-		//Already deleted.
-		//FIXME: set outError.
+		if (outError)
+		{
+			NSString* title = BXLocalizedString (@"deletionUnsuccessful", @"Couldn't delete the object.", @"Error title");
+			NSString* message = BXLocalizedString (@"objectAlreadyDeleted", @"The object has already been deleted.", @"Error description");
+			NSError* error = DatabaseError (kBXErrorObjectAlreadyDeleted, title, message, self, nil, nil);
+			*outError = error;
+		}
 	}
 	else if ([[self entity] hasCapability: kBXEntityCapabilityRelationships])
 	{
@@ -281,8 +326,13 @@ ParseSelector (SEL aSelector, NSString** key)
 			if (NSDenyDeleteRule == [inverse deleteRule] && 
 				nil != [self primitiveValueForKey: [currentRel name]])
 			{
-				//Deletion denied.
-				//FIXME: set outError.
+				if (outError)
+				{
+					NSString* title = BXLocalizedString (@"deletionUnsuccessful", @"Couldn't delete the object.", @"Error title");
+					NSString* message = BXLocalizedString (@"objectInUseByRelationship", @"The object is referenced by a relationship that doesn't allow deletion.", @"Error description");
+					NSError* error = DatabaseError (kBXErrorObjectAlreadyDeleted, title, message, self, nil, currentRel);
+					*outError = error;					
+				}
 				retval = NO;
 				break;
 			}
@@ -1050,9 +1100,10 @@ ParseSelector (SEL aSelector, NSString** key)
 	}
 }
 
+
 - (BOOL) checkNullConstraintForValue: (id *) ioValue key: (NSString *) key error: (NSError **) outError
 {
-	BOOL rval = YES;
+	BOOL retval = YES;
 	BXEntityDescription* entity = [mObjectID entity];
 	BXAssertValueReturn (NULL != ioValue, NO, @"Expected ioValue not to be NULL.");
 	BXAssertValueReturn ([entity isValidated], NO, @"Expected entity %@ to have been validated earlier.", entity);
@@ -1060,23 +1111,16 @@ ParseSelector (SEL aSelector, NSString** key)
 	BXAttributeDescription* attribute = [[entity attributesByName] objectForKey: key];
 	if (NO == [attribute isOptional] && (nil == value || [NSNull null] == value))
 	{
-		rval = NO;
+		retval = NO;
 		if (NULL != outError)
 		{
+			NSString* title = BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet");
 			NSString* message = BXLocalizedString (@"nullValueGivenForNonOptionalField", @"This field requires a non-null value.", @"Error description");
-            NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                BXSafeObj (attribute), kBXAttributeKey,
-                BXLocalizedString (@"databaseError", @"Database Error", @"Title for a sheet"), NSLocalizedDescriptionKey,
-                BXSafeObj (message), NSLocalizedFailureReasonErrorKey,
-                BXSafeObj (message), NSLocalizedRecoverySuggestionErrorKey,
-                nil];
-			NSError* error = [NSError errorWithDomain: kBXErrorDomain 
-												 code: kBXErrorNullConstraintNotSatisfied
-											 userInfo: userInfo];
+			NSError* error = DatabaseError (kBXErrorNullConstraintNotSatisfied, title, message, self, attribute, nil);
 			*outError = error;
 		}
 	}
-	return rval;
+	return retval;
 }
 
 - (id) valueForUndefinedKey: (NSString *) aKey

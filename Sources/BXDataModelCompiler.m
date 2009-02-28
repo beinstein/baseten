@@ -146,42 +146,57 @@ end:
 }
 
 - (void) compileDataModel
-{
-	//FIXME: handle errors in asprintf and mkstemps.
-	
+{	
 	NSString* sourcePath = [mModelURL path];
 	char* pathFormat = NULL;
-	BOOL ok = NO;
 	if ([sourcePath hasSuffix: @".xcdatamodeld"])
 	{
 		asprintf (&pathFormat, "%s/BaseTen.datamodel.%u.XXXXX", 
 				  [NSTemporaryDirectory () UTF8String], getpid ());
-		ok = (NULL != mkdtemp (pathFormat));
+		if (! pathFormat)
+		{
+			BXLogError (@"asprintf returned NULL. errno was %d.", errno);
+			goto bail;
+		}
+		
+		if (! mkdtemp (pathFormat))
+		{
+			BXLogError (@"mkdtemp returned NULL. errno was %d.", errno);
+			goto bail;
+		}
 	}
 	else
 	{
 		asprintf (&pathFormat, "%s/BaseTen.datamodel.%u.XXXXX.mom", 
 				  [NSTemporaryDirectory () UTF8String], getpid ());
-		ok = (-1 != mkstemps (pathFormat, 5));
-	}
-	
-	if (ok)
-	{
-		NSString* targetPath = [NSString stringWithCString: pathFormat encoding: NSUTF8StringEncoding];
-		NSString* momcPath = [[self class] momcPath];
-		NSArray* arguments = [NSArray arrayWithObjects: sourcePath, targetPath, nil];
-		[self setCompiledModelURL: [NSURL fileURLWithPath: targetPath]];
-		mErrorPipe = [[NSPipe pipe] retain];
+		if (! pathFormat)
+		{
+			BXLogError (@"asprintf returned NULL.");
+			goto bail;
+		}
 		
-		mMomcTask = [[NSTask alloc] init];
-		[mMomcTask setLaunchPath: momcPath];
-		[mMomcTask setArguments: arguments];
-		[mMomcTask setStandardError: [mErrorPipe fileHandleForWriting]];
-		[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector (momcTaskFinished:) 
-													 name: NSTaskDidTerminateNotification object: mMomcTask];
-		[mMomcTask launch];
+		if (-1 == mkstemps (pathFormat, 5))
+		{
+			BXLogError (@"mkstemps returned -1. errno was %d.", errno);
+			goto bail;
+		}
 	}
 	
+	NSString* targetPath = [NSString stringWithCString: pathFormat encoding: NSUTF8StringEncoding];
+	NSString* momcPath = [[self class] momcPath];
+	NSArray* arguments = [NSArray arrayWithObjects: sourcePath, targetPath, nil];
+	[self setCompiledModelURL: [NSURL fileURLWithPath: targetPath]];
+	mErrorPipe = [[NSPipe pipe] retain];
+	
+	mMomcTask = [[NSTask alloc] init];
+	[mMomcTask setLaunchPath: momcPath];
+	[mMomcTask setArguments: arguments];
+	[mMomcTask setStandardError: [mErrorPipe fileHandleForWriting]];
+	[[NSNotificationCenter defaultCenter] addObserver: self selector: @selector (momcTaskFinished:) 
+												 name: NSTaskDidTerminateNotification object: mMomcTask];
+	[mMomcTask launch];
+	
+bail:
 	if (pathFormat)
 		free (pathFormat);
 }

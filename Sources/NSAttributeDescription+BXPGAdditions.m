@@ -230,7 +230,8 @@ CharLengthExpression (NSString* name)
 				}
 				else
 				{
-					//FIXME: report the error! We don't understand other key paths than length.
+					//FIXME: report the error in some other way. We don't understand other key paths than length.
+					BXLogError (@"Predicate %@ wasn't understood.", [predicate predicateFormat]);
 					retval = nil;
 				}
 			}

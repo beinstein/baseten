@@ -72,6 +72,7 @@ PGTS::InsertConditionally (IdMap* map, PGTSAbstractDescription* description)
 	{
 		[mName release];
 		mName = [aString copy];
+		mHash = [mName hash];
 	}
 }
 
@@ -98,8 +99,6 @@ PGTS::InsertConditionally (IdMap* map, PGTSAbstractDescription* description)
 
 - (unsigned int) hash
 {
-    if (0 == mHash)
-        mHash = ([mName hash]);
     return mHash;
 }
 @end

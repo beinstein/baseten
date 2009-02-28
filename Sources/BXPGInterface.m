@@ -1018,9 +1018,7 @@ error:
 					//Optionality
 					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.
 					[rel setOptional: YES];
-					
-					//FIXME: delete rule.
-
+		
 					if ('m' == kind)
 					{
 						Oid dstconoid = [[relationships valueForKey: @"dstconoid"] PGTSOidValue];

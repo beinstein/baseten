@@ -73,7 +73,7 @@
 /**
  * \mainpage Introduction
  *
- * BaseTen is a new, open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
+ * BaseTen is an open source Cocoa database framework for working with PostgreSQL databases. BaseTen 
  * has been designed with familiar, Core Data -like semantics and APIs. 
  *
  * The BaseTen feature highlights include:
@@ -93,10 +93,11 @@
  * \page general_usage Using BaseTen framework
  *
  * \li \subpage overview
- * \li \subpage getting_started
  * \li \subpage accessing_values
+ * \li \subpage getting_started
  * \li \subpage tracking_changes
  * \li \subpage using_appkit_classes
+ * \li \subpage database_types
  * \li \subpage postgresql_installation
  * \li \subpage building_baseten
  * \li \subpage limitations
@@ -205,16 +206,15 @@
  *     described above.
  *
  * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
- * The functions are <em>baseten.prepareformodificationobserving</em> and <em>baseten.cancelmodificationobserving</em>
- * and they take an oid as an argument.
+ * The functions are <em>baseten.enable</em> and <em>baseten.disable</em> and they take an oid as an argument.
  *
- * Views' primary keys are stored in <em>baseten.viewprimarykey</em>. The table has three columns: \em nspname, 
+ * Views' primary keys are stored in <em>baseten.view_pkey</em>. The table has three columns: \em nspname, 
  * \em relname and \em attname, which correspond to the view's schema name, the view's name and each primary 
  * key column's name respectively. They also make up the table's primary key. In addition to using 
  * BaseTen Assistant, it is possible to determine a view's primary key by inserting rows into the table.
  *
  * Relationships that involve views are stored in automatically-generated tables. These may be refreshed view
- * the SQL function <em>baseten.refreshcaches</em>. BaseTen Assistant does this automatically.
+ * the SQL function <em>baseten.refresh_caches</em>. BaseTen Assistant does this automatically.
  */
 
 /**
@@ -395,12 +395,13 @@
  * <tt>-valueForKey:</tt> and <tt>-setValue:forKey:</tt>. The key will be the column name. As with 
  * NSManagedObject, methods like <tt>-&lt;key&gt;</tt> and <tt>-set&lt;Key&gt;:</tt> are also automatically available.
  *
- * Column values are converted to Foundation objects based on the column type. The type conversion is
- * defined in the file <em>datatypeassociations.plist</em>. Currently, there is no way to affect the type conversion,
- * and modifying the file is not recommended. Instead, custom getters may be written for preprocessing
+ * Column values are converted to Foundation objects based on the column type. Currently, there is no way to 
+ * affect the type conversion. Instead, custom getters may be written for preprocessing
  * fetched objects. To support this, the column values may also be accessed using 
  * <tt>-primitiveValueForKey:</tt>. Similarly <tt>-setPrimitiveValue:forKey:</tt> may be used to set a column 
  * value.
+ *
+ * Currently handled types are listed in \ref database_types.
  *
  *
  * \section accessing_relationships Accessing relationships
@@ -588,6 +589,114 @@
  */
 
 /**
+ * \page database_types Handled PostgreSQL types
+ *
+ * Composite types, domains, pseudo-types and types not listed here are currently returned as NSData. 
+ * Various array types are returned as NSArrays of the respective type.
+ *
+ * <table>
+ *     <caption>Type conversion</caption>
+ *     <tr>
+ *         <th><strong>PostgreSQL type</strong></th>
+ *         <th><strong>Cocoa type</strong></th>
+ *     </tr>
+ *     <tr>
+ *         <td>bit</td>
+ *         <td>NSData</td>
+ *     </tr>
+ *     <tr>
+ *         <td>bool</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>bpchar</td>
+ *         <td>NSString</td>
+ *     </tr> 
+ *     <tr>
+ *         <td>bytea</td>
+ *         <td>NSData</td>
+ *     </tr>
+ *     <tr>
+ *         <td>char</td>
+ *         <td>NSString</td>
+ *     </tr>
+ *     <tr>
+ *         <td>date</td>
+ *         <td>NSCalendarDate<sup>\ref database_types_ref_1 "1"</sup></td>
+ *     </tr>
+ *     <tr>
+ *         <td>float4</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>float8</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>int2</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>int2vector</td>
+ *         <td>NSArray of NSNumbers</td>
+ *     </tr> 
+ *     <tr>
+ *         <td>int4</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>int8</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>name</td>
+ *         <td>NSString</td>
+ *     </tr>
+ *     <tr>
+ *         <td>numeric</td>
+ *         <td>NSDecimalNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>oid</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>point</td>
+ *         <td>NSValue</td>
+ *     </tr>
+ *     <tr>
+ *         <td>text</td>
+ *         <td>NSString</td>
+ *     </tr>
+ *     <tr>
+ *         <td>timestamp</td>
+ *         <td>NSDate</td>
+ *     </tr>
+ *     <tr>
+ *         <td>timestamptz</td>
+ *         <td>NSCalendarDate<sup>\ref database_types_ref_1 "1"</sup></td>
+ *     </tr>
+ *     <tr>
+ *         <td>tinterval</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>varbit</td>
+ *         <td>NSData</td>
+ *     </tr>
+ *     <tr>
+ *         <td>varchar</td>
+ *         <td>NSString</td>
+ *     </tr>
+ *     <tr>
+ *         <td>uuid</td>
+ *         <td>NSString</td>
+ *     </tr>
+ * </table>
+ * \anchor database_types_ref_1 1. Subject to change as NSCalendarDate might become deprecated.
+ */
+
+/**
  * \page postgresql_installation PostgreSQL installation
  *
  * Here's a brief tutorial on PostgreSQL installation.
@@ -631,7 +740,7 @@
  * in the \em Documentation folder.
  *
  *
- * \section building_for_the_release_dmg Building for the release DMG
+ * \section building_for_the_release_dmg Building for the release disk image
  *
  * The files needed to build the release disk image are in the SVN repository as well. Doxygen is needed during 
  * the process. To create the DMG, follow these steps:
@@ -639,7 +748,7 @@
  *     <li>From the checked-out directory, <tt>cd ReleaseDMG</tt>.</li>
  *     <li>The default location for the built files is <em>~/Build/BaseTen-dmg-build</em>. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
  *     <li>
- *         Do <tt>./create_release_dmg.sh</tt>. The build DMG will appear in the ReleaseDMG folder.
+ *         Do <tt>./create_release_dmg.sh</tt>. The built DMG will appear in the ReleaseDMG folder.
  *         <ul>
  *             <li>If you don't have LaTeX installed, do <tt>./create_release_dmg.sh -&ndash;without-latex</tt> instead. The PDF manual won't be included on the DMG, though.</li>
  *         </ul>
@@ -651,7 +760,7 @@
  * \page limitations Limitations in current version
  * 
  * These are some of the most severe limitations in the current version.
- * \li Practically all public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
+ * \li Most public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
  *     Furthermore, all queries must be performed from the thread in which the context made a database connection. This could change
  *     in the future, so it is best to create and handle a context only in one thread.
  * \li Any serialization mechanism has not been implemented for BXDatabaseObject.

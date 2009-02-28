@@ -237,10 +237,6 @@ bail:
 
 - (unsigned int) hash
 {
-    if (0 == mHash)
-    {
-        mHash = [mURIRepresentation BXHash];
-    }
     return mHash;
 }
 
@@ -373,7 +369,7 @@ bail:
         mURIRepresentation = [anURI retain];
         mEntity = [anEntity retain];
         mRegistered = NO;
-        mHash = 0;
+        mHash = [mURIRepresentation BXHash];
     }
     return self;
 }

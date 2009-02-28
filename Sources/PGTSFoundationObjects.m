@@ -121,11 +121,8 @@
 	size_t resultLength = 0;
 	unsigned char *unescaped = PQunescapeBytea ((unsigned char*) value, &resultLength);
 	
-	if (NULL == unescaped)
-	{
-		BXLogError (@"PQunescapeBytea failed for characters: %s", value); //FIXME: Handle error?
-		return nil;
-	}
+	//FIXME: Handle the error?
+	BXAssertValueReturn (unescaped, nil, @"PQunescapeBytea failed for characters: %s", value);
 	
     NSData *data = [[self class] dataWithBytes: unescaped length: resultLength];
 	PQfreemem (unescaped);
