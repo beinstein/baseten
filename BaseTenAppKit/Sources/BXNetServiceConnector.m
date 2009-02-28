@@ -348,6 +348,7 @@ MakeInvocation (const id target, const SEL selector)
 	}
 }
 
+#pragma mark Start here
 - (IBAction) connect: (id) sender
 {	
 	mPort = -1;
@@ -599,11 +600,24 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 - (void) recoveredFromConnectionError: (BOOL) didRecover
 {
 	if (didRecover)
-		[self endConnectionAttempt];
-	else if (kBXNSConnectorHostPanel != mCurrentPanel)
 	{
-		mCurrentPanel = kBXNSConnectorHostPanel;
-		[mConnectorImpl displayHostPanel: [self hostPanel]];
+		[self endConnectionAttempt];
+	}
+	else
+	{
+		NSURL* databaseURI = [mContext databaseURI];
+		databaseURI = [databaseURI BXURIForHost: @""
+										   port: nil
+									   database: nil 
+									   username: @""
+									   password: @""];
+		[mContext setDatabaseURIInternal: databaseURI];
+		
+		if (kBXNSConnectorHostPanel != mCurrentPanel)
+		{
+			mCurrentPanel = kBXNSConnectorHostPanel;
+			[mConnectorImpl displayHostPanel: [self hostPanel]];
+		}
 	}
 }
 

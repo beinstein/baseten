@@ -486,8 +486,8 @@ ParseSelector (SEL aSelector, NSString** key)
 	{
 		enum BXDatabaseObjectKeyType keyType = [self keyType: aKey];
 		BXAssertLog (kBXDatabaseObjectUnknownKey != keyType, 
-					 @"Key %@ wasn't found in entity %@.%@.", 
-					 aKey, [[self entity] schemaName], [[self entity] name]);
+					 @"Key %@ wasn't found in entity %@.", 
+					 aKey, [self entity]);
 		switch (keyType)
 		{
 			case kBXDatabaseObjectPrimaryKey:

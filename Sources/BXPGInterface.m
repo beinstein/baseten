@@ -689,6 +689,11 @@ error:
 		entity = [objectID entity];
 	}
 	
+	if (! [entity isValidated])
+	{
+		*error = TableNotFoundError (mContext, entity);
+		goto error;
+	}		
 	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 
