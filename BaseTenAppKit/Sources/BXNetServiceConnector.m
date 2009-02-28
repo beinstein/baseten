@@ -607,7 +607,7 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 	{
 		NSURL* databaseURI = [mContext databaseURI];
 		databaseURI = [databaseURI BXURIForHost: @""
-										   port: nil
+										   port: [NSNumber numberWithInteger: -1]
 									   database: nil 
 									   username: @""
 									   password: @""];

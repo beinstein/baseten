@@ -89,7 +89,7 @@
 		
 		if (! port)
 			port = [self port];
-		if (port) [URLString appendFormat: @":%@", port];
+		if (port && -1 != [port integerValue]) [URLString appendFormat: @":%@", port];
 	
 		if (nil != dbName)
             dbName = [dbName BXURLEncodedString];
