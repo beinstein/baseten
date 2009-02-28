@@ -197,9 +197,8 @@
 }
 
 /**
- * \internal
  * \brief Set the database context.
- * \see #setFetchesOnAwake:
+ * \see #setFetchesOnConnect:
  */
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx
 {
@@ -228,14 +227,16 @@
     }
 }
 
+/**
+ * \brief Whether this controller fetches on connect.
+ */
 - (BOOL) fetchesOnConnect
 {
     return mFetchesOnConnect;
 }
 
 /**
- * \internal
- * \brief Whether this controller fetches on connect.
+ * \brief Set whether this controller fetches on connect.
  * \note Controllers bound to an automatically-fetching controller should not fetch on connect.
  * \see #setDatabaseContext:
  */
@@ -279,6 +280,14 @@
 }
 
 /**
+ * \name Methods used by the IB palette
+ * \brief The controller will try to get an entity description when its database context
+ *        based on these properties. This will occur when the context gets set and when 
+ *        the context connects. If a class name has also been set, the controller will
+ *        call NSClassFromString and set the entity's corresponding property.
+ */
+//@{
+/**
  * \brief Database schema name for this controller.
  */
 - (NSString *) schemaName
@@ -320,8 +329,6 @@
 
 /**
  * \brief Database object class name for this controller.
- *
- * When setting the database context, this will be changed into a Class.
  */
 - (NSString *) databaseObjectClassName
 {
@@ -339,6 +346,7 @@
         mDBObjectClassName = [aDBObjectClassName retain];
     }
 }
+//@}
 
 - (void) endConnecting: (NSNotification *) notification
 {
@@ -436,6 +444,9 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 	}
 }
 
+/**
+ * \brief The Object IDs of the selected objects.
+ */
 - (NSArray *) selectedObjectIDs
 {
 	return (id) [[[self selectedObjects] PGTSCollect] objectID];

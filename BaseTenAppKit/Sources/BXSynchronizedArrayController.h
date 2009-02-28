@@ -67,11 +67,11 @@
 - (void) setEntityDescription: (BXEntityDescription *) desc;
 - (BOOL) fetchesOnConnect;
 - (void) setFetchesOnConnect: (BOOL) aBool;
+- (NSArray *) selectedObjectIDs;
 
 - (void) setBXContent: (id) anObject;
 - (id) createObject: (NSError **) outError;
 - (NSDictionary *) valuesForBoundRelationship;
-- (NSArray *) selectedObjectIDs;
 @end
 
 

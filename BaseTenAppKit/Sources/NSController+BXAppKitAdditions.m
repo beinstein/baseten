@@ -50,6 +50,7 @@
 
 
 /**
+ * \internal
  * \brief Some methods used by BaseTen in BXArrayController.
  * \ingroup baseten_appkit
  */
