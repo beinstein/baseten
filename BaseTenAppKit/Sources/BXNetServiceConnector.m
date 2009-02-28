@@ -44,6 +44,7 @@
 
 @interface BXApplicationModalNSConnectorImplementation : BXNSConnectorImplementation <BXNSConnectorImplementation>
 {
+	BOOL mBegunSendingPeriodicEvents;
 }
 @end
 
@@ -141,20 +142,34 @@ MakeInvocation (const id target, const SEL selector)
 @implementation BXApplicationModalNSConnectorImplementation
 - (void) beginConnectionAttempt
 {
-	//This is rather stupid: NSApplication doesn't check if its
-	//run loop should be run after a modal session but instead
-	//requires some event before that happens. In other words,
-	//our next connection panel won't be displayed if the user
-	//doesn't click somewhere. (Initial mouse movement events are
-	//discarded?!?)
-	//We try to solve the problem by generating events for 
-	//NSApplication, so it can happily run the run loop.
-	[NSEvent startPeriodicEventsAfterDelay: 0.0 withPeriod: 0.5];
+	@try 
+	{
+		//This is rather stupid: NSApplication doesn't check if its
+		//run loop should be run after a modal session but instead
+		//requires some event before that happens. In other words,
+		//our next connection panel won't be displayed if the user
+		//doesn't click somewhere. (Initial mouse movement events are
+		//discarded?!?)
+		//We try to solve the problem by generating events for 
+		//NSApplication, so it can happily run the run loop.
+		[NSEvent startPeriodicEventsAfterDelay: 0.0 withPeriod: 0.5];
+		mBegunSendingPeriodicEvents = YES;
+	}
+	@catch (NSException * e) 
+	{
+		if (! [NSInternalInconsistencyException isEqual: [e name]])
+			[e raise];
+	}
+	@catch (id e) 
+	{
+		[e raise];
+	}
 }
 
 - (void) endConnectionAttempt
 {
-	[NSEvent stopPeriodicEvents];
+	if (mBegunSendingPeriodicEvents)
+		[NSEvent stopPeriodicEvents];
 }
 
 - (NSString *) runLoopMode
