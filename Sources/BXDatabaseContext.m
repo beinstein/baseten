@@ -2034,8 +2034,7 @@ ModTypeToObject (enum BXModificationType value)
  *
  * Entities in private and metadata schemata won't be included.
  * \param reload Whether the entity list should be reloaded.
- * \param       error           If an error occurs, this pointer is set to an NSError instance.
- *                              May be NULL.
+ * \param outError If an error occurs, this pointer is set to an NSError instance. May be NULL.
  * \return An NSDicionary with NSStrings corresponding to schema names as keys and NSDictionarys as objects. 
  *         Each of them will have NSStrings corresponding to relation names as keys and BXEntityDescriptions
  *         as objects.

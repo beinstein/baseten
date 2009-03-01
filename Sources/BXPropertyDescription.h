@@ -47,11 +47,12 @@ inline BXPropertyFlag operator &= (BXPropertyFlag x, BXPropertyFlag y) { return 
 #endif 
 	
 
+/** \brief Property kind. */
 enum BXPropertyKind
 {
-	kBXPropertyNoKind = 0,
-	kBXPropertyKindAttribute,
-	kBXPropertyKindRelationship
+	kBXPropertyNoKind = 0, /**< Kind is unspecified. */
+	kBXPropertyKindAttribute, /**< The property is an attribute. */
+	kBXPropertyKindRelationship /**< The property is a relationship. */
 };
 
 

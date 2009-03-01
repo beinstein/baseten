@@ -105,20 +105,22 @@ enum BXRelationshipType
     kBXRelationshipManyToMany    = (1 << 2)
 };
 
+/** \brief SSL certificate policy. */
 enum BXCertificatePolicy
 {
-	kBXCertificatePolicyUndefined			= 0,
-	kBXCertificatePolicyAllow,
-	kBXCertificatePolicyDeny,
-	kBXCertificatePolicyDisplayTrustPanel
+	kBXCertificatePolicyUndefined = 0, /**< Certificate policy is unspecified. */
+	kBXCertificatePolicyAllow, /** Untrusted certificates are allowed. */
+	kBXCertificatePolicyDeny, /** Untrusted certificates are denied. */
+	kBXCertificatePolicyDisplayTrustPanel /** A trust panel will be displayed to the user. */
 };
 
+/** \brief SSL connection mode. */
 enum BXSSLMode
 {
-	kBXSSLModeUndefined	= 0,
-	kBXSSLModeRequire,
-	kBXSSLModeDisable,
-	kBXSSLModePrefer
+	kBXSSLModeUndefined	= 0, /**< SSL mode is unspecified. */
+	kBXSSLModeRequire, /** SSL is required. */
+	kBXSSLModeDisable, /** SSL has been disabled. */
+	kBXSSLModePrefer /** A secure connection will be attempted at first. */
 };
 
 enum BXConnectionErrorHandlingState

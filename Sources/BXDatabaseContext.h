@@ -72,10 +72,8 @@
 	id <BXDatabaseContextDelegate>			mDelegateProxy;
 	NSError*								mLastConnectionError;
 	
-	/** \brief An NSWindow to which sheets are attached. \see -modalWindow */
-	IBOutlet NSWindow*						modalWindow;
-	/** \brief The context's delegate. \see -delegate */
-	IBOutlet id	<BXDatabaseContextDelegate>	delegate;
+	IBOutlet NSWindow*						modalWindow; /**< \brief An NSWindow to which sheets are attached. \see -modalWindow */
+	IBOutlet id	<BXDatabaseContextDelegate>	delegate; 	/**< \brief The context's delegate. \see -delegate */
 	
 	enum BXConnectionErrorHandlingState		mConnectionErrorHandlingState;
 
