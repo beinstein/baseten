@@ -381,6 +381,9 @@ MakeInvocation (const id target, const SEL selector)
 	else
 		mConnectorImpl = [[BXApplicationModalNSConnectorImplementation alloc] initWithConnector: self];
 	
+	if (! [mContext databaseURI])
+		[mContext setDatabaseURI: [NSURL URLWithString: @"pgsql:///"]];
+	
 	[mConnectorImpl beginConnectionAttempt];
 	
 	//If we have a host, try to reach it. Otherwise, display the panel.
@@ -510,13 +513,14 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 		
 		//Complete the database URI. If we're allowed to use the Keychain, try to fetch some credentials.
 		//If none are found, display the authentication panel. Otherwise connect.
+		//Don't use -setDatabaseURIInternal: because we just got a new host name.
 		NSURL* databaseURI = [mContext databaseURI];
 		databaseURI = [databaseURI BXURIForHost: mHostName
 										   port: (-1 == mPort ? nil : [NSNumber numberWithInteger: mPort])
 									   database: nil 
 									   username: nil 
 									   password: nil];
-		[mContext setDatabaseURIInternal: databaseURI];
+		[mContext setDatabaseURI: databaseURI];
 				
 		if ([mContext usesKeychain])
             [mContext fetchPasswordFromKeychain];

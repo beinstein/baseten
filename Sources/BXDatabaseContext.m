@@ -341,17 +341,18 @@ ModTypeToObject (enum BXModificationType value)
 - (void) setDatabaseURI: (NSURL *) uri
 {
 	[self setKeychainPasswordItem: NULL];
-	[self setDatabaseObjectModel: nil];
-
 	if (! [[uri scheme] isEqual: [mDatabaseURI scheme]])
 	{
 		[self setDatabaseInterface: nil];
 		[self databaseInterface];
 	}
 
+	if (mDatabaseURI && 0 < [[mDatabaseURI host] length])
+		[self setDatabaseObjectModel: nil];
+	
 	[self setDatabaseURIInternal: uri];
 
-	if (0 < [[uri host] length])
+	if (0 < [[mDatabaseURI host] length])
 	{
 		[self databaseObjectModel];
 
@@ -1649,7 +1650,7 @@ ModTypeToObject (enum BXModificationType value)
 		[self setDatabaseURIInternal: newURI];
 				
 		NSNotification* notification = nil;
-		if ([mObjectModel contextConnectedUsingDatabaseInterface: mDatabaseInterface error: &localError])
+		if ([[self databaseObjectModel] contextConnectedUsingDatabaseInterface: mDatabaseInterface error: &localError])
 		{
 			[mObjectModel setCanCreateEntityDescriptions: NO];
 			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification object: self userInfo: nil];
@@ -1659,10 +1660,15 @@ ModTypeToObject (enum BXModificationType value)
 		else
 		{
 			retval = NO;
-			if (NULL != error)
-				*error = localError;
+			NSDictionary* userInfo = nil;
 			[mDatabaseInterface disconnect];
-			NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey];
+
+			if (localError)
+			{
+				userInfo = [NSDictionary dictionaryWithObject: localError forKey: kBXErrorKey];
+				if (NULL != error)
+					*error = localError;
+			}
 			notification = [NSNotification notificationWithName: kBXConnectionFailedNotification object: self userInfo: userInfo];
 			[mDelegateProxy databaseContext: self failedToConnect: localError];
 		}
