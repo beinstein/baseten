@@ -237,7 +237,8 @@
 
 /**
  * \brief Set whether this controller fetches on connect.
- * \note Controllers bound to an automatically-fetching controller should not fetch on connect.
+ * \note Controllers the content of which is bound to other 
+ *       BXSynchronizedArrayControllers should not fetch on connect.
  * \see #setDatabaseContext:
  */
 - (void) setFetchesOnConnect: (BOOL) aBool
