@@ -109,18 +109,18 @@ enum BXRelationshipType
 enum BXCertificatePolicy
 {
 	kBXCertificatePolicyUndefined = 0, /**< Certificate policy is unspecified. */
-	kBXCertificatePolicyAllow, /** Untrusted certificates are allowed. */
-	kBXCertificatePolicyDeny, /** Untrusted certificates are denied. */
-	kBXCertificatePolicyDisplayTrustPanel /** A trust panel will be displayed to the user. */
+	kBXCertificatePolicyAllow, /**< Untrusted certificates are allowed. */
+	kBXCertificatePolicyDeny, /**< Untrusted certificates are denied. */
+	kBXCertificatePolicyDisplayTrustPanel /**< A trust panel will be displayed to the user. */
 };
 
 /** \brief SSL connection mode. */
 enum BXSSLMode
 {
 	kBXSSLModeUndefined	= 0, /**< SSL mode is unspecified. */
-	kBXSSLModeRequire, /** SSL is required. */
-	kBXSSLModeDisable, /** SSL has been disabled. */
-	kBXSSLModePrefer /** A secure connection will be attempted at first. */
+	kBXSSLModeRequire, /**< SSL is required. */
+	kBXSSLModeDisable, /**< SSL has been disabled. */
+	kBXSSLModePrefer /**< A secure connection will be attempted at first. */
 };
 
 enum BXConnectionErrorHandlingState
