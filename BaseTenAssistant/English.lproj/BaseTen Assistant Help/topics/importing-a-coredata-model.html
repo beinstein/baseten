@@ -21,9 +21,11 @@
 			<div id="navleftbox">
 				<a class="navlink_left" href="help:anchor='access' bookID=BaseTen Assistant Help">Home</a>
 			</div>
+			<!--
 			<div id="navrightbox">
 				<a class="navlink_right" href="help:anchor='xall' bookID=BaseTen Assistant Help">Index</a>
 			</div>
+			-->
 		</div>
 		<!--closes top navigation area-->
 		
@@ -107,7 +109,13 @@
 							Choose which entities you want to import.
 						</p>
 						<p class="taskprimtextlongtext">
-							TODO: details, including configurations, schema name, dry run, action menu (check-all and check-non)
+							In case your data model has different configurations, you have the option to select the one from which you'd like to import the entities.
+						</p>
+						<p class="taskprimtextlongtext">
+							If you want the tables to be placed in some other schema than public, enter its name in the Schema Name field.
+						</p>
+						<p class="taskprimtextlongtext">
+							Clicking Dry Run will output the SQL statements in the Log window before actually sending them to the database.
 						</p>
 					</div><!--closes taskprimcontent-->
 				</div><!-- closes taskprimtext -->

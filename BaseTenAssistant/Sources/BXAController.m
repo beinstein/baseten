@@ -48,6 +48,7 @@
 #import <BaseTen/BXPGDatabaseDescription.h>
 #import <BaseTen/BXLocalizedString.h>
 #import <BaseTen/PGTSConstants.h>
+#import <BaseTen/BXLogger.h>
 
 #import <sys/socket.h>
 //Patch by Tim Bedford 2008-08-11
@@ -1131,6 +1132,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (void) terminateAfterRefresh: (PGTSResultSet *) res
 {
+	BXAssertLog ([res querySucceeded], @"Expected query to succeed. Error: %@", [res error]);
 	[self hideProgressPanel];
 	[self finishTermination]; //Patch by Tim Bedford 2008-08-11
 }
@@ -1144,7 +1146,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
 	[mProgressCancelButton setEnabled: NO];
 	[self displayProgressPanel: NSLocalizedString(@"Refreshing caches", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
-	[connection sendQuery: @"SELECT baseten.refreshcaches ();" delegate: self callback: callback];
+	[connection sendQuery: @"SELECT baseten.refresh_caches ();" delegate: self callback: callback];
 }
 @end
 
