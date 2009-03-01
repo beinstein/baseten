@@ -310,13 +310,13 @@
  *
  *
  * Connection to the database may be made synchronously using the method
- * #connectSync:. Applications that use an NSRunLoop also have the
- * option to use #connectAsync. The method returns immediately. When the connection 
+ * BXDatabaseContext::connectSync:. Applications that use an NSRunLoop also have the
+ * option to use BXDatabaseContext::connectAsync. The method returns immediately. When the connection 
  * attempt has finished, the context's delegate will be called and notifications will
  * be posted to the context's notification center (accessed with BXDatabaseContext::notificationCenter).
  *
  * In AppKit applications, the easiest way to connect to the database is to use the IBAction
- * #connect:. In addition to attempting the connection asynchronously,
+ * BXDatabaseContext::connect:. In addition to attempting the connection asynchronously,
  * it also presents a number of panels to the user, if some required information is missing from the URI. 
  * The panels allow the user to specify their username, password and the database host making URIs
  * like <tt>pgsql:///database_name</tt> allowed. Additionally a \em kBXConnectionSetupAlertDidEndNotification
@@ -340,7 +340,8 @@
  *
  * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
  * entity description, BXDatabaseContext has two methods: 
- * #entityForTable:error: and #entityForTable:inSchema:error:.
+ * \ref BXDatabaseContext::entityForTable:error: "-entityForTable:error:" and  
+ * \ref BXDatabaseContext::entityForTable:inSchema:error: "-entityForTable:inSchema:error:".  
  * Entity descriptions may be accessed before making a
  * connection in which case the database context will check their existence on connect.
  *
@@ -361,7 +362,8 @@
  * <code>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</code>
  * \endhtmlonly
  *
- * BXDatabaseContext's method #executeFetchForEntity:withPredicate:error:
+ * BXDatabaseContext's method
+ * \ref BXDatabaseContext::executeFetchForEntity:withPredicate:error: "-executeFetchForEntity:withPredicate:error:" 
  * and its variations may be used to fetch objects from the database. The method takes a BXEntityDescription 
  * and an NSPredicate and performs a fetch synchronously. The fetched objects are returned in an NSArray.
  */

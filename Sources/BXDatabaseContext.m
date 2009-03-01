@@ -694,7 +694,7 @@ ModTypeToObject (enum BXModificationType value)
 /** 
  * \brief Commit the changes.
  * \param sender Ignored.
- * \throw A BXException named \em kBXFailedToExecuteQueryException if commit fails.
+ * \throw BXException named \em kBXFailedToExecuteQueryException if commit fails.
  */
 - (IBAction) saveDocument: (id) sender
 {
