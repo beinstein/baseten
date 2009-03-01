@@ -357,11 +357,11 @@
  *
  * \latexonly
  * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Performing a fetch]
- * NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];
+ * NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  * \end{lstlisting}
  * \endlatexonly
  * \htmlonly 
- * <code>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</code>
+ * <code>NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];</code>
  * \endhtmlonly
  *
  * BXDatabaseContext's method
