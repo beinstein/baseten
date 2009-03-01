@@ -329,6 +329,11 @@ ModTypeToObject (enum BXModificationType value)
 }
 //@}
 
+- (BOOL) connectIfNeeded: (NSError **) error
+{
+	return [self connectSync: error];
+}
+
 /** \name Connecting and disconnecting */
 //@{
 /**
@@ -404,11 +409,6 @@ ModTypeToObject (enum BXModificationType value)
 - (BOOL) isConnected
 {
 	return [[self databaseInterface] connected];
-}
-
-- (BOOL) connectIfNeeded: (NSError **) error
-{
-	return [self connectSync: error];
 }
 
 /**
