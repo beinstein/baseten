@@ -232,7 +232,7 @@ ModTypeToObject (enum BXModificationType value)
  * \brief A convenience method.
  * \param   uri     URI of the target database
  * \return          The database context
- * \throw   NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
+ * \throw   NSException named \em kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 + (id) contextWithDatabaseURI: (NSURL *) uri
 {
@@ -254,7 +254,7 @@ ModTypeToObject (enum BXModificationType value)
  * \brief The designated initializer.
  * \param   uri     URI of the target database
  * \return          The database context
- * \throw           NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
+ * \throw           NSException named \em kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 - (id) initWithDatabaseURI: (NSURL *) uri
 {
@@ -336,7 +336,7 @@ ModTypeToObject (enum BXModificationType value)
  *
  * Also clears the context's strong references to entity descriptions received from it.
  * \param   uri     The database URI
- * \throw   NSException named \c kBXUnsupportedDatabaseException in case the given URI cannot be handled.
+ * \throw   NSException named \em kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
 - (void) setDatabaseURI: (NSURL *) uri
 {
@@ -442,7 +442,7 @@ ModTypeToObject (enum BXModificationType value)
 /**
  * \brief Connect to the database.
  *
- * Hand over the connection setup to \c mConnectionSetupManager. In BaseTenAppKit 
+ * Hand over the connection setup to \em mConnectionSetupManager. In BaseTenAppKit 
  * applications, a BXNetServiceConnector will be created automatically if 
  * one doesn't exist.
  */
@@ -469,8 +469,8 @@ ModTypeToObject (enum BXModificationType value)
  * \brief Connect to the database.
  *
  * This method returns immediately.
- * After the attempt, either a \c kBXConnectionSuccessfulNotification or a 
- * \c kBXConnectionFailedNotification will be posted to the context's
+ * After the attempt, either a \em kBXConnectionSuccessfulNotification or a 
+ * \em kBXConnectionFailedNotification will be posted to the context's
  * notification center.
  */
 - (void) connectAsync
@@ -694,7 +694,7 @@ ModTypeToObject (enum BXModificationType value)
 /** 
  * \brief Commit the changes.
  * \param sender Ignored.
- * \throw A BXException named \c kBXFailedToExecuteQueryException if commit fails.
+ * \throw A BXException named \em kBXFailedToExecuteQueryException if commit fails.
  */
 - (IBAction) saveDocument: (id) sender
 {
@@ -1205,7 +1205,7 @@ ModTypeToObject (enum BXModificationType value)
 /**
  * \brief Fetch objects from the database.
  *
- * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:error: with \c returningFaults set to NO.
+ * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:error: with \em returningFaults set to NO.
  *  
  * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
@@ -1224,7 +1224,7 @@ ModTypeToObject (enum BXModificationType value)
  *
  * Instead of fetching the field values, the context can retrieve objects that
  * contain only the object ID. The other values get fetched on-demand.\n
- * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:updateAutomatically:error: with \c updateAutomatically set to NO.
+ * Essentially calls #executeFetchForEntity:withPredicate:returningFaults:updateAutomatically:error: with \em updateAutomatically set to NO.
  *
  * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.
@@ -1251,7 +1251,7 @@ ModTypeToObject (enum BXModificationType value)
  * that are excluded from the query results. The returned objects are 
  * faults. Values for the non-excluded fields are cached, though.\n
  * Essentially calls #executeFetchForEntity:withPredicate:excludingFields:updateAutomatically:error:
- * with \c updateAutomatically set to NO.
+ * with \em updateAutomatically set to NO.
  *
  * \param       entity          The entity from which rows are fetched.
  * \param       predicate       A WHERE clause is constructed using this predicate. May be nil.

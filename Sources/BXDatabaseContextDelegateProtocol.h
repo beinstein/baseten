@@ -85,7 +85,7 @@
  * 
  * When the NSError** parameter has been supplied to the methods, no action 
  * will be taken and the error is assumed to have been handled. If the parameter
- * is NULL and an error occurs, a BXException named \c kBXExceptionUnhandledError
+ * is NULL and an error occurs, a BXException named \em kBXExceptionUnhandledError
  * will be thrown.
  *
  * \param context			The database context from which the error originated.

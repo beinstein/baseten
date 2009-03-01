@@ -312,7 +312,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 }
 
 /** 
- * \brief Whether this entity is marked as a view or not. 
+ * \brief Whether this entity has been BaseTen enabled or not.
  */
 - (BOOL) isEnabled
 {

@@ -206,7 +206,7 @@
  *     described above.
  *
  * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
- * The functions are <em>baseten.enable</em> and <em>baseten.disable</em> and they take an oid as an argument.
+ * The functions are <em>baseten.enable</em> and <em>baseten.disable</em> and they take an \em oid as an argument.
  *
  * Views' primary keys are stored in <em>baseten.view_pkey</em>. The table has three columns: \em nspname, 
  * \em relname and \em attname, which correspond to the view's schema name, the view's name and each primary 
@@ -282,8 +282,9 @@
 /**
  * \page creating_a_database_context Creating a database context
  *
- * The designated initializer of BXDatabaseContext is <tt>-initWithDatabaseURI:</tt>. <tt>-init</tt> is also
- * available but the context does require an URI before connecting.
+ * The designated initializer of BXDatabaseContext is 
+ * \ref BXDatabaseContext::initWithDatabaseURI: "-initWithDatabaseURI:". \ref BXDatabaseContext::init "-init" 
+ * is also available but the context does require an URI before connecting.
  *
  * BXDatabaseContext requires the URI to be formatted as follows:
  * <tt>pgsql://username:password\@host/database_name</tt>. Currently, as PostgreSQL is the only supported 
@@ -309,13 +310,13 @@
  *
  *
  * Connection to the database may be made synchronously using the method
- * <tt>-connectSync:</tt>. Applications that use an NSRunLoop also have the
- * option to use <tt>-connectAsync</tt>. The method returns immediately. When the connection attempt has
- * finished, the context's delegate will be called and notifications will
- * be posted to the context's notification center (accessed with <tt>-notificationCenter</tt>).
+ * BXDatabaseContext::connectSync:. Applications that use an NSRunLoop also have the
+ * option to use BXDatabaseContext::connectAsync. The method returns immediately. When the connection 
+ * attempt has finished, the context's delegate will be called and notifications will
+ * be posted to the context's notification center (accessed with BXDatabaseContext::notificationCenter).
  *
  * In AppKit applications, the easiest way to connect to the database is to use the IBAction
- * <tt>-connect:</tt>. In addition to attempting the connection asynchronously,
+ * BXDatabaseContext::connect:. In addition to attempting the connection asynchronously,
  * it also presents a number of panels to the user, if some required information is missing from the URI. 
  * The panels allow the user to specify their username, password and the database host making URIs
  * like <tt>pgsql:///database_name</tt> allowed. Additionally a \em kBXConnectionSetupAlertDidEndNotification
@@ -338,12 +339,14 @@
  * \endhtmlonly
  *
  * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
- * entity description, BXDatabaseContext has two methods: <tt>-entityForTable:error:</tt> and 
- * <tt>-entityForTable:inSchema:error:</tt>. Entity descriptions may be accessed before making a
+ * entity description, BXDatabaseContext has two methods: 
+ * \ref BXDatabaseContext::entityForTable:error: "-entityForTable:error:" and 
+ * \ref BXDatabaseContext::entityForTable:inSchema:error: "-entityForTable:inSchema:error:". 
+ * Entity descriptions may be accessed before making a
  * connection in which case the database context will check their existence on connect.
  *
  * NSPredicates are created by various Cocoa objects and may be passed directly to BXDatabaseContext.
- * One way to create ad-hoc predicates is by using <tt>-[NSPredicate predicateWithFormat]</tt>.
+ * One way to create ad-hoc predicates is by using NSPredicate::predicateWithFormat:.
  * In this example, we fetch all the objects instead of filtering them, though.
  */
 
@@ -359,9 +362,10 @@
  * <code>NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];</code>
  * \endhtmlonly
  *
- * BXDatabaseContext's method <tt>-executeFetchForEntity:withPredicate:error:</tt> and its variations may 
- * be used to fetch objects from the database. The method takes a BXEntityDescription and an NSPredicate and
- * performs a fetch synchronously. The fetched objects are returned in an NSArray.
+ * BXDatabaseContext's method 
+ * \ref BXDatabaseContext::executeFetchForEntity:withPredicate:error: "-executeFetchForEntity:withPredicate:error:"
+ * and its variations may be used to fetch objects from the database. The method takes a BXEntityDescription 
+ * and an NSPredicate and performs a fetch synchronously. The fetched objects are returned in an NSArray.
  */
 
 /**
@@ -384,22 +388,22 @@
  *}</code>
  * \endhtmlonly 
  *
- * Since BXDatabaseObject conforms to \em NSKeyValueObserving, methods <tt>-valueForKey:</tt> and 
- * <tt>-setValue:forKey:</tt> are available. See \ref accessing_values for details.
+ * Since BXDatabaseObject conforms to \em NSKeyValueObserving, methods -valueForKey: and 
+ * -setValue:forKey: are available. See \ref accessing_values for details.
  */
 
 /**
  * \page accessing_values Accessing object values
  *
  * BXDatabaseObjects implement NSKeyValueCoding and object values may thus be accessed with 
- * <tt>-valueForKey:</tt> and <tt>-setValue:forKey:</tt>. The key will be the column name. As with 
- * NSManagedObject, methods like <tt>-&lt;key&gt;</tt> and <tt>-set&lt;Key&gt;:</tt> are also automatically available.
+ * -valueForKey: and -setValue:forKey:. The key will be the column name. As with 
+ * NSManagedObject, methods like -&lt;key&gt; and -set&lt;Key&gt;: are also automatically available.
  *
  * Column values are converted to Foundation objects based on the column type. Currently, there is no way to 
  * affect the type conversion. Instead, custom getters may be written for preprocessing
  * fetched objects. To support this, the column values may also be accessed using 
- * <tt>-primitiveValueForKey:</tt>. Similarly <tt>-setPrimitiveValue:forKey:</tt> may be used to set a column 
- * value.
+ * BXDatabaseObject::primitiveValueForKey:. Similarly BXDatabaseObject::setPrimitiveValue:forKey: may be
+ * used to set a column value.
  *
  * Currently handled types are listed in \ref database_types.
  *
@@ -410,8 +414,10 @@
  *
  * One-to-many is the simplest type of these three: a foreign key in one table referring another will be 
  * interpreted as such. Both of the tables need to be BaseTen enabled and BaseTen's cache tables need to be
- * up-to-date (see the BaseTen Assistant for details). Calling a database object's <tt>-valueForKey:</tt> or 
- * <tt>-primitiveValueForKey:</tt> on the to-one side with the name of the foreign key constraint will 
+ * up-to-date (see the BaseTen Assistant for details). Calling a database object's 
+ * \ref BXDatabaseObject::valueForKey: "-valueForKey:" or 
+ * \ref BXDatabaseObject::primitiveValueForKey: "-primitiveValueForKey:" 
+ * on the to-one side with the name of the foreign key constraint will 
  * return the object on the other side of the reference. On the to-many side, -valueForKey: retrieves a 
  * collection of objects that reference the table in a foreign key. They key used is the other table's name.
  *
@@ -543,9 +549,9 @@
  * entity changes will be posted to the relevant context's notification center. The notification object
  * will be a BXEntityDescription which corresponds to the table where the change happened. The names 
  * of the notifications are:
- * \li \c kBXInsertNotification on database \c INSERT
- * \li \c kBXUpdateNotification on database \c UPDATE
- * \li \c kBXDeleteNotification on database \c DELETE
+ * \li \em kBXInsertNotification on database \em INSERT
+ * \li \em kBXUpdateNotification on database \em UPDATE
+ * \li \em kBXDeleteNotification on database \em DELETE
  *
  * At the time the notifications are posted, database objects and self-updating collections will 
  * already have been updated.
@@ -578,7 +584,7 @@
  *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
  *     <li>Enter a table name into the field.
  *         <ul>
- *             <li>The schema field may be left empty, in which case <tt>public</tt> will be used.</li>
+ *             <li>The schema field may be left empty, in which case \em public will be used.</li>
  *             <li>Please note that the table needs to be enabled for change observing. This can be 
  *                 done using the Setup Application.</li>
  *         </ul>
@@ -704,7 +710,7 @@
  *     <li>Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.</li>
  *     <li>Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so <tt>./configure &ndash;-with-bonjour &ndash;-with-openssl && make && sudo make install</tt> probably gives the expected results.</li>
  *     <li>It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.</li>
- *     <li>Make <tt>mysql</tt> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
+ *     <li>Make \em mysql the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
  *         <tt>
  *             sudo chown -R mysql:mysql /usr/local/pgsql\n
  *             sudo -u mysql -s
@@ -719,7 +725,7 @@
  *     <li>Create a superuser account for yourself. This way, you don't have to sudo to mysql to create new databases and users.\n
  *         <tt>/usr/local/pgsql/bin/createuser <your-short-user-name></tt>
  *     </li>
- *     <li>Exit the <tt>mysql</tt> sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
+ *     <li>Exit the \em mysql sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
  *         <tt>
  *             exit\n
  *             /usr/local/pgsql/bin/createdb <your-short-user-name>
