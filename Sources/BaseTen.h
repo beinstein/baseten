@@ -243,7 +243,7 @@
  * 
  *     [ctx connectSync: NULL];
  *     BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
- *     NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];
+ *     NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  *
  *     for (BXDatabaseObject* object in result)
  *     {
@@ -266,7 +266,7 @@
  * 
  *     [ctx connectSync: NULL];
  *     BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
- *     NSArray* result = [ctx executeFetchForEntity: entity predicate: nil error: NULL];
+ *     NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  *
  *     for (BXDatabaseObject* object in result)
  *     {
