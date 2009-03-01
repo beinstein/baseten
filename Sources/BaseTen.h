@@ -310,13 +310,14 @@
  *
  *
  * Connection to the database may be made synchronously using the method
- * BXDatabaseContext::connectSync:. Applications that use an NSRunLoop also have the
- * option to use BXDatabaseContext::connectAsync. The method returns immediately. When the connection 
- * attempt has finished, the context's delegate will be called and notifications will
- * be posted to the context's notification center (accessed with BXDatabaseContext::notificationCenter).
+ * \ref BXDatabaseContext::connectSync: "-connectSync". Applications that use an NSRunLoop also have the
+ * option to use \ref BXDatabaseContext::connectAsync "-connectAsync". The method returns immediately. 
+ * When the connection attempt has finished, the context's delegate will be called and notifications will
+ * be posted to the context's notification center (accessed with 
+ * \ref BXDatabaseContext::notificationCenter "-notificationCenter").
  *
  * In AppKit applications, the easiest way to connect to the database is to use the IBAction
- * BXDatabaseContext::connect:. In addition to attempting the connection asynchronously,
+ * \ref BXDatabaseContext::connect: "-connect:". In addition to attempting the connection asynchronously,
  * it also presents a number of panels to the user, if some required information is missing from the URI. 
  * The panels allow the user to specify their username, password and the database host making URIs
  * like <tt>pgsql:///database_name</tt> allowed. Additionally a \em kBXConnectionSetupAlertDidEndNotification
@@ -340,8 +341,9 @@
  *
  * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
  * entity description, BXDatabaseContext has two methods: 
- * \ref BXDatabaseContext::entityForTable:error: "-entityForTable:error:" and  
- * \ref BXDatabaseContext::entityForTable:inSchema:error: "-entityForTable:inSchema:error:".  
+ * -entityForTable:error:
+ * and
+ * -entityForTable:inSchema:error:.
  * Entity descriptions may be accessed before making a
  * connection in which case the database context will check their existence on connect.
  *
@@ -363,7 +365,7 @@
  * \endhtmlonly
  *
  * BXDatabaseContext's method
- * \ref BXDatabaseContext::executeFetchForEntity:withPredicate:error: "-executeFetchForEntity:withPredicate:error:" 
+ * -executeFetchForEntity:withPredicate:error:
  * and its variations may be used to fetch objects from the database. The method takes a BXEntityDescription 
  * and an NSPredicate and performs a fetch synchronously. The fetched objects are returned in an NSArray.
  */
@@ -402,8 +404,8 @@
  * Column values are converted to Foundation objects based on the column type. Currently, there is no way to 
  * affect the type conversion. Instead, custom getters may be written for preprocessing
  * fetched objects. To support this, the column values may also be accessed using 
- * BXDatabaseObject::primitiveValueForKey:. Similarly BXDatabaseObject::setPrimitiveValue:forKey: may be
- * used to set a column value.
+ * \ref BXDatabaseObject::primitiveValueForKey: "-primitiveValueForKey:". Similarly 
+ * -setPrimitiveValue:forKey: may be used to set a column value.
  *
  * Currently handled types are listed in \ref database_types.
  *
