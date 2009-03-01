@@ -174,7 +174,7 @@ ModTypeToObject (enum BXModificationType value)
  * like pgsql://username:password\@hostname/database_name/.
  *
  * Various methods of this class take an NSError parameter. If the parameter isn't set, the context
- * will handle errors by throwing a BXException named kBXFailedToExecuteQueryException. 
+ * will handle errors by throwing a BXException named \em kBXFailedToExecuteQueryException. 
  * See BXDatabaseContextDelegate::databaseContext:hadError:willBePassedOn:.
  *
  * \note This class is not thread-safe, i.e. 

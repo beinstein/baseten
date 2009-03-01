@@ -106,7 +106,7 @@
  * for some reason, the context will be set to return \em nil for all non-cached object 
  * values.
  *
- * Foundation applications will throw a BXException named kBXExceptionUnhandledError.
+ * Foundation applications will throw a BXException named \em kBXExceptionUnhandledError.
  * 
  * \note -databaseContext:hadError:willBePassedOn: won't be called for this error.
  */
