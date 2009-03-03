@@ -88,7 +88,7 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 		else if (mB2 == object)
 			mReceivedForB2++;
 		else
-			NSLog (@"Got a strange KVO notification.");
+			STAssertTrue (NO, @"Got a strange KVO notification.");
 	}
 	else 
 	{
