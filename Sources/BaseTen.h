@@ -771,11 +771,7 @@
  * \li Most public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
  *     Furthermore, all queries must be performed from the thread in which the context made a database connection. This could change
  *     in the future, so it is best to create and handle a context only in one thread.
- * \li Any serialization mechanism has not been implemented for BXDatabaseObject.
- * \li BaseTen is currently suitable for inserting small data sets into the database. 
- *     Insertion of larger data sets (thousands of objects) takes considerable amount of time and 
- *     may cause 'out of shared memory' errors if executed without the autocommit flag.
- *     Fetching large data sets should be fast enough.  
+ * \li No serialization mechanism has been implemented for BXDatabaseObject.
  * \li Currently, migration models aren't understood by the assistant, so the easiest way to do model
  *	   migration might be using SQL.
  */
