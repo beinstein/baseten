@@ -1643,9 +1643,6 @@ ModTypeToObject (enum BXModificationType value)
 	{
 		NSError* localError = nil;
 		
-		//FIXME: testing
-		[mDatabaseInterface setLogsQueries: YES];
-
 		if (mShouldStoreURICredentials)
 			[self storeURICredentials];
 
