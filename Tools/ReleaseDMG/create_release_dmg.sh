@@ -19,6 +19,8 @@ echo "Xcode version:"
 xcodebuild -version
 exit_on_error
 
+sleep 5
+
 for x in \
     ../../BaseTen.xcodeproj \
     ../../BaseTenAppKit/BaseTenAppKit.xcodeproj \
