@@ -5,4 +5,5 @@ How To Run the Unit Tests
    BaseTenModifications.sql. Please read the scripts before running them.
 1. Create the test database. A command like this should work:
    psql -f BaseTenTest.sql
-2. Build the tests. A shell script phase at the end of the target will run them.
+2. Build the tests. If you use the Coverage target and build configuration, 
+   a shell script phase at the end of the target will run them.
