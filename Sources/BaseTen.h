@@ -754,9 +754,9 @@
  * the process. To create the DMG, follow these steps:
  * <ol>
  *     <li>From the checked-out directory, <tt>cd ReleaseDMG</tt>.</li>
- *     <li>The default location for the built files is <em>~/Build/BaseTen-dmg-build</em>. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
+ *     <li>The default location for the built files is <em>BaseTen-dmg-build</em> in the current directory. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
  *     <li>
- *         Do <tt>./create_release_dmg.sh</tt>. The built DMG will appear in the ReleaseDMG folder.
+ *         Do <tt>./create_release_dmg.sh</tt>. The built DMG will appear in the \em ReleaseDMG folder.
  *         <ul>
  *             <li>If you don't have LaTeX installed, do <tt>./create_release_dmg.sh -&ndash;without-latex</tt> instead. The PDF manual won't be included on the DMG, though.</li>
  *         </ul>
