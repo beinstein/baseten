@@ -99,16 +99,22 @@
 
 - (void) testExclusion
 {
+	[ctx setLogsQueries: YES];
 	[ctx connectSync: NULL];
+	[ctx setLogsQueries: YES];
 	
-	BXEntityDescription* entity = [ctx entityForTable: @"test" error: NULL];
-	MKCAssertNotNil (entity);
+	NSError* error = nil;
+	BXEntityDescription* entity = [ctx entityForTable: @"test" error: &error];
+	STAssertNotNil (entity, [error description]);
 	
 	BXAttributeDescription* attr = [[entity attributesByName] objectForKey: @"xmin"];
+	MKCAssertNotNil (attr);
 	MKCAssertTrue ([attr isExcluded]);
 	attr = [[entity attributesByName] objectForKey: @"id"];
+	MKCAssertNotNil (attr);
 	MKCAssertFalse ([attr isExcluded]);
 	attr = [[entity attributesByName] objectForKey: @"value"];
+	MKCAssertNotNil (attr);
 	MKCAssertFalse ([attr isExcluded]);
 }
 
