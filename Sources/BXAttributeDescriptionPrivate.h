@@ -36,6 +36,7 @@
 + (id) attributeWithName: (NSString *) name entity: (BXEntityDescription *) entity;
 - (void) setPrimaryKey: (BOOL) aBool;
 - (void) setExcluded: (BOOL) aBool;
+- (void) setExcludedByDefault: (BOOL) aBool;
 - (void) setPrimaryKey: (BOOL) aBool;
 
 - (void) setAttributeValueClass: (Class) aClass;

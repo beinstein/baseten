@@ -954,7 +954,10 @@ error:
 					//Internal fields are excluded by default.
 					NSInteger idx = [column index];
 					if (idx <= 0)
+					{
+						[attr setExcludedByDefault: YES];
 						[attr setExcluded: YES];					
+					}
 					
 					NSLog (@"table: %@ column: %@ idx: %d isEx: %d", [table name], name, idx, [attr isExcluded]);
 					[currentAttributes setObject: attr forKey: name];
@@ -1680,33 +1683,5 @@ bail:
 		printf ("\t%d: %.30s\n", i, description);
 	}
 	return nil;
-}
-
-- (void) addAttributeFor: (PGTSColumnDescription *) field into: (NSMutableDictionary *) attrs 
-				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey
-{
-	NSString* name = [field name];
-	BXAttributeDescription* desc = [attrs objectForKey: name];
-	if (! desc)
-		desc = [BXAttributeDescription attributeWithName: name entity: entity];
-	
-	BOOL isPrimaryKey = [pkey containsObject: field];
-	BOOL isOptional = (! ([field isNotNull] || isPrimaryKey));
-	[desc setOptional: isOptional];
-	[desc setPrimaryKey: isPrimaryKey];
-	
-	PGTSConnection* connection = [mTransactionHandler connection];
-	PGTSTypeDescription* typeDesc = [field type];
-	NSString* typeName = [typeDesc name];
-	[desc setDatabaseTypeName: typeName];
-	
-	NSDictionary* classDict = [connection deserializationDictionary];
-	[desc setAttributeValueClass: [classDict objectForKey: typeName]];
-	
-	//Internal fields are excluded by default.
-	if ([field index] <= 0)
-		[desc setExcluded: YES];
-	
-	[attrs setObject: desc forKey: name];
 }
 @end

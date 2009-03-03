@@ -34,11 +34,12 @@
 
 enum BXPropertyFlag
 {
-	kBXPropertyNoFlag		= 0,
-	kBXPropertyOptional		= 1 << 0,
-	kBXPropertyPrimaryKey	= 1 << 1,
-	kBXPropertyExcluded		= 1 << 2,
-	kBXPropertyIsArray		= 1 << 3	
+	kBXPropertyNoFlag				= 0,
+	kBXPropertyOptional				= 1 << 0,
+	kBXPropertyPrimaryKey			= 1 << 1,
+	kBXPropertyExcluded				= 1 << 2,
+	kBXPropertyIsArray				= 1 << 3,
+	kBXPropertyExcludedByDefault	= 1 << 4
 };
 
 #ifdef __cplusplus

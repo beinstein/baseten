@@ -473,8 +473,7 @@ FilterPkeyAttributes (id attribute, void* arg)
 
 - (void) resetAttributeExclusion
 {
-	BXEnumerate (currentProp, e, [mAttributes objectEnumerator])
-		[currentProp setExcluded: NO];
+	[[mAttributes PGTSDo] resetAttributeExclusion];
 }
 
 - (NSArray *) attributes: (NSArray *) strings

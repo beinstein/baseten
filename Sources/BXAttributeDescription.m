@@ -62,11 +62,13 @@
 	[super dealloc];
 }
 
+#if 0
 - (id) initWithCoder: (NSCoder *) decoder
 {
 	if ((self = [super initWithCoder: decoder]))
 	{
 		[self setPrimaryKey: [decoder decodeBoolForKey: @"isPrimaryKey"]];
+		//FIXME: excludedByDefault
 		[self setExcluded: [decoder decodeBoolForKey: @"isExcluded"]];
 		mRelationshipsUsing = PGTSSetCreateMutableStrongRetainingForNSRD ();
 	}
@@ -76,9 +78,11 @@
 - (void) encodeWithCoder: (NSCoder *) coder
 {
 	[coder encodeBool: [self isPrimaryKey] forKey: @"isPrimaryKey"];
+	//FIXME: excludedByDefault
 	[coder encodeBool: [self isExcluded] forKey: @"isExcluded"];
 	[super encodeWithCoder: coder];
 }
+#endif
 
 /** \brief Whether the attribute is part of the primary key of its entity. */
 - (BOOL) isPrimaryKey
@@ -186,6 +190,25 @@
 		else
 			mFlags &= ~kBXPropertyExcluded;
 	}
+}
+
+- (void) setExcludedByDefault: (BOOL) aBool
+{
+	if (![self isPrimaryKey])
+	{
+		if (aBool)
+			mFlags |= kBXPropertyExcludedByDefault;
+		else
+			mFlags &= ~kBXPropertyExcludedByDefault;
+	}
+}
+
+- (void) resetAttributeExclusion
+{
+	if (kBXPropertyExcludedByDefault & mFlags)
+		mFlags |= kBXPropertyExcluded;
+	else
+		mFlags &= ~kBXPropertyExcluded;
 }
 
 - (void) setAttributeValueClass: (Class) aClass

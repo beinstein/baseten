@@ -108,6 +108,4 @@ BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prepen
 
 
 @interface BXPGInterface (Visitor) <PGTSQueryVisitor>
-- (void) addAttributeFor: (PGTSColumnDescription *) field into: (NSMutableDictionary *) attrs 
-				  entity: (BXEntityDescription *) entity primaryKeyFields: (NSSet *) pkey;
 @end

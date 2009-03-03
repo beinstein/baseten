@@ -63,6 +63,7 @@
 #import "BXLocalizedString.h"
 #import "BXDatabaseObjectModel.h"
 #import "BXDatabaseObjectModelStorage.h"
+#import "BXAttributeDescriptionPrivate.h"
 
 #import "NSURL+BaseTenAdditions.h"
 
@@ -2157,7 +2158,7 @@ ModTypeToObject (enum BXModificationType value)
 			if (nil != excludedFields)
 			{
 				excludedFields = [entity attributes: excludedFields];
-				[excludedFields setValue: [NSNumber numberWithBool: YES] forKey: @"excluded"];
+				[[excludedFields PGTSDo] setExcluded: YES];
 			}
 			
 			if (BASETEN_BEGIN_FETCH_ENABLED ())
