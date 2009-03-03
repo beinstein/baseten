@@ -99,9 +99,7 @@
 
 - (void) testExclusion
 {
-	[ctx setLogsQueries: YES];
 	[ctx connectSync: NULL];
-	[ctx setLogsQueries: YES];
 	
 	NSError* error = nil;
 	BXEntityDescription* entity = [ctx entityForTable: @"test" error: &error];

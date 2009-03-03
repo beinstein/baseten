@@ -956,6 +956,7 @@ error:
 					if (idx <= 0)
 						[attr setExcluded: YES];					
 					
+					NSLog (@"table: %@ column: %@ idx: %d isEx: %d", [table name], name, idx, [attr isExcluded]);
 					[currentAttributes setObject: attr forKey: name];
 				}
 				[(BXEntityDescription *) entity setAttributes: currentAttributes];
