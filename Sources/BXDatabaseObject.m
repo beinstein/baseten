@@ -536,8 +536,8 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 	{
 		enum BXDatabaseObjectKeyType keyType = [self keyType: aKey];
 		BXAssertLog (kBXDatabaseObjectUnknownKey != keyType, 
-					 @"Key %@ wasn't found in entity %@.", 
-					 aKey, [self entity]);
+					 @"Key %@ wasn't found in entity %@. (Called from an instance of %@.)", 
+					 aKey, [self entity], [self class]);
 		switch (keyType)
 		{
 			case kBXDatabaseObjectPrimaryKey:
