@@ -51,6 +51,33 @@ INSERT INTO float8_test VALUES (2.71828);
 GRANT SELECT, INSERT, UPDATE, DELETE ON float8_test TO baseten_test_user;
 
 
+CREATE TABLE text_test (
+    value TEXT
+);
+INSERT INTO text_test VALUES ('aàáâäå');
+GRANT SELECT, INSERT, UPDATE, DELETE ON text_test TO baseten_test_user;
+
+
+CREATE TABLE int2_test (
+    value int2
+);
+INSERT INTO int2_test VALUES (12);
+GRANT SELECT, INSERT, UPDATE, DELETE ON int2_test TO baseten_test_user;
+
+
+CREATE TABLE int4_test (
+    value int4
+);
+INSERT INTO int4_test VALUES (14);
+GRANT SELECT, INSERT, UPDATE, DELETE ON int4_test TO baseten_test_user;
+
+
+CREATE TABLE int8_test (
+    value int8
+);
+INSERT INTO int8_test VALUES (16);
+GRANT SELECT, INSERT, UPDATE, DELETE ON int8_test TO baseten_test_user;
+
 -- BaseTen tests
 
 CREATE TABLE test (

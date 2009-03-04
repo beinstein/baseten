@@ -48,6 +48,61 @@
 	[mConnection release];
 }
 
+- (void) testInt2
+{
+	PGTSResultSet* res = [mConnection executeQuery: @"SELECT * FROM int2_test"];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	
+	[res advanceRow];
+	NSNumber* value = [res valueForKey: @"value"];
+	MKCAssertNotNil (value);	
+	
+	SInt16 i = 0;
+	MKCAssertTrue (CFNumberGetValue ((CFNumberRef) value, kCFNumberSInt16Type, &i));
+	MKCAssertTrue (12 == i);
+}
+
+- (void) testInt4
+{
+	PGTSResultSet* res = [mConnection executeQuery: @"SELECT * FROM int4_test"];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	
+	[res advanceRow];
+	NSNumber* value = [res valueForKey: @"value"];
+	MKCAssertNotNil (value);	
+	
+	SInt32 i = 0;
+	MKCAssertTrue (CFNumberGetValue ((CFNumberRef) value, kCFNumberSInt32Type, &i));
+	MKCAssertTrue (14 == i);
+}
+
+- (void) testInt8
+{
+	PGTSResultSet* res = [mConnection executeQuery: @"SELECT * FROM int8_test"];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	
+	[res advanceRow];
+	NSNumber* value = [res valueForKey: @"value"];
+	MKCAssertNotNil (value);	
+	
+	SInt64 i = 0;
+	MKCAssertTrue (CFNumberGetValue ((CFNumberRef) value, kCFNumberSInt64Type, &i));
+	MKCAssertTrue (16 == i);
+}
+
+- (void) testText
+{
+	PGTSResultSet* res = [mConnection executeQuery: @"SELECT * FROM text_test"];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	
+	[res advanceRow];
+	NSString* value = [res valueForKey: @"value"];
+	MKCAssertNotNil (value);
+	
+	MKCAssertTrue (NSOrderedSame == [value compare: @"aàáâäå" options: 0]);
+	MKCAssertTrue ([value isEqualToString: [@"aàáâäå" decomposedStringWithCanonicalMapping]]);
+}
+
 - (void) testPoint
 {
 	PGTSResultSet* res = [mConnection executeQuery: @"SELECT * FROM point_test"];
