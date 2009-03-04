@@ -28,6 +28,31 @@ SELECT prepare ();
 DROP FUNCTION prepare ();
 
 
+-- Type tests
+
+CREATE TABLE point_test (
+    value point
+);
+INSERT INTO point_test VALUES ('(2.005, 10.0)');
+GRANT SELECT, INSERT, UPDATE, DELETE ON point_test TO baseten_test_user;
+
+
+CREATE TABLE float4_test (
+    value float4
+);
+INSERT INTO float4_test VALUES (2.71828);
+GRANT SELECT, INSERT, UPDATE, DELETE ON float4_test TO baseten_test_user;
+
+
+CREATE TABLE float8_test (
+    value float8
+);
+INSERT INTO float8_test VALUES (2.71828);
+GRANT SELECT, INSERT, UPDATE, DELETE ON float8_test TO baseten_test_user;
+
+
+-- BaseTen tests
+
 CREATE TABLE test (
     id SERIAL PRIMARY KEY,
     value VARCHAR (255)
