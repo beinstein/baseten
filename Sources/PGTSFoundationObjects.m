@@ -667,20 +667,3 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     return [NSValue valueWithPoint: retval];
 }
 @end
-
-
-@implementation PGTSSize
-@end
-
-
-@implementation PGTSSize (PGTSAdditions)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
-{
-    NSPoint p = NSZeroPoint;
-    [[PGTSPoint newForPGTSResultSet: set withCharacters: value type: typeInfo] getValue: &p];
-    NSSize s;
-    s.width = p.x;
-    s.height = p.y;
-    return [NSValue valueWithSize: s];
-}
-@end

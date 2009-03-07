@@ -36,8 +36,6 @@
 	<string>NSDate</string>
 	<key>timestamptz</key>
 	<string>NSCalendarDate</string>
-	<key>tinterval</key>
-	<string>NSNumber</string>
 	<key>varbit</key>
 	<string>NSData</string>
 	<key>varchar</key>

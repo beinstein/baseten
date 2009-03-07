@@ -685,10 +685,6 @@
  *         <td>NSCalendarDate<sup>\ref database_types_ref_1 "1"</sup></td>
  *     </tr>
  *     <tr>
- *         <td>tinterval</td>
- *         <td>NSNumber</td>
- *     </tr>
- *     <tr>
  *         <td>varbit</td>
  *         <td>NSData</td>
  *     </tr>

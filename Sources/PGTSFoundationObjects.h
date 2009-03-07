@@ -65,8 +65,3 @@
 {
 }
 @end
-
-@interface PGTSSize : PGTSAbstractClass
-{
-}
-@end
