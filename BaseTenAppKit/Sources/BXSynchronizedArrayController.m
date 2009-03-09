@@ -175,6 +175,7 @@
 - (void) prepareEntity
 {
 	NSError* error = nil;
+	[self setEntityDescription: nil];
 	BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
 																	inSchema: [self schemaName]
 																	   error: &error];
@@ -221,8 +222,8 @@
             //Also set the entity description, since the database URI has changed.
 			if (nil != [self tableName] && [databaseContext canGiveEntities])
 				[self prepareEntity];
-			else
-				[nc addObserver: self selector: @selector (gotDatabaseURI:) name: kBXGotDatabaseURINotification object: databaseContext];
+
+			[nc addObserver: self selector: @selector (gotDatabaseURI:) name: kBXGotDatabaseURINotification object: databaseContext];
 		}
     }
 }

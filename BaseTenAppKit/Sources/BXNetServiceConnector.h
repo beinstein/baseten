@@ -76,6 +76,8 @@ enum BXNSConnectorCurrentPanel
 	enum BXNSConnectorCurrentPanel mCurrentPanel;
 	
 	CFHostRef mHost;
+	NSString* mRunLoopMode;
+	
 	NSString* mHostName;
 	NSInteger mPort;
 }

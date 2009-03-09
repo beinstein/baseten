@@ -45,6 +45,7 @@
 @interface BXApplicationModalNSConnectorImplementation : BXNSConnectorImplementation <BXNSConnectorImplementation>
 {
 	BOOL mBegunSendingPeriodicEvents;
+	BOOL mHavePanel;
 }
 @end
 
@@ -174,7 +175,8 @@ MakeInvocation (const id target, const SEL selector)
 
 - (NSString *) runLoopMode
 {
-	return NSModalPanelRunLoopMode;
+	NSString* retval = (mHavePanel ? NSModalPanelRunLoopMode : NSDefaultRunLoopMode);
+	return retval;
 }
 
 - (void) presentError2: (NSError *) error callback: (SEL) selector
@@ -201,7 +203,9 @@ MakeInvocation (const id target, const SEL selector)
 {
 	[hostPanel makeKeyAndOrderFront: nil];
 	[hostPanel center];
+	mHavePanel = YES;
 	[NSApp runModalForWindow: hostPanel];
+	mHavePanel = NO;
 }
 
 - (void) displayHostPanel: (BXHostPanel *) hostPanel
@@ -223,7 +227,9 @@ MakeInvocation (const id target, const SEL selector)
 {
 	[authenticationPanel makeKeyAndOrderFront: nil];
 	[authenticationPanel center];
+	mHavePanel = YES;
 	[NSApp runModalForWindow: authenticationPanel];
+	mHavePanel = NO;
 }
 
 - (void) displayAuthenticationPanel: (BXAuthenticationPanel *) authenticationPanel
@@ -252,13 +258,22 @@ MakeInvocation (const id target, const SEL selector)
  * \ingroup baseten_appkit
  */
 @implementation BXNetServiceConnector
-- (void) dealloc
+- (void) removeHost
 {
 	if (mHost)
 	{
+		CFHostCancelInfoResolution (mHost, kCFHostReachability);
+		if (mRunLoopMode)
+			CFHostUnscheduleFromRunLoop (mHost, CFRunLoopGetCurrent (), (CFStringRef) mRunLoopMode);
 		CFRelease (mHost);
 		mHost = NULL;
-	}
+	}	
+}
+
+- (void) dealloc
+{	
+	[self removeHost];
+	[mRunLoopMode release];
 	
 	[mHostPanel release];
 	[mAuthenticationPanel release];
@@ -268,12 +283,9 @@ MakeInvocation (const id target, const SEL selector)
 
 - (void) finalize
 {
-	if (mHost)
-	{
-		CFRelease (mHost);
-		mHost = NULL;
-	}
-	
+	[self removeHost];
+	if (mRunLoopMode)
+		CFRelease (mRunLoopMode);
 	[super finalize];
 }
 
@@ -363,6 +375,20 @@ MakeInvocation (const id target, const SEL selector)
 	}
 }
 
+- (void) setRunLoopMode: (NSString *) mode
+{
+	if (mode != mRunLoopMode)
+	{
+		if (mRunLoopMode)
+			CFRelease (mRunLoopMode);
+		
+		if (mode)
+			CFRetain (mode);
+			
+		mRunLoopMode = mode;
+	}
+}
+
 #pragma mark Start here
 - (IBAction) connect: (id) sender
 {	
@@ -411,9 +437,8 @@ MakeInvocation (const id target, const SEL selector)
 {
 	if (mHost)
 	{
-		CFHostCancelInfoResolution (mHost, kCFHostReachability);
-		CFRelease (mHost);
-		mHost = nil;
+		[self removeHost];
+		[self setRunLoopMode: nil];
 	}
 	else
 	{
@@ -435,6 +460,8 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 
 - (void) checkHostReachability: (NSString *) name
 {
+	Boolean status = FALSE;
+	[self removeHost];
 	mHost = CFHostCreateWithName (CFAllocatorGetDefault (), (CFStringRef) name);
 	CFHostClientContext ctx = {
 		0,
@@ -443,8 +470,12 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 		NULL,
 		NULL
 	};
-	CFHostSetClient (mHost, &HostClientCallback, &ctx);
-	CFHostScheduleWithRunLoop (mHost, CFRunLoopGetCurrent (), (CFStringRef) [mConnectorImpl runLoopMode]);
+	status = CFHostSetClient (mHost, &HostClientCallback, &ctx);
+	
+	CFRunLoopRef rl = CFRunLoopGetCurrent ();
+	NSString* mode = [mConnectorImpl runLoopMode];
+	[self setRunLoopMode: mode];
+	CFHostScheduleWithRunLoop (mHost, rl, (CFStringRef) mode);
 	
 	CFStreamError error = {};
 	if (! CFHostStartInfoResolution (mHost, kCFHostReachability, &error))
@@ -487,11 +518,8 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 		
 		//FIXME: localization.
 		
-		if (mHost)
-		{
-			CFRelease (mHost);
-			mHost = nil;
-		}		
+		[self removeHost];
+		[self setRunLoopMode: nil];
 
 		[[self hostPanel] setMessage: message];
 		if (kBXNSConnectorHostPanel == mCurrentPanel)
@@ -505,22 +533,19 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 	}
 	else
 	{
-		if (mHost)
-		{
-			CFRelease (mHost);
-			mHost = nil;
-		}		
-		
+		[self removeHost];
+		[self setRunLoopMode: nil];
+
 		//Complete the database URI. If we're allowed to use the Keychain, try to fetch some credentials.
 		//If none are found, display the authentication panel. Otherwise connect.
 		//Don't use -setDatabaseURIInternal: because we just got a new host name.
-		NSURL* databaseURI = [mContext databaseURI];
-		databaseURI = [databaseURI BXURIForHost: mHostName
-										   port: (-1 == mPort ? nil : [NSNumber numberWithInteger: mPort])
-									   database: nil 
-									   username: nil 
-									   password: nil];
-		[mContext setDatabaseURI: databaseURI];
+		NSURL* oldURI = [mContext databaseURI];
+		NSURL* newURI = [oldURI BXURIForHost: mHostName
+										port: (-1 == mPort ? nil : [NSNumber numberWithInteger: mPort])
+									database: nil
+									username: nil
+									password: nil];
+		[mContext setDatabaseURI: newURI];
 				
 		if ([mContext usesKeychain])
             [mContext fetchPasswordFromKeychain];
@@ -569,7 +594,7 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 }
 
 - (void) endConnecting: (NSNotification *) notification
-{
+{	
 	if ([[notification name] isEqualToString: kBXConnectionSuccessfulNotification])
 	{
 		[self endPanelUnless: kBXNSConnectorNoPanel];
