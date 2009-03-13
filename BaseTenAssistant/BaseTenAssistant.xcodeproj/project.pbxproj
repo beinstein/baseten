@@ -433,6 +433,7 @@
 			buildPhases = (
 				5381D25D0E4896B5001574D4 /* Copy IB plugin to built products dir */,
 				530602B90A3F112C00C01351 /* Copy Frameworks */,
+				53341E910F6A6C9700EA666F /* Index help */,
 				8D1107290486CEB800E47090 /* Resources */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
@@ -577,6 +578,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		53341E910F6A6C9700EA666F /* Index help */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Index help";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"$SYSTEM_DEVELOPER_UTILITIES_DIR\"/\"Help Indexer.app\"/Contents/MacOS/\"Help Indexer\" ./English.lproj/\"BaseTen Assistant Help\" ";
+			showEnvVarsInLog = 0;
+		};
 		5381D25D0E4896B5001574D4 /* Copy IB plugin to built products dir */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
