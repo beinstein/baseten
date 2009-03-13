@@ -58,9 +58,6 @@
 #import <RegexKit/RegexKit.h>
 
 
-extern NSNumber* BXACopyBundledVersionNumber ();
-
-
 static NSString* kBXAControllerCtx = @"kBXAControllerCtx";
 static NSString* kBXAControllerErrorDomain = @"kBXAControllerErrorDomain";
 
@@ -350,7 +347,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	gController = self;
 	mLastSelectedEntityWasView = YES;
-	mBundledSchemaVersionNumber = BXACopyBundledVersionNumber ();
+	mBundledSchemaVersionNumber = [[BXPGVersion currentVersionNumber] retain];
 
 	//Patch by Tim Bedford 2008-08-11
 	[mMainWindow setExcludedFromWindowsMenu:YES];
