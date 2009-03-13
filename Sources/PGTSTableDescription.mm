@@ -28,6 +28,7 @@
 
 #import "PGTSTableDescription.h"
 #import "PGTSColumnDescription.h"
+#import "PGTSIndexDescription.h"
 #import "PGTSCollections.h"
 #import "PGTSScannedMemoryAllocator.h"
 #import "BXLogger.h"
@@ -93,7 +94,7 @@ using namespace PGTS;
 	Expect (mUniqueIndexes);
 	id retval = nil;
 	IdList::const_iterator it = mUniqueIndexes->begin ();
-	if (mUniqueIndexes->end () != it)
+	if (mUniqueIndexes->end () != it && [*it isPrimaryKey])
 		retval = *it;
 	return retval;
 }

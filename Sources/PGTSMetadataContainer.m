@@ -294,7 +294,7 @@
 	@" WHERE i.indisunique = true AND "
 	@"  n.nspname NOT IN ('information_schema', 'baseten') AND "
 	@"  n.nspname NOT LIKE 'pg_%' "
-	@" ORDER BY i.indexrelid ASC, i.indisprimary DESC";
+	@" ORDER BY i.indrelid ASC, i.indisprimary DESC";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded]);
 
