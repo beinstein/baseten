@@ -197,13 +197,11 @@
 /**
  * \page baseten_enabling More detail on enabling relations
  *
- * Some tables are created in BaseTen schema to track changes in other relations. The tables and relations
- * correspond to each other based on their names. The BaseTen tables store values for the actual relations' 
- * primary keys. Thus, there will be two restrictions on table handling:
- * \li Renaming tables after having them enabled will not work.
- *     Should tables need to be renamed, first disable the table, then rename it and finally prepare it again.
- * \li Changing tables' primary keys after having them enabled will not work. Use the method 
- *     described above.
+ * Some tables are created in BaseTen schema to track changes in other relations. The association is based
+ * on relation \em oids \ref baseten_enabling_ref_1 "¹". The BaseTen tables store values for the actual 
+ * relations' primary keys. Thus, changing tables' primary keys after having them enabled will not work. 
+ * Should this need to be done, first disable the relation, then alter the primary key and finally enable 
+ * the relation again. Renaming or otherwise altering relations should be possible, though.
  *
  * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
  * The functions are <em>baseten.enable</em> and <em>baseten.disable</em> and they take an \em oid as an argument.
@@ -213,8 +211,13 @@
  * key column's name respectively. They also make up the table's primary key. In addition to using 
  * BaseTen Assistant, it is possible to determine a view's primary key by inserting rows into the table.
  *
- * Relationships that involve views are stored in automatically-generated tables. These may be refreshed view
- * the SQL function <em>baseten.refresh_caches</em>. BaseTen Assistant does this automatically.
+ * Relationships and view hierarchies among other things are stored in automatically-generated tables. 
+ * These should be refreshed with the SQL function <em>baseten.refresh_caches</em> after all changes to views,
+ * primary keys and foreign keys. BaseTen Assistant does this automatically.
+ *
+ * <ol>
+ *     <li>\anchor baseten_enabling_ref_1 PostgreSQL assigns an \em oid to each relation. This does not imply that tables should be created WITH OIDS.</li>
+ * </ol>
  */
 
 /**
@@ -630,7 +633,7 @@
  *     </tr>
  *     <tr>
  *         <td>date</td>
- *         <td>NSCalendarDate<sup>\ref database_types_ref_1 "1"</sup></td>
+ *         <td>NSCalendarDate \ref database_types_ref_1 "¹"</td>
  *     </tr>
  *     <tr>
  *         <td>float4</td>
@@ -682,7 +685,7 @@
  *     </tr>
  *     <tr>
  *         <td>timestamptz</td>
- *         <td>NSCalendarDate<sup>\ref database_types_ref_1 "1"</sup></td>
+ *         <td>NSCalendarDate \ref database_types_ref_1 "¹"</td>
  *     </tr>
  *     <tr>
  *         <td>varbit</td>
@@ -697,7 +700,9 @@
  *         <td>NSString</td>
  *     </tr>
  * </table>
- * \anchor database_types_ref_1 1. Subject to change as NSCalendarDate might become deprecated.
+ * <ol>
+ *     <li>\anchor database_types_ref_1 Subject to change as NSCalendarDate might become deprecated.</li>
+ * </ol>
  */
 
 /**
