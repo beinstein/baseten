@@ -603,7 +603,8 @@
  * \page database_types Handled PostgreSQL types
  *
  * Composite types, domains, pseudo-types and types not listed here are currently returned as NSData. 
- * Various array types are returned as NSArrays of the respective type.
+ * Array types are returned as NSArrays of the respective type, NSArrays of NSData objects or
+ * NSData objects.
  *
  * <table>
  *     <caption>Type conversion</caption>
