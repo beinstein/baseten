@@ -633,7 +633,7 @@
  *     </tr>
  *     <tr>
  *         <td>date</td>
- *         <td>NSCalendarDate \ref database_types_ref_1 "¹"</td>
+ *         <td>NSCalendarDate\ref database_types_ref_1 "¹"</td>
  *     </tr>
  *     <tr>
  *         <td>float4</td>
@@ -685,7 +685,7 @@
  *     </tr>
  *     <tr>
  *         <td>timestamptz</td>
- *         <td>NSCalendarDate \ref database_types_ref_1 "¹"</td>
+ *         <td>NSCalendarDate\ref database_types_ref_1 "¹"</td>
  *     </tr>
  *     <tr>
  *         <td>varbit</td>
