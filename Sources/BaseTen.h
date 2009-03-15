@@ -612,6 +612,10 @@
  *         <th><strong>Cocoa type</strong></th>
  *     </tr>
  *     <tr>
+ *         <td>aclitem</td>
+ *         <td>(A private class)</td>
+ *     </tr>
+ *     <tr>
  *         <td>bit</td>
  *         <td>NSData</td>
  *     </tr>
