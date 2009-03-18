@@ -40,7 +40,6 @@
     if ((self = [super init]))
     {
         mElementOid = InvalidOid;
-        mElementCount = 0;
         mDelimiter = '\0';
     }
     return self;
@@ -50,6 +49,11 @@
 - (Oid) elementOid
 {
 	return mElementOid;
+}
+
+- (NSInteger) length
+{
+	return mLength;
 }
 
 - (char) delimiter
@@ -65,6 +69,11 @@
 - (void) setElementOid: (Oid) elementOid
 {
 	mElementOid = elementOid;
+}
+
+- (void) setLength: (NSInteger) length
+{
+	mLength = length;
 }
 
 - (void) setDelimiter: (char) delimiter

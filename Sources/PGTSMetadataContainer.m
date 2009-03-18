@@ -104,7 +104,7 @@
 {
 	ExpectV (connection);
 	NSString* query = 
-	@"SELECT t.oid, typname, typnamespace, typelem, typdelim, typtype "
+	@"SELECT t.oid, typname, typnamespace, typelem, typdelim, typtype, typlen "
 	@" FROM pg_type t ";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded]);
@@ -117,6 +117,7 @@
 		[res setClass: [NSNumber class] forKey: @"typelem"];
 		[res setClass: [NSString class] forKey: @"typdelim"];
 		[res setClass: [NSString class] forKey: @"typtype"];
+		[res setClass: [NSNumber class] forKey: @"typlen"];
 		
 		while ([res advanceRow])
 		{
@@ -136,6 +137,8 @@
 			unichar kind = [[res valueForKey: @"typtype"] characterAtIndex: 0];
 			ExpectV (kind <= UCHAR_MAX);
 			[type setKind: kind];
+			NSInteger length = [[res valueForKey: @"typlen"] integerValue];
+			[type setLength: length];
 			
 			[type setSchema: [mDatabase schemaWithOid: [[res valueForKey: @"typnamespace"] PGTSOidValue]]];
 			

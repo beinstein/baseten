@@ -34,16 +34,18 @@
 @interface PGTSTypeDescription : PGTSSchemaObjectDescription 
 {
     Oid mElementOid;
-    unsigned int mElementCount;
+	NSInteger mLength;
     char mDelimiter;
 	char mKind;
 }
 - (Oid) elementOid;
+- (NSInteger) length;
 - (char) delimiter;
 - (char) kind;
 
 //Thread un-safe methods.
 - (void) setElementOid: (Oid) anOid;
+- (void) setLength: (NSInteger) length;
 - (void) setDelimiter: (char) delimiter;
 - (void) setKind: (char) kind;
 @end

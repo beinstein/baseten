@@ -276,24 +276,33 @@ ErrorUserInfoKey (char fieldCode)
 		
 		if (! aClass)
 		{
-			//Come up with some reasonable defaults. Maybe a delegate could be asked, too?
-			switch ([type kind]) 
+			//Check for arrays. Other types that satisfy the condition (like int2vector and oidvector) 
+			//should have an entry in deserializationDictionary, if they are used.
+			if (-1 == [type length] && InvalidOid != [type elementOid])
 			{
-				case 'e':
-					aClass = [NSString class];
-					break;
-					
-				case 'c':
-					//FIXME: handle composite types.
-				case 'd':
-					//FIXME: handle domains.
-				case 'p':
-					//FIXME: handle pseudo-types.
-				case 'b':
-				default:
-					aClass = [NSData class];					
-					break;
-			}			
+				aClass = [NSArray class];
+			}
+			else
+			{
+				//Handle other types by kind.
+				switch ([type kind]) 
+				{
+					case 'e':
+						aClass = [NSString class];
+						break;
+						
+					case 'c':
+						//FIXME: handle composite types.
+					case 'd':
+						//FIXME: handle domains.
+					case 'p':
+						//FIXME: handle pseudo-types. (On the other hand, this shouldn't get reached.)
+					case 'b':
+					default:
+						aClass = [NSData class];					
+						break;
+				}				
+			}
 		}
 		
 		[self setClass: aClass forFieldAtIndex: i];

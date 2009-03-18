@@ -130,5 +130,5 @@ void BXLog_v (const char* fileName, const char* functionName, void* functionAddr
 		free (executable);
 	if (library)
 		free (library);
-	[pool release];
+	[pool drain];
 }
