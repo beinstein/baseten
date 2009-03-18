@@ -850,6 +850,7 @@ ModTypeToObject (enum BXModificationType value)
 {
 	mShouldStoreURICredentials = shouldStore;
 }
+//@}
 
 /**
  * \internal
@@ -894,7 +895,6 @@ ModTypeToObject (enum BXModificationType value)
 		[self setKeychainPasswordItem: NULL];
 	}
 }
-//@}
 
 /** \name Faulting database objects */
 //@{
