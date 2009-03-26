@@ -521,7 +521,7 @@ bx_error_during_rollback (id self, NSError* error)
 		retval = [res resultAsArray];
 	else
 	{
-        //FIXME: reason for error?
+        //FIXME: reason for error!
 		*error = [NSError errorWithDomain: kBXErrorDomain
 									 code: kBXErrorUnsuccessfulQuery
 								 userInfo: nil];
@@ -727,7 +727,7 @@ error:
 		[mTransactionHandler checkSuperEntities: entity];
 		NSArray* objectIDs = ObjectIDs (entity, res);
 
-		NSDictionary* values = (id) [[valueDict PGTSKeyCollectDK] name];
+		NSDictionary* values = (id) [[valueDict PGTSKeyCollectD] name];
 		if (objectID)
 		{
 			BXDatabaseObject* object = [mContext registeredObjectWithID: objectID];

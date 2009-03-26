@@ -358,9 +358,9 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	return HOMTrampoline (self, @selector (PGTSCollectDK:userInfo:), nil);
 }
 
-- (id) PGTSKeyCollectDK
+- (id) PGTSKeyCollectD
 {
-	return KeyTrampoline (self, @selector (PGTSKeyCollectDK:userInfo:), nil);
+	return KeyTrampoline (self, @selector (PGTSKeyCollectD:userInfo:), nil);
 }
 
 - (id) PGTSDo
@@ -391,7 +391,7 @@ Visit (NSInvocation* invocation, NSEnumerator* enumerator)
 	CollectAndPerformDK (self, retval, invocation, [self objectEnumerator]);
 }
 
-- (void) PGTSKeyCollectDK: (NSInvocation *) invocation userInfo: (id) ignored
+- (void) PGTSKeyCollectD: (NSInvocation *) invocation userInfo: (id) ignored
 {
 	id retval = [[[NSMutableDictionary alloc] initWithCapacity: [self count]] autorelease];
 	BXEnumerate (currentKey, e, [self keyEnumerator])

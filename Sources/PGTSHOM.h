@@ -39,7 +39,7 @@
  * \internal
  * \brief Make a dictionary of collected objects.
  *
- * Make existing objects keys and collected objects values.
+ * Make existing objects values and collected objects keys.
  * \return An invocation recorder that creates an NSDictionary.
  */
 - (id) PGTSCollectD;
@@ -48,7 +48,7 @@
  * \internal
  * \brief Make a dictionary of collected objects.
  *
- * Make existing objects values and collected objects keys.
+ * Make existing objects keys and collected objects values.
  * \return An invocation recorder that creates an NSDictionary.
  */
 - (id) PGTSCollectDK;
@@ -86,7 +86,7 @@
  * Make existing objects values and collected objects keys.
  * \return An invocation recorder that creates an NSDictionary.
  */
-- (id) PGTSKeyCollectDK;
+- (id) PGTSKeyCollectD;
 
 - (id) PGTSValueSelectFunction: (int (*)(id)) fptr;
 - (id) PGTSValueSelectFunction: (int (*)(id, void*)) fptr argument: (void *) arg;
