@@ -360,6 +360,7 @@ INSERT INTO person_address VALUES (1, 'Mannerheimintie 1');
 INSERT INTO person VALUES (1, 'nzhuk', 1, 1);
 
 
+-- Test a non-ASCII name.
 CREATE TABLE ♨ (id SERIAL PRIMARY KEY, value VARCHAR (255));
 SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n
 	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname = '♨';
@@ -369,6 +370,18 @@ GRANT USAGE ON SEQUENCE ♨_id_seq TO baseten_test_user;
 INSERT INTO ♨ (value) VALUES ('test1');
 INSERT INTO ♨ (value) VALUES ('test2');
 INSERT INTO ♨ (value) VALUES ('test3');
+
+
+-- Test an astral character name.
+CREATE TABLE 𐄤𐄧𐄪𐄷 (id SERIAL PRIMARY KEY, value VARCHAR (255));
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n
+	WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname = '𐄤𐄧𐄪𐄷';
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON 𐄤𐄧𐄪𐄷 TO baseten_test_user;
+GRANT USAGE ON SEQUENCE 𐄤𐄧𐄪𐄷_id_seq TO baseten_test_user;
+INSERT INTO 𐄤𐄧𐄪𐄷 (value) VALUES ('test1');
+INSERT INTO 𐄤𐄧𐄪𐄷 (value) VALUES ('test2');
+INSERT INTO 𐄤𐄧𐄪𐄷 (value) VALUES ('test3');
 
 
 CREATE TABLE datetest (
