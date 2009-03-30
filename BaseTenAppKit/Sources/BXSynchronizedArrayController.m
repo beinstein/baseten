@@ -188,15 +188,6 @@
 	}	
 }
 
-- (void) gotDatabaseURI: (NSNotification *) notification
-{	
-	BXDatabaseContext* ctx = [notification object];
-	ExpectV (ctx == databaseContext)
-
-	[[ctx notificationCenter] removeObserver: self name: kBXGotDatabaseURINotification object: ctx];
-	[self prepareEntity];
-}
-
 /**
  * \brief Set the database context.
  * \see #setFetchesOnConnect:
@@ -214,16 +205,12 @@
         databaseContext = [ctx retain];
 		
 		if (nil != databaseContext)
-		{
-            nc = [databaseContext notificationCenter];
-			if (mFetchesOnConnect)
-				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
-            
+		{            
             //Also set the entity description, since the database URI has changed.
 			if (nil != [self tableName] && [databaseContext canGiveEntities])
 				[self prepareEntity];
 
-			[nc addObserver: self selector: @selector (gotDatabaseURI:) name: kBXGotDatabaseURINotification object: databaseContext];
+			[[databaseContext notificationCenter] addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
 		}
     }
 }
