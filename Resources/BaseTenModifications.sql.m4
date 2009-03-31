@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.922}})dnl
+define({{_bx_version_}}, {{0.923}})dnl
 define({{_bx_compat_version_}}, {{0.18}})dnl
 
 
@@ -1247,9 +1247,9 @@ DECLARE
 	relid ALIAS FOR $1;
 	retval "baseten"."reltype";
 BEGIN	 
-	EXECUTE 'DROP FUNCTION IF EXISTS ' || "baseten".mod_insert_fn (relid) || ' () CASCADE';
-	EXECUTE 'DROP TABLE IF EXISTS ' || "baseten".lock_table (relid) || ' CASCADE';
-	EXECUTE 'DROP TABLE IF EXISTS ' || "baseten".mod_table (relid) || ' CASCADE';
+	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten".mod_insert_fn (relid) || ' () CASCADE';
+	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten".lock_table (relid) || ' CASCADE';
+	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten".mod_table (relid) || ' CASCADE';
 	DELETE FROM "baseten".enabled_relation r WHERE r.relid = relid;
 	retval := "baseten".reltype (relid);
 	RETURN retval;

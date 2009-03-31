@@ -610,30 +610,30 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	if (status)
 	{
 		PGTSResultSet* res = nil;
-		res = [connection executeQuery: @"INSERT INTO baseten.viewprimarykey SELECT * FROM baseten_viewprimarykey"];
+		res = [connection executeQuery: @"INSERT INTO baseten.view_pkey SELECT * FROM baseten_view_pkey"];
 		if (! [res querySucceeded])
 			[NSApp presentError: [res error]];
 		else
 		{
-			res = [connection executeQuery: @"SELECT baseten.prepareformodificationobserving (oid) FROM baseten_enabledoids"];
+			res = [connection executeQuery: @"SELECT baseten.enable (oid) FROM baseten_enabled_oids"];
 			if (! [res querySucceeded])
 				[NSApp presentError: [res error]];
 		}
 	}
 	
 	//Clean up.
-	[connection executeQuery: @"DROP TABLE baseten_viewprimarykey"];
-	[connection executeQuery: @"DROP TABLE baseten_enabledoids"];
+	[connection executeQuery: @"DROP TABLE baseten_view_pkey"];
+	[connection executeQuery: @"DROP TABLE baseten_enabled_oids"];
 }
 
 - (void) upgradeBaseTenSchema
 {
 	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
-	[connection executeQuery: @"CREATE TEMPORARY TABLE baseten_viewprimarykey AS SELECT * FROM baseten.viewprimarykey"];
+	[connection executeQuery: @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.view_pkey"];
 	NSError* error; //Patch by Tim Bedford 2008-08-11
 	NSString* query = 
-	@"CREATE TEMPORARY TABLE baseten_enabledoids AS "
-	@" SELECT oid FROM pg_class WHERE baseten.isobservingcompatible (oid) = true";
+	@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
+	@" SELECT relid AS oid FROM baseten.enabled_relation";
 	[connection executeQuery: query];
 	
 	//Patch by Tim Bedford 2008-08-11
