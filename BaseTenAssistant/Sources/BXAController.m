@@ -347,6 +347,8 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	gController = self;
 	mLastSelectedEntityWasView = YES;
 	mBundledSchemaVersionNumber = [[BXPGVersion currentVersionNumber] retain];
+	
+	[mBonjourPopUpButton setAutoenablesItems: NO];
 
 	//Patch by Tim Bedford 2008-08-11
 	[mMainWindow setExcludedFromWindowsMenu:YES];
@@ -431,6 +433,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[mServiceBrowser searchForServicesOfType:@"_postgresql._tcp" inDomain:@"local."];	
 	[NSApp beginSheet: mConnectPanel modalForWindow: mMainWindow modalDelegate: self 
 	   didEndSelector: NULL contextInfo: NULL];
+	[self updateBonjourUI];
 }
 
 - (void) hideConnectPanel
@@ -1293,8 +1296,11 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	}
 	else
 	{
-		// Add a disabled menu item indicating that no services were found
-		[menu addItemWithTitle:NSLocalizedString(@"No services found", @"Service popup menu") action:nil keyEquivalent:@""];
+		// Add a disabled menu item indicating that no services were found.
+		NSMenuItem* menuItem = [[NSMenuItem alloc] initWithTitle: NSLocalizedString(@"No services found", @"Service popup menu")
+														  action: NULL keyEquivalent: @""];
+		[menu addItem: menuItem];
+		[menuItem setEnabled: NO];
 	}
 }
 

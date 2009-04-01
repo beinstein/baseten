@@ -1667,6 +1667,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 									</object>
 									<string key="NSFrame">{{1, 1}, {368, 126}}</string>
 									<reference key="NSSuperview" ref="392771615"/>
+									<reference key="NSNextKeyView" ref="71290370"/>
 									<reference key="NSDocView" ref="71290370"/>
 									<object class="NSColor" key="NSBGColor">
 										<int key="NSColorSpace">1</int>
@@ -1697,6 +1698,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							</object>
 							<string key="NSFrame">{{20, 60}, {385, 128}}</string>
 							<reference key="NSSuperview" ref="957137145"/>
+							<reference key="NSNextKeyView" ref="45882566"/>
 							<int key="NSsFlags">18</int>
 							<reference key="NSVScroller" ref="744026035"/>
 							<reference key="NSHScroller" ref="1061755770"/>
