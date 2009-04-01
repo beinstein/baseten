@@ -83,21 +83,31 @@ function build
     mkdir -p ../"$my_arch"
 	exit_on_error
 	
-	## Required targets, see src/backend/Makefile: Make symlinks...
-	make -j "$my_availcpu" -C src/backend ../../src/include/parser/parse.h
-	exit_on_error
-	make -j "$my_availcpu" -C src/backend ../../src/include/utils/fmgroids.h
-	exit_on_error
-
+    ## The selective build fails at times. Just make everything.
+    make -j "$my_availcpu" 2>&1
+    exit_on_error
     for x in src/include src/interfaces/libpq src/bin/psql
     do
         pushd "$x"
-		make -j "$my_availcpu" 2>&1
-		exit_on_error
 		make -j "$my_availcpu" install 2>&1
 		exit_on_error
         popd
     done
+	### Required targets, see src/backend/Makefile: Make symlinks...
+	#make -j "$my_availcpu" -C src/backend ../../src/include/parser/parse.h
+	#exit_on_error
+	#make -j "$my_availcpu" -C src/backend ../../src/include/utils/fmgroids.h
+	#exit_on_error
+    #
+    #for x in src/include src/interfaces/libpq src/bin/psql
+    #do
+    #   pushd "$x"
+	#	make -j "$my_availcpu" 2>&1
+	#	exit_on_error
+	#	make -j "$my_availcpu" install 2>&1
+	#	exit_on_error
+    #   popd
+    #done
     
     popd
 
