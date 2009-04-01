@@ -205,11 +205,8 @@
         databaseContext = [ctx retain];
 		
 		if (nil != databaseContext)
-		{            
-            //Also set the entity description, since the database URI has changed.
-			if (nil != [self tableName] && [databaseContext canGiveEntities])
-				[self prepareEntity];
-
+		{
+			[self setEntityDescription: nil];
 			[[databaseContext notificationCenter] addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
 		}
     }

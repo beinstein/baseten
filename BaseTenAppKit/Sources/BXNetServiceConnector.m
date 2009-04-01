@@ -538,14 +538,19 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 
 		//Complete the database URI. If we're allowed to use the Keychain, try to fetch some credentials.
 		//If none are found, display the authentication panel. Otherwise connect.
-		//Don't use -setDatabaseURIInternal: because we just got a new host name.
 		NSURL* oldURI = [mContext databaseURI];
 		NSURL* newURI = [oldURI BXURIForHost: mHostName
 										port: (-1 == mPort ? nil : [NSNumber numberWithInteger: mPort])
 									database: nil
 									username: nil
 									password: nil];
-		[mContext setDatabaseURI: newURI];
+		
+		
+		//Don't use -setDatabaseURIInternal: because we just got a new host name.
+		//If old URI already contains the host name, the context might already
+		//have given entity descriptions, and we don't want to replace the object model.
+		if (! [oldURI isEqual: newURI])
+			[mContext setDatabaseURI: newURI];
 				
 		if ([mContext usesKeychain])
             [mContext fetchPasswordFromKeychain];
