@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.923}})dnl
+define({{_bx_version_}}, {{0.924}})dnl
 define({{_bx_compat_version_}}, {{0.18}})dnl
 
 
@@ -88,9 +88,6 @@ DROP FUNCTION "baseten".prepare ();
 
 REVOKE ALL PRIVILEGES ON SCHEMA "baseten" FROM PUBLIC;
 GRANT USAGE ON SCHEMA "baseten" TO basetenread;
-
-CREATE TEMPORARY SEQUENCE "baseten_lock_seq";
-REVOKE ALL PRIVILEGES ON SEQUENCE "baseten_lock_seq" FROM PUBLIC;
 
 
 -- Helper functions
@@ -194,13 +191,6 @@ RETURNS SETOF INTEGER AS $$
 $$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".running_backend_pids () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".running_backend_pids () TO basetenread;
-
-
-CREATE FUNCTION "baseten".lock_next_id () RETURNS BIGINT AS $$
-	SELECT nextval ('baseten_lock_seq');
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
-REVOKE ALL PRIVILEGES ON  FUNCTION "baseten".lock_next_id () FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".lock_next_id () TO basetenuser;
 
 
 define({{between_operator}}, {{
@@ -958,41 +948,37 @@ GRANT SELECT ON "baseten".relationship TO basetenread;
 
 
 -- For modification tracking
+CREATE SEQUENCE "baseten".modification_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".modification (
-	"baseten_modification_id" INTEGER PRIMARY KEY,
+	"baseten_modification_id" INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."modification_id_seq"'),
 	"baseten_modification_relid" OID NOT NULL,
 	"baseten_modification_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
 	"baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_modification_type" CHAR NOT NULL,
 	"baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
 );
-CREATE SEQUENCE "baseten".modification_id_seq CYCLE OWNED BY "baseten".modification."baseten_modification_id";
-CREATE FUNCTION "baseten".set_mod_id () RETURNS TRIGGER AS $$
-BEGIN
-	NEW."baseten_modification_id" = nextval ('"baseten"."modification_id_seq"');
-	RETURN NEW;
-END;
-$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER;
-CREATE TRIGGER "set_mod_id" BEFORE INSERT ON "baseten".modification 
-	FOR EACH ROW EXECUTE PROCEDURE "baseten".set_mod_id ();
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".set_mod_id () FROM PUBLIC;
+ALTER SEQUENCE "baseten".modification_id_seq OWNED BY "baseten".modification."baseten_modification_id";
 REVOKE ALL PRIVILEGES ON SEQUENCE "baseten".modification_id_seq FROM PUBLIC;
 REVOKE ALL PRIVILEGES ON "baseten".modification FROM PUBLIC;
 GRANT SELECT ON "baseten".modification TO basetenread;
+GRANT USAGE ON SEQUENCE "baseten".modification_id_seq TO basetenuser;
 
 
+CREATE SEQUENCE "baseten".lock_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".lock (
-	"baseten_lock_backend_pid"	 INTEGER NOT NULL DEFAULT pg_backend_pid (),
-	"baseten_lock_id"			 BIGINT NOT NULL DEFAULT "baseten".lock_next_id (),
+	"baseten_lock_id"			 INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."lock_id_seq"'),
 	"baseten_lock_relid"		 OID NOT NULL,
 	"baseten_lock_timestamp"	 TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_lock_query_type"	 CHAR (1) NOT NULL DEFAULT 'U',	 -- U == UPDATE, D == DELETE
 	"baseten_lock_cleared"		 BOOLEAN NOT NULL DEFAULT FALSE,
 	"baseten_lock_savepoint_idx" BIGINT NOT NULL,
-	PRIMARY KEY ("baseten_lock_backend_pid", "baseten_lock_id")
+	"baseten_lock_backend_pid"	 INTEGER NOT NULL DEFAULT pg_backend_pid ()
 );
+ALTER SEQUENCE "baseten".lock_id_seq OWNED BY "baseten".lock."baseten_lock_id";
+REVOKE ALL PRIVILEGES ON SEQUENCE "baseten".lock_id_seq FROM PUBLIC;
 REVOKE ALL PRIVILEGES ON "baseten".lock FROM PUBLIC;
 GRANT SELECT ON "baseten".lock TO basetenread;
+GRANT USAGE ON SEQUENCE "baseten".lock_id_seq TO basetenuser;
 
 
 -- Functions
@@ -1209,13 +1195,6 @@ DECLARE
 	retval "baseten".observation_type;
 BEGIN
 	PERFORM "baseten".observing_compatible_ex (relid);
-
-	-- Don't create if exists.
-	-- Using PERFORM & checking FOUND might cause a race condition.
-	BEGIN
-		CREATE TEMPORARY SEQUENCE "baseten_lock_seq";
-	EXCEPTION WHEN OTHERS THEN
-	END;
 
 	nname := "baseten".lock_notification (relid);
 	--RAISE NOTICE 'Observing: %', nname;
@@ -1519,11 +1498,6 @@ BEGIN
 		'CREATE TRIGGER "modify_table" ' ||
 		'AFTER INSERT ON "baseten".' || quote_ident (mod_table) || ' ' ||
 		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".mod_notify (''' || "baseten".mod_notification (relid_) || ''')';
-	EXECUTE query;
-	query :=
-		'CREATE TRIGGER "set_mod_id" ' ||
-		'BEFORE INSERT ON "baseten".' || quote_ident (mod_table) || ' ' ||
-		'FOR EACH ROW EXECUTE PROCEDURE "baseten".set_mod_id ()';
 	EXECUTE query;
 	
 	-- Triggers for the enabled relation.

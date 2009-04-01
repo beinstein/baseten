@@ -319,7 +319,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	return retval;
 }
 
-
 - (BOOL) canUpgradeSchema
 {
 	BOOL retval = NO;
@@ -622,22 +621,62 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	}
 	
 	//Clean up.
-	[connection executeQuery: @"DROP TABLE baseten_view_pkey"];
-	[connection executeQuery: @"DROP TABLE baseten_enabled_oids"];
+	[connection executeQuery: @"DROP TABLE IF EXISTS baseten_view_pkey"];
+	[connection executeQuery: @"DROP TABLE IF EXISTS baseten_enabled_oids"];
 }
 
 - (void) upgradeBaseTenSchema
 {
-	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
-	[connection executeQuery: @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.view_pkey"];
-	NSError* error; //Patch by Tim Bedford 2008-08-11
-	NSString* query = 
-	@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
-	@" SELECT relid AS oid FROM baseten.enabled_relation";
-	[connection executeQuery: query];
+	NSInvocation* callback = nil;
+	if ([self hasBaseTenSchema])
+	{
+		callback = MakeInvocation (self, @selector (finishUpgrading:));
+		
+		//We should have multiple migrator classes instead of the switch statement below,
+		//but since there are only two different cases, we probably can manage with it.
+		BXPGTransactionHandler* handler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
+		BXPGDatabaseDescription* desc = [handler databaseDescription];
+		PGTSConnection* connection = [handler connection];
+
+		//If version is less than 0.922, we have old-style table and function names.
+		NSNumber* version = [desc schemaVersion];
+		NSNumber* threshold = [NSDecimalNumber decimalNumberWithString: @"0.922"];
+		NSComparisonResult res = [threshold compare: version];
+		switch (res)
+		{
+			case NSOrderedDescending:
+			{
+				NSString* query = nil;
+				query = @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.viewprimarykey";
+				[connection executeQuery: query];
+				query = 
+				@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
+				@" SELECT oid FROM pg_class WHERE baseten.isobservingcompatible (oid) = true";
+				[connection executeQuery: query];
+				break;
+			}
+				
+			case NSOrderedSame:
+			case NSOrderedAscending:
+			{
+				NSString* query = nil;
+				query = @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.view_pkey";
+				[connection executeQuery: query];
+				query = 
+				@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
+				@" SELECT relid AS oid FROM baseten.enabled_relation";
+				[connection executeQuery: query];
+				break;
+			}
+				
+			default:
+				break;
+		}
+	}
 	
+	NSError* error = nil;
 	//Patch by Tim Bedford 2008-08-11
-	[self installBaseTenSchema: MakeInvocation (self, @selector (finishUpgrading:)) error:&error];
+	[self installBaseTenSchema: callback error: &error];
 	//FIXME: handle the error.
 	//End patch
 }
@@ -658,12 +697,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
 	[mEntitiesBySchema setContent: entities];
-}
-
-- (BOOL) canRemoveSchema
-{
-	return [[[(BXPGInterface *) [mContext databaseInterface] transactionHandler] 
-			 databaseDescription] hasBaseTenSchema];
 }
 @end
 
@@ -866,9 +899,9 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	{
 		retval = YES; // YES by default
 		if(action == @selector(upgradeSchema:))
-			retval = [self canUpgradeSchema];
+			retval = ([self canUpgradeSchema] || ![self hasBaseTenSchema]);
 		else if(action == @selector(removeSchema:))
-			retval = [self canRemoveSchema];
+			retval = [self hasBaseTenSchema];
 		else if(action == @selector(exportLog:))
 			retval = [self canExportLog];
 		else if(action == @selector(importDataModel:))
@@ -1583,6 +1616,8 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	{
 		for (id pair in [mEntities arrangedObjects])
 			[[pair value] setEnabled: NO];
+		[[mContext databaseInterface] reloadDatabaseMetadata];
+		[self checkBaseTenSchema: NULL];
 	}
 }
 

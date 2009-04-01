@@ -2,15 +2,16 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9F33</string>
+		<string key="IBDocument.SystemVersion">9G55</string>
 		<string key="IBDocument.InterfaceBuilderVersion">670</string>
-		<string key="IBDocument.AppKitVersion">949.34</string>
-		<string key="IBDocument.HIToolboxVersion">352.00</string>
+		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
 			<integer value="849"/>
-			<integer value="449"/>
 			<integer value="512"/>
+			<integer value="582"/>
+			<integer value="449"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1666,7 +1667,6 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 									</object>
 									<string key="NSFrame">{{1, 1}, {368, 126}}</string>
 									<reference key="NSSuperview" ref="392771615"/>
-									<reference key="NSNextKeyView" ref="71290370"/>
 									<reference key="NSDocView" ref="71290370"/>
 									<object class="NSColor" key="NSBGColor">
 										<int key="NSColorSpace">1</int>
@@ -1697,7 +1697,6 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							</object>
 							<string key="NSFrame">{{20, 60}, {385, 128}}</string>
 							<reference key="NSSuperview" ref="957137145"/>
-							<reference key="NSNextKeyView" ref="45882566"/>
 							<int key="NSsFlags">18</int>
 							<reference key="NSVScroller" ref="744026035"/>
 							<reference key="NSHScroller" ref="1061755770"/>
@@ -2510,7 +2509,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 								</object>
 								<object class="NSMenuItem" id="765264690">
 									<reference key="NSMenu" ref="452600950"/>
-									<string key="NSTitle">Upgrade BaseTen Schema</string>
+									<string key="NSTitle">Install or Upgrade BaseTen Schema</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="622407158"/>
@@ -5502,7 +5501,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{589, 634}, {113, 23}}</string>
+					<string>{{561, 568}, {89, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{193, 484}, {616, 0}}</string>
@@ -5533,9 +5532,9 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{270, 149}, {506, 387}}</string>
+					<string>{{184, 149}, {506, 387}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{270, 149}, {506, 387}}</string>
+					<string>{{184, 149}, {506, 387}}</string>
 					<reference ref="8"/>
 					<string>{{441, 464}, {506, 387}}</string>
 					<reference ref="9"/>
@@ -5714,7 +5713,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>{{923, 941}, {232, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{336, 684}, {255, 183}}</string>
+					<string>{{336, 684}, {319, 183}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{766, 811}, {235, 153}}</string>
@@ -5750,9 +5749,9 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>fi.karppinen.BaseTen.InterfaceBuilderPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{568, 296}, {425, 233}}</string>
+					<string>{{265, 296}, {425, 233}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{568, 296}, {425, 233}}</string>
+					<string>{{265, 296}, {425, 233}}</string>
 					<reference ref="8"/>
 					<reference ref="8"/>
 					<reference ref="9"/>
@@ -5763,9 +5762,9 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{429, 332}, {389, 320}}</string>
+					<string>{{301, 332}, {389, 320}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{429, 332}, {389, 320}}</string>
+					<string>{{301, 332}, {389, 320}}</string>
 					<reference ref="9"/>
 					<string>{{906, 834}, {308, 201}}</string>
 					<reference ref="9"/>
