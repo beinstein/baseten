@@ -482,7 +482,8 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 
 - (BOOL) fetchWithRequest: (NSFetchRequest *) fetchRequest merge: (BOOL) merge error: (NSError **) error
 {
-	ExpectR (mEntityDescription, NO);
+	if (! mEntityDescription)
+		[self prepareEntity];
 	
     BOOL retval = NO;
 	if (merge && nil != [self content])
