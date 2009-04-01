@@ -1319,7 +1319,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 @end
 
 
-#if 0
 @implementation BXAController (NetServiceBrowserDelegate)
 
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser
@@ -1396,7 +1395,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 @end
 //End patch
-#endif
 
 
 @implementation BXAController (IBActions)
