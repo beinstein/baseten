@@ -568,6 +568,11 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 
 - (void) authenticationPanelCancel: (id) panel
 {
+	//Make the context forget the password.
+	NSURL* databaseURI = [mContext databaseURI];
+	databaseURI = [databaseURI BXURIForHost: nil database: nil username: nil password: @""];
+	[mContext setDatabaseURIInternal: databaseURI];	
+	
 	[mContext disconnect];
 }
 
@@ -586,7 +591,7 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 {
 	[mContext setStoresURICredentials: [panel shouldStorePasswordInKeychain]];
 	NSURL* databaseURI = [mContext databaseURI];
-	databaseURI = [databaseURI BXURIForHost: nil database: nil username: username password: password];
+	databaseURI = [databaseURI BXURIForHost: nil database: nil username: username password: password ?: @""];
 	
 	[mContext setDatabaseURIInternal: databaseURI];
 	[mContext connectAsync];
