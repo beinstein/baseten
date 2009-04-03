@@ -28,8 +28,8 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.924}})dnl
-define({{_bx_compat_version_}}, {{0.18}})dnl
+define({{_bx_version_}}, {{0.925}})dnl
+define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
 \unset ON_ERROR_ROLLBACK
@@ -158,7 +158,7 @@ BEGIN
 	END LOOP;
 	RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+$$ IMMUTABLE LANGUAGE PLPGSQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES 
 	ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT []) TO basetenread;
@@ -177,7 +177,7 @@ BEGIN
 	END LOOP;
 	RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+$$ IMMUTABLE LANGUAGE PLPGSQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES 
 	ON FUNCTION "baseten".array_append_each (TEXT, TEXT [])	 FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_append_each (TEXT, TEXT []) TO basetenread;
@@ -188,7 +188,7 @@ RETURNS SETOF INTEGER AS $$
 	SELECT 
 		pg_stat_get_backend_pid (idset.id) AS pid 
 	FROM pg_stat_get_backend_idset () AS idset (id);
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".running_backend_pids () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".running_backend_pids () TO basetenread;
 
@@ -273,14 +273,14 @@ CREATE FUNCTION "baseten".oidof (TEXT, TEXT) RETURNS "baseten".reltype AS $$
 	FROM pg_class c
 	INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
 	WHERE c.relname = $2 AND n.nspname = $1;
-$$ STABLE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
+$$ STABLE LANGUAGE SQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".oidof (TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".oidof (TEXT, TEXT) TO basetenread;
 
 
 CREATE FUNCTION "baseten".oidof (TEXT) RETURNS "baseten".reltype AS $$
 	SELECT "baseten".oidof ('public', $1);
-$$ STABLE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
+$$ STABLE LANGUAGE SQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".oidof (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".oidof (TEXT) TO basetenread;
 
@@ -296,14 +296,15 @@ COMMENT ON TABLE "baseten".view_pkey IS 'Primary keys for views. This table may 
 COMMENT ON COLUMN "baseten".view_pkey.nspname IS 'Namespace name';
 COMMENT ON COLUMN "baseten".view_pkey.relname IS 'View name';
 COMMENT ON COLUMN "baseten".view_pkey.attname IS 'Column name';
--- FIXME: privileges?
 GRANT SELECT ON TABLE "baseten".view_pkey TO basetenread;
 
 
 CREATE TABLE "baseten".enabled_relation (
-	relid oid PRIMARY KEY
+	id SERIAL PRIMARY KEY,
+	nspname NAME NOT NULL,
+	relname NAME NOT NULL,
+	UNIQUE (nspname, relname)
 );
--- FIXME: privileges?
 GRANT SELECT ON TABLE "baseten".enabled_relation TO basetenread;
 
 
@@ -391,7 +392,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".viewhierarchy (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".viewhierarchy (OID) TO basetenread;
 
@@ -424,7 +425,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) TO basetenread;
 
@@ -453,7 +454,7 @@ CREATE FUNCTION "baseten".matchingviews (OID, NAME [])
 			a2.fnames @> $2
 		)
 	)
-$$ STABLE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
+$$ STABLE LANGUAGE SQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".matchingviews (OID, NAME []) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".matchingviews (OID, NAME []) TO basetenread;
 
@@ -482,13 +483,12 @@ GRANT SELECT ON "baseten".conname TO basetenread;
 
 
 CREATE TABLE "baseten".ignored_fkey (
-	schemaname NAME,
+	nspname NAME,
 	relname NAME,
 	fkeyname NAME,
-	PRIMARY KEY (schemaname, relname, fkeyname)
+	PRIMARY KEY (nspname, relname, fkeyname)
 );
 REVOKE ALL PRIVILEGES ON "baseten".ignored_fkey FROM PUBLIC;
--- FIXME: privileges?
 GRANT SELECT ON "baseten".ignored_fkey TO basetenread;
 
 
@@ -835,7 +835,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".srcdstview () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".srcdstview () TO basetenread;
 
@@ -950,12 +950,12 @@ GRANT SELECT ON "baseten".relationship TO basetenread;
 -- For modification tracking
 CREATE SEQUENCE "baseten".modification_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".modification (
-	"baseten_modification_id" INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."modification_id_seq"'),
-	"baseten_modification_relid" OID NOT NULL,
-	"baseten_modification_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
+	"baseten_modification_id"				INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."modification_id_seq"'),
+	"baseten_modification_relid"			OID NOT NULL,
+	"baseten_modification_timestamp"		TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
 	"baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
-	"baseten_modification_type" CHAR NOT NULL,
-	"baseten_modification_backend_pid" INT4 NOT NULL DEFAULT pg_backend_pid ()
+	"baseten_modification_type"				CHAR NOT NULL,
+	"baseten_modification_backend_pid"		INTEGER NOT NULL DEFAULT pg_backend_pid ()
 );
 ALTER SEQUENCE "baseten".modification_id_seq OWNED BY "baseten".modification."baseten_modification_id";
 REVOKE ALL PRIVILEGES ON SEQUENCE "baseten".modification_id_seq FROM PUBLIC;
@@ -999,16 +999,27 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".compatibilityversion () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".compatibilityversion () TO basetenread;
 
 
+CREATE FUNCTION "baseten".enabled_relation_id (OID) RETURNS INTEGER AS $$
+	SELECT b.id
+	FROM pg_class c
+	INNER JOIN pg_namespace n ON n.oid = c.relnamespace
+	INNER JOIN "baseten".enabled_relation b USING (relname, nspname)
+	WHERE c.oid = $1;
+$$ STABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enabled_relation_id (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".enabled_relation_id (OID) TO basetenread;
+
+
 CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
-	SELECT 'baseten_mod__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+	SELECT 'baseten_mod__' || "baseten".enabled_relation_id ($1);
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_notification (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_notification (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".mod_table (OID) RETURNS TEXT AS $$
-	SELECT 'mod__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+	SELECT 'mod__' || "baseten".enabled_relation_id ($1);
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_table (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_table (OID) TO basetenread;
 
@@ -1024,29 +1035,29 @@ GRANT EXECUTE ON FUNCTION "baseten".mod_rule (TEXT) TO basetenread;
 
 CREATE FUNCTION "baseten".mod_insert_fn (OID)
 RETURNS TEXT AS $$
-	SELECT 'mod_insert_fn__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+	SELECT 'mod_insert_fn__' || "baseten".enabled_relation_id ($1);
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_insert_fn (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_insert_fn (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".lock_fn (OID) RETURNS TEXT AS $$
-	SELECT 'lock_fn__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+	SELECT 'lock_fn__' || "baseten".enabled_relation_id ($1);
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_fn (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_fn (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".lock_table (OID) RETURNS TEXT AS $$
-	SELECT 'lock__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+	SELECT 'lock__' || "baseten".enabled_relation_id ($1);
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_table (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_table (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".lock_notification (OID) RETURNS TEXT AS $$
-	SELECT 'baseten_lock__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+	SELECT 'baseten_lock__' || "baseten".enabled_relation_id ($1);
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_notification (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_notification (OID) TO basetenread;
 
@@ -1065,7 +1076,7 @@ CREATE FUNCTION "baseten".mod_cleanup (BOOLEAN) RETURNS VOID AS $$
 		WHERE "baseten_modification_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes';
 	UPDATE "baseten".modification SET "baseten_modification_timestamp" = clock_timestamp ()
 		WHERE "baseten_modification_timestamp" IS NULL AND ($1 OR "baseten_modification_backend_pid" != pg_backend_pid ());
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_cleanup (BOOLEAN) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_cleanup (BOOLEAN) TO basetenread;
 
@@ -1087,7 +1098,7 @@ CREATE FUNCTION "baseten".lock_cleanup () RETURNS VOID AS $$
 		WHERE ("baseten_lock_timestamp" < pg_postmaster_start_time ()) -- Locks cannot be older than postmaster
 			OR ("baseten_lock_backend_pid" NOT IN  (SELECT pid FROM "baseten".running_backend_pids () AS r (pid))) -- Locks have to be owned by a running backend
 			OR ("baseten_lock_cleared" = true AND "baseten_lock_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes'); -- Cleared locks older than 5 minutes may be removed
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_cleanup () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_cleanup () TO basetenread;
 
@@ -1099,7 +1110,7 @@ CREATE FUNCTION "baseten".lock_unlock () RETURNS VOID AS $$
 	WHERE "baseten_lock_backend_pid" = pg_backend_pid ()
 		AND "baseten_lock_timestamp" < CURRENT_TIMESTAMP;
 	NOTIFY "baseten_unlocked_locks";
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_unlock () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_unlock () TO basetenuser;
 
@@ -1115,7 +1126,7 @@ CREATE FUNCTION "baseten".lock_step_back () RETURNS VOID AS $$
 			 WHERE "baseten_lock_backend_pid" = pg_backend_pid ()
 			);
 	NOTIFY "baseten_unlocked_locks";
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_step_back () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_step_back () TO basetenuser;
 
@@ -1132,8 +1143,10 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_notify () FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".observing_compatible (OID) RETURNS boolean AS $$
-	SELECT EXISTS (SELECT relid FROM "baseten".enabled_relation WHERE relid = $1);
-$$ STABLE LANGUAGE SQL EXTERNAL SECURITY INVOKER;
+	SELECT EXISTS (
+		SELECT "baseten".enabled_relation_id ($1)
+	);
+$$ STABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".observing_compatible (OID) IS 'Checks for observing compatibility. Returns a boolean.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".observing_compatible (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".observing_compatible (OID) TO basetenread;
@@ -1203,7 +1216,7 @@ BEGIN
 	retval := (relid, nname, "baseten".lock_fn (relid), "baseten".lock_table (relid));
 	RETURN retval;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY INVOKER;
+$$ VOLATILE LANGUAGE PLPGSQL SECURITY INVOKER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_observe (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_observe (OID) TO basetenuser;
 
@@ -1263,7 +1276,7 @@ BEGIN
 				'(''I'', ' || array_to_string ("baseten".array_prepend_each ('NEW.', pkey), ', ') || '); ' ||
 			'RETURN NEW; ' ||
 		'END; ' ||
-		'$$ VOLATILE LANGUAGE PLPGSQL EXTERNAL SECURITY DEFINER';
+		'$$ VOLATILE LANGUAGE PLPGSQL SECURITY DEFINER';
 	query := 
 		'CREATE TRIGGER ' || quote_ident ("baseten".mod_rule ('INSERT')) || ' ' ||
 			'AFTER INSERT ON ' || quote_ident (rel.nspname) || '.' || quote_ident (rel.relname) || ' ' || 
@@ -1595,7 +1608,7 @@ CREATE FUNCTION "baseten".refresh_caches () RETURNS void AS $$
 	INSERT INTO "baseten".viewdependency SELECT * from "baseten".viewdependency_v;
 	INSERT INTO "baseten".srcdstview SELECT * FROM "baseten".srcdstview ();
 	INSERT INTO "baseten".relationship SELECT * FROM "baseten".relationship_v;
-$$ VOLATILE LANGUAGE SQL EXTERNAL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_caches () FROM PUBLIC;
 -- Only owner for now.
 
