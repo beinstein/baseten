@@ -310,7 +310,7 @@ GRANT SELECT ON TABLE "baseten".relation TO basetenread;
 
 
 -- FIXME: schema qualification of type name.
-CREATE VIEW "baseten".primary_key_v AS
+CREATE VIEW "baseten"._primary_key AS
 	SELECT * FROM (
 		SELECT a.attrelid AS oid, cl.relkind, n.nspname, cl.relname, a.attnum, a.attname AS attname, t.typname AS type
 			FROM pg_attribute a, pg_constraint co, pg_type t, pg_class cl, pg_namespace n
@@ -333,17 +333,12 @@ CREATE VIEW "baseten".primary_key_v AS
 				AND c.relkind = 'v'
 	) r
 	ORDER BY oid ASC, attnum ASC;
-REVOKE ALL PRIVILEGES ON "baseten".primary_key_v FROM PUBLIC;
-GRANT SELECT ON "baseten".primary_key_v TO basetenread;
-
-
-CREATE TABLE "baseten".primary_key AS SELECT * FROM "baseten".primary_key_v LIMIT 0;
-REVOKE ALL PRIVILEGES ON "baseten".primary_key FROM PUBLIC;
-GRANT SELECT ON "baseten".primary_key TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._primary_key FROM PUBLIC;
+GRANT SELECT ON "baseten"._primary_key TO basetenread;
 
 
 -- Note that system views aren't correctly listed.
-CREATE VIEW "baseten".viewdependency_v AS 
+CREATE VIEW "baseten"._viewdependency_v AS 
 	SELECT DISTINCT 
 		d1.refobjid AS viewoid, 
 		n1.oid		AS viewnamespace, 
@@ -364,12 +359,12 @@ CREATE VIEW "baseten".viewdependency_v AS
 	INNER JOIN pg_class c3 ON c3.oid = d1.classid AND c3.relname = 'pg_rewrite'
 	INNER JOIN pg_class c4 ON c4.oid = d1.refclassid AND c4.relname = 'pg_class'
 	WHERE d1.deptype = 'n';
-REVOKE ALL PRIVILEGES ON "baseten".viewdependency_v FROM PUBLIC;
-GRANT SELECT ON "baseten".viewdependency_v TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._viewdependency_v FROM PUBLIC;
+GRANT SELECT ON "baseten"._viewdependency_v TO basetenread;
 
 
--- SELECT * FROM viewdependency_v can take ~300 ms.
-CREATE TABLE "baseten".viewdependency AS SELECT * FROM "baseten".viewdependency_v LIMIT 0;
+-- SELECT * FROM _viewdependency_v can take ~300 ms.
+CREATE TABLE "baseten".viewdependency AS SELECT * FROM "baseten"._viewdependency_v LIMIT 0;
 REVOKE ALL PRIVILEGES ON "baseten".viewdependency FROM PUBLIC;
 GRANT SELECT ON "baseten".viewdependency TO basetenread;
 
@@ -413,7 +408,7 @@ BEGIN
 	retval.generation = generation::SMALLINT;
 
 	-- Fetch dependant views
-	FOR currentoid IN SELECT viewoid FROM "baseten".viewdependency_v WHERE reloid = parent 
+	FOR currentoid IN SELECT viewoid FROM "baseten"._viewdependency_v WHERE reloid = parent 
 	LOOP
 		retval.oid := currentoid;
 		RETURN NEXT retval;
@@ -462,7 +457,7 @@ GRANT EXECUTE ON FUNCTION "baseten".matchingviews (OID, NAME []) TO basetenread;
 
 -- Constraint names
 -- Helps joining to queries on pg_constraint
-CREATE VIEW "baseten".conname AS
+CREATE VIEW "baseten"._conname AS
 SELECT 
 	c.oid,
 	"baseten".array_accum (a1.attnum) AS key,
@@ -479,8 +474,8 @@ INNER JOIN pg_attribute a2 ON (
 	a2.attnum = ANY (c.confkey)
 )
 GROUP BY c.oid;
-REVOKE ALL PRIVILEGES ON "baseten".conname FROM PUBLIC;
-GRANT SELECT ON "baseten".conname TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._conname FROM PUBLIC;
+GRANT SELECT ON "baseten"._conname TO basetenread;
 
 
 CREATE TABLE "baseten".ignored_fkey (
@@ -493,7 +488,7 @@ REVOKE ALL PRIVILEGES ON "baseten".ignored_fkey FROM PUBLIC;
 GRANT SELECT ON "baseten".ignored_fkey TO basetenread;
 
 
-CREATE VIEW "baseten".foreignkey AS
+CREATE VIEW "baseten"._foreignkey AS
 SELECT
 	c1.oid				AS conoid,
 	c1.conname			AS name,
@@ -511,7 +506,7 @@ SELECT
 	c1.confdeltype		AS deltype
 FROM pg_constraint c1
 -- Constrained fields' names
-INNER JOIN "baseten".conname n ON (c1.oid = n.oid)
+INNER JOIN "baseten"._conname n ON (c1.oid = n.oid)
 -- Is src key also unique?
 LEFT JOIN pg_constraint c2 ON (
 	c2.conrelid = c1.conrelid AND
@@ -527,12 +522,12 @@ INNER JOIN pg_namespace ns2 ON (ns2.oid = cl2.relnamespace)
 -- Only select foreign keys
 WHERE c1.contype = 'f' AND
 	ROW (ns1.nspname, cl1.relname, c1.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey);
-REVOKE ALL PRIVILEGES ON "baseten".foreignkey FROM PUBLIC;
-GRANT SELECT ON "baseten".foreignkey TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._foreignkey FROM PUBLIC;
+GRANT SELECT ON "baseten"._foreignkey TO basetenread;
 
 
 -- Fkeys in pkeys
-CREATE VIEW "baseten".mtmcandidates AS
+CREATE VIEW "baseten"._mtmcandidates AS
 -- In the sub-select we search for all primary keys and their columns.
 -- Then we count the foreign keys the columns of which are contained
 -- in those of the primary keys'. Finally we filter out anything irrelevant.
@@ -542,22 +537,22 @@ FROM (
 		f.srcoid,
 		COUNT (f.conoid) AS fkeycount,
 		"baseten".array_cat (f.srcfnames) AS fkeyattnames
-	FROM "baseten".foreignkey f
+	FROM "baseten"._foreignkey f
 	GROUP BY f.srcoid
 ) f1 INNER JOIN (
 	SELECT
 		p.oid,
 		baseten.array_accum (p.attname) AS pkeyattnames
-	FROM "baseten".primary_key_v p
+	FROM "baseten"._primary_key p
 	WHERE relkind = 'r'
 	GROUP BY p.oid
 ) p1 ON f1.srcoid = p1.oid
 WHERE 2 = fkeycount AND p1.pkeyattnames @> f1.fkeyattnames;
-REVOKE ALL PRIVILEGES ON "baseten".mtmcandidates FROM PUBLIC;
-GRANT SELECT ON "baseten".mtmcandidates TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._mtmcandidates FROM PUBLIC;
+GRANT SELECT ON "baseten"._mtmcandidates TO basetenread;
 
 
-CREATE VIEW "baseten".oneto_fk AS
+CREATE VIEW "baseten"._oneto_fk AS
 SELECT
 	conoid,
 	name		AS name,
@@ -574,7 +569,7 @@ SELECT
 	dstfnames,
 	true		AS isinverse,
 	srcisunique AS istoone
-FROM "baseten".foreignkey
+FROM "baseten"._foreignkey
 UNION ALL
 SELECT
 	conoid,
@@ -592,12 +587,12 @@ SELECT
 	srcfnames					AS dstfnames,
 	false						AS isinverse,
 	srcisunique					AS istoone
-FROM "baseten".foreignkey;
-REVOKE ALL PRIVILEGES ON "baseten".oneto_fk FROM PUBLIC;
-GRANT SELECT ON "baseten".oneto_fk TO basetenread;
+FROM "baseten"._foreignkey;
+REVOKE ALL PRIVILEGES ON "baseten"._oneto_fk FROM PUBLIC;
+GRANT SELECT ON "baseten"._oneto_fk TO basetenread;
 
 
-CREATE VIEW "baseten".manytomany_fk AS
+CREATE VIEW "baseten"._manytomany_fk AS
 SELECT
 	f1.conoid,
 	f2.conoid		AS dstconoid,
@@ -617,20 +612,20 @@ SELECT
 	f1.srcnspname	AS helpernspname,
 	f1.srcrelname	AS helperrelname,
 	array_cat (f1.srcfnames, f2.srcfnames) AS helperfnames
-FROM "baseten".foreignkey f1
-INNER JOIN "baseten".foreignkey f2 ON (
+FROM "baseten"._foreignkey f1
+INNER JOIN "baseten"._foreignkey f2 ON (
 	f1.srcoid = f2.srcoid AND
 	f1.dstoid <> f2.dstoid
 )
 -- Primary key needs to include exactly two foreign keys and possibly other columns.
-INNER JOIN "baseten".mtmcandidates c ON (
+INNER JOIN "baseten"._mtmcandidates c ON (
 	c.oid = f1.srcoid
 );
-REVOKE ALL PRIVILEGES ON "baseten".manytomany_fk FROM PUBLIC;
-GRANT SELECT ON "baseten".manytomany_fk TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._manytomany_fk FROM PUBLIC;
+GRANT SELECT ON "baseten"._manytomany_fk TO basetenread;
 
 
-CREATE VIEW "baseten".relationship_fk AS
+CREATE VIEW "baseten"._relationship_fk AS
 	SELECT
 		-- These three are sort of a primary key.
 		conoid,
@@ -644,7 +639,7 @@ CREATE VIEW "baseten".relationship_fk AS
 		dstfnames,
 		NULL::NAME [] AS helperfnames,
 		isinverse
-	FROM baseten.oneto_fk
+	FROM baseten._oneto_fk
 	UNION ALL
 	SELECT
 		conoid,
@@ -658,12 +653,12 @@ CREATE VIEW "baseten".relationship_fk AS
 		dstfnames,
 		helperfnames,
 		false AS isinverse
-	FROM baseten.manytomany_fk;
-REVOKE ALL PRIVILEGES ON "baseten".relationship_fk FROM PUBLIC;
-GRANT SELECT ON "baseten".relationship_fk TO basetenread;
+	FROM baseten._manytomany_fk;
+REVOKE ALL PRIVILEGES ON "baseten"._relationship_fk FROM PUBLIC;
+GRANT SELECT ON "baseten"._relationship_fk TO basetenread;
 
 
-CREATE VIEW "baseten".nameconflict1 AS
+CREATE VIEW "baseten"._nameconflict1 AS
 SELECT
 	srcoid,
 	dstoid,
@@ -674,7 +669,7 @@ SELECT
 	dstnspname,
 	dstrelname,
 	ARRAY [name]				AS relationship_names
-FROM "baseten".oneto_fk
+FROM "baseten"._oneto_fk
 WHERE srcnsp = dstnsp
 UNION ALL
 SELECT
@@ -687,14 +682,14 @@ SELECT
 	dstnspname,
 	dstrelname,
 	ARRAY [name, inversename]	AS relationship_names
-FROM "baseten".manytomany_fk
+FROM "baseten"._manytomany_fk
 WHERE srcnsp = dstnsp;
-REVOKE ALL PRIVILEGES ON "baseten".nameconflict1 FROM PUBLIC;
-GRANT SELECT ON "baseten".nameconflict1 TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._nameconflict1 FROM PUBLIC;
+GRANT SELECT ON "baseten"._nameconflict1 TO basetenread;
 
  
 -- Name conflicts for table relationships
-CREATE VIEW "baseten".nameconflict AS
+CREATE VIEW "baseten"._nameconflict AS
 SELECT
 	srcoid,
 	dstoid,
@@ -704,7 +699,7 @@ SELECT
 	dstrelname,
 	(1 < count (dstoid)) AS conflicts,
 	"baseten".array_cat (relationship_names) AS relationship_names
-FROM "baseten".nameconflict1
+FROM "baseten"._nameconflict1
 GROUP BY 
 	srcoid, 
 	dstoid, 
@@ -712,11 +707,11 @@ GROUP BY
 	srcrelname, 
 	dstnspname, 
 	dstrelname;
-REVOKE ALL PRIVILEGES ON "baseten".nameconflict FROM PUBLIC;
-GRANT SELECT ON "baseten".nameconflict TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._nameconflict FROM PUBLIC;
+GRANT SELECT ON "baseten"._nameconflict TO basetenread;
 
 
-CREATE VIEW "baseten".oneto_ AS
+CREATE VIEW "baseten"._oneto AS
 SELECT
 	conoid,
 	name,
@@ -731,7 +726,7 @@ SELECT
 	dstfnames,
 	isinverse,
 	istoone
-FROM "baseten".oneto_fk
+FROM "baseten"._oneto_fk
 UNION ALL
 SELECT
 	fk.conoid,
@@ -747,22 +742,22 @@ SELECT
 	fk.dstfnames,
 	fk.isinverse,
 	fk.istoone
-FROM "baseten".oneto_fk fk
-INNER JOIN "baseten".nameconflict n1 ON (
+FROM "baseten"._oneto_fk fk
+INNER JOIN "baseten"._nameconflict n1 ON (
 	fk.srcoid = n1.srcoid AND
 	fk.dstoid = n1.dstoid AND
 	n1.conflicts = false
 )
-LEFT JOIN "baseten".nameconflict n2 ON (
+LEFT JOIN "baseten"._nameconflict n2 ON (
 	fk.srcoid = n2.dstoid AND
 	fk.dstoid = n2.srcoid AND
 	n2.conflicts = false
 );
-REVOKE ALL PRIVILEGES ON "baseten".oneto_ FROM PUBLIC;
-GRANT SELECT ON "baseten".oneto_ TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._oneto FROM PUBLIC;
+GRANT SELECT ON "baseten"._oneto TO basetenread;
 
 
-CREATE VIEW "baseten".manytomany AS
+CREATE VIEW "baseten"._manytomany AS
 SELECT
 	conoid,
 	dstconoid,
@@ -780,7 +775,7 @@ SELECT
 	helpernspname,
 	helperrelname,
 	helperfnames
-FROM "baseten".manytomany_fk
+FROM "baseten"._manytomany_fk
 UNION ALL
 SELECT
 	fk.conoid,
@@ -799,29 +794,29 @@ SELECT
 	fk.helpernspname,
 	fk.helperrelname,
 	fk.helperfnames
-FROM "baseten".manytomany_fk fk
-INNER JOIN "baseten".nameconflict n1 ON (
+FROM "baseten"._manytomany_fk fk
+INNER JOIN "baseten"._nameconflict n1 ON (
 	fk.srcoid = n1.srcoid AND
 	fk.dstoid = n1.dstoid AND
 	n1.conflicts = false
 )
-LEFT JOIN "baseten".nameconflict n2 ON (
+LEFT JOIN "baseten"._nameconflict n2 ON (
 	fk.srcoid = n2.dstoid AND
 	fk.dstoid = n2.srcoid AND
 	n2.conflicts = false
 );
-REVOKE ALL PRIVILEGES ON "baseten".manytomany FROM PUBLIC;
-GRANT SELECT ON "baseten".manytomany TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._manytomany FROM PUBLIC;
+GRANT SELECT ON "baseten"._manytomany TO basetenread;
 
 
 CREATE FUNCTION "baseten".srcdstview ()
-	RETURNS SETOF "baseten".relationship_fk AS $$
+	RETURNS SETOF "baseten"._relationship_fk AS $$
 DECLARE
-	retval "baseten".relationship_fk;
+	retval "baseten"._relationship_fk;
 	srcoid OID;
 	dstoid OID;
 BEGIN
-	FOR retval IN SELECT * FROM "baseten".relationship_fk r
+	FOR retval IN SELECT * FROM "baseten"._relationship_fk r
 	LOOP
 		srcoid := retval.srcoid;
 		dstoid := retval.dstoid;
@@ -846,7 +841,7 @@ REVOKE ALL PRIVILEGES ON "baseten".srcdstview FROM PUBLIC;
 GRANT SELECT ON "baseten".srcdstview TO basetenread;
 
 
-CREATE VIEW "baseten".view_relationship AS
+CREATE VIEW "baseten"._view_relationship AS
 	SELECT v1.*, 
 		c2.relname	AS name,
 		c1.relname	AS inversename,
@@ -872,11 +867,11 @@ CREATE VIEW "baseten".view_relationship AS
 	LEFT JOIN pg_class c3 ON (c3.oid = v1.helperoid)
 	LEFT JOIN pg_namespace n3 ON (c3.relnamespace = n3.oid)
 	WHERE (1 = v2.count AND c1.relnamespace = c2.relnamespace);
-REVOKE ALL PRIVILEGES ON "baseten".view_relationship FROM PUBLIC;
-GRANT SELECT ON "baseten".view_relationship TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten"._view_relationship FROM PUBLIC;
+GRANT SELECT ON "baseten"._view_relationship TO basetenread;
 
 
-CREATE VIEW "baseten".relationship_v AS
+CREATE VIEW "baseten"._relationship_v AS
 	SELECT
 		o.conoid,
 		null::OID AS dstconoid,
@@ -896,7 +891,7 @@ CREATE VIEW "baseten".relationship_v AS
 		null::name AS helpernspname,
 		null::name AS helperrelname,
 		null::name[] AS helperfnames
-	FROM "baseten".oneto_ o
+	FROM "baseten"._oneto o
 	UNION ALL
 	SELECT
 		m.conoid,
@@ -917,7 +912,7 @@ CREATE VIEW "baseten".relationship_v AS
 		m.helpernspname,
 		m.helperrelname,
 		m.helperfnames
-	FROM "baseten".manytomany m
+	FROM "baseten"._manytomany m
 	UNION ALL
 	SELECT
 		v.conoid,
@@ -938,12 +933,12 @@ CREATE VIEW "baseten".relationship_v AS
 		v.helpernspname,
 		v.helperrelname,
 		v.helperfnames
-	FROM "baseten".view_relationship v;
-REVOKE ALL PRIVILEGES ON "baseten".relationship_v FROM PUBLIC;
-GRANT SELECT ON "baseten".relationship_v TO basetenread;
+	FROM "baseten"._view_relationship v;
+REVOKE ALL PRIVILEGES ON "baseten"._relationship_v FROM PUBLIC;
+GRANT SELECT ON "baseten"._relationship_v TO basetenread;
 
 
-CREATE TABLE "baseten".relationship AS SELECT * FROM "baseten".relationship_v LIMIT 0;
+CREATE TABLE "baseten".relationship AS SELECT * FROM "baseten"._relationship_v LIMIT 0;
 REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
 GRANT SELECT ON "baseten".relationship TO basetenread;
 
@@ -1458,7 +1453,7 @@ BEGIN
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
 		"baseten".array_accum (quote_ident (p.type))
-		FROM "baseten".primary_key_v p
+		FROM "baseten"._primary_key p
 		WHERE p.oid = relid
 		GROUP BY p.oid
 		INTO STRICT pkey, pkey_types;
@@ -1511,7 +1506,7 @@ BEGIN
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
 		array_to_string ("baseten".array_accum (quote_ident (p.attname) || ' ' || p.type || ' NOT NULL'), ', ')
-		FROM "baseten".primary_key_v p
+		FROM "baseten"._primary_key p
 		WHERE p.oid = relid_
 		GROUP BY p.oid
 		INTO STRICT pkey, pkey_decl;
@@ -1601,7 +1596,7 @@ BEGIN
 	SELECT 
 		array_to_string ("baseten".array_accum (quote_ident (p.attname)), ', '),
 		array_to_string ("baseten".array_append_each (' ASC', "baseten".array_accum (quote_ident (p.attname))), ', ')
-		FROM "baseten".primary_key_v p
+		FROM "baseten"._primary_key p
 		WHERE p.oid = relid
 		GROUP BY p.oid
 		INTO STRICT pkey, order_by;
@@ -1644,11 +1639,10 @@ GRANT EXECUTE ON FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, INTEGER)
 
 
 CREATE FUNCTION "baseten".refresh_caches () RETURNS void AS $$
-	TRUNCATE "baseten".primary_key, "baseten".viewdependency, "baseten".srcdstview, "baseten".relationship;
-	INSERT INTO "baseten".primary_key SELECT * from "baseten".primary_key_v;
-	INSERT INTO "baseten".viewdependency SELECT * from "baseten".viewdependency_v;
+	TRUNCATE "baseten".viewdependency, "baseten".srcdstview, "baseten".relationship;
+	INSERT INTO "baseten".viewdependency SELECT * from "baseten"._viewdependency_v;
 	INSERT INTO "baseten".srcdstview SELECT * FROM "baseten".srcdstview ();
-	INSERT INTO "baseten".relationship SELECT * FROM "baseten".relationship_v;
+	INSERT INTO "baseten".relationship SELECT * FROM "baseten"._relationship_v;
 $$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_caches () FROM PUBLIC;
 -- Only owner for now.
