@@ -299,13 +299,14 @@ COMMENT ON COLUMN "baseten".view_pkey.attname IS 'Column name';
 GRANT SELECT ON TABLE "baseten".view_pkey TO basetenread;
 
 
-CREATE TABLE "baseten".enabled_relation (
+CREATE TABLE "baseten".relation (
 	id SERIAL PRIMARY KEY,
 	nspname NAME NOT NULL,
 	relname NAME NOT NULL,
+	enabled BOOLEAN NOT NULL DEFAULT false,
 	UNIQUE (nspname, relname)
 );
-GRANT SELECT ON TABLE "baseten".enabled_relation TO basetenread;
+GRANT SELECT ON TABLE "baseten".relation TO basetenread;
 
 
 -- FIXME: schema qualification of type name.
@@ -375,18 +376,18 @@ GRANT SELECT ON "baseten".viewdependency TO basetenread;
 
 CREATE FUNCTION "baseten".viewhierarchy (OID) RETURNS SETOF "baseten".viewtype AS $$
 DECLARE
-	tableoid ALIAS FOR $1;
+	relid ALIAS FOR $1;
 	retval "baseten".viewtype;
 BEGIN
 	-- First return the table itself.
-	retval.root = tableoid;
+	retval.root = relid;
 	retval.parent = NULL;
 	retval.generation = 0::SMALLINT;
-	retval.oid = tableoid;
+	retval.oid = relid;
 	RETURN NEXT retval;
 
 	-- Fetch dependant views.
-	FOR retval IN SELECT * FROM "baseten".viewhierarchy (tableoid, tableoid, 1) 
+	FOR retval IN SELECT * FROM "baseten".viewhierarchy (relid, relid, 1) 
 	LOOP
 		RETURN NEXT retval;
 	END LOOP;
@@ -412,7 +413,7 @@ BEGIN
 	retval.generation = generation::SMALLINT;
 
 	-- Fetch dependant views
-	FOR currentoid IN SELECT viewoid FROM "baseten".viewdependency WHERE reloid = parent 
+	FOR currentoid IN SELECT viewoid FROM "baseten".viewdependency_v WHERE reloid = parent 
 	LOOP
 		retval.oid := currentoid;
 		RETURN NEXT retval;
@@ -547,7 +548,7 @@ FROM (
 	SELECT
 		p.oid,
 		baseten.array_accum (p.attname) AS pkeyattnames
-	FROM "baseten".primary_key p
+	FROM "baseten".primary_key_v p
 	WHERE relkind = 'r'
 	GROUP BY p.oid
 ) p1 ON f1.srcoid = p1.oid
@@ -855,11 +856,11 @@ CREATE VIEW "baseten".view_relationship AS
 		c2.relname	AS dstrelname,
 		n3.nspname	AS helpernspname,
 		c3.relname	AS helperrelname
-	FROM "baseten".srcdstview v1
+	FROM "baseten".srcdstview () v1
 	INNER JOIN (
 		SELECT srcoid, dstoid,
 			COUNT (srcoid) AS count
-		FROM "baseten".srcdstview
+		FROM "baseten".srcdstview ()
 		GROUP BY srcoid, dstoid
 	) v2 ON (
 		v1.srcoid = v2.srcoid AND 
@@ -999,26 +1000,65 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".compatibilityversion () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".compatibilityversion () TO basetenread;
 
 
-CREATE FUNCTION "baseten".enabled_relation_id (OID) RETURNS INTEGER AS $$
-	SELECT b.id
+CREATE FUNCTION "baseten".relation_id (OID) RETURNS INTEGER AS $$
+	SELECT r.id
 	FROM pg_class c
 	INNER JOIN pg_namespace n ON n.oid = c.relnamespace
-	INNER JOIN "baseten".enabled_relation b USING (relname, nspname)
+	INNER JOIN "baseten".relation r USING (relname, nspname)
 	WHERE c.oid = $1;
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enabled_relation_id (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".enabled_relation_id (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".relation_id (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".relation_id (OID) TO basetenread;
+
+
+CREATE FUNCTION "baseten".relation_id_ex (OID) RETURNS INTEGER AS $$
+DECLARE
+	relid ALIAS FOR $1;
+	retval INTEGER;
+BEGIN
+	SELECT "baseten".relation_id (relid) INTO STRICT retval;
+	IF retval IS NULL THEN
+		RAISE EXCEPTION 'Relation with OID % was not found', relid;
+	END IF;
+	RETURN retval;
+END;
+$$ STABLE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".relation_id_ex (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".relation_id_ex (OID) TO basetenread;
+
+
+CREATE FUNCTION "baseten".assign_relation_ids () RETURNS VOID AS $$
+	DELETE FROM "baseten".relation r 
+	WHERE ROW (r.relname, r.nspname) NOT IN (
+		SELECT c.relname, n.nspname
+		FROM pg_class c
+		INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
+	);
+
+	INSERT INTO "baseten".relation (relname, nspname)
+		SELECT c.relname, n.nspname
+		FROM pg_class c
+		INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
+		WHERE NOT (
+			n.nspname IN ('baseten', 'information_schema') OR
+			n.nspname LIKE 'pg_%' OR
+			ROW (c.relname, n.nspname) IN (
+				SELECT r.relname, r.nspname FROM "baseten".relation r
+			)
+		);
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relation_ids () FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
-	SELECT 'baseten_mod__' || "baseten".enabled_relation_id ($1);
+	SELECT 'baseten_mod__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_notification (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_notification (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".mod_table (OID) RETURNS TEXT AS $$
-	SELECT 'mod__' || "baseten".enabled_relation_id ($1);
+	SELECT 'mod__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_table (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_table (OID) TO basetenread;
@@ -1035,28 +1075,28 @@ GRANT EXECUTE ON FUNCTION "baseten".mod_rule (TEXT) TO basetenread;
 
 CREATE FUNCTION "baseten".mod_insert_fn (OID)
 RETURNS TEXT AS $$
-	SELECT 'mod_insert_fn__' || "baseten".enabled_relation_id ($1);
+	SELECT 'mod_insert_fn__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_insert_fn (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_insert_fn (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".lock_fn (OID) RETURNS TEXT AS $$
-	SELECT 'lock_fn__' || "baseten".enabled_relation_id ($1);
+	SELECT 'lock_fn__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_fn (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_fn (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".lock_table (OID) RETURNS TEXT AS $$
-	SELECT 'lock__' || "baseten".enabled_relation_id ($1);
+	SELECT 'lock__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_table (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_table (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".lock_notification (OID) RETURNS TEXT AS $$
-	SELECT 'baseten_lock__' || "baseten".enabled_relation_id ($1);
+	SELECT 'baseten_lock__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_notification (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_notification (OID) TO basetenread;
@@ -1142,28 +1182,28 @@ $$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_notify () FROM PUBLIC;
 
 
-CREATE FUNCTION "baseten".observing_compatible (OID) RETURNS boolean AS $$
-	SELECT EXISTS (
-		SELECT "baseten".enabled_relation_id ($1)
-	);
+CREATE FUNCTION "baseten".is_enabled (OID) RETURNS boolean AS $$
+	SELECT CASE WHEN 1 = COUNT (r.id) THEN true ELSE false END
+	FROM "baseten".relation r
+	WHERE r.id = "baseten".relation_id ($1) AND r.enabled = true;
 $$ STABLE LANGUAGE SQL;
-COMMENT ON FUNCTION "baseten".observing_compatible (OID) IS 'Checks for observing compatibility. Returns a boolean.';
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".observing_compatible (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".observing_compatible (OID) TO basetenread;
+COMMENT ON FUNCTION "baseten".is_enabled (OID) IS 'Checks for observing compatibility. Returns a boolean.';
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".is_enabled (OID) TO basetenread;
 
 
-CREATE FUNCTION "baseten".observing_compatible_ex (OID) RETURNS VOID AS $$
+CREATE FUNCTION "baseten".is_enabled_ex (OID) RETURNS VOID AS $$
 DECLARE
 	relid ALIAS FOR $1;
 BEGIN
-	IF NOT ("baseten".observing_compatible (relid)) THEN
+	IF NOT ("baseten".is_enabled (relid)) THEN
 		RAISE EXCEPTION 'Relation with OID % has not been enabled', relid;
 	END IF;
 	RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".observing_compatible_ex (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".observing_compatible_ex (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled_ex (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".is_enabled_ex (OID) TO basetenread;
 
 
 -- A convenience function for observing modifications
@@ -1174,7 +1214,7 @@ DECLARE
 	nname TEXT;
 	retval "baseten".observation_type;
 BEGIN
-	PERFORM "baseten".observing_compatible_ex (relid);
+	PERFORM "baseten".is_enabled_ex (relid);
 	nname := "baseten".mod_notification (relid);
 	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
@@ -1207,7 +1247,7 @@ DECLARE
 	nname TEXT;
 	retval "baseten".observation_type;
 BEGIN
-	PERFORM "baseten".observing_compatible_ex (relid);
+	PERFORM "baseten".is_enabled_ex (relid);
 
 	nname := "baseten".lock_notification (relid);
 	--RAISE NOTICE 'Observing: %', nname;
@@ -1242,7 +1282,7 @@ BEGIN
 	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten".mod_insert_fn (relid) || ' () CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten".lock_table (relid) || ' CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten".mod_table (relid) || ' CASCADE';
-	DELETE FROM "baseten".enabled_relation r WHERE r.relid = relid;
+	UPDATE "baseten".relation r SET enabled = false WHERE r.relid = relid;
 	retval := "baseten".reltype (relid);
 	RETURN retval;
 END;
@@ -1462,6 +1502,8 @@ DECLARE
 	pkey_decl						TEXT;
 	retval							"baseten"."reltype";
 BEGIN
+	PERFORM "baseten".assign_relation_ids ();
+	UPDATE "baseten".relation SET enabled = true WHERE id = "baseten".relation_id_ex (relid_);
 	SELECT "baseten".mod_table (relid_) INTO STRICT mod_table;
 	SELECT "baseten".lock_table (relid_) INTO STRICT lock_table;
 	SELECT 'v' = c.relkind FROM pg_class c WHERE c.oid = relid_ INTO STRICT is_view;
@@ -1526,13 +1568,12 @@ BEGIN
 	PERFORM "baseten".enable_other ('delete', relid_, pkey);
 	PERFORM "baseten".enable_other ('update', relid_, pkey);
 	PERFORM "baseten".enable_other ('update_pk', relid_, pkey);
-	INSERT INTO "baseten".enabled_relation (relid) VALUES (relid_);
 
 	retval := "baseten".reltype (relid_);
 	RETURN retval;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
-	
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable (OID, BOOLEAN, TEXT) FROM PUBLIC;	
 
 CREATE FUNCTION "baseten".enable (OID) RETURNS "baseten".reltype AS $$
 	SELECT "baseten".enable ($1, false, null);
@@ -1560,7 +1601,7 @@ BEGIN
 	SELECT 
 		array_to_string ("baseten".array_accum (quote_ident (p.attname)), ', '),
 		array_to_string ("baseten".array_append_each (' ASC', "baseten".array_accum (quote_ident (p.attname))), ', ')
-		FROM "baseten".primary_key p
+		FROM "baseten".primary_key_v p
 		WHERE p.oid = relid
 		GROUP BY p.oid
 		INTO STRICT pkey, order_by;
