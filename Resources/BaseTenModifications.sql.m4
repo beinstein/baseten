@@ -309,6 +309,19 @@ CREATE TABLE "baseten".relation (
 GRANT SELECT ON TABLE "baseten".relation TO basetenread;
 
 
+CREATE TABLE "baseten"._foreign_key (
+	conid SERIAL PRIMARY KEY,
+	conname NAME NOT NULL,
+	conrelid INTEGER NOT NULL REFERENCES "baseten".relation (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	confrelid INTEGER NOT NULL REFERENCES "baseten".relation (id) ON UPDATE CASCADE ON DELETE CASCADE,
+	conkey SMALLINT[] NOT NULL,
+	confkey SMALLINT[] NOT NULL,
+	confdeltype CHAR NOT NULL,
+	UNIQUE (conrelid, conname)
+);
+GRANT SELECT ON TABLE "baseten"._foreign_key TO basetenread;
+
+
 -- FIXME: schema qualification of type name.
 CREATE VIEW "baseten"._primary_key AS
 	SELECT * FROM (
@@ -364,9 +377,9 @@ GRANT SELECT ON "baseten"._viewdependency_v TO basetenread;
 
 
 -- SELECT * FROM _viewdependency_v can take ~300 ms.
-CREATE TABLE "baseten".viewdependency AS SELECT * FROM "baseten"._viewdependency_v LIMIT 0;
-REVOKE ALL PRIVILEGES ON "baseten".viewdependency FROM PUBLIC;
-GRANT SELECT ON "baseten".viewdependency TO basetenread;
+--CREATE TABLE "baseten".viewdependency AS SELECT * FROM "baseten"._viewdependency_v LIMIT 0;
+--REVOKE ALL PRIVILEGES ON "baseten".viewdependency FROM PUBLIC;
+--GRANT SELECT ON "baseten".viewdependency TO basetenread;
 
 
 CREATE FUNCTION "baseten".viewhierarchy (OID) RETURNS SETOF "baseten".viewtype AS $$
@@ -488,6 +501,7 @@ REVOKE ALL PRIVILEGES ON "baseten".ignored_fkey FROM PUBLIC;
 GRANT SELECT ON "baseten".ignored_fkey TO basetenread;
 
 
+-- FIXME: rename me or consider removing.
 CREATE VIEW "baseten"._foreignkey AS
 SELECT
 	c1.oid				AS conoid,
@@ -836,9 +850,9 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".srcdstview () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".srcdstview () TO basetenread;
 
 
-CREATE TABLE "baseten".srcdstview AS SELECT * FROM "baseten".srcdstview () LIMIT 0;
-REVOKE ALL PRIVILEGES ON "baseten".srcdstview FROM PUBLIC;
-GRANT SELECT ON "baseten".srcdstview TO basetenread;
+--CREATE TABLE "baseten".srcdstview AS SELECT * FROM "baseten".srcdstview () LIMIT 0;
+--REVOKE ALL PRIVILEGES ON "baseten".srcdstview FROM PUBLIC;
+--GRANT SELECT ON "baseten".srcdstview TO basetenread;
 
 
 CREATE VIEW "baseten"._view_relationship AS
@@ -871,7 +885,7 @@ REVOKE ALL PRIVILEGES ON "baseten"._view_relationship FROM PUBLIC;
 GRANT SELECT ON "baseten"._view_relationship TO basetenread;
 
 
-CREATE VIEW "baseten"._relationship_v AS
+CREATE VIEW "baseten".relationship_v AS
 	SELECT
 		o.conoid,
 		null::OID AS dstconoid,
@@ -934,13 +948,13 @@ CREATE VIEW "baseten"._relationship_v AS
 		v.helperrelname,
 		v.helperfnames
 	FROM "baseten"._view_relationship v;
-REVOKE ALL PRIVILEGES ON "baseten"._relationship_v FROM PUBLIC;
-GRANT SELECT ON "baseten"._relationship_v TO basetenread;
+REVOKE ALL PRIVILEGES ON "baseten".relationship_v FROM PUBLIC;
+GRANT SELECT ON "baseten".relationship_v TO basetenread;
 
 
-CREATE TABLE "baseten".relationship AS SELECT * FROM "baseten"._relationship_v LIMIT 0;
-REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
-GRANT SELECT ON "baseten".relationship TO basetenread;
+--CREATE TABLE "baseten".relationship AS SELECT * FROM "baseten"._relationship_v LIMIT 0;
+--REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
+--GRANT SELECT ON "baseten".relationship TO basetenread;
 
 
 -- For modification tracking
@@ -1043,6 +1057,35 @@ CREATE FUNCTION "baseten".assign_relation_ids () RETURNS VOID AS $$
 		);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relation_ids () FROM PUBLIC;
+
+
+-- FIXME: complete me.
+CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
+	SELECT "baseten".assign_relation_ids ();
+	INSERT INTO "baseten"._foreign_key 
+		(
+			conname,
+			conrelid,
+			confrelid,
+			conkey,
+			confkey,
+			confdeltype
+		)
+		SELECT
+			conname,
+			"baseten".relation_id (conrelid),
+			"baseten".relation_id (confrelid),
+			conkey,
+			confkey,
+			confdeltype
+		FROM pg_constraint
+		WHERE (
+			contype = 'f' AND
+			"baseten".relation_id (conrelid) IS NOT NULL AND
+			"baseten".relation_id (confrelid) IS NOT NULL
+		);
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_foreign_key_ids () FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
@@ -1639,10 +1682,10 @@ GRANT EXECUTE ON FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, INTEGER)
 
 
 CREATE FUNCTION "baseten".refresh_caches () RETURNS void AS $$
-	TRUNCATE "baseten".viewdependency, "baseten".srcdstview, "baseten".relationship;
-	INSERT INTO "baseten".viewdependency SELECT * from "baseten"._viewdependency_v;
-	INSERT INTO "baseten".srcdstview SELECT * FROM "baseten".srcdstview ();
-	INSERT INTO "baseten".relationship SELECT * FROM "baseten"._relationship_v;
+	--TRUNCATE "baseten".viewdependency, "baseten".srcdstview, "baseten".relationship;
+	--INSERT INTO "baseten".viewdependency SELECT * from "baseten"._viewdependency_v;
+	--INSERT INTO "baseten".srcdstview SELECT * FROM "baseten".srcdstview ();
+	--INSERT INTO "baseten".relationship SELECT * FROM "baseten"._relationship_v;
 $$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_caches () FROM PUBLIC;
 -- Only owner for now.
