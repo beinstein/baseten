@@ -306,20 +306,22 @@ CREATE TABLE "baseten".relation (
 	enabled BOOLEAN NOT NULL DEFAULT false,
 	UNIQUE (nspname, relname)
 );
+REVOKE ALL PRIVILEGES ON TABLE "baseten".relation FROM PUBLIC;
 GRANT SELECT ON TABLE "baseten".relation TO basetenread;
 
 
-CREATE TABLE "baseten"._foreign_key (
+CREATE TABLE "baseten".foreign_key (
 	conid SERIAL PRIMARY KEY,
 	conname NAME NOT NULL,
 	conrelid INTEGER NOT NULL REFERENCES "baseten".relation (id) ON UPDATE CASCADE ON DELETE CASCADE,
 	confrelid INTEGER NOT NULL REFERENCES "baseten".relation (id) ON UPDATE CASCADE ON DELETE CASCADE,
-	conkey SMALLINT[] NOT NULL,
-	confkey SMALLINT[] NOT NULL,
+	conkey NAME[] NOT NULL,
+	confkey NAME[] NOT NULL,
 	confdeltype CHAR NOT NULL,
 	UNIQUE (conrelid, conname)
 );
-GRANT SELECT ON TABLE "baseten"._foreign_key TO basetenread;
+REVOKE ALL PRIVILEGES ON TABLE "baseten".foreign_key FROM PUBLIC;
+GRANT SELECT ON TABLE "baseten".foreign_key TO basetenread;
 
 
 -- FIXME: schema qualification of type name.
@@ -468,7 +470,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".matchingviews (OID, NAME []) FROM PU
 GRANT EXECUTE ON FUNCTION "baseten".matchingviews (OID, NAME []) TO basetenread;
 
 
--- Constraint names
+-- Foreign key column names
 -- Helps joining to queries on pg_constraint
 CREATE VIEW "baseten"._conname AS
 SELECT 
@@ -489,6 +491,27 @@ INNER JOIN pg_attribute a2 ON (
 GROUP BY c.oid;
 REVOKE ALL PRIVILEGES ON "baseten"._conname FROM PUBLIC;
 GRANT SELECT ON "baseten"._conname TO basetenread;
+
+
+CREATE FUNCTION "baseten".fkey_columns_max () RETURNS INTEGER AS $$
+	SELECT max (array_upper (conkey, 1)) FROM pg_constraint c WHERE c.contype = 'f';
+$$ STABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".fkey_columns_max () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".fkey_columns_max () TO basetenread;
+
+
+CREATE VIEW "baseten"._fkey_column_names AS
+SELECT 
+	c.oid, 
+	"baseten".array_accum (a1.attname) AS conkey,
+	"baseten".array_accum (a2.attname) AS confkey
+FROM pg_constraint c 
+INNER JOIN generate_series (1, "baseten".fkey_columns_max ()) AS s (idx) ON (s.idx <= array_upper (c.conkey, 1))
+INNER JOIN pg_attribute a1 ON (a1.attrelid = c.conrelid  AND a1.attnum = c.conkey [s.idx])
+INNER JOIN pg_attribute a2 ON (a2.attrelid = c.confrelid AND a2.attnum = c.confkey [s.idx])
+GROUP BY c.oid;
+REVOKE ALL PRIVILEGES ON "baseten"._fkey_column_names FROM PUBLIC;
+GRANT SELECT ON "baseten"._fkey_column_names TO basetenread;
 
 
 CREATE TABLE "baseten".ignored_fkey (
@@ -1062,7 +1085,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relation_ids () FROM PUBLIC;
 -- FIXME: complete me.
 CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 	SELECT "baseten".assign_relation_ids ();
-	INSERT INTO "baseten"._foreign_key 
+	INSERT INTO "baseten".foreign_key 
 		(
 			conname,
 			conrelid,
@@ -1072,13 +1095,14 @@ CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 			confdeltype
 		)
 		SELECT
-			conname,
-			"baseten".relation_id (conrelid),
-			"baseten".relation_id (confrelid),
-			conkey,
-			confkey,
-			confdeltype
-		FROM pg_constraint
+			c.conname,
+			"baseten".relation_id (c.conrelid),
+			"baseten".relation_id (c.confrelid),
+			f.conkey,
+			f.confkey,
+			c.confdeltype
+		FROM pg_constraint c
+		INNER JOIN "baseten"._fkey_column_names f ON (c.oid = f.oid)
 		WHERE (
 			contype = 'f' AND
 			"baseten".relation_id (conrelid) IS NOT NULL AND
