@@ -1538,6 +1538,7 @@ DECLARE
 	
 	pkey							NAME [];
 	pkey_decl						TEXT;
+	rel								"baseten"."reltype";
 	retval							"baseten"."reltype";
 BEGIN
 	PERFORM "baseten".assign_relation_ids ();
@@ -1545,6 +1546,7 @@ BEGIN
 	SELECT "baseten".mod_table (relid_) INTO STRICT mod_table;
 	SELECT "baseten".lock_table (relid_) INTO STRICT lock_table;
 	SELECT 'v' = c.relkind FROM pg_class c WHERE c.oid = relid_ INTO STRICT is_view;
+	rel := "baseten".reltype (relid_);
 	
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
@@ -1564,6 +1566,7 @@ BEGIN
 	EXECUTE 'REVOKE ALL PRIVILEGES ON "baseten".' || quote_ident (lock_table) || ' FROM PUBLIC';
 	EXECUTE 'GRANT SELECT ON "baseten".' || quote_ident (lock_table) || ' TO basetenread';
 	EXECUTE 'GRANT INSERT ON "baseten".' || quote_ident (lock_table) || ' TO basetenuser';
+	EXECUTE 'COMMENT ON TABLE "baseten".' || quote_ident (lock_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
 
 	-- Trigger for the _lock_ table
 	query :=
@@ -1585,6 +1588,7 @@ BEGIN
 	EXECUTE 'REVOKE ALL PRIVILEGES ON "baseten".' || quote_ident (mod_table) || ' FROM PUBLIC';
 	EXECUTE 'GRANT INSERT ON "baseten".' || quote_ident (mod_table) || ' TO basetenuser';
 	EXECUTE 'GRANT SELECT ON "baseten".' || quote_ident (mod_table) || ' TO basetenread';
+	EXECUTE 'COMMENT ON TABLE "baseten".' || quote_ident (mod_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
 	
 	-- Triggers for the _modification_ table
 	query :=
