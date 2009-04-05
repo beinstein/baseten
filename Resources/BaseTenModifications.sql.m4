@@ -989,6 +989,9 @@ CREATE TABLE "baseten".relationship (
 	kind			CHAR (1) NOT NULL,
 	is_inverse		BOOLEAN NOT NULL,
 	srcid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
+	srcnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	srcrelname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	dstid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
 	dstnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
 	dstrelname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
 	helpernspname	TEXT,			--FIXME: use NAME or VARCHAR?
@@ -1150,6 +1153,9 @@ CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
 			kind,
 			is_inverse,
 			srcid,
+			srcnspname,
+			srcrelname,
+			dstid,
 			dstnspname,
 			dstrelname
 		)
@@ -1160,6 +1166,9 @@ CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			true,
 			f.conrelid,
+			r1.nspname,
+			r1.relname,
+			f.confrelid,
 			r2.nspname,
 			r2.relname
 		FROM "baseten".foreign_key f
@@ -1168,15 +1177,51 @@ CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
 		UNION ALL
 		SELECT
 			f.conid,
-			r.nspname || '_' || r.relname || '_' || f.conname,
+			r1.nspname || '_' || r1.relname || '_' || f.conname,
 			f.conname,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			false,
 			f.confrelid,
-			r.nspname,
-			r.relname
+			r2.nspname,
+			r2.relname,
+			f.conrelid,
+			r1.nspname,
+			r1.relname
 		FROM "baseten".foreign_key f
-		INNER JOIN "baseten".relation r ON (r.id = f.conrelid);
+		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
+		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
+		UNION ALL
+		SELECT
+			f.conid,
+			r2.relname,
+			r1.relname,
+			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
+			true,
+			f.conrelid,
+			r1.nspname,
+			r1.relname,
+			f.confrelid,
+			r2.nspname,
+			r2.relname
+		FROM "baseten".foreign_key f
+		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
+		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
+		UNION ALL
+		SELECT
+			f.conid,
+			r1.relname,
+			r2.relname,
+			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
+			false,
+			f.confrelid,
+			r2.nspname,
+			r2.relname,
+			f.conrelid,
+			r1.nspname,
+			r1.relname
+		FROM "baseten".foreign_key f
+		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
+		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relationships () FROM PUBLIC;
 
