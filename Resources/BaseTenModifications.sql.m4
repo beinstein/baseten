@@ -984,8 +984,8 @@ GRANT SELECT ON "baseten".relationship_v TO basetenread;
 CREATE TABLE "baseten".relationship (
 	conid			INTEGER NOT NULL REFERENCES "baseten".foreign_key (conid),
 	dstconid		INTEGER REFERENCES "baseten".foreign_key (conid), -- Only used for mtm.
-	name			TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
-	inversename		TEXT NOT NULL,	--Inverse relationships are currently mandatory. FIXME: use NAME or VARCHAR?
+	name			VARCHAR (255) NOT NULL,
+	inversename		VARCHAR (255) NOT NULL, --Inverse relationships are currently mandatory.
 	kind			CHAR (1) NOT NULL,
 	is_inverse		BOOLEAN NOT NULL,
 	srcid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
@@ -994,6 +994,7 @@ CREATE TABLE "baseten".relationship (
 	dstid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
 	dstnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
 	dstrelname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	helperid		INTEGER REFERENCES "baseten".relation (id),
 	helpernspname	TEXT,			--FIXME: use NAME or VARCHAR?
 	helperrelname	TEXT			--FIXME: use NAME or VARCHAR?
 );
@@ -1056,7 +1057,7 @@ GRANT EXECUTE ON FUNCTION "baseten".compatibilityversion () TO basetenread;
 CREATE FUNCTION "baseten".relation_id (OID) RETURNS INTEGER AS $$
 	SELECT r.id
 	FROM pg_class c
-	INNER JOIN pg_namespace n ON n.oid = c.relnamespace
+	INNER JOIN pg_namespace n ON (n.oid = c.relnamespace)
 	INNER JOIN "baseten".relation r USING (relname, nspname)
 	WHERE c.oid = $1;
 $$ STABLE LANGUAGE SQL;
@@ -1093,7 +1094,8 @@ CREATE FUNCTION "baseten".assign_relation_ids () RETURNS VOID AS $$
 		FROM pg_class c
 		INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
 		WHERE NOT (
-			n.nspname IN ('baseten', 'information_schema') OR
+			--n.nspname = 'baseten' OR
+			n.nspname = 'information_schema' OR
 			n.nspname LIKE 'pg_%' OR
 			ROW (c.relname, n.nspname) IN (
 				SELECT r.relname, r.nspname FROM "baseten".relation r
@@ -1143,8 +1145,8 @@ $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_foreign_key_ids () FROM PUBLIC;
 
 
--- FIXME: complete me.
 CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
+	-- OTO, OTM
 	INSERT INTO "baseten".relationship
 		(
 			conid,
@@ -1161,8 +1163,8 @@ CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
 		)
 		SELECT
 			f.conid,
-			f.conname,
-			r1.nspname || '_' || r1.relname || '_' || f.conname,
+			CASE WHEN 1 = idx THEN r2.relname ELSE f.conname END,
+			CASE WHEN 1 = idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			true,
 			f.conrelid,
@@ -1174,11 +1176,12 @@ CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
 		FROM "baseten".foreign_key f
 		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
+		CROSS JOIN generate_series (1, 2) g (idx)
 		UNION ALL
 		SELECT
 			f.conid,
-			r1.nspname || '_' || r1.relname || '_' || f.conname,
-			f.conname,
+			CASE WHEN 1 = idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
+			CASE WHEN 1 = idx THEN r2.relname ELSE f.conname END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			false,
 			f.confrelid,
@@ -1190,40 +1193,105 @@ CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
 		FROM "baseten".foreign_key f
 		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
-		UNION ALL
+		CROSS JOIN generate_series (1, 2) g (idx);
+		
+	-- MTM
+	INSERT INTO "baseten".relationship
+		(
+			conid,
+            dstconid,
+            name,
+            inversename,
+            kind,
+            is_inverse,
+            srcid,
+            srcnspname,
+            srcrelname,
+            dstid,
+            dstnspname,
+            dstrelname,
+			helperid,
+            helpernspname,
+            helperrelname
+		)
 		SELECT
-			f.conid,
-			r2.relname,
-			r1.relname,
-			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
-			true,
-			f.conrelid,
-			r1.nspname,
-			r1.relname,
-			f.confrelid,
-			r2.nspname,
-			r2.relname
-		FROM "baseten".foreign_key f
-		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
-		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
-		UNION ALL
-		SELECT
-			f.conid,
-			r1.relname,
-			r2.relname,
-			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
+			f1.conid,
+			f2.conid,
+			CASE WHEN 1 = idx THEN r2.relname ELSE f1.conname END,
+			CASE WHEN 1 = idx THEN r1.relname ELSE f2.conname END,
+			'm',
 			false,
-			f.confrelid,
+			f1.confrelid,
+			r1.nspname,
+			r1.relname,
+			f2.confrelid,
 			r2.nspname,
 			r2.relname,
-			f.conrelid,
-			r1.nspname,
-			r1.relname
-		FROM "baseten".foreign_key f
-		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
-		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid);
+			f1.conrelid,
+			r3.nspname,
+			r3.relname
+		FROM "baseten".foreign_key f1
+		INNER JOIN "baseten".foreign_key f2 ON (f1.conrelid = f2.conrelid AND f1.confrelid <> f2.confrelid)
+		INNER JOIN (
+			SELECT 
+				conrelid,
+				COUNT (conid) AS count
+			FROM "baseten".foreign_key
+			GROUP BY conrelid
+		) c ON (c.conrelid = f1.conrelid AND 2 = c.count)
+		INNER JOIN (
+			SELECT
+				"baseten".relation_id (c.conrelid) AS relid,
+				"baseten".array_accum (a.attname) AS attnames
+			FROM pg_constraint c
+			INNER JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey)
+			WHERE c.contype = 'p'
+			GROUP BY c.conrelid
+		) p ON (p.relid = f1.conrelid AND p.attnames @> (f1.conkey || f2.conkey))
+		INNER JOIN "baseten".relation r1 ON (r1.id = f1.confrelid)
+		INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
+		INNER JOIN "baseten".relation r3 ON (r3.id = f1.conrelid)
+		CROSS JOIN generate_series (1, 2) g (idx);
+		
+	-- Views
+	-- FIXME: complete me.
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relationships () FROM PUBLIC;
+
+
+CREATE FUNCTION "baseten".remove_ambiguous_relationships () RETURNS VOID AS $$
+	DELETE FROM "baseten".relationship r1
+	USING (
+		SELECT name, srcid 
+		FROM (
+			SELECT 
+				count (name), 
+				name, 
+				srcid 
+			FROM baseten.relationship 
+			GROUP BY name, srcid
+		) r
+		WHERE r.count = 2
+	) r2
+	WHERE r1.name = r2.name AND r1.srcid = r2.srcid;
+	
+	DELETE FROM "baseten".relationship r1
+	USING (
+		SELECT 
+			r1.name, 
+			r1.srcid 
+		FROM baseten.relationship r1 
+		LEFT JOIN baseten.relationship r2 ON (
+			r1.inversename = r2.name AND
+			r1.name = r2.inversename AND
+			r1.dstid = r2.srcid AND 
+			r1.srcid = r2.dstid 
+		)
+		WHERE r2.conid IS NULL
+	) r2
+	WHERE r1.name = r2.name AND r1.srcid = r2.srcid;
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".remove_ambiguous_relationships () FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
