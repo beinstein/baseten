@@ -981,6 +981,23 @@ GRANT SELECT ON "baseten".relationship_v TO basetenread;
 --GRANT SELECT ON "baseten".relationship TO basetenread;
 
 
+CREATE TABLE "baseten".relationship (
+	conid			INTEGER NOT NULL REFERENCES "baseten".foreign_key (conid),
+	dstconid		INTEGER REFERENCES "baseten".foreign_key (conid), -- Only used for mtm.
+	name			TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	inversename		TEXT NOT NULL,	--Inverse relationships are currently mandatory. FIXME: use NAME or VARCHAR?
+	kind			CHAR (1) NOT NULL,
+	is_inverse		BOOLEAN NOT NULL,
+	srcid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
+	dstnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	dstrelname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	helpernspname	TEXT,			--FIXME: use NAME or VARCHAR?
+	helperrelname	TEXT			--FIXME: use NAME or VARCHAR?
+);
+REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
+GRANT SELECT ON "baseten".relationship TO basetenread;
+
+
 -- For modification tracking
 CREATE SEQUENCE "baseten".modification_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".modification (
@@ -1121,6 +1138,47 @@ CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 		);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_foreign_key_ids () FROM PUBLIC;
+
+
+-- FIXME: complete me.
+CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
+	INSERT INTO "baseten".relationship
+		(
+			conid,
+			name,
+			inversename,
+			kind,
+			is_inverse,
+			srcid,
+			dstnspname,
+			dstrelname
+		)
+		SELECT
+			f.conid,
+			f.conname,
+			r1.nspname || '_' || r1.relname || '_' || f.conname,
+			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
+			true,
+			f.conrelid,
+			r2.nspname,
+			r2.relname
+		FROM "baseten".foreign_key f
+		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
+		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
+		UNION ALL
+		SELECT
+			f.conid,
+			r.nspname || '_' || r.relname || '_' || f.conname,
+			f.conname,
+			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
+			false,
+			f.confrelid,
+			r.nspname,
+			r.relname
+		FROM "baseten".foreign_key f
+		INNER JOIN "baseten".relation r ON (r.id = f.conrelid);
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relationships () FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
