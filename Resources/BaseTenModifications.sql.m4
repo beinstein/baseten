@@ -1103,10 +1103,13 @@ CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 			c.confdeltype
 		FROM pg_constraint c
 		INNER JOIN "baseten"._fkey_column_names f ON (c.oid = f.oid)
+		INNER JOIN pg_class cl ON (c.conrelid = cl.oid)
+		INNER JOIN pg_namespace n ON (cl.relnamespace = n.oid)
 		WHERE (
 			contype = 'f' AND
 			"baseten".relation_id (conrelid) IS NOT NULL AND
-			"baseten".relation_id (confrelid) IS NOT NULL
+			"baseten".relation_id (confrelid) IS NOT NULL AND
+			ROW (n.nspname, cl.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey)
 		);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_foreign_key_ids () FROM PUBLIC;
