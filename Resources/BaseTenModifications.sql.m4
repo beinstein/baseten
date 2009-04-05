@@ -318,6 +318,7 @@ CREATE TABLE "baseten".foreign_key (
 	conkey NAME[] NOT NULL,
 	confkey NAME[] NOT NULL,
 	confdeltype CHAR NOT NULL,
+	conkey_is_unique BOOLEAN NOT NULL,
 	UNIQUE (conrelid, conname)
 );
 REVOKE ALL PRIVILEGES ON TABLE "baseten".foreign_key FROM PUBLIC;
@@ -568,14 +569,14 @@ CREATE VIEW "baseten"._mtmcandidates AS
 -- In the sub-select we search for all primary keys and their columns.
 -- Then we count the foreign keys the columns of which are contained
 -- in those of the primary keys'. Finally we filter out anything irrelevant.
-SELECT srcoid AS oid
+SELECT conrelid AS oid -- FIXME: doesn't work as this isn't the oid.
 FROM (
 	SELECT
-		f.srcoid,
-		COUNT (f.conoid) AS fkeycount,
-		"baseten".array_cat (f.srcfnames) AS fkeyattnames
-	FROM "baseten"._foreignkey f
-	GROUP BY f.srcoid
+		f.conrelid,
+		COUNT (f.conid) AS fkeycount,
+		"baseten".array_cat (f.conkey) AS fkeyattnames
+	FROM "baseten".foreign_key f
+	GROUP BY f.conrelid
 ) f1 INNER JOIN (
 	SELECT
 		p.oid,
@@ -583,7 +584,7 @@ FROM (
 	FROM "baseten"._primary_key p
 	WHERE relkind = 'r'
 	GROUP BY p.oid
-) p1 ON f1.srcoid = p1.oid
+) p1 ON f1.conrelid = p1.oid
 WHERE 2 = fkeycount AND p1.pkeyattnames @> f1.fkeyattnames;
 REVOKE ALL PRIVILEGES ON "baseten"._mtmcandidates FROM PUBLIC;
 GRANT SELECT ON "baseten"._mtmcandidates TO basetenread;
@@ -1092,7 +1093,8 @@ CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 			confrelid,
 			conkey,
 			confkey,
-			confdeltype
+			confdeltype,
+			conkey_is_unique
 		)
 		SELECT
 			c.conname,
@@ -1100,15 +1102,21 @@ CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 			"baseten".relation_id (c.confrelid),
 			f.conkey,
 			f.confkey,
-			c.confdeltype
+			c.confdeltype,
+			c2.oid IS NOT NULL
 		FROM pg_constraint c
-		INNER JOIN "baseten"._fkey_column_names f ON (c.oid = f.oid)
-		INNER JOIN pg_class cl ON (c.conrelid = cl.oid)
-		INNER JOIN pg_namespace n ON (cl.relnamespace = n.oid)
+		INNER JOIN "baseten"._fkey_column_names f ON (f.oid = c.oid)
+		INNER JOIN pg_class cl ON (cl.oid = c.conrelid)
+		INNER JOIN pg_namespace n ON (n.oid = cl.relnamespace)
+		LEFT JOIN pg_constraint c2 ON (
+			c2.conrelid = c.conrelid AND
+			c2.conkey = c.conkey AND
+			c2.contype = 'u'
+		)
 		WHERE (
-			contype = 'f' AND
-			"baseten".relation_id (conrelid) IS NOT NULL AND
-			"baseten".relation_id (confrelid) IS NOT NULL AND
+			c.contype = 'f' AND
+			"baseten".relation_id (c.conrelid) IS NOT NULL AND
+			"baseten".relation_id (c.confrelid) IS NOT NULL AND
 			ROW (n.nspname, cl.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey)
 		);
 $$ VOLATILE LANGUAGE SQL;
