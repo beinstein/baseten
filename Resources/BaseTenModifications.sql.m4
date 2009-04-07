@@ -709,7 +709,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_relation_ids () FROM PUBLIC;
 
 CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
 	DELETE FROM "baseten".foreign_key f
-	USING "baseten".relation r,
+	USING "baseten".relation r
 	WHERE (
 		r.id = f.conrelid AND
 		ROW (r.nspname, r.relname, f.conname) NOT IN (
@@ -1609,7 +1609,23 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, 
 GRANT EXECUTE ON FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, INTEGER) TO basetenread;
 
 
-CREATE FUNCTION "baseten".refresh_caches () RETURNS void AS $$
+CREATE FUNCTION "baseten".prune () RETURNS VOID AS $$
+	DELETE FROM "baseten".modification;
+	DELETE FROM "baseten".lock;
+	TRUNCATE 
+		"baseten"._view_dependency, 
+		"baseten"._rel_view_hierarchy, 
+		"baseten"._rel_view_oneto, 
+		"baseten"._rel_view_manytomany;
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".prune () FROM PUBLIC;
+-- Only owner for now.
+
+
+CREATE FUNCTION "baseten".refresh_caches () RETURNS VOID AS $$
+	TRUNCATE "baseten".relationship;
+	SELECT "baseten"._insert_relationships ();
+	SELECT "baseten"._remove_ambiguous_relationships ();
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_caches () FROM PUBLIC;
 -- Only owner for now.
