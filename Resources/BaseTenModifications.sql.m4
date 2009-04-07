@@ -721,16 +721,20 @@ CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
 		)
 		SELECT
 			c.conname,
-			"baseten".relation_id (c.conrelid),
-			"baseten".relation_id (c.confrelid),
+			r1.id,
+			r2.id,
 			f.conkey,
 			f.confkey,
 			c.confdeltype,
 			c2.oid IS NOT NULL
 		FROM pg_constraint c
 		INNER JOIN "baseten"._fkey_column_names f ON (f.oid = c.oid)
-		INNER JOIN pg_class cl ON (cl.oid = c.conrelid)
-		INNER JOIN pg_namespace n ON (n.oid = cl.relnamespace)
+		INNER JOIN pg_class cl1 ON (cl1.oid = c.conrelid)
+		INNER JOIN pg_class cl2 ON (cl2.oid = c.confrelid)
+		INNER JOIN pg_namespace n1 ON (n1.oid = cl1.relnamespace)
+		INNER JOIN pg_namespace n2 ON (n2.oid = cl2.relnamespace)
+		INNER JOIN "baseten".relation r1 ON (r1.nspname = n1.nspname AND r1.relname = cl1.relname)
+		INNER JOIN "baseten".relation r2 ON (r2.nspname = n2.nspname AND r2.relname = cl2.relname)
 		LEFT OUTER JOIN pg_constraint c2 ON (
 			c2.conrelid = c.conrelid AND
 			c2.conkey = c.conkey AND
@@ -738,9 +742,7 @@ CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
 		)
 		WHERE (
 			c.contype = 'f' AND
-			"baseten".relation_id (c.conrelid) IS NOT NULL AND
-			"baseten".relation_id (c.confrelid) IS NOT NULL AND
-			ROW (n.nspname, cl.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey)
+			ROW (n1.nspname, cl1.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey)
 		);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_foreign_key_ids () FROM PUBLIC;
@@ -789,8 +791,8 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		)
 		SELECT
 			f.conid,
-			CASE WHEN 1 = idx THEN r2.relname ELSE f.conname END,
-			CASE WHEN 1 = idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
+			CASE WHEN 1 = g.idx THEN r2.relname ELSE f.conname END,
+			CASE WHEN 1 = g.idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			true,
 			f.conrelid,
@@ -806,8 +808,8 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		UNION ALL
 		SELECT
 			f.conid,
-			CASE WHEN 1 = idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
-			CASE WHEN 1 = idx THEN r2.relname ELSE f.conname END,
+			CASE WHEN 1 = g.idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
+			CASE WHEN 1 = g.idx THEN r2.relname ELSE f.conname END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			false,
 			f.confrelid,
@@ -843,8 +845,8 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		SELECT
 			f1.conid,
 			f2.conid,
-			CASE WHEN 1 = idx THEN r2.relname ELSE f1.conname END,
-			CASE WHEN 1 = idx THEN r1.relname ELSE f2.conname END,
+			CASE WHEN 1 = g.idx THEN r2.relname ELSE f1.conname END,
+			CASE WHEN 1 = g.idx THEN r1.relname ELSE f2.conname END,
 			'm',
 			false,
 			f1.confrelid,
@@ -854,8 +856,8 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			r2.nspname,
 			r2.relname,
 			f1.conrelid,
-			r3.nspname,
-			r3.relname
+			rh.nspname,
+			rh.relname
 		FROM "baseten".foreign_key f1
 		INNER JOIN "baseten".foreign_key f2 ON (f1.conrelid = f2.conrelid AND f1.confrelid <> f2.confrelid)
 		INNER JOIN (
@@ -865,18 +867,20 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			FROM "baseten".foreign_key
 			GROUP BY conrelid
 		) c ON (c.conrelid = f1.conrelid AND 2 = c.count)
+		INNER JOIN "baseten".relation rh ON (rh.id = f1.conrelid)
+		INNER JOIN pg_class ch ON (ch.relname = rh.relname)
+		INNER JOIN pg_namespace nh ON (nh.oid = ch.relnamespace AND nh.nspname = rh.nspname)
 		INNER JOIN (
 			SELECT
-				"baseten".relation_id (c.conrelid) AS relid,
+				c.conrelid AS reloid,
 				"baseten".array_accum (a.attname) AS attnames
 			FROM pg_constraint c
-			INNER JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey)
+			INNER JOIN pg_attribute a ON (a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey))
 			WHERE c.contype = 'p'
 			GROUP BY c.conrelid
-		) p ON (p.relid = f1.conrelid AND p.attnames @> (f1.conkey || f2.conkey))
+		) p ON (p.reloid = ch.oid AND p.attnames @> (f1.conkey || f2.conkey))
 		INNER JOIN "baseten".relation r1 ON (r1.id = f1.confrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
-		INNER JOIN "baseten".relation r3 ON (r3.id = f1.conrelid)
 		CROSS JOIN generate_series (1, 2) g (idx);
 
 	-- Views
