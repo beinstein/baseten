@@ -228,7 +228,7 @@ CREATE TYPE "baseten".reltype AS (
 );
 
 
-CREATE TYPE "baseten".viewtype AS (
+CREATE TYPE "baseten".view_type AS (
 	oid OID,
 	parent OID,
 	root OID,
@@ -353,152 +353,11 @@ REVOKE ALL PRIVILEGES ON "baseten"._primary_key FROM PUBLIC;
 GRANT SELECT ON "baseten"._primary_key TO basetenread;
 
 
--- Note that system views aren't correctly listed.
-CREATE VIEW "baseten"._viewdependency_v AS 
-	SELECT DISTINCT 
-		d1.refobjid AS viewoid, 
-		n1.oid		AS viewnamespace, 
-		n1.nspname	AS viewnspname, 
-		c1.relname	AS viewrelname, 
-		d2.refobjid AS reloid, 
-		c2.relkind	AS relkind, 
-		n2.oid		AS relnamespace, 
-		n2.nspname	AS relnspname, 
-		c2.relname	AS relname 
-	FROM pg_depend d1
-	INNER JOIN pg_rewrite r ON r.oid = d1.objid AND r.ev_class = d1.refobjid AND rulename = '_RETURN'
-	INNER JOIN pg_depend d2 ON r.oid = d2.objid AND d2.refobjid <> d1.refobjid AND d2.deptype = 'n'
-	INNER JOIN pg_class c1 ON c1.oid = d1.refobjid AND c1.relkind = 'v'
-	INNER JOIN pg_class c2 ON c2.oid = d2.refobjid
-	INNER JOIN pg_namespace n1 ON n1.oid = c1.relnamespace
-	INNER JOIN pg_namespace n2 ON n2.oid = c2.relnamespace
-	INNER JOIN pg_class c3 ON c3.oid = d1.classid AND c3.relname = 'pg_rewrite'
-	INNER JOIN pg_class c4 ON c4.oid = d1.refclassid AND c4.relname = 'pg_class'
-	WHERE d1.deptype = 'n';
-REVOKE ALL PRIVILEGES ON "baseten"._viewdependency_v FROM PUBLIC;
-GRANT SELECT ON "baseten"._viewdependency_v TO basetenread;
-
-
--- SELECT * FROM _viewdependency_v can take ~300 ms.
---CREATE TABLE "baseten".viewdependency AS SELECT * FROM "baseten"._viewdependency_v LIMIT 0;
---REVOKE ALL PRIVILEGES ON "baseten".viewdependency FROM PUBLIC;
---GRANT SELECT ON "baseten".viewdependency TO basetenread;
-
-
-CREATE FUNCTION "baseten".viewhierarchy (OID) RETURNS SETOF "baseten".viewtype AS $$
-DECLARE
-	relid ALIAS FOR $1;
-	retval "baseten".viewtype;
-BEGIN
-	-- First return the table itself.
-	retval.root = relid;
-	retval.parent = NULL;
-	retval.generation = 0::SMALLINT;
-	retval.oid = relid;
-	RETURN NEXT retval;
-
-	-- Fetch dependant views.
-	FOR retval IN SELECT * FROM "baseten".viewhierarchy (relid, relid, 1) 
-	LOOP
-		RETURN NEXT retval;
-	END LOOP;
-	RETURN;
-END;
-$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".viewhierarchy (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".viewhierarchy (OID) TO basetenread;
-
-
-CREATE FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) 
-	RETURNS SETOF "baseten".viewtype AS $$
-DECLARE
-	parent ALIAS FOR $1;
-	root ALIAS FOR $2;
-	generation ALIAS FOR $3;
-	currentoid OID;
-	retval "baseten".viewtype;
-	subview "baseten".viewtype;
-BEGIN
-	retval.root = root;
-	retval.parent = parent;
-	retval.generation = generation::SMALLINT;
-
-	-- Fetch dependant views
-	FOR currentoid IN SELECT viewoid FROM "baseten"._viewdependency_v WHERE reloid = parent 
-	LOOP
-		retval.oid := currentoid;
-		RETURN NEXT retval;
-
-		-- Recursion to subviews
-		FOR subview IN SELECT * 
-		FROM "baseten".viewhierarchy (currentoid, root, generation + 1) LOOP
-			RETURN NEXT subview;
-		END LOOP;
-	END LOOP;
-	RETURN;
-END;
-$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".viewhierarchy (OID, OID, INTEGER) TO basetenread;
-
-
-CREATE FUNCTION "baseten".matchingviews (OID, NAME [])
-	RETURNS SETOF OID AS $$
-	SELECT v.oid FROM "baseten".viewhierarchy ($1) v
-	INNER JOIN (
-		SELECT 
-			attrelid, 
-			"baseten".array_accum (attname) AS fnames
-		FROM pg_attribute
-		GROUP BY attrelid
-	) a1 ON (a1.attrelid = v.oid)
-	LEFT JOIN (
-		SELECT
-			attrelid,
-			"baseten".array_accum (attname) AS fnames
-		FROM pg_attribute
-		GROUP BY attrelid
-	) a2 ON (a2.attrelid = v.parent)
-	WHERE (
-		v.parent IS NULL OR 
-		(
-			a1.fnames @> $2 AND
-			a2.fnames @> $2
-		)
-	)
-$$ STABLE LANGUAGE SQL SECURITY INVOKER;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".matchingviews (OID, NAME []) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".matchingviews (OID, NAME []) TO basetenread;
-
-
--- Foreign key column names
--- Helps joining to queries on pg_constraint
-CREATE VIEW "baseten"._conname AS
-SELECT 
-	c.oid,
-	"baseten".array_accum (a1.attnum) AS key,
-	"baseten".array_accum (a2.attnum) AS fkey,
-	"baseten".array_accum (a1.attname) AS keynames,
-	"baseten".array_accum (a2.attname) AS fkeynames
-FROM pg_constraint c
-INNER JOIN pg_attribute a1 ON (
-	c.conrelid = a1.attrelid AND
-	a1.attnum = ANY (c.conkey)
-)
-INNER JOIN pg_attribute a2 ON (
-	c.confrelid = a2.attrelid AND
-	a2.attnum = ANY (c.confkey)
-)
-GROUP BY c.oid;
-REVOKE ALL PRIVILEGES ON "baseten"._conname FROM PUBLIC;
-GRANT SELECT ON "baseten"._conname TO basetenread;
-
-
-CREATE FUNCTION "baseten".fkey_columns_max () RETURNS INTEGER AS $$
+CREATE FUNCTION "baseten"._fkey_columns_max () RETURNS INTEGER AS $$
 	SELECT max (array_upper (conkey, 1)) FROM pg_constraint c WHERE c.contype = 'f';
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".fkey_columns_max () FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".fkey_columns_max () TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._fkey_columns_max () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._fkey_columns_max () TO basetenread;
 
 
 CREATE VIEW "baseten"._fkey_column_names AS
@@ -507,7 +366,7 @@ SELECT
 	"baseten".array_accum (a1.attname) AS conkey,
 	"baseten".array_accum (a2.attname) AS confkey
 FROM pg_constraint c 
-INNER JOIN generate_series (1, "baseten".fkey_columns_max ()) AS s (idx) ON (s.idx <= array_upper (c.conkey, 1))
+INNER JOIN generate_series (1, "baseten"._fkey_columns_max ()) AS s (idx) ON (s.idx <= array_upper (c.conkey, 1))
 INNER JOIN pg_attribute a1 ON (a1.attrelid = c.conrelid  AND a1.attnum = c.conkey [s.idx])
 INNER JOIN pg_attribute a2 ON (a2.attrelid = c.confrelid AND a2.attnum = c.confkey [s.idx])
 GROUP BY c.oid;
@@ -525,462 +384,6 @@ REVOKE ALL PRIVILEGES ON "baseten".ignored_fkey FROM PUBLIC;
 GRANT SELECT ON "baseten".ignored_fkey TO basetenread;
 
 
--- FIXME: rename me or consider removing.
-CREATE VIEW "baseten"._foreignkey AS
-SELECT
-	c1.oid				AS conoid,
-	c1.conname			AS name,
-	c1.conrelid			AS srcoid,
-	ns1.oid				AS srcnsp,
-	ns1.nspname			AS srcnspname,
-	cl1.relname			AS srcrelname,
-	n.keynames			AS srcfnames,
-	c1.confrelid		AS dstoid,
-	ns2.oid				AS dstnsp,
-	ns2.nspname			AS dstnspname,
-	cl2.relname			AS dstrelname,
-	n.fkeynames			AS dstfnames,
-	c2.oid IS NOT NULL	AS srcisunique,
-	c1.confdeltype		AS deltype
-FROM pg_constraint c1
--- Constrained fields' names
-INNER JOIN "baseten"._conname n ON (c1.oid = n.oid)
--- Is src key also unique?
-LEFT JOIN pg_constraint c2 ON (
-	c2.conrelid = c1.conrelid AND
-	c2.contype = 'u' AND
-	c2.conkey = n.key
-)
--- Relation names
-INNER JOIN pg_class cl1 ON (cl1.oid = c1.conrelid)
-INNER JOIN pg_class cl2 ON (cl2.oid = c1.confrelid)
--- Namespace names
-INNER JOIN pg_namespace ns1 ON (ns1.oid = cl1.relnamespace)
-INNER JOIN pg_namespace ns2 ON (ns2.oid = cl2.relnamespace)
--- Only select foreign keys
-WHERE c1.contype = 'f' AND
-	ROW (ns1.nspname, cl1.relname, c1.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey);
-REVOKE ALL PRIVILEGES ON "baseten"._foreignkey FROM PUBLIC;
-GRANT SELECT ON "baseten"._foreignkey TO basetenread;
-
-
--- Fkeys in pkeys
-CREATE VIEW "baseten"._mtmcandidates AS
--- In the sub-select we search for all primary keys and their columns.
--- Then we count the foreign keys the columns of which are contained
--- in those of the primary keys'. Finally we filter out anything irrelevant.
-SELECT conrelid AS oid -- FIXME: doesn't work as this isn't the oid.
-FROM (
-	SELECT
-		f.conrelid,
-		COUNT (f.conid) AS fkeycount,
-		"baseten".array_cat (f.conkey) AS fkeyattnames
-	FROM "baseten".foreign_key f
-	GROUP BY f.conrelid
-) f1 INNER JOIN (
-	SELECT
-		p.oid,
-		baseten.array_accum (p.attname) AS pkeyattnames
-	FROM "baseten"._primary_key p
-	WHERE relkind = 'r'
-	GROUP BY p.oid
-) p1 ON f1.conrelid = p1.oid
-WHERE 2 = fkeycount AND p1.pkeyattnames @> f1.fkeyattnames;
-REVOKE ALL PRIVILEGES ON "baseten"._mtmcandidates FROM PUBLIC;
-GRANT SELECT ON "baseten"._mtmcandidates TO basetenread;
-
-
-CREATE VIEW "baseten"._oneto_fk AS
-SELECT
-	conoid,
-	name		AS name,
-	srcnspname || '_' || srcrelname || '_' || name AS inversename,
-	srcoid,
-	srcnsp,
-	srcnspname,
-	srcrelname,
-	srcfnames,
-	dstoid,
-	dstnsp,
-	dstnspname,
-	dstrelname,
-	dstfnames,
-	true		AS isinverse,
-	srcisunique AS istoone
-FROM "baseten"._foreignkey
-UNION ALL
-SELECT
-	conoid,
-	srcnspname || '_' || srcrelname || '_' || name AS name,
-	name						AS inversename,
-	dstoid						AS srcoid,
-	dstnsp						AS srcnsp,
-	dstnspname					AS srcnspname,
-	dstrelname					AS srcrelname,
-	dstfnames					AS srcfnames,
-	srcoid						AS dstoid,
-	srcnsp						AS dstnsp,
-	srcnspname					AS dstnspname,
-	srcrelname					AS dstrelname,
-	srcfnames					AS dstfnames,
-	false						AS isinverse,
-	srcisunique					AS istoone
-FROM "baseten"._foreignkey;
-REVOKE ALL PRIVILEGES ON "baseten"._oneto_fk FROM PUBLIC;
-GRANT SELECT ON "baseten"._oneto_fk TO basetenread;
-
-
-CREATE VIEW "baseten"._manytomany_fk AS
-SELECT
-	f1.conoid,
-	f2.conoid		AS dstconoid,
-	f1.name			AS name,
-	f2.name			AS inversename,
-	f1.dstoid		AS srcoid,
-	f1.dstnsp		AS srcnsp,
-	f1.dstnspname	AS srcnspname,
-	f1.dstrelname	AS srcrelname,
-	f1.dstfnames	AS srcfnames,
-	f2.dstoid,
-	f2.dstnsp,
-	f2.dstnspname,
-	f2.dstrelname,
-	f2.dstfnames,
-	f1.srcoid		AS helperoid,
-	f1.srcnspname	AS helpernspname,
-	f1.srcrelname	AS helperrelname,
-	array_cat (f1.srcfnames, f2.srcfnames) AS helperfnames
-FROM "baseten"._foreignkey f1
-INNER JOIN "baseten"._foreignkey f2 ON (
-	f1.srcoid = f2.srcoid AND
-	f1.dstoid <> f2.dstoid
-)
--- Primary key needs to include exactly two foreign keys and possibly other columns.
-INNER JOIN "baseten"._mtmcandidates c ON (
-	c.oid = f1.srcoid
-);
-REVOKE ALL PRIVILEGES ON "baseten"._manytomany_fk FROM PUBLIC;
-GRANT SELECT ON "baseten"._manytomany_fk TO basetenread;
-
-
-CREATE VIEW "baseten"._relationship_fk AS
-	SELECT
-		-- These three are sort of a primary key.
-		conoid,
-		NULL::OID AS dstconoid,
-		(CASE WHEN true = istoone THEN 'o' ELSE 't' END)::char AS kind,
-		
-		srcoid, 
-		dstoid,
-		NULL::OID AS helperoid,
-		srcfnames, 
-		dstfnames,
-		NULL::NAME [] AS helperfnames,
-		isinverse
-	FROM baseten._oneto_fk
-	UNION ALL
-	SELECT
-		conoid,
-		dstconoid,
-		'm'::char AS kind,
-		
-		srcoid, 
-		dstoid, 
-		helperoid,
-		srcfnames, 
-		dstfnames,
-		helperfnames,
-		false AS isinverse
-	FROM baseten._manytomany_fk;
-REVOKE ALL PRIVILEGES ON "baseten"._relationship_fk FROM PUBLIC;
-GRANT SELECT ON "baseten"._relationship_fk TO basetenread;
-
-
-CREATE VIEW "baseten"._nameconflict1 AS
-SELECT
-	srcoid,
-	dstoid,
-	srcnsp,
-	dstnsp,
-	srcnspname,
-	srcrelname,
-	dstnspname,
-	dstrelname,
-	ARRAY [name]				AS relationship_names
-FROM "baseten"._oneto_fk
-WHERE srcnsp = dstnsp
-UNION ALL
-SELECT
-	srcoid,
-	dstoid,
-	srcnsp,
-	dstnsp,
-	srcnspname,
-	srcrelname,
-	dstnspname,
-	dstrelname,
-	ARRAY [name, inversename]	AS relationship_names
-FROM "baseten"._manytomany_fk
-WHERE srcnsp = dstnsp;
-REVOKE ALL PRIVILEGES ON "baseten"._nameconflict1 FROM PUBLIC;
-GRANT SELECT ON "baseten"._nameconflict1 TO basetenread;
-
- 
--- Name conflicts for table relationships
-CREATE VIEW "baseten"._nameconflict AS
-SELECT
-	srcoid,
-	dstoid,
-	srcnspname,
-	srcrelname,
-	dstnspname,
-	dstrelname,
-	(1 < count (dstoid)) AS conflicts,
-	"baseten".array_cat (relationship_names) AS relationship_names
-FROM "baseten"._nameconflict1
-GROUP BY 
-	srcoid, 
-	dstoid, 
-	srcnspname, 
-	srcrelname, 
-	dstnspname, 
-	dstrelname;
-REVOKE ALL PRIVILEGES ON "baseten"._nameconflict FROM PUBLIC;
-GRANT SELECT ON "baseten"._nameconflict TO basetenread;
-
-
-CREATE VIEW "baseten"._oneto AS
-SELECT
-	conoid,
-	name,
-	inversename,
-	srcoid,
-	srcnspname,
-	srcrelname,
-	srcfnames,
-	dstoid,
-	dstnspname,
-	dstrelname,
-	dstfnames,
-	isinverse,
-	istoone
-FROM "baseten"._oneto_fk
-UNION ALL
-SELECT
-	fk.conoid,
-	n1.dstrelname,
-	COALESCE (n2.dstrelname, fk.inversename),
-	fk.srcoid,
-	fk.srcnspname,
-	fk.srcrelname,
-	fk.srcfnames,
-	fk.dstoid,
-	fk.dstnspname,
-	fk.dstrelname,
-	fk.dstfnames,
-	fk.isinverse,
-	fk.istoone
-FROM "baseten"._oneto_fk fk
-INNER JOIN "baseten"._nameconflict n1 ON (
-	fk.srcoid = n1.srcoid AND
-	fk.dstoid = n1.dstoid AND
-	n1.conflicts = false
-)
-LEFT JOIN "baseten"._nameconflict n2 ON (
-	fk.srcoid = n2.dstoid AND
-	fk.dstoid = n2.srcoid AND
-	n2.conflicts = false
-);
-REVOKE ALL PRIVILEGES ON "baseten"._oneto FROM PUBLIC;
-GRANT SELECT ON "baseten"._oneto TO basetenread;
-
-
-CREATE VIEW "baseten"._manytomany AS
-SELECT
-	conoid,
-	dstconoid,
-	name,
-	inversename,
-	srcoid,
-	srcnspname,
-	srcrelname,
-	srcfnames,
-	dstoid,
-	dstnspname,
-	dstrelname,
-	dstfnames,
-	helperoid,
-	helpernspname,
-	helperrelname,
-	helperfnames
-FROM "baseten"._manytomany_fk
-UNION ALL
-SELECT
-	fk.conoid,
-	fk.dstconoid,
-	n1.dstrelname AS name,
-	COALESCE (n2.dstrelname, fk.inversename) AS inversename,
-	fk.srcoid,
-	fk.srcnspname,
-	fk.srcrelname,
-	fk.srcfnames,
-	fk.dstoid,
-	fk.dstnspname,
-	fk.dstrelname,
-	fk.dstfnames,
-	fk.helperoid,
-	fk.helpernspname,
-	fk.helperrelname,
-	fk.helperfnames
-FROM "baseten"._manytomany_fk fk
-INNER JOIN "baseten"._nameconflict n1 ON (
-	fk.srcoid = n1.srcoid AND
-	fk.dstoid = n1.dstoid AND
-	n1.conflicts = false
-)
-LEFT JOIN "baseten"._nameconflict n2 ON (
-	fk.srcoid = n2.dstoid AND
-	fk.dstoid = n2.srcoid AND
-	n2.conflicts = false
-);
-REVOKE ALL PRIVILEGES ON "baseten"._manytomany FROM PUBLIC;
-GRANT SELECT ON "baseten"._manytomany TO basetenread;
-
-
-CREATE FUNCTION "baseten".srcdstview ()
-	RETURNS SETOF "baseten"._relationship_fk AS $$
-DECLARE
-	retval "baseten"._relationship_fk;
-	srcoid OID;
-	dstoid OID;
-BEGIN
-	FOR retval IN SELECT * FROM "baseten"._relationship_fk r
-	LOOP
-		srcoid := retval.srcoid;
-		dstoid := retval.dstoid;
-		FOR retval.srcoid, retval.dstoid IN 
-			SELECT m1.*, m2.*
-			FROM "baseten".matchingviews (retval.srcoid, retval.srcfnames) m1 (oid)
-			CROSS JOIN "baseten".matchingviews (retval.dstoid, retval.dstfnames) m2 (oid)
-			WHERE NOT (m1.oid = srcoid AND m2.oid = dstoid)
-		LOOP
-			RETURN NEXT retval;
-		END LOOP;
-	END LOOP;
-	RETURN;
-END;
-$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".srcdstview () FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".srcdstview () TO basetenread;
-
-
---CREATE TABLE "baseten".srcdstview AS SELECT * FROM "baseten".srcdstview () LIMIT 0;
---REVOKE ALL PRIVILEGES ON "baseten".srcdstview FROM PUBLIC;
---GRANT SELECT ON "baseten".srcdstview TO basetenread;
-
-
-CREATE VIEW "baseten"._view_relationship AS
-	SELECT v1.*, 
-		c2.relname	AS name,
-		c1.relname	AS inversename,
-		n1.nspname	AS srcnspname,
-		c1.relname	AS srcrelname,
-		n1.nspname	AS dstnspname,
-		c2.relname	AS dstrelname,
-		n3.nspname	AS helpernspname,
-		c3.relname	AS helperrelname
-	FROM "baseten".srcdstview () v1
-	INNER JOIN (
-		SELECT srcoid, dstoid,
-			COUNT (srcoid) AS count
-		FROM "baseten".srcdstview ()
-		GROUP BY srcoid, dstoid
-	) v2 ON (
-		v1.srcoid = v2.srcoid AND 
-		v1.dstoid = v2.dstoid
-	) 
-	INNER JOIN pg_class c1 ON (c1.oid = v1.srcoid)
-	INNER JOIN pg_class c2 ON (c2.oid = v1.dstoid)
-	INNER JOIN pg_namespace n1 ON (c1.relnamespace = n1.oid)
-	LEFT JOIN pg_class c3 ON (c3.oid = v1.helperoid)
-	LEFT JOIN pg_namespace n3 ON (c3.relnamespace = n3.oid)
-	WHERE (1 = v2.count AND c1.relnamespace = c2.relnamespace);
-REVOKE ALL PRIVILEGES ON "baseten"._view_relationship FROM PUBLIC;
-GRANT SELECT ON "baseten"._view_relationship TO basetenread;
-
-
-CREATE VIEW "baseten".relationship_v AS
-	SELECT
-		o.conoid,
-		null::OID AS dstconoid,
-		o.name,
-		o.inversename,
-		(CASE WHEN true = istoone THEN 'o' ELSE 't' END)::char AS kind,
-		o.isinverse,
-		o.srcoid,
-		o.srcnspname,
-		o.srcrelname,
-		o.srcfnames,
-		o.dstoid,
-		o.dstnspname,
-		o.dstrelname,
-		o.dstfnames,
-		null::OID AS helperoid,
-		null::name AS helpernspname,
-		null::name AS helperrelname,
-		null::name[] AS helperfnames
-	FROM "baseten"._oneto o
-	UNION ALL
-	SELECT
-		m.conoid,
-		m.dstconoid,
-		m.name,
-		m.inversename,
-		'm'::char AS kind,
-		false AS isinverse,
-		m.srcoid,
-		m.srcnspname,
-		m.srcrelname,
-		m.srcfnames,
-		m.dstoid,
-		m.dstnspname,
-		m.dstrelname,
-		m.dstfnames,
-		m.helperoid,
-		m.helpernspname,
-		m.helperrelname,
-		m.helperfnames
-	FROM "baseten"._manytomany m
-	UNION ALL
-	SELECT
-		v.conoid,
-		v.dstconoid,
-		v.name,
-		v.inversename,
-		v.kind,
-		v.isinverse,
-		v.srcoid,
-		v.srcnspname,
-		v.srcrelname,
-		v.srcfnames,
-		v.dstoid,
-		v.dstnspname,
-		v.dstrelname,
-		v.dstfnames,
-		v.helperoid,
-		v.helpernspname,
-		v.helperrelname,
-		v.helperfnames
-	FROM "baseten"._view_relationship v;
-REVOKE ALL PRIVILEGES ON "baseten".relationship_v FROM PUBLIC;
-GRANT SELECT ON "baseten".relationship_v TO basetenread;
-
-
---CREATE TABLE "baseten".relationship AS SELECT * FROM "baseten"._relationship_v LIMIT 0;
---REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
---GRANT SELECT ON "baseten".relationship TO basetenread;
-
-
 CREATE TABLE "baseten".relationship (
 	conid			INTEGER NOT NULL REFERENCES "baseten".foreign_key (conid),
 	dstconid		INTEGER REFERENCES "baseten".foreign_key (conid), -- Only used for mtm.
@@ -988,6 +391,7 @@ CREATE TABLE "baseten".relationship (
 	inversename		VARCHAR (255) NOT NULL, --Inverse relationships are currently mandatory.
 	kind			CHAR (1) NOT NULL,
 	is_inverse		BOOLEAN NOT NULL,
+	has_views		BOOLEAN NOT NULL DEFAULT false,
 	srcid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
 	srcnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
 	srcrelname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
@@ -1081,7 +485,204 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".relation_id_ex (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".relation_id_ex (OID) TO basetenread;
 
 
-CREATE FUNCTION "baseten".assign_relation_ids () RETURNS VOID AS $$
+CREATE FUNCTION "baseten"._view_hierarchy (OID, OID, INTEGER) 
+	RETURNS SETOF "baseten".view_type AS $$
+DECLARE
+	parent ALIAS FOR $1;
+	root ALIAS FOR $2;
+	generation ALIAS FOR $3;
+	currentoid OID;
+	retval "baseten".view_type;
+	subview "baseten".view_type;
+BEGIN
+	retval.root = root;
+	retval.parent = parent;
+	retval.generation = generation::SMALLINT;
+
+	-- Fetch dependent views
+	FOR currentoid IN SELECT viewoid FROM "baseten"._view_dependency WHERE reloid = parent
+	LOOP
+		retval.oid := currentoid;
+		RETURN NEXT retval;
+
+		-- Recursion to subviews
+		FOR subview IN SELECT * 
+		FROM "baseten"._view_hierarchy (currentoid, root, generation + 1) LOOP
+			RETURN NEXT subview;
+		END LOOP;
+	END LOOP;
+	RETURN;
+END;
+$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._view_hierarchy (OID, OID, INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._view_hierarchy (OID, OID, INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten"._view_hierarchy (OID) RETURNS SETOF "baseten".view_type AS $$
+DECLARE
+	relid ALIAS FOR $1;
+	retval "baseten".view_type;
+BEGIN
+	-- First return the table itself.
+	retval.root = relid;
+	retval.parent = NULL;
+	retval.generation = 0::SMALLINT;
+	retval.oid = relid;
+	RETURN NEXT retval;
+
+	-- Fetch dependent views.
+	FOR retval IN SELECT * FROM "baseten"._view_hierarchy (relid, relid, 1) 
+	LOOP
+		RETURN NEXT retval;
+	END LOOP;
+	RETURN;
+END;
+$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._view_hierarchy (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._view_hierarchy (OID) TO basetenread;
+
+
+CREATE FUNCTION "baseten"._rel_view_hierarchy () RETURNS SETOF "baseten".view_type AS $$
+DECLARE
+	reloid OID;
+	retval "baseten".view_type;
+BEGIN
+	FOR reloid IN 
+		SELECT DISTINCT ON (rs.srcid) 
+			c.oid 
+		FROM "baseten".relationship rs
+		INNER JOIN "baseten".relation r ON (r.id = rs.srcid)
+		INNER JOIN pg_class c ON (r.relname = c.relname)
+		INNER JOIN pg_namespace n ON (r.nspname = n.nspname AND c.relnamespace = n.oid)
+	LOOP
+		FOR retval IN SELECT * FROM "baseten"._view_hierarchy (reloid)
+		LOOP
+			RETURN NEXT retval;
+		END LOOP;
+	END LOOP;
+	RETURN;
+END;
+$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._rel_view_hierarchy () FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._rel_view_hierarchy () TO basetenread;
+
+
+-- Note that system views aren't correctly listed.
+CREATE VIEW "baseten"._view_dependency_v AS 
+	SELECT DISTINCT 
+		d1.refobjid AS viewoid, 
+		n1.oid		AS viewnamespace, 
+		n1.nspname	AS viewnspname, 
+		c1.relname	AS viewrelname, 
+		d2.refobjid AS reloid, 
+		c2.relkind	AS relkind, 
+		n2.oid		AS relnamespace, 
+		n2.nspname	AS relnspname, 
+		c2.relname	AS relname 
+	FROM pg_depend d1
+	INNER JOIN pg_rewrite r ON r.oid = d1.objid AND r.ev_class = d1.refobjid AND rulename = '_RETURN'
+	INNER JOIN pg_depend d2 ON r.oid = d2.objid AND d2.refobjid <> d1.refobjid AND d2.deptype = 'n'
+	INNER JOIN pg_class c1 ON c1.oid = d1.refobjid AND c1.relkind = 'v'
+	INNER JOIN pg_class c2 ON c2.oid = d2.refobjid
+	INNER JOIN pg_namespace n1 ON n1.oid = c1.relnamespace
+	INNER JOIN pg_namespace n2 ON n2.oid = c2.relnamespace
+	INNER JOIN pg_class c3 ON c3.oid = d1.classid AND c3.relname = 'pg_rewrite'
+	INNER JOIN pg_class c4 ON c4.oid = d1.refclassid AND c4.relname = 'pg_class'
+	WHERE d1.deptype = 'n';
+REVOKE ALL PRIVILEGES ON "baseten"._view_dependency_v FROM PUBLIC;
+GRANT SELECT ON "baseten"._view_dependency_v TO basetenread;
+
+
+CREATE TABLE "baseten"._view_dependency AS SELECT * FROM "baseten"._view_dependency_v LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten"._view_dependency FROM PUBLIC;
+GRANT SELECT ON "baseten"._view_dependency TO basetenread;
+
+
+CREATE VIEW "baseten"._rel_view_hierarchy_v AS
+	SELECT
+		r1.id,
+		r2.id AS root,
+		r1.nspname,
+		r1.relname,
+		r2.nspname AS rootnspname,
+		r2.relname AS rootrelname,
+		"baseten".array_accum (a.attname) AS attributes
+	FROM "baseten"._rel_view_hierarchy () h
+	INNER JOIN pg_attribute a ON (a.attrelid = h.oid)
+	INNER JOIN pg_class c1 ON (c1.oid = h.oid)
+	INNER JOIN pg_class c2 ON (c2.oid = h.root)
+	INNER JOIN pg_namespace n1 ON (n1.oid = c1.relnamespace)
+	INNER JOIN pg_namespace n2 ON (n2.oid = c2.relnamespace)
+	INNER JOIN "baseten".relation r1 ON (n1.nspname = r1.nspname AND c1.relname = r1.relname)
+	INNER JOIN "baseten".relation r2 ON (n2.nspname = r2.nspname AND c2.relname = r2.relname)
+	GROUP BY r1.id, r2.id, r1.nspname, r1.relname, r2.nspname, r2.relname;
+	
+	
+CREATE TABLE "baseten"._rel_view_hierarchy AS SELECT * FROM "baseten"._rel_view_hierarchy_v LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten"._rel_view_hierarchy FROM PUBLIC;
+GRANT SELECT ON "baseten"._rel_view_hierarchy TO basetenread;
+
+
+CREATE VIEW "baseten"._rel_view_oneto_v AS
+	SELECT
+		r.conid,
+		COALESCE (h1.id, srcid) AS srcid,
+		COALESCE (h2.id, dstid) AS dstid,
+		r.kind,
+		r.is_inverse
+	FROM
+		(
+			SELECT DISTINCT
+				conid,
+				srcid,
+				dstid,
+				kind,
+				is_inverse
+			FROM "baseten".relationship
+			WHERE kind IN ('t', 'o')
+		) r
+	INNER JOIN "baseten".foreign_key f ON (f.conid = r.conid)
+	INNER JOIN "baseten"._rel_view_hierarchy h1 ON (h1.root = r.srcid AND h1.attributes @> (CASE WHEN r.is_inverse THEN f.conkey ELSE f.confkey END))
+	INNER JOIN "baseten"._rel_view_hierarchy h2 ON (h2.root = r.dstid AND h2.attributes @> (CASE WHEN r.is_inverse THEN f.confkey ELSE f.conkey END))
+	WHERE NOT (h1.id = h1.root AND h2.id = h2.root);
+
+
+CREATE TABLE "baseten"._rel_view_oneto AS SELECT * FROM "baseten"._rel_view_oneto_v LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten"._rel_view_oneto FROM PUBLIC;
+GRANT SELECT ON "baseten"._rel_view_oneto TO basetenread;
+
+
+CREATE VIEW "baseten"._rel_view_manytomany_v AS
+	SELECT
+		r.conid,
+		r.dstconid,
+		COALESCE (h1.id, r.srcid) AS srcid,
+		COALESCE (h2.id, r.dstid) AS dstid,
+		r.helperid
+	FROM
+		(
+			SELECT DISTINCT ON (conid, dstconid, srcid, dstid) 
+				conid,
+				dstconid,
+				srcid,
+				dstid,
+				helperid
+			FROM "baseten".relationship
+			WHERE kind = 'm'
+		) r
+	INNER JOIN "baseten".foreign_key f1 ON (f1.conid = r.conid)
+	INNER JOIN "baseten".foreign_key f2 ON (f2.conid = r.dstconid)
+	INNER JOIN "baseten"._rel_view_hierarchy h1 ON (h1.root = r.srcid AND h1.attributes @> f1.confkey)
+	INNER JOIN "baseten"._rel_view_hierarchy h2 ON (h2.root = r.dstid AND h2.attributes @> f2.confkey)
+	WHERE NOT (h1.id = h1.root AND h2.id = h2.root);
+
+
+CREATE TABLE "baseten"._rel_view_manytomany AS SELECT * FROM "baseten"._rel_view_manytomany_v LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten"._rel_view_manytomany FROM PUBLIC;
+GRANT SELECT ON "baseten"._rel_view_manytomany TO basetenread;
+
+
+CREATE FUNCTION "baseten"._assign_relation_ids () RETURNS VOID AS $$
 	DELETE FROM "baseten".relation r 
 	WHERE ROW (r.relname, r.nspname) NOT IN (
 		SELECT c.relname, n.nspname
@@ -1102,12 +703,12 @@ CREATE FUNCTION "baseten".assign_relation_ids () RETURNS VOID AS $$
 			)
 		);
 $$ VOLATILE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relation_ids () FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_relation_ids () FROM PUBLIC;
 
 
--- FIXME: complete me.
-CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
-	SELECT "baseten".assign_relation_ids ();
+-- FIXME: complete me. Instead of removing everything try to delete and insert selectively.
+CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
+	DELETE FROM "baseten".foreign_key;
 	INSERT INTO "baseten".foreign_key 
 		(
 			conname,
@@ -1130,7 +731,7 @@ CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 		INNER JOIN "baseten"._fkey_column_names f ON (f.oid = c.oid)
 		INNER JOIN pg_class cl ON (cl.oid = c.conrelid)
 		INNER JOIN pg_namespace n ON (n.oid = cl.relnamespace)
-		LEFT JOIN pg_constraint c2 ON (
+		LEFT OUTER JOIN pg_constraint c2 ON (
 			c2.conrelid = c.conrelid AND
 			c2.conkey = c.conkey AND
 			c2.contype = 'u'
@@ -1142,10 +743,35 @@ CREATE FUNCTION "baseten".assign_foreign_key_ids () RETURNS VOID AS $$
 			ROW (n.nspname, cl.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey)
 		);
 $$ VOLATILE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_foreign_key_ids () FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_foreign_key_ids () FROM PUBLIC;
 
 
-CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
+CREATE FUNCTION "baseten".assign_internal_ids () RETURNS VOID AS $$
+	SELECT "baseten"._assign_relation_ids ();
+	SELECT "baseten"._assign_foreign_key_ids ();
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_internal_ids () FROM PUBLIC;
+-- Only owner for now.
+
+
+CREATE FUNCTION "baseten".refresh_view_caches () RETURNS void AS $$
+	TRUNCATE 
+		"baseten"._view_dependency, 
+		"baseten"._rel_view_hierarchy, 
+		"baseten"._rel_view_oneto, 
+		"baseten"._rel_view_manytomany;
+	INSERT INTO "baseten"._view_dependency		SELECT * from "baseten"._view_dependency_v;
+	INSERT INTO "baseten"._rel_view_hierarchy	SELECT * from "baseten"._rel_view_hierarchy_v;
+	INSERT INTO "baseten"._rel_view_oneto		SELECT * from "baseten"._rel_view_oneto_v;
+	INSERT INTO "baseten"._rel_view_manytomany	SELECT * from "baseten"._rel_view_manytomany_v;
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_view_caches () FROM PUBLIC;
+-- Only owner for now.
+
+
+CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
+	SELECT "baseten".assign_internal_ids ();
+
 	-- OTO, OTM
 	INSERT INTO "baseten".relationship
 		(
@@ -1252,14 +878,75 @@ CREATE FUNCTION "baseten".assign_relationships () RETURNS VOID AS $$
 		INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
 		INNER JOIN "baseten".relation r3 ON (r3.id = f1.conrelid)
 		CROSS JOIN generate_series (1, 2) g (idx);
-		
+
 	-- Views
-	-- FIXME: complete me.
+	SELECT "baseten".refresh_view_caches ();
+	INSERT INTO "baseten".relationship
+		(
+			conid,
+			dstconid,
+			name,
+			inversename,
+			kind,
+			is_inverse,
+			has_views,
+			srcid,
+			srcnspname,
+			srcrelname,
+			dstid,
+			dstnspname,
+			dstrelname,
+			helperid,
+			helpernspname,
+			helperrelname
+		)
+		SELECT
+			rel.conid,
+			rel.dstconid,
+			r2.relname,
+			r1.relname,
+			rel.kind,
+			rel.is_inverse,
+			true,
+			rel.srcid,
+			r1.nspname,
+			r1.relname,
+			rel.dstid,
+			r2.nspname,
+			r2.relname,
+			rel.helperid,
+			r3.nspname,
+			r3.relname
+		FROM
+			(
+				SELECT 
+					conid,
+					null::INTEGER AS dstconid,
+					kind,
+					is_inverse,
+					srcid,
+					dstid,
+					null::INTEGER AS helperid
+				FROM "baseten"._rel_view_oneto
+				UNION ALL
+				SELECT
+					conid,
+					dstconid,
+					'm' AS kind,
+					false AS is_inverse,
+					srcid,
+					dstid,
+					helperid
+				FROM "baseten"._rel_view_manytomany
+			) rel
+		INNER JOIN "baseten".relation r1 ON (r1.id = rel.srcid)
+		INNER JOIN "baseten".relation r2 ON (r2.id = rel.dstid)
+		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid);
 $$ VOLATILE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_relationships () FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
 
 
-CREATE FUNCTION "baseten".remove_ambiguous_relationships () RETURNS VOID AS $$
+CREATE FUNCTION "baseten"._remove_ambiguous_relationships () RETURNS VOID AS $$
 	DELETE FROM "baseten".relationship r1
 	USING (
 		SELECT name, srcid 
@@ -1281,7 +968,7 @@ CREATE FUNCTION "baseten".remove_ambiguous_relationships () RETURNS VOID AS $$
 			r1.name, 
 			r1.srcid 
 		FROM baseten.relationship r1 
-		LEFT JOIN baseten.relationship r2 ON (
+		LEFT OUTER JOIN baseten.relationship r2 ON (
 			r1.inversename = r2.name AND
 			r1.name = r2.inversename AND
 			r1.dstid = r2.srcid AND 
@@ -1291,7 +978,7 @@ CREATE FUNCTION "baseten".remove_ambiguous_relationships () RETURNS VOID AS $$
 	) r2
 	WHERE r1.name = r2.name AND r1.srcid = r2.srcid;
 $$ VOLATILE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".remove_ambiguous_relationships () FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._remove_ambiguous_relationships () FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
@@ -1747,7 +1434,7 @@ DECLARE
 	rel								"baseten"."reltype";
 	retval							"baseten"."reltype";
 BEGIN
-	PERFORM "baseten".assign_relation_ids ();
+	PERFORM "baseten".assign_internal_ids ();
 	UPDATE "baseten".relation SET enabled = true WHERE id = "baseten".relation_id_ex (relid_);
 	SELECT "baseten".mod_table (relid_) INTO STRICT mod_table;
 	SELECT "baseten".lock_table (relid_) INTO STRICT lock_table;
@@ -1892,11 +1579,7 @@ GRANT EXECUTE ON FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, INTEGER)
 
 
 CREATE FUNCTION "baseten".refresh_caches () RETURNS void AS $$
-	--TRUNCATE "baseten".viewdependency, "baseten".srcdstview, "baseten".relationship;
-	--INSERT INTO "baseten".viewdependency SELECT * from "baseten"._viewdependency_v;
-	--INSERT INTO "baseten".srcdstview SELECT * FROM "baseten".srcdstview ();
-	--INSERT INTO "baseten".relationship SELECT * FROM "baseten"._relationship_v;
-$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_caches () FROM PUBLIC;
 -- Only owner for now.
 
