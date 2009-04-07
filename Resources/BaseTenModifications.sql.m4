@@ -695,7 +695,7 @@ CREATE FUNCTION "baseten"._assign_relation_ids () RETURNS VOID AS $$
 		FROM pg_class c
 		INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
 		WHERE NOT (
-			--n.nspname = 'baseten' OR
+			n.nspname = 'baseten' OR
 			n.nspname = 'information_schema' OR
 			n.nspname LIKE 'pg_%' OR
 			ROW (c.relname, n.nspname) IN (
@@ -704,11 +704,26 @@ CREATE FUNCTION "baseten"._assign_relation_ids () RETURNS VOID AS $$
 		);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_relation_ids () FROM PUBLIC;
+-- Only owner for now.
 
 
--- FIXME: complete me. Instead of removing everything try to delete and insert selectively.
 CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
-	DELETE FROM "baseten".foreign_key;
+	DELETE FROM "baseten".foreign_key f
+	USING "baseten".relation r,
+	WHERE (
+		r.id = f.conrelid AND
+		ROW (r.nspname, r.relname, f.conname) NOT IN (
+			SELECT
+				n.nspname,
+				cl.relname,
+				co.conname
+			FROM pg_constraint co
+			INNER JOIN pg_class cl ON (cl.oid = co.conrelid)
+			INNER JOIN pg_namespace n ON (n.oid = cl.relnamespace)
+			WHERE co.contype = 'f'
+		)
+	);
+	
 	INSERT INTO "baseten".foreign_key 
 		(
 			conname,
@@ -742,10 +757,19 @@ CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
 		)
 		WHERE (
 			c.contype = 'f' AND
-			ROW (n1.nspname, cl1.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey)
+			ROW (n1.nspname, cl1.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey) AND
+			ROW (n1.nspname, cl1.relname, c.conname) NOT IN (
+				SELECT
+					r.nspname,
+					r.relname,
+					f.conname
+				FROM "baseten".foreign_key f
+				INNER JOIN "baseten".relation r ON (r.id = f.conrelid)
+			)
 		);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_foreign_key_ids () FROM PUBLIC;
+-- Only owner for now.
 
 
 CREATE FUNCTION "baseten".assign_internal_ids () RETURNS VOID AS $$
@@ -948,6 +972,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
+-- Only owner for now.
 
 
 CREATE FUNCTION "baseten"._remove_ambiguous_relationships () RETURNS VOID AS $$
@@ -983,6 +1008,7 @@ CREATE FUNCTION "baseten"._remove_ambiguous_relationships () RETURNS VOID AS $$
 	WHERE r1.name = r2.name AND r1.srcid = r2.srcid;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._remove_ambiguous_relationships () FROM PUBLIC;
+-- Only owner for now.
 
 
 CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
@@ -1513,6 +1539,7 @@ BEGIN
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable (OID, BOOLEAN, TEXT) FROM PUBLIC;	
+
 
 CREATE FUNCTION "baseten".enable (OID) RETURNS "baseten".reltype AS $$
 	SELECT "baseten".enable ($1, false, null);
