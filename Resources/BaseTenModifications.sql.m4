@@ -1275,11 +1275,11 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".disable (OID) FROM PUBLIC;
 
 
 -- A helper function
-CREATE FUNCTION "baseten".enable_table_insert (OID, NAME []) 
+CREATE FUNCTION "baseten".enable_table_insert (OID, TEXT []) 
 RETURNS VOID AS $marker$
 DECLARE
 	relid	ALIAS FOR $1;
-	pkey	NAME [] DEFAULT $2;
+	pkey	TEXT [] DEFAULT $2;
 	rel		"baseten".reltype;
 	query	TEXT;
 	mtable	TEXT;
@@ -1311,7 +1311,7 @@ BEGIN
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".enable_table_insert (OID, NAME []) 
+	"baseten".enable_table_insert (OID, TEXT []) 
 	FROM PUBLIC;
 
 
@@ -1345,12 +1345,12 @@ REVOKE ALL PRIVILEGES ON FUNCTION
 
 
 -- Another helper function
-CREATE FUNCTION "baseten".enable_other (TEXT, OID, NAME []) 
+CREATE FUNCTION "baseten".enable_other (TEXT, OID, TEXT []) 
 RETURNS VOID AS $marker$
 DECLARE
 	querytype		TEXT DEFAULT $1;
 	relid			ALIAS FOR $2;
-	pkey			NAME [] DEFAULT $3;
+	pkey			TEXT [] DEFAULT $3;
 	rel				"baseten".reltype;
 	query			TEXT;
 	insertion		TEXT;
@@ -1392,12 +1392,12 @@ BEGIN
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".enable_other (TEXT, OID, NAME [])
+	"baseten".enable_other (TEXT, OID, TEXT [])
 	FROM PUBLIC;
 
 
 -- Another helper function
-CREATE FUNCTION "baseten".enable_insert_query (OID, CHAR, TEXT, NAME [])
+CREATE FUNCTION "baseten".enable_insert_query (OID, CHAR, TEXT, TEXT [])
 RETURNS TEXT AS $$
 DECLARE
 	relid		ALIAS FOR $1;
@@ -1417,7 +1417,7 @@ BEGIN
 END;
 $$ STABLE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".enable_insert_query (OID, CHAR, TEXT, NAME [])
+	"baseten".enable_insert_query (OID, CHAR, TEXT, TEXT [])
 	FROM PUBLIC;
 
 
@@ -1481,7 +1481,7 @@ DECLARE
 	mod_table						TEXT;
 	lock_table						TEXT;
 	
-	pkey							NAME [];
+	pkey							TEXT [];
 	pkey_decl						TEXT;
 	rel								"baseten"."reltype";
 	retval							"baseten"."reltype";
