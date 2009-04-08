@@ -303,6 +303,7 @@ CREATE TABLE "baseten".relation (
 	id SERIAL PRIMARY KEY,
 	nspname NAME NOT NULL,
 	relname NAME NOT NULL,
+	relkind CHAR (1) NOT NULL,
 	enabled BOOLEAN NOT NULL DEFAULT false,
 	UNIQUE (nspname, relname)
 );
@@ -325,30 +326,30 @@ REVOKE ALL PRIVILEGES ON TABLE "baseten".foreign_key FROM PUBLIC;
 GRANT SELECT ON TABLE "baseten".foreign_key TO basetenread;
 
 
--- FIXME: schema qualification of type name.
+-- We can do all sorts of joins here because this view isn't cached.
 CREATE VIEW "baseten"._primary_key AS
-	SELECT * FROM (
-		SELECT a.attrelid AS oid, cl.relkind, n.nspname, cl.relname, a.attnum, a.attname AS attname, t.typname AS type
-			FROM pg_attribute a, pg_constraint co, pg_type t, pg_class cl, pg_namespace n
-			WHERE co.conrelid = a.attrelid 
-				AND a.attnum = ANY (co.conkey)
-				AND a.atttypid = t.oid
-				AND co.contype = 'p'
-				AND cl.oid = a.attrelid
-				AND n.oid = cl.relnamespace
-				AND cl.relkind = 'r'
-		UNION
-		SELECT c.oid AS oid, c.relkind, n.nspname, c.relname, a.attnum, vpkey.attname AS fieldname, t.typname AS type
-			FROM "baseten".view_pkey vpkey, pg_attribute a, pg_type t, pg_namespace n, pg_class c
-			WHERE vpkey.nspname = n.nspname
-				AND vpkey.relname = c.relname
-				AND c.relnamespace = n.oid
-				AND a.attname = vpkey.attname
-				AND a.attrelid = c.oid
-				AND a.atttypid = t.oid
-				AND c.relkind = 'v'
-	) r
-	ORDER BY oid ASC, attnum ASC;
+	SELECT 
+		r.id,
+		c.oid,
+		r.relkind,
+		r.nspname,
+		r.relname,
+		a.attnum,
+		a.attname,
+		n2.nspname AS typnspname,
+		t.typname
+	FROM baseten.relation r
+	INNER JOIN pg_class c ON (c.relname = r.relname)
+	INNER JOIN pg_namespace n1 ON (n1.nspname = r.nspname AND n1.oid = c.relnamespace)
+	LEFT OUTER JOIN pg_constraint co ON (r.relkind = 'r' AND co.conrelid = c.oid AND co.contype = 'p') -- Tables
+	LEFT OUTER JOIN "baseten".view_pkey vp ON (r.relkind = 'v' AND vp.nspname = n1.nspname AND vp.relname = c.relname) -- Views
+	INNER JOIN pg_attribute a ON (a.attrelid = c.oid AND (
+		(r.relkind = 'r' AND a.attnum = ANY (co.conkey)) OR
+		(r.relkind = 'v' AND vp.attname = a.attname)
+	))
+	INNER JOIN pg_type t ON (t.oid = a.atttypid)
+	INNER JOIN pg_namespace n2 ON (n2.oid = t.typnamespace)
+	ORDER BY r.id, a.attnum;
 REVOKE ALL PRIVILEGES ON "baseten"._primary_key FROM PUBLIC;
 GRANT SELECT ON "baseten"._primary_key TO basetenread;
 
@@ -684,24 +685,27 @@ GRANT SELECT ON "baseten"._rel_view_manytomany TO basetenread;
 
 CREATE FUNCTION "baseten"._assign_relation_ids () RETURNS VOID AS $$
 	DELETE FROM "baseten".relation r 
-	WHERE ROW (r.relname, r.nspname) NOT IN (
-		SELECT c.relname, n.nspname
+	WHERE ROW (r.relname, r.nspname, r.relkind) NOT IN (
+		SELECT c.relname, n.nspname, c.relkind
 		FROM pg_class c
 		INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
+		WHERE c.relkind IN ('r', 'v')
 	);
 
-	INSERT INTO "baseten".relation (relname, nspname)
-		SELECT c.relname, n.nspname
+	INSERT INTO "baseten".relation (relname, nspname, relkind)
+		SELECT c.relname, n.nspname, c.relkind
 		FROM pg_class c
 		INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
-		WHERE NOT (
-			n.nspname = 'baseten' OR
-			n.nspname = 'information_schema' OR
-			n.nspname LIKE 'pg_%' OR
-			ROW (c.relname, n.nspname) IN (
-				SELECT r.relname, r.nspname FROM "baseten".relation r
-			)
-		);
+		WHERE 
+			c.relkind IN ('r', 'v') AND
+			NOT (
+				n.nspname = 'baseten' OR
+				n.nspname = 'information_schema' OR
+				n.nspname LIKE 'pg_%' OR
+				ROW (c.relname, n.nspname) IN (
+					SELECT r.relname, r.nspname FROM "baseten".relation r
+				) 
+			);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_relation_ids () FROM PUBLIC;
 -- Only owner for now.
@@ -1018,11 +1022,18 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_notification (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_notification (OID) TO basetenread;
 
 
-CREATE FUNCTION "baseten".mod_table (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten"._mod_table (INTEGER) RETURNS TEXT AS $$
+	SELECT 'mod__' || $1;
+$$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_table (INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._mod_table (INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten"._mod_table (OID) RETURNS TEXT AS $$
 	SELECT 'mod__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_table (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".mod_table (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_table (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._mod_table (OID) TO basetenread;
 
 
 -- Returns the modification rule or trigger name associated with the given operation.
@@ -1242,7 +1253,7 @@ DECLARE
 BEGIN	 
 	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten".mod_insert_fn (relid) || ' () CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten".lock_table (relid) || ' CASCADE';
-	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten".mod_table (relid) || ' CASCADE';
+	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._mod_table (relid) || ' CASCADE';
 	UPDATE "baseten".relation r SET enabled = false WHERE r.relid = relid;
 	retval := "baseten".reltype (relid);
 	RETURN retval;
@@ -1264,7 +1275,7 @@ DECLARE
 	fname	TEXT;
 	fdecl	TEXT;
 BEGIN
-	SELECT "baseten".mod_table (relid) INTO STRICT mtable;
+	SELECT "baseten"._mod_table (relid) INTO STRICT mtable;
 	SELECT "baseten".mod_insert_fn (relid) INTO STRICT fname;
 	rel := "baseten".reltype (relid);
 	-- Trigger functions cannot be written in SQL
@@ -1305,7 +1316,7 @@ DECLARE
 BEGIN
 	rel := "baseten".reltype (relid);
 	insertion := 
-		'INSERT INTO "baseten".' || quote_ident ("baseten".mod_table (relid)) || ' ' ||
+		'INSERT INTO "baseten".' || quote_ident ("baseten"._mod_table (relid)) || ' ' ||
 			'("baseten_modification_type", id) ' || 
 			'VALUES ' || 
 			'(''I'', ' || default_value || ')';
@@ -1388,7 +1399,7 @@ BEGIN
 	pkey_values := array_to_string ("baseten".array_prepend_each (refname, $4), ', ');
 
 	RETURN
-		'INSERT INTO "baseten".' || quote_ident ("baseten".mod_table (relid)) || ' ' ||
+		'INSERT INTO "baseten".' || quote_ident ("baseten"._mod_table (relid)) || ' ' ||
 			'("baseten_modification_type", ' || pkey || ') ' ||
 			'VALUES ' || 
 			'(''' || operation || ''',' || pkey_values || ')';
@@ -1410,15 +1421,15 @@ DECLARE
 	fn_args							TEXT;
 	fn_code							TEXT;
 	query							TEXT;
-	pkey							NAME [];
-	pkey_types						NAME [];
+	pkey							TEXT [];
+	pkey_types						TEXT [];
 BEGIN
 	SELECT "baseten".lock_table (relid) INTO STRICT lock_table;
 	SELECT "baseten".lock_fn (relid) INTO STRICT lock_fn;
 	SELECT "baseten".lock_notification (relid) INTO STRICT lock_notification;
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
-		"baseten".array_accum (quote_ident (p.type))
+		"baseten".array_accum (quote_ident (p.typnspname) || '.' || quote_ident (p.typname))
 		FROM "baseten"._primary_key p
 		WHERE p.oid = relid
 		GROUP BY p.oid
@@ -1466,14 +1477,14 @@ DECLARE
 BEGIN
 	PERFORM "baseten".assign_internal_ids ();
 	UPDATE "baseten".relation SET enabled = true WHERE id = "baseten".relation_id_ex (relid_);
-	SELECT "baseten".mod_table (relid_) INTO STRICT mod_table;
+	SELECT "baseten"._mod_table (relid_) INTO STRICT mod_table;
 	SELECT "baseten".lock_table (relid_) INTO STRICT lock_table;
 	SELECT 'v' = c.relkind FROM pg_class c WHERE c.oid = relid_ INTO STRICT is_view;
 	rel := "baseten".reltype (relid_);
 	
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
-		array_to_string ("baseten".array_accum (quote_ident (p.attname) || ' ' || p.type || ' NOT NULL'), ', ')
+		array_to_string ("baseten".array_accum (quote_ident (p.attname) || ' ' || quote_ident (p.typnspname) || '.' || quote_ident (p.typname) || ' NOT NULL'), ', ')
 		FROM "baseten"._primary_key p
 		WHERE p.oid = relid_
 		GROUP BY p.oid
@@ -1548,7 +1559,7 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable (OID) FROM PUBLIC;
 COMMENT ON FUNCTION "baseten".enable (OID) IS 'BaseTen-enables a relation';
 
 
-CREATE FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, INTEGER)
+CREATE FUNCTION "baseten".modification (INTEGER, BOOL, TIMESTAMP, INTEGER)
 RETURNS SETOF RECORD AS $marker$
 DECLARE
 	relid			ALIAS FOR $1;
@@ -1563,13 +1574,13 @@ DECLARE
 	order_by		TEXT;
 	retval			RECORD;
 BEGIN
-	SELECT "baseten".mod_table (relid) INTO STRICT mtable;
+	SELECT "baseten"._mod_table (relid) INTO STRICT mtable;
 	SELECT 
 		array_to_string ("baseten".array_accum (quote_ident (p.attname)), ', '),
 		array_to_string ("baseten".array_append_each (' ASC', "baseten".array_accum (quote_ident (p.attname))), ', ')
 		FROM "baseten"._primary_key p
-		WHERE p.oid = relid
-		GROUP BY p.oid
+		WHERE p.id = relid
+		GROUP BY p.id
 		INTO STRICT pkey, order_by;
 	date_str := COALESCE (earliest_date, '-infinity');
 	ignored_be_pid := COALESCE (ignored_be_pid, 0);
@@ -1605,8 +1616,8 @@ BEGIN
 	RETURN;
 END;		 
 $marker$ VOLATILE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, INTEGER) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".modification (OID, BOOL, TIMESTAMP, INTEGER) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".modification (INTEGER, BOOL, TIMESTAMP, INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".modification (INTEGER, BOOL, TIMESTAMP, INTEGER) TO basetenread;
 
 
 CREATE FUNCTION "baseten".prune () RETURNS VOID AS $$
