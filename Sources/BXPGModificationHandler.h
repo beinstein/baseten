@@ -34,6 +34,7 @@
 @interface BXPGModificationHandler : BXPGTableNotificationHandler
 {
 	NSString* mQueryString;
+#warning Change to relation's identifier.
 	Oid mOid;
 }
 - (void) checkModifications: (int) backendPID;

@@ -32,6 +32,7 @@
 divert(-1)
 include(`Resources/BaseTenModifications.sql.m4')
 divert(0)dnl
+// '  Fix for syntax coloring
 
 
 @implementation BXPGVersion

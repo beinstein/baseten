@@ -102,6 +102,7 @@ typedef std::tr1::unordered_map <Oid, lock_st,
 		{
 			NSDictionary* row = [res currentRowAsDictionary];
 			unichar lockType = [[row valueForKey: @"baseten_lock_query_type"] characterAtIndex: 0];
+#warning relid or oid?
 			Oid tableOid = [[row valueForKey: @"baseten_lock_relid"] PGTSOidValue];
 			
 			struct lock_st ls = (* locks) [tableOid];

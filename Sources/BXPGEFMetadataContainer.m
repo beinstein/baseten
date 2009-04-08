@@ -80,11 +80,11 @@
 
 - (void) fetchViewPrimaryKeys: (PGTSConnection *) connection
 {
-	NSString* query = 
-	@"SELECT oid, baseten.array_accum (attnum) AS attnum "
-	@" FROM baseten.primary_key "
-	@" WHERE relkind = 'v' "
-	@" GROUP BY oid";
+#warning Refactor to use the new query.
+	NSString* query =
+	@"SELECT nspname, relname, baseten.array_accum (attname) AS attnames "
+	@" FROM baseten.view_pkey "
+	@" GROUP BY nspname, relname";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded]);
 	
@@ -105,6 +105,7 @@
 
 - (void) fetchForeignKeys: (PGTSConnection *) connection
 {
+#warning rewrite me.
 	NSString* query = 
 	@"SELECT conoid, name, srcfnames, dstfnames, deltype "
 	@" FROM baseten.foreignkey ";
@@ -153,6 +154,7 @@
 
 - (void) fetchBXSpecific: (PGTSConnection *) connection
 {
+#warning rewrite me
 	NSString* query = @"SELECT EXISTS (SELECT n.oid FROM pg_namespace n WHERE nspname = 'baseten') AS exists";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded])

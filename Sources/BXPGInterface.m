@@ -871,6 +871,7 @@ error:
 	
 - (PGTSResultSet *) relationships
 {
+#warning rewrite me
 	NSString* query = 
 	@"SELECT "
 	@"	conoid, "

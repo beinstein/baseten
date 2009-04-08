@@ -39,6 +39,7 @@
 	NSNumber* mSchemaVersion;
 	NSNumber* mSchemaCompatibilityVersion;
 	BOOL mHasBaseTenSchema;
+#warning change conoid to conid
 	PGTS_OidMap* mForeignKeysByConoid;
 }
 - (BOOL) hasBaseTenSchema;

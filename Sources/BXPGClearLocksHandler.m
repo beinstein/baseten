@@ -71,7 +71,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 	@" WHERE baseten_lock_cleared = true "
 	@"  AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp " 
 	@"  AND baseten_lock_backend_pid != $2 "
-	@"  AND baseten_lock_relid = ANY ($3) "
+	@"  AND baseten_lock_reloid = ANY ($3) "
 	@" GROUP BY baseten_lock_relid";
     PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID], oids];
     if (NO == [res querySucceeded])
@@ -81,6 +81,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 	}
     
 	//Update the timestamp.
+#relid or oid?
 	while ([res advanceRow]) 
 		[self setLastCheck: [res valueForKey: @"last_date"]];	
 	
@@ -92,6 +93,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 	{
 		[ids removeAllObjects];
 		NSString* query = nil;
+#warning relid or oid?
 		NSNumber* relid = [res valueForKey: @"baseten_lock_relid"];
 		PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [relid PGTSOidValue]];
 		
@@ -115,6 +117,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 		}
 		
 		{
+#warning comparing backend_pid to relid
 			PGTSResultSet* unlockedRows = [mConnection executeQuery: query parameters: relid, mLastCheck];
 			if (! [unlockedRows querySucceeded])
 			{
