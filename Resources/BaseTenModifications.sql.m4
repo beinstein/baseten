@@ -412,7 +412,7 @@ GRANT SELECT ON "baseten".relationship TO basetenread;
 CREATE SEQUENCE "baseten".modification_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".modification (
 	"baseten_modification_id"				INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."modification_id_seq"'),
-	"baseten_modification_relid"			OID NOT NULL,
+	"baseten_modification_relid"			INTEGER NOT NULL REFERENCES "baseten".relation (id),
 	"baseten_modification_timestamp"		TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
 	"baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_modification_type"				CHAR NOT NULL,
@@ -428,7 +428,7 @@ GRANT USAGE ON SEQUENCE "baseten".modification_id_seq TO basetenuser;
 CREATE SEQUENCE "baseten".lock_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".lock (
 	"baseten_lock_id"			 INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."lock_id_seq"'),
-	"baseten_lock_relid"		 OID NOT NULL,
+	"baseten_lock_relid"		 INTEGER NOT NULL REFERENCES "baseten".relation (id),
 	"baseten_lock_timestamp"	 TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_lock_query_type"	 CHAR (1) NOT NULL DEFAULT 'U',	 -- U == UPDATE, D == DELETE
 	"baseten_lock_cleared"		 BOOLEAN NOT NULL DEFAULT FALSE,
@@ -1472,12 +1472,13 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_lock_fn (OID) FROM PUBLIC;
 CREATE FUNCTION "baseten".enable (OID, BOOLEAN, TEXT) 
 RETURNS "baseten".reltype AS $marker$
 DECLARE
-	relid_							ALIAS FOR $1;
+	reloid							ALIAS FOR $1;
 	handle_view_serial_id_column	ALIAS FOR $2;
 	view_id_default_value			ALIAS FOR $3;
 	is_view							BOOL;
 	query							TEXT;
 	
+	relid_							INTEGER;
 	mod_table						TEXT;
 	lock_table						TEXT;
 	
@@ -1487,24 +1488,25 @@ DECLARE
 	retval							"baseten"."reltype";
 BEGIN
 	PERFORM "baseten".assign_internal_ids ();
-	UPDATE "baseten".relation SET enabled = true WHERE id = "baseten".relation_id_ex (relid_);
-	SELECT "baseten"._mod_table (relid_) INTO STRICT mod_table;
-	SELECT "baseten"._lock_table (relid_) INTO STRICT lock_table;
-	SELECT 'v' = c.relkind FROM pg_class c WHERE c.oid = relid_ INTO STRICT is_view;
-	rel := "baseten".reltype (relid_);
+	UPDATE "baseten".relation SET enabled = true WHERE id = "baseten".relation_id_ex (reloid);
+	SELECT "baseten"._mod_table (reloid) INTO STRICT mod_table;
+	SELECT "baseten"._lock_table (reloid) INTO STRICT lock_table;
+	SELECT 'v' = c.relkind FROM pg_class c WHERE c.oid = reloid INTO STRICT is_view;
+	relid_ := "baseten".relation_id_ex (reloid);
+	rel := "baseten".reltype (reloid);
 	
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
 		array_to_string ("baseten".array_accum (quote_ident (p.attname) || ' ' || quote_ident (p.typnspname) || '.' || quote_ident (p.typname) || ' NOT NULL'), ', ')
 		FROM "baseten"._primary_key p
-		WHERE p.oid = relid_
+		WHERE p.oid = reloid
 		GROUP BY p.oid
 		INTO STRICT pkey, pkey_decl;
 
 	-- Locking
 	query := 
 		'CREATE TABLE "baseten".' || quote_ident (lock_table) || ' (' ||
-			'"baseten_lock_relid" OID NOT NULL DEFAULT ' || relid_ || ', ' ||
+			'"baseten_lock_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".lock)';
 	EXECUTE query;
@@ -1517,16 +1519,16 @@ BEGIN
 	query :=
 		'CREATE TRIGGER "lock_row" ' ||
 		'AFTER INSERT ON "baseten".' || quote_ident (lock_table) || ' ' ||
-		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".lock_notify (''' || "baseten".lock_notification (relid_) || ''')';
+		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".lock_notify (''' || "baseten".lock_notification (reloid) || ''')';
 	EXECUTE query;
 
 	-- Locking function
-	PERFORM "baseten".enable_lock_fn (relid_);
+	PERFORM "baseten".enable_lock_fn (reloid);
 
 	-- Modifications
 	query :=
 		'CREATE TABLE "baseten".' || quote_ident (mod_table) || ' (' ||
-			'"baseten_modification_relid" OID NOT NULL DEFAULT ' || relid_ || ', ' ||
+			'"baseten_modification_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".modification)';
 	EXECUTE query;
@@ -1539,24 +1541,24 @@ BEGIN
 	query :=
 		'CREATE TRIGGER "modify_table" ' ||
 		'AFTER INSERT ON "baseten".' || quote_ident (mod_table) || ' ' ||
-		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".mod_notify (''' || "baseten".mod_notification (relid_) || ''')';
+		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".mod_notify (''' || "baseten".mod_notification (reloid) || ''')';
 	EXECUTE query;
 	
 	-- Triggers for the enabled relation.
 	IF is_view THEN
 		IF handle_view_serial_id_column THEN
-			PERFORM "baseten".enable_view_insert (relid_, view_id_default_value);
+			PERFORM "baseten".enable_view_insert (reloid, view_id_default_value);
 		ELSE
-			PERFORM "baseten".enable_other ('insert', relid_, pkey);
+			PERFORM "baseten".enable_other ('insert', reloid, pkey);
 		END IF;
 	ELSE
-		PERFORM "baseten".enable_table_insert (relid_, pkey) ;
+		PERFORM "baseten".enable_table_insert (reloid, pkey) ;
 	END IF;
-	PERFORM "baseten".enable_other ('delete', relid_, pkey);
-	PERFORM "baseten".enable_other ('update', relid_, pkey);
-	PERFORM "baseten".enable_other ('update_pk', relid_, pkey);
+	PERFORM "baseten".enable_other ('delete', reloid, pkey);
+	PERFORM "baseten".enable_other ('update', reloid, pkey);
+	PERFORM "baseten".enable_other ('update_pk', reloid, pkey);
 
-	retval := "baseten".reltype (relid_);
+	retval := "baseten".reltype (reloid);
 	RETURN retval;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
