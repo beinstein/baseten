@@ -413,6 +413,7 @@ CREATE SEQUENCE "baseten".modification_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".modification (
 	"baseten_modification_id"				INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."modification_id_seq"'),
 	"baseten_modification_relid"			INTEGER NOT NULL REFERENCES "baseten".relation (id),
+	"baseten_modification_reloid"			OID NOT NULL,
 	"baseten_modification_timestamp"		TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
 	"baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_modification_type"				CHAR NOT NULL,
@@ -427,13 +428,14 @@ GRANT USAGE ON SEQUENCE "baseten".modification_id_seq TO basetenuser;
 
 CREATE SEQUENCE "baseten".lock_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".lock (
-	"baseten_lock_id"			 INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."lock_id_seq"'),
-	"baseten_lock_relid"		 INTEGER NOT NULL REFERENCES "baseten".relation (id),
-	"baseten_lock_timestamp"	 TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
-	"baseten_lock_query_type"	 CHAR (1) NOT NULL DEFAULT 'U',	 -- U == UPDATE, D == DELETE
-	"baseten_lock_cleared"		 BOOLEAN NOT NULL DEFAULT FALSE,
-	"baseten_lock_savepoint_idx" BIGINT NOT NULL,
-	"baseten_lock_backend_pid"	 INTEGER NOT NULL DEFAULT pg_backend_pid ()
+	"baseten_lock_id"				INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."lock_id_seq"'),
+	"baseten_lock_relid"			INTEGER NOT NULL REFERENCES "baseten".relation (id),
+	"baseten_lock_reloid"			OID NOT NULL,
+	"baseten_lock_timestamp"		TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
+	"baseten_lock_query_type"		CHAR (1) NOT NULL DEFAULT 'U',	 -- U == UPDATE, D == DELETE
+	"baseten_lock_cleared"			BOOLEAN NOT NULL DEFAULT FALSE,
+	"baseten_lock_savepoint_idx"	BIGINT NOT NULL,
+	"baseten_lock_backend_pid"		INTEGER NOT NULL DEFAULT pg_backend_pid ()
 );
 ALTER SEQUENCE "baseten".lock_id_seq OWNED BY "baseten".lock."baseten_lock_id";
 REVOKE ALL PRIVILEGES ON SEQUENCE "baseten".lock_id_seq FROM PUBLIC;
@@ -1507,6 +1509,7 @@ BEGIN
 	query := 
 		'CREATE TABLE "baseten".' || quote_ident (lock_table) || ' (' ||
 			'"baseten_lock_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
+			'"baseten_lock_reloid" OID NOT NULL DEFAULT ' || reloid || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".lock)';
 	EXECUTE query;
@@ -1529,6 +1532,7 @@ BEGIN
 	query :=
 		'CREATE TABLE "baseten".' || quote_ident (mod_table) || ' (' ||
 			'"baseten_modification_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
+			'"baseten_modification_reloid" OID NOT NULL DEFAULT ' || reloid || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".modification)';
 	EXECUTE query;
