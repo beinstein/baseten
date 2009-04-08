@@ -238,6 +238,7 @@ CREATE TYPE "baseten".view_type AS (
 
 CREATE TYPE "baseten".observation_type AS (
 	oid OID,
+	identifier INTEGER,
 	notification_name TEXT,
 	function_name TEXT,
 	table_name TEXT
@@ -1060,11 +1061,18 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_fn (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_fn (OID) TO basetenread;
 
 
-CREATE FUNCTION "baseten".lock_table (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten"._lock_table (INTEGER) RETURNS TEXT AS $$
+	SELECT 'lock__' || $1;
+$$ STABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_table (INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._lock_table (INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten"._lock_table (OID) RETURNS TEXT AS $$
 	SELECT 'lock__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_table (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".lock_table (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_table (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._lock_table (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten".lock_notification (OID) RETURNS TEXT AS $$
@@ -1182,16 +1190,18 @@ GRANT EXECUTE ON FUNCTION "baseten".is_enabled_ex (OID) TO basetenread;
 -- Subscribes the caller to receive the approppriate notification
 CREATE FUNCTION "baseten".mod_observe (OID) RETURNS "baseten".observation_type AS $$
 DECLARE
-	relid ALIAS FOR $1;
+	reloid ALIAS FOR $1;
+	relid INTEGER;
 	nname TEXT;
 	retval "baseten".observation_type;
 BEGIN
-	PERFORM "baseten".is_enabled_ex (relid);
-	nname := "baseten".mod_notification (relid);
+	PERFORM "baseten".is_enabled_ex (reloid);
+	SELECT "baseten".relation_id_ex (reloid) INTO STRICT relid;
+	nname := "baseten".mod_notification (reloid);
 	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
-	retval := (relid, nname, null::TEXT, null::TEXT);
+	retval := (reloid, relid, nname, null::TEXT, null::TEXT);
 	RETURN retval;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
@@ -1215,17 +1225,18 @@ GRANT EXECUTE ON FUNCTION "baseten".mod_observe_stop (OID) TO basetenread;
 -- Subscribes the caller to receive the approppriate notification
 CREATE FUNCTION "baseten".lock_observe (OID) RETURNS "baseten".observation_type AS $$
 DECLARE
-	relid ALIAS FOR $1;
+	reloid ALIAS FOR $1;
+	relid INTEGER;
 	nname TEXT;
 	retval "baseten".observation_type;
 BEGIN
-	PERFORM "baseten".is_enabled_ex (relid);
-
+	PERFORM "baseten".is_enabled_ex (reloid);
+	SELECT "baseten".relation_id_ex (reloid) INTO STRICT relid;
 	nname := "baseten".lock_notification (relid);
 	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
-	retval := (relid, nname, "baseten".lock_fn (relid), "baseten".lock_table (relid));
+	retval := (reloid, relid, nname, "baseten".lock_fn (relid), "baseten"._lock_table (relid));
 	RETURN retval;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL SECURITY INVOKER;
@@ -1252,7 +1263,7 @@ DECLARE
 	retval "baseten"."reltype";
 BEGIN	 
 	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten".mod_insert_fn (relid) || ' () CASCADE';
-	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten".lock_table (relid) || ' CASCADE';
+	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._lock_table (relid) || ' CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._mod_table (relid) || ' CASCADE';
 	UPDATE "baseten".relation r SET enabled = false WHERE r.relid = relid;
 	retval := "baseten".reltype (relid);
@@ -1424,7 +1435,7 @@ DECLARE
 	pkey							TEXT [];
 	pkey_types						TEXT [];
 BEGIN
-	SELECT "baseten".lock_table (relid) INTO STRICT lock_table;
+	SELECT "baseten"._lock_table (relid) INTO STRICT lock_table;
 	SELECT "baseten".lock_fn (relid) INTO STRICT lock_fn;
 	SELECT "baseten".lock_notification (relid) INTO STRICT lock_notification;
 	SELECT
@@ -1478,7 +1489,7 @@ BEGIN
 	PERFORM "baseten".assign_internal_ids ();
 	UPDATE "baseten".relation SET enabled = true WHERE id = "baseten".relation_id_ex (relid_);
 	SELECT "baseten"._mod_table (relid_) INTO STRICT mod_table;
-	SELECT "baseten".lock_table (relid_) INTO STRICT lock_table;
+	SELECT "baseten"._lock_table (relid_) INTO STRICT lock_table;
 	SELECT 'v' = c.relkind FROM pg_class c WHERE c.oid = relid_ INTO STRICT is_view;
 	rel := "baseten".reltype (relid_);
 	
