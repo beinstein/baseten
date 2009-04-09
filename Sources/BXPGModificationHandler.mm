@@ -99,8 +99,9 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
     //pgts_modification_timestamp should be included in the query.	
 	BOOL isIdle = (PQTRANS_IDLE == [mConnection transactionStatus]);
 	
-	PGTSResultSet* res = [mConnection executeQuery: mQueryString 
-										parameters: PGTSOidAsObject (mOid), [NSNumber numberWithBool: isIdle], mLastCheck, [NSNumber numberWithInt: backendPID]];
+	PGTSResultSet* res = [mConnection executeQuery: mQueryString parameters: 
+						  [NSNumber numberWithInteger: mIdentifier], [NSNumber numberWithBool: isIdle], 
+						  mLastCheck, [NSNumber numberWithInt: backendPID]];
 	BXAssertVoidReturn ([res querySucceeded], @"Expected query to succeed: %@", [res error]);
 	
 	//Update the timestamp.
@@ -155,8 +156,8 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 	delete changes;
 }
 
-- (void) setOid: (Oid) oid
+- (void) setIdentifier: (NSInteger) identifier
 {
-	mOid = oid;
+	mIdentifier = identifier;
 }
 @end

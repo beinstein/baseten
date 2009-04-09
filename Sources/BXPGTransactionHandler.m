@@ -599,6 +599,7 @@ ConnectionString (NSDictionary* connectionDict)
 			NSString* query = 
 			@"SELECT "
 			@" CURRENT_TIMESTAMP::TIMESTAMP WITHOUT TIME ZONE AS ts, "
+			@" null AS reloid, "
 			@" null AS relid, "
 			@" null AS n_name, "
 			@" null AS fn_name, "
@@ -623,7 +624,7 @@ ConnectionString (NSDictionary* connectionDict)
 					[handler setLastCheck: lastCheck];
 					[handler setEntity: entity];
 					[handler setNotificationName: notificationName];
-					[handler setOid: [[res valueForKey: @"relid"] PGTSOidValue]];
+					[handler setIdentifier: [[res valueForKey: @"relid"] integerValue]];
 					[handler prepare];
 					
 					[mObservers setObject: handler forKey: notificationName];

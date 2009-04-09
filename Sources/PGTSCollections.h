@@ -95,7 +95,6 @@ namespace PGTS
 		return ([a.first isEqual: b.first] && [a.second isEqual: b.second]);
 	}	
 	
-		
 	typedef std::list <id, PGTS::scanned_memory_allocator <id> > IdList;
 	
 	typedef std::tr1::unordered_set <id,

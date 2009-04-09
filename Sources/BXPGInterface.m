@@ -871,24 +871,42 @@ error:
 	
 - (PGTSResultSet *) relationships
 {
-#warning rewrite me
 	NSString* query = 
 	@"SELECT "
-	@"	conoid, "
-    @"	dstconoid, "
+	@"	conid, "
+    @"	dstconid, "
     @"	name, "
     @"	inversename, "
     @"	kind, "
-    @"	isinverse, "
-    @"	srcoid, "
+    @"	is_inverse, "
+	@"	srcnspname, "
+    @"	srcrelname, "
 	@"	dstnspname, "
 	@"	dstrelname, "
 	@"	helpernspname, "
 	@"	helperrelname "
 	@"FROM baseten.relationship "
-	@"ORDER BY srcoid, dstoid ASC ";
+	@"ORDER BY srcnspname, srcrelname ASC ";
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
 	return res;
+}
+
+
+struct nr_compare_st
+{
+	__strong NSString* nrc_nspname;
+	__strong NSString* nrc_relname;
+};
+
+
+static NSComparisonResult
+SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
+{
+	struct nr_compare_st* context = (struct nr_compare_st *) ctx;
+	NSComparisonResult retval = [(NSString *) [res valueForKey: @"srcnspname"] compare: context->nrc_nspname];
+	if (NSOrderedSame == retval)
+		retval = [(NSString *)  [res valueForKey: @"srcrelname"] compare: context->nrc_relname];
+	return retval;
 }
 
 
@@ -973,9 +991,11 @@ error:
 				if (! relationships)
 					relationships = [self relationships];
 				
-				Oid oid = [table oid];
-				[relationships goBeforeFirstRowWithValue: PGTSOidAsObject (oid) forKey: @"srcoid"];
-				while ([relationships advanceRow] && oid == [[relationships valueForKey: @"srcoid"] PGTSOidValue])
+				struct nr_compare_st ctx = {[table schemaName], [table name]};
+				[relationships goBeforeFirstRowUsingFunction: &SrcNamespaceRelationCompare context: &ctx];
+				while ([relationships advanceRow] && 
+					   [[relationships valueForKey: @"relname"] isEqual: [table name]] &&
+					   [[relationships valueForKey: @"nspname"] isEqual: [table schemaName]])
 				{
 					const unichar kind = [[relationships valueForKey: @"kind"] characterAtIndex: 0];
 					
@@ -1009,8 +1029,8 @@ error:
 					}
 										
 					//Foreign key
-					Oid conoid = [[relationships valueForKey: @"conoid"] PGTSOidValue];
-					BXPGForeignKeyDescription* fkey = [database foreignKeyWithOid: conoid];
+					NSInteger conid = [[relationships valueForKey: @"conid"] integerValue];
+					BXPGForeignKeyDescription* fkey = [database foreignKeyWithIdentifier: conid];
 					[rel setForeignKey: fkey];
 
 					//Inverse name
@@ -1025,8 +1045,8 @@ error:
 		
 					if ('m' == kind)
 					{
-						Oid dstconoid = [[relationships valueForKey: @"dstconoid"] PGTSOidValue];
-						BXPGForeignKeyDescription* dstFkey = [database foreignKeyWithOid: dstconoid];
+						NSInteger dstconid = [[relationships valueForKey: @"dstconid"] integerValue];
+						BXPGForeignKeyDescription* dstFkey = [database foreignKeyWithIdentifier: dstconid];
 						[rel setDstForeignKey: dstFkey];
 						
 						NSString* helperrelname = [relationships valueForKey: @"helperrelname"];

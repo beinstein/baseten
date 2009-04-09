@@ -34,18 +34,35 @@
 @class BXPGForeignKeyDescription;
 
 
+#if defined(__cplusplus)
+#import <BaseTen/PGTSScannedMemoryAllocator.h>
+#import <tr1/unordered_map>
+namespace PGTS 
+{
+	typedef std::tr1::unordered_map <NSInteger, id, 
+		std::tr1::hash <NSInteger>, 
+		std::equal_to <NSInteger>, 
+		PGTS::scanned_memory_allocator <std::pair <const NSInteger, id> > > 
+		IdentifierMap;	
+}
+#define PGTS_IdentifierMap PGTS::IdentifierMap
+
+#else
+#define PGTS_IdentifierMap void
+#endif
+
+
 @interface BXPGDatabaseDescription : PGTSDatabaseDescription
 {
 	NSNumber* mSchemaVersion;
 	NSNumber* mSchemaCompatibilityVersion;
 	BOOL mHasBaseTenSchema;
-#warning change conoid to conid
-	PGTS_OidMap* mForeignKeysByConoid;
+	PGTS_IdentifierMap* mForeignKeysByIdentifier;
 }
 - (BOOL) hasBaseTenSchema;
 - (NSNumber *) schemaVersion;
 - (NSNumber *) schemaCompatibilityVersion;
-- (BXPGForeignKeyDescription *) foreignKeyWithOid: (Oid) oid;
+- (BXPGForeignKeyDescription *) foreignKeyWithIdentifier: (NSInteger) identifier;
 
 - (void) setSchemaVersion: (NSNumber *) number;
 - (void) setSchemaCompatibilityVersion: (NSNumber *) number;

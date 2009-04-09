@@ -63,6 +63,7 @@
 - (NSDictionary *) currentRowAsDictionary;
 - (void) goBeforeFirstRow;
 - (BOOL) goToRow: (int) aRow;
+- (void) goBeforeFirstRowUsingFunction: (NSComparisonResult (*)(PGTSResultSet*, void*)) comparator context: (void *) context;
 - (void) goBeforeFirstRowWithValue: (id) value forKey: (NSString *) columnName;
 - (int) count;
 - (unsigned long long) numberOfRowsAffectedByCommand;

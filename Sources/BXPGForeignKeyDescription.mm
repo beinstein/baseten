@@ -77,6 +77,16 @@ using namespace PGTS;
 	mDeleteRule = aRule;
 }
 
+- (NSInteger) identifier
+{
+	return mIdentifier;
+}
+
+- (void) setIdentifier: (NSInteger) identifier
+{
+	mIdentifier = identifier;
+}
+
 - (void) iterateColumnNames: (void (*)(NSString* srcName, NSString* dstName, void* context)) callback context: (void *) context
 {
 	pthread_rwlock_rdlock (&mFieldNameLock);

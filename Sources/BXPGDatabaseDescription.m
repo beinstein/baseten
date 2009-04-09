@@ -33,16 +33,27 @@
 #import "BXPGTableDescription.h"
 #import "BXPGForeignKeyDescription.h"
 
+namespace PGTS 
+{
+	void InsertConditionally (IdentifierMap* map, BXPGForeignKeyDescription* description);
+}
+
+void PGTS::InsertConditionally (IdentifierMap* map, BXPGForeignKeyDescription* description)
+{
+	NSInteger identifier = [description identifier];
+	if (! (* map) [identifier])
+		(* map) [identifier] = [description retain];	
+}
+
 
 using namespace PGTS;
-
 
 @implementation BXPGDatabaseDescription
 - (id) init
 {
 	if ((self = [super init]))
 	{
-		mForeignKeysByConoid = new OidMap ();
+		mForeignKeysByIdentifier = new IdentifierMap ();
 	}
 	return self;
 }
@@ -51,19 +62,19 @@ using namespace PGTS;
 {
 	[mSchemaVersion release];
 	[mSchemaCompatibilityVersion release];
-	for (OidMap::const_iterator it = mForeignKeysByConoid->begin (), end = mForeignKeysByConoid->end (); 
+	for (IdentifierMap::const_iterator it = mForeignKeysByIdentifier->begin (), end = mForeignKeysByIdentifier->end (); 
 		 it != end; it++)
 	{
 		[it->second release];
 	}
 	
-	delete mForeignKeysByConoid;
+	delete mForeignKeysByIdentifier;
 	[super dealloc];
 }
 
 - (void) finalize
 {
-	delete mForeignKeysByConoid;
+	delete mForeignKeysByIdentifier;
 	[super finalize];
 }
 
@@ -107,11 +118,11 @@ using namespace PGTS;
 
 - (void) addForeignKey: (BXPGForeignKeyDescription *) fkey
 {
-	InsertConditionally (mForeignKeysByConoid, fkey);
+	InsertConditionally (mForeignKeysByIdentifier, fkey);
 }
 
-- (BXPGForeignKeyDescription *) foreignKeyWithOid: (Oid) oid
+- (BXPGForeignKeyDescription *) foreignKeyWithIdentifier: (NSInteger) identifier
 {
-	return FindObject (mForeignKeysByConoid, oid);
+	return FindObject (mForeignKeysByIdentifier, identifier);
 }
 @end

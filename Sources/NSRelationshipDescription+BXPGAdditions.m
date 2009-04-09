@@ -238,13 +238,13 @@ ImportError (NSString* message, NSString* reason)
 		
 		if (createConstraints)
 		{
-			if ([srcRelationship isOptional])
+			if (! [srcRelationship isOptional])
 			{
 				NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ALTER COLUMN \"%@\" SET NOT NULL;";
 				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
 			}
 			
-			if (createConstraints && isOneToOne)
+			if (isOneToOne)
 			{
 				NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD UNIQUE (\"%@\");";
 				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];

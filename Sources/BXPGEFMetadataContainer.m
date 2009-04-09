@@ -80,7 +80,6 @@
 
 - (void) fetchViewPrimaryKeys: (PGTSConnection *) connection
 {
-#warning Refactor to use the new query.
 	NSString* query =
 	@"SELECT nspname, relname, baseten.array_accum (attname) AS attnames "
 	@" FROM baseten.view_pkey "
@@ -105,9 +104,8 @@
 
 - (void) fetchForeignKeys: (PGTSConnection *) connection
 {
-#warning rewrite me.
 	NSString* query = 
-	@"SELECT conoid, name, srcfnames, dstfnames, deltype "
+	@"SELECT conid, conname, conkey, confkey, confdeltype "
 	@" FROM baseten.foreignkey ";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded]);
@@ -115,16 +113,16 @@
 	while ([res advanceRow])
 	{
 		BXPGForeignKeyDescription* fkey = [[BXPGForeignKeyDescription alloc] init];
-		[fkey setOid: [[res valueForKey: @"conoid"] PGTSOidValue]];
+		[fkey setIdentifier: [[res valueForKey: @"conoid"] integerValue]];
 		[fkey setName: [res valueForKey: @"name"]];
 		
-		NSArray* srcfnames = [res valueForKey: @"srcfnames"];
-		NSArray* dstfnames = [res valueForKey: @"dstfnames"];
+		NSArray* srcfnames = [res valueForKey: @"conkey"];
+		NSArray* dstfnames = [res valueForKey: @"confkey"];
 		for (NSUInteger i = 0, count = [srcfnames count]; i < count; i++)
 			[fkey addSrcFieldName: [srcfnames objectAtIndex: i] dstFieldName: [dstfnames objectAtIndex: i]];
 		
 		NSDeleteRule deleteRule = NSDenyDeleteRule;
-		enum PGTSDeleteRule pgDeleteRule = PGTSDeleteRule ([[res valueForKey: @"deltype"] characterAtIndex: 0]);
+		enum PGTSDeleteRule pgDeleteRule = PGTSDeleteRule ([[res valueForKey: @"confdeltype"] characterAtIndex: 0]);
 		switch (pgDeleteRule)
 		{
 			case kPGTSDeleteRuleUnknown:
@@ -154,7 +152,6 @@
 
 - (void) fetchBXSpecific: (PGTSConnection *) connection
 {
-#warning rewrite me
 	NSString* query = @"SELECT EXISTS (SELECT n.oid FROM pg_namespace n WHERE nspname = 'baseten') AS exists";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded])

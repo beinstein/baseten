@@ -96,16 +96,15 @@ typedef std::tr1::unordered_map <Oid, lock_st,
 		while ([res advanceRow]) 
 			[self setLastCheck: [res valueForKey: @"baseten_lock_timestamp"]];
 		
-		//Sort the locks.
+		//Sort the locks by relation.
 		LockMap* locks = new LockMap ([res count]);
 		while ([res advanceRow])
 		{
 			NSDictionary* row = [res currentRowAsDictionary];
 			unichar lockType = [[row valueForKey: @"baseten_lock_query_type"] characterAtIndex: 0];
-#warning relid or oid?
-			Oid tableOid = [[row valueForKey: @"baseten_lock_relid"] PGTSOidValue];
+			Oid reloid = [[row valueForKey: @"baseten_lock_reloid"] PGTSOidValue];
 			
-			struct lock_st ls = (* locks) [tableOid];
+			struct lock_st ls = (* locks) [reloid];
 			
 			NSMutableArray* ids = nil;
 			switch (lockType) 

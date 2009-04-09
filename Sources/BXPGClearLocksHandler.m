@@ -59,7 +59,6 @@ bx_error_during_clear_notification (id self, NSError* error)
 		goto error;
 	}
 	
-	int backendPID = [mConnection backendPID];
 	NSArray* oids = [mInterface observedOids];
     
     //Which tables have pending locks?
@@ -70,10 +69,10 @@ bx_error_during_clear_notification (id self, NSError* error)
 	@" FROM baseten.lock "
 	@" WHERE baseten_lock_cleared = true "
 	@"  AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp " 
-	@"  AND baseten_lock_backend_pid != $2 "
-	@"  AND baseten_lock_reloid = ANY ($3) "
+	@"  AND baseten_lock_backend_pid != pg_backend_pid () "
+	@"  AND baseten_lock_reloid = ANY ($2) "
 	@" GROUP BY baseten_lock_relid";
-    PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, [NSNumber numberWithInt: backendPID], oids];
+    PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, oids];
     if (NO == [res querySucceeded])
 	{
 		error = [res error];
@@ -81,7 +80,6 @@ bx_error_during_clear_notification (id self, NSError* error)
 	}
     
 	//Update the timestamp.
-#relid or oid?
 	while ([res advanceRow]) 
 		[self setLastCheck: [res valueForKey: @"last_date"]];	
 	
@@ -93,17 +91,16 @@ bx_error_during_clear_notification (id self, NSError* error)
 	{
 		[ids removeAllObjects];
 		NSString* query = nil;
-#warning relid or oid?
-		NSNumber* relid = [res valueForKey: @"baseten_lock_relid"];
-		PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [relid PGTSOidValue]];
+		NSNumber* reloid = [res valueForKey: @"baseten_lock_reloid"];
+		PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [reloid PGTSOidValue]];
 		
 		{
 			NSString* queryFormat =
 			@"SELECT DISTINCT ON (%@) l.* "
 			@"FROM %@ l NATURAL INNER JOIN %@ "
 			@"WHERE baseten_lock_cleared = true "
-			@" AND baseten_lock_backend_pid != $1 "
-			@" AND baseten_lock_timestamp > COALESCE ($2, '-infinity')::timestamp ";
+			@" AND baseten_lock_backend_pid != pg_backend_pid () "
+			@" AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp ";
 						
 			//Primary key field names.
 			NSArray* pkeyfnames = (id) [[[[table primaryKey] columns] PGTSCollect] quotedName: mConnection];
@@ -117,8 +114,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 		}
 		
 		{
-#warning comparing backend_pid to relid
-			PGTSResultSet* unlockedRows = [mConnection executeQuery: query parameters: relid, mLastCheck];
+			PGTSResultSet* unlockedRows = [mConnection executeQuery: query parameters: mLastCheck];
 			if (! [unlockedRows querySucceeded])
 			{
 				error = [unlockedRows error];

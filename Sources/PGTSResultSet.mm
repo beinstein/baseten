@@ -437,7 +437,8 @@ ErrorUserInfoKey (char fieldCode)
 	return retval;
 }
 
-- (void) goBeforeFirstRowWithValue: (id) value forKey: (NSString *) columnName low: (const int) low high: (const int) high
+- (void) goBeforeFirstRowUsingFunction: (NSComparisonResult (*)(PGTSResultSet*, void*)) comparator context: (void *) context
+								   low: (const int) low high: (const int) high
 {
 	int mid = round (low / 2.0 + high / 2.0);
 	if (mid == high)
@@ -445,33 +446,59 @@ ErrorUserInfoKey (char fieldCode)
 	else
 	{
 		//Tail recursion.
-		id currentValue = [self valueForKey: columnName row: mid];
-		switch ([currentValue compare: value])
+		[self goToRow: mid];
+		NSComparisonResult res = comparator (self, context);
+		switch (res)
 		{
 			case NSOrderedAscending:
-				[self goBeforeFirstRowWithValue: value forKey: columnName low: mid high: high];
+				[self goBeforeFirstRowUsingFunction: comparator context: context low: mid high: high];
 				break;
 				
 			case NSOrderedSame:
 			case NSOrderedDescending:
-				[self goBeforeFirstRowWithValue: value forKey: columnName low: low high: mid];
+				[self goBeforeFirstRowUsingFunction: comparator context: context low: low high: mid];
 				break;
-												
+				
 			default: 
-				[NSException raise: NSInternalInconsistencyException format: nil];
+				[NSException raise: NSInternalInconsistencyException format: @"Unexpected return value from comparator."];
 				break;
 		}
 	}
 }
 
-- (void) goBeforeFirstRowWithValue: (id) value forKey: (NSString *) columnName
+
+- (void) goBeforeFirstRowUsingFunction: (NSComparisonResult (*)(PGTSResultSet*, void*)) comparator context: (void *) context
 {
 	if (! mKnowsFieldClasses && mDeterminesFieldClassesFromDB)
         [self fetchFieldDescriptions];
-
+	
 	//low is -1 because the first row might apply and -advanceRow will probably will be called after this method.
 	//high is mTuples (instead of mTuples - 1) in case even the last row doesn't apply and we set it to current.
-	[self goBeforeFirstRowWithValue: value forKey: columnName low: -1 high: mTuples];
+	[self goBeforeFirstRowUsingFunction: comparator context: context low: -1 high: mTuples];
+}
+
+
+struct kv_compare_st
+{
+	__strong NSString* kvs_key;
+	__strong id kvs_value;
+};
+
+
+static NSComparisonResult
+KVCompare (PGTSResultSet* res, void* ctx)
+{
+	struct kv_compare_st* context = (struct kv_compare_st *) ctx;
+	id currentValue = [res valueForKey: context->kvs_key];
+	id givenValue = context->kvs_value;
+	return [currentValue compare: givenValue];
+}
+
+
+- (void) goBeforeFirstRowWithValue: (id) value forKey: (NSString *) columnName
+{
+	struct kv_compare_st ctx = {columnName, value};
+	[self goBeforeFirstRowUsingFunction: &KVCompare context: &ctx];
 	ExpectV (mCurrentRow == -1 || NSOrderedAscending == [[self valueForKey: columnName row: mCurrentRow] compare: value]);
 	ExpectV (mCurrentRow == mTuples - 1 || NSOrderedAscending != [[self valueForKey: columnName row: mCurrentRow + 1] compare: value]);
 }

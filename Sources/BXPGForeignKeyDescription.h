@@ -33,14 +33,18 @@
 #import <pthread.h>
 
 
-@interface BXPGForeignKeyDescription : PGTSAbstractObjectDescription <BXForeignKey>
+@interface BXPGForeignKeyDescription : PGTSAbstractDescription <BXForeignKey>
 {
+	NSInteger mIdentifier;
 	PGTS_RetainingIdPairSet* mFieldNames;
 	pthread_rwlock_t mFieldNameLock;
 	NSDeleteRule mDeleteRule;
 }
+- (NSInteger) identifier;
+- (NSDeleteRule) deleteRule;
 - (void) addSrcFieldName: (NSString *) srcFName dstFieldName: (NSString *) dstFName;
 
-- (NSDeleteRule) deleteRule;
+//Thread-unsafe methods
+- (void) setIdentifier: (NSInteger) identifier;
 - (void) setDeleteRule: (NSDeleteRule) aRule;
 @end
