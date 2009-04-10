@@ -67,13 +67,15 @@
 
 - (void) fetchPreparedRelations: (PGTSConnection *) connection
 {
-	NSString* query = @"SELECT relid FROM baseten.enabled_relation";
+	NSString* query = @"SELECT nspname, relname FROM baseten.relation WHERE enabled = true";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded]);
 	
 	while ([res advanceRow])
 	{
-		id table = [mDatabase tableWithOid: [[res valueForKey: @"relid"] PGTSOidValue]];
+		NSString* nspname = [res valueForKey: @"nspname"];
+		NSString* relname = [res valueForKey: @"relname"];
+		id table = [mDatabase table: relname inSchema: nspname];
 		[table setEnabled: YES];
 	}	
 }
