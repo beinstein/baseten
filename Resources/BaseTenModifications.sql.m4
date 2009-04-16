@@ -1421,7 +1421,7 @@ BEGIN
 	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten"._mod_insert_fn (relid) || ' () CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._lock_table (relid) || ' CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._mod_table (relid) || ' CASCADE';
-	UPDATE "baseten".relation r SET enabled = false WHERE r.relid = relid;
+	UPDATE "baseten".relation r SET enabled = false WHERE r.id = relid;
 	retval := "baseten".reltype (relid);
 	RETURN retval;
 END;
