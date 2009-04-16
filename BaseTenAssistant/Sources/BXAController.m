@@ -626,6 +626,9 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	//Clean up.
 	[connection executeQuery: @"DROP TABLE IF EXISTS baseten_view_pkey"];
 	[connection executeQuery: @"DROP TABLE IF EXISTS baseten_enabled_oids"];
+	
+	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
+	[mEntitiesBySchema setContent: entities];
 }
 
 - (void) upgradeBaseTenSchema
