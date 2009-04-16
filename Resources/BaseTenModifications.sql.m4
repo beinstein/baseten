@@ -1018,11 +1018,11 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._remove_ambiguous_relationships () F
 -- Only owner for now.
 
 
-CREATE FUNCTION "baseten".mod_notification (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten"._mod_notification (OID) RETURNS TEXT AS $$
 	SELECT 'baseten_mod__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_notification (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".mod_notification (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_notification (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._mod_notification (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._mod_table (INTEGER) RETURNS TEXT AS $$
@@ -1040,32 +1040,39 @@ GRANT EXECUTE ON FUNCTION "baseten"._mod_table (OID) TO basetenread;
 
 
 -- Returns the modification rule or trigger name associated with the given operation.
-CREATE FUNCTION "baseten".mod_rule (TEXT)
+CREATE FUNCTION "baseten"._mod_rule (TEXT)
 RETURNS TEXT AS $$
 	SELECT '~baseten_modification_' || upper ($1);
 $$ IMMUTABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_rule (TEXT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".mod_rule (TEXT) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_rule (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._mod_rule (TEXT) TO basetenread;
 
 
-CREATE FUNCTION "baseten".mod_insert_fn (OID)
+CREATE FUNCTION "baseten"._mod_insert_fn (OID)
 RETURNS TEXT AS $$
 	SELECT 'mod_insert_fn__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_insert_fn (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".mod_insert_fn (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_insert_fn (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._mod_insert_fn (OID) TO basetenread;
 
 
-CREATE FUNCTION "baseten".lock_fn (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten"._lock_fn (INTEGER) RETURNS TEXT AS $$
+	SELECT 'lock_fn__' || $1;
+$$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_fn (INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._lock_fn (INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten"._lock_fn (OID) RETURNS TEXT AS $$
 	SELECT 'lock_fn__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_fn (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".lock_fn (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_fn (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._lock_fn (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._lock_table (INTEGER) RETURNS TEXT AS $$
 	SELECT 'lock__' || $1;
-$$ STABLE LANGUAGE SQL;
+$$ IMMUTABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_table (INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_table (INTEGER) TO basetenread;
 
@@ -1077,11 +1084,30 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_table (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_table (OID) TO basetenread;
 
 
-CREATE FUNCTION "baseten".lock_notification (OID) RETURNS TEXT AS $$
+CREATE FUNCTION "baseten"._lock_notification (INTEGER) RETURNS TEXT AS $$
+	SELECT 'baseten_lock__' || $1;
+$$ IMMUTABLE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_notification (INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._lock_notification (INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten"._lock_notification (OID) RETURNS TEXT AS $$
 	SELECT 'baseten_lock__' || "baseten".relation_id_ex ($1);
 $$ STABLE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_notification (OID) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".lock_notification (OID) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_notification (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten"._lock_notification (OID) TO basetenread;
+
+
+CREATE VIEW "baseten".pending_locks AS
+	SELECT 
+		baseten_lock_reloid AS reloid, 
+		max (baseten_lock_timestamp) AS last_date, 
+		"baseten"._lock_table (baseten_lock_relid) AS lock_table_name 
+	FROM "baseten".lock 
+	WHERE baseten_lock_cleared = true AND baseten_lock_backend_pid != pg_backend_pid ()
+	GROUP BY reloid, lock_table_name;
+REVOKE ALL PRIVILEGES ON "baseten".pending_locks FROM PUBLIC;
+GRANT SELECT ON "baseten".pending_locks TO basetenread;
 
 
 -- Removes tracked modifications which are older than 5 minutes and set the modification timestamps 
@@ -1199,7 +1225,7 @@ DECLARE
 BEGIN
 	PERFORM "baseten".is_enabled_ex (reloid);
 	SELECT "baseten".relation_id_ex (reloid) INTO STRICT relid;
-	nname := "baseten".mod_notification (reloid);
+	nname := "baseten"._mod_notification (reloid);
 	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
@@ -1215,7 +1241,7 @@ CREATE FUNCTION "baseten".mod_observe_stop (OID) RETURNS VOID AS $$
 DECLARE 
 	relid ALIAS FOR $1;
 BEGIN
-	EXECUTE 'UNLISTEN ' || quote_ident ("baseten".mod_notification (relid));
+	EXECUTE 'UNLISTEN ' || quote_ident ("baseten"._mod_notification (relid));
 	RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
@@ -1234,11 +1260,11 @@ DECLARE
 BEGIN
 	PERFORM "baseten".is_enabled_ex (reloid);
 	SELECT "baseten".relation_id_ex (reloid) INTO STRICT relid;
-	nname := "baseten".lock_notification (relid);
+	nname := "baseten"._lock_notification (relid);
 	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
-	retval := (reloid, relid, nname, "baseten".lock_fn (relid), "baseten"._lock_table (relid));
+	retval := (reloid, relid, nname, "baseten"._lock_fn (relid), "baseten"._lock_table (relid));
 	RETURN retval;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL SECURITY INVOKER;
@@ -1250,7 +1276,7 @@ CREATE FUNCTION "baseten".lock_observe_stop (OID) RETURNS VOID AS $$
 DECLARE 
 	relid ALIAS FOR $1;
 BEGIN
-	EXECUTE 'UNLISTEN ' || quote_ident ("baseten".lock_notification (relid));
+	EXECUTE 'UNLISTEN ' || quote_ident ("baseten"._lock_notification (relid));
 	RETURN;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
@@ -1264,7 +1290,7 @@ DECLARE
 	relid ALIAS FOR $1;
 	retval "baseten"."reltype";
 BEGIN	 
-	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten".mod_insert_fn (relid) || ' () CASCADE';
+	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten"._mod_insert_fn (relid) || ' () CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._lock_table (relid) || ' CASCADE';
 	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._mod_table (relid) || ' CASCADE';
 	UPDATE "baseten".relation r SET enabled = false WHERE r.relid = relid;
@@ -1289,7 +1315,7 @@ DECLARE
 	fdecl	TEXT;
 BEGIN
 	SELECT "baseten"._mod_table (relid) INTO STRICT mtable;
-	SELECT "baseten".mod_insert_fn (relid) INTO STRICT fname;
+	SELECT "baseten"._mod_insert_fn (relid) INTO STRICT fname;
 	rel := "baseten".reltype (relid);
 	-- Trigger functions cannot be written in SQL
 	fdecl :=
@@ -1303,7 +1329,7 @@ BEGIN
 		'END; ' ||
 		'$$ VOLATILE LANGUAGE PLPGSQL SECURITY DEFINER';
 	query := 
-		'CREATE TRIGGER ' || quote_ident ("baseten".mod_rule ('INSERT')) || ' ' ||
+		'CREATE TRIGGER ' || quote_ident ("baseten"._mod_rule ('INSERT')) || ' ' ||
 			'AFTER INSERT ON ' || quote_ident (rel.nspname) || '.' || quote_ident (rel.relname) || ' ' || 
 			'FOR EACH ROW EXECUTE PROCEDURE "baseten".' || quote_ident (fname) || ' ()'; 
 	EXECUTE fdecl;
@@ -1334,7 +1360,7 @@ BEGIN
 			'VALUES ' || 
 			'(''I'', ' || default_value || ')';
 	query := 
-		'CREATE RULE ' || quote_ident ("baseten".mod_rule ('INSERT')) || ' ' ||
+		'CREATE RULE ' || quote_ident ("baseten"._mod_rule ('INSERT')) || ' ' ||
 			'AS ON INSERT TO ' || quote_ident (rel.nspname) || '.' || quote_ident (rel.relname) || ' ' ||
 			'DO ALSO (' || insertion || ');';
 	EXECUTE query;
@@ -1386,7 +1412,7 @@ BEGIN
 	END IF;
 
 	query := 
-		'CREATE RULE ' || quote_ident ("baseten".mod_rule ($1)) || ' AS ON ' || querytype ||
+		'CREATE RULE ' || quote_ident ("baseten"._mod_rule ($1)) || ' AS ON ' || querytype ||
 		' TO ' || quote_ident (rel.nspname) || '.' || quote_ident (rel.relname) ||
 		whereclause || ' DO ALSO (' || insertion || ')';
 	EXECUTE query;
@@ -1438,8 +1464,8 @@ DECLARE
 	pkey_types						TEXT [];
 BEGIN
 	SELECT "baseten"._lock_table (relid) INTO STRICT lock_table;
-	SELECT "baseten".lock_fn (relid) INTO STRICT lock_fn;
-	SELECT "baseten".lock_notification (relid) INTO STRICT lock_notification;
+	SELECT "baseten"._lock_fn (relid) INTO STRICT lock_fn;
+	SELECT "baseten"._lock_notification (relid) INTO STRICT lock_notification;
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
 		"baseten".array_accum (quote_ident (p.typnspname) || '.' || quote_ident (p.typname))
@@ -1522,7 +1548,7 @@ BEGIN
 	query :=
 		'CREATE TRIGGER "lock_row" ' ||
 		'AFTER INSERT ON "baseten".' || quote_ident (lock_table) || ' ' ||
-		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".lock_notify (''' || "baseten".lock_notification (reloid) || ''')';
+		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".lock_notify (''' || "baseten"._lock_notification (reloid) || ''')';
 	EXECUTE query;
 
 	-- Locking function
@@ -1545,7 +1571,7 @@ BEGIN
 	query :=
 		'CREATE TRIGGER "modify_table" ' ||
 		'AFTER INSERT ON "baseten".' || quote_ident (mod_table) || ' ' ||
-		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".mod_notify (''' || "baseten".mod_notification (reloid) || ''')';
+		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".mod_notify (''' || "baseten"._mod_notification (reloid) || ''')';
 	EXECUTE query;
 	
 	-- Triggers for the enabled relation.
