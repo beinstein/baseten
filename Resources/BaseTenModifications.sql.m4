@@ -183,6 +183,21 @@ REVOKE ALL PRIVILEGES
 GRANT EXECUTE ON FUNCTION "baseten".array_append_each (TEXT, TEXT []) TO basetenread;
 
 
+CREATE FUNCTION "baseten".split_part (string TEXT, delimiter TEXT, field INTEGER) RETURNS TEXT AS $$
+DECLARE
+	retval TEXT;
+BEGIN
+	SELECT split_part ($1, $2, $3) INTO retval;
+	IF 0 = length (retval) THEN
+		retval := null;
+	END IF;
+	RETURN retval;
+END;
+$$ IMMUTABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".split_part (TEXT, TEXT, INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".split_part (TEXT, TEXT, INTEGER) TO basetenread;
+
+
 CREATE FUNCTION "baseten".running_backend_pids () 
 RETURNS SETOF INTEGER AS $$
 	SELECT 
@@ -393,6 +408,8 @@ CREATE TABLE "baseten".relationship (
 	inversename		VARCHAR (255) NOT NULL, --Inverse relationships are currently mandatory.
 	kind			CHAR (1) NOT NULL,
 	is_inverse		BOOLEAN NOT NULL,
+	is_deprecated	BOOLEAN NOT NULL DEFAULT false,
+	has_rel_names	BOOLEAN NOT NULL,
 	has_views		BOOLEAN NOT NULL DEFAULT false,
 	srcid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
 	srcnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
@@ -813,6 +830,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			inversename,
 			kind,
 			is_inverse,
+			has_rel_names,
 			srcid,
 			srcnspname,
 			srcrelname,
@@ -820,12 +838,21 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			dstnspname,
 			dstrelname
 		)
-		SELECT
+		SELECT -- MTO
 			f.conid,
-			CASE WHEN 1 = g.idx THEN r2.relname ELSE f.conname END,
-			CASE WHEN 1 = g.idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
+			CASE WHEN 1 = g.idx THEN 
+				r2.relname 
+			ELSE 
+				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
+			END,
+			CASE WHEN 1 = g.idx THEN 
+				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
+			ELSE 
+				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
+			END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			true,
+			1 = g.idx,
 			f.conrelid,
 			r1.nspname,
 			r1.relname,
@@ -837,12 +864,21 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
 		CROSS JOIN generate_series (1, 2) g (idx)
 		UNION ALL
-		SELECT
+		SELECT -- OTM
 			f.conid,
-			CASE WHEN 1 = g.idx THEN r1.relname ELSE r1.nspname || '_' || r1.relname || '_' || f.conname END,
-			CASE WHEN 1 = g.idx THEN r2.relname ELSE f.conname END,
+			CASE WHEN 1 = g.idx THEN 
+				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
+			ELSE 
+				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
+			END,
+			CASE WHEN 1 = g.idx THEN 
+				r2.relname 
+			ELSE 
+				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
+			END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			false,
+			1 = g.idx,
 			f.confrelid,
 			r2.nspname,
 			r2.relname,
@@ -863,6 +899,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
             inversename,
             kind,
             is_inverse,
+			has_rel_names,
             srcid,
             srcnspname,
             srcrelname,
@@ -876,10 +913,11 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		SELECT
 			f1.conid,
 			f2.conid,
-			CASE WHEN 1 = g.idx THEN r2.relname ELSE f1.conname END,
-			CASE WHEN 1 = g.idx THEN r1.relname ELSE f2.conname END,
+			CASE WHEN 1 = g.idx THEN r2.relname || 'Set' ELSE f1.conname END,
+			CASE WHEN 1 = g.idx THEN r1.relname || 'Set' ELSE f2.conname END,
 			'm',
 			false,
+			1 = g.idx,
 			f1.confrelid,
 			r1.nspname,
 			r1.relname,
@@ -913,7 +951,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		INNER JOIN "baseten".relation r1 ON (r1.id = f1.confrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
 		CROSS JOIN generate_series (1, 2) g (idx);
-
+    
 	-- Views
 	SELECT "baseten".refresh_view_caches ();
 	INSERT INTO "baseten".relationship
@@ -924,6 +962,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			inversename,
 			kind,
 			is_inverse,
+			has_rel_names,
 			has_views,
 			srcid,
 			srcnspname,
@@ -938,10 +977,11 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		SELECT
 			rel.conid,
 			rel.dstconid,
-			r2.relname,
-			r1.relname,
+			r2.relname || CASE WHEN 'm' = rel.kind OR ('t' = rel.kind AND rel.is_inverse = false) THEN 'Set' ELSE '' END,
+			r1.relname || CASE WHEN 'm' = rel.kind OR ('t' = rel.kind AND rel.is_inverse = true)  THEN 'Set' ELSE '' END,
 			rel.kind,
 			rel.is_inverse,
+			true,
 			true,
 			rel.srcid,
 			r1.nspname,
@@ -977,6 +1017,94 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		INNER JOIN "baseten".relation r1 ON (r1.id = rel.srcid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = rel.dstid)
 		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid);
+		
+	-- Deprecated names
+	INSERT INTO "baseten".relationship 
+		(
+			conid,
+			dstconid,
+			name,
+			inversename,
+			kind,
+			is_inverse,
+			is_deprecated,
+			has_rel_names,
+			has_views,
+			srcid,
+			srcnspname,
+			srcrelname,
+			dstid,
+			dstnspname,
+			dstrelname,
+			helperid,
+			helpernspname,
+			helperrelname
+		)
+		SELECT
+			conid,
+			dstconid,
+			substring (name from 1 for length (name) - 3), -- Remove 'Set'
+			substring (inversename from 1 for length (inversename) - 3), -- Remove 'Set'
+			kind,
+			is_inverse,
+			true,
+			has_rel_names,
+			has_views,
+			srcid,
+			srcnspname,
+			srcrelname,
+			dstid,
+			dstnspname,
+			dstrelname,
+			helperid,
+			helpernspname,
+			helperrelname
+		FROM "baseten".relationship
+		WHERE kind = 'm' AND has_rel_names = true
+		UNION
+		SELECT
+			conid,
+			dstconid,
+			name || '__deprecation_placeholder',
+			substring (inversename from 1 for length (inversename) - 3), -- Remove 'Set'
+			kind,
+			is_inverse,
+			true,
+			has_rel_names,
+			has_views,
+			srcid,
+			srcnspname,
+			srcrelname,
+			dstid,
+			dstnspname,
+			dstrelname,
+			helperid,
+			helpernspname,
+			helperrelname
+		FROM "baseten".relationship
+		WHERE kind = 't' AND is_inverse = true
+		UNION
+		SELECT
+			conid,
+			dstconid,
+			substring (name from 1 for length (name) - 3), -- Remove 'Set'
+			inversename || '__deprecation_placeholder',
+			kind,
+			is_inverse,
+			true,
+			has_rel_names,
+			has_views,
+			srcid,
+			srcnspname,
+			srcrelname,
+			dstid,
+			dstnspname,
+			dstrelname,
+			helperid,
+			helpernspname,
+			helperrelname
+		FROM "baseten".relationship
+		WHERE kind = 't' AND is_inverse = false;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
 -- Only owner for now.
