@@ -127,6 +127,7 @@
 	MKCAssertNotNil (table);
 	PGTSIndexDescription* pkey = [table primaryKey];
 	
+	MKCAssertNotNil (pkey);
 	MKCAssertFalse ([pkey isUnique]);
 	MKCAssertTrue ([pkey isPrimaryKey]);
 	
