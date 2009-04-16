@@ -283,6 +283,11 @@ LeftJoin (BXEntityDescription* dstEntity, NSString* srcAlias, NSString* dstAlias
 	BXRelationshipDescription* relationship = [fromItem relationship];
 	id <BXForeignKey> fkey = [relationship foreignKey];	
 	BXEntityDescription* dstEntity = [relationship destinationEntity];
+	
+	Expect (relationship);
+	Expect (fkey);
+	Expect (dstEntity);
+	
 	NSString* dst = [fromItem alias];
 	NSString* retval = nil;	
 	if (mIsFirstInUpdate)

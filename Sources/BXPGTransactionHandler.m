@@ -608,7 +608,9 @@ ConnectionString (NSDictionary* connectionDict)
 			@"SELECT null, m.* FROM baseten.mod_observe ($1) m "
 			@"UNION ALL "
 			@"SELECT null, l.* FROM baseten.lock_observe ($1) l";
+			
 			PGTSResultSet* res = [connection executeQuery: query parameters: oid];
+			ExpectL ([res querySucceeded]);
 			if ([res querySucceeded] && 3 == [res count])
 			{
 				[res advanceRow];

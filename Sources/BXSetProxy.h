@@ -32,6 +32,7 @@
 @interface BXSetProxy : BXContainerProxy 
 {
 }
+- (id) mutableSet;
 
 - (unsigned int) countForObject: (id) anObject;
 - (id) countedSet;

@@ -71,7 +71,7 @@
 
 /**
  * \internal
- * \brief An NSCountedSet-style self-updating container proxy for relationships.
+ * \brief An NSMutableSet-style self-updating container proxy for relationships.
  * \ingroup auto_containers
  */
 @implementation BXSetRelationProxy

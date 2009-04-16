@@ -994,8 +994,8 @@ SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
 				struct nr_compare_st ctx = {[table schemaName], [table name]};
 				[relationships goBeforeFirstRowUsingFunction: &SrcNamespaceRelationCompare context: &ctx];
 				while ([relationships advanceRow] && 
-					   [[relationships valueForKey: @"relname"] isEqual: [table name]] &&
-					   [[relationships valueForKey: @"nspname"] isEqual: [table schemaName]])
+					   [[relationships valueForKey: @"srcrelname"] isEqual: [table name]] &&
+					   [[relationships valueForKey: @"srcnspname"] isEqual: [table schemaName]])
 				{
 					const unichar kind = [[relationships valueForKey: @"kind"] characterAtIndex: 0];
 					
@@ -1031,13 +1031,14 @@ SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
 					//Foreign key
 					NSInteger conid = [[relationships valueForKey: @"conid"] integerValue];
 					BXPGForeignKeyDescription* fkey = [database foreignKeyWithIdentifier: conid];
+					ExpectL (fkey);
 					[rel setForeignKey: fkey];
 
 					//Inverse name
 					[rel setInverseName: [relationships valueForKey: @"inversename"]];
 					
 					//Inversity					
-					[rel setIsInverse: [[relationships valueForKey: @"isinverse"] boolValue]];
+					[rel setIsInverse: [[relationships valueForKey: @"is_inverse"] boolValue]];
 					
 					//Optionality
 					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.

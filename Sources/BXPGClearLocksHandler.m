@@ -63,15 +63,10 @@ bx_error_during_clear_notification (id self, NSError* error)
     
     //Which tables have pending locks?
     NSString* query = 
-	@"SELECT baseten_lock_relid, "
-	@"   max (baseten_lock_timestamp) AS last_date, "
-	@"   baseten.lock_table (baseten_lock_relid) AS lock_table_name "
-	@" FROM baseten.lock "
-	@" WHERE baseten_lock_cleared = true "
-	@"  AND baseten_lock_timestamp > COALESCE ($1, '-infinity')::timestamp " 
-	@"  AND baseten_lock_backend_pid != pg_backend_pid () "
-	@"  AND baseten_lock_reloid = ANY ($2) "
-	@" GROUP BY baseten_lock_relid";
+	@"SELECT reloid, last_date, lock_table_name "
+	@" FROM baseten.pending_locks "
+	@" WHERE last_date > COALESCE ($1, '-infinity')::timestamp "
+	@"  AND reloid = ANY ($2) ";
     PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, oids];
     if (NO == [res querySucceeded])
 	{
@@ -91,7 +86,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 	{
 		[ids removeAllObjects];
 		NSString* query = nil;
-		NSNumber* reloid = [res valueForKey: @"baseten_lock_reloid"];
+		NSNumber* reloid = [res valueForKey: @"reloid"];
 		PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [reloid PGTSOidValue]];
 		
 		{

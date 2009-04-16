@@ -56,10 +56,12 @@
 
 
 #define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to evaluate to true.");
+#define ExpectL( X ) BXAssertLog( X, @"Expected " #X " to evaluate to true.");
 #define ExpectR( X, RETVAL )	BXAssertValueReturn( X, RETVAL, @"Expected " #X " to evaluate to true.");
 #define ExpectV( X ) BXAssertVoidReturn( X, @"Expected " #X " to evaluate to true.");
 //C function variants.
 #define ExpectC( X ) Expect( X )
+#define ExpectCL( X ) ExpectL( X )
 #define ExpectCV( X ) ExpectV( X )
 #define ExpectCR( X, RETVAL ) ExpectR( X, RETVAL )
 

@@ -34,7 +34,7 @@
 
 
 /**
- * \brief An NSCountedSet-style self-updating container proxy.
+ * \brief An NSMutableSet-style self-updating container proxy.
  * \ingroup auto_containers
  */
 @implementation BXSetProxy
@@ -60,6 +60,11 @@
 - (id) countedSet
 {
     return mContainer;
+}
+
+- (id) mutableSet
+{
+	return mContainer;
 }
 
 - (void) addedObjectsWithIDs: (NSArray *) ids

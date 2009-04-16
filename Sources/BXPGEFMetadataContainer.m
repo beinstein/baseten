@@ -91,12 +91,15 @@
 	
 	while ([res advanceRow])
 	{
-		PGTSTableDescription* view = [mDatabase tableWithOid: [[res valueForKey: @"oid"] PGTSOidValue]];				
+		NSString* nspname = [res valueForKey: @"nspname"];
+		NSString* relname = [res valueForKey: @"relname"];
+		PGTSTableDescription* view = [mDatabase table: relname inSchema: nspname];
 		PGTSIndexDescription* index = [[[PGTSIndexDescription alloc] init] autorelease];
 		
+		NSDictionary* columns = [view columns];
 		NSMutableSet* indexFields = [NSMutableSet set];
-		BXEnumerate (currentColIndex, e, [[res valueForKey: @"attnum"] objectEnumerator])
-		[indexFields addObject: [view columnAtIndex: [currentColIndex integerValue]]];
+		BXEnumerate (currentCol, e, [[res valueForKey: @"attnames"] objectEnumerator])
+			[indexFields addObject: [columns objectForKey: currentCol]];
 		
 		[index setPrimaryKey: YES];
 		[index setColumns: indexFields];
@@ -108,15 +111,15 @@
 {
 	NSString* query = 
 	@"SELECT conid, conname, conkey, confkey, confdeltype "
-	@" FROM baseten.foreignkey ";
+	@" FROM baseten.foreign_key ";
 	PGTSResultSet* res = [connection executeQuery: query];
 	ExpectV ([res querySucceeded]);
 	
 	while ([res advanceRow])
 	{
 		BXPGForeignKeyDescription* fkey = [[BXPGForeignKeyDescription alloc] init];
-		[fkey setIdentifier: [[res valueForKey: @"conoid"] integerValue]];
-		[fkey setName: [res valueForKey: @"name"]];
+		[fkey setIdentifier: [[res valueForKey: @"conid"] integerValue]];
+		[fkey setName: [res valueForKey: @"conname"]];
 		
 		NSArray* srcfnames = [res valueForKey: @"conkey"];
 		NSArray* dstfnames = [res valueForKey: @"confkey"];

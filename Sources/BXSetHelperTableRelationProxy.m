@@ -40,7 +40,7 @@
 
 /**
  * \internal
- * \brief An NSCountedSet-style self-updating container proxy for many-to-many relationships.
+ * \brief An NSMutableSet-style self-updating container proxy for many-to-many relationships.
  * \ingroup auto_containers
  */
 //FIXME: this needs to be changed to use set mutation -style KVO notifications.
