@@ -93,6 +93,13 @@ ImportError (NSString* message, NSString* reason)
 		NSString* reason = @"Inverse relationships are required for to-many relationships.";
 		[errorMessages addObject: ImportError (message, reason)];
 	}
+	else if (62 < [[self name] length] + [[[self inverseRelationship] name] length]) //FIXME: measure UTF-8 char length instead?
+	{
+		NSString* messageFormat = @"Relationship %@ in %@ will be skipped.";
+		NSString* message = [NSString stringWithFormat: messageFormat, [self name], [[self entity] name]];
+		NSString* reason = @"The relationship's and its inverse relationship's names combined exceed 62 characters.";
+		[errorMessages addObject: ImportError (message, reason)];
+	}
 	else if ([self isToMany] && [[self inverseRelationship] isToMany])
 	{
 		retval = [NSMutableArray array];
@@ -228,6 +235,7 @@ ImportError (NSString* message, NSString* reason)
 		//We assume that the schema name is the same for all entities.
 		NSString* dstEntityName = [[srcRelationship destinationEntity] name];
 		NSString* srcRelationshipName = [srcRelationship name];
+		NSString* inverseName = [inverseRelationship name];
 		NSString* columnName = [srcRelationshipName stringByAppendingString: @"_id"];
 		
 		if (createColumns)
@@ -250,12 +258,13 @@ ImportError (NSString* message, NSString* reason)
 				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
 			}		
 			
+			NSString* fkeyName = [NSString stringWithFormat: @"%@__%@", srcRelationshipName, inverseName];
 			NSString* statementFormat = 
 			@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
 			"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
 			"  ON DELETE %@ ON UPDATE CASCADE;";
 			[retval addObject: [NSString stringWithFormat: statementFormat,
-								schemaName, [entity name], srcRelationshipName,
+								schemaName, [entity name], fkeyName,
 								columnName, schemaName, dstEntityName,
 								BXPGDeleteRuleName ([srcRelationship deleteRule])]];		
 		}
