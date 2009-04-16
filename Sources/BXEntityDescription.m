@@ -559,4 +559,11 @@ InverseToOneRelationships (id arg)
 	}
 	[mValidationLock unlock];
 }
+
+- (void) removeValidation
+{
+	[mValidationLock lock];
+	[self setValidated: NO];
+	[mValidationLock unlock];
+}
 @end

@@ -50,4 +50,5 @@
 - (BOOL) beginValidation;
 - (void) setValidated: (BOOL) flag;
 - (void) endValidation;
+- (void) removeValidation;
 @end

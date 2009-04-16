@@ -123,12 +123,18 @@
 	{
 		[interface reloadDatabaseMetadata];
 		@synchronized (mEntitiesBySchemaAndName)
-		{
+		{			
 			mCanCreateEntities = YES;
 			[interface prepareForEntityValidation];
 			NSArray* entities = [self entities: outError];
-			if (entities && [interface validateEntities: entities error: outError])
-				retval = [[mEntitiesBySchemaAndName copy] autorelease];
+			if (entities)
+			{
+				BXEnumerate (currentEntity, e, [entities objectEnumerator])
+					[currentEntity removeValidation];
+				
+				if ([interface validateEntities: entities error: outError])
+					retval = [[mEntitiesBySchemaAndName copy] autorelease];
+			}
 		}
 	}
 	else
