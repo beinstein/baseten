@@ -41,10 +41,13 @@
 	id <BXForeignKey> mForeignKey;
 	NSString* mInverseName;
 	BOOL mIsInverse;
+	BOOL mIsDeprecated;
 }
 
 - (BXEntityDescription *) destinationEntity;
 - (BXRelationshipDescription *) inverseRelationship;
 - (NSDeleteRule) deleteRule;
 - (BOOL) isToMany;
+
+- (BOOL) isDeprecated;
 @end

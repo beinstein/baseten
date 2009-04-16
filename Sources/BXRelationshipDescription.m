@@ -138,6 +138,11 @@
 {
 	return kBXPropertyKindRelationship;
 }
+
+- (BOOL) isDeprecated
+{
+	return mIsDeprecated;
+}
 @end
 
 
@@ -229,6 +234,11 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 - (BOOL) isInverse
 {
 	return mIsInverse;
+}
+
+- (void) setDeprecated: (BOOL) aBool
+{
+	mIsDeprecated = aBool;
 }
 
 - (void) setInverseName: (NSString *) aString

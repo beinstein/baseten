@@ -879,6 +879,7 @@ error:
     @"	inversename, "
     @"	kind, "
     @"	is_inverse, "
+	@"  is_deprecated, "
 	@"	srcnspname, "
     @"	srcrelname, "
 	@"	dstnspname, "
@@ -1039,6 +1040,9 @@ SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
 					
 					//Inversity					
 					[rel setIsInverse: [[relationships valueForKey: @"is_inverse"] boolValue]];
+					
+					//Deprecation
+					[rel setDeprecated: [[relationships valueForKey: @"is_deprecated"] boolValue]];
 					
 					//Optionality
 					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.

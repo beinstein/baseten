@@ -40,6 +40,7 @@
 - (BOOL) isInverse;
 - (void) setIsInverse: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
+- (void) setDeprecated: (BOOL) aBool;
 
 //Remember to override these in subclasses.
 - (id) registeredTargetFor: (BXDatabaseObject *) databaseObject fireFault: (BOOL) fireFault;
