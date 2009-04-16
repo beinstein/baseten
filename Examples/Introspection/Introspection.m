@@ -142,14 +142,19 @@ int main (int argc, const char * argv [])
 								printf ("\t\tRelationships:\n");
 								for (NSString* relName in [[relationships allKeys] sortedArrayUsingSelector: @selector (caseInsensitiveCompare:)])
 								{
-									printf ("\t\t\t%s\n", [relName UTF8String]);
-									BXRelationshipDescription* rel = [relationships objectForKey: relName];
-									
-									BXRelationshipDescription* inverseRelationship = [rel inverseRelationship];
-									BXEntityDescription* dstEntity = [rel destinationEntity];
-									printf ("\t\t\t\t%s-to-%s\n", ([inverseRelationship isToMany] ? "Many" : "One"), ([rel isToMany] ? "many" : "one"));
-									printf ("\t\t\t\tDestination: %s.%s\n", [[dstEntity schemaName] UTF8String], [[dstEntity name] UTF8String]);
-									printf ("\t\t\t\tInverse relationship: %s\n", [[inverseRelationship name] UTF8String]);
+                                    BXRelationshipDescription* rel = [relationships objectForKey: relName];
+
+                                    // Some relationship names are deprecated and are marked as such. We don't print them here.
+                                    if (! [rel isDeprecated])
+                                    {
+                                        printf ("\t\t\t%s\n", [relName UTF8String]);
+                                        
+                                        BXRelationshipDescription* inverseRelationship = [rel inverseRelationship];
+                                        BXEntityDescription* dstEntity = [rel destinationEntity];
+                                        printf ("\t\t\t\t%s-to-%s\n", ([inverseRelationship isToMany] ? "Many" : "One"), ([rel isToMany] ? "many" : "one"));
+                                        printf ("\t\t\t\tDestination: %s.%s\n", [[dstEntity schemaName] UTF8String], [[dstEntity name] UTF8String]);
+                                        printf ("\t\t\t\tInverse relationship: %s\n", [[inverseRelationship name] UTF8String]);
+                                    }
 								}
 							}
 						}
