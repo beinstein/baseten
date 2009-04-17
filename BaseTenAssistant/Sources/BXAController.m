@@ -106,7 +106,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (BOOL) canEnableForAssistant
 {
-	return (! [self isView] || 0 < [[self primaryKeyFields] count]);
+	return (0 < [[self primaryKeyFields] count]);
 }
 
 + (NSSet *) keyPathsForValuesAffectingEnabledForAssistant
