@@ -41,6 +41,7 @@
 #import "BXProbes.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXEnumerate.h"
+#import "BXDeprecationWarning.h"
 
 
 /**
@@ -354,6 +355,8 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
     BXAssertValueReturn ([[self entity] isEqual: [databaseObject entity]], nil, 
 						 @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, databaseObject);
 	
+	if (mIsDeprecated) BXDeprecationWarning ();
+	
 	id retval = nil;
 	//If we can determine an object ID, fetch the target object from the context's cache.
     if (! [self isToMany] && [self isInverse])
@@ -391,6 +394,9 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	ExpectR (error, NO);
 	ExpectR (databaseObject, NO);
 	ExpectR ([[self entity] isEqual: [databaseObject entity]], NO);
+	
+	if (mIsDeprecated) BXDeprecationWarning ();
+	
 	BOOL retval = NO;
 	BXRelationshipDescription* inverse = [self inverseRelationship];
 	NSString* inverseName = [inverse name];

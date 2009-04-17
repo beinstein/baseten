@@ -351,6 +351,8 @@
 		53B24CF50E223A14007AED76 /* BXPGDatabaseDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF30E223A14007AED76 /* BXPGDatabaseDescription.m */; };
 		53B24CFA0E223C8C007AED76 /* BXPGTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B24CF80E223C8C007AED76 /* BXPGTableDescription.h */; };
 		53B24CFB0E223C8C007AED76 /* BXPGTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF90E223C8C007AED76 /* BXPGTableDescription.m */; };
+		53B934DE0F98BDFA006BD87D /* BXDeprecationWarning.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B934DC0F98BDFA006BD87D /* BXDeprecationWarning.h */; };
+		53B934DF0F98BDFA006BD87D /* BXDeprecationWarning.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B934DD0F98BDFA006BD87D /* BXDeprecationWarning.m */; };
 		53C6BA8D0E7148B6000E509D /* NSAttributeDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */; };
 		53C7113B0F57636E00C6481F /* BXOpenSSLCompatibility.h in Copy Headers */ = {isa = PBXBuildFile; fileRef = 538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */; };
 		53CE796B0E87F29C00D5A310 /* BXPGQueryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CE79690E87F29C00D5A310 /* BXPGQueryHandler.h */; };
@@ -832,6 +834,8 @@
 		53B872800A0A4CEC007315BC /* BXAbstractDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXAbstractDescription.h; path = Sources/BXAbstractDescription.h; sourceTree = "<group>"; };
 		53B872810A0A4CEC007315BC /* BXAbstractDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAbstractDescription.m; path = Sources/BXAbstractDescription.m; sourceTree = "<group>"; };
 		53B90C250BA6AE7600D982C4 /* BXPropertyDescriptionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPropertyDescriptionPrivate.h; path = Sources/BXPropertyDescriptionPrivate.h; sourceTree = "<group>"; };
+		53B934DC0F98BDFA006BD87D /* BXDeprecationWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDeprecationWarning.h; path = Sources/BXDeprecationWarning.h; sourceTree = "<group>"; };
+		53B934DD0F98BDFA006BD87D /* BXDeprecationWarning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDeprecationWarning.m; path = Sources/BXDeprecationWarning.m; sourceTree = "<group>"; };
 		53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConstantsPrivate.h; path = Sources/BXConstantsPrivate.h; sourceTree = "<group>"; };
 		53CE79690E87F29C00D5A310 /* BXPGQueryHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGQueryHandler.h; path = Sources/BXPGQueryHandler.h; sourceTree = "<group>"; };
 		53CE796A0E87F29C00D5A310 /* BXPGQueryHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGQueryHandler.m; path = Sources/BXPGQueryHandler.m; sourceTree = "<group>"; };
@@ -1077,6 +1081,8 @@
 				5354F7DD0F00417400422613 /* BXURLEncoding.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
+				53B934DC0F98BDFA006BD87D /* BXDeprecationWarning.h */,
+				53B934DD0F98BDFA006BD87D /* BXDeprecationWarning.m */,
 				53666CC20E1CD8D20028DBEA /* PGTSHOM.h */,
 				53666CC30E1CD8D20028DBEA /* PGTSHOM.m */,
 				53937B650EFD097700510DBD /* PGTSInvocationRecorder.h */,
@@ -1631,6 +1637,7 @@
 				534BE4680F34F7130098951C /* BXForeignKey.h in Headers */,
 				5348B7060F57547F00B2655E /* BXCoreDataCompatibility.h in Headers */,
 				538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */,
+				53B934DE0F98BDFA006BD87D /* BXDeprecationWarning.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2002,6 +2009,7 @@
 				535736C60F3283C200DB3D0B /* BXDatabaseObjectModel.m in Sources */,
 				535736CC0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.m in Sources */,
 				533F88410F35482000041C02 /* BXForeignKey.m in Sources */,
+				53B934DF0F98BDFA006BD87D /* BXDeprecationWarning.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

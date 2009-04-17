@@ -36,6 +36,7 @@
 #import "BXLogger.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXEnumerate.h"
+#import "BXDeprecationWarning.h"
 
 
 @implementation BXManyToManyRelationshipDescription
@@ -188,6 +189,8 @@ AddToCompoundPredicate (NSString* helperKey, NSString* entityKey, void* context)
 	ExpectR (error, NO);
 	ExpectR (databaseObject, NO);
 	ExpectR ([[self entity] isEqual: [databaseObject entity]], NO);
+	
+	if (mIsDeprecated) BXDeprecationWarning ();
 	
 	BOOL retval = NO;
 	NSString* name = [self name];
