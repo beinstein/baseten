@@ -869,7 +869,7 @@ error:
 }
 	
 	
-- (PGTSResultSet *) relationships
+- (NSDictionary *) relationshipBySrcSchemaAndName
 {
 	NSString* query = 
 	@"SELECT "
@@ -889,24 +889,31 @@ error:
 	@"FROM baseten.relationship "
 	@"ORDER BY srcnspname, srcrelname ASC ";
 	PGTSResultSet* res = [[mTransactionHandler connection] executeQuery: query];
-	return res;
-}
 
-
-struct nr_compare_st
-{
-	__strong NSString* nrc_nspname;
-	__strong NSString* nrc_relname;
-};
-
-
-static NSComparisonResult
-SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
-{
-	struct nr_compare_st* context = (struct nr_compare_st *) ctx;
-	NSComparisonResult retval = [(NSString *) [res valueForKey: @"srcnspname"] compare: context->nrc_nspname];
-	if (NSOrderedSame == retval)
-		retval = [(NSString *)  [res valueForKey: @"srcrelname"] compare: context->nrc_relname];
+	NSMutableDictionary* retval = [NSMutableDictionary dictionary];
+	while (([res advanceRow]))
+	{
+		NSDictionary* currentRow = [res currentRowAsDictionary];
+		NSString* srcnspname = [currentRow objectForKey: @"srcnspname"];
+		NSString* srcrelname = [currentRow objectForKey: @"srcrelname"];
+		
+		NSMutableDictionary* schema = [retval objectForKey: srcnspname];
+		if (! schema)
+		{
+			schema = [NSMutableDictionary dictionary];
+			[retval setObject: schema forKey: srcnspname];
+		}
+		
+		NSMutableArray* relation = [schema objectForKey: srcrelname];
+		if (! relation)
+		{
+			relation = [NSMutableArray array];
+			[schema setObject: relation forKey: srcrelname];
+		}
+		
+		[relation addObject: currentRow];
+	}
+	
 	return retval;
 }
 
@@ -914,7 +921,7 @@ SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
 - (BOOL) validateEntities: (NSArray *) entities error: (NSError **) outError
 {
 	BOOL retval = NO;
-	PGTSResultSet* relationships = nil;
+	NSDictionary* allRelationships = nil;
 	BXDatabaseObjectModel* objectModel = [mContext databaseObjectModel];
 	NSDictionary* classDict = [[mTransactionHandler connection] deserializationDictionary];
 
@@ -989,21 +996,19 @@ SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
 			{
 				[currentRelationships removeAllObjects];
 				
-				if (! relationships)
-					relationships = [self relationships];
+				if (! allRelationships)
+					allRelationships = [self relationshipBySrcSchemaAndName];
 				
-				struct nr_compare_st ctx = {[table schemaName], [table name]};
-				[relationships goBeforeFirstRowUsingFunction: &SrcNamespaceRelationCompare context: &ctx];
-				while ([relationships advanceRow] && 
-					   [[relationships valueForKey: @"srcrelname"] isEqual: [table name]] &&
-					   [[relationships valueForKey: @"srcnspname"] isEqual: [table schemaName]])
+				NSDictionary* relations = [allRelationships objectForKey: [table schemaName]];
+				NSArray* relationships = [relations objectForKey: [table name]];
+				BXEnumerate (currentRel, e, [relationships objectEnumerator])
 				{
-					const unichar kind = [[relationships valueForKey: @"kind"] characterAtIndex: 0];
+					const unichar kind = [[currentRel objectForKey: @"kind"] characterAtIndex: 0];
 					
 					id rel = nil;
-					NSString* name = [relationships valueForKey: @"name"];
-					NSString* dstrelname = [relationships valueForKey: @"dstrelname"];
-					NSString* dstnspname = [relationships valueForKey: @"dstnspname"];
+					NSString* name = [currentRel objectForKey: @"name"];
+					NSString* dstrelname = [currentRel objectForKey: @"dstrelname"];
+					NSString* dstnspname = [currentRel objectForKey: @"dstnspname"];
 					BXEntityDescription* dstEntity = [objectModel entityForTable: dstrelname inSchema: dstnspname error: NULL];
 					switch (kind)
 					{
@@ -1030,19 +1035,19 @@ SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
 					}
 										
 					//Foreign key
-					NSInteger conid = [[relationships valueForKey: @"conid"] integerValue];
+					NSInteger conid = [[currentRel objectForKey: @"conid"] integerValue];
 					BXPGForeignKeyDescription* fkey = [database foreignKeyWithIdentifier: conid];
 					ExpectL (fkey);
 					[rel setForeignKey: fkey];
 
 					//Inverse name
-					[rel setInverseName: [relationships valueForKey: @"inversename"]];
+					[rel setInverseName: [currentRel objectForKey: @"inversename"]];
 					
 					//Inversity					
-					[rel setIsInverse: [[relationships valueForKey: @"is_inverse"] boolValue]];
+					[rel setIsInverse: [[currentRel objectForKey: @"is_inverse"] boolValue]];
 					
 					//Deprecation
-					[rel setDeprecated: [[relationships valueForKey: @"is_deprecated"] boolValue]];
+					[rel setDeprecated: [[currentRel objectForKey: @"is_deprecated"] boolValue]];
 					
 					//Optionality
 					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.
@@ -1050,12 +1055,12 @@ SrcNamespaceRelationCompare (PGTSResultSet* res, void* ctx)
 		
 					if ('m' == kind)
 					{
-						NSInteger dstconid = [[relationships valueForKey: @"dstconid"] integerValue];
+						NSInteger dstconid = [[currentRel objectForKey: @"dstconid"] integerValue];
 						BXPGForeignKeyDescription* dstFkey = [database foreignKeyWithIdentifier: dstconid];
 						[rel setDstForeignKey: dstFkey];
 						
-						NSString* helperrelname = [relationships valueForKey: @"helperrelname"];
-						NSString* helpernspname = [relationships valueForKey: @"helpernspname"];
+						NSString* helperrelname = [currentRel objectForKey: @"helperrelname"];
+						NSString* helpernspname = [currentRel objectForKey: @"helpernspname"];
 						BXEntityDescription* helper = [objectModel entityForTable: helperrelname inSchema: helpernspname error: NULL];
 						
 						//The helper entity may get changed by trigger if rows are deleted from source
