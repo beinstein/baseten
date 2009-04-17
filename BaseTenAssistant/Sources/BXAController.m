@@ -109,6 +109,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	return (0 < [[self primaryKeyFields] count]);
 }
 
++ (NSSet *) keyPathsForValuesAffectingCanEnableForAssistantV
+{
+	return [NSSet setWithObject: @"primaryKeyFields"];
+}
+
 - (BOOL) canEnableForAssistantV
 {
 	return (0 < [[self primaryKeyFields] count] || [self isView]);
@@ -124,34 +129,12 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	return [self isEnabled];
 }
 
-- (BOOL) validateEnabledForAssistant: (id *) ioValue error: (NSError **) outError
-{
-	BOOL retval = YES;
-	if (! ([gController hasBaseTenSchema]))
-	{
-		retval = NO;
-		if (outError)
-			*outError = [gController schemaInstallError];
-	}
-	return retval;
-}
-
 - (void) setEnabledForAssistant: (BOOL) aBool
 {
 	[gController process: aBool entity: self];
 }
 
-+ (NSSet *) keyPathsForValuesAffectingEnabledForAssistantV
-{
-	return [NSSet setWithObject: @"enabled"];
-}
-
-- (BOOL) isEnabledForAssistantV
-{
-	return [self isEnabled];
-}
-
-- (BOOL) validateEnabledForAssistantV: (id *) ioValue error: (NSError **) outError
+- (BOOL) validateEnabledForAssistant: (id *) ioValue error: (NSError **) outError
 {
 	BOOL retval = YES;
 	if ([self isView] && 0 == [[self primaryKeyFields] count])
@@ -165,29 +148,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 		if (outError)
 			*outError = [gController schemaInstallError];
 	}
-	return retval;
-}
-
-- (void) setEnabledForAssistantV: (BOOL) aBool
-{
-	[gController process: aBool entity: self];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingAllowsSettingPrimaryKey
-{
-	return [NSSet setWithObjects: @"isView", @"isEnabled", nil];
-}
-
-+ (NSSet *) keyPathsForValuesAffectingAllowsEnabling
-{
-	return [NSSet setWithObjects: @"isView", @"primaryKeyFields", nil];
-}
-
-- (BOOL) allowsEnabling
-{
-	BOOL retval = YES;
-	if ([self isView])
-		retval = (0 < [[self primaryKeyFields] count]);
 	return retval;
 }
 @end
@@ -309,8 +269,8 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 		[mInspectorButtonCell setControlSize: NSMiniControlSize];
 		[mInspectorButtonCell setFont: [NSFont systemFontOfSize: 
 										[NSFont systemFontSizeForControlSize: NSMiniControlSize]]];
-		[mInspectorButtonCell setTarget: mInspectorWindow];
-		[mInspectorButtonCell setAction: @selector (makeKeyAndOrderFront:)];
+		[mInspectorButtonCell setTarget: [BXAInspectorPanelController inspectorPanelController]];
+		[mInspectorButtonCell setAction: @selector (showWindow:)];
 	}
 }
 
