@@ -32,7 +32,29 @@
 #import <BaseTen/BXEntityDescriptionPrivate.h>
 
 
+__strong static NSString* kBXAInspectorPanelControllerKVOContext = @"kBXAInspectorPanelControllerKVOContext";
+
+
 @implementation BXAInspectorPanelController
+- (void) moveTableViewUp: (BOOL) moveUp
+{
+	CGFloat diff = 59.0;
+	NSView* view = [[mAttributesTableView superview] superview];
+	NSRect frame = [view frame];
+	
+	if (moveUp)
+	{
+		frame.origin.y += diff;
+		frame.size.height -= diff;
+		[view setFrame: frame];		
+	}
+	else
+	{
+		frame.origin.y -= diff;
+		frame.size.height += diff;
+		[view setFrame: frame];		
+	}
+}
 
 #pragma mark Initialisation & Dealloc
 
@@ -75,8 +97,12 @@
 	// Set up default sort descriptors
 	NSSortDescriptor* descriptor = [[mAttributesTableView tableColumnWithIdentifier:@"name"] sortDescriptorPrototype];
 	NSArray* descriptors = [NSArray arrayWithObject:descriptor];
-	
 	[mAttributesTableView setSortDescriptors:descriptors];
+	
+	[self moveTableViewUp: NO];
+	[self addObserver: self	forKeyPath: @"entity" 
+			  options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionInitial
+			  context: kBXAInspectorPanelControllerKVOContext];
 }
 
 
@@ -88,8 +114,6 @@
 {
 	return [NSPredicate predicateWithFormat: @"value.isExcluded == false"];
 }
-
-#pragma mark Accessors
 
 - (NSString *) entityTitle
 {
@@ -140,5 +164,27 @@
 	[self unbind:@"entity"];
 	[self bind:@"entity" toObject: observable withKeyPath: keypath options:nil];
 }
+
+- (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
+						 change: (NSDictionary *) change context: (void *) context
+{
+    if (context == kBXAInspectorPanelControllerKVOContext) 
+	{
+		BXEntityDescription* oldEntity = [change objectForKey: NSKeyValueChangeOldKey];
+		BXEntityDescription* newEntity = [change objectForKey: NSKeyValueChangeNewKey];
+		if ([NSNull null] == (id) oldEntity) oldEntity = nil;
+		if ([NSNull null] == (id) newEntity) newEntity = nil;
+		
+		if ([oldEntity isView] && ![newEntity isView])
+			[self moveTableViewUp: NO];
+		else if (![oldEntity isView] && [newEntity isView])
+			[self moveTableViewUp: YES];
+	}
+	else 
+	{
+		[super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
+	}
+}
+
 
 @end
