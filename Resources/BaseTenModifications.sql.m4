@@ -1061,7 +1061,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			helperrelname
 		FROM "baseten".relationship
 		WHERE kind = 'm' AND has_rel_names = true
-		UNION
+		UNION ALL
 		SELECT
 			conid,
 			dstconid,
@@ -1083,7 +1083,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			helperrelname
 		FROM "baseten".relationship
 		WHERE kind = 't' AND is_inverse = true
-		UNION
+		UNION ALL
 		SELECT
 			conid,
 			dstconid,
