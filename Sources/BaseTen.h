@@ -436,7 +436,7 @@
  *CREATE TABLE email (
  *    id SERIAL PRIMARY KEY,
  *    address VARCHAR (255),
- *    person_id INTEGER CONSTRAINT person REFERENCES person (id)
+ *    person_id INTEGER REFERENCES person (id)
  *);</code>
  *
  * Lets say we have two objects: \em aPerson and \em anEmail which have been fetched from the person and email
