@@ -24,7 +24,7 @@
 
 /* Begin PBXBuildFile section */
 		530925290FA89023000DC21C /* BXDataModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530925280FA89023000DC21C /* BXDataModelTests.m */; };
-		530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Resources */ = {isa = PBXBuildFile; fileRef = 530927A80FA894D2000DC21C /* people-departments.xcdatamodel */; };
+		530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 530927A80FA894D2000DC21C /* people-departments.xcdatamodel */; };
 		530927BB0FA89BBE000DC21C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530927BA0FA89BBE000DC21C /* CoreData.framework */; };
 		5317CEB20D1ACB0900A48792 /* UndoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B2C1390BE88608002B66B1 /* UndoTests.m */; };
 		5317CEB40D1ACB0B00A48792 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
@@ -382,7 +382,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,6 +445,7 @@
 				53A0DAF80F4B754100434E4E /* CreateTests.m in Sources */,
 				53BCC1D80F5EE90D00BD717A /* PGTSTypeTests.m in Sources */,
 				530925290FA89023000DC21C /* BXDataModelTests.m in Sources */,
+				530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

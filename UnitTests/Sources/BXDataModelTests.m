@@ -35,33 +35,17 @@
 @implementation BXDataModelTests
 - (void) setUp
 {
-	mCompiler = [[BXDataModelCompiler alloc] init];
 	mImporter = [[BXPGEntityImporter alloc] init];
 	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
 	
-	[mCompiler setDelegate: self];
 	[mImporter setDelegate: self];
 	[mImporter setDatabaseContext: mContext];
 }
 
 - (void) tearDown
 {
-	[mCompiler release];
 	[mImporter release];
 	[mContext release];
-	[mModelURL release];
-}
-
-- (void) dataModelCompiler: (BXDataModelCompiler *) compiler 
-				  finished: (int) exitStatus
-			   errorOutput: (NSFileHandle *) handle
-{
-	MKCAssertTrue (0 == exitStatus);
-	
-	NSURL* url = [compiler compiledModelURL];
-	MKCAssertNotNil (url);
-	
-	mModelURL = [url retain];
 }
 
 - (void) entityImporterAdvanced: (BXPGEntityImporter *) importer
@@ -75,24 +59,23 @@
 - (void) testPeopleDepartments
 {
 	NSBundle* bundle = [NSBundle bundleForClass: [self class]];
-	NSString* path = [bundle pathForResource: @"people-departments" ofType: @"xcdatamodel"];
+	NSString* path = [bundle pathForResource: @"people-departments" ofType: @"mom"];
 	NSURL* url = [NSURL fileURLWithPath: path];
 	MKCAssertNotNil (bundle);
 	MKCAssertNotNil (path);
 	MKCAssertNotNil (url);
-	
-	[mCompiler setModelURL: url];
-	[mCompiler compiledModelURL];
-	[mCompiler waitForCompletion];
-	MKCAssertNotNil (mModelURL);
-	
-	NSManagedObjectModel* model = [[[NSManagedObjectModel alloc] initWithContentsOfURL: mModelURL] autorelease];
+		
+	NSManagedObjectModel* model = [[[NSManagedObjectModel alloc] initWithContentsOfURL: url] autorelease];
 	NSArray* entities = [model entities];
+	MKCAssertNotNil (model);
+	MKCAssertNotNil (entities);
+	
 	[mImporter setSchemaName: @"test_schema"];
 	[mImporter setEntities: entities];
 	NSArray* statements = [mImporter importStatements];
 	
 	NSArray* expected = [NSArray arrayWithObjects:
+						 @"CREATE SCHEMA \"test_schema\";",
 						 @"CREATE TABLE \"test_schema\".\"Person\" (id SERIAL, \"surname\" text , \"birthday\" timestamp with time zone ) ;",
 						 @"ALTER TABLE \"test_schema\".\"Person\" ADD PRIMARY KEY (id);",
 						 @"CREATE TABLE \"test_schema\".\"Employee\" (id SERIAL, \"salary\" numeric , \"room\" smallint ) INHERITS (\"test_schema\".\"Person\");",

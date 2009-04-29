@@ -29,15 +29,12 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import "TestLoader.h"
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXDataModelCompiler.h>
 #import <BaseTen/BXPGEntityImporter.h>
 
 
-@interface BXDataModelTests : BXTestCase <BXDataModelCompilerDelegate, BXPGEntityImporterDelegate>
+@interface BXDataModelTests : BXTestCase <BXPGEntityImporterDelegate>
 {
-	BXDataModelCompiler* mCompiler;
 	BXPGEntityImporter* mImporter;
 	BXDatabaseContext* mContext;
-	NSURL* mModelURL;
 }
 @end
