@@ -34,6 +34,7 @@
 #import "BXDatabaseContextTests.h"
 #import "PGTSMetadataTests.h"
 #import "PGTSTypeTests.h"
+#import "PGTSNotificationTests.h"
 
 #import "ConnectTest.h"
 #import "BXDataModelTests.h"
@@ -69,6 +70,7 @@
 							
 							[PGTSMetadataTests class],
 							[PGTSTypeTests class],
+							[PGTSNotificationTests class],
 							
 							[ConnectTest class],
 							[BXDataModelTests class],
