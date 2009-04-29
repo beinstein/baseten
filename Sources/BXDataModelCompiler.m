@@ -201,6 +201,11 @@ bail:
 		free (pathFormat);
 }
 
+- (void) waitForCompletion
+{
+	[mMomcTask waitUntilExit];
+}
+
 - (void) momcTaskFinished: (NSNotification *) notification
 {
 	[mDelegate dataModelCompiler: self finished: [mMomcTask terminationStatus] errorOutput: [mErrorPipe fileHandleForReading]];

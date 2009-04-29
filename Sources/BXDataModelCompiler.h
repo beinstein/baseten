@@ -53,6 +53,7 @@
 - (void) setModelURL: (NSURL *) aFileURL;
 - (void) setDelegate: (id <BXDataModelCompilerDelegate>) anObject;
 - (void) compileDataModel;
+- (void) waitForCompletion;
 
 - (void) setCompiledModelURL: (NSURL *) aFileURL;
 @end

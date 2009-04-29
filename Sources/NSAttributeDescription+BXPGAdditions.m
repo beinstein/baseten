@@ -331,25 +331,29 @@ ImportError (NSString* message, NSString* reason)
 	BOOL retval = NO;
 	NSString* errorFormat = @"Skipped attribute %@ in %@.";
 	NSError* localError = nil;
-	switch ([self attributeType]) 
+	
+	if (! [self isTransient])
 	{
-        case NSUndefinedAttributeType:
+		switch ([self attributeType]) 
 		{
-			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name], [[self entity] name]];
-			localError = ImportError (errorString, @"Attributes with undefined type are not supported.");
-			break;
+			case NSUndefinedAttributeType:
+			{
+				NSString* errorString = [NSString stringWithFormat: errorFormat, [self name], [[self entity] name]];
+				localError = ImportError (errorString, @"Attributes with undefined type are not supported.");
+				break;
+			}
+				
+			case NSTransformableAttributeType:
+			{
+				NSString* errorString = [NSString stringWithFormat: errorFormat, [self name], [[self entity] name]];
+				localError = ImportError (errorString, @"Attributes with transformable type are not supported.");
+				break;
+			}
+				
+			default:
+				retval = YES;
+				break;
 		}
-			
-		case NSTransformableAttributeType:
-		{
-			NSString* errorString = [NSString stringWithFormat: errorFormat, [self name], [[self entity] name]];
-			localError = ImportError (errorString, @"Attributes with transformable type are not supported.");
-            break;
-		}
-			
-		default:
-			retval = YES;
-			break;
 	}
 	
 	if (outError)
