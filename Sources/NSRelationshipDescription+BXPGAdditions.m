@@ -258,15 +258,37 @@ ImportError (NSString* message, NSString* reason)
 				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
 			}		
 			
-			NSString* fkeyName = [NSString stringWithFormat: @"%@__%@", srcRelationshipName, inverseName];
-			NSString* statementFormat = 
-			@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
-			"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
-			"  ON DELETE %@ ON UPDATE CASCADE;";
-			[retval addObject: [NSString stringWithFormat: statementFormat,
-								schemaName, [entity name], fkeyName,
-								columnName, schemaName, dstEntityName,
-								BXPGDeleteRuleName ([srcRelationship deleteRule])]];		
+			
+			NSString* fkeyName = nil;
+			if ([srcRelationshipName length] && [inverseName length])
+				fkeyName = [NSString stringWithFormat: @"%@__%@", srcRelationshipName, inverseName];
+			else if ([srcRelationshipName length])
+				fkeyName = srcRelationshipName;
+			else if ([inverseName length])
+				fkeyName = [@"__" stringByAppendingString: inverseName];
+			
+			if (fkeyName)
+			{
+				NSString* statementFormat = 
+				@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
+				"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
+				"  ON DELETE %@ ON UPDATE CASCADE;";
+				[retval addObject: [NSString stringWithFormat: statementFormat,
+									schemaName, [entity name], fkeyName,
+									columnName, schemaName, dstEntityName,
+									BXPGDeleteRuleName ([srcRelationship deleteRule])]];		
+			}
+			else
+			{
+				NSString* statementFormat = 
+				@"ALTER TABLE \"%@\".\"%@\" ADD "
+				"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
+				"  ON DELETE %@ ON UPDATE CASCADE;";
+				[retval addObject: [NSString stringWithFormat: statementFormat,
+									schemaName, [entity name],
+									columnName, schemaName, dstEntityName,
+									BXPGDeleteRuleName ([srcRelationship deleteRule])]];				
+			}
 		}
 	}
 	return retval;
