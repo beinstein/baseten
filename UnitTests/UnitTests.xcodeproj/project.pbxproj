@@ -26,6 +26,7 @@
 		530925290FA89023000DC21C /* BXDataModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530925280FA89023000DC21C /* BXDataModelTests.m */; };
 		530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 530927A80FA894D2000DC21C /* people-departments.xcdatamodel */; };
 		530927BB0FA89BBE000DC21C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530927BA0FA89BBE000DC21C /* CoreData.framework */; };
+		530928B70FA8A511000DC21C /* one-to-one.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 530928B60FA8A511000DC21C /* one-to-one.xcdatamodel */; };
 		5317CEB20D1ACB0900A48792 /* UndoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B2C1390BE88608002B66B1 /* UndoTests.m */; };
 		5317CEB40D1ACB0B00A48792 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
 		5317CEB50D1ACB0C00A48792 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
@@ -93,6 +94,7 @@
 		530925280FA89023000DC21C /* BXDataModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDataModelTests.m; path = Sources/BXDataModelTests.m; sourceTree = "<group>"; };
 		530927A80FA894D2000DC21C /* people-departments.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "people-departments.xcdatamodel"; path = "Sources/people-departments.xcdatamodel"; sourceTree = "<group>"; };
 		530927BA0FA89BBE000DC21C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		530928B60FA8A511000DC21C /* one-to-one.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "one-to-one.xcdatamodel"; path = "Sources/one-to-one.xcdatamodel"; sourceTree = "<group>"; };
 		530987C60B57B1C30010765D /* ObjectIDTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectIDTests.h; path = Sources/ObjectIDTests.h; sourceTree = "<group>"; };
 		530987C70B57B1C30010765D /* ObjectIDTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectIDTests.m; path = Sources/ObjectIDTests.m; sourceTree = "<group>"; };
 		530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTen.xcodeproj; path = ../BaseTen.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -181,6 +183,7 @@
 				530A438D0A5C0FD000A4722B /* Products */,
 				989B4E790F45D73200CE048A /* xcconfig */,
 				530927A80FA894D2000DC21C /* people-departments.xcdatamodel */,
+				530928B60FA8A511000DC21C /* one-to-one.xcdatamodel */,
 				530A438E0A5C0FD000A4722B /* UnitTests-Info.plist */,
 			);
 			sourceTree = "<group>";
@@ -446,6 +449,7 @@
 				53BCC1D80F5EE90D00BD717A /* PGTSTypeTests.m in Sources */,
 				530925290FA89023000DC21C /* BXDataModelTests.m in Sources */,
 				530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Sources */,
+				530928B70FA8A511000DC21C /* one-to-one.xcdatamodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
