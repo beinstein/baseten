@@ -36,6 +36,7 @@
 #import "PGTSTypeTests.h"
 
 #import "ConnectTest.h"
+#import "BXDataModelTests.h"
 #import "EntityTests.h"
 #import "ObjectIDTests.h"
 #import "FetchTests.h"
@@ -70,6 +71,7 @@
 							[PGTSTypeTests class],
 							
 							[ConnectTest class],
+							[BXDataModelTests class],
 							[EntityTests class],
 							//[ObjectTests class], //FIXME: enable this. It still requires a modified OCMock, though.
 							[ObjectIDTests class],
