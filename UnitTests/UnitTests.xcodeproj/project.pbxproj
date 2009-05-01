@@ -36,6 +36,7 @@
 		5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
 		5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
 		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
+		534C95EC0FAB623F006BBC8A /* relationship-optionality.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 534C95EB0FAB623F006BBC8A /* relationship-optionality.xcdatamodel */; };
 		535627B90E6E805D002EA3FD /* PredicateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535627B80E6E805D002EA3FD /* PredicateTests.m */; };
 		536C463A0F2E1CED003A8231 /* PGTSMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */; };
 		5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */; };
@@ -108,6 +109,7 @@
 		531E118C0A6A3A6C003A0F23 /* EntityTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EntityTests.m; path = Sources/EntityTests.m; sourceTree = "<group>"; };
 		5321BEAB0AD4DCDD0011D0C8 /* MTMCollectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTMCollectionTest.h; path = Sources/MTMCollectionTest.h; sourceTree = "<group>"; };
 		5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTMCollectionTest.m; path = Sources/MTMCollectionTest.m; sourceTree = "<group>"; };
+		534C95EB0FAB623F006BBC8A /* relationship-optionality.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "relationship-optionality.xcdatamodel"; path = "Sources/relationship-optionality.xcdatamodel"; sourceTree = "<group>"; };
 		535059B20CDA1CFC00DA25EC /* TestLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLoader.h; path = Sources/TestLoader.h; sourceTree = "<group>"; };
 		535059B30CDA1CFC00DA25EC /* TestLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestLoader.m; path = Sources/TestLoader.m; sourceTree = "<group>"; };
 		535627B70E6E805D002EA3FD /* PredicateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PredicateTests.h; path = Sources/PredicateTests.h; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				989B4E790F45D73200CE048A /* xcconfig */,
 				530927A80FA894D2000DC21C /* people-departments.xcdatamodel */,
 				530928B60FA8A511000DC21C /* one-to-one.xcdatamodel */,
+				534C95EB0FAB623F006BBC8A /* relationship-optionality.xcdatamodel */,
 				530A438E0A5C0FD000A4722B /* UnitTests-Info.plist */,
 			);
 			sourceTree = "<group>";
@@ -456,6 +459,7 @@
 				530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Sources */,
 				530928B70FA8A511000DC21C /* one-to-one.xcdatamodel in Sources */,
 				5387ACFC0FA8F56A00866E19 /* PGTSNotificationTests.m in Sources */,
+				534C95EC0FAB623F006BBC8A /* relationship-optionality.xcdatamodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

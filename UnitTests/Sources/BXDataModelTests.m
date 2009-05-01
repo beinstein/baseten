@@ -119,4 +119,50 @@
 						 nil];
 	MKCAssertEqualObjects (expected, statements);
 }
+
+- (void) testRelationshipOptionality
+{
+	NSArray* statements = [self importStatements: @"relationship-optionality"];
+	NSArray* expected = [NSArray arrayWithObjects:
+						 @"CREATE SCHEMA \"test_schema\";",
+						 @"CREATE TABLE \"test_schema\".\"Book\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Book\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"User\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"User\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Department\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Department\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Location\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Location\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Revision\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Revision\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Date\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Date\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Employee\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Employee\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Author\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Author\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Licence\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Licence\" ADD PRIMARY KEY (id);",
+						 @"CREATE TABLE \"test_schema\".\"Person\" (id SERIAL) ;",
+						 @"ALTER TABLE \"test_schema\".\"Person\" ADD PRIMARY KEY (id);",
+						 @"DROP TABLE IF EXISTS \"test_schema\".\"authors_books_rel\" CASCADE;",
+						 @"CREATE TABLE \"test_schema\".\"authors_books_rel\" (\"Book_id\" integer, \"Author_id\" integer);",
+						 @"ALTER TABLE \"test_schema\".\"authors_books_rel\" ADD PRIMARY KEY (\"Book_id\", \"Author_id\")",
+						 @"ALTER TABLE \"test_schema\".\"authors_books_rel\" ADD CONSTRAINT \"authors\"   FOREIGN KEY (\"Book_id\") REFERENCES \"test_schema\".\"Book\" (id)   ON UPDATE CASCADE ON DELETE CASCADE;",
+						 @"ALTER TABLE \"test_schema\".\"authors_books_rel\" ADD CONSTRAINT \"books\"   FOREIGN KEY (\"Author_id\") REFERENCES \"test_schema\".\"Author\" (id)   ON UPDATE CASCADE ON DELETE CASCADE;",
+						 @"ALTER TABLE \"test_schema\".\"User\" ADD COLUMN \"licence_id\" integer;",
+						 @"ALTER TABLE \"test_schema\".\"User\" ADD UNIQUE (\"licence_id\");",
+						 @"ALTER TABLE \"test_schema\".\"User\" ADD CONSTRAINT \"licence__user\"   FOREIGN KEY (\"licence_id\") REFERENCES \"test_schema\".\"Licence\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						 @"ALTER TABLE \"test_schema\".\"Employee\" ADD COLUMN \"department_id\" integer;",
+						 @"ALTER TABLE \"test_schema\".\"Employee\" ALTER COLUMN \"department_id\" SET NOT NULL;",
+						 @"ALTER TABLE \"test_schema\".\"Employee\" ADD CONSTRAINT \"department__people\"   FOREIGN KEY (\"department_id\") REFERENCES \"test_schema\".\"Department\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						 @"ALTER TABLE \"test_schema\".\"Person\" ADD COLUMN \"address_id\" integer;",
+						 @"ALTER TABLE \"test_schema\".\"Person\" ADD CONSTRAINT \"address__people\"   FOREIGN KEY (\"address_id\") REFERENCES \"test_schema\".\"Location\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						 @"ALTER TABLE \"test_schema\".\"Revision\" ADD COLUMN \"date_id\" integer;",
+						 @"ALTER TABLE \"test_schema\".\"Revision\" ALTER COLUMN \"date_id\" SET NOT NULL;",
+						 @"ALTER TABLE \"test_schema\".\"Revision\" ADD UNIQUE (\"date_id\");",
+						 @"ALTER TABLE \"test_schema\".\"Revision\" ADD CONSTRAINT \"date__revision\"   FOREIGN KEY (\"date_id\") REFERENCES \"test_schema\".\"Date\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						 nil];
+	MKCAssertEqualObjects (expected, statements);
+}
 @end
