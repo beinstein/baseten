@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.925}})dnl
+define({{_bx_version_}}, {{0.926}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -423,6 +423,12 @@ CREATE TABLE "baseten".relationship (
 );
 REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
 GRANT SELECT ON "baseten".relationship TO basetenread;
+
+
+CREATE TABLE "baseten"._deprecated_relationship_name AS 
+	SELECT r.*, false AS is_ambiguous FROM "baseten".relationship r LIMIT 0;
+REVOKE ALL PRIVILEGES ON "baseten"._deprecated_relationship_name FROM PUBLIC;
+GRANT SELECT ON "baseten"._deprecated_relationship_name TO basetenread;
 
 
 -- For modification tracking
@@ -1017,37 +1023,22 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		INNER JOIN "baseten".relation r1 ON (r1.id = rel.srcid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = rel.dstid)
 		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid);
-		
+$$ VOLATILE LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
+-- Only owner for now.
+
+
+CREATE FUNCTION "baseten"._insert_deprecated_relationships () RETURNS VOID AS $$
 	-- Deprecated names
-	INSERT INTO "baseten".relationship 
-		(
-			conid,
-			dstconid,
-			name,
-			inversename,
-			kind,
-			is_inverse,
-			is_deprecated,
-			has_rel_names,
-			has_views,
-			srcid,
-			srcnspname,
-			srcrelname,
-			dstid,
-			dstnspname,
-			dstrelname,
-			helperid,
-			helpernspname,
-			helperrelname
-		)
+	INSERT INTO "baseten"._deprecated_relationship_name
 		SELECT
 			conid,
 			dstconid,
-			substring (name from 1 for length (name) - 3), -- Remove 'Set'
-			substring (inversename from 1 for length (inversename) - 3), -- Remove 'Set'
+			substring (name from 1 for length (name) - 3) AS name, -- Remove 'Set'
+			substring (inversename from 1 for length (inversename) - 3) AS inversename, -- Remove 'Set'
 			kind,
 			is_inverse,
-			true,
+			true AS is_deprecated,
 			has_rel_names,
 			has_views,
 			srcid,
@@ -1058,18 +1049,19 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			dstrelname,
 			helperid,
 			helpernspname,
-			helperrelname
+			helperrelname,
+			false AS is_ambiguous
 		FROM "baseten".relationship
 		WHERE kind = 'm' AND has_rel_names = true
 		UNION ALL
 		SELECT
 			conid,
 			dstconid,
-			name || '__deprecation_placeholder',
-			substring (inversename from 1 for length (inversename) - 3), -- Remove 'Set'
+			name || '__deprecation_placeholder' AS name,
+			substring (inversename from 1 for length (inversename) - 3) AS inversename, -- Remove 'Set'
 			kind,
 			is_inverse,
-			true,
+			true AS is_deprecated,
 			has_rel_names,
 			has_views,
 			srcid,
@@ -1080,18 +1072,19 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			dstrelname,
 			helperid,
 			helpernspname,
-			helperrelname
+			helperrelname,
+			false AS is_ambiguous
 		FROM "baseten".relationship
 		WHERE kind = 't' AND has_rel_names = true AND is_inverse = true
 		UNION ALL
 		SELECT
 			conid,
 			dstconid,
-			substring (name from 1 for length (name) - 3), -- Remove 'Set'
-			inversename || '__deprecation_placeholder',
+			substring (name from 1 for length (name) - 3) AS name, -- Remove 'Set'
+			inversename || '__deprecation_placeholder' AS inversename,
 			kind,
 			is_inverse,
-			true,
+			true AS is_deprecated,
 			has_rel_names,
 			has_views,
 			srcid,
@@ -1102,11 +1095,38 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			dstrelname,
 			helperid,
 			helpernspname,
-			helperrelname
+			helperrelname,
+			false AS is_ambiguous
 		FROM "baseten".relationship
 		WHERE kind = 't' AND has_rel_names = true AND is_inverse = false;
+	
+	-- Mark relationships that have to-one duplicates.
+	UPDATE "baseten"._deprecated_relationship_name d
+		SET is_ambiguous = true
+		FROM "baseten".relationship r
+		WHERE 
+			d.name = r.name AND
+			d.srcnspname = r.srcnspname AND
+			d.srcrelname = r.srcrelname;
+	
+	-- Mark duplicates' inverse relationships.
+	UPDATE "baseten"._deprecated_relationship_name d1
+		SET is_ambiguous = true
+		FROM "baseten"._deprecated_relationship_name d2
+		WHERE 
+			d1.conid = d2.conid AND
+			d1.kind = d2.kind AND
+			d1.kind IN ('t', 'o');
+	UPDATE "baseten"._deprecated_relationship_name d1
+		SET is_ambiguous = true
+		FROM "baseten"._deprecated_relationship_name d2
+		WHERE
+			d1.conid = d2.conid AND
+			d1.dstconid = d2.dstconid AND
+			d1.kind = d2.kind AND
+			d1.kind = 'm';	
 $$ VOLATILE LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_deprecated_relationships () FROM PUBLIC;
 -- Only owner for now.
 
 
@@ -1805,8 +1825,34 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".prune () FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".refresh_caches () RETURNS VOID AS $$
-	TRUNCATE "baseten".relationship;
+	TRUNCATE "baseten".relationship, "baseten"._deprecated_relationship_name;
 	SELECT "baseten"._insert_relationships ();
+	
+	-- Deprecated names.
+	SELECT "baseten"._insert_deprecated_relationships ();
+	INSERT INTO "baseten".relationship
+		SELECT
+			conid,
+		    dstconid,
+		    name,
+		    inversename,
+		    kind,
+		    is_inverse,
+		    is_deprecated,
+		    has_rel_names,
+		    has_views,
+		    srcid,
+		    srcnspname,
+		    srcrelname,
+		    dstid,
+		    dstnspname,
+		    dstrelname,
+		    helperid,
+		    helpernspname,
+		    helperrelname
+		FROM "baseten"._deprecated_relationship_name
+		WHERE is_ambiguous = false;
+	
 	SELECT "baseten"._remove_ambiguous_relationships ();
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_caches () FROM PUBLIC;
