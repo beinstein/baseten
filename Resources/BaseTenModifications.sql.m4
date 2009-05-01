@@ -1818,7 +1818,8 @@ CREATE FUNCTION "baseten".prune () RETURNS VOID AS $$
 		"baseten"._view_dependency, 
 		"baseten"._rel_view_hierarchy, 
 		"baseten"._rel_view_oneto, 
-		"baseten"._rel_view_manytomany;
+		"baseten"._rel_view_manytomany,
+		"baseten"._deprecated_relationship_name;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".prune () FROM PUBLIC;
 -- Only owner for now.
