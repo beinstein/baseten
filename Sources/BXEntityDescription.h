@@ -74,6 +74,7 @@ enum BXEntityFlag
 - (NSComparisonResult) caseInsensitiveCompare: (BXEntityDescription *) anotherEntity;
 - (BOOL) isValidated;
 - (NSDictionary *) relationshipsByName;
+- (NSDictionary *) propertiesByName;
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability;
 - (BOOL) isEnabled;
 

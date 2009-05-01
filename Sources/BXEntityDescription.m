@@ -306,6 +306,21 @@ FilterPkeyAttributes (id attribute, void* arg)
 	return [[mRelationships retain] autorelease];
 }
 
+- (NSDictionary *) propertiesByName
+{
+	id retval = nil;
+	if ([self hasCapability: kBXEntityCapabilityRelationships])
+	{
+		retval = [[[self relationshipsByName] mutableCopy] autorelease];
+		[retval addEntriesFromDictionary: [self attributesByName]];
+	}
+	else
+	{
+		retval = [self attributesByName];
+	}
+	return retval;
+}
+
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability
 {
 	return (mCapabilities & aCapability ? YES : NO);
@@ -562,8 +577,14 @@ InverseToOneRelationships (id arg)
 
 - (void) removeValidation
 {
-	[mValidationLock lock];
-	[self setValidated: NO];
-	[mValidationLock unlock];
+	if ([mValidationLock tryLock])
+	{
+		[self setValidated: NO];
+		[mValidationLock unlock];
+	}
+	else
+	{
+		BXLogError (@"Tried to remove validation for entity %@ while validating it.", self);
+	}
 }
 @end
