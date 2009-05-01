@@ -1082,7 +1082,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			helpernspname,
 			helperrelname
 		FROM "baseten".relationship
-		WHERE kind = 't' AND is_inverse = true
+		WHERE kind = 't' AND has_rel_names = true AND is_inverse = true
 		UNION ALL
 		SELECT
 			conid,
@@ -1104,7 +1104,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			helpernspname,
 			helperrelname
 		FROM "baseten".relationship
-		WHERE kind = 't' AND is_inverse = false;
+		WHERE kind = 't' AND has_rel_names = true AND is_inverse = false;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
 -- Only owner for now.
