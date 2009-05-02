@@ -84,6 +84,10 @@
 	//Patch by Tim Bedford 2008-08-11
 	IBOutlet NSPopUpButton* mBonjourPopUpButton;
     
+	NSSavePanel* mSavePanel;
+	IBOutlet NSView* mDataModelExportView;
+	IBOutlet NSPopUpButton* mModelFormatButton;
+	
 	NSNetServiceBrowser* mServiceBrowser;
     NSMutableArray* mServices; // Keeps track of available services
     BOOL mSearching; // Keeps track of Bonjour search status
@@ -91,13 +95,14 @@
 	
 	IBOutlet NSPanel* mMomcErrorPanel;
 	IBOutlet MKCStackView* mMomcErrorView;
-		
+			
 	BOOL mLastSelectedEntityWasView;
 	BOOL mDeniedSchemaInstall;
 }
 
 @property (readonly) BOOL hasBaseTenSchema;
 @property (readonly) NSWindow* mainWindow;
+@property (readwrite, retain) NSSavePanel* savePanel;
 
 
 - (id) init; //Patch by Tim Bedford 2008-08-11
@@ -119,6 +124,7 @@
 - (IBAction) importDataModel: (id) sender;
 - (IBAction) dismissMomcErrorPanel: (id) sender;
 - (IBAction) exportLog: (id) sender; //Patch by Tim Bedford 2008-08-11
+- (IBAction) exportObjectModel: (id) sender;
 - (IBAction) clearLog: (id) sender;
 - (IBAction) displayLogWindow: (id) sender;
 - (IBAction) reload: (id) sender;
@@ -129,6 +135,8 @@
 - (IBAction) upgradeSchema: (id) sender;
 - (IBAction) removeSchema: (id) sender;
 - (IBAction) cancelSchemaInstall: (id) sender;
+
+- (IBAction) changeModelFormat: (id) sender;
 
 - (IBAction) openHelp: (id) sender; //Patch by Tim Bedford 2008-08-12
 @end
@@ -163,7 +171,10 @@
 @end
 
 @interface BXAController (NSSavePanelDelegate)
-- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo;
+//End patch.
+- (void) exportLogSavePanelDidEnd: (NSSavePanel *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo;
+- (void) exportModelSavePanelDidEnd: (NSSavePanel *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo;
+//Patch by Tim Bedford 2008-08-11
 @end
 
 @interface BXAController (NetServiceBrowserDelegate)

@@ -112,7 +112,7 @@ __strong static NSString* kBXAInspectorPanelControllerKVOContext = @"kBXAInspect
 
 - (NSPredicate *) attributeFilterPredicate
 {
-	return [NSPredicate predicateWithFormat: @"value.isExcluded == false"];
+	return [NSPredicate predicateWithFormat: @"value.isExcluded == false && value.isDeprecated == false"];
 }
 
 - (NSString *) entityTitle

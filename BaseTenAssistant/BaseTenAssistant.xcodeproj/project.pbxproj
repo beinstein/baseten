@@ -48,6 +48,8 @@
 		53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */; };
 		53DAFF180B4F0DE700C000FE /* View16.tif in Resources */ = {isa = PBXBuildFile; fileRef = 53DAFF170B4F0DE700C000FE /* View16.tif */; };
 		53E029D50D7C49C8001AED9C /* MKCBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */; };
+		53E302F60FACC36D000C0478 /* ObjectModelRecords.xsl in Resources */ = {isa = PBXBuildFile; fileRef = 53E302F40FACC36D000C0478 /* ObjectModelRecords.xsl */; };
+		53E302F70FACC36D000C0478 /* ObjectModel.xsl in Resources */ = {isa = PBXBuildFile; fileRef = 53E302F50FACC36D000C0478 /* ObjectModel.xsl */; };
 		53EF32B90E23B7220027EA18 /* Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E4B70B0D364E000D353D /* Additions.m */; };
 		53EF33B50E23CC430027EA18 /* BXASchemaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF33B40E23CC430027EA18 /* BXASchemaCell.m */; };
 		53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF34500E23D83B0027EA18 /* BXAEntityCell.m */; };
@@ -229,6 +231,8 @@
 		53DAFF170B4F0DE700C000FE /* View16.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = View16.tif; path = Resources/View16.tif; sourceTree = "<group>"; };
 		53E029D30D7C49C8001AED9C /* MKCBackgroundView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCBackgroundView.h; path = Sources/MKCBackgroundView.h; sourceTree = "<group>"; };
 		53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCBackgroundView.m; path = Sources/MKCBackgroundView.m; sourceTree = "<group>"; };
+		53E302F40FACC36D000C0478 /* ObjectModelRecords.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = ObjectModelRecords.xsl; path = ../Resources/ObjectModelRecords.xsl; sourceTree = SOURCE_ROOT; };
+		53E302F50FACC36D000C0478 /* ObjectModel.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = ObjectModel.xsl; path = ../Resources/ObjectModel.xsl; sourceTree = SOURCE_ROOT; };
 		53EF33B30E23CC430027EA18 /* BXASchemaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXASchemaCell.h; path = Sources/BXASchemaCell.h; sourceTree = "<group>"; };
 		53EF33B40E23CC430027EA18 /* BXASchemaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXASchemaCell.m; path = Sources/BXASchemaCell.m; sourceTree = "<group>"; };
 		53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAEntityCell.h; path = Sources/BXAEntityCell.h; sourceTree = "<group>"; };
@@ -312,6 +316,8 @@
 				227A5CD50E4BBEBF0009CC08 /* Icons */,
 				5312A74C0F584C560097DAA4 /* BaseTen Assistant Help */,
 				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */,
+				53E302F50FACC36D000C0478 /* ObjectModel.xsl */,
+				53E302F40FACC36D000C0478 /* ObjectModelRecords.xsl */,
 				227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */,
 				532F429E0D69B70F009FEDCD /* Import.xib */,
 				227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */,
@@ -569,6 +575,8 @@
 				227A5CD40E4BBEA90009CC08 /* GetInfoWindow.xib in Resources */,
 				227A5F4F0E4C5E300009CC08 /* InspectorPanel.xib in Resources */,
 				5312A7970F584C560097DAA4 /* BaseTen Assistant Help in Resources */,
+				53E302F60FACC36D000C0478 /* ObjectModelRecords.xsl in Resources */,
+				53E302F70FACC36D000C0478 /* ObjectModel.xsl in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

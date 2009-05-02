@@ -49,6 +49,7 @@
 #import <BaseTen/BXLocalizedString.h>
 #import <BaseTen/PGTSConstants.h>
 #import <BaseTen/BXLogger.h>
+#import <BaseTen/BXDatabaseObjectModelXMLSerialization.h>
 
 #import <sys/socket.h>
 //Patch by Tim Bedford 2008-08-11
@@ -179,11 +180,41 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	}
 	return retval;
 }
+
+- (NSString *) databaseTypeNameForAssistant
+{
+	return [self databaseTypeName];
+}
+@end
+
+
+@implementation BXPropertyDescription (BXAControllerAdditions)
+- (BOOL) isExcluded
+{
+	return NO;
+}
+
+- (BOOL) isDeprecated
+{
+	return NO;
+}
+
+- (BOOL) isPrimaryKey
+{
+	return NO;
+}
+
+- (NSString *) databaseTypeName
+{
+	return @"";
+}
 @end
 
 
 
+
 @implementation BXAController
+@synthesize savePanel = mSavePanel;
 
 //Patch by Tim Bedford 2008-08-11
 - (id) init
@@ -903,6 +934,8 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			retval = YES;
 		else if(action == @selector(terminate:) && [mMainWindow attachedSheet] == (NSWindow*)mConnectPanel)
 			retval = YES; // Enable quit if the connect panel up because a quit button is available on the dialogue
+		else if (action == @selector (changeModelFormat:))
+			retval = YES;
 	}
 	//End patch
     return retval;
@@ -1191,16 +1224,72 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 @implementation BXAController (NSSavePanelDelegate)
 
-- (void)savePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
+- (void)exportLogSavePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
-	[sheet orderOut:self];
-	
-	if(returnCode == NSOKButton)
-	{
+	[sheet orderOut:self];	
+	if (returnCode == NSOKButton)
 		[self finishExportLogWithURL:[sheet URL]];
+	[self setSavePanel: nil];
+}
+//End patch.
+
+
+- (void) exportModelSavePanelDidEnd: (NSSavePanel *) sheet returnCode: (int) returnCode contextInfo: (void *) contextInfo
+{
+	[sheet orderOut: self];
+	if (NSOKButton == returnCode)
+	{
+		NSError* error = nil;
+		BXDatabaseObjectModel* model = [mContext databaseObjectModel];
+		NSXMLDocument* doc = [BXDatabaseObjectModelXMLSerialization documentFromObjectModel: model error: &error];
+		ExpectV (model);
+		ExpectV (doc);
+		
+		if (error)
+			[NSApp presentError: error];
+		else
+		{
+			NSBundle* bundle = [NSBundle bundleForClass: [self class]];
+			NSURL* xsltURL = nil;
+			switch ([mModelFormatButton selectedTag]) 
+			{
+				case 1:
+					xsltURL = [NSURL fileURLWithPath: [bundle pathForResource: @"ObjectModel" ofType: @"xsl"]];
+					break;
+					
+				case 2:
+					xsltURL = [NSURL fileURLWithPath: [bundle pathForResource: @"ObjectModelRecords" ofType: @"xsl"]];
+					break;
+					
+				default:
+					break;
+			}
+			
+			if (xsltURL)
+			{
+				NSData* dotData = [doc objectByApplyingXSLTAtURL: xsltURL arguments: nil error: &error];
+				if (error)
+					[NSApp presentError: error];
+				else
+				{
+					[dotData writeToURL: [sheet URL] options: NSAtomicWrite error: &error];
+					if (error)
+						[NSApp presentError: error];
+				}
+			}
+			else
+			{
+				NSData* xmlData = [doc XMLData];
+				[xmlData writeToURL: [sheet URL] options: NSAtomicWrite error: &error];
+				if (error)
+					[NSApp presentError: error];
+			}
+		}
 	}
+	[self setSavePanel: nil];
 }
 
+//Patch by Tim Bedford 2008-08-11
 @end
 
 
@@ -1395,7 +1484,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (IBAction) disconnect: (id) sender
 {
-	if ([self hasBaseTenSchema])
+	if ([mContext isConnected] && [self hasBaseTenSchema])
 		[self refreshCaches: NO];
 	else
 		[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
@@ -1404,7 +1493,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (IBAction) terminate: (id) sender
 {
-	if ([self hasBaseTenSchema])
+	if ([mContext isConnected] && [self hasBaseTenSchema])
 		[self refreshCaches: YES]; // The YES refers to terminate after refresh. Method name could be a bit more descriptive //Patch by Tim Bedford 2008-08-11
 	else
 	{
@@ -1537,23 +1626,58 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 - (IBAction) exportLog: (id) sender
 {
-	NSSavePanel* savePanel = [NSSavePanel savePanel];
+	[self setSavePanel: [NSSavePanel savePanel]];
 	
-	[savePanel setTitle:NSLocalizedString(@"Export Log", @"Save panel title")];
-	[savePanel setPrompt:NSLocalizedString(@"Export", @"Export button label")];
-	[savePanel setRequiredFileType:@"sql"];
-	[savePanel setCanSelectHiddenExtension:YES];
+	[mSavePanel setTitle: NSLocalizedString (@"Export Log", @"Save panel title")];
+	[mSavePanel setPrompt: NSLocalizedString (@"Export", @"Export button label")];
+	[mSavePanel setRequiredFileType: @"sql"];
+	[mSavePanel setCanSelectHiddenExtension: YES];
 	
-	if(![mLogWindow isVisible])
-		[mLogWindow makeKeyAndOrderFront:self];
-	[savePanel beginSheetForDirectory:nil
-								 file:NSLocalizedString(@"LogExportDefaultName", @"Default log filename")
-					   modalForWindow:mLogWindow
-						modalDelegate:self
-					   didEndSelector:@selector(savePanelDidEnd:returnCode:contextInfo:)
-						  contextInfo:nil];
+	if (![mLogWindow isVisible])
+		[mLogWindow makeKeyAndOrderFront: self];
+	[mSavePanel beginSheetForDirectory: nil
+								  file: NSLocalizedString (@"LogExportDefaultName", @"Default log filename")
+						modalForWindow: mLogWindow
+						 modalDelegate: self
+						didEndSelector: @selector (exportLogSavePanelDidEnd:returnCode:contextInfo:)
+						   contextInfo: nil];
 }
 //End patch
+
+
+- (IBAction) exportObjectModel: (id) sender
+{
+	[self setSavePanel: [NSSavePanel savePanel]];
+	
+	[mSavePanel setTitle: NSLocalizedString (@"Export Database Object Model", @"Save panel title")];	
+	[mSavePanel setPrompt: NSLocalizedString (@"Export", @"Export button label")];
+	[mSavePanel setCanSelectHiddenExtension: YES];
+	[mSavePanel setAccessoryView: mDataModelExportView];
+	[self changeModelFormat: nil];
+	
+	[mSavePanel beginSheetForDirectory: nil
+								  file: NSLocalizedString (@"ModelExportDefaultName", @"Default model filename")
+						modalForWindow: mMainWindow
+						 modalDelegate: self
+						didEndSelector: @selector (exportModelSavePanelDidEnd:returnCode:contextInfo:)
+						   contextInfo: NULL];
+}
+
+
+- (IBAction) changeModelFormat: (id) sender
+{
+	switch ([mModelFormatButton selectedTag]) 
+	{
+		case 1:
+		case 2:
+			[mSavePanel setRequiredFileType: @"dot"];
+			break;
+		case 3:
+		default:
+			[mSavePanel setRequiredFileType: @"xml"];
+			break;
+	}
+}
 
 
 - (IBAction) clearLog: (id) sender
