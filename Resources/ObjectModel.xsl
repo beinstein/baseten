@@ -123,12 +123,7 @@
     <xsl:template match="//relationship" mode="edge">
         <xsl:variable name="entityName" select="../../@id" />
         <xsl:variable name="relName" select="./name" />
-        <xsl:variable name="relationships">
-            <xsl:copy-of select="preceding::entity//relationship" />
-            <xsl:copy-of select="preceding-sibling::relationship" />
-        </xsl:variable>        
-        <xsl:variable name="inverse" select="$relationships/* [./target = $entityName and ./inverseRelationship = $relName][1]" />
-        
+        <xsl:variable name="inverse" select="preceding::relationship [./target = $entityName and ./inverseRelationship = $relName][1]" />        
         <xsl:if test="$inverse">
             <xsl:text>&#9;</xsl:text>
             <xsl:value-of select="../../@id" />
