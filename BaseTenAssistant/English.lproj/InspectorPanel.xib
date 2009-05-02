@@ -378,13 +378,13 @@
 									<object class="NSTableView" id="313535780">
 										<reference key="NSNextResponder" ref="784271507"/>
 										<int key="NSvFlags">4352</int>
-										<string key="NSFrameSize">{295, 206}</string>
+										<string key="NSFrameSize">{297, 206}</string>
 										<reference key="NSSuperview" ref="784271507"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTableHeaderView" key="NSHeaderView" id="460089532">
 											<reference key="NSNextResponder" ref="245360227"/>
 											<int key="NSvFlags">256</int>
-											<string key="NSFrameSize">{295, 17}</string>
+											<string key="NSFrameSize">{297, 17}</string>
 											<reference key="NSSuperview" ref="245360227"/>
 											<reference key="NSTableView" ref="313535780"/>
 										</object>
@@ -398,7 +398,7 @@
 											<bool key="EncodedWithXMLCoder">YES</bool>
 											<object class="NSTableColumn" id="198122167">
 												<string key="NSIdentifier">type</string>
-												<double key="NSWidth">5.300000e+01</double>
+												<double key="NSWidth">8.600000e+01</double>
 												<double key="NSMinWidth">4.000000e+01</double>
 												<double key="NSMaxWidth">1.000000e+03</double>
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -427,7 +427,7 @@
 											</object>
 											<object class="NSTableColumn" id="828123425">
 												<string key="NSIdentifier">name</string>
-												<double key="NSWidth">1.540000e+02</double>
+												<double key="NSWidth">1.240000e+02</double>
 												<double key="NSMinWidth">4.000000e+01</double>
 												<double key="NSMaxWidth">1.000000e+03</double>
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -453,7 +453,7 @@
 											</object>
 											<object class="NSTableColumn" id="1049780405">
 												<string key="NSIdentifier">primaryKey</string>
-												<double key="NSWidth">7.852344e+01</double>
+												<double key="NSWidth">7.752344e+01</double>
 												<double key="NSMinWidth">4.052344e+01</double>
 												<double key="NSMaxWidth">1.000000e+03</double>
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -517,6 +517,7 @@
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{-100, -100}, {231, 11}}</string>
 								<reference key="NSSuperview" ref="137697787"/>
+								<bool key="NSEnabled">YES</bool>
 								<int key="NSsFlags">257</int>
 								<reference key="NSTarget" ref="137697787"/>
 								<string key="NSAction">_doScroller:</string>
@@ -542,7 +543,7 @@
 						<string key="NSFrame">{{8, 88}, {312, 224}}</string>
 						<reference key="NSSuperview" ref="362132747"/>
 						<reference key="NSNextKeyView" ref="784271507"/>
-						<int key="NSsFlags">18</int>
+						<int key="NSsFlags">146</int>
 						<reference key="NSVScroller" ref="255429836"/>
 						<reference key="NSHScroller" ref="653939793"/>
 						<reference key="NSContentView" ref="784271507"/>
@@ -982,7 +983,7 @@
 							<string key="NSKeyPath">arrangedObjects.value.databaseTypeName</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSConditionallySetsEditable</string>
-								<integer value="1" key="NS.object.0" id="5"/>
+								<reference key="NS.object.0" ref="9"/>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
@@ -1002,7 +1003,7 @@
 							<string key="NSKeyPath">arrangedObjects.value.primaryKey</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValidatesImmediately</string>
-								<reference key="NS.object.0" ref="5"/>
+								<reference key="NS.object.0" ref="9"/>
 							</object>
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
@@ -1069,8 +1070,8 @@
 							<reference ref="807898627"/>
 							<reference ref="350617502"/>
 							<reference ref="1045506743"/>
-							<reference ref="137697787"/>
 							<reference ref="743760348"/>
+							<reference ref="137697787"/>
 						</object>
 						<reference key="parent" ref="1002"/>
 						<string key="objectName">Entity Attributes</string>

@@ -211,6 +211,14 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 @end
 
 
+@implementation BXRelationshipDescription (BXAControllerAdditions)
+- (NSString *) databaseTypeName
+{
+	return [NSString stringWithFormat: @"%@-to-%@",
+			([[self inverseRelationship] isToMany] ? @"many" : @"one"),
+			([self isToMany] ? @"many" : @"one")];
+}
+@end
 
 
 @implementation BXAController
