@@ -254,6 +254,8 @@
 		53666D140E1CD8D20028DBEA /* PGTSTableDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD50E1CD8D20028DBEA /* PGTSTableDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666D160E1CD8D20028DBEA /* PGTSTypeDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CD70E1CD8D20028DBEA /* PGTSTypeDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666DAC0E1CE2180028DBEA /* postgresql in Headers */ = {isa = PBXBuildFile; fileRef = 53666DAB0E1CE2180028DBEA /* postgresql */; settings = {ATTRIBUTES = (Private, ); }; };
+		53671B4B0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 53671B490FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		53671B4C0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 53671B4A0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.m */; };
 		53680C0E0E59922C00A53B26 /* BXKeyPathParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 53680C0C0E59922C00A53B26 /* BXKeyPathParser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53680C0F0E59922C00A53B26 /* BXKeyPathParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */; };
 		53688DED0F2F64F200AAC65D /* BXPGEFMetadataContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 53688DEB0F2F64F200AAC65D /* BXPGEFMetadataContainer.h */; };
@@ -696,6 +698,8 @@
 		53666D7B0E1CDE5A0028DBEA /* NSExpression+PGTSAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSExpression+PGTSAdditions.m"; path = "Sources/NSExpression+PGTSAdditions.m"; sourceTree = "<group>"; };
 		53666D7C0E1CDE5A0028DBEA /* NSPredicate+PGTSAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSPredicate+PGTSAdditions.h"; path = "Sources/NSPredicate+PGTSAdditions.h"; sourceTree = "<group>"; };
 		53666DAB0E1CE2180028DBEA /* postgresql */ = {isa = PBXFileReference; explicitFileType = folder; fileEncoding = 4; name = postgresql; path = "BaseTen-PostgreSQL/postgresql"; sourceTree = BUILT_PRODUCTS_DIR; };
+		53671B490FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectModelXMLSerialization.h; path = Sources/BXDatabaseObjectModelXMLSerialization.h; sourceTree = "<group>"; };
+		53671B4A0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectModelXMLSerialization.m; path = Sources/BXDatabaseObjectModelXMLSerialization.m; sourceTree = "<group>"; };
 		53680C0C0E59922C00A53B26 /* BXKeyPathParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXKeyPathParser.h; path = Sources/BXKeyPathParser.h; sourceTree = "<group>"; };
 		53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXKeyPathParser.m; path = Sources/BXKeyPathParser.m; sourceTree = "<group>"; };
 		53688DEB0F2F64F200AAC65D /* BXPGEFMetadataContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGEFMetadataContainer.h; path = Sources/BXPGEFMetadataContainer.h; sourceTree = "<group>"; };
@@ -1055,6 +1059,8 @@
 				535736CA0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.m */,
 				535736C30F3283C200DB3D0B /* BXDatabaseObjectModel.h */,
 				535736C40F3283C200DB3D0B /* BXDatabaseObjectModel.m */,
+				53671B490FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h */,
+				53671B4A0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.m */,
 				53B8730F0A0A53D9007315BC /* Descriptions */,
 			);
 			name = "Object model";
@@ -1638,6 +1644,7 @@
 				5348B7060F57547F00B2655E /* BXCoreDataCompatibility.h in Headers */,
 				538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */,
 				53B934DE0F98BDFA006BD87D /* BXDeprecationWarning.h in Headers */,
+				53671B4B0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2010,6 +2017,7 @@
 				535736CC0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.m in Sources */,
 				533F88410F35482000041C02 /* BXForeignKey.m in Sources */,
 				53B934DF0F98BDFA006BD87D /* BXDeprecationWarning.m in Sources */,
+				53671B4C0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
