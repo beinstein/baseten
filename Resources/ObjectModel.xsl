@@ -33,7 +33,7 @@
     <xsl:template match="/">
         <xsl:text>graph G {&#10;</xsl:text>
         <xsl:text>&#9;rankdir="LR"&#10;</xsl:text>
-        <xsl:text>&#9;node [shape = plaintext];&#10;</xsl:text>
+        <xsl:text>&#9;node [shape = plaintext, style = rounded];&#10;</xsl:text>
         <xsl:apply-templates select="//entity" />
         
         <xsl:text>&#9;edge [];&#10;</xsl:text>
@@ -46,10 +46,10 @@
         <xsl:text>&#9;</xsl:text>
         <xsl:value-of select="./@id" />
         <xsl:text> [label = &lt;&#10;</xsl:text>
-        <xsl:text>&#9;&#9;&lt;table&gt;&#10;</xsl:text>
+        <xsl:text>&#9;&#9;&lt;table border="1" cellspacing="0"&gt;&#10;</xsl:text>
         
         <xsl:text>&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
-        <xsl:text>&#9;&#9;&#9;&#9;&lt;td&gt;</xsl:text>
+        <xsl:text>&#9;&#9;&#9;&#9;&lt;td bgcolor="#e2bfc9"&gt;</xsl:text>
         <xsl:value-of select="./schemaName" />
         <xsl:text>.</xsl:text>
         <xsl:value-of select="./name" />
