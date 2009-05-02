@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
- ObjectModel.xsl
+ ObjectModelRecords.xsl
  BaseTen
  
  Copyright (C) 2009 Marko Karppinen & Co. LLC.
@@ -33,7 +33,7 @@
     <xsl:template match="/">
         <xsl:text>graph G {&#10;</xsl:text>
         <xsl:text>&#9;rankdir="LR"&#10;</xsl:text>
-        <xsl:text>&#9;node [shape = plaintext];&#10;</xsl:text>
+        <xsl:text>&#9;node [shape = record, style = rounded];&#10;</xsl:text>
         <xsl:apply-templates select="//entity" />
         
         <xsl:text>&#9;edge [];&#10;</xsl:text>
@@ -45,78 +45,44 @@
     <xsl:template match="//entity">
         <xsl:text>&#9;</xsl:text>
         <xsl:value-of select="./@id" />
-        <xsl:text> [label = &lt;&#10;</xsl:text>
-        <xsl:text>&#9;&#9;&lt;table&gt;&#10;</xsl:text>
-        
-        <xsl:text>&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
-        <xsl:text>&#9;&#9;&#9;&#9;&lt;td&gt;</xsl:text>
+        <xsl:text> [label = "</xsl:text>
+
         <xsl:value-of select="./schemaName" />
         <xsl:text>.</xsl:text>
         <xsl:value-of select="./name" />
-        <xsl:text>&lt;/td&gt;&#10;</xsl:text>
-        <xsl:text>&#9;&#9;&#9;&lt;/tr&gt;&#10;</xsl:text>
-
+        
         <xsl:apply-templates select="./attributes" />
         <xsl:apply-templates select="./relationships" />
         
-        <xsl:text>&#9;&#9;&lt;/table&gt;&#10;</xsl:text>
-        <xsl:text>&#9;&gt;];&#10;</xsl:text>
+        <xsl:text>"];&#10;</xsl:text>
     </xsl:template>
 
 
     <xsl:template match="//attributes">
         <xsl:comment>Attributes</xsl:comment>
-        <xsl:if test="0 &lt; count (./attribute)">
-            <xsl:text>&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&#9;&lt;td&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&#9;&#9;&lt;table border="0"&gt;&#10;</xsl:text>
-            <xsl:apply-templates select="./attribute" />
-            <xsl:text>&#9;&#9;&#9;&#9;&#9;&lt;/table&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&#9;&lt;/td&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&lt;/tr&gt;&#10;</xsl:text>
-        </xsl:if>
+        <xsl:apply-templates select="./attribute" />
     </xsl:template>
 
 
     <xsl:template match="//relationships">
         <xsl:comment>Relationships</xsl:comment>
-        <xsl:if test="0 &lt; count (./relationship)">
-            <xsl:text>&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&#9;&lt;td&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&#9;&#9;&lt;table border="0"&gt;&#10;</xsl:text>
-            <xsl:apply-templates select="./relationship" />
-            <xsl:text>&#9;&#9;&#9;&#9;&#9;&lt;/table&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&#9;&lt;/td&gt;&#10;</xsl:text>
-            <xsl:text>&#9;&#9;&#9;&lt;/tr&gt;&#10;</xsl:text>
-        </xsl:if>
+        <xsl:apply-templates select="./relationship" />
     </xsl:template>
 
 
     <xsl:template match="//attribute">
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
-
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left"&gt;</xsl:text>
+        <xsl:text>|</xsl:text>
         <xsl:value-of select="./name" />
-        <xsl:text>&lt;/td&gt;&#10;</xsl:text>
-
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left"&gt;</xsl:text>
+        <xsl:text> </xsl:text>
         <xsl:value-of select="./type" />
-        <xsl:text>&lt;/td&gt;&#10;</xsl:text>
-
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&lt;/tr&gt;&#10;</xsl:text>
     </xsl:template>
 
 
     <xsl:template match="//relationship">
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
-
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left" port="</xsl:text>
+        <xsl:text>|&lt;</xsl:text>
         <xsl:value-of select="./name" />
-        <xsl:text>"&gt;</xsl:text>
+        <xsl:text>&gt; </xsl:text>
         <xsl:value-of select="./name" />
-        <xsl:text>&lt;/td&gt;&#10;</xsl:text>
-
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&lt;/tr&gt;&#10;</xsl:text>
     </xsl:template>
 
     
@@ -134,13 +100,12 @@
             <xsl:value-of select="../../@id" />
             <xsl:text>:</xsl:text>
             <xsl:value-of select="./name" />
-            <xsl:text>:c -- </xsl:text>
+            <xsl:text> -- </xsl:text>
             <xsl:value-of select="./target" />
             <xsl:text>:</xsl:text>
             <xsl:value-of select="./inverseRelationship" />
-            <xsl:text>:c </xsl:text>
             
-            <xsl:text>[arrowhead = normal</xsl:text>
+            <xsl:text> [arrowhead = normal</xsl:text>
             <xsl:if test="./targetType = 'many'">
                 <xsl:text>normal</xsl:text>
             </xsl:if>
@@ -148,7 +113,8 @@
             <xsl:if test="$inverse/targetType = 'many'">
                 <xsl:text>normal</xsl:text>
             </xsl:if>
-            <xsl:text>]&#10;</xsl:text>
+            
+            <xsl:text>];&#10;</xsl:text>
         </xsl:if>
     </xsl:template>
 </xsl:stylesheet>
