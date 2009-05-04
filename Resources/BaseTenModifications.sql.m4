@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.928}})dnl
+define({{_bx_version_}}, {{0.929}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -74,6 +74,16 @@ CREATE FUNCTION "baseten".prepare () RETURNS VOID AS $$
 		PERFORM rolname FROM pg_roles WHERE rolname = 'basetenuser';
 		IF NOT FOUND THEN
 			CREATE ROLE basetenuser WITH
+				INHERIT
+				NOSUPERUSER
+				NOCREATEDB
+				NOCREATEROLE
+				NOLOGIN;
+		END IF;
+		
+		PERFORM rolname FROM pg_roles WHERE rolname = 'basetenowner';
+		IF NOT FOUND THEN
+			CREATE ROLE basetenowner WITH
 				INHERIT
 				NOSUPERUSER
 				NOCREATEDB
@@ -158,9 +168,8 @@ BEGIN
 	END LOOP;
 	RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL SECURITY INVOKER;
-REVOKE ALL PRIVILEGES 
-	ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
+$$ IMMUTABLE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT []) TO basetenread;
 
 
@@ -177,9 +186,8 @@ BEGIN
 	END LOOP;
 	RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL SECURITY INVOKER;
-REVOKE ALL PRIVILEGES 
-	ON FUNCTION "baseten".array_append_each (TEXT, TEXT [])	 FROM PUBLIC;
+$$ IMMUTABLE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_append_each (TEXT, TEXT [])	 FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_append_each (TEXT, TEXT []) TO basetenread;
 
 
@@ -193,7 +201,7 @@ BEGIN
 	END IF;
 	RETURN retval;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+$$ IMMUTABLE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".split_part (TEXT, TEXT, INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".split_part (TEXT, TEXT, INTEGER) TO basetenread;
 
@@ -203,7 +211,7 @@ RETURNS SETOF INTEGER AS $$
 	SELECT 
 		pg_stat_get_backend_pid (idset.id) AS pid 
 	FROM pg_stat_get_backend_idset () AS idset (id);
-$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
+$$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".running_backend_pids () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".running_backend_pids () TO basetenread;
 
@@ -289,14 +297,14 @@ CREATE FUNCTION "baseten".oidof (TEXT, TEXT) RETURNS "baseten".reltype AS $$
 	FROM pg_class c
 	INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
 	WHERE c.relname = $2 AND n.nspname = $1;
-$$ STABLE LANGUAGE SQL SECURITY INVOKER;
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".oidof (TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".oidof (TEXT, TEXT) TO basetenread;
 
 
 CREATE FUNCTION "baseten".oidof (TEXT) RETURNS "baseten".reltype AS $$
 	SELECT "baseten".oidof ('public', $1);
-$$ STABLE LANGUAGE SQL SECURITY INVOKER;
+$$ STABLE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".oidof (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".oidof (TEXT) TO basetenread;
 
@@ -540,7 +548,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+$$ STABLE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._view_hierarchy (OID, OID, INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._view_hierarchy (OID, OID, INTEGER) TO basetenread;
 
@@ -564,7 +572,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+$$ STABLE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._view_hierarchy (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._view_hierarchy (OID) TO basetenread;
 
@@ -589,7 +597,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL SECURITY INVOKER;
+$$ STABLE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._rel_view_hierarchy () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._rel_view_hierarchy () TO basetenread;
 
@@ -734,7 +742,7 @@ CREATE FUNCTION "baseten"._assign_relation_ids () RETURNS VOID AS $$
 			);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_relation_ids () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten"._assign_relation_ids () TO basetenowner;
 
 
 CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
@@ -799,7 +807,7 @@ CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
 		);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_foreign_key_ids () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten"._assign_foreign_key_ids () TO basetenowner;
 
 
 CREATE FUNCTION "baseten".assign_internal_ids () RETURNS VOID AS $$
@@ -807,7 +815,7 @@ CREATE FUNCTION "baseten".assign_internal_ids () RETURNS VOID AS $$
 	SELECT "baseten"._assign_foreign_key_ids ();
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".assign_internal_ids () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten".assign_internal_ids () TO basetenowner;
 
 
 CREATE FUNCTION "baseten".refresh_view_caches () RETURNS void AS $$
@@ -822,7 +830,7 @@ CREATE FUNCTION "baseten".refresh_view_caches () RETURNS void AS $$
 	INSERT INTO "baseten"._rel_view_manytomany	SELECT * from "baseten"._rel_view_manytomany_v;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_view_caches () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten".refresh_view_caches () TO basetenowner;
 
 
 CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
@@ -1025,7 +1033,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten"._insert_relationships () TO basetenowner;
 
 
 CREATE FUNCTION "baseten"._insert_deprecated_relationships () RETURNS VOID AS $$
@@ -1116,7 +1124,8 @@ CREATE FUNCTION "baseten"._insert_deprecated_relationships () RETURNS VOID AS $$
 		WHERE 
 			d1.conid = d2.conid AND
 			d1.kind = d2.kind AND
-			d1.kind IN ('t', 'o');
+			d1.kind IN ('t', 'o') AND
+			d2.is_ambiguous = true;
 	UPDATE "baseten"._deprecated_relationship_name d1
 		SET is_ambiguous = true
 		FROM "baseten"._deprecated_relationship_name d2
@@ -1124,10 +1133,11 @@ CREATE FUNCTION "baseten"._insert_deprecated_relationships () RETURNS VOID AS $$
 			d1.conid = d2.conid AND
 			d1.dstconid = d2.dstconid AND
 			d1.kind = d2.kind AND
-			d1.kind = 'm';	
+			d1.kind = 'm' AND
+			d2.is_ambiguous = true;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_deprecated_relationships () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten"._insert_deprecated_relationships () TO basetenowner;
 
 
 CREATE FUNCTION "baseten"._remove_ambiguous_relationships () RETURNS VOID AS $$
@@ -1163,7 +1173,7 @@ CREATE FUNCTION "baseten"._remove_ambiguous_relationships () RETURNS VOID AS $$
 	WHERE r1.name = r2.name AND r1.srcid = r2.srcid;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._remove_ambiguous_relationships () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten"._remove_ambiguous_relationships () TO basetenowner;
 
 
 CREATE FUNCTION "baseten"._mod_notification (OID) RETURNS TEXT AS $$
@@ -1433,7 +1443,7 @@ BEGIN
 	retval := (reloid, relid, nname, "baseten"._lock_fn (relid), "baseten"._lock_table (relid));
 	RETURN retval;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL SECURITY INVOKER;
+$$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_observe (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_observe (OID) TO basetenuser;
 
@@ -1462,9 +1472,10 @@ BEGIN
 	retval := "baseten".reltype ($1);
 	RETURN retval;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE LANGUAGE PLPGSQL SECURITY DEFINER;
 COMMENT ON FUNCTION "baseten".disable (OID) IS 'Removes BaseTen tables for a specific relation';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".disable (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".disable (OID) TO basetenowner;
 
 
 -- A helper function
@@ -1503,9 +1514,7 @@ BEGIN
 	RETURN;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".enable_table_insert (OID, TEXT []) 
-	FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_table_insert (OID, TEXT []) FROM PUBLIC;
 
 
 -- Another helper function
@@ -1532,9 +1541,7 @@ BEGIN
 	RETURN;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".enable_view_insert (OID, TEXT)
-	FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_view_insert (OID, TEXT) FROM PUBLIC;
 
 
 -- Another helper function
@@ -1584,9 +1591,7 @@ BEGIN
 	RETURN;
 END;
 $marker$ VOLATILE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".enable_other (TEXT, OID, TEXT [])
-	FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_other (TEXT, OID, TEXT []) FROM PUBLIC;
 
 
 -- Another helper function
@@ -1609,9 +1614,7 @@ BEGIN
 			'(''' || operation || ''',' || pkey_values || ')';
 END;
 $$ STABLE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION
-	"baseten".enable_insert_query (OID, CHAR, TEXT, TEXT [])
-	FROM PUBLIC;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_insert_query (OID, CHAR, TEXT, TEXT []) FROM PUBLIC;
 
 
 CREATE FUNCTION "baseten".enable_lock_fn (OID) 
@@ -1756,14 +1759,16 @@ BEGIN
 	retval := "baseten".reltype (reloid);
 	RETURN retval;
 END;
-$marker$ VOLATILE LANGUAGE PLPGSQL;
+$marker$ VOLATILE LANGUAGE PLPGSQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable (OID, BOOLEAN, TEXT) FROM PUBLIC;	
+GRANT EXECUTE ON FUNCTION "baseten".enable (OID, BOOLEAN, TEXT) TO basetenowner;
 
 
 CREATE FUNCTION "baseten".enable (OID) RETURNS "baseten".reltype AS $$
 	SELECT "baseten".enable ($1, false, null);
-$$ VOLATILE LANGUAGE SQL;
+$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable (OID) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".enable (OID) TO basetenowner;
 COMMENT ON FUNCTION "baseten".enable (OID) IS 'BaseTen-enables a relation';
 
 
@@ -1839,7 +1844,7 @@ CREATE FUNCTION "baseten".prune () RETURNS VOID AS $$
 		"baseten"._deprecated_relationship_name;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".prune () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten".prune () TO basetenowner;
 
 
 CREATE FUNCTION "baseten".refresh_caches () RETURNS VOID AS $$
@@ -1874,8 +1879,9 @@ CREATE FUNCTION "baseten".refresh_caches () RETURNS VOID AS $$
 	SELECT "baseten"._remove_ambiguous_relationships ();
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_caches () FROM PUBLIC;
--- Only owner for now.
+GRANT EXECUTE ON FUNCTION "baseten".refresh_caches () TO basetenowner;
 
 
 GRANT basetenread TO basetenuser;
+GRANT basetenuser TO basetenowner;
 COMMIT; -- Functions
