@@ -43,7 +43,6 @@
 }
 
 + (id) inspectorPanelController;
-
 - (id) init;
 - (void) awakeFromNib;
 

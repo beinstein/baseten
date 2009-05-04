@@ -33,6 +33,7 @@
 
 
 __strong static NSString* kBXAInspectorPanelControllerKVOContext = @"kBXAInspectorPanelControllerKVOContext";
+static NSPoint gLastPoint = {};
 
 
 @implementation BXAInspectorPanelController
@@ -60,9 +61,18 @@ __strong static NSString* kBXAInspectorPanelControllerKVOContext = @"kBXAInspect
 
 + (void)initialize
 {
-	[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityTitle"];
-	[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityName"];
-	[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityIcon"];
+	static BOOL tooLate = NO;
+	if (! tooLate)
+	{
+		tooLate = YES;
+		
+		NSRect frame = [[NSScreen mainScreen] frame];
+		gLastPoint = NSMakePoint (0.0, frame.origin.y + frame.size.height);
+								  
+		[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityTitle"];
+		[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityName"];
+		[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityIcon"];		
+	}	
 }
 
 + (id) inspectorPanelController
@@ -77,22 +87,32 @@ __strong static NSString* kBXAInspectorPanelControllerKVOContext = @"kBXAInspect
 	return sInspector;
 }
 
-- (id) init
+- (NSWindow *) windowPrototype: (NSRect) contentRect
 {
-	return [self initWithWindowNibName:@"InspectorPanel"];
+	NSUInteger windowStyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSUtilityWindowMask;
+	NSPanel* window = [[[NSPanel alloc] initWithContentRect: contentRect styleMask: windowStyle 
+													backing: NSBackingStoreBuffered defer: YES] autorelease];
+	[window setFloatingPanel: YES];
+	return window;
 }
 
-- (id) initWithWindowNibName: (NSString *) nibName
+- (id) init
 {
-	if(![super initWithWindowNibName: nibName])
-		return nil;
-	
+	if ((self = [super initWithWindowNibName: @"InspectorView"]))
+	{
+	}
 	return self;
 }
 
 - (void) awakeFromNib
 {
-	[[self window] setContentView:mEntityAttributesView];
+	NSWindow* window = [self windowPrototype: [mEntityAttributesView frame]];
+	gLastPoint = [window cascadeTopLeftFromPoint: gLastPoint];
+
+	[self setWindow: window];
+	[window bind: @"title" toObject: self withKeyPath: @"entity.name" options: nil];
+	[window setContentView: mEntityAttributesView];
+	[window setFrameTopLeftPoint: gLastPoint];
 	
 	// Set up default sort descriptors
 	NSSortDescriptor* descriptor = [[mAttributesTableView tableColumnWithIdentifier:@"name"] sortDescriptorPrototype];

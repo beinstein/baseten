@@ -15,15 +15,14 @@
 		227A5C320E4BB4EA0009CC08 /* GetInfo32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C310E4BB4EA0009CC08 /* GetInfo32.tiff */; };
 		227A5C350E4BB4FA0009CC08 /* Reload32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C340E4BB4FA0009CC08 /* Reload32.tiff */; };
 		227A5CB90E4BBCBB0009CC08 /* Help32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5CB80E4BBCBB0009CC08 /* Help32.tiff */; };
-		227A5CD40E4BBEA90009CC08 /* GetInfoWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */; };
 		227A5CE40E4BC2EB0009CC08 /* BXAGetInfoWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */; };
 		227A5F4C0E4C5B9D0009CC08 /* BXAInspectorPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */; };
-		227A5F4F0E4C5E300009CC08 /* InspectorPanel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */; };
 		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */; };
 		5312A7970F584C560097DAA4 /* BaseTen Assistant Help in Resources */ = {isa = PBXBuildFile; fileRef = 5312A74C0F584C560097DAA4 /* BaseTen Assistant Help */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
 		53425B650E2CD237005F6123 /* MKCStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53425B640E2CD237005F6123 /* MKCStackView.m */; };
+		536353D90FAF46AF003AE7D5 /* InspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 536353D70FAF46AF003AE7D5 /* InspectorView.xib */; };
 		536CB9CB0B0D217000EBCB39 /* ImportModel32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C50B0D217000EBCB39 /* ImportModel32.png */; };
 		536CB9CC0B0D217000EBCB39 /* Entity16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C60B0D217000EBCB39 /* Entity16.png */; };
 		536CB9CD0B0D217000EBCB39 /* Schema16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C70B0D217000EBCB39 /* Schema16.png */; };
@@ -177,12 +176,10 @@
 		227A5C310E4BB4EA0009CC08 /* GetInfo32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = GetInfo32.tiff; path = Resources/GetInfo32.tiff; sourceTree = "<group>"; };
 		227A5C340E4BB4FA0009CC08 /* Reload32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Reload32.tiff; path = Resources/Reload32.tiff; sourceTree = "<group>"; };
 		227A5CB80E4BBCBB0009CC08 /* Help32.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; name = Help32.tiff; path = Resources/Help32.tiff; sourceTree = "<group>"; };
-		227A5CD10E4BBEA50009CC08 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/GetInfoWindow.xib; sourceTree = "<group>"; };
 		227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAGetInfoWindowController.h; path = Sources/BXAGetInfoWindowController.h; sourceTree = "<group>"; };
 		227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAGetInfoWindowController.m; path = Sources/BXAGetInfoWindowController.m; sourceTree = "<group>"; };
 		227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAInspectorPanelController.h; path = Sources/BXAInspectorPanelController.h; sourceTree = "<group>"; };
 		227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAInspectorPanelController.m; path = Sources/BXAInspectorPanelController.m; sourceTree = "<group>"; };
-		227A5F4E0E4C5E300009CC08 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorPanel.xib; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Sources/main.m; sourceTree = "<group>"; };
 		2B66D7D70B1C5CB800F8C64A /* SetupApplication_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = SetupApplication_Prefix.pch; path = Sources/SetupApplication_Prefix.pch; sourceTree = "<group>"; };
 		2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */ = {isa = PBXFileReference; explicitFileType = text; fileEncoding = 5; name = BaseTenModifications.sql.m4; path = ../Resources/BaseTenModifications.sql.m4; sourceTree = SOURCE_ROOT; };
@@ -194,6 +191,7 @@
 		532F429F0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Import.xib; sourceTree = "<group>"; };
 		53425B630E2CD237005F6123 /* MKCStackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCStackView.h; path = Sources/MKCStackView.h; sourceTree = "<group>"; };
 		53425B640E2CD237005F6123 /* MKCStackView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCStackView.m; path = Sources/MKCStackView.m; sourceTree = "<group>"; };
+		536353D80FAF46AF003AE7D5 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/InspectorView.xib; sourceTree = "<group>"; };
 		536CB9C50B0D217000EBCB39 /* ImportModel32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ImportModel32.png; path = Resources/ImportModel32.png; sourceTree = "<group>"; };
 		536CB9C60B0D217000EBCB39 /* Entity16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Entity16.png; path = Resources/Entity16.png; sourceTree = "<group>"; };
 		536CB9C70B0D217000EBCB39 /* Schema16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Schema16.png; path = Resources/Schema16.png; sourceTree = "<group>"; };
@@ -318,9 +316,8 @@
 				2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */,
 				53E302F50FACC36D000C0478 /* ObjectModel.xsl */,
 				53E302F40FACC36D000C0478 /* ObjectModelRecords.xsl */,
-				227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */,
 				532F429E0D69B70F009FEDCD /* Import.xib */,
-				227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */,
+				536353D70FAF46AF003AE7D5 /* InspectorView.xib */,
 				532F429A0D69B70F009FEDCD /* MainMenu.xib */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
@@ -572,11 +569,10 @@
 				227A5C320E4BB4EA0009CC08 /* GetInfo32.tiff in Resources */,
 				227A5C350E4BB4FA0009CC08 /* Reload32.tiff in Resources */,
 				227A5CB90E4BBCBB0009CC08 /* Help32.tiff in Resources */,
-				227A5CD40E4BBEA90009CC08 /* GetInfoWindow.xib in Resources */,
-				227A5F4F0E4C5E300009CC08 /* InspectorPanel.xib in Resources */,
 				5312A7970F584C560097DAA4 /* BaseTen Assistant Help in Resources */,
 				53E302F60FACC36D000C0478 /* ObjectModelRecords.xsl in Resources */,
 				53E302F70FACC36D000C0478 /* ObjectModel.xsl in Resources */,
+				536353D90FAF46AF003AE7D5 /* InspectorView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -681,22 +677,6 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
-		227A5CD30E4BBEA90009CC08 /* GetInfoWindow.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				227A5CD10E4BBEA50009CC08 /* English */,
-			);
-			name = GetInfoWindow.xib;
-			sourceTree = "<group>";
-		};
-		227A5F4D0E4C5E300009CC08 /* InspectorPanel.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				227A5F4E0E4C5E300009CC08 /* English */,
-			);
-			name = InspectorPanel.xib;
-			sourceTree = "<group>";
-		};
 		5312A74C0F584C560097DAA4 /* BaseTen Assistant Help */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -719,6 +699,14 @@
 				532F429F0D69B70F009FEDCD /* English */,
 			);
 			name = Import.xib;
+			sourceTree = "<group>";
+		};
+		536353D70FAF46AF003AE7D5 /* InspectorView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				536353D80FAF46AF003AE7D5 /* English */,
+			);
+			name = InspectorView.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

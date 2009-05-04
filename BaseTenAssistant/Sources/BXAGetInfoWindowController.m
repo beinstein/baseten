@@ -41,15 +41,15 @@
 	return [[[BXAGetInfoWindowController alloc] init] autorelease];
 }
 
-- (id) init
+- (NSWindow *) windowPrototype: (NSRect) contentRect
 {
-	if(![super initWithWindowNibName:@"GetInfoWindow"])
-		return nil;
-	
-	return self;
+	NSUInteger windowStyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask;
+	NSWindow* window = [[[NSWindow alloc] initWithContentRect: contentRect styleMask: windowStyle 
+													  backing: NSBackingStoreBuffered defer: YES] autorelease];
+	return window;
 }
-
 @end
+
 
 @implementation BXAGetInfoWindowController (NSWindowDelegate)
 

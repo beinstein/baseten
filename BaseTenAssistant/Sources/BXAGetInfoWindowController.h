@@ -39,9 +39,6 @@
 }
 
 + (id) getInfoWindowController;
-
-- (id) init;
-
 @end
 
 @interface BXAGetInfoWindowController (NSWindowDelegate)
