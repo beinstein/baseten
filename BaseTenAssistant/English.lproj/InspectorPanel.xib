@@ -378,13 +378,13 @@
 									<object class="NSTableView" id="313535780">
 										<reference key="NSNextResponder" ref="784271507"/>
 										<int key="NSvFlags">4352</int>
-										<string key="NSFrameSize">{297, 206}</string>
+										<string key="NSFrameSize">{295, 206}</string>
 										<reference key="NSSuperview" ref="784271507"/>
 										<bool key="NSEnabled">YES</bool>
 										<object class="NSTableHeaderView" key="NSHeaderView" id="460089532">
 											<reference key="NSNextResponder" ref="245360227"/>
 											<int key="NSvFlags">256</int>
-											<string key="NSFrameSize">{297, 17}</string>
+											<string key="NSFrameSize">{295, 17}</string>
 											<reference key="NSSuperview" ref="245360227"/>
 											<reference key="NSTableView" ref="313535780"/>
 										</object>
@@ -427,7 +427,7 @@
 											</object>
 											<object class="NSTableColumn" id="828123425">
 												<string key="NSIdentifier">name</string>
-												<double key="NSWidth">1.240000e+02</double>
+												<double key="NSWidth">1.220000e+02</double>
 												<double key="NSMinWidth">4.000000e+01</double>
 												<double key="NSMaxWidth">1.000000e+03</double>
 												<object class="NSTableHeaderCell" key="NSHeaderCell">
@@ -517,7 +517,6 @@
 								<int key="NSvFlags">-2147483392</int>
 								<string key="NSFrame">{{-100, -100}, {231, 11}}</string>
 								<reference key="NSSuperview" ref="137697787"/>
-								<bool key="NSEnabled">YES</bool>
 								<int key="NSsFlags">257</int>
 								<reference key="NSTarget" ref="137697787"/>
 								<string key="NSAction">_doScroller:</string>
@@ -543,7 +542,7 @@
 						<string key="NSFrame">{{8, 88}, {312, 224}}</string>
 						<reference key="NSSuperview" ref="362132747"/>
 						<reference key="NSNextKeyView" ref="784271507"/>
-						<int key="NSsFlags">146</int>
+						<int key="NSsFlags">18</int>
 						<reference key="NSVScroller" ref="255429836"/>
 						<reference key="NSHScroller" ref="653939793"/>
 						<reference key="NSContentView" ref="784271507"/>
@@ -691,6 +690,9 @@
 					<string>value.canSetPrimaryKey</string>
 					<string>value.databaseTypeNameForAssistant</string>
 					<string>value.primaryKey</string>
+					<string>value.isAttribute</string>
+					<string>value.isEnabled</string>
+					<string>value.isEnabledForAssistant</string>
 				</object>
 				<bool key="NSEditable">YES</bool>
 				<bool key="NSAvoidsEmptySelection">YES</bool>
@@ -770,7 +772,7 @@
 						<string key="label">enabled: entity.canSetPrimaryKey</string>
 						<reference key="source" ref="1049780405"/>
 						<reference key="destination" ref="1001"/>
-						<object class="NSNibBindingConnector" key="connector">
+						<object class="NSNibBindingConnector" key="connector" id="1026738554">
 							<reference key="NSSource" ref="1049780405"/>
 							<reference key="NSDestination" ref="1001"/>
 							<string key="NSLabel">enabled: entity.canSetPrimaryKey</string>
@@ -1009,6 +1011,76 @@
 						</object>
 					</object>
 					<int key="connectionID">123</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled2: arrangedObjects.value.isAttribute</string>
+						<reference key="source" ref="1049780405"/>
+						<reference key="destination" ref="829741630"/>
+						<object class="NSNibBindingConnector" key="connector" id="378139535">
+							<reference key="NSSource" ref="1049780405"/>
+							<reference key="NSDestination" ref="829741630"/>
+							<string key="NSLabel">enabled2: arrangedObjects.value.isAttribute</string>
+							<string key="NSBinding">enabled2</string>
+							<string key="NSKeyPath">arrangedObjects.value.isAttribute</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMutableArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSMultipleValuesPlaceholder</string>
+									<string>NSNoSelectionPlaceholder</string>
+									<string>NSNotApplicablePlaceholder</string>
+									<string>NSNullPlaceholder</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<reference ref="7"/>
+									<reference ref="7"/>
+									<reference ref="7"/>
+									<reference ref="7"/>
+								</object>
+							</object>
+							<reference key="NSPreviousConnector" ref="1026738554"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">125</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled3: entity.enabledForAssistant</string>
+						<reference key="source" ref="1049780405"/>
+						<reference key="destination" ref="1001"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1049780405"/>
+							<reference key="NSDestination" ref="1001"/>
+							<string key="NSLabel">enabled3: entity.enabledForAssistant</string>
+							<string key="NSBinding">enabled3</string>
+							<string key="NSKeyPath">entity.enabledForAssistant</string>
+							<object class="NSDictionary" key="NSOptions">
+								<bool key="EncodedWithXMLCoder">YES</bool>
+								<object class="NSMutableArray" key="dict.sortedKeys">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<string>NSMultipleValuesPlaceholder</string>
+									<string>NSNoSelectionPlaceholder</string>
+									<string>NSNotApplicablePlaceholder</string>
+									<string>NSNullPlaceholder</string>
+									<string>NSValueTransformerName</string>
+								</object>
+								<object class="NSMutableArray" key="dict.values">
+									<bool key="EncodedWithXMLCoder">YES</bool>
+									<reference ref="7"/>
+									<reference ref="7"/>
+									<reference ref="7"/>
+									<reference ref="7"/>
+									<string>NSNegateBoolean</string>
+								</object>
+							</object>
+							<reference key="NSPreviousConnector" ref="378139535"/>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">134</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1530,7 +1602,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">123</int>
+			<int key="maxID">134</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

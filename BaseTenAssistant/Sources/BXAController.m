@@ -155,6 +155,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 
 @implementation BXAttributeDescription (BXAControllerAdditions)
+- (BOOL) isAttribute
+{
+	return YES;
+}
+
 - (BOOL) isPrimaryKeyForAssistant
 {
 	return [self isPrimaryKey];
@@ -207,6 +212,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 - (NSString *) databaseTypeName
 {
 	return @"";
+}
+
+- (BOOL) isAttribute
+{
+	return NO;
 }
 @end
 
