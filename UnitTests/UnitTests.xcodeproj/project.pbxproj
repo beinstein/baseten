@@ -522,7 +522,7 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_CONFIGURATION)",
+					"../build/$(BUILD_STYLE)",
 					../build/Release,
 					"$(BUILD_DIR)/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
@@ -561,7 +561,7 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_CONFIGURATION)",
+					"../build/$(BUILD_STYLE)",
 					../build/Release,
 					"$(BUILD_DIR)/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
@@ -632,7 +632,7 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_CONFIGURATION)",
+					"../build/$(BUILD_STYLE)",
 					../build/Release,
 					"$(BUILD_DIR)/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
