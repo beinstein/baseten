@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.926}})dnl
+define({{_bx_version_}}, {{0.927}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -1435,14 +1435,13 @@ GRANT EXECUTE ON FUNCTION "baseten".lock_observe_stop (OID) TO basetenuser;
 -- Remove the modification tracking table, rules and the trigger
 CREATE FUNCTION "baseten".disable (OID) RETURNS "baseten".reltype AS $$
 DECLARE
-	relid ALIAS FOR $1;
 	retval "baseten"."reltype";
 BEGIN	 
-	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten"._mod_insert_fn (relid) || ' () CASCADE';
-	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._lock_table (relid) || ' CASCADE';
-	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._mod_table (relid) || ' CASCADE';
-	UPDATE "baseten".relation r SET enabled = false WHERE r.id = relid;
-	retval := "baseten".reltype (relid);
+	EXECUTE 'DROP FUNCTION IF EXISTS "baseten".' || "baseten"._mod_insert_fn ($1) || ' () CASCADE';
+	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._lock_table ($1) || ' CASCADE';
+	EXECUTE 'DROP TABLE IF EXISTS "baseten".' || "baseten"._mod_table ($1) || ' CASCADE';
+	UPDATE "baseten".relation r SET enabled = false WHERE r.id = "baseten".relation_id_ex ($1);
+	retval := "baseten".reltype ($1);
 	RETURN retval;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
