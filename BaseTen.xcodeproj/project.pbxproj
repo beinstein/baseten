@@ -355,6 +355,8 @@
 		53B24CFB0E223C8C007AED76 /* BXPGTableDescription.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B24CF90E223C8C007AED76 /* BXPGTableDescription.m */; };
 		53B934DE0F98BDFA006BD87D /* BXDeprecationWarning.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B934DC0F98BDFA006BD87D /* BXDeprecationWarning.h */; };
 		53B934DF0F98BDFA006BD87D /* BXDeprecationWarning.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B934DD0F98BDFA006BD87D /* BXDeprecationWarning.m */; };
+		53BFE53D0FAF2EFA0004533F /* BXError.h in Headers */ = {isa = PBXBuildFile; fileRef = 53BFE53B0FAF2EFA0004533F /* BXError.h */; };
+		53BFE53E0FAF2EFA0004533F /* BXError.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BFE53C0FAF2EFA0004533F /* BXError.m */; };
 		53C6BA8D0E7148B6000E509D /* NSAttributeDescription+BXPGAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53877E980E26B3F00097C35F /* NSAttributeDescription+BXPGAdditions.m */; };
 		53C7113B0F57636E00C6481F /* BXOpenSSLCompatibility.h in Copy Headers */ = {isa = PBXBuildFile; fileRef = 538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */; };
 		53CE796B0E87F29C00D5A310 /* BXPGQueryHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 53CE79690E87F29C00D5A310 /* BXPGQueryHandler.h */; };
@@ -841,6 +843,8 @@
 		53B934DC0F98BDFA006BD87D /* BXDeprecationWarning.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDeprecationWarning.h; path = Sources/BXDeprecationWarning.h; sourceTree = "<group>"; };
 		53B934DD0F98BDFA006BD87D /* BXDeprecationWarning.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDeprecationWarning.m; path = Sources/BXDeprecationWarning.m; sourceTree = "<group>"; };
 		53BDBBFC0C306DA6007F63A1 /* BXConstantsPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXConstantsPrivate.h; path = Sources/BXConstantsPrivate.h; sourceTree = "<group>"; };
+		53BFE53B0FAF2EFA0004533F /* BXError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXError.h; path = Sources/BXError.h; sourceTree = "<group>"; };
+		53BFE53C0FAF2EFA0004533F /* BXError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXError.m; path = Sources/BXError.m; sourceTree = "<group>"; };
 		53CE79690E87F29C00D5A310 /* BXPGQueryHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGQueryHandler.h; path = Sources/BXPGQueryHandler.h; sourceTree = "<group>"; };
 		53CE796A0E87F29C00D5A310 /* BXPGQueryHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGQueryHandler.m; path = Sources/BXPGQueryHandler.m; sourceTree = "<group>"; };
 		53CE94030E64119500063193 /* BXPGExpressionVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGExpressionVisitor.h; path = Sources/BXPGExpressionVisitor.h; sourceTree = "<group>"; };
@@ -1085,6 +1089,8 @@
 				53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */,
 				5354F7DC0F00417400422613 /* BXURLEncoding.h */,
 				5354F7DD0F00417400422613 /* BXURLEncoding.m */,
+				53BFE53B0FAF2EFA0004533F /* BXError.h */,
+				53BFE53C0FAF2EFA0004533F /* BXError.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
 				53B934DC0F98BDFA006BD87D /* BXDeprecationWarning.h */,
@@ -1645,6 +1651,7 @@
 				538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */,
 				53B934DE0F98BDFA006BD87D /* BXDeprecationWarning.h in Headers */,
 				53671B4B0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h in Headers */,
+				53BFE53D0FAF2EFA0004533F /* BXError.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2018,6 +2025,7 @@
 				533F88410F35482000041C02 /* BXForeignKey.m in Sources */,
 				53B934DF0F98BDFA006BD87D /* BXDeprecationWarning.m in Sources */,
 				53671B4C0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.m in Sources */,
+				53BFE53E0FAF2EFA0004533F /* BXError.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

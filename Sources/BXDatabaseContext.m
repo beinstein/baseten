@@ -64,6 +64,7 @@
 #import "BXDatabaseObjectModel.h"
 #import "BXDatabaseObjectModelStorage.h"
 #import "BXAttributeDescriptionPrivate.h"
+#import "BXError.h"
 
 #import "NSURL+BaseTenAdditions.h"
 
@@ -1146,7 +1147,7 @@ ModTypeToObject (enum BXModificationType value)
 		else
 		{
 			//FIXME: some human-readable error?
-			localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
+			localError = [BXError errorWithDomain: kBXErrorDomain code: kBXErrorObjectNotFound userInfo: nil];
 		}
 		
 	error:
@@ -1557,7 +1558,7 @@ ModTypeToObject (enum BXModificationType value)
 		if ([error localizedRecoverySuggestion])
 			[userInfo setObject: [error localizedRecoverySuggestion] forKey: NSLocalizedRecoverySuggestionErrorKey];
 	}
-	return [NSError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];	
+	return [BXError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];	
 }
 
 - (void) connectionLost: (NSError *) error
@@ -2018,7 +2019,7 @@ ModTypeToObject (enum BXModificationType value)
 		NSString* errorFormat = BXLocalizedString (@"relationNotFound", @"Relation %@ was not found in schema %@.", @"Error message for getting or using an entity description.");
 		NSString* localizedError = [NSString stringWithFormat: errorFormat, name, schemaName];
 		NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localizedError forKey: NSLocalizedFailureReasonErrorKey];
-		localError = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
+		localError = [BXError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
 	}
 	
 	BXHandleError (outError, localError);
@@ -2389,7 +2390,7 @@ ModTypeToObject (enum BXModificationType value)
 			nil];
 		
 		if (NULL != error)
-			*error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorNoDatabaseURI userInfo: userInfo];
+			*error = [BXError errorWithDomain: kBXErrorDomain code: kBXErrorNoDatabaseURI userInfo: userInfo];
 	}
 	return rval;
 }

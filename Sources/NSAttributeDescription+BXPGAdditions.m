@@ -34,6 +34,7 @@
 #import "PGTSFoundationObjects.h"
 #import "PGTSConstants.h"
 #import "BXEnumerate.h"
+#import "BXError.h"
 
 
 @implementation NSAttributeDescription (BXPGAdditions)
@@ -321,7 +322,7 @@ ImportError (NSString* message, NSString* reason)
 							  message, NSLocalizedFailureReasonErrorKey,
 							  reason, NSLocalizedRecoverySuggestionErrorKey,
 							  nil];
-	NSError* retval = [NSError errorWithDomain: @"" code: 0 userInfo: userInfo];
+	NSError* retval = [BXError errorWithDomain: @"" code: 0 userInfo: userInfo];
 	return retval;
 }
 

@@ -35,6 +35,7 @@
 #import "BXProbes.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "BXError.h"
 
 #import "BXPGCertificateVerificationDelegate.h"
 #import "BXPGTransactionHandler.h"
@@ -277,7 +278,7 @@ SSLMode (enum BXSSLMode mode)
 										 [mInterface databaseContext], kBXDatabaseContextKey,
 										 nil];
 		
-		NSError* error = [NSError errorWithDomain: kBXErrorDomain code: kBXErrorGenericNetworkError userInfo: userInfo];
+		NSError* error = [BXError errorWithDomain: kBXErrorDomain code: kBXErrorGenericNetworkError userInfo: userInfo];
 		*outError = error;
 	}
 	return retval;
@@ -381,7 +382,7 @@ ConnectionString (NSDictionary* connectionDict)
 	NSArray* options = [NSArray arrayWithObjects: @"Try to Reconnect", @"Continue", nil]; //FIXME: localization.
 	[userInfo setObject: options forKey: NSLocalizedRecoveryOptionsErrorKey];
 	
-	return [NSError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionLost userInfo: userInfo];
+	return [BXError errorWithDomain: kBXErrorDomain code: kBXErrorConnectionLost userInfo: userInfo];
 }
 
 

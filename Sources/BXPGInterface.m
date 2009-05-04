@@ -58,6 +58,7 @@
 #import "BXLocalizedString.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "BXError.h"
 
 //FIXME: it'd be nicer if we didn't need any private headers.
 #import "BXDatabaseContextPrivate.h"
@@ -309,7 +310,7 @@ DatabaseError (NSInteger errorCode, NSString* localizedError, BXDatabaseContext*
 	NSMutableDictionary* userInfo = ErrorUserInfo (title, localizedError, context);
 	if (entity) 
 		[userInfo setObject: entity	forKey: kBXEntityDescriptionKey];
-	return [NSError errorWithDomain: kBXErrorDomain code: errorCode userInfo: userInfo];		
+	return [BXError errorWithDomain: kBXErrorDomain code: errorCode userInfo: userInfo];		
 }
 
 
@@ -322,7 +323,7 @@ PredicateNotAllowedError (BXDatabaseContext* context, NSPredicate* predicate)
 										 @"Error explanation");
 	NSMutableDictionary* userInfo = ErrorUserInfo (title, error, context);
 	[userInfo setObject: predicate forKey: kBXPredicateKey];
-	return [NSError errorWithDomain: kBXErrorDomain code: kBXErrorPredicateNotAllowedForUpdateDelete userInfo: userInfo];
+	return [BXError errorWithDomain: kBXErrorDomain code: kBXErrorPredicateNotAllowedForUpdateDelete userInfo: userInfo];
 }
 
 
@@ -502,7 +503,7 @@ bx_error_during_rollback (id self, NSError* error)
 	
 	NSMutableDictionary* userInfo = [[[error userInfo] mutableCopy] autorelease];
 	[userInfo setObject: error forKey: NSUnderlyingErrorKey];
-	NSError* newError = [NSError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
+	NSError* newError = [BXError errorWithDomain: kBXErrorDomain code: code userInfo: userInfo];
 	return newError;
 }
 
@@ -522,7 +523,7 @@ bx_error_during_rollback (id self, NSError* error)
 	else
 	{
         //FIXME: reason for error!
-		*error = [NSError errorWithDomain: kBXErrorDomain
+		*error = [BXError errorWithDomain: kBXErrorDomain
 									 code: kBXErrorUnsuccessfulQuery
 								 userInfo: nil];
 	}
@@ -546,7 +547,7 @@ error:
 	else
 	{
         //FIXME: reason for error?
-		*error = [NSError errorWithDomain: kBXErrorDomain
+		*error = [BXError errorWithDomain: kBXErrorDomain
 									 code: kBXErrorUnsuccessfulQuery
 								 userInfo: nil];		
 	}
@@ -1632,7 +1633,7 @@ bail:
 								  @"Try upgrading your client application.", NSLocalizedRecoverySuggestionErrorKey,
 								  nil];
 		//FIXME: set domain and code.
-		NSError* error = [NSError errorWithDomain: @"" code: 1 userInfo: userInfo];
+		NSError* error = [BXError errorWithDomain: @"" code: 1 userInfo: userInfo];
 		*outError = error;
 	}
 	return retval;

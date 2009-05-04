@@ -65,7 +65,7 @@ BX_EXPORT NSString* const kBXOwnerObjectVariableName;
 
 BX_EXPORT NSString* const kBXErrorDomain;
 BX_EXPORT NSString* const kBXErrorMessageKey;
-enum BXError
+enum BXErrorCode
 {
 	kBXErrorNone = 0,
     kBXErrorUnsuccessfulQuery,

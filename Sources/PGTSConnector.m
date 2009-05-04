@@ -32,6 +32,7 @@
 #import "PGTSConstants.h"
 #import "PGTSCertificateVerificationDelegateProtocol.h"
 #import "BXLogger.h"
+#import "BXError.h"
 #import "libpq_additions.h"
 #import <sys/select.h>
 
@@ -181,7 +182,7 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 									  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
 									  nil];
 			
-			NSError* error = [NSError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
+			NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
 			[self setConnectionError: error];
 		}	
 		

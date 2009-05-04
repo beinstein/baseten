@@ -53,6 +53,7 @@
 #import "BXKeyPathParser.h"
 #import "BXLocalizedString.h"
 #import "BXSafetyMacros.h"
+#import "BXError.h"
 
 
 static NSString* 
@@ -156,7 +157,7 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 	ExpectCR (localizedTitle, nil);
 	ExpectCR (localizedError, nil);
 	NSMutableDictionary* userInfo = ErrorUserInfo (localizedTitle, localizedError, object, attr, rel);
-	NSError* retval = [NSError errorWithDomain: kBXErrorDomain 
+	NSError* retval = [BXError errorWithDomain: kBXErrorDomain 
 										  code: kBXErrorNullConstraintNotSatisfied
 									  userInfo: userInfo];
 	return retval;

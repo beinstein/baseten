@@ -28,6 +28,7 @@
 
 #import "NSRelationshipDescription+BXPGAdditions.h"
 #import "BXLogger.h"
+#import "BXError.h"
 
 
 static NSString*
@@ -70,7 +71,7 @@ ImportError (NSString* message, NSString* reason)
 							  message, NSLocalizedFailureReasonErrorKey,
 							  reason, NSLocalizedRecoverySuggestionErrorKey,
 							  nil];
-	NSError* retval = [NSError errorWithDomain: @"" code: 0 userInfo: userInfo];
+	NSError* retval = [BXError errorWithDomain: @"" code: 0 userInfo: userInfo];
 	return retval;
 }
 
