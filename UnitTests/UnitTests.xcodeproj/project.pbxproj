@@ -446,7 +446,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ ! -d \"$BUILD_DIR/Release/OCMock.framework\" ]\nthen\n\techo \"Building OCMock…\"\n\tpushd \"$PROJECT_DIR/../Contrib/OCMock/OCMock-current-source/\"\n\txcodebuild -configuration Release -target OCMock -sdk \"$SDKROOT\" INSTALL_PATH=\"\"\n\tpopd\nfi";
+			shellScript = "echo -n \"Checking whether to build OCMock… \"\nif [ ! -d \"$BUILD_DIR/Release/OCMock.framework\" ]\nthen\n\techo \"yes.\"\n\tpushd \"$PROJECT_DIR/../Contrib/OCMock/OCMock-current-source/\"\n\txcodebuild -configuration Release -target OCMock -sdk \"$SDKROOT\" INSTALL_PATH=\"\"\n\tpopd\nelse\n\techo \"already built.\"\nfi";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
