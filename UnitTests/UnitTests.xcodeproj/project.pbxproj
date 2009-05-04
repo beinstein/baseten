@@ -42,7 +42,6 @@
 		5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */; };
 		537E32C50FAF078600539A83 /* BXSQLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E32C40FAF078600539A83 /* BXSQLTests.m */; };
 		537E35CA0FAF280D00539A83 /* BXDatabaseObjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535717AD0CDE69C60084DD92 /* BXDatabaseObjectTests.m */; };
-		537E360D0FAF294B00539A83 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537E360A0FAF294100539A83 /* OCMock.framework */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		5387ACFC0FA8F56A00866E19 /* PGTSNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
@@ -63,27 +62,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 534EE22F0E53213300B079B0;
 			remoteInfo = "BaseTen for iPhone";
-		};
-		537E36090FAF294100539A83 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* OCMock.framework */;
-			remoteInfo = OCMock;
-		};
-		537E360B0FAF294100539A83 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 03BF2D3708F1C69500978C59 /* OCMockTests.octest */;
-			remoteInfo = OCMockTests;
-		};
-		537E360E0FAF296100539A83 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* OCMock */;
-			remoteInfo = OCMock;
 		};
 		538B40F40D634EA40009005B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -114,19 +92,6 @@
 			remoteInfo = "BaseTen Framework + GC";
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		537E36000FAF292E00539A83 /* Copy Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Copy Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		530925270FA89023000DC21C /* BXDataModelTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDataModelTests.h; path = Sources/BXDataModelTests.h; sourceTree = "<group>"; };
@@ -161,7 +126,6 @@
 		5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextTests.m; path = Sources/BXDatabaseContextTests.m; sourceTree = "<group>"; };
 		537E32C30FAF078600539A83 /* BXSQLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSQLTests.h; path = Sources/BXSQLTests.h; sourceTree = "<group>"; };
 		537E32C40FAF078600539A83 /* BXSQLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSQLTests.m; path = Sources/BXSQLTests.m; sourceTree = "<group>"; };
-		537E36010FAF294100539A83 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = "../Contrib/OCMock 1.29/Source/ocmock-1.29/OCMock.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		5387ACFA0FA8F56A00866E19 /* PGTSNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSNotificationTests.h; path = Sources/PGTSNotificationTests.h; sourceTree = "<group>"; };
 		5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSNotificationTests.m; path = Sources/PGTSNotificationTests.m; sourceTree = "<group>"; };
 		539C4F5C0C4E389700080667 /* PropagatedModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PropagatedModificationTests.h; path = Sources/PropagatedModificationTests.h; sourceTree = "<group>"; };
@@ -206,7 +170,6 @@
 				53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */,
 				53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */,
 				530927BB0FA89BBE000DC21C /* CoreData.framework in Frameworks */,
-				537E360D0FAF294B00539A83 /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,15 +287,6 @@
 			name = PGTS;
 			sourceTree = "<group>";
 		};
-		537E36020FAF294100539A83 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				537E360A0FAF294100539A83 /* OCMock.framework */,
-				537E360C0FAF294100539A83 /* OCMockTests.octest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		539C4FA20C4E39F700080667 /* Disabled tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -349,7 +303,6 @@
 				530927BA0FA89BBE000DC21C /* CoreData.framework */,
 				53BD96BE0A5C2501001C950C /* SenTestingKit.framework */,
 				530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */,
-				537E36010FAF294100539A83 /* OCMock.xcodeproj */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
@@ -376,7 +329,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 530A438F0A5C0FD200A4722B /* Build configuration list for PBXNativeTarget "UnitTests" */;
 			buildPhases = (
-				537E36000FAF292E00539A83 /* Copy Frameworks */,
+				53BFE5B60FAF32DA0004533F /* Build OCMock */,
 				530A43870A5C0FD000A4722B /* Resources */,
 				530A43880A5C0FD000A4722B /* Sources */,
 				530A43890A5C0FD000A4722B /* Frameworks */,
@@ -385,7 +338,6 @@
 			);
 			dependencies = (
 				53D03BB90DE82987002D14C4 /* PBXTargetDependency */,
-				537E360F0FAF296100539A83 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -408,10 +360,6 @@
 					ProductGroup = 530A435F0A5C0E0100A4722B /* Products */;
 					ProjectRef = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 				},
-				{
-					ProductGroup = 537E36020FAF294100539A83 /* Products */;
-					ProjectRef = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -427,20 +375,6 @@
 			fileType = archive.ar;
 			path = libBaseTen.a;
 			remoteRef = 535627AD0E6E7FD8002EA3FD /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		537E360A0FAF294100539A83 /* OCMock.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = OCMock.framework;
-			remoteRef = 537E36090FAF294100539A83 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		537E360C0FAF294100539A83 /* OCMockTests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = OCMockTests.octest;
-			remoteRef = 537E360B0FAF294100539A83 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		538B40F50D634EA40009005B /* BaseTen.framework */ = {
@@ -500,6 +434,20 @@
 			shellScript = "if [ \"${CONFIGURATION}\" != 'Coverage' ]; then\n\texit\nfi\n\n# Settings\nGCOVRUNNER=\"$PROJECT_DIR/../Tools/gcovRunner.php\"\nREPORT_DIR=\"$PROJECT_DIR/../Coverage/UnitTests/`date +'%d-%m-%Y_%H-%M-%S'`\"\nREPORT_SUMMARY_FILE=\"$REPORT_DIR/Coverage-summary.txt\"\nREPORT_DETAILED_DIR=\"$REPORT_DIR/detailed-reports\"\n\nif [ -d \"$OBJROOT/BaseTen.build/$CONFIGURATION\" ]\nthen\n\tBASETEN_BUILD_DIR=\"$OBJROOT\" # Global build directories\nelse\n\tBASETEN_BUILD_DIR=\"$PROJECT_DIR/../build\" # Per-project build directories\nfi\n\nOBJECT_FILES_DIR=\"$BASETEN_BUILD_DIR/BaseTen.build/${CONFIGURATION}/BaseTen Framework + GC.build/Objects-$CURRENT_VARIANT/$CURRENT_ARCH\"\n# /Settings\n\necho \"[Coverage] Using object files from '$OBJECT_FILES_DIR'.\"\necho \"[Coverage] Creating coverage report summary '$REPORT_SUMMARY_FILE'.\"\n\nmkdir -p \"$REPORT_DIR\"\nmkdir -p \"$REPORT_DETAILED_DIR\"\n\nphp \"$GCOVRUNNER\" 'txt' \"$PROJECT_DIR/../Sources\" \"$OBJECT_FILES_DIR\" > \"$REPORT_SUMMARY_FILE\" 2> /dev/null\n\necho \"[Coverage] Copying detailed coverage reports from '$OBJECT_FILES_DIR' to '$REPORT_DETAILED_DIR'.\"\nfind \"$OBJECT_FILES_DIR\" -name '*.gcov' -exec cp '{}' \"$REPORT_DETAILED_DIR\" \\;\n\necho \"[Coverage] Appending '.txt' file extension to files in '$REPORT_DETAILED_DIR'.\"\npushd \"$REPORT_DETAILED_DIR\"\nfor f in *.gcov; do mv $f `basename $f`.txt; done\npopd\n\necho \"[Coverage] Coverage reports created at '$REPORT_DIR'.\"\n";
 			showEnvVarsInLog = 0;
 		};
+		53BFE5B60FAF32DA0004533F /* Build OCMock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Build OCMock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ ! -d \"$BUILD_DIR/Release/OCMock.framework\" ]\nthen\n\techo \"Building OCMock…\"\n\tpushd \"$PROJECT_DIR/../Contrib/OCMock/OCMock-current-source/\"\n\txcodebuild -configuration Release -target OCMock -sdk \"$SDKROOT\" INSTALL_PATH=\"\"\n\tpopd\nfi";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -539,11 +487,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		537E360F0FAF296100539A83 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = OCMock;
-			targetProxy = 537E360E0FAF296100539A83 /* PBXContainerItemProxy */;
-		};
 		53A0DAD90F4B6DE500434E4E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 530A438B0A5C0FD000A4722B /* UnitTests */;
@@ -578,11 +521,9 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_STYLE)",
+					"$(BUILD_DIR)/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../Contrib/OCMock 1.29\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -597,6 +538,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
+				OTHER_LDFLAGS = (
+					"-framework",
+					OCMock,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
@@ -613,11 +558,9 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_STYLE)",
+					"$(BUILD_DIR)/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../Contrib/OCMock 1.29\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -629,7 +572,10 @@
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				INFOPLIST_FILE = "UnitTests-Info.plist";
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				LIBRARY_SEARCH_PATHS_QUOTED_1 = "\"$(SRCROOT)/../../../../..\"";
+				OTHER_LDFLAGS = (
+					"-framework",
+					OCMock,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
@@ -681,11 +627,9 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_STYLE)",
+					"$(BUILD_DIR)/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
-				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../Contrib/OCMock 1.29\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -702,7 +646,10 @@
 				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
 				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
 				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_LDFLAGS = "-lgcov";
+				OTHER_LDFLAGS = (
+					"-framework",
+					OCMock,
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = UnitTests;
 				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
