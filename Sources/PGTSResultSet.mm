@@ -572,7 +572,7 @@ KVCompare (PGTSResultSet* res, void* ctx)
 - (id) valueForFieldAtIndex: (int) columnIndex row: (int) rowIndex
 {
     id retval = nil;
-    if (! ((columnIndex < mFields) && (rowIndex < mTuples)))
+    if (! ((columnIndex < mFields) && (-1 < rowIndex) && (rowIndex < mTuples)))
     {
 		[NSException raise: kPGTSFieldNotFoundException format: nil];
     }
