@@ -40,6 +40,7 @@
 		535627B90E6E805D002EA3FD /* PredicateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535627B80E6E805D002EA3FD /* PredicateTests.m */; };
 		536C463A0F2E1CED003A8231 /* PGTSMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */; };
 		5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */; };
+		537E32C50FAF078600539A83 /* BXSQLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E32C40FAF078600539A83 /* BXSQLTests.m */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		5387ACFC0FA8F56A00866E19 /* PGTSNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
@@ -123,6 +124,8 @@
 		5373A65D0A6D3F9A0036424B /* ModificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ModificationTests.m; path = Sources/ModificationTests.m; sourceTree = "<group>"; };
 		5375C2500F3BAD88002CBF78 /* BXDatabaseContextTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextTests.h; path = Sources/BXDatabaseContextTests.h; sourceTree = "<group>"; };
 		5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextTests.m; path = Sources/BXDatabaseContextTests.m; sourceTree = "<group>"; };
+		537E32C30FAF078600539A83 /* BXSQLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSQLTests.h; path = Sources/BXSQLTests.h; sourceTree = "<group>"; };
+		537E32C40FAF078600539A83 /* BXSQLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSQLTests.m; path = Sources/BXSQLTests.m; sourceTree = "<group>"; };
 		5387ACFA0FA8F56A00866E19 /* PGTSNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSNotificationTests.h; path = Sources/PGTSNotificationTests.h; sourceTree = "<group>"; };
 		5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSNotificationTests.m; path = Sources/PGTSNotificationTests.m; sourceTree = "<group>"; };
 		539C4F5C0C4E389700080667 /* PropagatedModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PropagatedModificationTests.h; path = Sources/PropagatedModificationTests.h; sourceTree = "<group>"; };
@@ -241,6 +244,8 @@
 				530A439E0A5C114E00A4722B /* ConnectTest.m */,
 				530925270FA89023000DC21C /* BXDataModelTests.h */,
 				530925280FA89023000DC21C /* BXDataModelTests.m */,
+				537E32C30FAF078600539A83 /* BXSQLTests.h */,
+				537E32C40FAF078600539A83 /* BXSQLTests.m */,
 				535717AC0CDE69C60084DD92 /* ObjectTests.h */,
 				535717AD0CDE69C60084DD92 /* ObjectTests.m */,
 				531E118B0A6A3A6C003A0F23 /* EntityTests.h */,
@@ -460,6 +465,7 @@
 				530928B70FA8A511000DC21C /* one-to-one.xcdatamodel in Sources */,
 				5387ACFC0FA8F56A00866E19 /* PGTSNotificationTests.m in Sources */,
 				534C95EC0FAB623F006BBC8A /* relationship-optionality.xcdatamodel in Sources */,
+				537E32C50FAF078600539A83 /* BXSQLTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

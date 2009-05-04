@@ -38,6 +38,7 @@
 
 #import "ConnectTest.h"
 #import "BXDataModelTests.h"
+#import "BXSQLTests.h"
 #import "EntityTests.h"
 #import "ObjectIDTests.h"
 #import "FetchTests.h"
@@ -74,6 +75,7 @@
 							
 							[ConnectTest class],
 							[BXDataModelTests class],
+							[BXSQLTests class],
 							[EntityTests class],
 							//[ObjectTests class], //FIXME: enable this. It still requires a modified OCMock, though.
 							[ObjectIDTests class],
@@ -112,7 +114,7 @@ bx_test_failed (NSException* exception)
 	bx_test_failed (exception);
 }
 
-- (id) initWithInvocation:(NSInvocation *) anInvocation
+- (id) initWithInvocation: (NSInvocation *) anInvocation
 {
 	if ((self = [super initWithInvocation: anInvocation]))
 	{
@@ -124,9 +126,14 @@ bx_test_failed (NSException* exception)
 
 
 @implementation BXDatabaseTestCase
+- (NSURL *) databaseURI
+{
+	return [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"];
+}
+
 - (void) setUp
 {
-	NSURL* databaseURI = [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"];
+	NSURL* databaseURI = [self databaseURI];
 	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
 	[mContext setAutocommits: NO];
 }

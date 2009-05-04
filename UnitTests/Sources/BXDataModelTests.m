@@ -35,9 +35,9 @@
 @implementation BXDataModelTests
 - (void) setUp
 {
-	mImporter = [[BXPGEntityImporter alloc] init];
-	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
+	[super setUp];
 	
+	mImporter = [[BXPGEntityImporter alloc] init];
 	[mImporter setDelegate: self];
 	[mImporter setDatabaseContext: mContext];
 }
@@ -45,7 +45,7 @@
 - (void) tearDown
 {
 	[mImporter release];
-	[mContext release];
+	[super tearDown];
 }
 
 - (void) entityImporterAdvanced: (BXPGEntityImporter *) importer

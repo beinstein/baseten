@@ -19,9 +19,16 @@ CREATE FUNCTION prepare () RETURNS VOID AS $$
             DROP ROLE baseten_test_user;
         END IF;
 
+        PERFORM rolname FROM pg_roles WHERE rolname = 'baseten_test_owner';
+        IF FOUND THEN
+            DROP ROLE baseten_test_owner;
+        END IF;
+
         CREATE ROLE baseten_test_user WITH 
             NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN IN ROLE basetenuser;
         REVOKE ALL PRIVILEGES ON DATABASE basetentest FROM baseten_test_user;
+        CREATE ROLE baseten_test_owner WITH 
+            NOSUPERUSER NOCREATEDB NOCREATEROLE INHERIT LOGIN IN ROLE basetenowner;
     END;
 $$ VOLATILE LANGUAGE plpgsql;
 SELECT prepare ();

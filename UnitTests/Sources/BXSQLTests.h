@@ -1,5 +1,5 @@
 //
-// BXDataModelTests.h
+// BXSQLTests.h
 // BaseTen
 //
 // Copyright (C) 2009 Marko Karppinen & Co. LLC.
@@ -32,8 +32,7 @@
 #import <BaseTen/BXPGEntityImporter.h>
 
 
-@interface BXDataModelTests : BXDatabaseTestCase <BXPGEntityImporterDelegate>
+@interface BXSQLTests : BXDatabaseTestCase
 {
-	BXPGEntityImporter* mImporter;
 }
 @end
