@@ -95,11 +95,11 @@
     <xsl:template match="//attribute">
         <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
 
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left"&gt;</xsl:text>
+        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left" border="1" color="#aaaaaa"&gt;</xsl:text>
         <xsl:value-of select="./name" />
         <xsl:text>&lt;/td&gt;&#10;</xsl:text>
 
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left"&gt;</xsl:text>
+        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left" border="1" color="#aaaaaa"&gt;</xsl:text>
         <xsl:value-of select="./type" />
         <xsl:text>&lt;/td&gt;&#10;</xsl:text>
 
@@ -110,7 +110,7 @@
     <xsl:template match="//relationship">
         <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
 
-        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left" port="</xsl:text>
+        <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&#9;&lt;td align="left" border="1" color="#aaaaaa" port="</xsl:text>
         <xsl:value-of select="./name" />
         <xsl:text>"&gt;</xsl:text>
         <xsl:value-of select="./name" />
