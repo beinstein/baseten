@@ -41,6 +41,8 @@
 		536C463A0F2E1CED003A8231 /* PGTSMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */; };
 		5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */; };
 		537E32C50FAF078600539A83 /* BXSQLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E32C40FAF078600539A83 /* BXSQLTests.m */; };
+		537E35CA0FAF280D00539A83 /* BXDatabaseObjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535717AD0CDE69C60084DD92 /* BXDatabaseObjectTests.m */; };
+		537E360D0FAF294B00539A83 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 537E360A0FAF294100539A83 /* OCMock.framework */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		5387ACFC0FA8F56A00866E19 /* PGTSNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */; };
 		539385110B3940C80017E26E /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53BD96BE0A5C2501001C950C /* SenTestingKit.framework */; };
@@ -61,6 +63,27 @@
 			proxyType = 2;
 			remoteGlobalIDString = 534EE22F0E53213300B079B0;
 			remoteInfo = "BaseTen for iPhone";
+		};
+		537E36090FAF294100539A83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216 /* OCMock.framework */;
+			remoteInfo = OCMock;
+		};
+		537E360B0FAF294100539A83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 03BF2D3708F1C69500978C59 /* OCMockTests.octest */;
+			remoteInfo = OCMockTests;
+		};
+		537E360E0FAF296100539A83 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216 /* OCMock */;
+			remoteInfo = OCMock;
 		};
 		538B40F40D634EA40009005B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -92,6 +115,19 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		537E36000FAF292E00539A83 /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		530925270FA89023000DC21C /* BXDataModelTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDataModelTests.h; path = Sources/BXDataModelTests.h; sourceTree = "<group>"; };
 		530925280FA89023000DC21C /* BXDataModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDataModelTests.m; path = Sources/BXDataModelTests.m; sourceTree = "<group>"; };
@@ -115,9 +151,8 @@
 		535059B30CDA1CFC00DA25EC /* TestLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestLoader.m; path = Sources/TestLoader.m; sourceTree = "<group>"; };
 		535627B70E6E805D002EA3FD /* PredicateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PredicateTests.h; path = Sources/PredicateTests.h; sourceTree = "<group>"; };
 		535627B80E6E805D002EA3FD /* PredicateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PredicateTests.m; path = Sources/PredicateTests.m; sourceTree = "<group>"; };
-		535717AC0CDE69C60084DD92 /* ObjectTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectTests.h; path = Sources/ObjectTests.h; sourceTree = "<group>"; };
-		535717AD0CDE69C60084DD92 /* ObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ObjectTests.m; path = Sources/ObjectTests.m; sourceTree = "<group>"; };
-		535717B50CDE6B2F0084DD92 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = /Library/Frameworks/OCMock.framework; sourceTree = "<absolute>"; };
+		535717AC0CDE69C60084DD92 /* BXDatabaseObjectTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectTests.h; path = Sources/BXDatabaseObjectTests.h; sourceTree = "<group>"; };
+		535717AD0CDE69C60084DD92 /* BXDatabaseObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectTests.m; path = Sources/BXDatabaseObjectTests.m; sourceTree = "<group>"; };
 		536C46380F2E1CED003A8231 /* PGTSMetadataTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSMetadataTests.h; path = Sources/PGTSMetadataTests.h; sourceTree = "<group>"; };
 		536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSMetadataTests.m; path = Sources/PGTSMetadataTests.m; sourceTree = "<group>"; };
 		5373A65C0A6D3F9A0036424B /* ModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModificationTests.h; path = Sources/ModificationTests.h; sourceTree = "<group>"; };
@@ -126,6 +161,7 @@
 		5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextTests.m; path = Sources/BXDatabaseContextTests.m; sourceTree = "<group>"; };
 		537E32C30FAF078600539A83 /* BXSQLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSQLTests.h; path = Sources/BXSQLTests.h; sourceTree = "<group>"; };
 		537E32C40FAF078600539A83 /* BXSQLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSQLTests.m; path = Sources/BXSQLTests.m; sourceTree = "<group>"; };
+		537E36010FAF294100539A83 /* OCMock.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = OCMock.xcodeproj; path = "../Contrib/OCMock 1.29/Source/ocmock-1.29/OCMock.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		5387ACFA0FA8F56A00866E19 /* PGTSNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSNotificationTests.h; path = Sources/PGTSNotificationTests.h; sourceTree = "<group>"; };
 		5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSNotificationTests.m; path = Sources/PGTSNotificationTests.m; sourceTree = "<group>"; };
 		539C4F5C0C4E389700080667 /* PropagatedModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PropagatedModificationTests.h; path = Sources/PropagatedModificationTests.h; sourceTree = "<group>"; };
@@ -170,6 +206,7 @@
 				53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */,
 				53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */,
 				530927BB0FA89BBE000DC21C /* CoreData.framework in Frameworks */,
+				537E360D0FAF294B00539A83 /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,8 +283,8 @@
 				530925280FA89023000DC21C /* BXDataModelTests.m */,
 				537E32C30FAF078600539A83 /* BXSQLTests.h */,
 				537E32C40FAF078600539A83 /* BXSQLTests.m */,
-				535717AC0CDE69C60084DD92 /* ObjectTests.h */,
-				535717AD0CDE69C60084DD92 /* ObjectTests.m */,
+				535717AC0CDE69C60084DD92 /* BXDatabaseObjectTests.h */,
+				535717AD0CDE69C60084DD92 /* BXDatabaseObjectTests.m */,
 				531E118B0A6A3A6C003A0F23 /* EntityTests.h */,
 				531E118C0A6A3A6C003A0F23 /* EntityTests.m */,
 				530987C60B57B1C30010765D /* ObjectIDTests.h */,
@@ -287,6 +324,15 @@
 			name = PGTS;
 			sourceTree = "<group>";
 		};
+		537E36020FAF294100539A83 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				537E360A0FAF294100539A83 /* OCMock.framework */,
+				537E360C0FAF294100539A83 /* OCMockTests.octest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		539C4FA20C4E39F700080667 /* Disabled tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -303,7 +349,7 @@
 				530927BA0FA89BBE000DC21C /* CoreData.framework */,
 				53BD96BE0A5C2501001C950C /* SenTestingKit.framework */,
 				530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */,
-				535717B50CDE6B2F0084DD92 /* OCMock.framework */,
+				537E36010FAF294100539A83 /* OCMock.xcodeproj */,
 			);
 			name = Dependencies;
 			sourceTree = "<group>";
@@ -330,6 +376,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 530A438F0A5C0FD200A4722B /* Build configuration list for PBXNativeTarget "UnitTests" */;
 			buildPhases = (
+				537E36000FAF292E00539A83 /* Copy Frameworks */,
 				530A43870A5C0FD000A4722B /* Resources */,
 				530A43880A5C0FD000A4722B /* Sources */,
 				530A43890A5C0FD000A4722B /* Frameworks */,
@@ -338,6 +385,7 @@
 			);
 			dependencies = (
 				53D03BB90DE82987002D14C4 /* PBXTargetDependency */,
+				537E360F0FAF296100539A83 /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -360,6 +408,10 @@
 					ProductGroup = 530A435F0A5C0E0100A4722B /* Products */;
 					ProjectRef = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
 				},
+				{
+					ProductGroup = 537E36020FAF294100539A83 /* Products */;
+					ProjectRef = 537E36010FAF294100539A83 /* OCMock.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -375,6 +427,20 @@
 			fileType = archive.ar;
 			path = libBaseTen.a;
 			remoteRef = 535627AD0E6E7FD8002EA3FD /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		537E360A0FAF294100539A83 /* OCMock.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = OCMock.framework;
+			remoteRef = 537E36090FAF294100539A83 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		537E360C0FAF294100539A83 /* OCMockTests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OCMockTests.octest;
+			remoteRef = 537E360B0FAF294100539A83 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		538B40F50D634EA40009005B /* BaseTen.framework */ = {
@@ -466,12 +532,18 @@
 				5387ACFC0FA8F56A00866E19 /* PGTSNotificationTests.m in Sources */,
 				534C95EC0FAB623F006BBC8A /* relationship-optionality.xcdatamodel in Sources */,
 				537E32C50FAF078600539A83 /* BXSQLTests.m in Sources */,
+				537E35CA0FAF280D00539A83 /* BXDatabaseObjectTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		537E360F0FAF296100539A83 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OCMock;
+			targetProxy = 537E360E0FAF296100539A83 /* PBXContainerItemProxy */;
+		};
 		53A0DAD90F4B6DE500434E4E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 530A438B0A5C0FD000A4722B /* UnitTests */;
@@ -508,7 +580,9 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"../build/$(BUILD_STYLE)",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../Contrib/OCMock 1.29\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -541,7 +615,9 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"../build/$(BUILD_STYLE)",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../Contrib/OCMock 1.29\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -607,7 +683,9 @@
 				FRAMEWORK_SEARCH_PATHS = (
 					"../build/$(BUILD_STYLE)",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../Contrib/OCMock 1.29\"";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;

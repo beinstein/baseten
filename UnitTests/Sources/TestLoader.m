@@ -39,6 +39,7 @@
 #import "ConnectTest.h"
 #import "BXDataModelTests.h"
 #import "BXSQLTests.h"
+#import "BXDatabaseObjectTests.h"
 #import "EntityTests.h"
 #import "ObjectIDTests.h"
 #import "FetchTests.h"
@@ -49,7 +50,7 @@
 #import "MTOCollectionTest.h"
 #import "MTMCollectionTest.h"
 #import "UndoTests.h"
-#import "ObjectTests.h"
+#import "BXDatabaseObjectTests.h"
 #import "PredicateTests.h"
 #import "KeyPathComponentTest.h"
 #import "ToOneChangeNotificationTests.h"
@@ -76,8 +77,8 @@
 							[ConnectTest class],
 							[BXDataModelTests class],
 							[BXSQLTests class],
+							[BXDatabaseObjectTests class],
 							[EntityTests class],
-							//[ObjectTests class], //FIXME: enable this. It still requires a modified OCMock, though.
 							[ObjectIDTests class],
 							[CreateTests class],
 							[FetchTests class],
