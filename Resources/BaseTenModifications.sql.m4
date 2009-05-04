@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.927}})dnl
+define({{_bx_version_}}, {{0.928}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -1338,22 +1338,40 @@ $$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_notify () FROM PUBLIC;
 
 
-CREATE FUNCTION "baseten".is_enabled (OID) RETURNS boolean AS $$
+CREATE FUNCTION "baseten".is_enabled (INTEGER) RETURNS boolean AS $$
 	SELECT CASE WHEN 1 = COUNT (r.id) THEN true ELSE false END
 	FROM "baseten".relation r
-	WHERE r.id = "baseten".relation_id ($1) AND r.enabled = true;
+	WHERE r.id = $1 AND r.enabled = true;
+$$ STABLE LANGUAGE SQL;
+COMMENT ON FUNCTION "baseten".is_enabled (INTEGER) IS 'Checks for observing compatibility. Returns a boolean.';
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled (INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".is_enabled (INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten".is_enabled (OID) RETURNS boolean AS $$
+	SELECT "baseten".is_enabled ("baseten".relation_id ($1));
 $$ STABLE LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".is_enabled (OID) IS 'Checks for observing compatibility. Returns a boolean.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".is_enabled (OID) TO basetenread;
 
 
-CREATE FUNCTION "baseten".is_enabled_ex (OID) RETURNS VOID AS $$
-DECLARE
-	relid ALIAS FOR $1;
+CREATE FUNCTION "baseten".is_enabled_ex (INTEGER) RETURNS VOID AS $$
 BEGIN
-	IF NOT ("baseten".is_enabled (relid)) THEN
-		RAISE EXCEPTION 'Relation with OID % has not been enabled', relid;
+	IF NOT ("baseten".is_enabled ($1)) THEN
+		RAISE EXCEPTION 'Relation with ID % has not been enabled', $1;
+	END IF;
+	RETURN;
+END;
+$$ VOLATILE LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled_ex (INTEGER) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".is_enabled_ex (INTEGER) TO basetenread;
+
+
+CREATE FUNCTION "baseten".is_enabled_ex (OID) RETURNS VOID AS $$
+BEGIN
+	IF NOT ("baseten".is_enabled ($1)) THEN
+		RAISE EXCEPTION 'Relation with OID % has not been enabled', $1;
 	END IF;
 	RETURN;
 END;
