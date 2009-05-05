@@ -576,11 +576,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	if ([self hasBaseTenSchema])
 		[self refreshCaches: @selector (reloadAfterRefresh:)];
-	else
-	{
-		//The progress panel might have been left open by the importer.
-		[self hideProgressPanel];
-	}
 }
 
 - (void) refreshCaches: (SEL) callback
