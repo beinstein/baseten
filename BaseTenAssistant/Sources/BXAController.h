@@ -127,7 +127,10 @@
 - (IBAction) exportObjectModel: (id) sender;
 - (IBAction) clearLog: (id) sender;
 - (IBAction) displayLogWindow: (id) sender;
+
 - (IBAction) reload: (id) sender;
+- (IBAction) refreshCacheTables: (id) sender;
+
 - (IBAction) getInfo: (id) sender; //Patch by Tim Bedford 2008-08-11
 - (IBAction) toggleMainWindow: (id) sender; //Patch by Tim Bedford 2008-08-11
 - (IBAction) toggleInspector: (id) sender; //Patch by Tim Bedford 2008-08-11

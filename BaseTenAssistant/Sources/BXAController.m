@@ -481,12 +481,18 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 		PGTSResultSet* res = nil;
 		res = [connection executeQuery: @"INSERT INTO baseten.view_pkey SELECT * FROM baseten_view_pkey"];
 		if (! [res querySucceeded])
-			[NSApp presentError: [res error]];
+		{
+			[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil
+			 didPresentSelector: NULL contextInfo: NULL];
+		}
 		else
 		{
 			res = [connection executeQuery: @"SELECT baseten.enable (oid) FROM baseten_enabled_oids"];
 			if (! [res querySucceeded])
-				[NSApp presentError: [res error]];
+			{
+				[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil
+				 didPresentSelector: NULL contextInfo: NULL];
+			}
 		}
 	}
 	
@@ -1007,6 +1013,18 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[self setProgressValue: (double) position];
 }
 
+- (void) reloadAfterRefresh: (PGTSResultSet *) res
+{
+	if ([res querySucceeded])
+		[self reload: nil];
+	else
+	{
+		[self hideProgressPanel];
+		[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil
+		 didPresentSelector: NULL contextInfo: NULL];
+	}
+}
+
 - (void) disconnectAfterRefresh: (PGTSResultSet *) res
 {
 	[self hideProgressPanel];
@@ -1042,12 +1060,8 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[self finishTermination]; //Patch by Tim Bedford 2008-08-11
 }
 
-- (void) refreshCaches: (BOOL) terminate
+- (void) refreshCaches: (SEL) callback
 {
-	SEL callback = @selector (disconnectAfterRefresh:);
-	if (terminate)
-		callback = @selector (terminateAfterRefresh:);
-	
 	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
 	[mProgressCancelButton setEnabled: NO];
 	[self displayProgressPanel: NSLocalizedString(@"Refreshing caches", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
@@ -1116,7 +1130,10 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 		ExpectV (doc);
 		
 		if (error)
-			[NSApp presentError: error];
+		{
+			[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+			 didPresentSelector: NULL contextInfo: NULL];
+		}
 		else
 		{
 			NSBundle* bundle = [NSBundle bundleForClass: [self class]];
@@ -1139,12 +1156,18 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 			{
 				NSData* dotData = [doc objectByApplyingXSLTAtURL: xsltURL arguments: nil error: &error];
 				if (error)
-					[NSApp presentError: error];
+				{
+					[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+					 didPresentSelector: NULL contextInfo: NULL];
+				}
 				else
 				{
 					[dotData writeToURL: [sheet URL] options: NSAtomicWrite error: &error];
 					if (error)
-						[NSApp presentError: error];
+					{
+						[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+						 didPresentSelector: NULL contextInfo: NULL];
+					}
 				}
 			}
 			else
@@ -1152,7 +1175,10 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 				NSData* xmlData = [doc XMLData];
 				[xmlData writeToURL: [sheet URL] options: NSAtomicWrite error: &error];
 				if (error)
-					[NSApp presentError: error];
+				{
+					[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+					 didPresentSelector: NULL contextInfo: NULL];
+				}
 			}
 		}
 	}
@@ -1342,15 +1368,25 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	else
 	{
 		if (error)
-			[NSApp presentError: error];
+		{
+			[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+			 didPresentSelector: NULL contextInfo: NULL];
+		}
 		[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
 	}
 }
 
+
+- (IBAction) refreshCacheTables: (id) sender
+{
+	[self refreshCaches: @selector (reloadAfterRefresh:)];
+}
+
+
 - (IBAction) disconnect: (id) sender
 {
 	if ([mContext isConnected] && [self hasBaseTenSchema])
-		[self refreshCaches: NO];
+		[self refreshCaches: @selector (disconnectAfterRefresh:)];
 	else
 		[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
 }
@@ -1359,7 +1395,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 - (IBAction) terminate: (id) sender
 {
 	if ([mContext isConnected] && [self hasBaseTenSchema])
-		[self refreshCaches: YES]; // The YES refers to terminate after refresh. Method name could be a bit more descriptive //Patch by Tim Bedford 2008-08-11
+		[self refreshCaches: @selector (terminateAfterRefresh:)]; // Method name could be a bit more descriptive //Patch by Tim Bedford 2008-08-11
 	else
 	{
 		[self finishTermination]; //Patch by Tim Bedford 2008-08-11

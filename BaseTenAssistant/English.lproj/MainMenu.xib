@@ -8,8 +8,8 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1092"/>
 			<integer value="1094"/>
+			<integer value="629"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -2204,6 +2204,14 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 									<reference key="NSMixedImage" ref="978181122"/>
 									<int key="NSTag">1</int>
 								</object>
+								<object class="NSMenuItem" id="763134083">
+									<reference key="NSMenu" ref="452600950"/>
+									<string key="NSTitle">Refresh Cache Tables</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="622407158"/>
+									<reference key="NSMixedImage" ref="978181122"/>
+								</object>
 								<object class="NSMenuItem" id="682515390">
 									<reference key="NSMenu" ref="452600950"/>
 									<bool key="NSIsDisabled">YES</bool>
@@ -3440,6 +3448,14 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					</object>
 					<int key="connectionID">1106</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">refreshCacheTables:</string>
+						<reference key="source" ref="1038163843"/>
+						<reference key="destination" ref="763134083"/>
+					</object>
+					<int key="connectionID">1108</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -4078,6 +4094,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<reference ref="806683184"/>
 							<reference ref="466359841"/>
 							<reference ref="546121362"/>
+							<reference ref="763134083"/>
 						</object>
 						<reference key="parent" ref="1011302266"/>
 					</object>
@@ -4768,6 +4785,12 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						<reference key="object" ref="529128086"/>
 						<reference key="parent" ref="127939036"/>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1107</int>
+						<reference key="object" ref="763134083"/>
+						<reference key="parent" ref="452600950"/>
+						<string key="objectName">10</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4833,6 +4856,8 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>1100.IBPluginDependency</string>
 					<string>1102.IBPluginDependency</string>
 					<string>1103.IBPluginDependency</string>
+					<string>1107.IBPluginDependency</string>
+					<string>1107.ImportedFromIB2</string>
 					<string>449.IBEditorWindowLastContentRect</string>
 					<string>449.IBPluginDependency</string>
 					<string>449.IBWindowTemplateEditedContentRect</string>
@@ -5114,7 +5139,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{269, 739}, {295, 60}}</string>
+					<string>{{243, 515}, {295, 60}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{628, 654}</string>
 					<string>{{357, 416}, {480, 272}}</string>
@@ -5127,6 +5152,8 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
 					<string>{{118, 288}, {506, 387}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{118, 288}, {506, 387}}</string>
@@ -5201,7 +5228,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{173, 836}, {431, 20}}</string>
+					<string>{{-12, 514}, {431, 20}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{74, 862}</string>
@@ -5270,7 +5297,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>{{923, 941}, {232, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{336, 633}, {319, 203}}</string>
+					<string>{{151, 291}, {319, 223}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{766, 811}, {235, 153}}</string>
@@ -5381,7 +5408,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1106</int>
+			<int key="maxID">1108</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5406,6 +5433,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<string>getInfo:</string>
 							<string>importDataModel:</string>
 							<string>openHelp:</string>
+							<string>refreshCacheTables:</string>
 							<string>reload:</string>
 							<string>removeSchema:</string>
 							<string>terminate:</string>
@@ -5415,6 +5443,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
