@@ -94,4 +94,20 @@
 	res = [connection executeQuery: @"ROLLBACK"];
 	STAssertTrue ([res querySucceeded], [[res error] description]);
 }
+
+- (void) testPrune
+{
+	NSError* error = nil;
+	[mContext connectSync: &error];
+	STAssertNil (error, [error localizedDescription]);
+	
+	BXPGTransactionHandler* handler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
+	PGTSConnection* connection = [handler connection];
+	MKCAssertNotNil (handler);
+	MKCAssertNotNil (connection);
+
+	NSString* query = @"SELECT baseten.prune ()";
+	PGTSResultSet* res = [connection executeQuery: query];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+}
 @end
