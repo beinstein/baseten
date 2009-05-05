@@ -446,7 +446,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo -n \"Checking whether to build OCMock… \"\nif [ ! -d \"$BUILD_DIR/Release/OCMock.framework\" ]\nthen\n\techo \"yes.\"\n\tpushd \"$PROJECT_DIR/../Contrib/OCMock/OCMock-current-source/\"\n\txcodebuild -configuration Release -target OCMock -sdk \"$SDKROOT\" INSTALL_PATH=\"$BUILD_DIR/Release/\"\n\tpopd\nelse\n\techo \"already built.\"\nfi";
+			shellScript = "echo -n \"Checking whether to build OCMock… \"\nif [ -d \"$BUILD_DIR/Release/OCMock.framework\" ] || [ -d \"../Contrib/OCMock/OCMock-current-source/build\" ]\nthen\n\techo \"already built.\"\nelse\n\techo \"yes.\"\n\tpushd \"$PROJECT_DIR/../Contrib/OCMock/OCMock-current-source/\"\n\txcodebuild -configuration Release -target OCMock -sdk \"$SDKROOT\" INSTALL_PATH=\"$BUILD_DIR/Release/\"\n\tpopd\nfi";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -522,9 +522,9 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_STYLE)",
-					../build/Release,
 					"$(BUILD_DIR)/Release",
+					"../build/$(BUILD_STYLE)",
+					"../Contrib/OCMock/OCMock-current-source/build/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -561,9 +561,9 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_STYLE)",
-					../build/Release,
 					"$(BUILD_DIR)/Release",
+					"../build/$(BUILD_STYLE)",
+					"../Contrib/OCMock/OCMock-current-source/build/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -632,9 +632,9 @@
 				DEBUG_BUILD = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"../build/$(BUILD_STYLE)",
-					../build/Release,
 					"$(BUILD_DIR)/Release",
+					"../build/$(BUILD_STYLE)",
+					"../Contrib/OCMock/OCMock-current-source/build/Release",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
 				);
 				GCC_C_LANGUAGE_STANDARD = gnu99;
