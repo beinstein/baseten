@@ -33,7 +33,7 @@
 - (NSString *) description
 {
 	NSString* retval = [NSString stringWithFormat: @"(%d): %@: %@",
-						[self code], [self localizedDescription], ([self localizedFailureReason] ?: [self localizedRecoverySuggestion])];
+						[self code], [self localizedDescription], ([self localizedRecoverySuggestion] ?: [self localizedFailureReason])];
 	return retval;
 }
 @end

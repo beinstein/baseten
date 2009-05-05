@@ -56,8 +56,7 @@
 {
 	NSError* error = nil;
 	[mContext connectSync: &error];
-	//STAssertNil (error, [error description]); //FIXME: testing
-	STAssertNil (error, [[error userInfo] description]);
+	STAssertNil (error, [error description]);
 	
 	BXPGTransactionHandler* handler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
 	PGTSConnection* connection = [handler connection];
