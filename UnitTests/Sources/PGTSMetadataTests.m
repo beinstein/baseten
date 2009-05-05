@@ -45,7 +45,7 @@
 	NSString* connectionString = @"host = 'localhost' user = 'baseten_test_user' dbname = 'basetentest'";
 	PGTSConnection* connection = [[[PGTSConnection alloc] init] autorelease];
 	BOOL status = [connection connectSync: connectionString];
-	STAssertTrue (status, [[[connection connectionError] userInfo] description]);
+	STAssertTrue (status, [[connection connectionError] description]);
 	mDatabaseDescription = [[connection databaseDescription] retain];
 	[connection disconnect];
 }
