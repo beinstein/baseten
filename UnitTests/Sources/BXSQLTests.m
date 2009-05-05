@@ -105,9 +105,24 @@
 	PGTSConnection* connection = [handler connection];
 	MKCAssertNotNil (handler);
 	MKCAssertNotNil (connection);
+	
+	NSString* query = nil;
+	PGTSResultSet* res = nil;
 
-	NSString* query = @"SELECT baseten.prune ()";
-	PGTSResultSet* res = [connection executeQuery: query];
+	query = @"SELECT baseten.prune ()";
+	res = [connection executeQuery: query];
 	STAssertTrue ([res querySucceeded], [[res error] description]);
+	
+	query = @"SELECT COUNT (baseten_modification_id) FROM baseten.modification";
+	res = [connection executeQuery: query];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	[res advanceRow];
+	MKCAssertTrue (0 == [[res valueForKey: @"count"] integerValue]);
+	
+	query = @"SELECT COUNT (baseten_lock_id) FROM baseten.lock";
+	res = [connection executeQuery: query];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	[res advanceRow];
+	MKCAssertTrue (0 == [[res valueForKey: @"count"] integerValue]);	
 }
 @end
