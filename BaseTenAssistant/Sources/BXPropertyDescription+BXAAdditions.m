@@ -42,7 +42,7 @@
 	return NO;
 }
 
-- (BOOL) isPrimaryKey
+- (BOOL) isPrimaryKeyForAssistant
 {
 	return NO;
 }

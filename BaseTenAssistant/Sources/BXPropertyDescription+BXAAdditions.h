@@ -30,7 +30,7 @@
 @interface BXPropertyDescription (BXAControllerAdditions)
 - (BOOL) isExcluded;
 - (BOOL) isDeprecated;
-- (BOOL) isPrimaryKey;
+- (BOOL) isPrimaryKeyForAssistant
 - (NSString *) databaseTypeName;
 - (BOOL) isAttribute;
 @end

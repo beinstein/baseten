@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="13"/>
+			<integer value="27"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -684,26 +684,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: arrangedObjects.value.primaryKey</string>
-						<reference key="source" ref="1049780405"/>
-						<reference key="destination" ref="829741630"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1049780405"/>
-							<reference key="NSDestination" ref="829741630"/>
-							<string key="NSLabel">value: arrangedObjects.value.primaryKey</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">arrangedObjects.value.primaryKey</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSValidatesImmediately</string>
-								<reference key="NS.object.0" ref="9"/>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">123</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">enabled2: arrangedObjects.value.isAttribute</string>
 						<reference key="source" ref="1049780405"/>
 						<reference key="destination" ref="829741630"/>
@@ -771,6 +751,26 @@
 						</object>
 					</object>
 					<int key="connectionID">134</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">value: arrangedObjects.value.primaryKeyForAssistant</string>
+						<reference key="source" ref="1049780405"/>
+						<reference key="destination" ref="829741630"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="1049780405"/>
+							<reference key="NSDestination" ref="829741630"/>
+							<string key="NSLabel">value: arrangedObjects.value.primaryKeyForAssistant</string>
+							<string key="NSBinding">value</string>
+							<string key="NSKeyPath">arrangedObjects.value.primaryKeyForAssistant</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValidatesImmediately</string>
+								<integer value="1" key="NS.object.0"/>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">135</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1086,7 +1086,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">134</int>
+			<int key="maxID">135</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
