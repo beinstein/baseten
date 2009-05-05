@@ -132,9 +132,12 @@ function build
 }
 
 
+echo -n "Checking whether to build PostgreSQL for architecture $my_architecture… "
 if [ ! -e "$my_build_dir"/"$my_architecture"/lib/libpq.a ] || \
    [ ! -e "$my_build_dir"/"$my_architecture"/bin/psql ]
 then
+    echo "yes."
+
 	mkdir -p "$my_build_dir"
 	pushd "$SRCROOT"/Contrib/PostgreSQL
 	extract
@@ -184,5 +187,7 @@ then
 	build "${opts[@]}"
 	popd
 	"$postgresql_root"/configure --version | head -n 1 > "$my_build_dir"/VERSION
+else
+    echo "already built."
 fi
 return 0

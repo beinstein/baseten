@@ -27,9 +27,12 @@ function extract
 }
 
 
+echo -n "Checking whether to build OpenSSL for architecture arm… "
 if [ ! -e "$openssl_root"/libssl.a ] || \
    [ ! -e "$openssl_root"/libcrypto.a ]
 then
+    echo "yes."
+
 	export CC="${PLATFORM_DEVELOPER_BIN_DIR}/gcc-4.0"
 	mkdir -p "$my_build_dir"
 	
@@ -45,4 +48,6 @@ then
 	make
 	exit_on_error
 	popd
+else
+    echo "already built."
 fi
