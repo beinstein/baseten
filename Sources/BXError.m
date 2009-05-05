@@ -32,8 +32,14 @@
 @implementation BXError
 - (NSString *) description
 {
-	NSString* retval = [NSString stringWithFormat: @"(%d): %@: %@",
-						[self code], [self localizedDescription], ([self localizedRecoverySuggestion] ?: [self localizedFailureReason])];
+	NSString* reason = [self localizedRecoverySuggestion] ?: [self localizedFailureReason];
+	NSMutableString* retval = [NSMutableString stringWithFormat: @"%@ (%@: %d): %@: %@",
+							   [self class], [self domain], [self code], [self localizedDescription], reason];
+
+	NSError* underlyingError = [[self userInfo] objectForKey: NSUnderlyingErrorKey];
+	if (underlyingError)
+		[retval appendFormat: @"\n\tUnderlying error: %@", [underlyingError description]];
+	
 	return retval;
 }
 @end
