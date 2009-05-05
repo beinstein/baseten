@@ -212,7 +212,9 @@
 - (void) remove1: (BXEntityDescription *) oneEntity
 {
     BXDatabaseObject* object = [self removeRefObject: oneEntity];
+	MKCAssertTrue (0 < [[object primitiveValueForKey: @"test2"] count]);
     [object setPrimitiveValue: nil forKey: @"test2"];
+	MKCAssertTrue (0 == [[object primitiveValueForKey: @"test2"] count]);
 
     [context rollback];
 }
