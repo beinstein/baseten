@@ -197,7 +197,7 @@
     NSError* error = nil;
 	
 	[context connectIfNeeded: &error];
-	STAssertNil (error, [error localizedDescription]);
+	STAssertNil (error, [error description]);
 	
     BXRelationshipDescription* foobar = [[entity1 relationshipsByName] objectForKey: [entity2 name]];
     MKCAssertNotNil (foobar);
@@ -331,7 +331,7 @@
 	NSArray* res = [context executeFetchForEntity: entity
 									withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
 											error: &error];
-	STAssertNil (error, [error localizedDescription]);
+	STAssertNil (error, [error description]);
 	BXDatabaseObject* object = [res objectAtIndex: 0];
 	NSSet* helperObjects = [object primitiveValueForKey: @"mtmrel1"];
 	MKCAssertTrue (3 == [helperObjects count]);

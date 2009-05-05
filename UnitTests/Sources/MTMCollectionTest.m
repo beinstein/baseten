@@ -81,7 +81,7 @@
     //Execute a fetch
     NSArray* res = [context executeFetchForEntity: entity1
                                     withPredicate: nil error: &error];
-	STAssertNil (error, [error localizedDescription]);
+	STAssertNil (error, [error description]);
     MKCAssertTrue (4 == [res count]);
     
     //Get an object from the result

@@ -60,7 +60,7 @@
     NSArray* res = [context executeFetchForEntity: pkeytest
                                     withPredicate: [NSPredicate predicateWithFormat: @"Id = 1"]
                                             error: &error];
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     MKCAssertNotNil (res);
     
     MKCAssertTrue (1 == [res count]);
@@ -75,7 +75,7 @@
     res = [[context executeFetchForEntity: pkeytest withPredicate: nil error: &error]
         sortedArrayUsingDescriptors: [NSArray arrayWithObject: 
             [[[NSSortDescriptor alloc] initWithKey: @"Id" ascending: YES] autorelease]]];
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     MKCAssertNotNil (res);
 
     MKCAssertTrue (3 == [res count]);
@@ -99,7 +99,7 @@
     NSArray* res = [context executeFetchForEntity: updatetest withPredicate: nil
                                   returningFaults: NO error: &error];
     NSArray* originalResult = res;
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     MKCAssertNotNil (res);
     MKCAssertTrue (5 == [res count]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"value1"]] count]);
@@ -117,7 +117,7 @@
                        predicate: predicate
                   withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
                            error: &error];
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     MKCAssertEqualObjects (number, [object valueForKey: @"value1"]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"value1"]] count]);
     
@@ -128,7 +128,7 @@
                        predicate: nil
                   withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
                            error: &error];
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     NSArray* values = [res valueForKey: @"value1"];
     MKCAssertTrue (1 == [[NSSet setWithArray: values] count]);
     MKCAssertEqualObjects (number, [values objectAtIndex: 0]);
@@ -142,14 +142,14 @@
                        predicate: predicate
                   withDictionary: [NSDictionary dictionaryWithObject: number forKey: idattr]
                            error: &error];
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
     MKCAssertEqualObjects ([object valueForKey: @"id"], number);
     
     //Then delete an object
     predicate = [NSPredicate predicateWithFormat: @"id = -1"];
     [context executeDeleteFromEntity: updatetest withPredicate: predicate error: &error];
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     res = [context executeFetchForEntity: updatetest withPredicate: nil
                          returningFaults: NO error: &error];
     MKCAssertTrue (4 == [res count]);
@@ -159,7 +159,7 @@
     
     //Finally delete all objects
     [context executeDeleteFromEntity: updatetest withPredicate: nil error: &error];
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
     res = [context executeFetchForEntity: updatetest withPredicate: nil
                          returningFaults: NO error: &error];
     MKCAssertTrue (0 == [res count]);

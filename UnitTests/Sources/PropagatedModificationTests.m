@@ -45,7 +45,7 @@
 	[context setAutocommits: NO];
 	NSError* error = nil;
     entity = [context entityForTable: @"test" error: &error];
-	STAssertNil (error, [error localizedDescription]);
+	STAssertNil (error, [error description]);
     MKCAssertNotNil (entity);
 }
 

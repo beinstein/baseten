@@ -160,7 +160,7 @@
     
     error = nil;
     MKCAssertTrue ([mObject validateValue: &value forKey: @"key" error: &error]);
-    STAssertNil (error, [error localizedDescription]);
+    STAssertNil (error, [error description]);
 }
 #endif
 
