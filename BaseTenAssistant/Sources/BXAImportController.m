@@ -178,10 +178,9 @@ conflictingEntities = mConflictingEntities;
 
 - (void) entityImporter: (BXPGEntityImporter *) importer finishedImporting: (BOOL) succeeded error: (NSError *) error
 {
-	[mController hideProgressPanel];
-
 	if (! succeeded)
 	{
+		[mController hideProgressPanel];
 		[NSApp presentError: error modalForWindow: [mController mainWindow]
 				   delegate: nil didPresentSelector: NULL contextInfo: NULL];
 	}

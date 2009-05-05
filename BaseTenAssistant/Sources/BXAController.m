@@ -574,8 +574,22 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) finishedImporting
 {
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
-	[mEntitiesBySchema setContent: entities];
+	if ([self hasBaseTenSchema])
+		[self refreshCaches: @selector (reloadAfterRefresh:)];
+	else
+	{
+		//The progress panel might have been left open by the importer.
+		[self hideProgressPanel];
+	}
+}
+
+- (void) refreshCaches: (SEL) callback
+{
+	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+	[mProgressCancelButton setEnabled: NO];
+	[mProgressIndicator setIndeterminate: YES];
+	[self displayProgressPanel: NSLocalizedString(@"Refreshing caches", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
+	[connection sendQuery: @"SELECT baseten.refresh_caches ();" delegate: self callback: callback];
 }
 @end
 
@@ -1013,6 +1027,21 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[self setProgressValue: (double) position];
 }
 
+//Patch by Tim Bedford 2008-08-11
+- (void) finishTermination
+{
+	[mServiceBrowser stop];
+	
+	if([mMainWindow attachedSheet] == mConnectPanel)
+	{
+		[NSApp endSheet:mConnectPanel];
+		[mConnectPanel orderOut: nil];
+	}
+	
+	[NSApp terminate: nil];
+}
+//End patch
+
 - (void) reloadAfterRefresh: (PGTSResultSet *) res
 {
 	if ([res querySucceeded])
@@ -1038,34 +1067,11 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	}
 }
 
-//Patch by Tim Bedford 2008-08-11
-- (void) finishTermination
-{
-	[mServiceBrowser stop];
-	
-	if([mMainWindow attachedSheet] == mConnectPanel)
-	{
-		[NSApp endSheet:mConnectPanel];
-		[mConnectPanel orderOut: nil];
-	}
-	
-	[NSApp terminate: nil];
-}
-//End patch
-
 - (void) terminateAfterRefresh: (PGTSResultSet *) res
 {
 	BXAssertLog ([res querySucceeded], @"Expected query to succeed. Error: %@", [res error]);
 	[self hideProgressPanel];
 	[self finishTermination]; //Patch by Tim Bedford 2008-08-11
-}
-
-- (void) refreshCaches: (SEL) callback
-{
-	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
-	[mProgressCancelButton setEnabled: NO];
-	[self displayProgressPanel: NSLocalizedString(@"Refreshing caches", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
-	[connection sendQuery: @"SELECT baseten.refresh_caches ();" delegate: self callback: callback];
 }
 @end
 
@@ -1613,7 +1619,8 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	{
 		for (id pair in [mEntities arrangedObjects])
 			[[pair value] setEnabled: NO];
-		[[mContext databaseInterface] reloadDatabaseMetadata];
+
+		[self reload: nil];
 		[self checkBaseTenSchema: NULL];
 	}
 }
