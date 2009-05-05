@@ -1,8 +1,8 @@
 //
-// Additions.h
-// BaseTen Setup
+// BXAttributeDescription+BXAAdditions.m
+// BaseTen Assistant
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,27 +26,46 @@
 // $Id$
 //
 
+
 #import <Cocoa/Cocoa.h>
+#import <BaseTen/BaseTen.h>
+#import "BXAController.h"
 
 
-@interface NSTextFieldCell (BXAAdditions)
-- (void) makeEtchedSmall: (BOOL) makeSmall;
+@implementation BXAttributeDescription (BXAControllerAdditions)
+- (BOOL) isAttribute
+{
+	return YES;
+}
+
+- (BOOL) isPrimaryKeyForAssistant
+{
+	return [self isPrimaryKey];
+}
+
+- (void) setPrimaryKeyForAssistant: (BOOL) aBool
+{
+	[[NSApp delegate] process: aBool attribute: self];
+}
+
+- (BOOL) validatePrimaryKeyForAssistant: (id *) ioValue error: (NSError **) outError
+{
+	BOOL retval = YES;
+	if (! [[NSApp delegate] hasBaseTenSchema])
+	{
+		retval = NO;
+		
+		if (ioValue)
+			*ioValue = [NSNumber numberWithBool: NO];
+				
+		if (outError)
+			*outError = [[NSApp delegate] schemaInstallError];
+	}
+	return retval;
+}
+
+- (NSString *) databaseTypeNameForAssistant
+{
+	return [self databaseTypeName];
+}
 @end
-
-@interface NSTextField (BXAAdditions)
-- (void) makeEtchedSmall: (BOOL) makeSmall;
-@end
-
-@interface NSWindow (BXAAdditions)
-- (IBAction) MKCToggle: (id) sender;
-@end
-
-NSSize MKCTriangleSize ();
-NSRect MKCTriangleRect (NSRect cellFrame);
-void MKCDrawTriangleAtCellEnd (NSView* controlView, NSCell* cell, NSRect cellFrame);
-
-CFStringRef MKCCopyDescription (const void *value);
-CFHashCode MKCHash (const void *value);
-const void* MKCSetRetain (CFAllocatorRef allocator, const void *value);
-void MKCRelease (CFAllocatorRef allocator, const void *value);
-Boolean MKCEqualRelationshipDescription (const void *value1, const void *value2);

@@ -49,6 +49,10 @@
 		53E029D50D7C49C8001AED9C /* MKCBackgroundView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */; };
 		53E302F60FACC36D000C0478 /* ObjectModelRecords.xsl in Resources */ = {isa = PBXBuildFile; fileRef = 53E302F40FACC36D000C0478 /* ObjectModelRecords.xsl */; };
 		53E302F70FACC36D000C0478 /* ObjectModel.xsl in Resources */ = {isa = PBXBuildFile; fileRef = 53E302F50FACC36D000C0478 /* ObjectModel.xsl */; };
+		53E830370FB0654500C1FC34 /* BXRelationshipDescription+BXAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E830330FB0654500C1FC34 /* BXRelationshipDescription+BXAAdditions.m */; };
+		53E830380FB0654500C1FC34 /* BXPropertyDescription+BXAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E830340FB0654500C1FC34 /* BXPropertyDescription+BXAAdditions.m */; };
+		53E830390FB0654500C1FC34 /* BXAttributeDescription+BXAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E830350FB0654500C1FC34 /* BXAttributeDescription+BXAAdditions.m */; };
+		53E8303A0FB0654500C1FC34 /* BXEntityDescription+BXAAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E830360FB0654500C1FC34 /* BXEntityDescription+BXAAdditions.m */; };
 		53EF32B90E23B7220027EA18 /* Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E4B70B0D364E000D353D /* Additions.m */; };
 		53EF33B50E23CC430027EA18 /* BXASchemaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF33B40E23CC430027EA18 /* BXASchemaCell.m */; };
 		53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF34500E23D83B0027EA18 /* BXAEntityCell.m */; };
@@ -231,6 +235,12 @@
 		53E029D40D7C49C8001AED9C /* MKCBackgroundView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCBackgroundView.m; path = Sources/MKCBackgroundView.m; sourceTree = "<group>"; };
 		53E302F40FACC36D000C0478 /* ObjectModelRecords.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = ObjectModelRecords.xsl; path = ../Resources/ObjectModelRecords.xsl; sourceTree = SOURCE_ROOT; };
 		53E302F50FACC36D000C0478 /* ObjectModel.xsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = ObjectModel.xsl; path = ../Resources/ObjectModel.xsl; sourceTree = SOURCE_ROOT; };
+		53E830330FB0654500C1FC34 /* BXRelationshipDescription+BXAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXRelationshipDescription+BXAAdditions.m"; path = "Sources/BXRelationshipDescription+BXAAdditions.m"; sourceTree = "<group>"; };
+		53E830340FB0654500C1FC34 /* BXPropertyDescription+BXAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXPropertyDescription+BXAAdditions.m"; path = "Sources/BXPropertyDescription+BXAAdditions.m"; sourceTree = "<group>"; };
+		53E830350FB0654500C1FC34 /* BXAttributeDescription+BXAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXAttributeDescription+BXAAdditions.m"; path = "Sources/BXAttributeDescription+BXAAdditions.m"; sourceTree = "<group>"; };
+		53E830360FB0654500C1FC34 /* BXEntityDescription+BXAAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "BXEntityDescription+BXAAdditions.m"; path = "Sources/BXEntityDescription+BXAAdditions.m"; sourceTree = "<group>"; };
+		53E8304F0FB0669200C1FC34 /* BXPropertyDescription+BXAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXPropertyDescription+BXAAdditions.h"; path = "Sources/BXPropertyDescription+BXAAdditions.h"; sourceTree = "<group>"; };
+		53E830630FB066D800C1FC34 /* BXEntityDescription+BXAAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXEntityDescription+BXAAdditions.h"; path = "Sources/BXEntityDescription+BXAAdditions.h"; sourceTree = "<group>"; };
 		53EF33B30E23CC430027EA18 /* BXASchemaCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXASchemaCell.h; path = Sources/BXASchemaCell.h; sourceTree = "<group>"; };
 		53EF33B40E23CC430027EA18 /* BXASchemaCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXASchemaCell.m; path = Sources/BXASchemaCell.m; sourceTree = "<group>"; };
 		53EF344F0E23D83B0027EA18 /* BXAEntityCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAEntityCell.h; path = Sources/BXAEntityCell.h; sourceTree = "<group>"; };
@@ -298,6 +308,12 @@
 		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
+				53E830630FB066D800C1FC34 /* BXEntityDescription+BXAAdditions.h */,
+				53E830360FB0654500C1FC34 /* BXEntityDescription+BXAAdditions.m */,
+				53E8304F0FB0669200C1FC34 /* BXPropertyDescription+BXAAdditions.h */,
+				53E830340FB0654500C1FC34 /* BXPropertyDescription+BXAAdditions.m */,
+				53E830350FB0654500C1FC34 /* BXAttributeDescription+BXAAdditions.m */,
+				53E830330FB0654500C1FC34 /* BXRelationshipDescription+BXAAdditions.m */,
 				538963150EF2A480004391BF /* BXAPortFormatter.h */,
 				538963160EF2A480004391BF /* BXAPortFormatter.m */,
 				5374E4B60B0D364E000D353D /* Additions.h */,
@@ -637,6 +653,10 @@
 				227A5CE40E4BC2EB0009CC08 /* BXAGetInfoWindowController.m in Sources */,
 				227A5F4C0E4C5B9D0009CC08 /* BXAInspectorPanelController.m in Sources */,
 				538963170EF2A480004391BF /* BXAPortFormatter.m in Sources */,
+				53E830370FB0654500C1FC34 /* BXRelationshipDescription+BXAAdditions.m in Sources */,
+				53E830380FB0654500C1FC34 /* BXPropertyDescription+BXAAdditions.m in Sources */,
+				53E830390FB0654500C1FC34 /* BXAttributeDescription+BXAAdditions.m in Sources */,
+				53E8303A0FB0654500C1FC34 /* BXEntityDescription+BXAAdditions.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

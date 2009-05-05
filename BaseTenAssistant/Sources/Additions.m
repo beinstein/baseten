@@ -29,7 +29,7 @@
 #import "Additions.h"
 
 
-@implementation NSTextFieldCell (BXAdditions)
+@implementation NSTextFieldCell (BXAAdditions)
 - (void) makeEtchedSmall: (BOOL) makeSmall
 {
     NSAttributedString* originalText = [self attributedStringValue];
@@ -65,20 +65,30 @@
 }
 @end
 
-@implementation NSTextField (BXAdditions)
+
+@implementation NSTextField (BXAAdditions)
 - (void) makeEtchedSmall: (BOOL) makeSmall
 {
     [[self cell] makeEtchedSmall: makeSmall];
 }
 @end
 
-@implementation NSWindow (MKCAdditions)
+
+@implementation NSWindow (BXAAdditions)
 - (IBAction) MKCToggle: (id) sender
 {
     if ([self isVisible])
         [self orderOut: nil];
     else
         [self makeKeyAndOrderFront: nil];
+}
+@end
+
+
+@implementation NSArrayController (BXAAdditions)
+- (BOOL) MKCHasEmptySelection
+{
+    return NSNotFound == [self selectionIndex];
 }
 @end
 

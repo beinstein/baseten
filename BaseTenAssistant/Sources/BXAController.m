@@ -75,10 +75,6 @@ enum BXAControllerErrorCode
 };
 
 
-//FIXME: come up with a way for the entities etc. to get an NSDocument or something if we want to be document based some day.
-__strong static BXAController* gController = nil;
-
-
 NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	NSMethodSignature* sig = [target methodSignatureForSelector: selector];
@@ -87,148 +83,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[retval setSelector: selector];
 	return retval;
 }
-
-
-@implementation BXEntityDescription (BXAControllerAdditions)
-+ (NSSet *) keyPathsForValuesAffectingCanSetPrimaryKey
-{
-	return [NSSet setWithObjects: @"isEnabled", nil];
-}
-
-- (BOOL) canSetPrimaryKey
-{
-	return ([self isView] && ![self isEnabled]);
-}
-
-+ (NSSet *) keyPathsForValuesAffectingCanEnableForAssistant
-{
-	return [NSSet setWithObject: @"primaryKeyFields"];
-}
-
-- (BOOL) canEnableForAssistant
-{
-	return (0 < [[self primaryKeyFields] count]);
-}
-
-+ (NSSet *) keyPathsForValuesAffectingCanEnableForAssistantV
-{
-	return [NSSet setWithObject: @"primaryKeyFields"];
-}
-
-- (BOOL) canEnableForAssistantV
-{
-	return (0 < [[self primaryKeyFields] count] || [self isView]);
-}
-
-+ (NSSet *) keyPathsForValuesAffectingEnabledForAssistant
-{
-	return [NSSet setWithObject: @"enabled"];
-}
-
-- (BOOL) isEnabledForAssistant
-{
-	return [self isEnabled];
-}
-
-- (void) setEnabledForAssistant: (BOOL) aBool
-{
-	[gController process: aBool entity: self];
-}
-
-- (BOOL) validateEnabledForAssistant: (id *) ioValue error: (NSError **) outError
-{
-	BOOL retval = YES;
-	if ([self isView] && 0 == [[self primaryKeyFields] count])
-	{
-		if (ioValue)
-			*ioValue = [NSNumber numberWithBool: NO];
-	}
-	else if (! [gController hasBaseTenSchema])
-	{
-		retval = NO;
-		if (outError)
-			*outError = [gController schemaInstallError];
-	}
-	return retval;
-}
-@end
-
-
-@implementation BXAttributeDescription (BXAControllerAdditions)
-- (BOOL) isAttribute
-{
-	return YES;
-}
-
-- (BOOL) isPrimaryKeyForAssistant
-{
-	return [self isPrimaryKey];
-}
-
-- (void) setPrimaryKeyForAssistant: (BOOL) aBool
-{
-	[gController process: aBool attribute: self];
-}
-
-- (BOOL) validatePrimaryKeyForAssistant: (id *) ioValue error: (NSError **) outError
-{
-	BOOL retval = YES;
-	if (! [gController hasBaseTenSchema])
-	{
-		retval = NO;
-		
-		if (ioValue)
-			*ioValue = [NSNumber numberWithBool: NO];
-				
-		if (outError)
-			*outError = [gController schemaInstallError];
-	}
-	return retval;
-}
-
-- (NSString *) databaseTypeNameForAssistant
-{
-	return [self databaseTypeName];
-}
-@end
-
-
-@implementation BXPropertyDescription (BXAControllerAdditions)
-- (BOOL) isExcluded
-{
-	return NO;
-}
-
-- (BOOL) isDeprecated
-{
-	return NO;
-}
-
-- (BOOL) isPrimaryKey
-{
-	return NO;
-}
-
-- (NSString *) databaseTypeName
-{
-	return @"";
-}
-
-- (BOOL) isAttribute
-{
-	return NO;
-}
-@end
-
-
-@implementation BXRelationshipDescription (BXAControllerAdditions)
-- (NSString *) databaseTypeName
-{
-	return [NSString stringWithFormat: @"%@-to-%@",
-			([[self inverseRelationship] isToMany] ? @"many" : @"one"),
-			([self isToMany] ? @"many" : @"one")];
-}
-@end
 
 
 @implementation BXAController
@@ -258,7 +112,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 							  recoverySuggestion, NSLocalizedRecoverySuggestionErrorKey,
 							  [NSArray arrayWithObjects: NSLocalizedString(@"Install", @"Button label"), NSLocalizedString(@"Don't Install", @"Button label"), nil], NSLocalizedRecoveryOptionsErrorKey,
 							  //End patch
-							  gController, NSRecoveryAttempterErrorKey,
+							  self, NSRecoveryAttempterErrorKey,
 							  nil];
 	error = [NSError errorWithDomain: kBXAControllerErrorDomain 
 								code: kBXAControllerErrorNoBaseTenSchema 
@@ -358,7 +212,6 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) awakeFromNib
 {
-	gController = self;
 	mLastSelectedEntityWasView = YES;
 	mBundledSchemaVersionNumber = [[BXPGVersion currentVersionNumber] retain];
 	
@@ -1241,7 +1094,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 
 @implementation BXAController (NSSavePanelDelegate)
-
 - (void)exportLogSavePanelDidEnd:(NSSavePanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
 	[sheet orderOut:self];	
@@ -1306,7 +1158,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	}
 	[self setSavePanel: nil];
 }
-
 //Patch by Tim Bedford 2008-08-11
 @end
 
@@ -1390,12 +1241,10 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	NSLog(@"An error occurred with service %@.%@.%@, error code = %@",
 		  [service name], [service type], [service domain], error);
 }
-
 @end
 
 
 @implementation BXAController (NetServiceBrowserDelegate)
-
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser
 {
     mSearching = YES;
@@ -1448,7 +1297,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 
 
 @implementation BXAController (NSNetServiceDelegate)
-
 - (void)resolveNetServiceAtIndex:(NSInteger)index
 {
 	NSNetService* netService = (NSNetService*)[mServices objectAtIndex:index];
@@ -1467,7 +1315,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 {
 	[self handleNetServiceError:[errorDict objectForKey:NSNetServicesErrorCode] withService:netService];
 }
-
 @end
 //End patch
 
@@ -1746,13 +1593,4 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[helpManager openHelpAnchor:anchor inBook:bookName];
 }
 //End patch
-
-@end
-
-
-@implementation NSArrayController (BaseTenSetupApplicationAdditions)
-- (BOOL) MKCHasEmptySelection
-{
-    return NSNotFound == [self selectionIndex];
-}
 @end

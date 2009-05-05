@@ -1,8 +1,8 @@
 //
-// Additions.h
-// BaseTen Setup
+// BXEntityDescription+BXAAdditions.h
+// BaseTen Assistant
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,27 +26,11 @@
 // $Id$
 //
 
-#import <Cocoa/Cocoa.h>
 
-
-@interface NSTextFieldCell (BXAAdditions)
-- (void) makeEtchedSmall: (BOOL) makeSmall;
+@interface BXEntityDescription (BXAControllerAdditions)
+- (BOOL) canSetPrimaryKey;
+- (BOOL) canEnableForAssistant;
+- (BOOL) canEnableForAssistantV;
+- (BOOL) isEnabledForAssistant;
+- (void) setEnabledForAssistant: (BOOL) aBool;
 @end
-
-@interface NSTextField (BXAAdditions)
-- (void) makeEtchedSmall: (BOOL) makeSmall;
-@end
-
-@interface NSWindow (BXAAdditions)
-- (IBAction) MKCToggle: (id) sender;
-@end
-
-NSSize MKCTriangleSize ();
-NSRect MKCTriangleRect (NSRect cellFrame);
-void MKCDrawTriangleAtCellEnd (NSView* controlView, NSCell* cell, NSRect cellFrame);
-
-CFStringRef MKCCopyDescription (const void *value);
-CFHashCode MKCHash (const void *value);
-const void* MKCSetRetain (CFAllocatorRef allocator, const void *value);
-void MKCRelease (CFAllocatorRef allocator, const void *value);
-Boolean MKCEqualRelationshipDescription (const void *value1, const void *value2);
