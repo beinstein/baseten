@@ -33,6 +33,7 @@
 #import "PGTSCertificateVerificationDelegateProtocol.h"
 #import "BXLogger.h"
 #import "BXError.h"
+#import "NSString+PGTSAdditions.h"
 #import "libpq_additions.h"
 #import <sys/select.h>
 
@@ -175,11 +176,12 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 			
 			NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
 																	  @"Connection error", @"Title for a sheet.");
-			NSString* errorMessage = [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
+			NSString* message = [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
+			message = PGTSReformatErrorMessage (message);
 			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
 									  errorTitle, NSLocalizedDescriptionKey,
 									  errorTitle, NSLocalizedFailureReasonErrorKey,
-									  errorMessage, NSLocalizedRecoverySuggestionErrorKey,
+									  message, NSLocalizedRecoverySuggestionErrorKey,
 									  nil];
 			
 			NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];

@@ -33,6 +33,46 @@
 #import "PGTSConnection.h"
 
 
+PGTS_EXPORT
+NSString* PGTSReformatErrorMessage (NSString* message)
+{
+	NSMutableString* result = [NSMutableString string];
+	NSCharacterSet* skipSet = [NSCharacterSet characterSetWithCharactersInString: @"\t"];
+	NSCharacterSet* newlineSet = [NSCharacterSet characterSetWithCharactersInString: @"\n"];
+	NSInteger i = 0;
+	NSScanner* scanner = [NSScanner scannerWithString: message];
+	[scanner setCharactersToBeSkipped: skipSet];
+	
+	while (1)
+	{
+		NSString* part = nil;
+		if ([scanner scanUpToCharactersFromSet: newlineSet intoString: &part])
+		{
+			[scanner scanCharactersFromSet: newlineSet intoString: NULL];
+			[result appendString: part];
+			if (! i)
+				[result appendString: @"."];
+			
+			i++;
+		}
+		
+		if ([scanner isAtEnd])
+			break;
+		else
+			[result appendString: @" "];
+	}
+	
+	if (0 < [result length])
+	{
+		NSString* begin = [result substringToIndex: 1];
+		begin = [begin uppercaseString];
+		[result replaceCharactersInRange: NSMakeRange (0, 1) withString: begin];
+	}
+	
+	return [[result copy] autorelease];
+}
+
+
 @implementation NSString (PGTSAdditions)
 /**
  * \internal

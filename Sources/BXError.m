@@ -40,6 +40,6 @@
 	if (underlyingError)
 		[retval appendFormat: @"\n\tUnderlying error: %@", [underlyingError description]];
 	
-	return retval;
+	return [[retval copy] autorelease];
 }
 @end

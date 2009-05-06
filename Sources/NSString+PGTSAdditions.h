@@ -27,9 +27,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <BaseTen/BXExport.h>
 
 @class PGTSConnection;
 
+PGTS_EXPORT
+NSString* PGTSReformatErrorMessage (NSString* message);
 
 @interface NSString (PGTSAdditions)
 - (NSString *) escapeForPGTSConnection: (PGTSConnection *) connection;

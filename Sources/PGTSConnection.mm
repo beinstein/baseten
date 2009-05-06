@@ -45,6 +45,7 @@
 #import "BXEnumerate.h"
 #import "PGTSMetadataStorage.h"
 #import "PGTSMetadataContainer.h"
+#import "NSString+PGTSAdditions.h"
 
 
 @interface PGTSConnection (PGTSConnectorDelegate) <PGTSConnectorDelegate>
@@ -365,7 +366,9 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 
 - (NSString *) errorString
 {
-	return [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
+	NSString* message = [NSString stringWithUTF8String: PQerrorMessage (mConnection)];
+	message = PGTSReformatErrorMessage (message);
+	return message;
 }
 
 - (NSError *) connectionError
