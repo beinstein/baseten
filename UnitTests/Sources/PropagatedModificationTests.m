@@ -68,12 +68,12 @@
     
     NSError* error = nil;
     NSArray* res = [context executeFetchForEntity: entity withPredicate: predicate error: &error];
-    STAssertNil (error, [[error userInfo] objectForKey: kBXErrorMessageKey]);
+    STAssertNil (error, [error description]);
     MKCAssertNotNil (res);
     MKCAssertTrue (1 == [res count]);
     
     NSArray* res2 = [context executeFetchForEntity: viewEntity withPredicate: predicate error: &error];
-    STAssertNil (error, [[error userInfo] objectForKey: kBXErrorMessageKey]);
+    STAssertNil (error, [error description]);
     MKCAssertNotNil (res);
     MKCAssertTrue (1 == [res count]);
     

@@ -102,7 +102,7 @@
     NSArray* multicolumnpkeys = [context executeFetchForEntity: multicolumnpkey withPredicate: nil error: &error];
     MKCAssertNotNil (multicolumnpkeys);
     MKCAssertTrue (3 == [multicolumnpkeys  count]);
-    STAssertNil (error, @"Error: %@", error);
+    STAssertNil (error, [error description]);
     
     NSSortDescriptor* s1 = [[[NSSortDescriptor alloc] initWithKey: @"id1" ascending: YES] autorelease];
     NSSortDescriptor* s2 = [[[NSSortDescriptor alloc] initWithKey: @"id2" ascending: YES] autorelease];
