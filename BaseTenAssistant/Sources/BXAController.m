@@ -734,6 +734,9 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 {
 	[self hideProgressPanel];
 	
+#if 0
+	NSAlert* alert = [NSAlert alertWithError: dbError];
+#else
 	//Patch by Tim Bedford 2008-08-11
 	// Display error
 	NSDictionary* errorInfo = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -741,7 +744,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 							   NSLocalizedString(@"CouldntConnectRecoverySuggestion", @""), NSLocalizedRecoverySuggestionErrorKey, nil];
 	NSError* error = [NSError errorWithDomain: kBXAControllerErrorDomain code: kBXAControllerErrorCouldNotConnect userInfo: errorInfo];
 	NSAlert* alert = [NSAlert alertWithError: error];
-
+#endif
 	[alert beginSheetModalForWindow: mMainWindow modalDelegate: self didEndSelector: @selector(alertDidEnd:returnCode:contextInfo:) contextInfo: nil];
 	[NSApp runModalForWindow: mMainWindow];
 
