@@ -247,7 +247,7 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 		NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
 																  @"Connection error", @"Title for a sheet.");
 		NSString* messageFormat = NSLocalizedStringWithDefaultValue (@"libpqStyleConnectionErrorFormat", nil, [NSBundle bundleForClass: [self class]],
-																	 @"%@. Is the server running on host \"%s\" and accepting TCP/IP connections on port %s?", 
+																	 @"Could not connect to server: %@. Is the server running on host \"%s\" and accepting TCP/IP connections on port %s?", 
 																	 @"Reason for error");		
 		NSString* message = [NSString stringWithFormat: messageFormat, reason, PQhost (mConnection), PQport (mConnection)];
 		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
