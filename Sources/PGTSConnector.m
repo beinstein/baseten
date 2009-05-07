@@ -159,6 +159,7 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 	}
 	else
 	{
+		if (! mConnectionError)
 		{
 			enum PGTSConnectionError code = kPGTSConnectionErrorNone;
 			const char* SSLMode = pq_ssl_mode (mConnection);
@@ -193,15 +194,91 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 		[mDelegate connectorFailed: self];		
 	}	
 }
+
+- (BOOL) checkSocketStatus: (int) socket
+{
+	//We mimic libpq's error message because it doesn't provide us with error codes.
+	//Also we need to select first to make sure that getsockopt returns an accurate error message.
+	
+	BOOL haveError = NO;
+	NSString* reason = NSLocalizedStringWithDefaultValue (@"connectionRefused", nil, [NSBundle bundleForClass: [self class]],
+														  @"Connection refused", @"Reason for error");
+
+	{
+		char message [256] = {};
+		int status = 0;
+		
+		struct timeval timeout = {.tv_sec = 15, .tv_usec = 0};
+		fd_set mask = {};
+		FD_ZERO (&mask);
+		FD_SET (socket, &mask);
+		status = select (socket + 1, NULL, &mask, NULL, &timeout);		
+		
+		if (status <= 0)
+		{
+			haveError = YES;
+			strerror_r (errno, message, 256);
+			reason = [NSString stringWithUTF8String: message];
+		}
+		else
+		{
+			int optval = 0;
+			socklen_t size = sizeof (optval);
+			status = getsockopt (socket, SOL_SOCKET, SO_ERROR, &optval, &size);
+			
+			if (0 == status)
+			{
+				if (0 != optval)
+				{			
+					haveError = YES;
+					strerror_r (optval, message, 256);
+					reason = [NSString stringWithUTF8String: message];
+				}
+			}
+			else
+			{
+				haveError = YES;
+			}
+		}
+	}
+	
+	if (haveError)
+	{
+		NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
+																  @"Connection error", @"Title for a sheet.");
+		NSString* messageFormat = NSLocalizedStringWithDefaultValue (@"libpqStyleConnectionErrorFormat", nil, [NSBundle bundleForClass: [self class]],
+																	 @"%@. Is the server running on host \"%s\" and accepting TCP/IP connections on port %s?", 
+																	 @"Reason for error");		
+		NSString* message = [NSString stringWithFormat: messageFormat, reason, PQhost (mConnection), PQport (mConnection)];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  errorTitle, NSLocalizedDescriptionKey,
+								  errorTitle, NSLocalizedFailureReasonErrorKey,
+								  message, NSLocalizedRecoverySuggestionErrorKey,
+								  nil];		
+		NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: kPGTSConnectionErrorUnknown userInfo: userInfo];
+		[self setConnectionError: error];
+	}
+	
+	return (haveError ? NO : YES);
+}
 @end
 
 
 @implementation PGTSAsynchronousConnector
 
 static void 
-SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address, const void* data, void* self)
+SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address, const void* data, void* self)
 {
-	[(id) self socketReady];
+	[(id) self socketReady: callBackType];
+}
+
+- (id) init
+{
+	if ((self = [super init]))
+	{
+		mExpectedCallBack = 0;
+	}
+	return self;
 }
 
 - (void) setCFRunLoop: (CFRunLoopRef) aRef
@@ -265,43 +342,52 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 	[super finalize];
 }
 
-- (void) socketReady
+- (void) socketReady: (CFSocketCallBackType) callBackType
 {
-	PostgresPollingStatusType status = mPollFunction (mConnection);
-	
+	//Sometimes the wrong callback type gets called. We cope with this
+	//by checking against an expected type and re-enabling it if needed.
+	if (callBackType != mExpectedCallBack)
+		CFSocketEnableCallBacks (mSocket, mExpectedCallBack);
+	else
+	{
+		PostgresPollingStatusType status = mPollFunction (mConnection);
+		
 #ifdef USE_SSL
-	if (! mSSLSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
-	{
-		mSSLSetUp = YES;
-		SSL* ssl = PQgetssl (mConnection);
-		BXAssertVoidReturn (ssl, @"Expected ssl struct not to be NULL.");
-		SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
-		SSL_set_ex_data (ssl, SSLConnectionExIndex (), mConnection);
-	}
+		if (! mSSLSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
+		{
+			mSSLSetUp = YES;
+			SSL* ssl = PQgetssl (mConnection);
+			BXAssertVoidReturn (ssl, @"Expected ssl struct not to be NULL.");
+			SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
+			SSL_set_ex_data (ssl, SSLConnectionExIndex (), mConnection);
+		}
 #endif
-	
-	switch (status)
-	{
-        case PGRES_POLLING_OK:
-			[self finishedConnecting: YES];
-			break;
-			
-        case PGRES_POLLING_FAILED:
-			[self finishedConnecting: NO];
-            break;
-			
-		case PGRES_POLLING_ACTIVE:
-			[self socketReady];
-			break;
-            
-        case PGRES_POLLING_READING:
-			CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
-            break;
-            
-        case PGRES_POLLING_WRITING:
-        default:
-			CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
-            break;
+		
+		switch (status)
+		{
+			case PGRES_POLLING_OK:
+				[self finishedConnecting: YES];
+				break;
+				
+			case PGRES_POLLING_FAILED:
+				[self finishedConnecting: NO];
+				break;
+				
+			case PGRES_POLLING_ACTIVE:
+				[self socketReady: mExpectedCallBack];
+				break;
+				
+			case PGRES_POLLING_READING:
+				CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
+				mExpectedCallBack = kCFSocketReadCallBack;
+				break;
+				
+			case PGRES_POLLING_WRITING:
+			default:
+				CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
+				mExpectedCallBack = kCFSocketWriteCallBack;
+				break;
+		}
 	}
 }
 
@@ -315,15 +401,24 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
 	BOOL retval = NO;	
 	mNegotiationStarted = NO;
+	mExpectedCallBack = 0;
+	[self setConnectionError: nil];
 	if ([self start: conninfo])
 	{
 		if (CONNECTION_BAD == PQstatus (mConnection))
 			[self finishedConnecting: NO];
 		else
 		{
+			//CFSocket etc. do some nice things for us that prevent libpq for noticing
+			//connection problems. This causes SIGPIPE to be sent to us, and we get
+			//"Broken pipe" as the error message. To cope with this, we check the socket's
+			//status after connecting but before giving it to CFSocket.
+			
 			mNegotiationStarted = YES;
 			int bsdSocket = PQsocket (mConnection);
-			if (0 <= bsdSocket)
+			if (bsdSocket < 0)
+				BXLogInfo (@"Unable to get connection socket from libpq.");
+			else if ([self checkSocketStatus: bsdSocket])
 			{
 				if (mTraceFile)
 					PQtrace (mConnection, mTraceFile);
@@ -331,10 +426,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 				CFSocketContext context = {0, self, NULL, NULL, NULL};
 				CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
 				mSocket = CFSocketCreateWithNative (NULL, bsdSocket, callbacks, &SocketReady, &context);
-				CFOptionFlags flags = ~kCFSocketAutomaticallyReenableReadCallBack &
+				CFOptionFlags flags = 
+				~kCFSocketAutomaticallyReenableReadCallBack &
 				~kCFSocketAutomaticallyReenableWriteCallBack &
 				~kCFSocketCloseOnInvalidate &
 				CFSocketGetSocketFlags (mSocket);
+				
 				CFSocketSetSocketFlags (mSocket, flags);
 				mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
 				
@@ -347,8 +444,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 				CFStringRef mode = kCFRunLoopCommonModes;
 				CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
 				CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
+				mExpectedCallBack = kCFSocketWriteCallBack;
 				CFRunLoopAddSource (runloop, mSocketSource, mode);
-				
+
 				retval = YES;
 			}
 			else
@@ -368,6 +466,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callbackType, CFDataRef address
 {
     BOOL retval = NO;
 	mNegotiationStarted = NO;
+	[self setConnectionError: nil];
 	if ([self start: conninfo] && CONNECTION_BAD != PQstatus (mConnection))
 	{
 		mNegotiationStarted = YES;

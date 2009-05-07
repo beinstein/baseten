@@ -66,8 +66,9 @@
 	CFRunLoopRef mRunLoop;
 	CFSocketRef mSocket;
 	CFRunLoopSourceRef mSocketSource;
+	CFSocketCallBackType mExpectedCallBack;
 }
-- (void) socketReady;
+- (void) socketReady: (CFSocketCallBackType) callBackType;
 @end
 
 
