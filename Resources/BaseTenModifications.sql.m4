@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.929}})dnl
+define({{_bx_version_}}, {{0.930}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -433,8 +433,10 @@ REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
 GRANT SELECT ON "baseten".relationship TO basetenread;
 
 
-CREATE TABLE "baseten"._deprecated_relationship_name AS 
-	SELECT r.*, false AS is_ambiguous FROM "baseten".relationship r LIMIT 0;
+CREATE TABLE "baseten"._deprecated_relationship_name (
+	LIKE "baseten".relationship INCLUDING DEFAUlTS INCLUDING CONSTRAINTS INCLUDING INDEXES,
+	is_ambiguous BOOLEAN NOT NULL DEFAULT false
+);
 REVOKE ALL PRIVILEGES ON "baseten"._deprecated_relationship_name FROM PUBLIC;
 GRANT SELECT ON "baseten"._deprecated_relationship_name TO basetenread;
 
@@ -854,19 +856,19 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		)
 		SELECT -- MTO
 			f.conid,
-			CASE WHEN 1 = g.idx THEN 
-				r2.relname 
-			ELSE 
+			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
-			END,
-			CASE WHEN 1 = g.idx THEN 
-				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
 			ELSE 
+				r2.relname 
+			END,
+			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
+			ELSE 
+				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
 			END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			true,
-			1 = g.idx,
+			2 = COALESCE (g.idx, 1),
 			f.conrelid,
 			r1.nspname,
 			r1.relname,
@@ -876,23 +878,23 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		FROM "baseten".foreign_key f
 		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
-		CROSS JOIN generate_series (1, 2) g (idx)
+		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)))
 		UNION ALL
 		SELECT -- OTM
 			f.conid,
-			CASE WHEN 1 = g.idx THEN 
-				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
-			ELSE 
+			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
-			END,
-			CASE WHEN 1 = g.idx THEN 
-				r2.relname 
 			ELSE 
+				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
+			END,
+			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
+			ELSE 
+				r2.relname 
 			END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			false,
-			1 = g.idx,
+			2 = COALESCE (g.idx, 1),
 			f.confrelid,
 			r2.nspname,
 			r2.relname,
@@ -902,7 +904,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		FROM "baseten".foreign_key f
 		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
-		CROSS JOIN generate_series (1, 2) g (idx);
+		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)));
 		
 	-- MTM
 	INSERT INTO "baseten".relationship
@@ -927,11 +929,11 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		SELECT
 			f1.conid,
 			f2.conid,
-			CASE WHEN 1 = g.idx THEN r2.relname || 'Set' ELSE f1.conname END,
-			CASE WHEN 1 = g.idx THEN r1.relname || 'Set' ELSE f2.conname END,
+			CASE WHEN 1 = COALESCE (g.idx, 1) THEN f1.conname ELSE r2.relname || 'Set' END,
+			CASE WHEN 1 = COALESCE (g.idx, 1) THEN f2.conname ELSE r1.relname || 'Set' END,
 			'm',
 			false,
-			1 = g.idx,
+			2 = COALESCE (g.idx, 1),
 			f1.confrelid,
 			r1.nspname,
 			r1.relname,
@@ -964,7 +966,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		) p ON (p.reloid = ch.oid AND p.attnames @> (f1.conkey || f2.conkey))
 		INNER JOIN "baseten".relation r1 ON (r1.id = f1.confrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
-		CROSS JOIN generate_series (1, 2) g (idx);
+		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = f1.conname OR r1.relname = f2.conname));
     
 	-- Views
 	SELECT "baseten".refresh_view_caches ();
