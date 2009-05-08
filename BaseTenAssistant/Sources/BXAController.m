@@ -645,7 +645,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	}
 	else
 	{
-		NSData* output = [handle availableData];
+		NSData* output = (id) CFRetain ([handle availableData]);
 		const char* const bytes = [output bytes];
 		const char* const outputEnd = bytes + [output length];
 		const char* line = bytes;
@@ -675,6 +675,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 			[textView setTextContainerInset: NSMakeSize (10.0, 10.0)];
 			[mMomcErrorView addViewToStack: textView];
 		}
+		CFRelease (output);
 		[NSApp beginSheet: mMomcErrorPanel modalForWindow: mMainWindow modalDelegate: nil didEndSelector: NULL contextInfo: NULL];
 	}
 }
@@ -1191,7 +1192,8 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	
 	for(int index = 0; index < [[netService addresses] count]; index++)
 	{
-		socketAddress = (struct sockaddr*)[[[netService addresses] objectAtIndex:index] bytes];
+		NSData* address = (id) CFRetain ([[netService addresses] objectAtIndex: index]);
+		socketAddress = (struct sockaddr*)[address bytes];
 		
 		// Only continue if this is an IPv4 address
 		if(socketAddress && socketAddress->sa_family == AF_INET)
@@ -1209,6 +1211,9 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 				break;
 			}
 		}
+		
+		//For GC.
+		CFRelease (address);
 	}
 }
 
