@@ -169,7 +169,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
     [super finalize];
 }
 
-- (BOOL) connectUsingClass: (Class) connectorClass connectionString: (NSString *) connectionString
+- (BOOL) connectUsingClass: (Class) connectorClass connectionDictionary: (NSDictionary *) connectionDictionary
 {
 	PGTSConnector* connector = [[[connectorClass alloc] init] autorelease];
 	[self setConnector: connector];
@@ -178,27 +178,27 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	[connector setDelegate: self];
 	[connector setTraceFile: [mDelegate PGTSConnectionTraceFile: self]];
 	[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
-	return [connector connect: [connectionString UTF8String]];
+	return [connector connect: connectionDictionary];
 }
 
-- (void) connectAsync: (NSString *) connectionString
+- (void) connectAsync: (NSDictionary *) connectionDictionary
 {
-	[self connectUsingClass: [PGTSAsynchronousConnector class] connectionString: connectionString];
+	[self connectUsingClass: [PGTSAsynchronousConnector class] connectionDictionary: connectionDictionary];
 }
 
-- (BOOL) connectSync: (NSString *) connectionString
+- (BOOL) connectSync: (NSDictionary *) connectionDictionary
 {
-	return [self connectUsingClass: [PGTSSynchronousConnector class] connectionString: connectionString];
+	return [self connectUsingClass: [PGTSSynchronousConnector class] connectionDictionary: connectionDictionary];
 }
 
 - (void) resetAsync
 {
-	[self connectUsingClass: [PGTSAsynchronousReconnector class] connectionString: nil];
+	[self connectUsingClass: [PGTSAsynchronousReconnector class] connectionDictionary: nil];
 }
 
 - (BOOL) resetSync
 {
-	return [self connectUsingClass: [PGTSSynchronousReconnector class] connectionString: nil];
+	return [self connectUsingClass: [PGTSSynchronousReconnector class] connectionDictionary: nil];
 }
 
 - (void) disconnect

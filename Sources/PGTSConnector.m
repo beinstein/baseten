@@ -33,13 +33,37 @@
 #import "PGTSCertificateVerificationDelegateProtocol.h"
 #import "BXLogger.h"
 #import "BXError.h"
+#import "BXEnumerate.h"
 #import "NSString+PGTSAdditions.h"
 #import "libpq_additions.h"
 #import <sys/select.h>
+#import <arpa/inet.h>
+#import <netdb.h>
 
 
 #ifdef USE_SSL
 #import "BXOpenSSLCompatibility.h"
+
+
+static char*
+CopyConnectionString (NSDictionary* connectionDict)
+{
+	//-UTF8String assigns an internal pointer, hence the CFRetain + CFRelease.
+	NSMutableString* connectionString = [NSMutableString string];
+	CFRetain (connectionString);
+	NSEnumerator* e = [connectionDict keyEnumerator];
+	NSString* currentKey;
+	NSString* format = @"%@ = '%@' ";
+	while ((currentKey = [e nextObject]))
+	{
+		if ([kPGTSConnectionDictionaryKeys containsObject: currentKey])
+			[connectionString appendFormat: format, currentKey, [connectionDict objectForKey: currentKey]];
+	}
+	char* retval = strdup ([connectionString UTF8String]);
+	CFRelease (connectionString);
+	return retval;
+}
+
 
 //This is thread safe because it's called in +initialize for the first time.
 //Afterwards, the static variable is only read.
@@ -51,6 +75,7 @@ SSLConnectionExIndex ()
 		sslConnectionExIndex = SSL_get_ex_new_index (0, NULL, NULL, NULL, NULL);
 	return sslConnectionExIndex;
 }
+
 
 /**
  * \internal
@@ -105,7 +130,7 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 	mDelegate = anObject;
 }
 
-- (BOOL) connect: (const char *) conninfo
+- (BOOL) connect: (NSDictionary *) connectionDictionary
 {
 	return NO;
 }
@@ -116,7 +141,6 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 
 - (BOOL) start: (const char *) connectionString
 {
-	BXAssertLog (! mConnection, @"Expected not to have mConnection set.");
 	if (mConnection)
 		PQfinish (mConnection);
 	
@@ -185,6 +209,7 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 									  message, NSLocalizedRecoverySuggestionErrorKey,
 									  nil];
 			
+			//FIXME: error code
 			NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: code userInfo: userInfo];
 			[self setConnectionError: error];
 		}	
@@ -194,83 +219,25 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 		[mDelegate connectorFailed: self];		
 	}	
 }
-
-- (BOOL) checkSocketStatus: (int) socket
-{
-	//We mimic libpq's error message because it doesn't provide us with error codes.
-	//Also we need to select first to make sure that getsockopt returns an accurate error message.
-	
-	BOOL haveError = NO;
-	NSString* reason = NSLocalizedStringWithDefaultValue (@"connectionRefused", nil, [NSBundle bundleForClass: [self class]],
-														  @"Connection refused", @"Reason for error");
-
-	{
-		char message [256] = {};
-		int status = 0;
-		
-		struct timeval timeout = {.tv_sec = 15, .tv_usec = 0};
-		fd_set mask = {};
-		FD_ZERO (&mask);
-		FD_SET (socket, &mask);
-		status = select (socket + 1, NULL, &mask, NULL, &timeout);		
-		
-		if (status <= 0)
-		{
-			haveError = YES;
-			strerror_r (errno, message, 256);
-			reason = [NSString stringWithUTF8String: message];
-		}
-		else
-		{
-			int optval = 0;
-			socklen_t size = sizeof (optval);
-			status = getsockopt (socket, SOL_SOCKET, SO_ERROR, &optval, &size);
-			
-			if (0 == status)
-			{
-				if (0 != optval)
-				{			
-					haveError = YES;
-					strerror_r (optval, message, 256);
-					reason = [NSString stringWithUTF8String: message];
-				}
-			}
-			else
-			{
-				haveError = YES;
-			}
-		}
-	}
-	
-	if (haveError)
-	{
-		NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
-																  @"Connection error", @"Title for a sheet.");
-		NSString* messageFormat = NSLocalizedStringWithDefaultValue (@"libpqStyleConnectionErrorFormat", nil, [NSBundle bundleForClass: [self class]],
-																	 @"Could not connect to server: %@. Is the server running on host \"%s\" and accepting TCP/IP connections on port %s?", 
-																	 @"Reason for error");		
-		NSString* message = [NSString stringWithFormat: messageFormat, reason, PQhost (mConnection), PQport (mConnection)];
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								  errorTitle, NSLocalizedDescriptionKey,
-								  errorTitle, NSLocalizedFailureReasonErrorKey,
-								  message, NSLocalizedRecoverySuggestionErrorKey,
-								  nil];		
-		NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: kPGTSConnectionErrorUnknown userInfo: userInfo];
-		[self setConnectionError: error];
-	}
-	
-	return (haveError ? NO : YES);
-}
 @end
 
 
+
 @implementation PGTSAsynchronousConnector
+
+static void 
+HostReady (CFHostRef theHost, CFHostInfoType typeInfo, const CFStreamError *error, void *self)
+{
+	[(id) self continueFromNameResolution: error];
+}
+
 
 static void 
 SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address, const void* data, void* self)
 {
 	[(id) self socketReady: callBackType];
 }
+
 
 - (id) init
 {
@@ -280,6 +247,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	}
 	return self;
 }
+
 
 - (void) setCFRunLoop: (CFRunLoopRef) aRef
 {
@@ -294,9 +262,35 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	}
 }
 
+
+- (void) setConnectionDictionary: (NSDictionary *) aDict
+{
+	if (mConnectionDictionary != aDict)
+	{
+		[mConnectionDictionary release];
+		mConnectionDictionary = [aDict retain];
+	}
+}
+
+
+- (void) removeHost
+{
+	if (mHost)
+	{
+		CFHostCancelInfoResolution (mHost, kCFHostReachability);
+		CFHostUnscheduleFromRunLoop (mHost, CFRunLoopGetCurrent (), kCFRunLoopCommonModes);
+		CFRelease (mHost);
+		mHost = NULL;
+	}		
+}
+
+
 - (void) freeCFTypes
 {
 	//Don't release the connection. Delegate will handle it.
+	
+	[self removeHost];
+	
 	if (mSocketSource)
 	{
 		CFRunLoopSourceInvalidate (mSocketSource);
@@ -318,14 +312,17 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	}
 }
 
+
 - (void) cancel
 {
+	[self removeHost];
     if (mConnection)
     {
         PQfinish (mConnection);
         mConnection = NULL;
     }
 }
+
 
 - (void) dealloc
 {
@@ -335,12 +332,116 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	[super dealloc];
 }
 
+
 - (void) finalize
 {
 	[self freeCFTypes];
 	[self cancel];
 	[super finalize];
 }
+
+
+#pragma mark Callbacks
+
+- (void) continueFromNameResolution: (const CFStreamError *) streamError
+{
+	//If the resolution succeeded, iterate addresses and try to connect to each. Stop when a server gets reached.
+	
+	BOOL reachedServer = NO;
+	
+	if (streamError && streamError->domain)
+	{
+		NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
+																  @"Connection error", @"Title for a sheet.");
+		
+		//FIXME: localization.
+		NSString* messageFormat = nil;
+		const char* reason = NULL;
+		if (streamError->domain == kCFStreamErrorDomainNetDB)
+		{
+			reason = (gai_strerror (streamError->error));
+			if (reason)
+				messageFormat = @"The server %@ wasn't found: %s.";
+			else
+				messageFormat = @"The server %@ wasn't found.";
+		}
+		else if (streamError->domain == kCFStreamErrorDomainSystemConfiguration)
+		{
+			messageFormat = @"The server %@ wasn't found. Network might be unreachable.";
+		}
+		else
+		{
+			messageFormat = @"The server %@ wasn't found.";
+		}
+		NSString* message = [NSString stringWithFormat: messageFormat, [mConnectionDictionary objectForKey: kPGTSHostKey], reason];
+		
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  errorTitle, NSLocalizedDescriptionKey,
+								  errorTitle, NSLocalizedFailureReasonErrorKey,
+								  message, NSLocalizedRecoverySuggestionErrorKey,
+								  nil];
+		//FIXME: error code
+		NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: kPGTSConnectionErrorUnknown userInfo: userInfo];
+		[self setConnectionError: error];		
+	}
+	else
+	{		
+		NSArray* addresses = (id) CFHostGetAddressing (mHost, NULL);
+		if (addresses)
+		{
+			char addressBuffer [40] = {}; // 8 x 4 (hex digits in IPv6 address) + 7 (colons) + 1 (nul character)
+			
+			NSMutableDictionary* connectionDictionary = [[mConnectionDictionary mutableCopy] autorelease];
+			[connectionDictionary removeObjectForKey: kPGTSHostKey];
+			
+			//This is safe because each address is owned by the addresses CFArray which is owned 
+			//by mHost which is CFRetained.
+			BXEnumerate (addressData, e, [addresses objectEnumerator])
+			{
+				const struct sockaddr* address = [addressData bytes];
+				sa_family_t family = address->sa_family;
+				void* addressBytes = NULL;
+				
+				switch (family)
+				{
+					case AF_INET:
+						addressBytes = &((struct sockaddr_in *) address)->sin_addr.s_addr;
+						break;
+						
+					case AF_INET6:
+						addressBytes = ((struct sockaddr_in6 *) address)->sin6_addr.s6_addr;
+						break;
+						
+					default:
+						break;
+				}
+				
+				if (addressBytes && inet_ntop (family, addressBytes, addressBuffer, 40))
+				{
+					NSString* humanReadableAddress = [NSString stringWithUTF8String: addressBuffer];
+					BXLogInfo (@"Trying '%@'", humanReadableAddress);
+					[connectionDictionary setObject: humanReadableAddress forKey: kPGTSHostAddressKey];
+					char* conninfo = CopyConnectionString (connectionDictionary);
+					
+					if ([self startNegotiation: conninfo])
+					{
+						reachedServer = YES;
+						free (conninfo);
+						break;
+					}
+					
+					free (conninfo);
+				}
+			}
+		}
+	}
+	
+	if (reachedServer)
+		[self negotiateConnection];
+	else
+		[self finishedConnecting: NO];
+}
+
 
 - (void) socketReady: (CFSocketCallBackType) callBackType
 {
@@ -391,82 +492,202 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	}
 }
 
+
 - (void) finishedConnecting: (BOOL) succeeded
 {
 	[self freeCFTypes];
 	[super finishedConnecting: succeeded];
 }
 
-- (BOOL) connect: (const char *) conninfo
+
+#pragma mark Connection methods
+
+- (BOOL) connect: (NSDictionary *) connectionDictionary
 {
 	BOOL retval = NO;	
 	mNegotiationStarted = NO;
 	mExpectedCallBack = 0;
 	[self setConnectionError: nil];
-	if ([self start: conninfo])
+	[self setConnectionDictionary: connectionDictionary];
+	
+	//CFSocket etc. do some nice things for us that prevent libpq for noticing
+	//connection problems. This causes SIGPIPE to be sent to us, and we get
+	//"Broken pipe" as the error message. To cope with this, we check the socket's
+	//status after connecting but before giving it to CFSocket.
+	//For this to work, we need to resolve the host name by ourselves, if we have one.
+	
+	NSString* name = [connectionDictionary objectForKey: kPGTSHostKey];
+	if (name)
 	{
-		if (CONNECTION_BAD == PQstatus (mConnection))
-			[self finishedConnecting: NO];
+		Boolean status = FALSE;
+		CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
+		CFHostClientContext ctx = {
+			0,
+			self,
+			NULL,
+			NULL,
+			NULL
+		};
+				
+		[self removeHost];
+		mHost = CFHostCreateWithName (NULL, (CFStringRef) name);
+		status = CFHostSetClient (mHost, &HostReady, &ctx);
+		CFHostScheduleWithRunLoop (mHost, runloop, kCFRunLoopCommonModes);
+		
+		CFStreamError error = {};
+		if (! CFHostStartInfoResolution (mHost, kCFHostAddresses, &error))
+			[self continueFromNameResolution: &error];
+	}
+	else
+	{
+		char* conninfo = CopyConnectionString (mConnectionDictionary);
+		if ([self startNegotiation: conninfo])
+		{
+			retval = YES;
+			[self negotiateConnection];
+		}
 		else
 		{
-			//CFSocket etc. do some nice things for us that prevent libpq for noticing
-			//connection problems. This causes SIGPIPE to be sent to us, and we get
-			//"Broken pipe" as the error message. To cope with this, we check the socket's
-			//status after connecting but before giving it to CFSocket.
-			
-			mNegotiationStarted = YES;
-			int bsdSocket = PQsocket (mConnection);
-			if (bsdSocket < 0)
-				BXLogInfo (@"Unable to get connection socket from libpq.");
-			else if ([self checkSocketStatus: bsdSocket])
-			{
-				if (mTraceFile)
-					PQtrace (mConnection, mTraceFile);
-				
-				CFSocketContext context = {0, self, NULL, NULL, NULL};
-				CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
-				mSocket = CFSocketCreateWithNative (NULL, bsdSocket, callbacks, &SocketReady, &context);
-				CFOptionFlags flags = 
-				~kCFSocketAutomaticallyReenableReadCallBack &
-				~kCFSocketAutomaticallyReenableWriteCallBack &
-				~kCFSocketCloseOnInvalidate &
-				CFSocketGetSocketFlags (mSocket);
-				
-				CFSocketSetSocketFlags (mSocket, flags);
-				mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
-				
-				BXAssertLog (mSocket, @"Expected source to have been created.");
-				BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
-				BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
-				BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
-				
-				CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
-				CFStringRef mode = kCFRunLoopCommonModes;
-				CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
-				CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
-				mExpectedCallBack = kCFSocketWriteCallBack;
-				CFRunLoopAddSource (runloop, mSocketSource, mode);
-
-				retval = YES;
-			}
-			else
-			{
-				[self finishedConnecting: NO];
-			}
+			[self finishedConnecting: NO];
 		}
+		free (conninfo);
 	}
+	
 	return retval;
 }
 
+
+- (BOOL) startNegotiation: (const char *) conninfo
+{
+	mNegotiationStarted = NO;
+	BOOL retval = NO;
+	if ([self start: conninfo])
+	{
+		if (CONNECTION_BAD != PQstatus (mConnection))
+		{
+			mNegotiationStarted = YES;
+			int socket = PQsocket (mConnection);
+			if (socket < 0)
+				BXLogInfo (@"Unable to get connection socket from libpq.");
+			else
+			{
+				//We mimic libpq's error message because it doesn't provide us with error codes.
+				//Also we need to select first to make sure that getsockopt returns an accurate error message.
+				
+				BOOL haveError = NO;
+				NSString* reason = nil;
+				
+				{
+					char message [256] = {};
+					int status = 0;
+					
+					struct timeval timeout = {.tv_sec = 15, .tv_usec = 0};
+					fd_set mask = {};
+					FD_ZERO (&mask);
+					FD_SET (socket, &mask);
+					status = select (socket + 1, NULL, &mask, NULL, &timeout);		
+					
+					if (status <= 0)
+					{
+						haveError = YES;
+						strerror_r (errno, message, 256);
+						reason = [NSString stringWithUTF8String: message];
+					}
+					else
+					{
+						int optval = 0;
+						socklen_t size = sizeof (optval);
+						status = getsockopt (socket, SOL_SOCKET, SO_ERROR, &optval, &size);
+						
+						if (0 == status)
+						{
+							if (0 == optval)
+								retval = YES;
+							else
+							{			
+								haveError = YES;
+								strerror_r (optval, message, 256);
+								reason = [NSString stringWithUTF8String: message];
+							}
+						}
+						else
+						{
+							haveError = YES;
+						}
+					}
+				}
+				
+				if (haveError)
+				{
+					NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
+																			  @"Connection error", @"Title for a sheet.");
+					NSString* messageFormat = NSLocalizedStringWithDefaultValue (@"libpqStyleConnectionErrorFormat", nil, [NSBundle bundleForClass: [self class]],
+																				 @"Could not connect to server: %@. Is the server running at \"%@\" and accepting TCP/IP connections on port %s?", 
+																				 @"Reason for error");		
+					if (! reason)
+					{
+						reason = NSLocalizedStringWithDefaultValue (@"connectionRefused", nil, [NSBundle bundleForClass: [self class]],
+																	@"Connection refused", @"Reason for error");
+					}
+					
+					NSString* address = ([mConnectionDictionary objectForKey: kPGTSHostKey] ?: [mConnectionDictionary objectForKey: kPGTSHostAddressKey]);
+					NSString* message = [NSString stringWithFormat: messageFormat, reason, address, PQport (mConnection)];
+					NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+											  errorTitle, NSLocalizedDescriptionKey,
+											  errorTitle, NSLocalizedFailureReasonErrorKey,
+											  message, NSLocalizedRecoverySuggestionErrorKey,
+											  nil];		
+					NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: kPGTSConnectionErrorUnknown userInfo: userInfo];
+					[self setConnectionError: error];
+				}				
+			}
+		}
+	}
+	
+	return retval;
+}
+
+
+- (void) negotiateConnection
+{
+	if (mTraceFile)
+		PQtrace (mConnection, mTraceFile);
+	
+	CFSocketContext context = {0, self, NULL, NULL, NULL};
+	CFSocketCallBackType callbacks = kCFSocketReadCallBack | kCFSocketWriteCallBack;
+	mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
+	CFOptionFlags flags = 
+	~kCFSocketAutomaticallyReenableReadCallBack &
+	~kCFSocketAutomaticallyReenableWriteCallBack &
+	~kCFSocketCloseOnInvalidate &
+	CFSocketGetSocketFlags (mSocket);
+	
+	CFSocketSetSocketFlags (mSocket, flags);
+	mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
+	
+	BXAssertLog (mSocket, @"Expected source to have been created.");
+	BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
+	BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
+	BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
+	
+	CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
+	CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
+	CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
+	mExpectedCallBack = kCFSocketWriteCallBack;
+	CFRunLoopAddSource (runloop, mSocketSource, kCFRunLoopCommonModes);
+}
 @end
 
 
 @implementation PGTSSynchronousConnector
-- (BOOL) connect: (const char *) conninfo
+- (BOOL) connect: (NSDictionary *) connectionDictionary
 {
+	//Here libpq can resolve the name for us, because we don't use CFRunLoop and CFSocket.
+
     BOOL retval = NO;
 	mNegotiationStarted = NO;
 	[self setConnectionError: nil];
+	char* conninfo = CopyConnectionString (connectionDictionary);
 	if ([self start: conninfo] && CONNECTION_BAD != PQstatus (mConnection))
 	{
 		mNegotiationStarted = YES;
@@ -542,6 +763,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		}		
 	}
 	
+	if (conninfo)
+		free (conninfo);
 	[self finishedConnecting: retval && CONNECTION_OK == PQstatus (mConnection)];
 	return retval;
 }

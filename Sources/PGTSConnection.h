@@ -98,8 +98,8 @@ enum PGTSConnectionError
 }
 - (id) init;
 - (void) dealloc;
-- (void) connectAsync: (NSString *) connectionString;
-- (BOOL) connectSync: (NSString *) connectionString;
+- (void) connectAsync: (NSDictionary *) connectionDictionary;
+- (BOOL) connectSync: (NSDictionary *) connectionDictionary;
 - (void) resetAsync;
 - (BOOL) resetSync;
 - (void) disconnect;

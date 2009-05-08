@@ -48,7 +48,7 @@
 	BOOL mSSLSetUp;
 	BOOL mNegotiationStarted;
 }
-- (BOOL) connect: (const char *) connectionString;
+- (BOOL) connect: (NSDictionary *) connectionDictionary;
 - (void) cancel;
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
 - (void) setConnection: (PGconn *) connection;
@@ -63,12 +63,17 @@
 
 @interface PGTSAsynchronousConnector : PGTSConnector
 {
+	NSDictionary* mConnectionDictionary;
 	CFRunLoopRef mRunLoop;
+	CFHostRef mHost;
 	CFSocketRef mSocket;
 	CFRunLoopSourceRef mSocketSource;
 	CFSocketCallBackType mExpectedCallBack;
 }
 - (void) socketReady: (CFSocketCallBackType) callBackType;
+- (void) continueFromNameResolution: (const CFStreamError *) error;
+- (BOOL) startNegotiation: (const char *) conninfo;
+- (void) negotiateConnection;
 @end
 
 

@@ -295,23 +295,7 @@ SSLMode (enum BXSSLMode mode)
 }
 
 
-static NSString*
-ConnectionString (NSDictionary* connectionDict)
-{
-	NSMutableString* connectionString = [NSMutableString string];
-	NSEnumerator* e = [connectionDict keyEnumerator];
-	NSString* currentKey;
-	NSString* format = @"%@ = '%@' ";
-	while ((currentKey = [e nextObject]))
-	{
-		if ([kPGTSConnectionDictionaryKeys containsObject: currentKey])
-			[connectionString appendFormat: format, currentKey, [connectionDict objectForKey: currentKey]];
-	}
-	return connectionString;
-}
-
-
-- (NSString *) connectionString
+- (NSDictionary *) connectionDictionary
 {
 	BXDatabaseContext* ctx = [mInterface databaseContext];
 	NSURL* databaseURI = [ctx databaseURI];
@@ -321,8 +305,7 @@ ConnectionString (NSDictionary* connectionDict)
 	[connectionDict setValue: SSLMode (sslMode) forKey: kPGTSSSLModeKey];
 	
 	[connectionDict setValue: @"10" forKey: kPGTSConnectTimeoutKey];
-	
-	return ConnectionString (connectionDict);
+	return connectionDict;
 }
 
 

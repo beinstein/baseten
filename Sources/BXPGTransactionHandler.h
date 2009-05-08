@@ -92,7 +92,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 
 - (void) prepareForConnecting;
 - (void) didDisconnect;
-- (NSString *) connectionString;
+- (NSDictionary *) connectionDictionary;
 - (NSError *) connectionError: (NSError *) error recoveryAttempterClass: (Class) aClass;
 - (BXPGDatabaseDescription *) databaseDescription;
 - (void) refreshDatabaseDescription;

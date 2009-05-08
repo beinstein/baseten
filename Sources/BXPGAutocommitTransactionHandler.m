@@ -81,8 +81,8 @@
 	[self prepareForConnecting];
 	mAsync = YES;
 	
-	NSString* connectionString = [self connectionString];
-	[mConnection connectAsync: connectionString];
+	NSDictionary* connectionDictionary = [self connectionDictionary];
+	[mConnection connectAsync: connectionDictionary];
 }
 
 
@@ -94,8 +94,8 @@
 	mAsync = NO;
 	mSyncErrorPtr = outError;
 	
-	NSString* connectionString = [self connectionString];
-	[mConnection connectSync: connectionString];
+	NSDictionary* connectionDictionary = [self connectionDictionary];
+	[mConnection connectSync: connectionDictionary];
 	
 	//-finishedConnecting gets executed here.
 	
