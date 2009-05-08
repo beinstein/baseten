@@ -1,8 +1,8 @@
 //
-// PGTSTypeTests.h
+// BXTestCase.m
 // BaseTen
 //
-// Copyright (C) 2009 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -27,15 +27,55 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <BaseTen/BaseTen.h>
 #import "BXTestCase.h"
 
 
-@class PGTSConnection;
-@class PGTSResultSet;
+@interface SenTestCase (UndocumentedMethods)
+- (void) logException:(NSException *) anException;
+@end
 
 
-@interface PGTSTypeTests : BXTestCase 
+@implementation BXTestCase
+static void
+bx_test_failed (NSException* exception)
 {
-	PGTSConnection* mConnection;
+	abort ();
+}
+
+- (void) logAndCallBXTestFailed: (NSException *) exception
+{
+	[self logException: exception];
+	bx_test_failed (exception);
+}
+
+- (id) initWithInvocation: (NSInvocation *) anInvocation
+{
+	if ((self = [super initWithInvocation: anInvocation]))
+	{
+		[self setFailureAction: @selector (logAndCallBXTestFailed:)];
+	}
+	return self;
+}
+@end
+
+
+@implementation BXDatabaseTestCase
+- (NSURL *) databaseURI
+{
+	return [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"];
+}
+
+- (void) setUp
+{
+	NSURL* databaseURI = [self databaseURI];
+	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
+	[mContext setAutocommits: NO];
+}
+
+- (void) tearDown
+{
+	[mContext disconnect];
+	[mContext release];
 }
 @end

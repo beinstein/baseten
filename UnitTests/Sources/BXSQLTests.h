@@ -27,7 +27,7 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-#import "TestLoader.h"
+#import "BXTestCase.h"
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXPGEntityImporter.h>
 

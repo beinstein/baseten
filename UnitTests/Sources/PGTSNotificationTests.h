@@ -29,7 +29,7 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import <BaseTen/PGTSConnection.h>
 #import <BaseTen/PGTSResultSet.h>
-#import "TestLoader.h"
+#import "BXTestCase.h"
 
 @class PGTSConnection;
 

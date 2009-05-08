@@ -1,8 +1,8 @@
 //
-// PGTSTypeTests.h
+// BXTestCase.h
 // BaseTen
 //
-// Copyright (C) 2009 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,16 +26,17 @@
 // $Id$
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-#import "BXTestCase.h"
+@class BXDatabaseContext;
 
 
-@class PGTSConnection;
-@class PGTSResultSet;
-
-
-@interface PGTSTypeTests : BXTestCase 
+@interface BXTestCase : SenTestCase
 {
-	PGTSConnection* mConnection;
+}
+@end
+
+
+@interface BXDatabaseTestCase: BXTestCase
+{
+	BXDatabaseContext* mContext;
 }
 @end

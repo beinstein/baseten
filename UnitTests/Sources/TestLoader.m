@@ -27,7 +27,6 @@
 //
 
 #import "TestLoader.h"
-#import <SenTestingKit/SenTestingKit.h>
 #import <BaseTen/BaseTen.h>
 #import "MKCSenTestCaseAdditions.h"
 
@@ -54,11 +53,6 @@
 #import "PredicateTests.h"
 #import "KeyPathComponentTest.h"
 #import "ToOneChangeNotificationTests.h"
-
-
-@interface SenTestCase (UndocumentedMethods)
-- (void) logException:(NSException *) anException;
-@end
 
 
 @implementation BXTestLoader
@@ -98,50 +92,5 @@
 		SenTestSuite* suite = [SenTestSuite testSuiteForTestCaseClass: testCaseClass];
 		[suite run];
 	}
-}
-@end
-
-
-@implementation BXTestCase
-static void
-bx_test_failed (NSException* exception)
-{
-	abort ();
-}
-
-- (void) logAndCallBXTestFailed: (NSException *) exception
-{
-	[self logException: exception];
-	bx_test_failed (exception);
-}
-
-- (id) initWithInvocation: (NSInvocation *) anInvocation
-{
-	if ((self = [super initWithInvocation: anInvocation]))
-	{
-		[self setFailureAction: @selector (logAndCallBXTestFailed:)];
-	}
-	return self;
-}
-@end
-
-
-@implementation BXDatabaseTestCase
-- (NSURL *) databaseURI
-{
-	return [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"];
-}
-
-- (void) setUp
-{
-	NSURL* databaseURI = [self databaseURI];
-	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
-	[mContext setAutocommits: NO];
-}
-
-- (void) tearDown
-{
-	[mContext disconnect];
-	[mContext release];
 }
 @end

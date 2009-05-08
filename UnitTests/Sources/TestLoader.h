@@ -33,27 +33,11 @@
  * 3. Run otest with like this: `otest -SenTest BXTestLoader your_custom_path/UnitTests.octest`.
  */
 
-#import <Cocoa/Cocoa.h>
 #import <SenTestingKit/SenTestingKit.h>
-
-@class BXDatabaseContext;
 
 
 @interface BXTestLoader : SenTestCase 
 {
 }
 
-@end
-
-
-@interface BXTestCase : SenTestCase
-{
-}
-@end
-
-
-@interface BXDatabaseTestCase: BXTestCase
-{
-	BXDatabaseContext* mContext;
-}
 @end

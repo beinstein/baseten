@@ -1,5 +1,5 @@
 //
-// PGTSTypeTests.h
+// BXGarbageCollectionRunner.h
 // BaseTen
 //
 // Copyright (C) 2009 Marko Karppinen & Co. LLC.
@@ -26,16 +26,10 @@
 // $Id$
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-#import "BXTestCase.h"
+#import <Foundation/Foundation.h>
 
 
-@class PGTSConnection;
-@class PGTSResultSet;
-
-
-@interface PGTSTypeTests : BXTestCase 
+@interface BXGarbageCollectionRunner : NSObject 
 {
-	PGTSConnection* mConnection;
 }
 @end

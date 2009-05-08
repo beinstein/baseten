@@ -27,7 +27,7 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
-#import "TestLoader.h"
+#import "BXTestCase.h"
 
 
 @interface ModificationTests : BXTestCase 

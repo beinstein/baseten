@@ -30,7 +30,7 @@
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXAttributeDescriptionPrivate.h>
 #import "ToOneChangeNotificationTests.h"
-#import "TestLoader.h"
+#import "BXTestCase.h"
 #import "MKCSenTestCaseAdditions.h"
 
 

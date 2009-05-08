@@ -1,5 +1,5 @@
 //
-// PGTSTypeTests.h
+// BXGarbageCollectionRunner.m
 // BaseTen
 //
 // Copyright (C) 2009 Marko Karppinen & Co. LLC.
@@ -26,16 +26,29 @@
 // $Id$
 //
 
-#import <SenTestingKit/SenTestingKit.h>
-#import "BXTestCase.h"
+#import "BXGarbageCollectionRunner.h"
+
+NSTimeInterval gRunningInterval = 0.01;
 
 
-@class PGTSConnection;
-@class PGTSResultSet;
-
-
-@interface PGTSTypeTests : BXTestCase 
+@implementation BXGarbageCollectionRunner
++ (void) install
 {
-	PGTSConnection* mConnection;
+	static BOOL tooLate = NO;
+	if (! tooLate)
+	{
+		tooLate = YES;
+		if ([NSGarbageCollector defaultCollector])
+			[NSThread detachNewThreadSelector: @selector (run) toTarget: self withObject: nil];
+	}
+}
+
++ (void) run
+{
+	while (1)
+	{
+		[[NSGarbageCollector defaultCollector] collectExhaustively];
+		[NSThread sleepForTimeInterval: gRunningInterval];
+	}
 }
 @end
