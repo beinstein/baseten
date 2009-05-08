@@ -52,6 +52,8 @@
 		53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */; };
 		53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538B40F50D634EA40009005B /* BaseTen.framework */; };
 		53DAA0590E6EEB46001DC1D9 /* KeyPathComponentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */; };
+		53E21C280FB49CFA00A52F1A /* BXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E21C270FB49CFA00A52F1A /* BXTestCase.m */; };
+		53E21C330FB49E1800A52F1A /* BXGarbageCollectionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E21C320FB49E1800A52F1A /* BXGarbageCollectionRunner.m */; };
 		53F8E1DD0CBF7FF100C000C5 /* UnitTestAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A494840BD4D92F008E850E /* UnitTestAdditions.m */; };
 /* End PBXBuildFile section */
 
@@ -150,6 +152,10 @@
 		53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyPathComponentTest.m; path = Sources/KeyPathComponentTest.m; sourceTree = "<group>"; };
 		53DAE20F0AC4A0D200536DD0 /* MTOCollectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTOCollectionTest.h; path = Sources/MTOCollectionTest.h; sourceTree = "<group>"; };
 		53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTOCollectionTest.m; path = Sources/MTOCollectionTest.m; sourceTree = "<group>"; };
+		53E21C260FB49CFA00A52F1A /* BXTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXTestCase.h; path = Sources/BXTestCase.h; sourceTree = "<group>"; };
+		53E21C270FB49CFA00A52F1A /* BXTestCase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXTestCase.m; path = Sources/BXTestCase.m; sourceTree = "<group>"; };
+		53E21C310FB49E1800A52F1A /* BXGarbageCollectionRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXGarbageCollectionRunner.h; path = Sources/BXGarbageCollectionRunner.h; sourceTree = "<group>"; };
+		53E21C320FB49E1800A52F1A /* BXGarbageCollectionRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXGarbageCollectionRunner.m; path = Sources/BXGarbageCollectionRunner.m; sourceTree = "<group>"; };
 		53EAD1B40A668733008F3CE5 /* ForeignKeyTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForeignKeyTests.h; path = Sources/ForeignKeyTests.h; sourceTree = "<group>"; };
 		53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ForeignKeyTests.m; path = Sources/ForeignKeyTests.m; sourceTree = "<group>"; };
 		989B4E7A0F45D73200CE048A /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
@@ -184,6 +190,10 @@
 				53A494840BD4D92F008E850E /* UnitTestAdditions.m */,
 				535059B20CDA1CFC00DA25EC /* TestLoader.h */,
 				535059B30CDA1CFC00DA25EC /* TestLoader.m */,
+				53E21C260FB49CFA00A52F1A /* BXTestCase.h */,
+				53E21C270FB49CFA00A52F1A /* BXTestCase.m */,
+				53E21C310FB49E1800A52F1A /* BXGarbageCollectionRunner.h */,
+				53E21C320FB49E1800A52F1A /* BXGarbageCollectionRunner.m */,
 				535627B10E6E8015002EA3FD /* Tests not requiring a connection */,
 				5357179C0CDE69950084DD92 /* Tests requiring a connection */,
 				539C4FA20C4E39F700080667 /* Disabled tests */,
@@ -482,6 +492,8 @@
 				534C95EC0FAB623F006BBC8A /* relationship-optionality.xcdatamodel in Sources */,
 				537E32C50FAF078600539A83 /* BXSQLTests.m in Sources */,
 				537E35CA0FAF280D00539A83 /* BXDatabaseObjectTests.m in Sources */,
+				53E21C280FB49CFA00A52F1A /* BXTestCase.m in Sources */,
+				53E21C330FB49E1800A52F1A /* BXGarbageCollectionRunner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
