@@ -94,11 +94,13 @@ ImportError (NSString* message, NSString* reason)
 		NSString* reason = @"Inverse relationships are required for to-many relationships.";
 		[errorMessages addObject: ImportError (message, reason)];
 	}
-	else if (62 < [[self name] length] + [[[self inverseRelationship] name] length]) //FIXME: measure UTF-8 char length instead?
+	else if (61 < strlen ([[self name] UTF8String]) + strlen ([[[self inverseRelationship] name] UTF8String]))
 	{
+		//PostgreSQL's NAME data type is defined like char [NAMEDATALEN], see src/include/c.h.
+		//It is treated like a C string.
 		NSString* messageFormat = @"Relationship %@ in %@ will be skipped.";
 		NSString* message = [NSString stringWithFormat: messageFormat, [self name], [[self entity] name]];
-		NSString* reason = @"The relationship's and its inverse relationship's names combined exceed 62 characters.";
+		NSString* reason = @"The relationship's and its inverse relationship's names combined exceed 61 bytes.";
 		[errorMessages addObject: ImportError (message, reason)];
 	}
 	else if ([self isToMany] && [[self inverseRelationship] isToMany])
