@@ -34,7 +34,7 @@
 
 @interface NSObject (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type;
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
 - (BOOL) PGTSIsBinaryParameter;
 - (BOOL) PGTSIsCollection;
 - (id) PGTSExpressionOfType: (NSAttributeType) attrType;

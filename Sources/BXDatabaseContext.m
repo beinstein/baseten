@@ -2646,9 +2646,9 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
 - (NSArray *) keychainItems
 {
     OSStatus status = noErr;
-    NSMutableArray* rval = nil;
+    NSMutableArray* retval = nil;
     
-    NSMutableData* attributeBuffer = [NSMutableData data];
+    NSMutableData* attributeBuffer = (id) CFRetain ([NSMutableData data]);
     AddKeychainAttributeString (kSecAccountItemAttr, [mDatabaseURI user], attributeBuffer);
     AddKeychainAttributeString (kSecServerItemAttr,  [mDatabaseURI host], attributeBuffer);
     AddKeychainAttributeString (kSecPathItemAttr,    [mDatabaseURI path], attributeBuffer);
@@ -2679,14 +2679,17 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
                                                     &search);
     if (noErr == status)
     {
-        rval = [NSMutableArray array];
+        retval = [NSMutableArray array];
         SecKeychainItemRef item = NULL;
         while (noErr == SecKeychainSearchCopyNext (search, &item))
-            [rval addObject: (id) item];
+            [retval addObject: (id) item];
         CFRelease (search);
     }
-    
-    return rval;
+	
+	//For GC.
+	CFRelease (attributeBuffer);
+	
+    return retval;
 }
 
 - (SecKeychainItemRef) newestKeychainItem

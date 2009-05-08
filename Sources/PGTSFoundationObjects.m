@@ -45,7 +45,7 @@
     return nil;
 }
 
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
 	if (NULL != length)
 		*length = 0;
@@ -86,7 +86,7 @@
     return [NSString stringWithUTF8String: value];
 }
 
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
     if (nil == connection)
         BXLogWarning (@"Connection pointer was nil.");
@@ -100,7 +100,7 @@
     const char* retval = [decomposed UTF8String];
     if (NULL != length)
         *length = strlen (retval);
-    return (char *) retval;
+    return retval;
 }
 
 - (id) PGTSExpressionOfType: (NSAttributeType) attrType
@@ -129,12 +129,12 @@
 	return data;
 }
 
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    const char* rval = [self bytes];
+    const char* retval = [self bytes];
     if (NULL != length)
         *length = [self length];
-    return (char *) rval;
+    return retval;
 }
 
 - (BOOL) PGTSIsBinaryParameter
@@ -296,7 +296,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     }
 }
 
-- (char *) PGTSParameterLength: (int *) outLength connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) outLength connection: (PGTSConnection *) connection
 {
     //We make use of UTF-8's ASCII-compatibility feature.
     char* retval = NULL;
@@ -322,7 +322,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
             else
             {
                 int length = -1;
-                char* value = [currentObject PGTSParameterLength: &length connection: connection];
+                const char* value = [currentObject PGTSParameterLength: &length connection: connection];
                 
                 //Arrays can't have quotes around them.
                 if ([currentObject isKindOfClass: [NSArray class]])
@@ -344,7 +344,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
                     }
                     else
                     {
-                        char* end = value + length;
+                        const char* end = value + length;
                         while (value < end)
                         {
                             EscapeAndAppendByte (impl, contents, value);
@@ -373,9 +373,9 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 
 @implementation NSDate (PGTSFoundationObjects)
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    NSMutableString* rval = [NSMutableString stringWithString: 
+    NSMutableString* retval = [NSMutableString stringWithString:
         [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"
                                    timeZone: [NSTimeZone localTimeZone]
                                      locale: nil]];
@@ -384,10 +384,10 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     
     char* fractionalPart = NULL;
     asprintf (&fractionalPart, "%-.6f", fabs (subseconds));
-    [rval appendFormat: @"%s", &fractionalPart [1]];
+    [retval appendFormat: @"%s", &fractionalPart [1]];
     free (fractionalPart);
     
-    return [rval PGTSParameterLength: length connection: connection];
+    return [retval PGTSParameterLength: length connection: connection];
 }
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -523,20 +523,20 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     return rval;
 }
 
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    NSMutableString* rval = [NSMutableString stringWithString: [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"]];
+    NSMutableString* retval = [NSMutableString stringWithString: [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"]];
     double integralPart = 0.0;
     double subseconds = modf ([self timeIntervalSinceReferenceDate], &integralPart);
     
     char* fractionalPart = NULL;
     asprintf (&fractionalPart, "%-.6f", fabs (subseconds));
-    [rval appendFormat: @"%s", &fractionalPart [1]];
+    [retval appendFormat: @"%s", &fractionalPart [1]];
     free (fractionalPart);
     
     int seconds = [[self timeZone] secondsFromGMT];
-    [rval appendFormat: @"%+.2d:%.2d", seconds / (60 * 60), abs ((seconds % (60 * 60)) / 60)];
-    return [rval PGTSParameterLength: length connection: connection];
+    [retval appendFormat: @"%+.2d:%.2d", seconds / (60 * 60), abs ((seconds % (60 * 60)) / 60)];
+    return [retval PGTSParameterLength: length connection: connection];
 }
 @end
 
@@ -554,7 +554,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 
 @implementation NSNumber (PGTSFoundationObjects)
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
     return [[self description] PGTSParameterLength: length connection: connection];
 }
@@ -581,7 +581,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 }
 
 //FIXME: should we allow set parameters?
-- (char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return NULL;

@@ -50,7 +50,7 @@
 {
 	NSString* retval = nil;
 	int length = 0;
-	char* charParameter = [self PGTSParameterLength: &length connection: connection];
+	const char* charParameter = [self PGTSParameterLength: &length connection: connection];
 	if (NULL != charParameter)
 	{
 		PGconn* pgConn = [connection pgConnection];
