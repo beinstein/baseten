@@ -1383,6 +1383,18 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 }
 
 
+- (IBAction) prune: (id) sender
+{
+	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+	PGTSResultSet* res = [connection executeQuery: @"SELECT baseten.prune ()"];
+	if (! [res querySucceeded])
+	{
+		[NSApp presentError: [res error] modalForWindow: mMainWindow delegate: nil
+		 didPresentSelector: NULL contextInfo: NULL];
+	}
+}
+
+
 - (IBAction) disconnect: (id) sender
 {
 	if ([mContext isConnected] && [self hasBaseTenSchema])

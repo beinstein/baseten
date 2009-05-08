@@ -2204,9 +2204,28 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 									<reference key="NSMixedImage" ref="978181122"/>
 									<int key="NSTag">1</int>
 								</object>
+								<object class="NSMenuItem" id="559985196">
+									<reference key="NSMenu" ref="452600950"/>
+									<bool key="NSIsDisabled">YES</bool>
+									<bool key="NSIsSeparator">YES</bool>
+									<string key="NSTitle"/>
+									<string key="NSKeyEquiv"/>
+									<int key="NSKeyEquivModMask">1048576</int>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="622407158"/>
+									<reference key="NSMixedImage" ref="978181122"/>
+								</object>
 								<object class="NSMenuItem" id="763134083">
 									<reference key="NSMenu" ref="452600950"/>
 									<string key="NSTitle">Refresh Cache Tables</string>
+									<string key="NSKeyEquiv"/>
+									<int key="NSMnemonicLoc">2147483647</int>
+									<reference key="NSOnImage" ref="622407158"/>
+									<reference key="NSMixedImage" ref="978181122"/>
+								</object>
+								<object class="NSMenuItem" id="234975970">
+									<reference key="NSMenu" ref="452600950"/>
+									<string key="NSTitle">Prepare Database for Dump</string>
 									<string key="NSKeyEquiv"/>
 									<int key="NSMnemonicLoc">2147483647</int>
 									<reference key="NSOnImage" ref="622407158"/>
@@ -3456,6 +3475,14 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					</object>
 					<int key="connectionID">1108</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">prune:</string>
+						<reference key="source" ref="1038163843"/>
+						<reference key="destination" ref="234975970"/>
+					</object>
+					<int key="connectionID">1111</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -4095,6 +4122,8 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<reference ref="466359841"/>
 							<reference ref="546121362"/>
 							<reference ref="763134083"/>
+							<reference ref="234975970"/>
+							<reference ref="559985196"/>
 						</object>
 						<reference key="parent" ref="1011302266"/>
 					</object>
@@ -4791,6 +4820,18 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						<reference key="parent" ref="452600950"/>
 						<string key="objectName">10</string>
 					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1109</int>
+						<reference key="object" ref="234975970"/>
+						<reference key="parent" ref="452600950"/>
+						<string key="objectName">10</string>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">1110</int>
+						<reference key="object" ref="559985196"/>
+						<reference key="parent" ref="452600950"/>
+						<string key="objectName">2</string>
+					</object>
 				</object>
 			</object>
 			<object class="NSMutableDictionary" key="flattenedProperties">
@@ -4858,6 +4899,10 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>1103.IBPluginDependency</string>
 					<string>1107.IBPluginDependency</string>
 					<string>1107.ImportedFromIB2</string>
+					<string>1109.IBPluginDependency</string>
+					<string>1109.ImportedFromIB2</string>
+					<string>1110.IBPluginDependency</string>
+					<string>1110.ImportedFromIB2</string>
 					<string>449.IBEditorWindowLastContentRect</string>
 					<string>449.IBPluginDependency</string>
 					<string>449.IBWindowTemplateEditedContentRect</string>
@@ -5154,6 +5199,10 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
+					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
+					<reference ref="9"/>
 					<string>{{118, 288}, {506, 387}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>{{118, 288}, {506, 387}}</string>
@@ -5297,7 +5346,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					<string>{{923, 941}, {232, 23}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{151, 291}, {319, 223}}</string>
+					<string>{{151, 261}, {319, 253}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
 					<string>{{766, 811}, {235, 153}}</string>
@@ -5408,7 +5457,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1108</int>
+			<int key="maxID">1111</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -5433,6 +5482,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 							<string>getInfo:</string>
 							<string>importDataModel:</string>
 							<string>openHelp:</string>
+							<string>prune:</string>
 							<string>refreshCacheTables:</string>
 							<string>reload:</string>
 							<string>removeSchema:</string>
@@ -5443,6 +5493,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						</object>
 						<object class="NSMutableArray" key="dict.values">
 							<bool key="EncodedWithXMLCoder">YES</bool>
+							<string>id</string>
 							<string>id</string>
 							<string>id</string>
 							<string>id</string>
