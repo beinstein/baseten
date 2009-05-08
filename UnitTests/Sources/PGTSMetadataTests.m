@@ -42,9 +42,13 @@
 - (void) setUp
 {
 	[super setUp];
-	NSString* connectionString = @"host = 'localhost' user = 'baseten_test_user' dbname = 'basetentest'";
+	NSDictionary* connectionDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+										  @"localhost", kPGTSHostKey,
+										  @"baseten_test_user", kPGTSUserNameKey,
+										  @"basetentest", kPGTSDatabaseNameKey,
+										  nil];
 	PGTSConnection* connection = [[[PGTSConnection alloc] init] autorelease];
-	BOOL status = [connection connectSync: connectionString];
+	BOOL status = [connection connectSync: connectionDictionary];
 	STAssertTrue (status, [[connection connectionError] description]);
 	mDatabaseDescription = [[connection databaseDescription] retain];
 	[connection disconnect];

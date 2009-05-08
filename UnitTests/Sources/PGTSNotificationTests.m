@@ -28,6 +28,7 @@
 
 #import "PGTSNotificationTests.h"
 #import "MKCSenTestCaseAdditions.h"
+#import <BaseTen/PGTSConstants.h>
 
 
 @implementation PGTSNotificationTests
@@ -63,9 +64,13 @@
 
 - (void) setUp
 {
-	NSString* connectionString = @"host = 'localhost' user = 'baseten_test_user' dbname = 'basetentest'";
+	NSDictionary* connectionDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+										  @"localhost", kPGTSHostKey,
+										  @"baseten_test_user", kPGTSUserNameKey,
+										  @"basetentest", kPGTSDatabaseNameKey,
+										  nil];		
 	mConnection = [[PGTSConnection alloc] init];
-	BOOL status = [mConnection connectSync: connectionString];
+	BOOL status = [mConnection connectSync: connectionDictionary];
 	STAssertTrue (status, [[mConnection connectionError] description]);
 	
 	[mConnection setDelegate: self];

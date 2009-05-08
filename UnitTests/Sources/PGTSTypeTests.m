@@ -28,6 +28,7 @@
 
 #import <BaseTen/PGTSConnection.h>
 #import <BaseTen/PGTSResultSet.h>
+#import <BaseTen/PGTSConstants.h>
 #import "PGTSTypeTests.h"
 #import "MKCSenTestCaseAdditions.h"
 
@@ -36,9 +37,13 @@
 - (void) setUp
 {
 	[super setUp];
-	NSString* connectionString = @"host = 'localhost' user = 'baseten_test_user' dbname = 'basetentest'";
+	NSDictionary* connectionDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+										  @"localhost", kPGTSHostKey,
+										  @"baseten_test_user", kPGTSUserNameKey,
+										  @"basetentest", kPGTSDatabaseNameKey,
+										  nil];	
 	mConnection = [[PGTSConnection alloc] init];
-	BOOL status = [mConnection connectSync: connectionString];
+	BOOL status = [mConnection connectSync: connectionDictionary];
 	STAssertTrue (status, [[mConnection connectionError] description]);	
 }
 
