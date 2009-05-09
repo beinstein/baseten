@@ -515,9 +515,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	//"Broken pipe" as the error message. To cope with this, we check the socket's
 	//status after connecting but before giving it to CFSocket.
 	//For this to work, we need to resolve the host name by ourselves, if we have one.
+    //If the name begins with a slash, it is a path to socket.
 	
 	NSString* name = [connectionDictionary objectForKey: kPGTSHostKey];
-	if (name)
+	if (0 < [name length] && '/' != [name characterAtIndex: 0])
 	{
 		Boolean status = FALSE;
 		CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
