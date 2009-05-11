@@ -394,6 +394,7 @@ MakeInvocation (const id target, const SEL selector)
 {	
 	mPort = -1;
 	mCurrentPanel = kBXNSConnectorNoPanel;
+	bzero (&mHostError, sizeof (mHostError));
 	[mContext setStoresURICredentials: NO];
 	
 	if (mConnectorImpl)
@@ -462,6 +463,7 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 {
 	Boolean status = FALSE;
 	[self removeHost];
+	bzero (&mHostError, sizeof (mHostError));
 	mHost = CFHostCreateWithName (CFAllocatorGetDefault (), (CFStringRef) name);
 	CFHostClientContext ctx = {
 		0,
@@ -477,9 +479,8 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 	[self setRunLoopMode: mode];
 	CFHostScheduleWithRunLoop (mHost, rl, (CFStringRef) mode);
 	
-	CFStreamError error = {};
-	if (! CFHostStartInfoResolution (mHost, kCFHostReachability, &error))
-		[self reachabilityCheckDidComplete: &error];
+	if (! CFHostStartInfoResolution (mHost, kCFHostReachability, &mHostError))
+		[self reachabilityCheckDidComplete: &mHostError];
 }
 
 - (void) reachabilityCheckDidComplete: (const CFStreamError *) error

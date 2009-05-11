@@ -80,6 +80,8 @@ enum BXNSConnectorCurrentPanel
 	
 	NSString* mHostName;
 	NSInteger mPort;
+	
+	CFStreamError mHostError;
 }
 - (void) checkHostReachability: (NSString *) name;
 - (void) reachabilityCheckDidComplete: (const CFStreamError *) error;

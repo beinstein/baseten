@@ -509,6 +509,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	mExpectedCallBack = 0;
 	[self setConnectionError: nil];
 	[self setConnectionDictionary: connectionDictionary];
+	bzero (&mHostError, sizeof (mHostError));
 	
 	//CFSocket etc. do some nice things for us that prevent libpq for noticing
 	//connection problems. This causes SIGPIPE to be sent to us, and we get
@@ -535,9 +536,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		status = CFHostSetClient (mHost, &HostReady, &ctx);
 		CFHostScheduleWithRunLoop (mHost, runloop, kCFRunLoopCommonModes);
 		
-		CFStreamError error = {};
-		if (! CFHostStartInfoResolution (mHost, kCFHostAddresses, &error))
-			[self continueFromNameResolution: &error];
+		if (! CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError))
+			[self continueFromNameResolution: &mHostError];
 	}
 	else
 	{

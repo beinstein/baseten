@@ -69,6 +69,7 @@
 	CFSocketRef mSocket;
 	CFRunLoopSourceRef mSocketSource;
 	CFSocketCallBackType mExpectedCallBack;
+	CFStreamError mHostError;
 }
 - (void) socketReady: (CFSocketCallBackType) callBackType;
 - (void) continueFromNameResolution: (const CFStreamError *) error;
