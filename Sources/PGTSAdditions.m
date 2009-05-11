@@ -50,8 +50,8 @@
 {
 	NSString* retval = nil;
 	int length = 0;
-	const char* charParameter = [self PGTSParameterLength: &length connection: connection];
-	if (NULL != charParameter)
+	const char* charParameter = [[self PGTSParameter: connection] PGTSParameterLength: &length connection: connection];
+	if (charParameter)
 	{
 		PGconn* pgConn = [connection pgConnection];
 		char* escapedParameter = (char *) calloc (1 + 2 * length, sizeof (char));

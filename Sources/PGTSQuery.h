@@ -55,7 +55,7 @@
 }
 - (NSArray *) parameters;
 - (void) setParameters: (NSArray *) anArray;
-- (int) parameterCount;
+- (NSUInteger) parameterCount;
 @end
 
 

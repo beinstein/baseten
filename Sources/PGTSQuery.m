@@ -74,7 +74,7 @@
 	}
 }
 
-- (int) parameterCount
+- (NSUInteger) parameterCount
 {
 	return [mParameters count];
 }
@@ -172,7 +172,10 @@ CopyParameterString (int nParams, const char** values, int* formats)
 	//For some reason, libpq doesn't receive signal or EPIPE from send if network is down. Hence we check it here.
 	if ([connection canSend])
 	{
-		int nParams = [self parameterCount];
+		NSUInteger nParams = [self parameterCount];
+		NSArray* parameterObjects = [[mParameters PGTSCollect] PGTSParameter: connection];
+		CFRetain (parameterObjects);
+		
 		const char** paramValues  = calloc (nParams, sizeof (char *));
 		Oid*   paramTypes   = calloc (nParams, sizeof (Oid));
 		int*   paramLengths = calloc (nParams, sizeof (int));
@@ -180,22 +183,23 @@ CopyParameterString (int nParams, const char** values, int* formats)
 		
 		for (int i = 0; i < nParams; i++)
 		{
-			id parameter = [mParameters objectAtIndex: i];
+			BOOL isBinary = [[mParameters objectAtIndex: i] PGTSIsBinaryParameter];
+			id parameter = [parameterObjects objectAtIndex: i];
 			int length = 0;
 			const char* value = [parameter PGTSParameterLength: &length connection: connection];
 			
 			paramTypes   [i] = InvalidOid;
 			paramValues  [i] = value;
-			paramLengths [i] = length;
-			paramFormats [i] = [parameter PGTSIsBinaryParameter];
+			paramLengths [i] = (isBinary ? length : 0);
+			paramFormats [i] = isBinary;
 		}
 		
 		if (PGTS_SEND_QUERY_ENABLED ())
 		{
 			char* params = CopyParameterString (nParams, paramValues, paramFormats);
-			char* query_s = strdup ([mQuery UTF8String] ?: "");
-			PGTS_SEND_QUERY (connection, retval, query_s, params);
-			free (query_s);
+			char* query = strdup ([mQuery UTF8String] ?: "");
+			PGTS_SEND_QUERY (connection, retval, query, params);
+			free (query);
 			free (params);
 		}
 		
@@ -205,6 +209,7 @@ CopyParameterString (int nParams, const char** values, int* formats)
 		if ([connection logsQueries])
 			[(id) [connection delegate] PGTSConnection: connection sentQuery: self];
 		
+		CFRelease (parameterObjects);
 		free (paramTypes);
 		free (paramValues);
 		free (paramLengths);

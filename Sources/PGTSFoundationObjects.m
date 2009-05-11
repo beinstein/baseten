@@ -45,9 +45,14 @@
     return nil;
 }
 
+- (id) PGTSParameter: (PGTSConnection *) connection
+{
+	return self;
+}
+
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-	if (NULL != length)
+	if (length)
 		*length = 0;
 	return NULL;
 }
@@ -88,14 +93,16 @@
 
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    if (nil == connection)
-        BXLogWarning (@"Connection pointer was nil.");
-    else
+    if (connection)
     {
         const char* clientEncoding = PQparameterStatus ([connection pgConnection], "client_encoding");
 		BXAssertValueReturn (clientEncoding && 0 == strcmp ("UNICODE", clientEncoding), NULL,
 							 @"Expected client_encoding to be UNICODE (was: %s).", clientEncoding);
     }
+	else
+	{
+        BXLogWarning (@"Connection pointer was nil.");
+	}
 	NSString* decomposed = [self decomposedStringWithCanonicalMapping];
     const char* retval = [decomposed UTF8String];
     if (NULL != length)
@@ -115,18 +122,21 @@
 
 
 @implementation NSData (PGTSFoundationObjects)
-//FIXME: Should we use htonl?
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
+	NSData* retval = nil;
 	size_t resultLength = 0;
-	unsigned char *unescaped = PQunescapeBytea ((unsigned char*) value, &resultLength);
-	
-	//FIXME: Handle the error?
-	BXAssertValueReturn (unescaped, nil, @"PQunescapeBytea failed for characters: %s", value);
-	
-    NSData *data = [[self class] dataWithBytes: unescaped length: resultLength];
-	PQfreemem (unescaped);
-	return data;
+	unsigned char *unescaped = PQunescapeBytea ((const unsigned char *) value, &resultLength);
+	if (unescaped)
+	{
+		retval = [[self class] dataWithBytes: unescaped length: resultLength];
+		PQfreemem (unescaped);
+	}
+	else
+	{
+		BXLogWarning (@"PQunescapeBytea failed for characters: %s.", value);
+	}
+	return retval;
 }
 
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
@@ -141,11 +151,6 @@
 {
     return YES;
 }
-@end
-
-
-@interface NSArray (PGTSPrivateAdditions)
-- (NSString *) PGTSParameter2: (PGTSConnection *) connection;
 @end
 
 
@@ -296,15 +301,14 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     }
 }
 
-- (const char *) PGTSParameterLength: (int *) outLength connection: (PGTSConnection *) connection
+- (id) PGTSParameter: (PGTSConnection *) connection
 {
     //We make use of UTF-8's ASCII-compatibility feature.
-    char* retval = NULL;
+	id retval = nil;
     if (0 == [self count])
     {
-        retval = "{}";
-        if (outLength)
-            *outLength = 2;
+		const char* emptyArray = "{}";
+		retval = [NSData dataWithBytes: &emptyArray length: strlen (emptyArray)];
     }
     else
     {
@@ -322,7 +326,8 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
             else
             {
                 int length = -1;
-                const char* value = [currentObject PGTSParameterLength: &length connection: connection];
+                const char* value = [[currentObject PGTSParameter: connection] 
+									 PGTSParameterLength: &length connection: connection];
                 
                 //Arrays can't have quotes around them.
                 if ([currentObject isKindOfClass: [NSArray class]])
@@ -334,15 +339,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
                 {
                     //If the length isn't known, wait for a NUL byte.
                     AppendBytes (impl, contents, "\"", 1);
-                    if (-1 == length)
-                    {
-                        while ('\0' != *value)
-                        {
-                            EscapeAndAppendByte (impl, contents, value);
-                            value++;
-                        }
-                    }
-                    else
+                    if ([currentObject PGTSIsBinaryParameter] && -1 != length)
                     {
                         const char* end = value + length;
                         while (value < end)
@@ -351,16 +348,20 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
                             value++;
                         }
                     }
+                    else
+					{
+                        while ('\0' != *value)
+                        {
+                            EscapeAndAppendByte (impl, contents, value);
+                            value++;
+                        }
+                    }					
                     AppendBytes (impl, contents, "\"", 1);
                 }
                 AppendBytes (impl, contents, ",", 1);
             }
         }
 		[contents replaceBytesInRange: NSMakeRange ([contents length] - 1, 1) withBytes: "}\0" length: 2]; 
-		retval = (char *) [contents bytes];
-		if (outLength)
-			*outLength = [contents length];
-		
     }
     return retval;
 }
@@ -373,7 +374,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 
 @implementation NSDate (PGTSFoundationObjects)
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (id) PGTSParameter: (PGTSConnection *) connection
 {
     NSMutableString* retval = [NSMutableString stringWithString:
         [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"
@@ -387,7 +388,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     [retval appendFormat: @"%s", &fractionalPart [1]];
     free (fractionalPart);
     
-    return [retval PGTSParameterLength: length connection: connection];
+    return retval;
 }
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -417,6 +418,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
                               calendarFormat: @"%Y-%m-%d %H:%M:%S"];
     rval = [NSDate dateWithTimeIntervalSinceReferenceDate: [rval timeIntervalSinceReferenceDate] + interval];
     BXAssertLog (nil != rval, @"Failed to match string to date format");
+	//FIXME: change the constant.
 #ifndef L4_BLOCK_ASSERTIONS
 	double integralPart = 0.0;
 	BXAssertLog (NULL == subseconds || 0.0 < modf ([rval timeIntervalSince1970], &integralPart),
@@ -523,7 +525,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     return rval;
 }
 
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (id) PGTSParameter: (PGTSConnection *) connection
 {
     NSMutableString* retval = [NSMutableString stringWithString: [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"]];
     double integralPart = 0.0;
@@ -536,7 +538,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     
     int seconds = [[self timeZone] secondsFromGMT];
     [retval appendFormat: @"%+.2d:%.2d", seconds / (60 * 60), abs ((seconds % (60 * 60)) / 60)];
-    return [retval PGTSParameterLength: length connection: connection];
+	return retval;
 }
 @end
 
@@ -544,7 +546,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 @implementation NSDecimalNumber (PGTSFoundationObjects)
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    NSDecimal decimal;
+    NSDecimal decimal = {};
     NSString* stringValue = [NSString stringWithUTF8String: value];
     NSScanner* scanner = [NSScanner scannerWithString: stringValue];
     [scanner scanDecimal: &decimal];
@@ -554,9 +556,9 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 
 @implementation NSNumber (PGTSFoundationObjects)
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (id) PGTSParameter: (PGTSConnection *) connection
 {
-    return [[self description] PGTSParameterLength: length connection: connection];
+	return [self description];
 }
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
@@ -581,6 +583,12 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 }
 
 //FIXME: should we allow set parameters?
+- (id) PGTSParameter: (PGTSConnection *) connection
+{
+	[self doesNotRecognizeSelector: _cmd];
+	return nil;
+}
+
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
 	[self doesNotRecognizeSelector: _cmd];
