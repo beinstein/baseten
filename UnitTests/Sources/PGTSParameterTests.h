@@ -1,5 +1,5 @@
 //
-// PGTSTypeTests.h
+// PGTSParameterTests.h
 // BaseTen
 //
 // Copyright (C) 2009 Marko Karppinen & Co. LLC.
@@ -33,7 +33,7 @@
 @class PGTSConnection;
 
 
-@interface PGTSTypeTests : BXTestCase 
+@interface PGTSParameterTests : BXTestCase 
 {
 	PGTSConnection* mConnection;
 }

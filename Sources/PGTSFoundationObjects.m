@@ -362,6 +362,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
             }
         }
 		[contents replaceBytesInRange: NSMakeRange ([contents length] - 1, 1) withBytes: "}\0" length: 2]; 
+		retval = contents;
     }
     return retval;
 }
@@ -378,7 +379,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 {
     NSMutableString* retval = [NSMutableString stringWithString:
         [self descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S"
-                                   timeZone: [NSTimeZone localTimeZone]
+                                   timeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]
                                      locale: nil]];
     double integralPart = 0.0;
     double subseconds = modf ([self timeIntervalSinceReferenceDate], &integralPart);

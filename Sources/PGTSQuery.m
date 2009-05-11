@@ -174,7 +174,7 @@ CopyParameterString (int nParams, const char** values, int* formats)
 	{
 		NSUInteger nParams = [self parameterCount];
 		NSArray* parameterObjects = [[mParameters PGTSCollect] PGTSParameter: connection];
-		CFRetain (parameterObjects);
+		if (parameterObjects) CFRetain (parameterObjects);
 		
 		const char** paramValues  = calloc (nParams, sizeof (char *));
 		Oid*   paramTypes   = calloc (nParams, sizeof (Oid));
@@ -209,7 +209,7 @@ CopyParameterString (int nParams, const char** values, int* formats)
 		if ([connection logsQueries])
 			[(id) [connection delegate] PGTSConnection: connection sentQuery: self];
 		
-		CFRelease (parameterObjects);
+		if (parameterObjects) CFRelease (parameterObjects);
 		free (paramTypes);
 		free (paramValues);
 		free (paramLengths);

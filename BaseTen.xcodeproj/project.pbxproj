@@ -231,7 +231,7 @@
 		53666CF30E1CD8D20028DBEA /* PGTSConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB40E1CD8D20028DBEA /* PGTSConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666CF40E1CD8D20028DBEA /* PGTSConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CB50E1CD8D20028DBEA /* PGTSConstants.m */; };
 		53666CF50E1CD8D20028DBEA /* PGTSDatabaseDescription.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CB60E1CD8D20028DBEA /* PGTSDatabaseDescription.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		53666CFD0E1CD8D20028DBEA /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */; };
+		53666CFD0E1CD8D20028DBEA /* PGTSFoundationObjects.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666CFE0E1CD8D20028DBEA /* PGTSFoundationObjects.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */; };
 		53666D010E1CD8D20028DBEA /* PGTSHOM.h in Headers */ = {isa = PBXBuildFile; fileRef = 53666CC20E1CD8D20028DBEA /* PGTSHOM.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		53666D020E1CD8D20028DBEA /* PGTSHOM.m in Sources */ = {isa = PBXBuildFile; fileRef = 53666CC30E1CD8D20028DBEA /* PGTSHOM.m */; };
