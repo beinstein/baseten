@@ -145,10 +145,11 @@ RemoveChars (char* str, const char* removed)
 #endif
 
 
-static const char*
-ParameterString (int nParams, const char** values, int* formats)
+static char*
+CopyParameterString (int nParams, const char** values, int* formats)
 {
 	NSMutableString* desc = [NSMutableString string];
+	CFRetain (desc);
 	for (int i = 0; i < nParams; i++)
 	{
 		if (1 == formats [i])
@@ -159,7 +160,9 @@ ParameterString (int nParams, const char** values, int* formats)
 		if (! (i == nParams - 1))
 			[desc appendString: @", "];
 	}
-	return [desc UTF8String];
+	char* retval = strdup ([desc UTF8String] ?: "");
+	CFRelease (desc);
+	return retval;
 }
 
 
@@ -189,12 +192,11 @@ ParameterString (int nParams, const char** values, int* formats)
 		
 		if (PGTS_SEND_QUERY_ENABLED ())
 		{
-			const char* params = ParameterString (nParams, paramValues, paramFormats);
+			char* params = CopyParameterString (nParams, paramValues, paramFormats);
 			char* query_s = strdup ([mQuery UTF8String] ?: "");
-			char* params_s = strdup (params ?: "");
-			PGTS_SEND_QUERY (connection, retval, query_s, params_s);
+			PGTS_SEND_QUERY (connection, retval, query_s, params);
 			free (query_s);
-			free (params_s);
+			free (params);
 		}
 		
 		retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
