@@ -134,7 +134,7 @@
 	CFRetain (objectValue);
 	MKCAssertFalse ([object PGTSIsBinaryParameter]);
 	MKCAssertFalse (object == objectValue);
-	MKCAssertTrue (0 == strcmp ("2001-01-05 08:02:00.000000+00:00:00", paramValue));
+	MKCAssertTrue (0 == strcmp ("2001-01-05 08:02:00+00:00:00", paramValue));
 	CFRelease (objectValue);
 }
 
@@ -151,7 +151,7 @@
 	CFRetain (objectValue);
 	MKCAssertFalse ([object PGTSIsBinaryParameter]);
 	MKCAssertFalse (object == objectValue);
-	MKCAssertTrue (0 == strcmp ("2001-01-05 08:02:00.000000-01:00:00", paramValue));
+	MKCAssertTrue (0 == strcmp ("2001-01-05 09:02:00+00:00:00", paramValue));
 	CFRelease (objectValue);
 }
 
@@ -177,4 +177,20 @@
 	MKCAssertThrowsSpecificNamed ([value PGTSParameter: mConnection], NSException, NSInvalidArgumentException);
 	MKCAssertThrowsSpecificNamed ([value PGTSParameterLength: &length connection: mConnection], NSException, NSInvalidArgumentException);
 }
+
+- (void) testTimestamp
+{
+	NSTimeInterval interval = 263856941.04633799; //This caused problems.
+	NSDate* value = [NSDate dateWithTimeIntervalSinceReferenceDate: interval];
+	
+	int length = 0;
+	id objectValue = [value PGTSParameter: mConnection];
+	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
+	
+	CFRetain (objectValue);
+	MKCAssertFalse ([value PGTSIsBinaryParameter]);
+	MKCAssertFalse (value == objectValue);
+	MKCAssertTrue (0 == strcmp ("2009-05-12 21:35:41.046338+00:00:00", paramValue));
+	CFRelease (objectValue);	
+}					
 @end

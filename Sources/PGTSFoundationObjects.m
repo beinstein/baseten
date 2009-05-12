@@ -210,8 +210,7 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
         
         //Check if the array is enclosed in curly braces. If this is the case, remove them.
         //Arrays should always have this decoration but possibly (?) sometimes don't.
-        char* endings = NULL;
-        asprintf (&endings, "%c\0\0", [elementType delimiter]);
+        char endings [] = {[elementType delimiter], '\0', '\0'};
         if ('{' == *current)
         {
             current++;
@@ -276,7 +275,6 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
 continue_iteration:
                 current++;
         }
-        free (endings);
     }
     return retval;
 }

@@ -64,15 +64,13 @@
 	MKCAssertTrue (2 == [components day]);
 }
 
-//NSCalendar doesn't handle the era change?
-#if 0
 - (void) testDateBeforeCE
 {
 	const char* dateString = "2009-05-02 BC";
 	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
 	MKCAssertNotNil (date);
 	
-	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
+	NSUInteger units = NSEraCalendarUnit | NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
@@ -81,14 +79,6 @@
 	MKCAssertTrue (5 == [components month]);
 	MKCAssertTrue (2 == [components day]);
 }
-#else
-- (void) testDateBeforeCE
-{
-	const char* dateString = "2009-05-02 BC";
-	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
-	MKCAssertNil (date);
-}
-#endif
 
 - (void) testTime
 {

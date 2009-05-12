@@ -138,53 +138,53 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	else
 		seconds = [gDefaultComponents second];
 	
+	//ICU's unicode/gregocal.h: BC == 0, AD == 1.
+	long era = 1;
 	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "e", buffer, 16))
-		BXLogError (@"The date/timestamp '%s' is before the Common Era. We can't handle this.", subject);
-	else
+		era = 0;
+	
+	//NSGregorianCalendar works as the Julian calendar when appropriate.
+	//Not sure if Postgres does, though. Time zone needs to be set always, because
+	//NSCalendar defaults to the current time zone.
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	
+	long tzOffset = 0;
+	
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzh", buffer, 16))
+		tzOffset += 3600 * strtol (buffer, NULL, 10);
+	
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzm", buffer, 16))
+		tzOffset += 60 * strtol (buffer, NULL, 10);
+	
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzs", buffer, 16))
+		tzOffset += strtol (buffer, NULL, 10);
+	
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzd", buffer, 16))
 	{
-		
-		//NSGregorianCalendar works as the Julian calendar when appropriate.
-		//Not sure if Postgres does, though. Time zone needs to be set always, because
-		//NSCalendar defaults to the current time zone.
-		NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-		
-		long tzOffset = 0;
-		
-		if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzh", buffer, 16))
-			tzOffset += 3600 * strtol (buffer, NULL, 10);
-		
-		if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzm", buffer, 16))
-			tzOffset += 60 * strtol (buffer, NULL, 10);
-		
-		if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzs", buffer, 16))
-			tzOffset += strtol (buffer, NULL, 10);
-		
-		if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzd", buffer, 16))
-		{
-			if ('-' == buffer [0])
-				tzOffset *= -1;
-		}
-		
-		NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: tzOffset];
-		[calendar setTimeZone: tz];
-		
-		NSDateComponents* components = [[[NSDateComponents alloc] init] autorelease];
-		[components setYear: year];
-		[components setMonth: month];
-		[components setDay: day];
-		[components setHour: hours];
-		[components setMinute: minutes];
-		[components setSecond: seconds];
-				
-		retval = [calendar dateFromComponents: components];
-		if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "frac", buffer, 16))
-		{
-			double fraction = strtod (buffer, NULL);
-			if (fraction)
-				retval = [retval addTimeInterval: fraction];
-		}
+		if ('-' == buffer [0])
+			tzOffset *= -1;
 	}
-		
+	
+	NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: tzOffset];
+	[calendar setTimeZone: tz];
+	
+	NSDateComponents* components = [[[NSDateComponents alloc] init] autorelease];
+	[components setEra: era];
+	[components setYear: year];
+	[components setMonth: month];
+	[components setDay: day];
+	[components setHour: hours];
+	[components setMinute: minutes];
+	[components setSecond: seconds];
+	
+	retval = [calendar dateFromComponents: components];
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "frac", buffer, 16))
+	{
+		double fraction = strtod (buffer, NULL);
+		if (fraction)
+			retval = [retval addTimeInterval: fraction];
+	}
+	
 	return retval;	
 }
 
@@ -192,46 +192,46 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 @implementation NSDate (PGTSFoundationObjects)
 - (id) PGTSParameter: (PGTSConnection *) connection
 {
-	NSString* format = @"%Y-%m-%d %H:%M:%S";
+	NSString* retval = nil;
+	NSUInteger units = (NSEraCalendarUnit | 
+						NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit |
+						NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit);
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 	NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: 0];
-	NSString* description = [self descriptionWithCalendarFormat: format timeZone: tz locale: nil];
-    NSMutableString* retval = [NSMutableString stringWithString: description];
+	NSInteger tzs = [tz secondsFromGMT];
+	NSInteger tzsa = abs (tzs);
+
+	[calendar setTimeZone: tz];
 	
+	NSDateComponents* comps = [calendar components: units fromDate: self];
+	
+	char buffer [9] = {}; //0.123456 + nul character
+	char* fraction = buffer;
     double integralPart = 0.0;
-    double subseconds = modf ([self timeIntervalSinceReferenceDate], &integralPart);    
-    char* fractionalPart = NULL;
-    asprintf (&fractionalPart, "%-.6f", fabs (subseconds));
-    [retval appendFormat: @"%s+00:00:00", &fractionalPart [1]];
-    free (fractionalPart);
-    
-    return retval;
+    double subseconds = modf ([self timeIntervalSinceReferenceDate], &integralPart);
+	Expect (0.0 <= subseconds);
+	if (subseconds)
+	{
+		Expect (0 < snprintf (fraction, 9, "%-.6f", subseconds));
+		fraction++;
+	}
+	
+	NSString* format = @"%04d-%02d-%02d %02d:%02d:%02d%s%c%02d:%02d:%02d%s";
+	retval = [NSString stringWithFormat: format,
+			  [comps year], [comps month], [comps day], 
+			  [comps hour], [comps minute], [comps second],
+			  fraction,
+			  (0 <= tzs ? '+' : '-'),
+			  tzsa / 3600, (tzsa % 3600) / 60, tzsa % 60,
+			  ([comps era] ? "" : " BC")];
+	
+	return retval;
 }
 
 + (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return nil;
-}
-@end
-
-
-@implementation NSCalendarDate (PGTSFoundationObjects)
-- (id) PGTSParameter: (PGTSConnection *) connection
-{
-	NSString* format = @"%Y-%m-%d %H:%M:%S";
-	NSString* description = [self descriptionWithCalendarFormat: format];
-    NSMutableString* retval = [NSMutableString stringWithString: description];
-	
-    double integralPart = 0.0;
-    double subseconds = modf ([self timeIntervalSinceReferenceDate], &integralPart);
-    char* fractionalPart = NULL;
-    asprintf (&fractionalPart, "%-.6f", fabs (subseconds));
-    [retval appendFormat: @"%s", &fractionalPart [1]];
-    free (fractionalPart);
-    
-    NSInteger seconds = [[self timeZone] secondsFromGMT];
-    [retval appendFormat: @"%+.2d:%.2d:%.2d", seconds / (60 * 60), (seconds % (60 * 60)) / 60, seconds % 60];
-	return retval;
 }
 @end
 
