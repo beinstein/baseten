@@ -112,10 +112,13 @@
 	MKCAssertTrue (5 == [components second]);
 	
 	NSTimeInterval interval = [date timeIntervalSinceReferenceDate];
+	STAssertTrue (0.0 < interval, @"Expected %f to be greater than zero.", interval);
+	
 	double integral = 0.0;
+	double expected = 0.00067;
 	double fraction = modf (interval, &integral);
-
-	STAssertTrue (d_eq (0.00067, fraction), @"Expected %f to equal %f.", 0.00067, fraction);
+	STAssertTrue (d_eq (expected, fraction), @"Expected %f to equal %f. (integral: %f)", 
+				  expected, fraction, integral);
 }
 
 - (void) testTimeWithTimeZone
