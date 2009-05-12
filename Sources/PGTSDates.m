@@ -198,8 +198,6 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 						NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit);
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 	NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: 0];
-	NSInteger tzs = [tz secondsFromGMT];
-	NSInteger tzsa = abs (tzs);
 
 	[calendar setTimeZone: tz];
 	
@@ -216,13 +214,11 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		fraction++;
 	}
 	
-	NSString* format = @"%04d-%02d-%02d %02d:%02d:%02d%s%c%02d:%02d:%02d%s";
+	NSString* format = @"%04d-%02d-%02d %02d:%02d:%02d%s+00%s";
 	retval = [NSString stringWithFormat: format,
 			  [comps year], [comps month], [comps day], 
 			  [comps hour], [comps minute], [comps second],
 			  fraction,
-			  (0 <= tzs ? '+' : '-'),
-			  tzsa / 3600, (tzsa % 3600) / 60, tzsa % 60,
 			  ([comps era] ? "" : " BC")];
 	
 	return retval;

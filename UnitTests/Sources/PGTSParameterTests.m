@@ -134,7 +134,7 @@
 	CFRetain (objectValue);
 	MKCAssertFalse ([object PGTSIsBinaryParameter]);
 	MKCAssertFalse (object == objectValue);
-	MKCAssertTrue (0 == strcmp ("2001-01-05 08:02:00+00:00:00", paramValue));
+	MKCAssertTrue (0 == strcmp ("2001-01-05 08:02:00+00", paramValue));
 	CFRelease (objectValue);
 }
 
@@ -151,7 +151,7 @@
 	CFRetain (objectValue);
 	MKCAssertFalse ([object PGTSIsBinaryParameter]);
 	MKCAssertFalse (object == objectValue);
-	MKCAssertTrue (0 == strcmp ("2001-01-05 09:02:00+00:00:00", paramValue));
+	MKCAssertTrue (0 == strcmp ("2001-01-05 09:02:00+00", paramValue));
 	CFRelease (objectValue);
 }
 
@@ -190,7 +190,7 @@
 	CFRetain (objectValue);
 	MKCAssertFalse ([value PGTSIsBinaryParameter]);
 	MKCAssertFalse (value == objectValue);
-	MKCAssertTrue (0 == strcmp ("2009-05-12 21:35:41.046338+00:00:00", paramValue));
+	MKCAssertTrue (0 == strcmp ("2009-05-12 21:35:41.046338+00", paramValue));
 	CFRelease (objectValue);	
 }
 
@@ -206,7 +206,7 @@
 	CFRetain (objectValue);
 	MKCAssertFalse ([value PGTSIsBinaryParameter]);
 	MKCAssertFalse (value == objectValue);
-	MKCAssertTrue (0 == strcmp ("2009-05-12 21:35:41.000000+00:00:00", paramValue));
+	MKCAssertTrue (0 == strcmp ("2009-05-12 21:35:41.000000+00", paramValue));
 	CFRelease (objectValue);	
 }					
 @end
