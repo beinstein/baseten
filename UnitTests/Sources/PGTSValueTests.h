@@ -1,11 +1,11 @@
 //
-// PGTSFoundationObjects.h
+// PGTSValueTests.h
 // BaseTen
 //
-// Copyright (C) 2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+// by visiting http://basetenframework.org/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -26,17 +26,10 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <BaseTen/BXCoreDataCompatibility.h>
-@class PGTSResultSet;
-@class PGTSConnection;
-@class PGTSTypeDescription;
+#import <SenTestingKit/SenTestingKit.h>
+#import "BXTestCase.h"
 
-@interface NSObject (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type;
-- (id) PGTSParameter: (PGTSConnection *) connection;
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
-- (BOOL) PGTSIsBinaryParameter;
-- (BOOL) PGTSIsCollection;
-- (id) PGTSExpressionOfType: (NSAttributeType) attrType;
+@interface PGTSValueTests : BXTestCase 
+{
+}
 @end

@@ -201,6 +201,12 @@
 		535F24C10E8AA62800311CB5 /* BXPGObjectExpressionValueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F24BF0E8AA62800311CB5 /* BXPGObjectExpressionValueType.m */; };
 		535F24EE0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F24EC0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.h */; };
 		535F24EF0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F24ED0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.m */; };
+		5362062A0FB87A0300ACAE57 /* PGTSDates.m in Sources */ = {isa = PBXBuildFile; fileRef = 536206280FB87A0300ACAE57 /* PGTSDates.m */; };
+		5362062B0FB87A0300ACAE57 /* PGTSValueTypes.m in Sources */ = {isa = PBXBuildFile; fileRef = 536206290FB87A0300ACAE57 /* PGTSValueTypes.m */; };
+		536206360FB87AB700ACAE57 /* PGTSValueTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 536206350FB87AB700ACAE57 /* PGTSValueTypes.h */; };
+		536206520FB87DDA00ACAE57 /* PGTSValuePlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = 536206500FB87DDA00ACAE57 /* PGTSValuePlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		536206530FB87DDA00ACAE57 /* PGTSValuePlaceholder.m in Sources */ = {isa = PBXBuildFile; fileRef = 536206510FB87DDA00ACAE57 /* PGTSValuePlaceholder.m */; };
+		536206550FB87E8C00ACAE57 /* PGTSDates.h in Headers */ = {isa = PBXBuildFile; fileRef = 536206540FB87E8C00ACAE57 /* PGTSDates.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5364BB780DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB760DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h */; };
 		5364BB790DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */; };
 		5364BB7E0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */; };
@@ -464,12 +470,40 @@
 			remoteGlobalIDString = 5362E86C0E1CE46D005C7654;
 			remoteInfo = PostgreSQL;
 		};
+		532E54C30FB8E868001A2C62 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
+			remoteInfo = "RegexKit Framework";
+		};
 		535444940D634DA9002A6C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 535444870D634D9C002A6C47;
 			remoteInfo = "BaseTenAppKit + GC";
+		};
+		536207BC0FB8E63A00ACAE57 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
+			remoteInfo = "RegexKit Framework";
+		};
+		536207BE0FB8E63A00ACAE57 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1264D77F0C7A95B60044B285;
+			remoteInfo = "Unit Tests";
+		};
+		536207C00FB8E63A00ACAE57 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 1210C8110D4F254C00A9E73B;
+			remoteInfo = "Stack Protector";
 		};
 		5362E8700E1CE4A9005C7654 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -642,6 +676,13 @@
 		535F24BF0E8AA62800311CB5 /* BXPGObjectExpressionValueType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGObjectExpressionValueType.m; path = Sources/BXPGObjectExpressionValueType.m; sourceTree = "<group>"; };
 		535F24EC0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGIdentityExpressionValueType.h; path = Sources/BXPGIdentityExpressionValueType.h; sourceTree = "<group>"; };
 		535F24ED0E8AA96B00311CB5 /* BXPGIdentityExpressionValueType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGIdentityExpressionValueType.m; path = Sources/BXPGIdentityExpressionValueType.m; sourceTree = "<group>"; };
+		536206280FB87A0300ACAE57 /* PGTSDates.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSDates.m; path = Sources/PGTSDates.m; sourceTree = "<group>"; };
+		536206290FB87A0300ACAE57 /* PGTSValueTypes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSValueTypes.m; path = Sources/PGTSValueTypes.m; sourceTree = "<group>"; };
+		536206350FB87AB700ACAE57 /* PGTSValueTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSValueTypes.h; path = Sources/PGTSValueTypes.h; sourceTree = "<group>"; };
+		536206500FB87DDA00ACAE57 /* PGTSValuePlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSValuePlaceholder.h; path = Sources/PGTSValuePlaceholder.h; sourceTree = "<group>"; };
+		536206510FB87DDA00ACAE57 /* PGTSValuePlaceholder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSValuePlaceholder.m; path = Sources/PGTSValuePlaceholder.m; sourceTree = "<group>"; };
+		536206540FB87E8C00ACAE57 /* PGTSDates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSDates.h; path = Sources/PGTSDates.h; sourceTree = "<group>"; };
+		536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RegexKit.xcodeproj; path = Contrib/RegexKit/RegexKit.xcodeproj; sourceTree = "<group>"; };
 		5364BB760DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGAutocommitTransactionHandler.h; path = Sources/BXPGAutocommitTransactionHandler.h; sourceTree = "<group>"; };
 		5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGAutocommitTransactionHandler.m; path = Sources/BXPGAutocommitTransactionHandler.m; sourceTree = "<group>"; };
 		5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGManualCommitTransactionHandler.h; path = Sources/BXPGManualCommitTransactionHandler.h; sourceTree = "<group>"; };
@@ -944,6 +985,7 @@
 				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
 				5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */,
+				536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -1070,6 +1112,31 @@
 			name = "Object model";
 			sourceTree = "<group>";
 		};
+		5362062C0FB87A8F00ACAE57 /* Type conversion */ = {
+			isa = PBXGroup;
+			children = (
+				53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */,
+				53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */,
+				536206500FB87DDA00ACAE57 /* PGTSValuePlaceholder.h */,
+				536206510FB87DDA00ACAE57 /* PGTSValuePlaceholder.m */,
+				536206350FB87AB700ACAE57 /* PGTSValueTypes.h */,
+				536206290FB87A0300ACAE57 /* PGTSValueTypes.m */,
+				536206540FB87E8C00ACAE57 /* PGTSDates.h */,
+				536206280FB87A0300ACAE57 /* PGTSDates.m */,
+			);
+			name = "Type conversion";
+			sourceTree = "<group>";
+		};
+		536207B30FB8E63A00ACAE57 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				536207BD0FB8E63A00ACAE57 /* RegexKit.framework */,
+				536207BF0FB8E63A00ACAE57 /* Unit Tests.octest */,
+				536207C10FB8E63A00ACAE57 /* libStack Protector.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		53666C800E1CD8580028DBEA /* Utility */ = {
 			isa = PBXGroup;
 			children = (
@@ -1131,6 +1198,7 @@
 				53666D850E1CDFF80028DBEA /* Connection */,
 				53666D2E0E1CDDA70028DBEA /* Metadata */,
 				53666D820E1CDF100028DBEA /* Queries */,
+				5362062C0FB87A8F00ACAE57 /* Type conversion */,
 				53666D890E1CE05C0028DBEA /* Other */,
 				53666DAB0E1CE2180028DBEA /* postgresql */,
 			);
@@ -1217,8 +1285,6 @@
 				53666CA80E1CD8D20028DBEA /* PGTSCertificateVerificationDelegateProtocol.h */,
 				53666CB40E1CD8D20028DBEA /* PGTSConstants.h */,
 				53666CB50E1CD8D20028DBEA /* PGTSConstants.m */,
-				53666CBE0E1CD8D20028DBEA /* PGTSFoundationObjects.h */,
-				53666CBF0E1CD8D20028DBEA /* PGTSFoundationObjects.m */,
 				53915F9C0E3FD22D0098B419 /* libpq_additions.h */,
 				53915F9D0E3FD22D0098B419 /* libpq_additions.c */,
 			);
@@ -1652,6 +1718,9 @@
 				53B934DE0F98BDFA006BD87D /* BXDeprecationWarning.h in Headers */,
 				53671B4B0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h in Headers */,
 				53BFE53D0FAF2EFA0004533F /* BXError.h in Headers */,
+				536206360FB87AB700ACAE57 /* PGTSValueTypes.h in Headers */,
+				536206520FB87DDA00ACAE57 /* PGTSValuePlaceholder.h in Headers */,
+				536206550FB87E8C00ACAE57 /* PGTSDates.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1694,6 +1763,7 @@
 			dependencies = (
 				5362E8710E1CE4A9005C7654 /* PBXTargetDependency */,
 				538A82CB0E1D176D0025B3C8 /* PBXTargetDependency */,
+				532E54C40FB8E868001A2C62 /* PBXTargetDependency */,
 			);
 			name = "BaseTen Framework + GC";
 			productName = "BXDatabase Static";
@@ -1737,6 +1807,10 @@
 					ProductGroup = 5308940E0E4349A50063C5E7 /* Products */;
 					ProjectRef = 5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */;
 				},
+				{
+					ProductGroup = 536207B30FB8E63A00ACAE57 /* Products */;
+					ProjectRef = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1764,6 +1838,27 @@
 			fileType = wrapper.framework;
 			path = BaseTenAppKit.framework;
 			remoteRef = 535444940D634DA9002A6C47 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		536207BD0FB8E63A00ACAE57 /* RegexKit.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RegexKit.framework;
+			remoteRef = 536207BC0FB8E63A00ACAE57 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		536207BF0FB8E63A00ACAE57 /* Unit Tests.octest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Unit Tests.octest";
+			remoteRef = 536207BE0FB8E63A00ACAE57 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		536207C10FB8E63A00ACAE57 /* libStack Protector.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libStack Protector.a";
+			remoteRef = 536207C00FB8E63A00ACAE57 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2026,6 +2121,9 @@
 				53B934DF0F98BDFA006BD87D /* BXDeprecationWarning.m in Sources */,
 				53671B4C0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.m in Sources */,
 				53BFE53E0FAF2EFA0004533F /* BXError.m in Sources */,
+				5362062A0FB87A0300ACAE57 /* PGTSDates.m in Sources */,
+				5362062B0FB87A0300ACAE57 /* PGTSValueTypes.m in Sources */,
+				536206530FB87DDA00ACAE57 /* PGTSValuePlaceholder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2065,6 +2163,11 @@
 			isa = PBXTargetDependency;
 			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */;
 			targetProxy = 532876C80E1E778600CC507E /* PBXContainerItemProxy */;
+		};
+		532E54C40FB8E868001A2C62 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "RegexKit Framework";
+			targetProxy = 532E54C30FB8E868001A2C62 /* PBXContainerItemProxy */;
 		};
 		5362E8710E1CE4A9005C7654 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

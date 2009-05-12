@@ -1,8 +1,8 @@
 //
-// PGTSFoundationObjects.h
+// PGTSDates.h
 // BaseTen
 //
-// Copyright (C) 2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -26,17 +26,23 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-#import <BaseTen/BXCoreDataCompatibility.h>
-@class PGTSResultSet;
-@class PGTSConnection;
-@class PGTSTypeDescription;
 
-@interface NSObject (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type;
-- (id) PGTSParameter: (PGTSConnection *) connection;
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
-- (BOOL) PGTSIsBinaryParameter;
-- (BOOL) PGTSIsCollection;
-- (id) PGTSExpressionOfType: (NSAttributeType) attrType;
+#import <BaseTen/PGTSValuePlaceholder.h>
+
+
+@interface PGTSTimestamp : PGTSValuePlaceholder
+{
+}
+@end
+
+
+@interface PGTSDate : PGTSValuePlaceholder
+{
+}
+@end
+
+
+@interface PGTSTime : PGTSValuePlaceholder
+{
+}
 @end

@@ -11,7 +11,7 @@
 	<key>char</key>
 	<string>NSString</string>
 	<key>date</key>
-	<string>NSCalendarDate</string>
+	<string>PGTSDate</string>
 	<key>float4</key>
 	<string>PGTSFloat</string>
 	<key>float8</key>
@@ -33,9 +33,13 @@
 	<key>text</key>
 	<string>NSString</string>
 	<key>timestamp</key>
-	<string>NSDate</string>
+	<string>PGTSTimestamp</string>
 	<key>timestamptz</key>
-	<string>NSCalendarDate</string>
+	<string>PGTSTimestamp</string>
+	<key>time</key>
+	<string>PGTSTime</string>
+	<key>timetz</key>
+	<string>PGTSTime</string>
 	<key>varbit</key>
 	<string>NSData</string>
 	<key>varchar</key>

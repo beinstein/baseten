@@ -30,7 +30,11 @@
 #import <BaseTen/BaseTen.h>
 #import "MKCSenTestCaseAdditions.h"
 
+#import "KeyPathComponentTest.h"
+#import "PredicateTests.h"
 #import "BXDatabaseContextTests.h"
+#import "PGTSValueTests.h"
+
 #import "PGTSMetadataTests.h"
 #import "PGTSTypeTests.h"
 #import "PGTSParameterTests.h"
@@ -51,8 +55,6 @@
 #import "MTMCollectionTest.h"
 #import "UndoTests.h"
 #import "BXDatabaseObjectTests.h"
-#import "PredicateTests.h"
-#import "KeyPathComponentTest.h"
 #import "ToOneChangeNotificationTests.h"
 
 
@@ -62,8 +64,8 @@
 	NSArray* testClasses = [NSArray arrayWithObjects:
 							[KeyPathComponentTest class],
 							[PredicateTests class],
-							
 							[BXDatabaseContextTests class],
+							[PGTSValueTests class],
 							
 							[PGTSMetadataTests class],
 							[PGTSTypeTests class],
