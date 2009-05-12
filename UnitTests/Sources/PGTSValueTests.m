@@ -115,7 +115,7 @@
 	double integral = 0.0;
 	double fraction = modf (interval, &integral);
 
-	MKCAssertTrue (d_eq (0.00067, fraction));
+	STAssertTrue (d_eq (0.00067, fraction), @"Expected %f to equal %f.", 0.00067, fraction);
 }
 
 - (void) testTimeWithTimeZone
