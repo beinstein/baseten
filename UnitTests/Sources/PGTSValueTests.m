@@ -102,7 +102,7 @@
 	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
 	MKCAssertNotNil (date);
 	
-	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+	NSUInteger units = NSEraCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
@@ -110,15 +110,11 @@
 	MKCAssertTrue (10 == [components hour]);
 	MKCAssertTrue (2 == [components minute]);
 	MKCAssertTrue (5 == [components second]);
+	MKCAssertTrue (1 == [components era]);
 	
 	NSTimeInterval interval = [date timeIntervalSinceReferenceDate];
-	STAssertTrue (0.0 < interval, @"Expected %f to be greater than zero.", interval);
-	
-	double integral = 0.0;
-	double expected = 0.00067;
-	double fraction = modf (interval, &integral);
-	STAssertTrue (d_eq (expected, fraction), @"Expected %f to equal %f. (integral: %f)", 
-				  expected, fraction, integral);
+	NSTimeInterval expected = 36125.00067;
+	STAssertTrue (d_eq (expected, interval), @"Expected %f to equal %f.", expected, fraction);
 }
 
 - (void) testTimeWithTimeZone
