@@ -192,5 +192,21 @@
 	MKCAssertFalse (value == objectValue);
 	MKCAssertTrue (0 == strcmp ("2009-05-12 21:35:41.046338+00:00:00", paramValue));
 	CFRelease (objectValue);	
+}
+
+- (void) testTimestamp2
+{
+	NSTimeInterval interval = 263856941.0000002; //Fractional part that rounds to six zeros.
+	NSDate* value = [NSDate dateWithTimeIntervalSinceReferenceDate: interval];
+	
+	int length = 0;
+	id objectValue = [value PGTSParameter: mConnection];
+	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
+	
+	CFRetain (objectValue);
+	MKCAssertFalse ([value PGTSIsBinaryParameter]);
+	MKCAssertFalse (value == objectValue);
+	MKCAssertTrue (0 == strcmp ("2009-05-12 21:35:41.000000+00:00:00", paramValue));
+	CFRelease (objectValue);	
 }					
 @end
