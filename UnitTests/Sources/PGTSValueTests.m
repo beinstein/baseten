@@ -36,9 +36,11 @@
 {
 	const char* dateString = "2009-05-02";
 	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	
 	MKCAssertTrue (2009 == [components year]);
@@ -46,13 +48,57 @@
 	MKCAssertTrue (2 == [components day]);
 }
 
+- (void) testDateBeforeJulian
+{
+	const char* dateString = "0100-05-02";
+	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
+	
+	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	NSDateComponents* components = [calendar components: units fromDate: date];
+	
+	MKCAssertTrue (100 == [components year]);
+	MKCAssertTrue (5 == [components month]);
+	MKCAssertTrue (2 == [components day]);
+}
+
+//NSCalendar doesn't handle the era change?
+#if 0
+- (void) testDateBeforeCE
+{
+	const char* dateString = "2009-05-02 BC";
+	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
+	
+	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	NSDateComponents* components = [calendar components: units fromDate: date];
+	
+	MKCAssertTrue (2009 == [components year]);
+	MKCAssertTrue (5 == [components month]);
+	MKCAssertTrue (2 == [components day]);
+}
+#else
+- (void) testDateBeforeCE
+{
+	const char* dateString = "2009-05-02 BC";
+	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNil (date);
+}
+#endif
+
 - (void) testTime
 {
 	const char* dateString = "10:02:05";
 	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	
 	MKCAssertTrue (10 == [components hour]);
@@ -60,4 +106,73 @@
 	MKCAssertTrue (5 == [components second]);
 }
 
+- (void) testTimeWithFraction
+{
+	const char* dateString = "10:02:05.00067";
+	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
+	
+	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	NSDateComponents* components = [calendar components: units fromDate: date];
+	
+	MKCAssertTrue (10 == [components hour]);
+	MKCAssertTrue (2 == [components minute]);
+	MKCAssertTrue (5 == [components second]);
+	
+	NSTimeInterval interval = [date timeIntervalSinceReferenceDate];
+	double integral = 0.0;
+	double fraction = modf (interval, &integral);
+
+	MKCAssertTrue (d_eq (0.00067, fraction));
+}
+
+- (void) testTimeWithTimeZone
+{
+	const char* dateString = "10:02:05-02";
+	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
+	
+	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	NSDateComponents* components = [calendar components: units fromDate: date];
+	
+	MKCAssertTrue (12 == [components hour]);
+	MKCAssertTrue (2 == [components minute]);
+	MKCAssertTrue (5 == [components second]);
+}
+
+- (void) testTimeWithTimeZone2 //With minutes in time zone
+{
+	const char* dateString = "10:02:05+02:03";
+	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
+	
+	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 3600 * 2 + 60 * 3]];
+	NSDateComponents* components = [calendar components: units fromDate: date];
+	
+	MKCAssertTrue (10 == [components hour]);
+	MKCAssertTrue (2 == [components minute]);
+	MKCAssertTrue (5 == [components second]);
+}
+
+- (void) testTimeWithTimeZone3 //With seconds in time zone
+{
+	const char* dateString = "10:02:05+02:03:05";
+	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	MKCAssertNotNil (date);
+	
+	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
+	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 3600 * 2 + 60 * 3 + 5]];
+	NSDateComponents* components = [calendar components: units fromDate: date];
+	
+	MKCAssertTrue (10 == [components hour]);
+	MKCAssertTrue (2 == [components minute]);
+	MKCAssertTrue (5 == [components second]);
+}
 @end

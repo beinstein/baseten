@@ -29,6 +29,9 @@
 @class BXDatabaseContext;
 
 
+extern int d_eq (double a, double b);
+
+
 @interface BXTestCase : SenTestCase
 {
 }

@@ -98,6 +98,7 @@ Compile (struct regular_expression_st* re, const char* pattern)
 static NSDate*
 MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, int status)
 {
+	NSDate* retval = nil;
 	char buffer [16] = {};
 	
 	//Some reasonable default values.
@@ -138,20 +139,15 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		seconds = [gDefaultComponents second];
 	
 	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "e", buffer, 16))
-		year *= -1;
-	
-	//Apparently this works as the Julian calendar when appropriate.
-	//Not sure if Postgres does, though.
-	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	NSDateComponents* components = [[[NSDateComponents alloc] init] autorelease];
-	[components setYear: year];
-	[components setMonth: month];
-	[components setDay: day];
-	[components setHour: hours];
-	[components setMinute: minutes];
-	[components setSecond: seconds];
-	
+		BXLogError (@"The date/timestamp '%s' is before the Common Era. We can't handle this.", subject);
+	else
 	{
+		
+		//NSGregorianCalendar works as the Julian calendar when appropriate.
+		//Not sure if Postgres does, though. Time zone needs to be set always, because
+		//NSCalendar defaults to the current time zone.
+		NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+		
 		long tzOffset = 0;
 		
 		if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzh", buffer, 16))
@@ -169,21 +165,26 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 				tzOffset *= -1;
 		}
 		
-		if (tzOffset)
+		NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: tzOffset];
+		[calendar setTimeZone: tz];
+		
+		NSDateComponents* components = [[[NSDateComponents alloc] init] autorelease];
+		[components setYear: year];
+		[components setMonth: month];
+		[components setDay: day];
+		[components setHour: hours];
+		[components setMinute: minutes];
+		[components setSecond: seconds];
+				
+		retval = [calendar dateFromComponents: components];
+		if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "frac", buffer, 16))
 		{
-			NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: tzOffset];
-			[calendar setTimeZone: tz];
+			double fraction = strtod (buffer, NULL);
+			if (fraction)
+				retval = [retval addTimeInterval: fraction];
 		}
 	}
-	
-	NSDate* retval = [calendar dateFromComponents: components];
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "frac", buffer, 16))
-	{
-		double fraction = strtod (buffer, NULL);
-		if (fraction)
-			[retval addTimeInterval: fraction];
-	}
-
+		
 	return retval;	
 }
 
@@ -286,9 +287,9 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		//parts are both optional.
 		
 		const char* pattern = 
-		"^(?<H>\\d{2}):(?<M>\\d{2}):(?<S>\\d{2})"                           //Time
-		"(?<frac>\\.\\d{1,6})?"                                             //Fraction
-		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))))?$"; //Time zone
+		"^(?<H>\\d{2}):(?<M>\\d{2}):(?<S>\\d{2})"                             //Time
+		"(?<frac>\\.\\d{1,6})?"                                               //Fraction
+		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))?)?)?$"; //Time zone
 		Compile (&gTimeExp, pattern);
 	}
 }
@@ -321,12 +322,12 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		SetDefaultComponents ();
 
 		const char* pattern = 
-		"^(?<y>\\d{4,7})-(?<m>\\d{2})-(?<d>\\d{2})"                       //Date
+		"^(?<y>\\d{4,7})-(?<m>\\d{2})-(?<d>\\d{2})"                         //Date
 		" "
-		"(?<H>\\d{2}):(?<M>\\d{2}):(?<S>\\d{2})"                          //Time
-		"(?<frac>\\.\\d{1,6})?"                                           //Fraction
-		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))))?" //Time zone
-		"(?<e> BC)?$";                                                    //Era specifier
+		"(?<H>\\d{2}):(?<M>\\d{2}):(?<S>\\d{2})"                            //Time
+		"(?<frac>\\.\\d{1,6})?"                                             //Fraction
+		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))?)?)?" //Time zone
+		"(?<e> BC)?$";                                                      //Era specifier
 		Compile (&gTimestampExp, pattern);
 	}
 }

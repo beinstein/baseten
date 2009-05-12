@@ -31,6 +31,14 @@
 #import "BXTestCase.h"
 
 
+int d_eq (double a, double b)
+{
+	double aa = fabs (a);
+	double bb = fabs (b);
+	return (fabs (aa - bb) <= (FLT_EPSILON * MAX (aa, bb)));
+}
+
+
 @interface SenTestCase (UndocumentedMethods)
 - (void) logException:(NSException *) anException;
 @end

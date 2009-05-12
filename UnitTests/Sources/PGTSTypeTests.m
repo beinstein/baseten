@@ -144,14 +144,6 @@ f_eq (float a, float b)
 	MKCAssertTrue (f_eq (f, [value floatValue]));
 }
 
-static inline int
-d_eq (double a, double b)
-{
-	double aa = fabs (a);
-	double bb = fabs (b);
-	return (fabs (aa - bb) <= (FLT_EPSILON * MAX (aa, bb)));
-}
-
 - (void) testFloat8
 {
 	MKCAssertTrue (8 == sizeof (double));
