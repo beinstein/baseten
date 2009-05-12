@@ -179,14 +179,9 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	NSDate* retval = [calendar dateFromComponents: components];
 	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "frac", buffer, 16))
 	{
-		double fraction = strtol (buffer, NULL, 10);
+		double fraction = strtod (buffer, NULL);
 		if (fraction)
-		{
-			double exp = log10 (fraction);
-			exp = 1 + floor (exp);
-			fraction /= pow (10, exp);
 			[retval addTimeInterval: fraction];
-		}
 	}
 
 	return retval;	
@@ -292,7 +287,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		
 		const char* pattern = 
 		"^(?<H>\\d{2}):(?<M>\\d{2}):(?<S>\\d{2})"                           //Time
-		"(\\.(?<frac>\\d{1,6}))?"                                           //Fraction
+		"(?<frac>\\.\\d{1,6})?"                                             //Fraction
 		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))))?$"; //Time zone
 		Compile (&gTimeExp, pattern);
 	}
@@ -329,7 +324,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		"^(?<y>\\d{4,7})-(?<m>\\d{2})-(?<d>\\d{2})"                       //Date
 		" "
 		"(?<H>\\d{2}):(?<M>\\d{2}):(?<S>\\d{2})"                          //Time
-		"(\\.(?<frac>\\d{1,6}))?"                                         //Fraction
+		"(?<frac>\\.\\d{1,6})?"                                           //Fraction
 		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))))?" //Time zone
 		"(?<e> BC)?$";                                                    //Era specifier
 		Compile (&gTimestampExp, pattern);
