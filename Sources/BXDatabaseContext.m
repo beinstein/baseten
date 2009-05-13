@@ -65,6 +65,7 @@
 #import "BXDatabaseObjectModelStorage.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXError.h"
+#import "BXForeignKey.h"
 
 #import "NSURL+BaseTenAdditions.h"
 
@@ -1349,14 +1350,43 @@ ModTypeToObject (enum BXModificationType value)
 		if ([self connectSync: &localError])
 		{
 			//The interface wants only attribute descriptions as keys
+			NSMutableDictionary* changedObjectsByRelationship = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
 			NSMutableDictionary* fieldValues = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
-			Class attributeDescriptionClass = [BXAttributeDescription class];
+			Class propertyDescriptionClass = [BXPropertyDescription class];
 			Class stringClass = [NSString class];
 			BXEnumerate (currentKey, e, [givenFieldValues keyEnumerator])
 			{
 				id value = [givenFieldValues objectForKey: currentKey];
-				if ([currentKey isKindOfClass: attributeDescriptionClass])
-					[fieldValues setObject: value forKey: currentKey];
+				if ([currentKey isKindOfClass: propertyDescriptionClass])
+				{
+					switch ([currentKey propertyKind])
+					{
+						case kBXPropertyKindAttribute:
+							[fieldValues setObject: value forKey: currentKey];
+							break;
+
+						case kBXPropertyKindRelationship:
+						{
+							BXAssertValueReturn (![currentKey isToMany], nil, 
+												 @"%@ was specified in value dictionary, but only to-one relationships are allowed.",
+												 [currentKey name]);
+							BXAssertValueReturn ([currentKey isInverse], nil,
+												 @"%@ was specified in value dictionary, but its foreign key columns don't exist in %@.",
+												 [currentKey name], entity);
+							
+							NSDictionary* values = BXFkeySrcDictionary ([currentKey foreignKey], entity, value);
+							[fieldValues addEntriesFromDictionary: values];
+							
+							[value willChangeValueForKey: [currentKey name]];
+							[changedObjectsByRelationship setObject: value forKey: currentKey];
+							break;
+						}
+
+						default:
+							BXLogWarning (@"Got a strange key in values dictionary: %@", currentKey);
+							break;
+					}
+				}
 				else if ([currentKey isKindOfClass: stringClass])
 				{
 					//We connected earlier so no need for an assertion.
@@ -1419,6 +1449,13 @@ ModTypeToObject (enum BXModificationType value)
 						//Remember the modification type for ROLLBACK
                         [mModifiedObjectIDs setObject: ModTypeToObject (kBXInsertModification) forKey: objectID];
 					}
+				}
+				
+				//Call -didChangeValueForKey: for related objects that got a new target.
+				BXEnumerate (currentKey, e, [changedObjectsByRelationship keyEnumerator])
+				{
+					BXDatabaseObject* object = [changedObjectsByRelationship objectForKey: currentKey];
+					[object didChangeValueForKey: [[currentKey inverseRelationship] name]];
 				}
 			}
 		}		
