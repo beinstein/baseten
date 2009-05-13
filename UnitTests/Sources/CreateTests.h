@@ -31,10 +31,7 @@
 @class BXDatabaseContext;
 @class BXEntityDescription;
 
-@interface CreateTests : BXTestCase 
+@interface CreateTests : BXDatabaseTestCase 
 {
-    BXDatabaseContext* context;
-    BXEntityDescription* entity;
 }
-
 @end

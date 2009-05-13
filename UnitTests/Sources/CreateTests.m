@@ -42,48 +42,34 @@
 
 
 @implementation CreateTests
-
-- (void) setUp
-{
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
-    entity = [[context entityForTable: @"test" error: nil] retain];
-    MKCAssertNotNil (context);
-    MKCAssertNotNil (entity);
-}
-
-- (void) tearDown
-{
-    [context rollback];
-	[context disconnect];
-    [context release];
-    [entity release];
-}
-
 - (void) testCreate
 {
     NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     NSError* error = nil;    
+
+    BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
     MKCAssertNotNil (entity);
     
-    BXDatabaseObject* object = [context createObjectForEntity: entity withFieldValues: nil error: &error];
+    BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: nil error: &error];
     STAssertNil (error, [error description]);
     MKCAssertNotNil (object);
-    [context rollback];
+    [mContext rollback];
     [pool release];
 }
 
 - (void) testCreateWithFieldValues
 {
+	BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+    MKCAssertNotNil (entity);
+	
 	NSError* error = nil;
 	NSString* key = @"value";
 	NSDictionary* values = [NSDictionary dictionaryWithObjectsAndKeys: @"test", key, nil];
-	BXDatabaseObject* object = [context createObjectForEntity: entity withFieldValues: values error: &error];
+	BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: values error: &error];
 	MKCAssertNotNil (object);
 	STAssertNil (error, [error description]);
 	MKCAssertTrue ([[object valueForKey: key] isEqual: [values valueForKey: key]]);
-	[context rollback];
+	[mContext rollback];
 }
 
 - (void) testCreateCustom
@@ -92,15 +78,45 @@
     NSError* error = nil;
     Class objectClass = [TestObject class];
     
+	BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+    MKCAssertNotNil (entity);
+	
     [entity setDatabaseObjectClass: objectClass];
     MKCAssertEqualObjects (objectClass, [entity databaseObjectClass]);
     
-    BXDatabaseObject* object = [context createObjectForEntity: entity withFieldValues: nil error: &error];
+    BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: nil error: &error];
     MKCAssertNotNil (object);
     STAssertNil (error, [error description]);
     MKCAssertTrue ([object isKindOfClass: objectClass]);    
-    [context rollback];
+    [mContext rollback];
     [pool release];
 }
 
+- (void) testCreateWithRelatedObject
+{
+	[mContext connectSync: NULL];
+	MKCAssertTrue ([mContext isConnected]);
+	
+	BXEntityDescription* test1 = [mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: NULL];
+	BXEntityDescription* test2 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: NULL];
+	MKCAssertNotNil (test1);
+	MKCAssertNotNil (test2);
+	
+	NSError* error = nil;
+	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id == 2"];
+	NSArray* res = [mContext executeFetchForEntity: test1 withPredicate: predicate error: &error];
+	STAssertNotNil (res, [error description]);
+	
+	BXDatabaseObject* target = [res lastObject];
+	MKCAssertNotNil (target);
+	
+	NSDictionary* values = [NSDictionary dictionaryWithObject: target forKey: @"test1"];
+	BXDatabaseObject* newObject = [mContext createObjectForEntity: test2 withFieldValues: values error: &error];
+	STAssertNotNil (newObject, [error description]);
+	
+	MKCAssertTrue ([newObject primitiveValueForKey: @"test1"] == target);
+	MKCAssertTrue ([[target primitiveValueForKey: @"test2Set"] containsObject: newObject]);
+	
+	[mContext rollback];
+}
 @end
