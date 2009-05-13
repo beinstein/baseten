@@ -420,14 +420,14 @@ CREATE TABLE "baseten".relationship (
 	has_rel_names	BOOLEAN NOT NULL,
 	has_views		BOOLEAN NOT NULL DEFAULT false,
 	srcid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
-	srcnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
-	srcrelname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	srcnspname		TEXT NOT NULL,
+	srcrelname		TEXT NOT NULL,
 	dstid			INTEGER NOT NULL REFERENCES "baseten".relation (id),
-	dstnspname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
-	dstrelname		TEXT NOT NULL,	--FIXME: use NAME or VARCHAR?
+	dstnspname		TEXT NOT NULL,
+	dstrelname		TEXT NOT NULL,
 	helperid		INTEGER REFERENCES "baseten".relation (id),
-	helpernspname	TEXT,			--FIXME: use NAME or VARCHAR?
-	helperrelname	TEXT			--FIXME: use NAME or VARCHAR?
+	helpernspname	TEXT,
+	helperrelname	TEXT
 );
 REVOKE ALL PRIVILEGES ON "baseten".relationship FROM PUBLIC;
 GRANT SELECT ON "baseten".relationship TO basetenread;
