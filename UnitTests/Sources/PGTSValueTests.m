@@ -101,19 +101,23 @@
 	const char* dateString = "10:02:05.00067";
 	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
 	MKCAssertNotNil (date);
+	NSLog (@"date: %@ %f", date, [date timeIntervalSinceReferenceDate]);
 	
 	NSUInteger units = NSEraCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
 	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
+	NSLog (@"date: %@ %f", date, [date timeIntervalSinceReferenceDate]);
 	
 	MKCAssertTrue (10 == [components hour]);
 	MKCAssertTrue (2 == [components minute]);
 	MKCAssertTrue (5 == [components second]);
 	MKCAssertTrue (1 == [components era]);
+	NSLog (@"date: %@ %f", date, [date timeIntervalSinceReferenceDate]);
 	
 	NSTimeInterval interval = [date timeIntervalSinceReferenceDate];
 	NSTimeInterval expected = 36125.00067;
+	NSLog (@"date: %@ %f", date, [date timeIntervalSinceReferenceDate]);
 	STAssertTrue (d_eq (expected, interval), @"Expected %f to equal %f.", expected, interval);
 }
 
