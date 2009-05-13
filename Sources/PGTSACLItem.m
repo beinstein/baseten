@@ -93,7 +93,7 @@
     mPrivileges = anEnum;
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) res withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) res withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {        
     //Role and privileges are separated by an equals sign
     id retval = nil;
@@ -107,7 +107,7 @@
     BXAssertValueReturn (NULL != privileges && NULL != role && NULL != grantingRole, nil, @"Unable to parse privileges (%s).", value);
     
     //Role is zero-length if the privileges are for PUBLIC
-    retval = [[[PGTSACLItem alloc] init] autorelease];
+    retval = [[PGTSACLItem alloc] init];
     if (0 != strlen (role))
     {
         PGTSDatabaseDescription* database = [[res connection] databaseDescription];

@@ -35,7 +35,7 @@
 - (void) testDate
 {
 	const char* dateString = "2009-05-02";
-	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSDate copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
@@ -51,7 +51,7 @@
 - (void) testDateBeforeJulian
 {
 	const char* dateString = "0100-05-02";
-	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSDate copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
@@ -67,7 +67,7 @@
 - (void) testDateBeforeCE
 {
 	const char* dateString = "2009-05-02 BC";
-	NSDate* date = [PGTSDate newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSDate copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSEraCalendarUnit | NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
@@ -83,7 +83,7 @@
 - (void) testTime
 {
 	const char* dateString = "10:02:05";
-	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSTime copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
@@ -99,7 +99,7 @@
 - (void) testTimeWithFraction
 {
 	const char* dateString = "10:02:05.00067";
-	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSTime copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSEraCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
@@ -120,7 +120,7 @@
 - (void) testTimeWithTimeZone
 {
 	const char* dateString = "10:02:05-02";
-	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSTime copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
@@ -136,7 +136,7 @@
 - (void) testTimeWithTimeZone2 //With minutes in time zone
 {
 	const char* dateString = "10:02:05+02:03";
-	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSTime copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
@@ -152,7 +152,7 @@
 - (void) testTimeWithTimeZone3 //With seconds in time zone
 {
 	const char* dateString = "10:02:05+02:03:05";
-	NSDate* date = [PGTSTime newForPGTSResultSet: nil withCharacters: dateString type: nil];
+	NSDate* date = [[PGTSTime copyForPGTSResultSet: nil withCharacters: dateString type: nil] autorelease];
 	MKCAssertNotNil (date);
 	
 	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;

@@ -33,32 +33,32 @@
 
 
 @implementation PGTSFloat
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    return [NSNumber numberWithFloat: strtof (value, NULL)];
+    return [[NSNumber alloc] initWithFloat: strtof (value, NULL)];
 }
 @end
 
 
 @implementation PGTSDouble
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    return [NSNumber numberWithDouble: strtod (value, NULL)];
+    return [[NSNumber alloc] initWithDouble: strtod (value, NULL)];
 }
 @end
 
 
 @implementation PGTSBool
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     BOOL boolValue = (value [0] == 't' ? YES : NO);
-    return [NSNumber numberWithBool: boolValue];
+    return [[NSNumber alloc] initWithBool: boolValue];
 }
 @end
 
 
 @implementation PGTSPoint
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     NSPoint retval = NSZeroPoint;
     NSString* pointString = [NSString stringWithUTF8String: value];
@@ -79,6 +79,6 @@
     [pointScanner scanFloat: &(retval.y)];
 #endif
 	
-    return [NSValue valueWithPoint: retval];
+    return [[NSValue valueWithPoint: retval] retain];
 }
 @end

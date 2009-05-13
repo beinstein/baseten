@@ -39,7 +39,7 @@
 
 
 @implementation NSObject (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     BXLogWarning (@"Returning a nil from NSObject's implementation.");
     return nil;
@@ -86,9 +86,9 @@
 
 
 @implementation NSString (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    return [NSString stringWithUTF8String: value];
+    return [[NSString alloc] initWithUTF8String: value];
 }
 
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
@@ -122,14 +122,14 @@
 
 
 @implementation NSData (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	NSData* retval = nil;
 	size_t resultLength = 0;
 	unsigned char *unescaped = PQunescapeBytea ((const unsigned char *) value, &resultLength);
 	if (unescaped)
 	{
-		retval = [[self class] dataWithBytes: unescaped length: resultLength];
+		retval = [[self alloc] initWithBytes: unescaped length: resultLength];
 		PQfreemem (unescaped);
 	}
 	else
@@ -180,9 +180,9 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
     return length;
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) current type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) current type: (PGTSTypeDescription *) typeInfo
 {
-    id retval = [NSMutableArray array];
+    id retval = [[NSMutableArray alloc] init];
     //Used with type: argument later
 	PGTSConnection* connection = [set connection];
     PGTSTypeDescription* elementType = [[connection databaseDescription] typeWithOid: [typeInfo elementOid]];
@@ -260,7 +260,7 @@ UnescapePGArray (char* dst, const char* const src_, size_t length)
                     elementData [last] = '\0';
                     
                     //Create the object.
-                    object = [elementClass newForPGTSResultSet: set withCharacters: elementData type: elementType];
+                    object = [[elementClass copyForPGTSResultSet: set withCharacters: elementData type: elementType] autorelease];
                     free (elementData);
                 }
                 [retval addObject: object];
@@ -373,13 +373,13 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 
 @implementation NSDecimalNumber (PGTSFoundationObjects)
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     NSDecimal decimal = {};
     NSString* stringValue = [NSString stringWithUTF8String: value];
     NSScanner* scanner = [NSScanner scannerWithString: stringValue];
     [scanner scanDecimal: &decimal];
-    return [NSDecimalNumber decimalNumberWithDecimal: decimal];
+    return [[NSDecimalNumber alloc] initWithDecimal: decimal];
 }
 @end
 
@@ -390,9 +390,9 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 	return [self description];
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    return [NSNumber numberWithLongLong: strtoll (value, NULL, 10)];
+    return [[NSNumber alloc] initWithLongLong: strtoll (value, NULL, 10)];
 }
 
 - (id) PGTSExpressionOfType: (NSAttributeType) attrType

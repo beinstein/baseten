@@ -102,7 +102,7 @@ Compile (struct regular_expression_st* re, const char* pattern)
 
 
 static NSDate*
-MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, int status)
+CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, int status)
 {
 	NSDate* retval = nil;
 	char buffer [16] = {};
@@ -193,7 +193,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 			retval = [retval addTimeInterval: fraction];
 	}
 	
-	return retval;	
+	return [retval retain];
 }
 
 
@@ -230,7 +230,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	return retval;
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return nil;
@@ -256,7 +256,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	}
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	NSDate* retval = nil;
 	if (gDateExp.re_expression)
@@ -265,7 +265,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		int status = pcre_exec (gDateExp.re_expression, gDateExp.re_extra, value, 
 								strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
 		if (0 < status)
-			retval = MakeDate (&gDateExp, value, ovector, status);
+			retval = CopyDate (&gDateExp, value, ovector, status);
 		else
 			BXLogError (@"Unable to match timestamp string %s with pattern %s.", value, gTimestampExp.re_pattern);
 	}
@@ -296,7 +296,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	}
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	NSDate* retval = nil;
 	if (gDateExp.re_expression)
@@ -305,7 +305,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		int status = pcre_exec (gTimeExp.re_expression, gTimeExp.re_extra, value, 
 								strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
 		if (0 < status)
-			retval = MakeDate (&gTimeExp, value, ovector, status);
+			retval = CopyDate (&gTimeExp, value, ovector, status);
 		else
 			BXLogError (@"Unable to match time string %s with pattern %s.", value, gTimeExp.re_pattern);
 	}
@@ -334,7 +334,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	}
 }
 
-+ (id) newForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
 	NSDate* retval = nil;
 	if (gDateExp.re_expression)
@@ -343,7 +343,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		int status = pcre_exec (gTimestampExp.re_expression, gTimestampExp.re_extra, value, 
 								strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
 		if (0 < status)
-			retval = MakeDate (&gTimestampExp, value, ovector, status);
+			retval = CopyDate (&gTimestampExp, value, ovector, status);
 		else
 			BXLogError (@"Unable to match date string %s with pattern %s.", value, gTimestampExp.re_pattern);
 	}
