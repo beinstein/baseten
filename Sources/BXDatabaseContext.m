@@ -1350,49 +1350,51 @@ ModTypeToObject (enum BXModificationType value)
 		if ([self connectSync: &localError])
 		{
 			//The interface wants only attribute descriptions as keys
+			NSDictionary* properties = [entity propertiesByName];
 			NSMutableDictionary* changedObjectsByRelationship = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
 			NSMutableDictionary* fieldValues = [NSMutableDictionary dictionaryWithCapacity: [givenFieldValues count]];
-			Class propertyDescriptionClass = [BXPropertyDescription class];
-			Class stringClass = [NSString class];
 			BXEnumerate (currentKey, e, [givenFieldValues keyEnumerator])
 			{
 				id value = [givenFieldValues objectForKey: currentKey];
-				if ([currentKey isKindOfClass: propertyDescriptionClass])
+				if ([currentKey isKindOfClass: [NSString class]])
 				{
-					switch ([currentKey propertyKind])
+					NSString* oldValue = currentKey;
+					currentKey = [properties objectForKey: currentKey];
+					BXAssertValueReturn (currentKey, nil, @"Key %@ wasn't known.", oldValue);
+				}
+				else
+				{
+					BXAssertValueReturn ([currentKey isKindOfClass: [BXPropertyDescription class]],
+										 @"Expected %@ to be either a string or a property description.", currentKey);
+				}
+				
+				switch ([currentKey propertyKind])
+				{
+					case kBXPropertyKindAttribute:
+						[fieldValues setObject: value forKey: currentKey];
+						break;
+						
+					case kBXPropertyKindRelationship:
 					{
-						case kBXPropertyKindAttribute:
-							[fieldValues setObject: value forKey: currentKey];
-							break;
-
-						case kBXPropertyKindRelationship:
-						{
-							BXAssertValueReturn (![currentKey isToMany], nil, 
-												 @"%@ was specified in value dictionary, but only to-one relationships are allowed.",
-												 [currentKey name]);
-							BXAssertValueReturn ([currentKey isInverse], nil,
-												 @"%@ was specified in value dictionary, but its foreign key columns don't exist in %@.",
-												 [currentKey name], entity);
-							
-							NSDictionary* values = BXFkeySrcDictionary ([currentKey foreignKey], entity, value);
-							[fieldValues addEntriesFromDictionary: values];
-							
-							[value willChangeValueForKey: [currentKey name]];
-							[changedObjectsByRelationship setObject: value forKey: currentKey];
-							break;
-						}
-
-						default:
-							BXLogWarning (@"Got a strange key in values dictionary: %@", currentKey);
-							break;
+						BXAssertValueReturn (![currentKey isToMany], nil, 
+											 @"%@ was specified in value dictionary, but only to-one relationships are allowed.",
+											 [currentKey name]);
+						BXAssertValueReturn ([currentKey isInverse], nil,
+											 @"%@ was specified in value dictionary, but its foreign key columns don't exist in %@.",
+											 [currentKey name], entity);
+						
+						NSDictionary* values = BXFkeySrcDictionary ([currentKey foreignKey], entity, value);
+						[fieldValues addEntriesFromDictionary: values];
+						
+						[value willChangeValueForKey: [currentKey name]];
+						[changedObjectsByRelationship setObject: value forKey: currentKey];
+						break;
 					}
-				}
-				else if ([currentKey isKindOfClass: stringClass])
-				{
-					//We connected earlier so no need for an assertion.
-					BXAttributeDescription* attr = [[entity attributesByName] valueForKey: currentKey];
-					[fieldValues setObject: value forKey: attr];
-				}
+						
+					default:
+						BXLogWarning (@"Got a strange key in values dictionary: %@", currentKey);
+						break;
+				}				
 			}
 			
 			//First make the object
