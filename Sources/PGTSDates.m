@@ -50,17 +50,23 @@ static struct regular_expression_st gDateExp = {};
 static struct regular_expression_st gTimeExp = {};
 
 __strong static NSDateComponents* gDefaultComponents = nil;
+__strong static NSTimeZone* gDefaultTimeZone = nil;
 
 
 static void
-SetDefaultComponents ()
+SetDefaults ()
 {
 	static BOOL tooLate = NO;
 	if (! tooLate)
 	{
 		tooLate = YES;
+		
+		gDefaultTimeZone = [[NSTimeZone timeZoneWithName: @"UTC"] retain];
+		
 		NSDate* date = [NSDate dateWithTimeIntervalSinceReferenceDate: 0.0];
 		NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
+		[calendar setTimeZone: gDefaultTimeZone];
+		
 		NSUInteger units = (NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit | 
 							NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit);
 		NSDateComponents* components = [calendar components: units fromDate: date];
@@ -165,7 +171,9 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 			tzOffset *= -1;
 	}
 	
-	NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: tzOffset];
+	NSTimeZone* tz = gDefaultTimeZone;
+	if (tzOffset)
+		tz = [NSTimeZone timeZoneForSecondsFromGMT: tzOffset];
 	[calendar setTimeZone: tz];
 	
 	NSDateComponents* components = [[[NSDateComponents alloc] init] autorelease];
@@ -197,9 +205,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 						NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit |
 						NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit);
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: 0];
-
-	[calendar setTimeZone: tz];
+	[calendar setTimeZone: gDefaultTimeZone];
 	
 	NSDateComponents* comps = [calendar components: units fromDate: self];
 	
@@ -239,7 +245,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	if (! tooLate)
 	{
 		tooLate = YES;
-		SetDefaultComponents ();
+		SetDefaults ();
 
 		//Date format is "yyyy-mm-dd". The year range is 4713 BC - 5874897 AD.
 		//Years are zero-padded to at least four characters.
@@ -275,7 +281,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	if (! tooLate)
 	{
 		tooLate = YES;
-		SetDefaultComponents ();
+		SetDefaults ();
 		
 		//Time format is "hh:mm:ss". There is an optional subsecond part which can have
 		//one to six digits. There is also an optional time zone part which has the format
@@ -315,7 +321,7 @@ MakeDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	if (! tooLate)
 	{
 		tooLate = YES;
-		SetDefaultComponents ();
+		SetDefaults ();
 
 		const char* pattern = 
 		"^(?<y>\\d{4,7})-(?<m>\\d{2})-(?<d>\\d{2})"                         //Date

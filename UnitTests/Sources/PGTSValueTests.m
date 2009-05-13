@@ -40,7 +40,7 @@
 	
 	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	[calendar setTimeZone: [NSTimeZone timeZoneWithName: @"UTC"]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	
 	MKCAssertTrue (2009 == [components year]);
@@ -56,7 +56,7 @@
 	
 	NSUInteger units = NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	[calendar setTimeZone: [NSTimeZone timeZoneWithName: @"UTC"]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	
 	MKCAssertTrue (100 == [components year]);
@@ -72,7 +72,7 @@
 	
 	NSUInteger units = NSEraCalendarUnit | NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	[calendar setTimeZone: [NSTimeZone timeZoneWithName: @"UTC"]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	
 	MKCAssertTrue (2009 == [components year]);
@@ -88,7 +88,7 @@
 	
 	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	[calendar setTimeZone: [NSTimeZone timeZoneWithName: @"UTC"]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	
 	MKCAssertTrue (10 == [components hour]);
@@ -105,7 +105,7 @@
 	
 	NSUInteger units = NSEraCalendarUnit | NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	[calendar setTimeZone: [NSTimeZone timeZoneWithName: @"UTC"]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	NSLog (@"date: %@ %f", date, [date timeIntervalSinceReferenceDate]);
 	
@@ -129,7 +129,7 @@
 	
 	NSUInteger units = NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit;
 	NSCalendar* calendar = [[[NSCalendar alloc] initWithCalendarIdentifier: NSGregorianCalendar] autorelease];
-	[calendar setTimeZone: [NSTimeZone timeZoneForSecondsFromGMT: 0]];
+	[calendar setTimeZone: [NSTimeZone timeZoneWithName: @"UTC"]];
 	NSDateComponents* components = [calendar components: units fromDate: date];
 	
 	MKCAssertTrue (12 == [components hour]);
