@@ -94,10 +94,10 @@
  * \page general_usage Using BaseTen framework
  *
  * \li \subpage overview
- * \li \subpage sql_views
  * \li \subpage baseten_assistant
  * \li \subpage getting_started
  * \li \subpage accessing_values
+ * \li \subpage sql_views
  * \li \subpage database_types
  * \li \subpage relationships
  * \li \subpage predicates
@@ -149,25 +149,6 @@
  */
 
 /**
- * \page sql_views SQL views
- *
- * Contents of SQL views may be manipulated using database objects provided that some conditions are met.
- * Unlike tables, views don't have primary keys but BaseTen still needs to be able to reference individual 
- * rows. If a view has a group of columns that can act as a primary key, the columns may be marked as a 
- * primary key with the assistant, after which the view may be enabled.
- *
- * Views also lack foreign keys. Despite this entities that correspond to views may have relationships
- * provided that a certain condition is met: the view needs to have the column or columns of an underlying
- * table that form a foreign key, and the columns' names need to match. In this case, relationships will 
- * be created between the view and the target table as well as the view and all the views that are based
- * on the target table and contain the columns the foreign key references to. This applies to the complete
- * view hierarchy.
- *
- * PostgreSQL allows INSERT and UPDATE queries to target views if rules have been created to handle them.
- * In this case, the view contents may be modified also with BaseTen.
- */
-
-/**
  * \page baseten_assistant BaseTen Assistant
  *
  * BaseTen Assistant is a simple database management application distributed with BaseTen framework. It has its own help that is available from within the application. 
@@ -194,7 +175,7 @@
  *
  * \latexonly
  * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
- * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, caption=A simple command line tool that uses BaseTen]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, caption=A simple command line tool that uses BaseTen]
  * #import <Foundation/Foundation.h>
  * #import <BaseTen/BaseTen.h>
  *
@@ -247,7 +228,7 @@
  * \ref BXDatabaseContext::initWithDatabaseURI: "-initWithDatabaseURI:". \ref BXDatabaseContext::init "-init" 
  * is also available but the context does require an URI before connecting.
  *
- * BXDatabaseContext requires the URI to be formatted as follows:
+ * BXDatabaseContext requires the URI to be formatted as follows:<br>
  * <tt>pgsql://username:password\@host/database_name</tt>. Currently, as PostgreSQL is the only supported 
  * database, only <tt>pgsql://</tt> URIs are allowed. In command line tools, all parameters are required 
  * except for the password, the need for which depends on the database configuration.
@@ -260,7 +241,7 @@
  * \section connecting_to_a_database Connecting to a database
  *
  * \latexonly 
- * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Connecting to a database]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Connecting to a database]
  * [ctx connectSync: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -279,17 +260,17 @@
  * \ref BXDatabaseContext::connect: "-connect:". In addition to attempting the connection asynchronously,
  * it also presents a number of panels to the user, if some required information is missing from the URI. 
  * The panels allow the user to specify their username, password and the database host making URIs
- * like <tt>pgsql:///database_name</tt> allowed. Additionally a \em kBXConnectionSetupAlertDidEndNotification
+ * like <tt>pgsql:///database_name</tt> allowed. Additionally a <em>kBXConnectionSetupAlertDidEndNotification</em>
  * will be posted when the user dismisses an alert panel, which is presented on failure.
  *
- * Since \em NULL is passed in place of an NSError double pointer, a BXException will be thrown on error.
+ * Since <em>NULL</em> is passed in place of an NSError double pointer, a BXException will be thrown on error.
  * See BXDatabaseContext's documentation for details on error handling.
  *
  *
  * \section getting_an_entity_and_a_predicate Getting a BXEntityDescription and an NSPredicate
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Getting a BXEntityDescription]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Getting a BXEntityDescription]
  * BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -313,7 +294,7 @@
  * \section performing_a_fetch Performing a fetch using the entity and the predicate
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Performing a fetch]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Performing a fetch]
  * NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -330,7 +311,7 @@
  * \section handling_the_results Handling the results
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, float=h, frame=single, title=Handling fetch results]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Handling fetch results]
  * for (BXDatabaseObject* object in result)
  * {
  *    NSLog (@"Object ID: %@ column: %@", 
@@ -346,7 +327,7 @@
  *}</code>
  * \endhtmlonly 
  *
- * Since BXDatabaseObject conforms to \em NSKeyValueObserving, methods -valueForKey: and 
+ * Since BXDatabaseObject conforms to <em>NSKeyValueObserving</em>, methods -valueForKey: and 
  * -setValue:forKey: are available. See \ref accessing_values for details.
  */
 
@@ -362,6 +343,27 @@
  * fetched objects. To support this, the column values may also be accessed using 
  * \ref BXDatabaseObject::primitiveValueForKey: "-primitiveValueForKey:". Similarly 
  * -setPrimitiveValue:forKey: may be used to set a column value.
+ *
+ * Currently handled data types are listed in \see database_types.
+ */
+
+/**
+ * \page sql_views SQL views
+ *
+ * Contents of SQL views may be manipulated using database objects provided that some conditions are met.
+ * Unlike tables, views don't have primary keys but BaseTen still needs to be able to reference individual 
+ * rows. If a view has a group of columns that can act as a primary key, the columns may be marked as a 
+ * primary key with the assistant, after which the view may be enabled.
+ *
+ * Views also lack foreign keys. Despite this entities that correspond to views may have relationships
+ * provided that a certain condition is met: the view needs to have the column or columns of an underlying
+ * table that form a foreign key, and the columns' names need to match. In this case, relationships will 
+ * be created between the view and the target table as well as the view and all the views that are based
+ * on the target table and contain the columns the foreign key references to. This applies to the complete
+ * view hierarchy.
+ *
+ * PostgreSQL allows INSERT and UPDATE queries to target views if rules have been created to handle them.
+ * In this case, the view contents may be modified also with BaseTen.
  */
 
 /**
@@ -510,11 +512,6 @@
  * timestamps as dates. PostgreSQL, on the other hand, uses Julian days (number of days since January 1, 4713 BCE with fraction, length of the year specified as 365.2425 
  * days) for date calculations, and most likely converts them to Gregorian calendar dates for presentation. Thus, your mileage may vary when calculating dates within 
  * the database.
- *
- *
- * \section uuid_handling The UUID type
- *
- * UUIDs are stored as NSStrings. The rationale is that the SyncServices framework does this, too, and the CFUUID type is rather complex.
  */
 
 /**
@@ -542,81 +539,17 @@
  *         <td>A helper table that has foreign keys referencing two other tables. The foreign key columns also need to form the table's primary key.</td>
  *     </tr>
  * </table>
- *     
- *
- * To reiterate, one-to-many is the simplest type of these three: a foreign key in one table referring another will be 
- * interpreted as such. Both of the tables need to be BaseTen enabled and BaseTen's cache tables need to be
- * up-to-date. Calling a database object's 
- * \ref BXDatabaseObject::valueForKey: "-valueForKey:" or 
- * \ref BXDatabaseObject::primitiveValueForKey: "-primitiveValueForKey:"
- * on the to-one side with the name of the target table will 
- * return the object on the other side of the reference. On the to-many side, -valueForKey: retrieves a 
- * collection of objects that reference the table in a foreign key. They key used is the other table's name with the
- * word “Set” appended.
- *
- * Consider the following example:
- * <code>CREATE TABLE person (
- *    id SERIAL PRIMARY KEY,
- *    firstname VARCHAR (255),
- *    surname VARCHAR (255)
- *);
- *
- *CREATE TABLE email (
- *    id SERIAL PRIMARY KEY,
- *    address VARCHAR (255),
- *    person_id INTEGER REFERENCES person (id)
- *);</code>
- *
- * Lets say we have two objects: \em aPerson and \em anEmail which have been fetched from the person and email
- * tables, respectively. <tt>[aPerson valueForKey: @"emailSet"]</tt> will now return a collection of \em email objects. 
- * <tt>[anEmail valueForKey: @"person"]</tt> will return a single \em person object.
- *
- * If we modify the previous example, we get a one-to-one relationship: 
- * <code>ALTER TABLE email ADD UNIQUE (person_id);</code> 
- * Now <tt>[aPerson valueForKey: @"email"]</tt> 
- * and <tt>[anEmail valueForKey: @"person"]</tt> will return a single object from the corresponding table.
- *
- * Many-to-many relationships are modeled with helper tables. The helper table needs to have columns to contain 
- * both tables' primary keys. It needs to be BaseTen enabled as well.
- *
- * Another example: 
- *<code>CREATE TABLE person (
- *    id SERIAL PRIMARY KEY,
- *    firstname VARCHAR (255),
- *    surname VARCHAR (255)
- *);
- *
- *CREATE TABLE title (
- *    id SERIAL PRIMARY KEY,
- *    name VARCHAR (255)
- *);
- *
- *CREATE TABLE person_title_rel (
- *    person_id INTEGER REFERENCES person (id),
- *    title_id INTEGER REFERENCES title (id),
- *    PRIMARY KEY (person_id, title_id)
- *);</code>
- *
- * Lets say \em aPerson has been fetched from the person table and \em aTitle from the title table. 
- * In this case, <tt>[aPerson valueForKey: @"titleSet"]</tt> will return a collection of title objects 
- * and <tt>[aTitle valueForKey: @"personSet"]</tt> a collection of person objects. Any two foreign keys 
- * in one table will be interpreted as a many-to-many relationship, if they also form the table's 
- * primary key. Objects from the helper table may be retrieved as with one-to-many relationships: 
- * <tt>[aPerson valueForKey: @"person_title_rel"]</tt>.
  * 
  *
  * \section relationship_naming Relationship naming
  *
- * \note The relationship names used before version 1.7 are still available. They won't be listed
- *       by BaseTen Assistant, though, and using them will call BXDeprecationWarning.
- *
  * Relationship names are determined from foreign key names. For one-to-one and one-to-many 
- * relationships, the foreign key's name should have the form \em name1__name2, where \em name1 is 
- * the relationship's name from the foreign key's side, and \em name2 is the inverse relationship's 
+ * relationships, the foreign key's name should have the form <em>name1__name2</em>, where <em>name1</em> is 
+ * the relationship's name from the foreign key's side, and <em>name2</em> is the inverse relationship's 
  * name. If the foreign key's name doesn't contain two consecutive underscores, a generated name is 
  * used for the inverse relationship. (Similarly, if the foreign key's name begins with two 
  * underscores, a generated name is used for the relationship. The generated name has the format 
- * \em schema_table_foreignkey.
+ * <em>schema_table_foreignkey</em>.
  *
  * Many-to-many relationships have the same name as the foreign key that references the target table.
  *
@@ -636,55 +569,140 @@
  *     <caption>Relationship names</caption>
  *     <tr>
  *         <th><strong>Relationship type</strong></th>
- *         <th><strong>Target relation kind</strong></th>
  *         <th><strong>Available names</strong></th>
  *     </tr>
  *     <tr>
- *         <td rowspan="2">One-to-many (inverse, from the foreign key's side)</td>
- *         <td>Table</td>
+ *         <td>One-to-many (inverse, from the foreign key's side)</td>
  *         <td><em>target</em>Set, first part of the foreign key's name</td>
  *     </tr>
  *     <tr>
- *         <td>View</td>
- *         <td><em>target</em>Set</td>
- *     </tr>
- *     <tr>
- *         <td rowspan="2">One-to-many (from the referenced side)</td>
- *         <td>Table</td>
+ *         <td>One-to-many (from the referenced side)</td>
  *         <td><em>target</em>, second part of the foreign key's name</td>
  *     </tr>
  *     <tr>
- *         <td>View</td>
- *         <td><em>target</em></td>
- *     </tr>
- *     <tr>
- *         <td rowspan="2">One-to-one (from the foreign key's side)</td>
- *         <td>Table</td>
+ *         <td>One-to-one (from the foreign key's side)</td>
  *         <td><em>target</em>, first part of the foreign key's name</td>
  *     </tr>
  *     <tr>
- *         <td>View</td>
- *         <td><em>target</em></td>
- *     </tr>
- *     <tr>
- *         <td rowspan="2">One-to-one (from the referenced side)</td>
- *         <td>Table</td>
+ *         <td>One-to-one (from the referenced side)</td>
  *         <td><em>target</em>, second part of the foreign key's name</td>
  *     </tr>
  *     <tr>
- *         <td>View</td>
- *         <td><em>target</em></td>
- *     </tr>
- *     <tr>
- *         <td rowspan="2">Many-to-many</td>
- *         <td>Table</td>
+ *         <td>Many-to-many</td>
  *         <td><em>target</em>Set, name of the foreign key that references the target table</td>
  *     </tr>
- *     <tr>
- *         <td>View</td>
- *         <td><em>target</em>Set</td>
- *     </tr>
  * </table>
+ *     
+ * \note The relationship names used before version 1.7 are still available. They won't be listed
+ *       by BaseTen Assistant, though, and using them will call BXDeprecationWarning.
+ *
+ *
+ * \section relationship_naming_example Relationship example
+ *
+ * Consider the following case:
+ * \latexonly
+ * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * CREATE TABLE person (
+ *     id SERIAL PRIMARY KEY,
+ *     firstname VARCHAR (255),
+ *     surname VARCHAR (255)
+ * );
+ *
+ * CREATE TABLE email (
+ *     id SERIAL PRIMARY KEY,
+ *     address VARCHAR (255),
+ *     person_id INTEGER REFERENCES person (id)
+ * );
+ * \end{lstlisting} 
+ * \endlatexonly
+ * \htmlonly
+ * <code>CREATE TABLE person (
+ *     id SERIAL PRIMARY KEY,
+ *     firstname VARCHAR (255),
+ *     surname VARCHAR (255)
+ * );
+ *
+ * CREATE TABLE email (
+ *     id SERIAL PRIMARY KEY,
+ *     address VARCHAR (255),
+ *     person_id INTEGER REFERENCES person (id)
+ * );</code>
+ * \endhtmlonly
+ *
+ * Lets say we have two objects: <em>aPerson</em> and <em>anEmail</em> which have been fetched from the person and email
+ * tables, respectively.<br>
+ * <tt>[aPerson valueForKey:\@"emailSet"]</tt> will now return a collection of <em>email</em> objects.<br>
+ * <tt>[anEmail valueForKey:\@"person"]</tt> will return a single <em>person</em> object.
+ *
+ * If we modify the previous example by adding an unique constraint, we get a one-to-one relationship: 
+ *
+ * \latexonly
+ * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * ALTER TABLE email ADD UNIQUE (person_id);
+ * \end{lstlisting} 
+ * \endlatexonly
+ * \htmlonly
+ * <code>ALTER TABLE email ADD UNIQUE (person_id);</code> 
+ * \endhtmlonly
+ *
+ * Now both of the following messages will return a single object from the corresponding table:<br>
+ * <tt>[aPerson valueForKey:\@"email"]</tt><br>
+ * <tt>[anEmail valueForKey:\@"person"]</tt>
+ *
+ * Many-to-many relationships are modeled with helper tables. The helper table needs to have columns to contain 
+ * both tables' primary keys. It needs to be BaseTen enabled as well.
+ *
+ * Another example:
+ * \latexonly
+ * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * CREATE TABLE person (
+ *     id SERIAL PRIMARY KEY,
+ *     firstname VARCHAR (255),
+ *     surname VARCHAR (255)
+ * );
+ *
+ * CREATE TABLE title (
+ *     id SERIAL PRIMARY KEY,
+ *     name VARCHAR (255)
+ * );
+ *
+ * CREATE TABLE person_title_rel (
+ *     person_id INTEGER REFERENCES person (id),
+ *     title_id INTEGER REFERENCES title (id),
+ *     PRIMARY KEY (person_id, title_id)
+ * );
+ * \end{lstlisting} 
+ * \endlatexonly
+ * \htmlonly
+ *<code>CREATE TABLE person (
+ *    id SERIAL PRIMARY KEY,
+ *    firstname VARCHAR (255),
+ *    surname VARCHAR (255)
+ *);
+ *
+ *CREATE TABLE title (
+ *    id SERIAL PRIMARY KEY,
+ *    name VARCHAR (255)
+ *);
+ *
+ *CREATE TABLE person_title_rel (
+ *    person_id INTEGER REFERENCES person (id),
+ *    title_id INTEGER REFERENCES title (id),
+ *    PRIMARY KEY (person_id, title_id)
+ *);</code>
+ * \endhtmlonly
+ *
+ * Lets say <em>aPerson</em> has been fetched from the person table and <em>aTitle</em> from the title table. 
+ * In this case,<br>
+ * <tt>[aPerson valueForKey:\@"titleSet"]</tt> will return a collection of title objects and <br>
+ * <tt>[aTitle valueForKey:\@"personSet"]</tt> a collection of person objects.<br>
+ * Any two foreign keys 
+ * in one table will be interpreted as a many-to-many relationship, if they also form the table's 
+ * primary key. Objects from the helper table may be retrieved as with one-to-many relationships:<br>
+ * <tt>[aPerson valueForKey:\@"person_title_rel"]</tt>.
  */
 
 /**
@@ -692,7 +710,7 @@
  *
  * Most types of predicates and expressions are converted to SQL and sent to the database server.
  * Others cause the returned object set to be filtered again on the client side. Specifically, the following
- * use cases work in this manner: The affected part of the predicate is replaced with \em true (or \em false, 
+ * use cases work in this manner: The affected part of the predicate is replaced with <em>true</em> (or <em>false</em>, 
  * if the part is inside an odd number of NOT predicates), and excess objects are removed from the result set 
  * after it has been received.
  *
@@ -731,9 +749,9 @@
  * entity changes will be posted to the relevant context's notification center. The notification object
  * will be a BXEntityDescription which corresponds to the table where the change happened. The names 
  * of the notifications are:
- * \li \em kBXInsertNotification on database \em INSERT
- * \li \em kBXUpdateNotification on database \em UPDATE
- * \li \em kBXDeleteNotification on database \em DELETE
+ * \li <em>kBXInsertNotification</em> on database <em>INSERT</em>
+ * \li <em>kBXUpdateNotification</em> on database <em>UPDATE</em>
+ * \li <em>kBXDeleteNotification</em> on database <em>DELETE</em>
  *
  * At the time the notifications are posted, database objects and self-updating collections will 
  * already have been updated.
@@ -763,7 +781,7 @@
  *     <li>Create a new nib file.</li>
  *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
  *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a valid database URI, “pgsql:///” at minimum.
+ *     <li>Enter a valid database URI, “pgsql:///<em>database_name</em>” at minimum.
  *         <ul>
  *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
  *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
@@ -773,7 +791,7 @@
  *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
  *     <li>Enter a table name into the field.
  *         <ul>
- *             <li>The schema field may be left empty, in which case \em public will be used.</li>
+ *             <li>The schema field may be left empty, in which case <em>public</em> will be used.</li>
  *             <li>Please note that the table needs to be enabled for change observing. This can be 
  *                 done using BaseTen Setup.</li>
  *         </ul>
@@ -828,8 +846,8 @@
  * BaseTen has several subprojects, namely BaseTenAppKit and a plug-in for Interface Builder 3. The default target in 
  * BaseTen.xcodeproj, <em>BaseTen + GC</em>, builds them as well; the plug-in and the AppKit framework will appear in the 
  * subprojects' build folders, which are set to the default folder. The built files will be either in 
- * \em build folders in the subprojects' folders or in the user-specified build folder. The documentation will be
- * in the \em Documentation folder.
+ * <em>build</em> folders in the subprojects' folders or in the user-specified build folder. The documentation will be
+ * in the <em>Documentation</em> folder.
  *
  *
  * \section building_for_the_release_dmg Building for the release disk image
@@ -838,9 +856,9 @@
  * the process. To create the DMG, follow these steps:
  * <ol>
  *     <li>From the checked-out directory, <tt>cd ReleaseDMG</tt>.</li>
- *     <li>The default location for the built files is <em>BaseTen-dmg-build</em> in the current directory. To set a custom path, edit the \em SYMROOT variable in <em>create_release_dmg.sh</em>.</li>
+ *     <li>The default location for the built files is <em>BaseTen-dmg-build</em> in the current directory. To set a custom path, edit the <em>SYMROOT</em> variable in <em>create_release_dmg.sh</em>.</li>
  *     <li>
- *         Do <tt>./create_release_dmg.sh</tt>. The built DMG will appear in the \em ReleaseDMG folder.
+ *         Do <tt>./create_release_dmg.sh</tt>. The built DMG will appear in the <em>ReleaseDMG</em> folder.
  *         <ul>
  *             <li>If you don't have LaTeX installed, do <tt>./create_release_dmg.sh -&ndash;without-latex</tt> instead. The PDF manual won't be included on the DMG, though.</li>
  *         </ul>
@@ -892,10 +910,10 @@
  * \section sql_enabling Enabling relations and updating relationship cache using SQL functions
  *
  * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
- * The functions are <em>baseten.enable</em> and <em>baseten.disable</em> and they take an \em oid as an argument.
+ * The functions are <em>baseten.enable</em> and <em>baseten.disable</em> and they take an <em>oid</em> as an argument.
  *
- * Views' primary keys are stored in <em>baseten.view_pkey</em>. The table has three columns: \em nspname, 
- * \em relname and \em attname, which correspond to the view's schema name, the view's name and each primary 
+ * Views' primary keys are stored in <em>baseten.view_pkey</em>. The table has three columns: <em>nspname</em>, 
+ * <em>relname</em> and <em>attname</em>, which correspond to the view's schema name, the view's name and each primary 
  * key column's name respectively. To enable a view, its primary key needs to be specified first.
  *
  * Relationships and view hierarchies among other things are stored in automatically-generated tables. 
@@ -923,7 +941,7 @@
  *     <li>Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.</li>
  *     <li>Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so <tt>./configure &ndash;-with-bonjour &ndash;-with-openssl && make && sudo make install</tt> probably gives the expected results.</li>
  *     <li>It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.</li>
- *     <li>Make \em mysql the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
+ *     <li>Make <em>mysql</em> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
  *         <tt>
  *             sudo chown -R mysql:mysql /usr/local/pgsql\n
  *             sudo -u mysql -s
@@ -938,7 +956,7 @@
  *     <li>Create a superuser account for yourself. This way, you don't have to sudo to mysql to create new databases and users.\n
  *         <tt>/usr/local/pgsql/bin/createuser <your-short-user-name></tt>
  *     </li>
- *     <li>Exit the \em mysql sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
+ *     <li>Exit the <em>mysql</em> sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
  *         <tt>
  *             exit\n
  *             /usr/local/pgsql/bin/createdb <your-short-user-name>
