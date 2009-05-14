@@ -29,6 +29,13 @@
 #import "BXDeprecationWarning.h"
 
 
+/**
+ * \brief A debugging helper.
+ *
+ * This function provides a convenient breakpoint. It will be called when
+ * deprecated functionality is invoked, presently when relationships with
+ * deprecated names are used.
+ */
 void
 BXDeprecationWarning ()
 {
