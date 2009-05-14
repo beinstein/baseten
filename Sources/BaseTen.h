@@ -251,7 +251,7 @@
  * \section connecting_to_a_database Connecting to a database
  *
  * \latexonly 
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Connecting to a database]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
  * [ctx connectSync: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -280,7 +280,7 @@
  * \section getting_an_entity_and_a_predicate Getting a BXEntityDescription and an NSPredicate
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Getting a BXEntityDescription]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
  * BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -304,7 +304,7 @@
  * \section performing_a_fetch Performing a fetch using the entity and the predicate
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Performing a fetch]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
  * NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -321,7 +321,7 @@
  * \section handling_the_results Handling the results
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Handling fetch results]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
  * for (BXDatabaseObject* object in result)
  * {
  *    NSLog (@"Object ID: %@ column: %@", 
@@ -344,7 +344,7 @@
  * \section creating_objects Creating a new object
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Creating a new object]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
  * NSDictionary* values = [NSDictionary dictionaryWithObject: @"newValue" forKey: @"column"];
  * BXDatabaseObject* newObject = [ctx createObjectForEntity: entity 
  *                                 withFieldValues: values error: NULL];
@@ -633,7 +633,7 @@
  * Consider the following case:
  * \latexonly
  * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, caption=Tables with a one-to-many relationship]
  * CREATE TABLE person (
  *     id SERIAL PRIMARY KEY,
  *     firstname VARCHAR (255),
@@ -686,7 +686,7 @@
  *
  * Another example:
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, caption=Tables with a many-to-many relationship]
  * CREATE TABLE person (
  *     id SERIAL PRIMARY KEY,
  *     firstname VARCHAR (255),
