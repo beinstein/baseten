@@ -171,7 +171,7 @@
  * Here is a small walkthrough with sample code. More examples are available in the BaseTen Subversion repository and at http://basetenframework.org.
  *
  * \latexonly
- * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}, frame=single, framesep=0pt, framextopmargin=2pt, framexbottommargin=2pt, fontadjust, columns=fullflexible}
+ * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}, frame=single, framesep=0pt, framextopmargin=2pt, framexbottommargin=2pt, fontadjust, columns=fullflexible, captionpos=b}
  * \begin{lstlisting}[caption=A simple command line tool that uses BaseTen]
  * #import <Foundation/Foundation.h>
  * #import <BaseTen/BaseTen.h>
@@ -628,7 +628,7 @@
  *
  * Consider the following case:
  * \latexonly
- * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}, frame=single, framesep=0pt, framextopmargin=2pt, framexbottommargin=2pt, fontadjust, columns=fullflexible}
+ * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}, frame=single, framesep=0pt, framextopmargin=2pt, framexbottommargin=2pt, fontadjust, columns=fullflexible, captionpos=b}
  * \begin{lstlisting}[caption=Tables with a one-to-many relationship]
  * CREATE TABLE person (
  *     id SERIAL PRIMARY KEY,
