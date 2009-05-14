@@ -75,7 +75,7 @@ static inline const char* LastPathComponent (const char* path)
 	return retval;
 }
 
-static char* LibraryName_a (const void* addr)
+static char* CopyLibraryName (const void* addr)
 {
 	Dl_info info = {};
 	char* retval = NULL;
@@ -84,7 +84,7 @@ static char* LibraryName_a (const void* addr)
 	return retval;
 }
 
-static char* ExecutableName_a ()
+static char* CopyExecutableName ()
 {
 	uint32_t pathLength = 0;
 	_NSGetExecutablePath (NULL, &pathLength);
@@ -116,14 +116,14 @@ void BXLog (const char* fileName, const char* functionName, void* functionAddres
 void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	char* executable = ExecutableName_a ();
-	char* library = LibraryName_a (functionAddress);
+	char* executable = CopyExecutableName ();
+	char* library = CopyLibraryName (functionAddress);
 	const char* file = LastPathComponent (fileName);
 	
 	NSString* date = (id) CFRetain ([[NSDate date] descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S.%F" timeZone: nil locale: nil]);
 	NSString* message = (id) CFRetain ([[[NSString alloc] initWithFormat: messageFmt arguments: args] autorelease]);
 		
-	char isMain = ([NSThread isMainThread] ? 'm' : 's');
+	const char isMain = ([NSThread isMainThread] ? 'm' : 's');
 	fprintf (stderr, "%23s  %s (%s) [%d]  %s:%d  %s [%p%c] \t%8s %s\n", 
 		[date UTF8String], executable, library ?: "???", getpid (), file, line, functionName, [NSThread currentThread], isMain, LogLevel (level), [message UTF8String]);
 	

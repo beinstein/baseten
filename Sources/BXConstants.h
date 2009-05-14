@@ -31,6 +31,12 @@
 #import <BaseTen/BXExport.h>
 
 
+/**
+ * \file
+ * Various constants used by BaseTen
+ */
+
+
 BX_EXPORT NSString* const kBXNoDatabaseURIException;
 BX_EXPORT NSString* const kBXUnsupportedDatabaseException;
 BX_EXPORT NSString* const kBXExceptionUnhandledError;
@@ -144,4 +150,12 @@ enum BXDatabaseObjectKeyType
 	kBXDatabaseObjectPrimaryKey,
 	kBXDatabaseObjectKnownKey,
 	kBXDatabaseObjectForeignKey
+};
+
+/** \brief Property kind. */
+enum BXPropertyKind
+{
+	kBXPropertyNoKind = 0, /**< Kind is unspecified. */
+	kBXPropertyKindAttribute, /**< The property is an attribute. */
+	kBXPropertyKindRelationship /**< The property is a relationship. */
 };

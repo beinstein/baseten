@@ -32,6 +32,11 @@
 #import <mach-o/dyld.h>
 #import <BaseTen/BXExport.h>
 
+/**
+ * \file
+ * Logging and assertion functions used by BaseTen.
+ */
+
 
 #define BX_LOG_ARGS __BASE_FILE__, __PRETTY_FUNCTION__, __builtin_return_address(0), __LINE__
 
@@ -66,22 +71,39 @@
 #define ExpectCR( X, RETVAL ) ExpectR( X, RETVAL )
 
 
+/**
+ * \brief
+ * Logging levels used by BaseTen.
+ */
 enum BXLogLevel
 {
-	kBXLogLevelOff = 0,
-	kBXLogLevelFatal,
-	kBXLogLevelError,
-	kBXLogLevelWarning,
-	kBXLogLevelInfo,
-	kBXLogLevelDebug
+	kBXLogLevelOff = 0, /**< No logging */
+	kBXLogLevelFatal,   /**< Fatal errors */
+	kBXLogLevelError,   /**< Errors */
+	kBXLogLevelWarning, /**< Warnings */
+	kBXLogLevelInfo,    /**< Information */
+	kBXLogLevelDebug    /**< Debugging information */
 };
 
 //Do not use outside this file in case we decide to change the implementation.
 BX_EXPORT enum BXLogLevel BXLogLevel;
 
 
+/**
+ * \brief
+ * Set the logging level
+ *
+ * \warning This function is not thread-safe.
+ */
 BX_EXPORT void BXSetLogLevel (enum BXLogLevel level);
 BX_EXPORT void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...);
 BX_EXPORT void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args);
 
+/**
+ * \brief A debugging helper.
+ *
+ * This function provides a convenient breakpoint. It will be called when
+ * an assertion fails. The reason might be a bug in either BaseTen or in
+ * user code.
+ */
 BX_EXPORT void BXAssertionDebug ();

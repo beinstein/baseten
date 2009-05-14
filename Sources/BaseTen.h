@@ -40,14 +40,11 @@
 /*
  * Helpful breakpoints:
  *
- * BXDeprecationWarning
  * BXHandleError2
- * BXAssertionDebug
  * bx_error_during_rollback
  * bx_error_during_clear_notification
  * bx_test_failed
  * pgts_unrecognized_selector
- *
  */
 
 /**
@@ -624,7 +621,7 @@
  * </table>
  *     
  * \note The relationship names used before version 1.7 are still available. They won't be listed
- *       by BaseTen Assistant, though, and using them will call BXDeprecationWarning.
+ *       by BaseTen Assistant, though, and using them will call \ref BXDeprecationWarning.
  *
  *
  * \section relationship_naming_example Relationship example
@@ -991,12 +988,12 @@
  *             -l /usr/local/pgsql/data/pg.log start
  *         </tt>
  *     <li>Create a superuser account for yourself. This way, you don't have to sudo to mysql to create new databases and users.\n
- *         <tt>/usr/local/pgsql/bin/createuser <your-short-user-name></tt>
+ *         <tt>/usr/local/pgsql/bin/createuser <em>your-short-user-name</em></tt>
  *     </li>
  *     <li>Exit the <em>mysql</em> sudo and create a database. If you create a database with your short user name, psql will connect to it by default.\n
  *         <tt>
  *             exit\n
- *             /usr/local/pgsql/bin/createdb <your-short-user-name>
+ *             /usr/local/pgsql/bin/createdb <em>your-short-user-name</em>
  *         </tt>
  *     </li>
  * </ol>

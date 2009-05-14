@@ -46,15 +46,6 @@ enum BXPropertyFlag
 inline BXPropertyFlag operator |= (BXPropertyFlag x, BXPropertyFlag y) { return static_cast <BXPropertyFlag> (x | y); }
 inline BXPropertyFlag operator &= (BXPropertyFlag x, BXPropertyFlag y) { return static_cast <BXPropertyFlag> (x & y); }
 #endif 
-	
-
-/** \brief Property kind. */
-enum BXPropertyKind
-{
-	kBXPropertyNoKind = 0, /**< Kind is unspecified. */
-	kBXPropertyKindAttribute, /**< The property is an attribute. */
-	kBXPropertyKindRelationship /**< The property is a relationship. */
-};
 
 
 @interface BXPropertyDescription : BXAbstractDescription <NSCopying> //, NSCoding>
@@ -62,7 +53,6 @@ enum BXPropertyKind
     BXEntityDescription*  mEntity; //Weak
 	enum BXPropertyFlag   mFlags;
 }
-
 - (BXEntityDescription *) entity;
 - (BOOL) isOptional;
 - (enum BXPropertyKind) propertyKind;

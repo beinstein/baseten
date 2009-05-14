@@ -28,6 +28,11 @@
 
 #import "BXDeprecationWarning.h"
 
+/** 
+ * \file 
+ * This file contains only one function, BXDeprecationWarning.
+ */
+
 
 /**
  * \brief A debugging helper.
