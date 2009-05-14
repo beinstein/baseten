@@ -35,7 +35,6 @@
 #import "BXAttributeDescription.h"
 #import "BXDatabaseObject.h"
 #import "BXDatabaseObjectPrivate.h"
-//#import "BXAttributeDescriptionPrivate.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
 #import "BXURLEncoding.h"
@@ -45,9 +44,6 @@
 /**
  * \brief A unique identifier for a database object.
  *
- * This class is not thread-safe, i.e. 
- * if methods of a BXDatabaseObjectID instance will be called from 
- * different threads the result is undefined.
  * \ingroup baseten
  */
 @implementation BXDatabaseObjectID

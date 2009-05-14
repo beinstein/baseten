@@ -175,8 +175,8 @@
  * Here is a small walkthrough with sample code. More examples are available in the BaseTen Subversion repository and at http://basetenframework.org.
  *
  * \latexonly
- * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, caption=A simple command line tool that uses BaseTen]
+ * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}, frame=single, framesep=0pt, framextopmargin=2pt, framexbottommargin=2pt, fontadjust, columns=fullflexible}
+ * \begin{lstlisting}[caption=A simple command line tool that uses BaseTen]
  * #import <Foundation/Foundation.h>
  * #import <BaseTen/BaseTen.h>
  *
@@ -251,7 +251,7 @@
  * \section connecting_to_a_database Connecting to a database
  *
  * \latexonly 
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}
  * [ctx connectSync: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -280,7 +280,7 @@
  * \section getting_an_entity_and_a_predicate Getting a BXEntityDescription and an NSPredicate
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}
  * BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -304,7 +304,7 @@
  * \section performing_a_fetch Performing a fetch using the entity and the predicate
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}
  * NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  * \end{lstlisting}
  * \endlatexonly
@@ -321,7 +321,7 @@
  * \section handling_the_results Handling the results
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}
  * for (BXDatabaseObject* object in result)
  * {
  *    NSLog (@"Object ID: %@ column: %@", 
@@ -344,7 +344,7 @@
  * \section creating_objects Creating a new object
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}
  * NSDictionary* values = [NSDictionary dictionaryWithObject: @"newValue" forKey: @"column"];
  * BXDatabaseObject* newObject = [ctx createObjectForEntity: entity 
  *                                 withFieldValues: values error: NULL];
@@ -632,8 +632,8 @@
  *
  * Consider the following case:
  * \latexonly
- * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, caption=Tables with a one-to-many relationship]
+ * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}, frame=single, framesep=0pt, framextopmargin=2pt, framexbottommargin=2pt, fontadjust, columns=fullflexible}
+ * \begin{lstlisting}[caption=Tables with a one-to-many relationship]
  * CREATE TABLE person (
  *     id SERIAL PRIMARY KEY,
  *     firstname VARCHAR (255),
@@ -669,7 +669,7 @@
  * If we modify the previous example by adding an unique constraint, we get a one-to-one relationship: 
  *
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
+ * \begin{lstlisting}
  * ALTER TABLE email ADD UNIQUE (person_id);
  * \end{lstlisting} 
  * \endlatexonly
@@ -686,7 +686,7 @@
  *
  * Another example:
  * \latexonly
- * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, caption=Tables with a many-to-many relationship]
+ * \begin{lstlisting}[caption=Tables with a many-to-many relationship]
  * CREATE TABLE person (
  *     id SERIAL PRIMARY KEY,
  *     firstname VARCHAR (255),
@@ -832,7 +832,22 @@
 
 /**
  * \page thread_safety Thread safety
- * FIXME write me
+ *
+ * For its mostly used parts, BaseTen isn't thread safe. In particular, BXDatabaseContext needs to be used from the same thread 
+ * in which its connection methods have been called. This is because it adds a run loop source to the thread's run loop.
+ *
+ * The documented methods of the following classes are thread safe:
+ *
+ * \li BXEntityDescription
+ * \li BXAttributeDescription
+ * \li BXRelationshipDescription
+ * \li BXDatabaseObjectID
+ *
+ * Additionally, BXDatabaseObject's method -cachedValueForKey: is thread safe. As a result, BXDatabaseObject's values may be 
+ * accessed from multiple threads as soon as they have been fetched.
+ *
+ * One possibility to make use of multiple threads is to create a database context for each thread, but 
+ * see \ref multiple_contexts "the next chapter".
  */
 
 /**
