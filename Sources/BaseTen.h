@@ -40,6 +40,7 @@
 /*
  * Helpful breakpoints:
  *
+ * BXDeprecationWarning
  * BXHandleError2
  * BXAssertionDebug
  * bx_error_during_rollback
@@ -93,13 +94,13 @@
  * \page general_usage Using BaseTen framework
  *
  * \li \subpage overview
- * \li \subpage predicates
  * \li \subpage sql_views
  * \li \subpage baseten_assistant
  * \li \subpage getting_started
  * \li \subpage accessing_values
  * \li \subpage database_types
  * \li \subpage relationships
+ * \li \subpage predicates
  * \li \subpage tracking_changes
  * \li \subpage using_appkit_classes
  * \li \subpage multiple_contexts
@@ -110,11 +111,6 @@
 
 /**
  * \page overview Overview of BaseTen
- *
- * \image html BaseTen-object-relationships.png "Relationships between BaseTen's objects"
- * \image html BaseTen-class-hierarchy.png "BaseTen class hierarchy"
- * \image latex BaseTen-object-relationships.pdf "Relationships between BaseTen's objects" width=\textwidth
- * \image latex BaseTen-class-hierarchy.pdf "BaseTen class hierarchy" width=\textwidth 
  *
  * BaseTen aims to provide a Core Data -like API for handling a database. A database connection is managed
  * by an instance of BXDatabaseContext, which also fetches rows from the database. Rows are represented
@@ -145,35 +141,11 @@
  *
  * Since BaseTen relies on database introspection, SQL may be used to define the database schema.
  * Another option is to create a data model using Xcode's data modeler and import it using BaseTen Assistant.
- */
-
-/**
- * \page predicates Predicates
  *
- * Most types of predicates and expressions are converted to SQL and sent to the database server.
- * Others cause the returned object set to be filtered again on the client side. Specifically, the following
- * use cases work in this manner: The affected part of the predicate is replaced with \em true (or \em false, 
- * if the part is inside an odd number of NOT predicates), and excess objects are removed from the result set 
- * after it has been received.
- *
- * <ul>
- *     <li>Use of NSDiacriticInsensitivePredicateOption</li>
- *     <li>Use of NSCustomSelectorPredicateOperatorType</li>
- *     <li>Use of NSSubqueryExpressionType</li>
- *     <li>Use of NSUnionSetExpressionType</li>
- *     <li>Use of NSIntersectSetExpressionType</li>
- *     <li>Use of NSMinusSetExpressionType</li>
- *     <li>A modifier other than NSDirectPredicateModifier in combination with any of the following:
- *         <ul>
- *             <li>NSBeginsWithPredicateOperatorType</li>
- *             <li>NSEndsWithPredicateOperatorType</li>
- *             <li>NSMatchesPredicateOperatorType</li>
- *             <li>NSLikePredicateOperatorType</li>
- *             <li>NSContainsPredicateOperatorType</li>
- *             <li>NSInPredicateOperatorType</li>
- *         </ul>
- *     </li>
- * </ul>
+ * \image html BaseTen-object-relationships.png "Relationships between BaseTen's objects"
+ * \image html BaseTen-class-hierarchy.png "BaseTen class hierarchy"
+ * \image latex BaseTen-object-relationships.pdf "Relationships between BaseTen's objects" width=\textwidth
+ * \image latex BaseTen-class-hierarchy.pdf "BaseTen class hierarchy" width=\textwidth 
  */
 
 /**
@@ -212,13 +184,13 @@
  *
  * Typically accessing a database consists roughly of the following steps:
  * <ul>
- *     <li>\subpage creating_a_database_context "Creating an instance of BXDatabaseContext"</li>
- *     <li>\subpage connecting_to_a_database "Connecting to a database"</li>
- *     <li>\subpage getting_an_entity_and_a_predicate "Getting an entity description from the context and possibly creating an NSPredicate for reducing the number of fetched objects"</li>
- *     <li>\subpage performing_a_fetch "Performing a fetch using the entity and the predicate"</li>
- *     <li>\subpage handling_the_results "Handling the results"</li>
+ *     <li>\ref creating_a_database_context "Creating an instance of BXDatabaseContext"</li>
+ *     <li>\ref connecting_to_a_database "Connecting to a database"</li>
+ *     <li>\ref getting_an_entity_and_a_predicate "Getting an entity description from the context and possibly creating an NSPredicate for reducing the number of fetched objects"</li>
+ *     <li>\ref performing_a_fetch "Performing a fetch using the entity and the predicate"</li>
+ *     <li>\ref handling_the_results "Handling the results"</li>
  * </ul>
- * Here is a small walkthrough with sample code.
+ * Here is a small walkthrough with sample code. More examples are available at http://basetenframework.org and the BaseTen Subversion repository.
  *
  * \latexonly
  * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
@@ -390,8 +362,6 @@
  * fetched objects. To support this, the column values may also be accessed using 
  * \ref BXDatabaseObject::primitiveValueForKey: "-primitiveValueForKey:". Similarly 
  * -setPrimitiveValue:forKey: may be used to set a column value.
- *
- * Currently handled types are listed in \ref database_types.
  */
 
 /**
@@ -411,23 +381,23 @@
  *         <td>(A private class)</td>
  *     </tr>
  *     <tr>
+ *         <td>bigint, bigserial</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
  *         <td>bit</td>
  *         <td>NSData</td>
  *     </tr>
  *     <tr>
- *         <td>bool</td>
+ *         <td>boolean</td>
  *         <td>NSNumber</td>
  *     </tr>
- *     <tr>
- *         <td>bpchar</td>
- *         <td>NSString</td>
- *     </tr> 
  *     <tr>
  *         <td>bytea</td>
  *         <td>NSData</td>
  *     </tr>
  *     <tr>
- *         <td>char</td>
+ *         <td>char, bpchar</td>
  *         <td>NSString</td>
  *     </tr>
  *     <tr>
@@ -435,15 +405,11 @@
  *         <td>NSDate</td>
  *     </tr>
  *     <tr>
- *         <td>float4</td>
- *         <td>NSNumber</td>
+ *         <td>decimal, numeric</td>
+ *         <td>NSDecimalNumber</td>
  *     </tr>
  *     <tr>
- *         <td>float8</td>
- *         <td>NSNumber</td>
- *     </tr>
- *     <tr>
- *         <td>int2</td>
+ *         <td>double precision</td>
  *         <td>NSNumber</td>
  *     </tr>
  *     <tr>
@@ -451,20 +417,12 @@
  *         <td>NSArray of NSNumbers</td>
  *     </tr> 
  *     <tr>
- *         <td>int4</td>
- *         <td>NSNumber</td>
- *     </tr>
- *     <tr>
- *         <td>int8</td>
+ *         <td>integer, serial</td>
  *         <td>NSNumber</td>
  *     </tr>
  *     <tr>
  *         <td>name</td>
  *         <td>NSString</td>
- *     </tr>
- *     <tr>
- *         <td>numeric</td>
- *         <td>NSDecimalNumber</td>
  *     </tr>
  *     <tr>
  *         <td>oid</td>
@@ -475,6 +433,14 @@
  *         <td>NSValue</td>
  *     </tr>
  *     <tr>
+ *         <td>real</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
+ *         <td>smallint</td>
+ *         <td>NSNumber</td>
+ *     </tr>
+ *     <tr>
  *         <td>text</td>
  *         <td>NSString</td>
  *     </tr>
@@ -483,7 +449,7 @@
  *         <td>NSDate</td>
  *     </tr>
  *     <tr>
- *         <td>timetz</td>
+ *         <td>time with time zone</td>
  *         <td>NSDate</td>
  *     </tr>
  *     <tr>
@@ -491,7 +457,7 @@
  *         <td>NSDate</td>
  *     </tr>
  *     <tr>
- *         <td>timestamptz</td>
+ *         <td>timestamp with time zone</td>
  *         <td>NSDate</td>
  *     </tr>
  *     <tr>
@@ -719,6 +685,35 @@
  *         <td><em>target</em>Set</td>
  *     </tr>
  * </table>
+ */
+
+/**
+ * \page predicates Predicates
+ *
+ * Most types of predicates and expressions are converted to SQL and sent to the database server.
+ * Others cause the returned object set to be filtered again on the client side. Specifically, the following
+ * use cases work in this manner: The affected part of the predicate is replaced with \em true (or \em false, 
+ * if the part is inside an odd number of NOT predicates), and excess objects are removed from the result set 
+ * after it has been received.
+ *
+ * <ul>
+ *     <li>Use of NSDiacriticInsensitivePredicateOption</li>
+ *     <li>Use of NSCustomSelectorPredicateOperatorType</li>
+ *     <li>Use of NSSubqueryExpressionType</li>
+ *     <li>Use of NSUnionSetExpressionType</li>
+ *     <li>Use of NSIntersectSetExpressionType</li>
+ *     <li>Use of NSMinusSetExpressionType</li>
+ *     <li>A modifier other than NSDirectPredicateModifier in combination with any of the following:
+ *         <ul>
+ *             <li>NSBeginsWithPredicateOperatorType</li>
+ *             <li>NSEndsWithPredicateOperatorType</li>
+ *             <li>NSMatchesPredicateOperatorType</li>
+ *             <li>NSLikePredicateOperatorType</li>
+ *             <li>NSContainsPredicateOperatorType</li>
+ *             <li>NSInPredicateOperatorType</li>
+ *         </ul>
+ *     </li>
+ * </ul>
  */
 
 /**
