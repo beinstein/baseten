@@ -132,7 +132,7 @@ function build
 }
 
 
-echo -n "Checking whether to build PostgreSQL for architecture $my_architecture… "
+echo -n "Checking whether to build PostgreSQL for architecture $my_architecture... "
 if [ ! -e "$my_build_dir"/"$my_architecture"/lib/libpq.a ] || \
    [ ! -e "$my_build_dir"/"$my_architecture"/bin/psql ]
 then

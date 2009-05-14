@@ -27,7 +27,7 @@ function extract
 }
 
 
-echo -n "Checking whether to build OpenSSL for architecture arm… "
+echo -n "Checking whether to build OpenSSL for architecture arm... "
 if [ ! -e "$openssl_root"/libssl.a ] || \
    [ ! -e "$openssl_root"/libcrypto.a ]
 then
