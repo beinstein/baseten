@@ -249,8 +249,8 @@
  *
  * BXDatabaseContext requires the URI to be formatted as follows:
  * <tt>pgsql://username:password\@host/database_name</tt>. Currently, as PostgreSQL is the only supported 
- * database, only <tt>pgsql://</tt> URIs are allowed. All parameters are required except for the password,
- * the need for which depends on the database configuration.
+ * database, only <tt>pgsql://</tt> URIs are allowed. In command line tools, all parameters are required 
+ * except for the password, the need for which depends on the database configuration.
  *
  * Various methods in BXDatabaseContext take a double pointer to an NSError object as a parameter. if the 
  * called method fails, the NSError will be set on return. If the parameter is NULL, the default error
@@ -743,7 +743,8 @@
  * \page using_appkit_classes Using BaseTenAppKit
  *
  * When BaseTenAppKit is linked to an application, BXDatabaseContext gains some additional capabilities. If given
- * a partial database URI, it will present a number of connection panels when -connect: is called.
+ * a partial database URI, it will present a number of connection panels when 
+ * \ref BXDatabaseContext::connect: "-connect:" is called.
  *
  * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
  * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
