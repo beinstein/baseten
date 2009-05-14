@@ -103,10 +103,10 @@
  * \li \subpage predicates
  * \li \subpage tracking_changes
  * \li \subpage using_appkit_classes
+ * \li \subpage thread_safety
  * \li \subpage multiple_contexts
  * \li \subpage linking_to_baseten
  * \li \subpage building_baseten
- * \li \subpage limitations
  */ 
 
 /**
@@ -170,8 +170,9 @@
  *     <li>\ref getting_an_entity_and_a_predicate "Getting an entity description from the context and possibly creating an NSPredicate for reducing the number of fetched objects"</li>
  *     <li>\ref performing_a_fetch "Performing a fetch using the entity and the predicate"</li>
  *     <li>\ref handling_the_results "Handling the results"</li>
+ *     <li>\ref creating_objects "Creating new objects"</li>
  * </ul>
- * Here is a small walkthrough with sample code. More examples are available at http://basetenframework.org and the BaseTen Subversion repository.
+ * Here is a small walkthrough with sample code. More examples are available in the BaseTen Subversion repository and at http://basetenframework.org.
  *
  * \latexonly
  * \lstset{language=[Objective]C, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
@@ -193,6 +194,11 @@
  *         NSLog (@"Object ID: %@ column: %@", 
  *                [[object objectID] URIRepresentation], [object valueForKey: @"column"]);
  *     }
+ *
+ *     NSDictionary* values = [NSDictionary dictionaryWithObject: @"newValue" forKey: @"column"];
+ *     BXDatabaseObject* newObject = [ctx createObjectForEntity: entity 
+ *                                     withFieldValues: values error: NULL];
+ *     NSLog (@"new object: %@", newObject);
  *
  *     return 0;
  * }
@@ -216,6 +222,10 @@
  *         NSLog (@"Object ID: %@ column: %@", 
  *                [[object objectID] URIRepresentation], [object valueForKey: @"column"]);
  *     }
+ *
+ *     NSDictionary* values = [NSDictionary dictionaryWithObject: @"newValue" forKey: @"column"];
+ *     BXDatabaseObject* newObject = [ctx createObjectForEntity: entity withFieldValues: values error: NULL];
+ *     NSLog (@"new object: %@", newObject);
  *
  *     return 0;
  * }</code>
@@ -260,7 +270,7 @@
  * \ref BXDatabaseContext::connect: "-connect:". In addition to attempting the connection asynchronously,
  * it also presents a number of panels to the user, if some required information is missing from the URI. 
  * The panels allow the user to specify their username, password and the database host making URIs
- * like <tt>pgsql:///database_name</tt> allowed. Additionally a <em>kBXConnectionSetupAlertDidEndNotification</em>
+ * like <tt>pgsql:///<em>database_name</em></tt> allowed. Additionally a <em>kBXConnectionSetupAlertDidEndNotification</em>
  * will be posted when the user dismisses an alert panel, which is presented on failure.
  *
  * Since <em>NULL</em> is passed in place of an NSError double pointer, a BXException will be thrown on error.
@@ -329,6 +339,27 @@
  *
  * Since BXDatabaseObject conforms to <em>NSKeyValueObserving</em>, methods -valueForKey: and 
  * -setValue:forKey: are available. See \ref accessing_values for details.
+ *
+ *
+ * \section creating_objects Creating a new object
+ *
+ * \latexonly
+ * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single, title=Creating a new object]
+ * NSDictionary* values = [NSDictionary dictionaryWithObject: @"newValue" forKey: @"column"];
+ * BXDatabaseObject* newObject = [ctx createObjectForEntity: entity 
+ *                                 withFieldValues: values error: NULL];
+ * NSLog (@"new object: %@", newObject);
+ * \end{lstlisting}
+ * \endlatexonly
+ * \htmlonly 
+ * <code>NSDictionary* values = [NSDictionary dictionaryWithObject: @"newValue" forKey: @"column"];
+ * BXDatabaseObject* newObject = [ctx createObjectForEntity: entity withFieldValues: values error: NULL];
+ * NSLog (@"new object: %@", newObject);</code>
+ * \endhtmlonly
+ *
+ * New rows are inserted with BXDatabaseContext's method -createObjectForEntity:withFieldValues:error:.
+ * The values dictionary may contain initial values for both attributes and to-one relationships in
+ * case the target entity contains the foreign key.
  */
 
 /**
@@ -344,7 +375,7 @@
  * \ref BXDatabaseObject::primitiveValueForKey: "-primitiveValueForKey:". Similarly 
  * -setPrimitiveValue:forKey: may be used to set a column value.
  *
- * Currently handled data types are listed in \see database_types.
+ * Currently handled data types are listed in \ref database_types.
  */
 
 /**
@@ -490,9 +521,6 @@
  *
  * \section date_handling Date and time types
  *
- * \note In versions earlier than 1.7, date handling depended on several factors, such as the current time zone and the server's time zone. This is no longer the case. Also, all 
- *       date and time types are currently returned as NSDate, not NSCalendarDate.
- *
  * Cocoa's and Core Foundation's date classes store the date as seconds from a reference date, 2001-01-01 00:00:00 UTC. SQL times and timestamps, on the other hand, might have
  * an associated time zone specified as an offset to GMT. In PostgreSQL 8.3, removing the time zone information by casting truncates the value. Casting a time or a timestamp 
  * lacking a time zone assigns the current time zone to it instead of converting.
@@ -512,6 +540,9 @@
  * timestamps as dates. PostgreSQL, on the other hand, uses Julian days (number of days since January 1, 4713 BCE with fraction, length of the year specified as 365.2425 
  * days) for date calculations, and most likely converts them to Gregorian calendar dates for presentation. Thus, your mileage may vary when calculating dates within 
  * the database.
+ *
+ * \note In versions earlier than 1.7, date handling depended on several factors, such as the current time zone and the server's time zone. This is no longer the case. Also, all 
+ *       date and time types are currently returned as NSDate, not NSCalendarDate.
  */
 
 /**
@@ -638,7 +669,6 @@
  * If we modify the previous example by adding an unique constraint, we get a one-to-one relationship: 
  *
  * \latexonly
- * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
  * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
  * ALTER TABLE email ADD UNIQUE (person_id);
  * \end{lstlisting} 
@@ -656,7 +686,6 @@
  *
  * Another example:
  * \latexonly
- * \lstset{language=SQL, backgroundcolor=\color[rgb]{0.84,0.87,0.90}, rulecolor=\color[gray]{0.53}}
  * \begin{lstlisting}[fontadjust, columns=fullflexible, frame=single]
  * CREATE TABLE person (
  *     id SERIAL PRIMARY KEY,
@@ -781,7 +810,7 @@
  *     <li>Create a new nib file.</li>
  *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
  *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a valid database URI, “pgsql:///<em>database_name</em>” at minimum.
+ *     <li>Enter a valid database URI, <tt>pgsql:///<em>database_name</em></tt> at minimum.
  *         <ul>
  *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
  *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
@@ -799,6 +828,11 @@
  *     <li>Bind the Cocoa views to the controller.</li> 
  *     <li>Test the interface. The views should be populated using the database.</li>
  * </ol>
+ */
+
+/**
+ * \page thread_safety Thread safety
+ * FIXME write me
  */
 
 /**
@@ -866,18 +900,6 @@
  * </ol>
  */
 
-/** 
- * \page limitations Limitations in current version
- * 
- * These are some of the most severe limitations in the current version.
- * \li Most public classes are non-thread-safe, so thread safety must be enforced externally if it's required.
- *     Furthermore, all queries must be performed from the thread in which the context made a database connection. This could change
- *     in the future, so it is best to create and handle a context only in one thread.
- * \li No serialization mechanism has been implemented for BXDatabaseObject.
- * \li Currently, migration models aren't understood by the assistant, so the easiest way to do model
- *	   migration might be using SQL.
- */
-
 /**
  * \page database_usage Database administration
  *
@@ -889,13 +911,8 @@
 /**
  * \page baseten_enabling Enabling relations for use with BaseTen
  *
- * \note In version 1.5, relations and BaseTen's tables were associated with each other based on relation
- *       names. This didn't work for all names, though, and made renaming enabled relations impossible.
- *       In versions 1.6 through 1.6.2, the association was based on relation oids. While this made 
- *       renaming relations possible, it also made dumping database contents exceedingly difficult.
- *
  * Some tables are created in BaseTen schema to track changes in other relations and storing relationships
- * between tables and views. The association is based on relation names somewhat like in version 1.5.
+ * between tables and views. The association is based on relation names.
  *
  * While this arrangement allows clients to fault only changed objects, it has some unfortunate side effects:
  * \li Altering relations' names after having them enabled will not work. To rename relations, they need
@@ -905,6 +922,11 @@
  *     and needing to be refreshed.
  *
  * All this can be done using BaseTen Assistant.
+ *
+ * \note In version 1.5, relations and BaseTen's tables were associated with each other based on relation
+ *       names. This didn't work for all names, though, and made renaming enabled relations impossible.
+ *       In versions 1.6 through 1.6.2, the association was based on relation oids. While this made 
+ *       renaming relations possible, it also made dumping database contents exceedingly difficult.
  *
  *
  * \section sql_enabling Enabling relations and updating relationship cache using SQL functions
@@ -924,11 +946,9 @@
 /**
  * \page database_dumps Making a database dump
  *
- * \note Versions earlier than 1.7 had a severe limitation related to making a database dump; the BaseTen schema needed to be re-installed afterwards.
- *
- * Making a database dump and recreating a database using it shouldn't cause any problems, as database objects are references by names in BaseTen schema. However, the
- * BaseTen schema also contains some temporary information. The temporary information is removed periodically when the database is queried, but for creating installation
- * scripts it might be desirable to remove all unnecessary data. This can be done from BaseTen Assistant or by running the SQL function <tt>baseten.prune()</tt>.
+ * After having been in use, the BaseTen schema might contain some temporary information. The temporary information is removed periodically when the 
+ * database is queried, but for creating installation scripts it might be desirable to remove all unnecessary data. This can be done from BaseTen 
+ * Assistant or by running the SQL function <tt>baseten.prune()</tt>.
  *
  * For BaseTen schema to work, the table contents for most tables are needed, so dumps excluding the data are not recommended.
  */
@@ -936,7 +956,9 @@
 /**
  * \page postgresql_installation PostgreSQL installation
  *
- * Here's a brief tutorial on PostgreSQL installation.
+ * PostgreSQL is distributed as an Installer package at the following address:<br>
+ * http://www.postgresql.org/download/macosx
+ * Another option is to build the server from source. Here's a brief tutorial.
  * <ol>
  *     <li>Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.</li>
  *     <li>Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so <tt>./configure &ndash;-with-bonjour &ndash;-with-openssl && make && sudo make install</tt> probably gives the expected results.</li>
