@@ -740,13 +740,19 @@
  */
 
 /**
- * \page using_appkit_classes Using the controller subclasses provided with the framework
+ * \page using_appkit_classes Using BaseTenAppKit
+ *
+ * When BaseTenAppKit is linked to an application, BXDatabaseContext gains some additional capabilities. If given
+ * a partial database URI, it will present a number of connection panels when -connect: is called.
  *
  * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
  * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
  * some NSController subclasses have been provided with the framework. For now, the only directly usable one is 
  * BXSynchronizedArrayController. Additionally, there is BXController and additions to NSController for creating
  * controller subclasses.
+ *
+ * BXSynchronizedArrayController shouldn't be set to entity mode; the user interface for this isn't even available
+ * in Interface Builder. It also doesn't make use of a managed object context.
  *
  *
  * \section using_bxsynchronizedarraycontroller Using BXSyncronizedArrayController from Interface Builder
@@ -756,7 +762,7 @@
  *     <li>Create a new nib file.</li>
  *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
  *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a valid database URI. 
+ *     <li>Enter a valid database URI, “pgsql:///” at minimum.
  *         <ul>
  *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
  *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
