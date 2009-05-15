@@ -546,7 +546,8 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	PQsetClientEncoding (connection, "UNICODE"); 
 	[self execQuery: "SET standard_conforming_strings TO true"];
 	[self execQuery: "SET datestyle TO 'ISO, YMD'"];
-	[self execQuery: "SET timezone TO UTC"];
+	[self execQuery: "SET timezone TO 'UTC'"];
+	[self execQuery: "SET transaction_isolation TO 'read committed'"];
 	PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
 	
 	//Create a runloop source to receive data asynchronously.
