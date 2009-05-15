@@ -154,7 +154,7 @@
  * \li It can refresh the tables that BaseTen uses to determine relationships between entities.
  * \li It can list entities' attributes and relationships as they are available when using the framework.
  * \li It can create a database schema from an Xcode data model.
- * \li It can create a chart of the database schema that can be displayed using GraphViz or OmniGraffle.
+ * \li It can create a chart of the database schema that can be displayed using Graphviz or OmniGraffle.
  */
 
 /**
