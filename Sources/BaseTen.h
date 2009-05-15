@@ -99,6 +99,7 @@
  * \li \subpage predicates
  * \li \subpage tracking_changes
  * \li \subpage using_appkit_classes
+ * \li \subpage autocommit_manual_commit
  * \li \subpage thread_safety
  * \li \subpage multiple_contexts
  * \li \subpage linking_to_baseten
@@ -827,6 +828,46 @@
  */
 
 /**
+ * \page autocommit_manual_commit Commit modes and locking
+ *
+ * BXDatabaseContext has two modes for handling transactions, which affect queries sent to the database and the way
+ * the context's undo manager is used. In both cases, the transaction isolation level is set to READ COMMITTED meaning that
+ * changes committed by other connections will be received. The commit mode is set using -setAutocommits:.
+ *
+ *
+ * \section autocommit Autocommit
+ *
+ * When using autocommit, each query creates its own transaction and changes get propagated immediately to other clients. 
+ * Undo works at the level of -[BXDatabaseObject setPrimitiveValueForKey:]. For each change an invocation of the method
+ * is added to the undo manager with the earlier value as a parameter.
+ *
+ *
+ * \section manual_commit Manual commit
+ *
+ * In manual commit mode, a savepoint is added after each change. Undo causes a ROLLBACK TO SAVEPOINT query to be sent.
+ * This causes not only the changes made by BaseTen to be reverted, but their possible side effects as well. For instance,
+ * if database triggers fire when a specific change is made, its effects will be reverted, too.
+ *
+ * In case one client updates a row, BaseTen doesn't send the change to other clients immediately. Instead, it sends a
+ * notification indicating that the row is locked and changing it will cause the connection to block until the other
+ * client ends its transaction. BXDatabaseObject's method -isLockedForKey:, BXDatabaseObjectStatusInfo class and
+ * value transformers in BaseTenAppKit are useful for handling this situation. However, other than BaseTen clients
+ * don't cause the lock status to be set, and the connection could block.
+ *
+ * The downside is that if -[BXDatabaseContext commit:] or -[BXDatabaseContext rollback] aren't called frequently enough,
+ * transactions could become very long, which is against their intended use. This causes server resources to be consumed.
+ *
+ *
+ * \section locking_rows Locking rows
+ *
+ * BXDatabaseContext has a method, -setSendsLockQueries:, for enabling or disabling locking queries. Currently this has 
+ * an effect on BXSynchronizedArrayController's behaviour. When its -objectDidBeginEditing: method gets called and
+ * locking queries are enabled, an asynchronous SELECT ... FOR UPDATE NOWAIT query will be sent. If locking the row
+ * fails, -discardEditing will be called and an error message will be presented to the user. See NSEditor protocol
+ * for details.
+ */
+
+/**
  * \page thread_safety Thread safety
  *
  * For its mostly used parts, BaseTen isn't thread safe. In particular, BXDatabaseContext needs to be used from the same thread 
@@ -849,18 +890,23 @@
 /**
  * \page multiple_contexts Using multiple database contexts
  *
- * In general, there aren't many reasons to have multiple database contexts in an application that connects to a single database. One possibility to make the context available
+ * In general, there aren't many reasons to have multiple database contexts in an application that connects 
+ * to a single database. One possibility to make the context available
  * everywhere it's needed is to make it a property of the NSApplication delegate or an NSDocument subclass.
  *
  * Advantages:
- * \li Thread safety. Since database contexts should be created and used from within a single thread, it might be advantageous to create one for each thread.
+ * \li Thread safety. Since database contexts should be created and used from within a single thread, it 
+ *     might be advantageous to create one for each thread.
  * \li Transaction isolation. One could want to query the database state outside the current transaction.
  * \li Privilege separation. One might want to access the database using roles with different privileges.
+ * \li Different commit modes.
  *
  * Disadvantages:
- * \li Increased memory usage on the server. Each database context makes a connection to the database (two in manual commit mode). These require an amount of shared memory
+ * \li Increased memory usage on the server. Each database context makes a connection to the database 
+ *     (two in manual commit mode). These require an amount of shared memory
  *     on the server. This limits the number of clients who can connect simultaneously.
- * \li Increased memory and network usage on the client side. Database objects are uniqued and updated within a context, so each context requires its own copy of the objects.
+ * \li Increased memory and network usage on the client side. Database objects are uniqued and updated 
+ *     within a context, so each context requires its own copy of the objects.
  *     Each context also needs to update its objects on its own.
  * \li Database objects cannot be passed from one context to another. This causes problems.
  */
@@ -944,14 +990,15 @@
  * \section sql_enabling Enabling relations and updating relationship cache using SQL functions
  *
  * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
- * The functions are <em>baseten.enable</em> and <em>baseten.disable</em> and they take an <em>oid</em> as an argument.
+ * The functions are <em>baseten.enable (oid)</em> and <em>baseten.disable (oid)</em>. The object identifier
+ * argument can be looked up from PostgreSQL's system tables.
  *
  * Views' primary keys are stored in <em>baseten.view_pkey</em>. The table has three columns: <em>nspname</em>, 
  * <em>relname</em> and <em>attname</em>, which correspond to the view's schema name, the view's name and each primary 
  * key column's name respectively. To enable a view, its primary key needs to be specified first.
  *
  * Relationships and view hierarchies among other things are stored in automatically-generated tables. 
- * These should be refreshed with the SQL function <em>baseten.refresh_caches</em> after all changes to views,
+ * These should be refreshed with the SQL function <em>baseten.refresh_caches ()</em> after all changes to views,
  * primary keys and foreign keys.
  */
 
@@ -960,7 +1007,7 @@
  *
  * After having been in use, the BaseTen schema might contain some temporary information. The temporary information is removed periodically when the 
  * database is queried, but for creating installation scripts it might be desirable to remove all unnecessary data. This can be done from BaseTen 
- * Assistant or by running the SQL function <tt>baseten.prune()</tt>.
+ * Assistant or by running the SQL function <em>baseten.prune ()</em>.
  *
  * For BaseTen schema to work, the table contents for most tables are needed, so dumps excluding the data are not recommended.
  */
@@ -975,7 +1022,7 @@
  *     <li>Get the latest PostgreSQL source release (8.2 or later) from http://www.postgresql.org/ftp/source.</li>
  *     <li>Uncompress, configure, make, [sudo] make install. On Mac OS X, Bonjour and OpenSSL are available, so <tt>./configure &ndash;-with-bonjour &ndash;-with-openssl && make && sudo make install</tt> probably gives the expected results.</li>
  *     <li>It's usually a good idea to create a separate user and group for PostgreSQL, but Mac OS X already comes with a database-specific user: for mysql. We'll just use that and hope PostgreSQL doesn't mind.</li>
- *     <li>Make <em>mysql</em> the owner of the PostgreSQL folder, then sudo to <tt>mysql</tt>:\n
+ *     <li>Make <em>mysql</em> the owner of the PostgreSQL folder, then sudo to <em>mysql</em>:\n
  *         <tt>
  *             sudo chown -R mysql:mysql /usr/local/pgsql\n
  *             sudo -u mysql -s
