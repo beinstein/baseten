@@ -991,7 +991,7 @@
  *
  * In addition to using BaseTen Assistant, it is possible to enable and disable tables with SQL functions.
  * The functions are <em>baseten.enable (oid)</em> and <em>baseten.disable (oid)</em>. The object identifier
- * argument can be looked up from PostgreSQL's system tables.
+ * argument can be looked up from PostgreSQL's system tables, <em>pg_class</em> and <em>pg_namespace</em>.
  *
  * Views' primary keys are stored in <em>baseten.view_pkey</em>. The table has three columns: <em>nspname</em>, 
  * <em>relname</em> and <em>attname</em>, which correspond to the view's schema name, the view's name and each primary 
