@@ -832,7 +832,9 @@
  *
  * BXDatabaseContext has two modes for handling transactions, which affect queries sent to the database and the way
  * the context's undo manager is used. In both cases, the transaction isolation level is set to READ COMMITTED meaning that
- * changes committed by other connections will be received. The commit mode is set using -setAutocommits:.
+ * changes committed by other connections will be received. The commit mode is set using -setAutocommits:. Generally,
+ * autocommit is well-suited for non-document-based applications. Manual commit is well-suited for document-based 
+ * applications, provided that changes are committed frequently enough.
  *
  *
  * \section autocommit Autocommit
@@ -846,7 +848,8 @@
  *
  * In manual commit mode, a savepoint is added after each change. Undo causes a ROLLBACK TO SAVEPOINT query to be sent.
  * This causes not only the changes made by BaseTen to be reverted, but their possible side effects as well. For instance,
- * if database triggers fire when a specific change is made, its effects will be reverted, too.
+ * if database triggers fire when a specific change is made, its effects will be reverted, too. When -commit: or -rollback
+ * is called, undo queue is emptied.
  *
  * In case one client updates a row, BaseTen doesn't send the change to other clients immediately. Instead, it sends a
  * notification indicating that the row is locked and changing it will cause the connection to block until the other
