@@ -1383,6 +1383,13 @@ ModTypeToObject (enum BXModificationType value)
 											 @"%@ was specified in value dictionary, but its foreign key columns don't exist in %@.",
 											 [currentKey name], entity);
 						
+						if ([value isKindOfClass: [BXDatabaseObjectID class]])
+						{
+							value = [[self faultsWithIDs: [NSArray arrayWithObject: value]] lastObject];
+							BXAssertValueReturn (value, nil, @"Couldn't get object for object id %@.",
+												 [givenFieldValues objectForKey: currentKey]);
+						}
+						
 						NSDictionary* values = BXFkeySrcDictionary ([currentKey foreignKey], entity, value);
 						[fieldValues addEntriesFromDictionary: values];
 						
