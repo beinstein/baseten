@@ -5,7 +5,7 @@
 	<head>
 		<title>Importing a CoreData model</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<meta name="topicid" content="103"/>
+		<meta name="topicid" content="107"/>
 		<meta name="keywords" content="import, model"/>
 		<!-- do not translate --><meta name="keywords" content="BaseTen, CoreData, PostgreSQL"/><!-- end do not translate -->
 		<meta name="pagetype" content="Task"/>
@@ -17,7 +17,7 @@
 	<body id="apple-pd">
 		<!--top navigation area-->
 		<div id="navbox">
-			<a name="bxahelp103"></a>
+			<a name="bxahelp107"></a>
 			<div id="navleftbox">
 				<a class="navlink_left" href="help:anchor='access' bookID=BaseTen Assistant Help">Home</a>
 			</div>
@@ -35,7 +35,7 @@
 				<img id="iconimg" src="../media/app-icon32.png" alt="BaseTen Assistant Help Icon" height="32" width="32"/>
 			</div>
 			<div id="pagetitle">
-				<h1>Refreshing BaseTen's relationship cache</h1>
+				<h1>Preparing a database for dump</h1>
 			</div>
 		</div>
 		<!--closes page head-->
@@ -43,12 +43,13 @@
 		<div id="introbox">
 			<div class="introprimtext">
 				<p class="introprimtextlongtext">
-				    BaseTen Assistant refreshes the relationship cache automatically on application exit, after importing a 
-				    data model and before creating a chart of the database schema. The relationship cache can also be 
-				    refreshed manually.
+                    After having been in use, the BaseTen schema might contain some temporary information. The temporary 
+                    information is removed periodically when the database is queried, but for creating installation scripts it 
+                    might be desirable to remove all unnecessary data. All the data isn't temporary, so making schema-only
+                    dumps isn't recommended.
 				</p>
 				<p class="introprimtextlongtext">
-				    To manually refresh the relationship cache, select File → Refresh Cache Tables.
+				    To remove the temporary information select File → Prepare Database for Dump.
 				</p>
 			</div><!--closes introprimtext-->
 		</div> <!--closes introbox -->
