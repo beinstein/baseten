@@ -29,6 +29,7 @@
 #import "NSRelationshipDescription+BXPGAdditions.h"
 #import "BXLogger.h"
 #import "BXError.h"
+#import "BXArraySize.h"
 
 
 static NSString*
@@ -129,7 +130,7 @@ ImportError (NSString* message, NSString* reason)
 		NSString* dstFkeyName = [inverseRelationship name];
 				
 		id relationships [2] = {self, inverseRelationship};
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < BXArraySize (relationships); i++)
 		{
 			if (NSCascadeDeleteRule != [relationships [i] deleteRule])
 			{

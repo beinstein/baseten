@@ -34,6 +34,7 @@
 #import "BXLogger.h"
 #import "BXError.h"
 #import "BXEnumerate.h"
+#import "BXArraySize.h"
 #import "NSString+PGTSAdditions.h"
 #import "libpq_additions.h"
 #import <sys/select.h>
@@ -416,7 +417,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 						break;
 				}
 				
-				if (addressBytes && inet_ntop (family, addressBytes, addressBuffer, 40))
+				if (addressBytes && inet_ntop (family, addressBytes, addressBuffer, BXArraySize (addressBuffer)))
 				{
 					NSString* humanReadableAddress = [NSString stringWithUTF8String: addressBuffer];
 					BXLogInfo (@"Trying '%@'", humanReadableAddress);
@@ -591,7 +592,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 					if (status <= 0)
 					{
 						haveError = YES;
-						strerror_r (errno, message, 256);
+						strerror_r (errno, message, BXArraySize (message));
 						reason = [NSString stringWithUTF8String: message];
 					}
 					else
@@ -607,7 +608,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 							else
 							{			
 								haveError = YES;
-								strerror_r (optval, message, 256);
+								strerror_r (optval, message, BXArraySize (message));
 								reason = [NSString stringWithUTF8String: message];
 							}
 						}

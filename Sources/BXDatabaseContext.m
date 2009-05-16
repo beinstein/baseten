@@ -66,6 +66,7 @@
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXError.h"
 #import "BXForeignKey.h"
+#import "BXArraySize.h"
 
 #import "NSURL+BaseTenAdditions.h"
 
@@ -2744,8 +2745,8 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     UInt32 rvalModDate = 0;
     SecItemAttr attributes [] = {kSecModDateItemAttr, kSecNegativeItemAttr};
     SecExternalFormat formats [] = {kSecFormatUnknown, kSecFormatUnknown};
-    unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
-	BXAssertValueReturn (count == sizeof (formats) / sizeof (SecExternalFormat), NULL,
+    unsigned int count = BXArraySize (attributes);
+	BXAssertValueReturn (count == BXArraySize (formats), NULL,
 						   @"Expected arrays to have an equal number of items.");
     SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
     
@@ -2777,10 +2778,9 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     {
         SecItemAttr attributes [] = {kSecAccountItemAttr};
         SecExternalFormat formats [] = {kSecFormatUnknown};
-        unsigned int count = sizeof (attributes) / sizeof (SecItemAttr);
-		unsigned int formatCount = sizeof (formats) / sizeof (SecExternalFormat);
-        BXAssertValueReturn (count == formatCount, NO,
-							   @"Expected arrays to have an equal number of items (attributes: %u formats: %u).", count, formatCount);
+        unsigned int count = BXArraySize (attributes);
+        BXAssertValueReturn (count == BXArraySize (formats), NO,
+							 @"Expected arrays to have an equal number of items.");
         SecKeychainAttributeInfo info = {count, (void *) attributes, (void *) formats};
         
         OSStatus status = noErr;

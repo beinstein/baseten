@@ -30,6 +30,7 @@
 #import "BXDataModelCompiler.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+#import "BXArraySize.h"
 
 
 @implementation BXDataModelCompiler
@@ -54,7 +55,7 @@
 			if (file)
 			{
 				char buffer [1024] = {};
-				if (fgets (buffer, 1024, file))
+				if (fgets (buffer, BXArraySize (buffer), file))
 				{
 					//Remove the newline character if one exists.
 					size_t length = strlen (buffer);

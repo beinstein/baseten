@@ -30,6 +30,7 @@
 #import "BXSafetyMacros.h"
 #import <Security/Security.h>
 #import "BXOpenSSLCompatibility.h"
+#import "BXArraySize.h"
 
 
 __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = nil;
@@ -100,11 +101,11 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 		OSStatus status = noErr;
 		
 		mPolicies = [[NSMutableArray alloc] init];
-		int i = 0;
 		const CSSM_OID* currentOidPtr = NULL;
-		const CSSM_OID* oidPtrs [] = {&CSSMOID_APPLE_TP_SSL, &CSSMOID_APPLE_TP_REVOCATION_CRL, NULL};
-		while (NULL != (currentOidPtr = oidPtrs [i]))
+		const CSSM_OID* oidPtrs [] = {&CSSMOID_APPLE_TP_SSL, &CSSMOID_APPLE_TP_REVOCATION_CRL};
+		for (int i = 0, count = BXArraySize (oidPtrs); i < count; i++)
 		{
+			currentOidPtr = oidPtrs [i];
 			SecPolicySearchRef criteria = NULL;
 			SecPolicyRef policy = NULL;
 			status = SecPolicySearchCreate (CSSM_CERT_X_509v3, currentOidPtr, NULL, &criteria);
@@ -122,7 +123,6 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 				CFRelease (policy);
 			}
 			SafeCFRelease (criteria);
-			i++;
 		}
 	}
 	return [[mPolicies copy] autorelease];

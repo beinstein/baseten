@@ -58,6 +58,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		53015A850FBEF22400E52C1E /* BXArraySize.h in Headers */ = {isa = PBXBuildFile; fileRef = 53015A830FBEF18800E52C1E /* BXArraySize.h */; };
 		531A21500DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A214E0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h */; };
 		531A21510DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A214F0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m */; };
 		531A21560DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A21540DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h */; };
@@ -594,6 +595,7 @@
 		530132D809D45F9B0037C485 /* BXDatabaseObject.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 30; name = BXDatabaseObject.m; path = Sources/BXDatabaseObject.m; sourceTree = "<group>"; };
 		530132E109D460230037C485 /* BXPGInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXPGInterface.h; path = Sources/BXPGInterface.h; sourceTree = "<group>"; };
 		530132E209D460230037C485 /* BXPGInterface.m */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.objc; fileEncoding = 4; includeInIndex = 1; name = BXPGInterface.m; path = Sources/BXPGInterface.m; sourceTree = "<group>"; };
+		53015A830FBEF18800E52C1E /* BXArraySize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXArraySize.h; path = Sources/BXArraySize.h; sourceTree = "<group>"; };
 		5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = InterfaceBuilderPlugin.xcodeproj; path = InterfaceBuilderPlugin/InterfaceBuilderPlugin.xcodeproj; sourceTree = "<group>"; };
 		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
 		531266E40B68F9CA00637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = /System/Library/Frameworks/Security.framework; sourceTree = "<absolute>"; };
@@ -1146,6 +1148,7 @@
 				536C9D5F0EFD94D10041422F /* BXEnumerate.h */,
 				535661D70F02603600920008 /* BXLocalizedString.h */,
 				535661D80F02603600920008 /* BXSafetyMacros.h */,
+				53015A830FBEF18800E52C1E /* BXArraySize.h */,
 				53ED2E8C0E1AB7CB0095BE8B /* BXLogger.h */,
 				5364EF5B0E1B940A003D3DB6 /* BXLogger.m */,
 				53A59B230E34EB570026D7E1 /* BXWeakNotification.h */,
@@ -1721,6 +1724,7 @@
 				536206360FB87AB700ACAE57 /* PGTSValueTypes.h in Headers */,
 				536206520FB87DDA00ACAE57 /* PGTSValuePlaceholder.h in Headers */,
 				536206550FB87E8C00ACAE57 /* PGTSDates.h in Headers */,
+				53015A850FBEF22400E52C1E /* BXArraySize.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

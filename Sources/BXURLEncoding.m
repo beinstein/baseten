@@ -28,6 +28,7 @@
 
 #import "BXURLEncoding.h"
 #import "BXConstants.h"
+#import "BXArraySize.h"
 
 
 static NSData*
@@ -43,7 +44,7 @@ URLEncode (const char* bytes, size_t length)
             [retval appendBytes: &c length: sizeof (char)];
         else
         {
-            snprintf (hex, 4, "%%%02hhx", c);
+            snprintf (hex, BXArraySize (hex), "%%%02hhx", c);
             [retval appendBytes: hex length: 3 * sizeof (char)];
         }
     }
@@ -62,13 +63,13 @@ URLDecode (const char* bytes, size_t length, id sender)
             [retval appendBytes: &c length: sizeof (char)];
         else
         {
-            if (length < i + 3)
+            if (length < i + BXArraySize (hex))
             {
                 @throw [NSException exceptionWithName: NSRangeException reason: nil 
                                              userInfo: [NSDictionary dictionaryWithObject: sender forKey: kBXObjectKey]];
             }
             i++;
-            strlcpy ((char *) &hex, &bytes [i], 3);
+            strlcpy ((char *) &hex, &bytes [i], BXArraySize (hex));
             char c = (char) strtol ((char *) &hex, NULL, 16);
             [retval appendBytes: &c length: sizeof (char)];
             i++;

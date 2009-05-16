@@ -38,6 +38,7 @@
 #import "PGTSRoleDescription.h"
 #import "PGTSCollections.h"
 #import "BXLogger.h"
+#import "BXArraySize.h"
 
 
 using namespace PGTS;
@@ -79,7 +80,7 @@ FindUsingOidVector (const Oid* oidVector, OidMap* map)
 - (void) dealloc
 {
 	OidMap* maps [] = {mSchemasByOid, mTablesByOid, mTypesByOid, mRolesByOid};
-	for (int i = 0, count = sizeof (maps) / sizeof (*maps); i < count; i++)
+	for (int i = 0, count = BXArraySize (maps); i < count; i++)
 	{
 		OidMap::const_iterator iterator = maps [i]->begin ();
 		while (maps [i]->end () != iterator)

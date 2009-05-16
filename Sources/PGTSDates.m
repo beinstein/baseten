@@ -32,6 +32,7 @@
 #import "PGTSConnection.h"
 #import "PGTSTypeDescription.h"
 #import "BXLogger.h"
+#import "BXArraySize.h"
 
 
 #define kOvectorSize 64
@@ -109,44 +110,44 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	
 	//Some reasonable default values.
 	long year = 0;
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "y", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "y", buffer, BXArraySize (buffer)))
 		year = strtol (buffer, NULL, 10);
 	else
 		year = [gDefaultComponents year];
 	
 	long month = 0;
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "m", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "m", buffer, BXArraySize (buffer)))
 		month = strtol (buffer, NULL, 10);
 	else
 		month = [gDefaultComponents month];
 
 	long day = 0;
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "d", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "d", buffer, BXArraySize (buffer)))
 		day = strtol (buffer, NULL, 10);
 	else
 		day = [gDefaultComponents day];
 
 	long hours = 0;
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "H", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "H", buffer, BXArraySize (buffer)))
 		hours = strtol (buffer, NULL, 10);
 	else
 		hours = [gDefaultComponents hour];
 	
 	long minutes = 0;
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "M", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "M", buffer, BXArraySize (buffer)))
 		minutes = strtol (buffer, NULL, 10);
 	else
 		minutes = [gDefaultComponents minute];;
 	
 	long seconds = 0;
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "S", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "S", buffer, BXArraySize (buffer)))
 		seconds = strtol (buffer, NULL, 10);
 	else
 		seconds = [gDefaultComponents second];
 	
 	//ICU's unicode/gregocal.h: BC == 0, AD == 1.
 	long era = 1;
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "e", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "e", buffer, BXArraySize (buffer)))
 		era = 0;
 	
 	//NSGregorianCalendar works as the Julian calendar when appropriate.
@@ -156,16 +157,16 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	
 	long tzOffset = 0;
 	
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzh", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzh", buffer, BXArraySize (buffer)))
 		tzOffset += 3600 * strtol (buffer, NULL, 10);
 	
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzm", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzm", buffer, BXArraySize (buffer)))
 		tzOffset += 60 * strtol (buffer, NULL, 10);
 	
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzs", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzs", buffer, BXArraySize (buffer)))
 		tzOffset += strtol (buffer, NULL, 10);
 	
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzd", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "tzd", buffer, BXArraySize (buffer)))
 	{
 		if ('-' == buffer [0])
 			tzOffset *= -1;
@@ -186,7 +187,7 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	[components setSecond: seconds];
 	
 	retval = [calendar dateFromComponents: components];
-	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "frac", buffer, 16))
+	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "frac", buffer, BXArraySize (buffer)))
 	{
 		double fraction = strtod (buffer, NULL);
 		if (fraction)
@@ -216,7 +217,7 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	Expect (0.0 <= subseconds);
 	if (subseconds)
 	{
-		Expect (0 < snprintf (fraction, 9, "%-.6f", subseconds));
+		Expect (0 < snprintf (fraction, BXArraySize (buffer), "%-.6f", subseconds));
 		fraction++;
 	}
 	

@@ -42,6 +42,7 @@
 #import "PGTSScannedMemoryAllocator.h"
 #import "PGTSCollections.h"
 #import "BXLogger.h"
+#import "BXArraySize.h"
 
 
 typedef std::tr1::unordered_map <NSString*, int, 
@@ -644,9 +645,9 @@ KVCompare (PGTSResultSet* res, void* ctx)
 			PG_DIAG_SOURCE_FUNCTION
 		};
 		
-		NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity: (sizeof (fields)) / sizeof (char)];
+		NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithCapacity: BXArraySize (fields)];
 		
-		for (int i = 0, count = sizeof (fields) / sizeof (* fields); i < count; i++)
+		for (int i = 0, count = BXArraySize (fields); i < count; i++)
 		{
 			char* value = PQresultErrorField (result, fields [i]);
 			if (! value) continue;

@@ -30,6 +30,7 @@
 #import "PGTSAdditions.h"
 #import "PGTSProbes.h"
 #import "BXLogger.h"
+#import "BXArraySize.h"
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <IOKit/IOMessage.h>
 #import <AppKit/AppKit.h>
@@ -165,11 +166,10 @@ WorkspaceWillSleep (void* refCon, io_service_t service, natural_t messageType, v
 		kPGTSConnectionMonitorExitNotification, 
 		kPGTSConnectionMonitorSleepNotification, 
 		kPGTSConnectionMonitorAwakeNotification,
-		nil
 	};
 	
 	NSNotificationCenter* nc = [NSNotificationCenter defaultCenter];
-	for (int i = 0; nil != notificationNames [i]; i++)
+	for (int i = 0, count = BXArraySize (notificationNames); i < count; i++)
 		[nc removeObserver: connection name: notificationNames [i] object: self];
 }
 
