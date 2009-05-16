@@ -1,0 +1,42 @@
+\batchmode
+\documentclass[a4paper]{book}
+\usepackage{a4wide}
+\usepackage{makeidx}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{float}
+\usepackage{textcomp}
+\usepackage{alltt}
+\usepackage{times}
+\usepackage[pdftex,
+            pagebackref=true,
+            colorlinks=true,
+            linkcolor=blue,
+            unicode
+           ]{hyperref}
+\usepackage[utf8]{inputenc}
+\usepackage{doxygen}
+\usepackage{multirow}
+\usepackage{listings}
+\makeindex
+\setcounter{tocdepth}{3}
+\renewcommand{\footrulewidth}{0.4pt}
+\renewcommand{\printindex}{} %% Omit the index.
+
+\begin{document}
+\begin{titlepage}
+\vspace*{7cm}
+\begin{flushleft}
+\fontsize{40pt}{0pt}\selectfont
+BaseTen 1.7\\
+\fontsize{18pt}{28pt}\selectfont
+\hspace{1mm}Reference Manual\\
+\end{flushleft}
+\end{titlepage}
+\clearemptydoublepage
+\pagenumbering{roman}
+\tableofcontents
+\clearemptydoublepage
+\pagenumbering{arabic}
+
