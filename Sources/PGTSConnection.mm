@@ -548,6 +548,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	//Use UTF-8.
 	PQsetClientEncoding (connection, "UNICODE"); 
 	
+	BOOL shouldContinue = YES;
 	const char* queries [] = {
 		"SET standard_conforming_strings TO true",
 		"SET datestyle TO 'ISO, YMD'",
@@ -557,40 +558,50 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	for (int i = 0, count = BXArraySize (queries); i < count; i++)
 	{
 		PGresult* res = [self execQuery: queries [i]];
-		BXAssertLog (PGRES_COMMAND_OK == PQresultStatus (res), 
-					 @"Expected setting run-time parameters for connection to succeed. Error:\n%s",
-					 PQresultErrorMessage (res) ?: "<no error message>");
+		if (PGRES_COMMAND_OK != PQresultStatus (res))
+		{
+			shouldContinue = NO;
+			BXLogError (@"Expected setting run-time parameters for connection to succeed. Error:\n%s",
+						PQresultErrorMessage (res) ?: "<no error message>");
+			
+			PGTSResultSet* result = [[[PGTSResultSet alloc] initWithPGResult: res connection: self] autorelease];
+			NSError* error = [result error];
+			[mConnector setConnectionError: error];
+		}
 	}
 
-	PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
-	
-	//Create a runloop source to receive data asynchronously.
-	CFSocketContext context = {0, self, NULL, NULL, NULL};
-	CFSocketCallBackType callbacks = (CFSocketCallBackType)(kCFSocketReadCallBack | kCFSocketWriteCallBack);
-	mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
-	
-	CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
-	CFSocketSetSocketFlags (mSocket, flags);
-	mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
-	//NSLog (@"created socket: %p socketSource: %p", mSocket, mSocketSource);
-	
-	BXAssertLog (mSocket, @"Expected source to have been created.");
-	BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
-	BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
-	BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
-	
-	CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
-	CFStringRef mode = kCFRunLoopCommonModes;
-	CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
-	CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
-	CFRunLoopAddSource (runloop, mSocketSource, mode);
-	
-	[self beginTrackingNetworkStatusIn: runloop mode: mode];
-	
-	if (0 < [mQueue count])
-		[self sendNextQuery];
-	[mDelegate PGTSConnectionEstablished: self];
-	[self setConnector: nil];
+	if (shouldContinue)
+	{
+		PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
+		
+		//Create a runloop source to receive data asynchronously.
+		CFSocketContext context = {0, self, NULL, NULL, NULL};
+		CFSocketCallBackType callbacks = (CFSocketCallBackType)(kCFSocketReadCallBack | kCFSocketWriteCallBack);
+		mSocket = CFSocketCreateWithNative (NULL, PQsocket (mConnection), callbacks, &SocketReady, &context);
+		
+		CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
+		CFSocketSetSocketFlags (mSocket, flags);
+		mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
+		//NSLog (@"created socket: %p socketSource: %p", mSocket, mSocketSource);
+		
+		BXAssertLog (mSocket, @"Expected source to have been created.");
+		BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");
+		BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
+		BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
+		
+		CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
+		CFStringRef mode = kCFRunLoopCommonModes;
+		CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
+		CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
+		CFRunLoopAddSource (runloop, mSocketSource, mode);
+		
+		[self beginTrackingNetworkStatusIn: runloop mode: mode];
+		
+		if (0 < [mQueue count])
+			[self sendNextQuery];
+		[mDelegate PGTSConnectionEstablished: self];
+		[self setConnector: nil];
+	}
 }
 
 - (void) connectorFailed: (PGTSConnector*) connector
