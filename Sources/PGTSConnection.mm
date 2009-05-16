@@ -41,10 +41,13 @@
 #import "PGTSConnectionMonitor.h"
 #import "PGTSNotification.h"
 #import "PGTSProbes.h"
-#import "BXLogger.h"
-#import "BXEnumerate.h"
 #import "PGTSMetadataStorage.h"
 #import "PGTSMetadataContainer.h"
+
+#import "BXLogger.h"
+#import "BXEnumerate.h"
+#import "BXArraySize.h"
+
 #import "NSString+PGTSAdditions.h"
 
 
@@ -544,10 +547,21 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	PQsetnonblocking (connection, 0); 
 	//Use UTF-8.
 	PQsetClientEncoding (connection, "UNICODE"); 
-	[self execQuery: "SET standard_conforming_strings TO true"];
-	[self execQuery: "SET datestyle TO 'ISO, YMD'"];
-	[self execQuery: "SET timezone TO 'UTC'"];
-	[self execQuery: "SET transaction_isolation TO 'read committed'"];
+	
+	const char* queries [] = {
+		"SET standard_conforming_strings TO true",
+		"SET datestyle TO 'ISO, YMD'",
+		"SET timezone TO 'UTC'",
+		"SET transaction_isolation TO 'read committed'"
+	};
+	for (int i = 0, count = BXArraySize (queries); i < count; i++)
+	{
+		PGresult* res = [self execQuery: queries [i]];
+		BXAssertLog (PGRES_COMMAND_OK == PQresultStatus (res), 
+					 @"Expected setting run-time parameters for connection to succeed. Error:\n%s",
+					 PQresultErrorMessage (res) ?: "<no error message>");
+	}
+
 	PQsetNoticeReceiver (connection, &NoticeReceiver, (void *) self);
 	
 	//Create a runloop source to receive data asynchronously.
