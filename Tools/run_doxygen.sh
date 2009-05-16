@@ -30,10 +30,16 @@ if [ -x "$DOXYGEN" ]
 then
     cd "$SRCROOT"
     "$DOXYGEN"
+
+    ## Replace the title page
+    perl -i -e 'my $l = ""; my $t = 0; while ($l = <>) { if ($l =~ m/^\\(begin|end)\{titlepage\}$/) { $t = ($1 eq "begin"); if ($t) { print "\\input{../titlepage.tex}\n" } } elsif (!$t) { print $l; } }' Documentation/latex/refman.tex
+
     ## Make some LaTeX files \inputted instead of \included to prevent \clearpage on chapter title pages.
     perl -i -p -e 's/\\include\{(general_usage|database_usage)\}/\\input\{$1\}/g' Documentation/latex/refman.tex
+
     ## Removed [implementation] remarks, because they make lines long and we don't care where the documentation was found.
     perl -i -p -e 's/(\\hspace\{0\.3cm\})?\{\\tt  \\mbox\{\[\}implementation\\mbox\{\]\}\}//g' Documentation/latex/*.tex
+
     make -C Documentation/html
     #open *.docset
 else
