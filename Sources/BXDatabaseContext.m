@@ -2058,14 +2058,21 @@ ModTypeToObject (enum BXModificationType value)
 - (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName error: (NSError **) outError
 {
 	NSError* localError = nil;
-	id retval = [mObjectModel entityForTable: name inSchema: schemaName ?: @"public" error: &localError];
+	if (! schemaName) schemaName = @"public";
+	id retval = [mObjectModel entityForTable: name inSchema: schemaName error: &localError];
 	
 	//FIXME: should this be here or in the object model?
 	if (! retval && ! localError)
 	{
+		NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
 		NSString* errorFormat = BXLocalizedString (@"relationNotFound", @"Relation %@ was not found in schema %@.", @"Error message for getting or using an entity description.");
-		NSString* localizedError = [NSString stringWithFormat: errorFormat, name, schemaName];
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObject: localizedError forKey: NSLocalizedFailureReasonErrorKey];
+		NSString* reason = [NSString stringWithFormat: errorFormat, name, schemaName];
+		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+								  title, NSLocalizedDescriptionKey,
+								  title, NSLocalizedFailureReasonErrorKey, 
+								  reason, NSLocalizedRecoverySuggestionErrorKey, 
+								  self, kBXDatabaseContextKey,
+								  nil];
 		localError = [BXError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
 	}
 	
