@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>bit</key>
-	<string>NSData</string>
+	<string>NSString</string>
 	<key>bool</key>
 	<string>PGTSBool</string>
 	<key>bytea</key>
@@ -41,7 +41,7 @@
 	<key>timetz</key>
 	<string>PGTSTime</string>
 	<key>varbit</key>
-	<string>NSData</string>
+	<string>NSString</string>
 	<key>varchar</key>
 	<string>NSString</string>
     <key>bpchar</key>

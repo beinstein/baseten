@@ -88,7 +88,7 @@
 @implementation NSString (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    return [[NSString alloc] initWithUTF8String: value];
+    return [[[[NSString alloc] stringWithUTF8String: value] decomposedStringWithCanonicalMapping] retain];
 }
 
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
@@ -124,17 +124,29 @@
 @implementation NSData (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
+	//All columns are currently fetched in text format but according to the manual only bytea is escaped.
+	//Bit and varbit seem to return bit strings as their name indicates, rather than octet strings.
+
 	NSData* retval = nil;
-	size_t resultLength = 0;
-	unsigned char *unescaped = PQunescapeBytea ((const unsigned char *) value, &resultLength);
-	if (unescaped)
+	
+	NSString* name = [typeInfo name];
+	if ([@"bytea" isEqualToString: name])
 	{
-		retval = [[self alloc] initWithBytes: unescaped length: resultLength];
-		PQfreemem (unescaped);
+		size_t resultLength = 0;
+		unsigned char *unescaped = PQunescapeBytea ((const unsigned char *) value, &resultLength);
+		if (unescaped)
+		{
+			retval = [[self alloc] initWithBytes: unescaped length: resultLength];
+			PQfreemem (unescaped);
+		}
+		else
+		{
+			BXLogWarning (@"PQunescapeBytea failed for characters: %s.", value);
+		}		
 	}
 	else
 	{
-		BXLogWarning (@"PQunescapeBytea failed for characters: %s.", value);
+		retval = [[self alloc] initWithBytes: value length: strlen (value)];
 	}
 	return retval;
 }
@@ -422,5 +434,22 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return NULL;
+}
+@end
+
+
+@implementation NSXMLDocument (PGTSFoundationObjects)
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type
+{
+	//This is a bit dangerous but NSXMLDocument most likely won't store the document as NSData.
+	NSData* xmlData = [[NSData alloc] initWithBytesNoCopy: value length: strlen (value) freeWhenDone: NO];
+	NSXMLDocument* retval = [[NSXMLDocument alloc] initWithData: xmlData options: 0 error: NULL];
+	[xmlData release];
+	return retval;
+}
+
+- (id) PGTSParameter: (PGTSConnection *) connection
+{
+	return [self XMLStringWithOptions: NSXMLNodeCompactEmptyElement | NSXMLNodeUseDoubleQuotes];
 }
 @end

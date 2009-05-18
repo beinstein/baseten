@@ -416,7 +416,7 @@
  *     </tr>
  *     <tr>
  *         <td>bit</td>
- *         <td>NSData</td>
+ *         <td>NSString</td>
  *     </tr>
  *     <tr>
  *         <td>boolean</td>
@@ -492,7 +492,7 @@
  *     </tr>
  *     <tr>
  *         <td>varbit</td>
- *         <td>NSData</td>
+ *         <td>NSString</td>
  *     </tr>
  *     <tr>
  *         <td>varchar</td>
