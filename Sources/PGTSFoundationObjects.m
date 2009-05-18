@@ -441,10 +441,8 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 @implementation NSXMLDocument (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type
 {
-	//This is a bit dangerous but NSXMLDocument most likely won't store the document as NSData.
-	NSData* xmlData = [[NSData alloc] initWithBytesNoCopy: value length: strlen (value) freeWhenDone: NO];
+	NSData* xmlData = [[[NSData alloc] initWithBytes: value length: strlen (value)] autorelease];
 	NSXMLDocument* retval = [[NSXMLDocument alloc] initWithData: xmlData options: 0 error: NULL];
-	[xmlData release];
 	return retval;
 }
 
