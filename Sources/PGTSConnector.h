@@ -35,6 +35,7 @@
 @protocol PGTSConnectorDelegate <NSObject>
 - (void) connector: (PGTSConnector *) connector gotConnection: (PGconn *) connection;
 - (void) connectorFailed: (PGTSConnector *) connector;
+- (BOOL) allowSSLForConnector: (PGTSConnector *) connector context: (void *) x509_ctx preverifyStatus: (int) preverifyStatus;
 @end
 
 
@@ -47,11 +48,14 @@
 	FILE* mTraceFile;
 	BOOL mSSLSetUp;
 	BOOL mNegotiationStarted;
+	BOOL mServerCertificateVerificationFailed;
 }
 - (BOOL) connect: (NSDictionary *) connectionDictionary;
 - (void) cancel;
+- (id <PGTSConnectorDelegate>) delegate;
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject;
 - (void) setConnection: (PGconn *) connection;
+- (void) setServerCertificateVerificationFailed: (BOOL) aBool;
 
 - (BOOL) start: (const char *) connectionString;
 - (void) setTraceFile: (FILE *) stream;

@@ -91,7 +91,10 @@ enum BXErrorCode
 	kBXErrorIncompleteDatabaseURI,
 	kBXErrorPredicateNotAllowedForUpdateDelete,
 	kBXErrorGenericNetworkError,
-	kBXErrorObjectAlreadyDeleted
+	kBXErrorObjectAlreadyDeleted,
+	kBXErrorSSLUnavailable,
+	kBXErrorSSLCertificateVerificationFailed,
+	kBXErrorUserCancel
 };
 
 enum BXModificationType

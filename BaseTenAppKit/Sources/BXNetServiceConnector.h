@@ -86,5 +86,6 @@ enum BXNSConnectorCurrentPanel
 - (void) checkHostReachability: (NSString *) name;
 - (void) reachabilityCheckDidComplete: (const CFStreamError *) error;
 - (NSWindow *) modalWindow;
+- (void) recoveredFromConnectionError: (BOOL) didRecover;
 - (void) endConnectionAttempt;
 @end

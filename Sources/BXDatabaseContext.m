@@ -1624,24 +1624,31 @@ ModTypeToObject (enum BXModificationType value)
 		[self setLastConnectionError: *error];
 		if (NO == mDisplayingSheet)
 		{
+			//If the certificate wasn't verified, our delegate will handle the situation.
+			//On any other SSL error retry the connection.
 			BOOL authenticationFailed = NO;
-			BOOL certificateVerifyFailed = NO;
+			BOOL sslFailed = NO;
 			if ([[mLastConnectionError domain] isEqualToString: kBXErrorDomain])
 			{
-				switch ([mLastConnectionError code])
+				NSInteger code = [mLastConnectionError code];
+				switch (code)
 				{
 					case kBXErrorAuthenticationFailed:
 						authenticationFailed = YES;
 						break;
+						
 					case kBXErrorSSLError:
-						certificateVerifyFailed = YES;
+					case kBXErrorSSLUnavailable:
+						sslFailed = YES;
 						break;
+						
+					case kBXErrorSSLCertificateVerificationFailed:
 					default:
 						break;
 				}
 			}
 			
-			if (certificateVerifyFailed)
+			if (sslFailed)
 			{
 				[mDatabaseInterface disconnect];
 				if (async)
@@ -2017,10 +2024,19 @@ ModTypeToObject (enum BXModificationType value)
 	enum BXSSLMode mode = [mDelegateProxy SSLModeForDatabaseContext: self];
 	if ([kBXErrorDomain isEqualToString: [mLastConnectionError domain]])
 	{
-		if (kBXSSLModePrefer == mode &&
-			[mLastConnectionError code] == kBXErrorSSLError)
+		if (kBXSSLModePrefer == mode)
 		{
-			mode = kBXSSLModeDisable;
+			switch ([mLastConnectionError code])
+			{
+				case kBXErrorSSLError:
+				case kBXErrorSSLUnavailable:
+				case kBXErrorSSLCertificateVerificationFailed:
+					mode = kBXSSLModeDisable;
+					break;
+					
+				default:
+					break;
+			}
 		}
 	}
 	return mode;

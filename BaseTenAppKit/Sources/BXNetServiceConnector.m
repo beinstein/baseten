@@ -34,6 +34,7 @@
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/NSURL+BaseTenAdditions.h>
+#import <BaseTen/BXLogger.h>
 
 
 @interface BXWindowModalNSConnectorImplementation : BXNSConnectorImplementation <BXNSConnectorImplementation>
@@ -615,9 +616,11 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 	{	
 		NSDictionary* userInfo = [notification userInfo];
 		NSError* error = [userInfo objectForKey: kBXErrorKey];
-		BOOL willContinue = NO;
+		BOOL shouldReset = YES;
+		BOOL presentError = YES;
+		ExpectL (error);
 		
-		if ([[error domain] isEqualToString: kBXErrorDomain])
+		if (error && [[error domain] isEqualToString: kBXErrorDomain])
 		{
 			switch ([error code])
 			{
@@ -635,19 +638,35 @@ static void HostClientCallback (CFHostRef theHost, CFHostInfoType typeInfo, cons
 						[mConnectorImpl displayAuthenticationPanel: [self authenticationPanel]];
 					}					
 					
-					willContinue = YES;
+					shouldReset = NO;
+					presentError = NO;
 					break;
 				}
 					
+				case kBXErrorSSLCertificateVerificationFailed:
+					shouldReset = NO;
+					presentError = NO;
+					break;
+					
+				case kBXErrorUserCancel:
+					shouldReset = YES;
+					presentError = NO;
+					break;
+					
 				default:
+					shouldReset = YES;
+					presentError = YES;
 					break;
 			}
 		}
 		
-		if (! willContinue)
+		if (shouldReset)
 		{
 			[self endPanelUnless: kBXNSConnectorNoPanel];
-			[mConnectorImpl presentError: error didEndSelector: @selector (recoveredFromConnectionError:)];
+			if (presentError)
+				[mConnectorImpl presentError: error didEndSelector: @selector (recoveredFromConnectionError:)];
+			else
+				[self recoveredFromConnectionError: NO];
 		}
 	}
 }

@@ -484,11 +484,19 @@ bx_error_during_rollback (id self, NSError* error)
 
 - (NSError *) connectionErrorForContext: (NSError *) error
 {
-	NSInteger code = kBXErrorUnknown;	
-	switch ([error code]) 
+	NSInteger code = kBXErrorUnknown;
+	switch ([error code])
 	{
 		case kPGTSConnectionErrorSSLUnavailable:
-			code = kBXErrorSSLError; //FIXME: this is too ambiguous. Differentiate between "SSL unavailable" and "other SSL error."
+			code = kBXErrorSSLUnavailable;
+			break;
+			
+		case kPGTSConnectionErrorSSLCertificateVerificationFailed:
+			code = kBXErrorSSLCertificateVerificationFailed;
+			break;
+			
+		case kPGTSConnectionErrorSSLError:
+			code = kBXErrorSSLError;
 			break;
 			
 		case kPGTSConnectionErrorPasswordRequired:

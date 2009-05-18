@@ -42,10 +42,6 @@
 #import <netdb.h>
 
 
-#ifdef USE_SSL
-#import "BXOpenSSLCompatibility.h"
-
-
 static char*
 CopyConnectionString (NSDictionary* connectionDict)
 {
@@ -66,6 +62,8 @@ CopyConnectionString (NSDictionary* connectionDict)
 }
 
 
+#ifdef USE_SSL
+#import "BXOpenSSLCompatibility.h"
 //This is thread safe because it's called in +initialize for the first time.
 //Afterwards, the static variable is only read.
 static int
@@ -85,9 +83,18 @@ SSLConnectionExIndex ()
 static int
 VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 {
+	int retval = 0;
 	SSL* ssl = X509_STORE_CTX_get_ex_data (x509_ctx, SSL_get_ex_data_X509_STORE_CTX_idx ());
-	PGTSConnection* connection = SSL_get_ex_data (ssl, SSLConnectionExIndex ());
-	int retval = (YES == [[connection certificateVerificationDelegate] PGTSAllowSSLForConnection: connection context: x509_ctx preverifyStatus: preverify_ok]);
+	PGTSConnector* connector = SSL_get_ex_data (ssl, SSLConnectionExIndex ());
+	id <PGTSConnectorDelegate> delegate = [connector delegate];
+
+	if ([delegate allowSSLForConnector: connector context: x509_ctx preverifyStatus: preverify_ok])
+		retval = 1;
+	else 
+	{
+		retval = 0;
+		[connector setServerCertificateVerificationFailed: YES];
+	}
 	return retval;
 }
 #endif
@@ -126,6 +133,11 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 	return mSSLSetUp;
 }
 
+- (id <PGTSConnectorDelegate>) delegate
+{
+	return mDelegate;
+}
+
 - (void) setDelegate: (id <PGTSConnectorDelegate>) anObject
 {
 	mDelegate = anObject;
@@ -157,6 +169,11 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 - (void) setTraceFile: (FILE *) stream
 {
 	mTraceFile = stream;
+}
+
+- (void) setServerCertificateVerificationFailed: (BOOL) aBool
+{
+	mServerCertificateVerificationFailed = aBool;
 }
 
 - (NSError *) connectionError
@@ -191,8 +208,15 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 			
 			if (! mNegotiationStarted)
 				code = kPGTSConnectionErrorUnknown;
-			else if (! mSSLSetUp && 0 == strcmp ("require", SSLMode))
-				code = kPGTSConnectionErrorSSLUnavailable;
+			else if (0 == strcmp ("require", SSLMode))
+			{
+				if (mServerCertificateVerificationFailed)
+					code = kPGTSConnectionErrorSSLCertificateVerificationFailed;
+				else if (mSSLSetUp)
+					code = kPGTSConnectionErrorSSLError;
+				else
+					code = kPGTSConnectionErrorSSLUnavailable;
+			}
 			else if (PQconnectionNeedsPassword (mConnection))
 				code = kPGTSConnectionErrorPasswordRequired;
 			else if (PQconnectionUsedPassword (mConnection))
@@ -219,6 +243,29 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 		mConnection = NULL;
 		[mDelegate connectorFailed: self];		
 	}	
+}
+
+- (void) setUpSSL
+{
+#ifdef USE_SSL
+	ConnStatusType status = PQstatus (mConnection);
+	if (! mSSLSetUp && CONNECTION_SSL_CONTINUE == status)
+	{
+		mSSLSetUp = YES;
+		SSL* ssl = PQgetssl (mConnection);
+		BXAssertVoidReturn (ssl, @"Expected ssl struct not to be NULL.");
+		SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
+		SSL_set_ex_data (ssl, SSLConnectionExIndex (), self);
+	}
+#endif	
+}
+
+- (void) prepareForConnect
+{
+	mSSLSetUp = NO;
+	mNegotiationStarted = NO;
+	mServerCertificateVerificationFailed = NO;
+	[self setConnectionError: nil];
 }
 @end
 
@@ -341,6 +388,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	[super finalize];
 }
 
+- (void) prepareForConnect
+{
+	[super prepareForConnect];
+	bzero (&mHostError, sizeof (mHostError));
+}
+
 
 #pragma mark Callbacks
 
@@ -454,16 +507,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	{
 		PostgresPollingStatusType status = mPollFunction (mConnection);
 		
-#ifdef USE_SSL
-		if (! mSSLSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
-		{
-			mSSLSetUp = YES;
-			SSL* ssl = PQgetssl (mConnection);
-			BXAssertVoidReturn (ssl, @"Expected ssl struct not to be NULL.");
-			SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
-			SSL_set_ex_data (ssl, SSLConnectionExIndex (), mConnection);
-		}
-#endif
+		[self setUpSSL];
 		
 		switch (status)
 		{
@@ -505,12 +549,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 - (BOOL) connect: (NSDictionary *) connectionDictionary
 {
-	BOOL retval = NO;	
-	mNegotiationStarted = NO;
+	BOOL retval = NO;
 	mExpectedCallBack = 0;
-	[self setConnectionError: nil];
+	[self prepareForConnect];
 	[self setConnectionDictionary: connectionDictionary];
-	bzero (&mHostError, sizeof (mHostError));
 	
 	//CFSocket etc. do some nice things for us that prevent libpq for noticing
 	//connection problems. This causes SIGPIPE to be sent to us, and we get
@@ -687,8 +729,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	//Here libpq can resolve the name for us, because we don't use CFRunLoop and CFSocket.
 
     BOOL retval = NO;
-	mNegotiationStarted = NO;
-	[self setConnectionError: nil];
+	[self prepareForConnect];
 	char* conninfo = CopyConnectionString (connectionDictionary);
 	if ([self start: conninfo] && CONNECTION_BAD != PQstatus (mConnection))
 	{
@@ -717,16 +758,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 				pollingStatus = mPollFunction (mConnection);
 				
 				BXLogDebug (@"Polling status: %d connection status: %d", pollingStatus, PQstatus (mConnection));
-#ifdef USE_SSL
-				if (NO == mSSLSetUp && CONNECTION_SSL_CONTINUE == PQstatus (mConnection))
-				{
-					mSSLSetUp = YES;
-					SSL* ssl = PQgetssl (mConnection);
-					BXAssertValueReturn (NULL != ssl, NO, @"Expected ssl struct not to be NULL.");
-					SSL_set_verify (ssl, SSL_VERIFY_PEER, &VerifySSLCertificate);
-					SSL_set_ex_data (ssl, SSLConnectionExIndex (), self);
-				}
-#endif
+				
+				[self setUpSSL];
 				
 				switch (pollingStatus)
 				{

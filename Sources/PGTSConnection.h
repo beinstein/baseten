@@ -71,7 +71,9 @@ enum PGTSConnectionError
 	kPGTSConnectionErrorUnknown,
 	kPGTSConnectionErrorSSLUnavailable,
 	kPGTSConnectionErrorPasswordRequired,
-	kPGTSConnectionErrorInvalidPassword
+	kPGTSConnectionErrorInvalidPassword,
+	kPGTSConnectionErrorSSLError,
+	kPGTSConnectionErrorSSLCertificateVerificationFailed
 };
 
 

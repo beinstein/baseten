@@ -611,9 +611,9 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	//Retain the connector for error handling.
 }
 
-- (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate
+- (BOOL) allowSSLForConnector: (PGTSConnector *) connector context: (void *) x509_ctx preverifyStatus: (int) preverifyStatus
 {
-	return mCertificateVerificationDelegate;
+	return [mCertificateVerificationDelegate PGTSAllowSSLForConnection: self context: x509_ctx preverifyStatus: preverifyStatus];
 }
 @end
 
