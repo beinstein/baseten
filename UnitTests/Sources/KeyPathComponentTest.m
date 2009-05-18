@@ -61,6 +61,8 @@
 
 - (void) testEndingFullStop
 {
+	MKCFail (); //FIXME: only for testing the buildbot.
+
 	NSString* keyPath = @"aa.";
 	MKCAssertThrowsSpecificNamed (BXKeyPathComponents (keyPath), NSException, NSInvalidArgumentException);
 }
