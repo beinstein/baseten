@@ -32,27 +32,13 @@
 
 
 @implementation ObjectIDTests
-
-- (void) setUp
-{
-	ctx = [[BXDatabaseContext contextWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]] retain];
-	[ctx setAutocommits: NO];
-}
-
-- (void) tearDown
-{
-	[ctx disconnect];
-	[ctx release];
-}
-
 - (void) testObjectIDWithURI
 {
 	NSError* error = nil;
-	BXEntityDescription* entity = [ctx entityForTable: @"test" inSchema: @"public" error: &error];
+	BXEntityDescription* entity = [mContext entityForTable: @"test" inSchema: @"public" error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	
-	BXDatabaseObject* object = [[ctx executeFetchForEntity: entity 
+	BXDatabaseObject* object = [[mContext executeFetchForEntity: entity 
 											 withPredicate: [NSPredicate predicateWithFormat: @"id == 1"]
 													 error: &error] objectAtIndex: 0];
 	MKCAssertNotNil (object);
@@ -62,7 +48,8 @@
 	MKCAssertNotNil (uri);
 	
 	//Change the URI back to a object id
-	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [ctx databaseURI]];
+	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [mContext databaseURI]];
+	[ctx2 setDelegate: self];
 	BXDatabaseObjectID* objectID2 = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx2 error: &error] autorelease];
 	STAssertNil (error, [error description]);
 	MKCAssertEqualObjects (objectID, objectID2);
@@ -75,14 +62,14 @@
 - (void) testInvalidObjectID
 {
 	NSError* error = nil;
-	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=12345" relativeToURL: [ctx databaseURI]];
-	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx error: &error] autorelease];
+	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=12345" relativeToURL: [mContext databaseURI]];
+	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: mContext error: &error] autorelease];
 	STAssertNil (error, [error description]);
 	
-	[ctx connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
 	
-	BXDatabaseObject* object = [ctx objectWithID: anId error: &error];
+	BXDatabaseObject* object = [mContext objectWithID: anId error: &error];
 	MKCAssertNil (object);
 	MKCAssertNotNil (error);
 	MKCAssertTrue ([[error domain] isEqualToString: kBXErrorDomain]);
@@ -92,21 +79,22 @@
 - (void) testValidObjectID
 {
 	NSError* error = nil;
-	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=1" relativeToURL: [ctx databaseURI]];
-	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx error: &error] autorelease];
+	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=1" relativeToURL: [mContext databaseURI]];
+	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: mContext error: &error] autorelease];
 	STAssertNil (error, [error description]);
 	
-	[ctx connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
 	
-	BXDatabaseObject* object = [ctx objectWithID: anId error: &error];
+	BXDatabaseObject* object = [mContext objectWithID: anId error: &error];
 	MKCAssertNotNil (object);
 	STAssertNil (error, [error description]);
 }
 
 - (void) testObjectIDFromAnotherContext
 {
-	BXDatabaseContext* ctx2 = [[[BXDatabaseContext alloc] initWithDatabaseURI: [ctx databaseURI]] autorelease];
+	BXDatabaseContext* ctx2 = [[[BXDatabaseContext alloc] initWithDatabaseURI: [mContext databaseURI]] autorelease];
+	[ctx2 setDelegate: self];
 	NSError* error = nil;
 	MKCAssertNotNil (ctx2);
 	
@@ -120,10 +108,10 @@
 	BXDatabaseObjectID* anId = (id) [[objectArray objectAtIndex: 0] objectID];
 	MKCAssertNotNil (anId);
 	
-	[ctx connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
 	
-	BXDatabaseObject* anObject = [ctx objectWithID: anId error: &error];
+	BXDatabaseObject* anObject = [mContext objectWithID: anId error: &error];
 	STAssertNil (error, [error description]);
 	MKCAssertNotNil (anObject);
 	

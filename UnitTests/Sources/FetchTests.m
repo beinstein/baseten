@@ -62,30 +62,24 @@
 
 - (void) setUp
 {
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-	[context setAutocommits: NO];
+	[super setUp];
 	NSError* error = nil;
-    entity = [context entityForTable: @"test" error: &error];
+    mEntity = [mContext entityForTable: @"test" error: &error];
 	STAssertNil (error, [error description]);
-    MKCAssertNotNil (entity);
-}
-
-- (void) tearDown
-{
-	[context disconnect];
-    [context release];
+    MKCAssertNotNil (mEntity);
 }
 
 - (void) testObjectWithID
 {
     NSError* error = nil;
-	NSURL* objectURI = [NSURL URLWithString: @"pgsql://localhost/basetentest/public/test?id,n=1"];
+	NSString* uriString = [[self databaseURI] absoluteString];
+	uriString = [uriString stringByAppendingString: @"/public/test?id,n=1"];
+	NSURL* objectURI = [NSURL URLWithString: uriString];
 	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: objectURI
-																context: context 
+																context: mContext 
 																  error: &error] autorelease];
 	STAssertNil (error, [error description]);
-    BXDatabaseObject* object = [context objectWithID: anId error: &error];
+    BXDatabaseObject* object = [mContext objectWithID: anId error: &error];
 	STAssertNil (error, [error description]);
     MKCAssertEqualObjects ([object primitiveValueForKey: @"id"], [NSNumber numberWithInt: 1]);
     //if this is not nil, then another test has failed or the database is not in known state
@@ -95,11 +89,11 @@
 - (void) testMultiColumnPkey
 {
     NSError* error = nil;
-    [context connectIfNeeded: nil];
+    [mContext connectIfNeeded: nil];
     
-    BXEntityDescription* multicolumnpkey = [context entityForTable: @"multicolumnpkey" error: nil];
+    BXEntityDescription* multicolumnpkey = [mContext entityForTable: @"multicolumnpkey" error: nil];
     MKCAssertNotNil (multicolumnpkey);
-    NSArray* multicolumnpkeys = [context executeFetchForEntity: multicolumnpkey withPredicate: nil error: &error];
+    NSArray* multicolumnpkeys = [mContext executeFetchForEntity: multicolumnpkey withPredicate: nil error: &error];
     MKCAssertNotNil (multicolumnpkeys);
     MKCAssertTrue (3 == [multicolumnpkeys  count]);
     STAssertNil (error, [error description]);
@@ -127,11 +121,11 @@
 - (void) testDates
 {
     NSError* error = nil;
-    [context connectIfNeeded: nil];
+    [mContext connectIfNeeded: nil];
     
-    BXEntityDescription* datetest = [context entityForTable: @"datetest" error: nil];
+    BXEntityDescription* datetest = [mContext entityForTable: @"datetest" error: nil];
     MKCAssertNotNil (datetest);
-    NSArray* dateobjects = [context executeFetchForEntity: datetest withPredicate: nil error: &error];
+    NSArray* dateobjects = [mContext executeFetchForEntity: datetest withPredicate: nil error: &error];
     STAssertNil (error, [error description]);
     MKCAssertNotNil (dateobjects);
 }
@@ -139,7 +133,7 @@
 - (void) testQuery
 {
 	NSError* error = nil;
-	NSArray* result = [context executeQuery: [NSString stringWithUTF8String: "SELECT * FROM ♨"] error: &error];
+	NSArray* result = [mContext executeQuery: [NSString stringWithUTF8String: "SELECT * FROM ♨"] error: &error];
 	STAssertNil (error, [error description]);
 	MKCAssertTrue (3 == [result count]);
 	BXEnumerate (currentRow, e, [result objectEnumerator])
@@ -149,7 +143,7 @@
 - (void) testCommand
 {
 	NSError* error = nil;
-	unsigned long long count = [context executeCommand: [NSString stringWithUTF8String: "UPDATE ♨ SET value = 'test'"] error: &error];
+	unsigned long long count = [mContext executeCommand: [NSString stringWithUTF8String: "UPDATE ♨ SET value = 'test'"] error: &error];
 	STAssertNil (error, [error description]);
 	MKCAssertTrue (3 == count);
 }
@@ -157,8 +151,8 @@
 - (void) testNullValidation
 {
 	NSError* error = nil;
-	BXEntityDescription* person = [context entityForTable: @"person" error: &error];
-	NSArray* people = [context executeFetchForEntity: person withPredicate: nil error: &error];
+	BXEntityDescription* person = [mContext entityForTable: @"person" error: &error];
+	NSArray* people = [mContext executeFetchForEntity: person withPredicate: nil error: &error];
 	BXDatabaseObject* personObject = [people objectAtIndex: 0];
 	
 	//soulmate has a non-null constraint.
@@ -183,12 +177,12 @@
 {
 	NSError* error = nil;
 	NSString* fieldname = @"value";
-	[context connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
-	BXAttributeDescription* property = [[entity attributesByName] objectForKey: fieldname];
+	BXAttributeDescription* property = [[mEntity attributesByName] objectForKey: fieldname];
 	MKCAssertFalse ([property isExcluded]);
 
-	NSArray* result = [context executeFetchForEntity: entity withPredicate: nil 
+	NSArray* result = [mContext executeFetchForEntity: mEntity withPredicate: nil 
 									 excludingFields: [NSArray arrayWithObject: fieldname]
 											   error: &error];
 	STAssertNil (error, [error description]);
@@ -197,20 +191,20 @@
 	//Quite the same, which object we get
 	BXDatabaseObject* object = [result objectAtIndex: 0]; 
 	MKCAssertTrue (1 == [object isFaultKey: fieldname]);
-	[context fireFault: object key: fieldname error: &error];
+	[mContext fireFault: object key: fieldname error: &error];
 	STAssertNil (error, [error description]);
 	MKCAssertTrue (0 == [object isFaultKey: fieldname]);
 	
-	[entity resetAttributeExclusion];
+	[mEntity resetAttributeExclusion];
 }
 
 - (void) testJoin
 {
 	NSError* error = nil;
-	[context connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
 	
-	BXEntityDescription* person = [context entityForTable: @"person" error: &error];
+	BXEntityDescription* person = [mContext entityForTable: @"person" error: &error];
 	STAssertNil (error, [error description]);
 	
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"person_address.address = 'Mannerheimintie 1'"];
@@ -222,7 +216,7 @@
 	NSPredicate* compound = [NSCompoundPredicate andPredicateWithSubpredicates: 
 		[NSArray arrayWithObjects: predicate, truePredicate, nil]];
 	
-	NSArray* res = [context executeFetchForEntity: person withPredicate: compound error: &error];
+	NSArray* res = [mContext executeFetchForEntity: person withPredicate: compound error: &error];
 	STAssertNil (error, [error description]);
 	
 	MKCAssertTrue (1 == [res count]);
@@ -233,12 +227,12 @@
 - (void) testJoin2
 {
 	NSError* error = nil;	
-	[context connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
 	
-	BXEntityDescription* order = [context entityForTable: @"order" error: &error];
+	BXEntityDescription* order = [mContext entityForTable: @"order" error: &error];
 	STAssertNil (error, [error description]);
-	BXEntityDescription* supplier = [context entityForTable: @"supplier" error: &error];
+	BXEntityDescription* supplier = [mContext entityForTable: @"supplier" error: &error];
 	STAssertNil (error, [error description]);
 	
 	BXPropertyDescription* supplierName = [[supplier attributesByName] objectForKey: @"supplier_name"];
@@ -254,7 +248,7 @@
         @"%@ == %@ AND ((NOT %@ MATCHES[c] \"test\") OR %@ MATCHES[c] \"ferg\")", 
 		supplierId, orderSupplierId, poNumber, supplierName];
     
-	NSArray* res = [context executeFetchForEntity: order withPredicate: predicate error: &error];
+	NSArray* res = [mContext executeFetchForEntity: order withPredicate: predicate error: &error];
 	res = nil;
 }
 #endif
@@ -262,8 +256,8 @@
 - (void) testFault
 {
 	NSError* error = nil;
-	[entity setDatabaseObjectClass: [FetchTestObject class]];
-	NSArray* res = [context executeFetchForEntity: entity withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
+	[mEntity setDatabaseObjectClass: [FetchTestObject class]];
+	NSArray* res = [mContext executeFetchForEntity: mEntity withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
 								  returningFaults: NO error: &error];
 	STAssertNil (error, [error description]);
 	
@@ -286,17 +280,17 @@
 	
 	object->didTurnIntoFault = NO;
 	[object valueForKey: @"value"];
-	[context refreshObject: object mergeChanges: YES];
+	[mContext refreshObject: object mergeChanges: YES];
 	MKCAssertFalse (object->didTurnIntoFault);
 	MKCAssertFalse ([object isFaultKey: @"value"]);
 	
 	object->didTurnIntoFault = NO;
 	[object valueForKey: @"value"];
-	[context refreshObject: object mergeChanges: NO];
+	[mContext refreshObject: object mergeChanges: NO];
 	MKCAssertTrue (object->didTurnIntoFault);
 	MKCAssertTrue ([object isFaultKey: nil]);
 	MKCAssertTrue ([object isFaultKey: @"value"]);
 		
-	[entity setDatabaseObjectClass: nil];
+	[mEntity setDatabaseObjectClass: nil];
 }
 @end

@@ -33,26 +33,12 @@
 
 
 @implementation EntityTests
-
-- (void) setUp
-{
-	ctx = [[BXDatabaseContext contextWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]] retain];
-	[ctx setAutocommits: NO];
-}
-
-- (void) tearDown
-{
-	[ctx disconnect];
-	[ctx release];
-}
-
 - (void) testValidName
 {
 	NSError* error = nil;
 	NSString* schemaName = @"Fkeytest";
 	NSString* entityName = @"mtocollectiontest1";
-	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
+	BXEntityDescription* entity = [mContext entityForTable: entityName inSchema: schemaName error: &error];
 	STAssertNil (error, [error description]);
 	MKCAssertNotNil (entity);
 	MKCAssertEqualObjects ([entity name], entityName);
@@ -64,8 +50,8 @@
 	NSError* error = nil;
 	NSString* schemaName = @"public";
 	NSString* entityName = @"aNonExistentTable";
-	[ctx connectIfNeeded: &error];
-	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
+	[mContext connectIfNeeded: &error];
+	BXEntityDescription* entity = [mContext entityForTable: entityName inSchema: schemaName error: &error];
 	MKCAssertNotNil (error);
 	MKCAssertNil (entity);
 }
@@ -73,9 +59,9 @@
 - (void) testValidation
 {
 	NSError* error = nil;
-	[ctx connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	//This entity has fields only some of which are primary key.
-	BXEntityDescription* entity = [ctx entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: &error];
+	BXEntityDescription* entity = [mContext entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	
 	//The entity should be validated
@@ -88,10 +74,11 @@
 	NSError* error = nil;
 	NSString* entityName = @"mtocollectiontest1";
 	NSString* schemaName = @"Fkeytest";
-	BXEntityDescription* entity = [ctx entityForTable: entityName inSchema: schemaName error: &error];
+	BXEntityDescription* entity = [mContext entityForTable: entityName inSchema: schemaName error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	
-	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [ctx databaseURI]];
+	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [mContext databaseURI]];
+	[ctx2 setDelegate: self];
 	BXEntityDescription* entity2 = [ctx2 entityForTable: entityName inSchema: schemaName error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	MKCAssertTrue (entity == entity2);
@@ -99,10 +86,10 @@
 
 - (void) testExclusion
 {
-	[ctx connectSync: NULL];
+	[mContext connectSync: NULL];
 	
 	NSError* error = nil;
-	BXEntityDescription* entity = [ctx entityForTable: @"test" error: &error];
+	BXEntityDescription* entity = [mContext entityForTable: @"test" error: &error];
 	STAssertNotNil (entity, [error description]);
 	
 	BXAttributeDescription* attr = [[entity attributesByName] objectForKey: @"xmin"];
@@ -118,8 +105,8 @@
 
 - (void) testHash
 {
-    BXEntityDescription* e1 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
-    BXEntityDescription* e2 = [ctx entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
+    BXEntityDescription* e1 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
+    BXEntityDescription* e2 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
 
     NSSet* container3 = [NSSet setWithObject: e1];
     MKCAssertNotNil ([container3 member: e1]);
@@ -130,12 +117,12 @@
     MKCAssertEqualObjects (e1, e2);
     
     NSArray* container = [NSArray arrayWithObjects: 
-        [ctx entityForTable: @"mtmrel1"  inSchema: @"Fkeytest" error: nil],
-        [ctx entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil],
-        [ctx entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil],
-        [ctx entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil],
-        [ctx entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil],
-        [ctx entityForTable: @"test1"    inSchema: @"Fkeytest" error: nil],
+        [mContext entityForTable: @"mtmrel1"  inSchema: @"Fkeytest" error: nil],
+        [mContext entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil],
+        [mContext entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil],
+        [mContext entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil],
+        [mContext entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil],
+        [mContext entityForTable: @"test1"    inSchema: @"Fkeytest" error: nil],
         nil];
     NSSet* container2 = [NSSet setWithArray: container];
 
@@ -159,8 +146,8 @@
 - (void) testViewPkey
 {
 	NSError* error = nil;
-	[ctx connectIfNeeded: &error];
-	BXEntityDescription* entity = [ctx entityForTable: @"test_v" error: &error];
+	[mContext connectIfNeeded: &error];
+	BXEntityDescription* entity = [mContext entityForTable: @"test_v" error: &error];
 	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
 	
 	NSArray* pkeyFields = [entity primaryKeyFields];

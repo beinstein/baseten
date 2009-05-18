@@ -1,8 +1,8 @@
 //
-// ObjectIDTests.h
+// BXSSLConnectionTests.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -27,12 +27,14 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import <BaseTen/BaseTen.h>
 #import "BXTestCase.h"
 
-@class BXDatabaseContext;
 
-
-@interface ObjectIDTests : BXDatabaseTestCase 
+@interface BXSSLConnectionTests : BXTestCase
 {
+	BXDatabaseContext* mContext;
+	enum BXSSLMode mSSLMode;
+	enum BXCertificatePolicy mCertificatePolicy;
 }
 @end

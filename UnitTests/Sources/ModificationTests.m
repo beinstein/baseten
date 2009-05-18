@@ -35,29 +35,14 @@
 
 
 @implementation ModificationTests
-
-- (void) setUp
-{
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
-    MKCAssertFalse ([context autocommits]);
-}
-
-- (void) tearDown
-{
-	[context disconnect];
-    [context release];
-}
-
 - (void) testPkeyModification
 {    
-    BXEntityDescription* pkeytest = [context entityForTable: @"Pkeytest" error: nil];
+    BXEntityDescription* pkeytest = [mContext entityForTable: @"Pkeytest" error: nil];
     NSError* error = nil;
-    MKCAssertNotNil (context);
+    MKCAssertNotNil (mContext);
     MKCAssertNotNil (pkeytest);
     
-    NSArray* res = [context executeFetchForEntity: pkeytest
+    NSArray* res = [mContext executeFetchForEntity: pkeytest
                                     withPredicate: [NSPredicate predicateWithFormat: @"Id = 1"]
                                             error: &error];
     STAssertNil (error, [error description]);
@@ -72,7 +57,7 @@
     MKCAssertEquals ([[object valueForKey: @"Id"] intValue], 4);
     [object setPrimitiveValue: @"d" forKey: @"value"];
     
-    res = [[context executeFetchForEntity: pkeytest withPredicate: nil error: &error]
+    res = [[mContext executeFetchForEntity: pkeytest withPredicate: nil error: &error]
         sortedArrayUsingDescriptors: [NSArray arrayWithObject: 
             [[[NSSortDescriptor alloc] initWithKey: @"Id" ascending: YES] autorelease]]];
     STAssertNil (error, [error description]);
@@ -88,15 +73,15 @@
         MKCAssertEqualObjects ([object valueForKey: @"value"], value);
     }
     
-    [context rollback];
+    [mContext rollback];
 }
 
 - (void) testMassUpdateAndDelete
 {
-    BXEntityDescription* updatetest = [context entityForTable: @"updatetest" error: nil];
+    BXEntityDescription* updatetest = [mContext entityForTable: @"updatetest" error: nil];
     NSError* error = nil;
     
-    NSArray* res = [context executeFetchForEntity: updatetest withPredicate: nil
+    NSArray* res = [mContext executeFetchForEntity: updatetest withPredicate: nil
                                   returningFaults: NO error: &error];
     NSArray* originalResult = res;
     STAssertNil (error, [error description]);
@@ -112,7 +97,7 @@
 
     //First update just one object
 	id value1Attr = [[updatetest attributesByName] objectForKey: @"value1"];
-    [context executeUpdateObject: nil
+    [mContext executeUpdateObject: nil
 						  entity: updatetest 
                        predicate: predicate
                   withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
@@ -123,7 +108,7 @@
     
     //Then update multiple objects
     number = [NSNumber numberWithInt: 2];
-    [context executeUpdateObject: nil
+    [mContext executeUpdateObject: nil
 						  entity: updatetest 
                        predicate: nil
                   withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
@@ -137,7 +122,7 @@
     number = [NSNumber numberWithInt: -1];
 	id idattr = [[updatetest attributesByName] objectForKey: @"id"];
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
-    [context executeUpdateObject: object
+    [mContext executeUpdateObject: object
 						  entity: updatetest
                        predicate: predicate
                   withDictionary: [NSDictionary dictionaryWithObject: number forKey: idattr]
@@ -148,24 +133,24 @@
     
     //Then delete an object
     predicate = [NSPredicate predicateWithFormat: @"id = -1"];
-    [context executeDeleteFromEntity: updatetest withPredicate: predicate error: &error];
+    [mContext executeDeleteFromEntity: updatetest withPredicate: predicate error: &error];
     STAssertNil (error, [error description]);
-    res = [context executeFetchForEntity: updatetest withPredicate: nil
+    res = [mContext executeFetchForEntity: updatetest withPredicate: nil
                          returningFaults: NO error: &error];
     MKCAssertTrue (4 == [res count]);
-    res = [context executeFetchForEntity: updatetest withPredicate: predicate
+    res = [mContext executeFetchForEntity: updatetest withPredicate: predicate
                          returningFaults: NO error: &error];
     MKCAssertTrue (0 == [res count]);
     
     //Finally delete all objects
-    [context executeDeleteFromEntity: updatetest withPredicate: nil error: &error];
+    [mContext executeDeleteFromEntity: updatetest withPredicate: nil error: &error];
     STAssertNil (error, [error description]);
-    res = [context executeFetchForEntity: updatetest withPredicate: nil
+    res = [mContext executeFetchForEntity: updatetest withPredicate: nil
                          returningFaults: NO error: &error];
     MKCAssertTrue (0 == [res count]);
     originalResult = nil;
     
-    [context rollback];
+    [mContext rollback];
 }
 
 - (void) testCreateAndDeleteWithArray
@@ -173,16 +158,16 @@
 	//Fetch a self-updating collection and expect its contents to change.
     NSError* error = nil;
     NSArray* array = nil;
-    BXEntityDescription* entity = [[context entityForTable: @"test" error: nil] retain];
-    array = [context executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
+    BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+    array = [mContext executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
 					   updateAutomatically: YES error: &error];
     STAssertNil (error, [error description]);
     MKCAssertNotNil (array);
     unsigned int count = [array count];
     
     //Create an object into the array using another connection.
-    BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
+    BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
+	[context2 setDelegate: self];
     [context2 setAutocommits: NO];
     MKCAssertNotNil (context2);
     

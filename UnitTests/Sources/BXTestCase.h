@@ -26,15 +26,17 @@
 // $Id$
 //
 
-@class BXDatabaseContext;
+#import <BaseTen/BaseTen.h>
 
 
 extern int d_eq (double a, double b);
 
 
-@interface BXTestCase : SenTestCase
+@interface BXTestCase : SenTestCase <BXDatabaseContextDelegate>
 {
 }
+- (NSURL *) databaseURI;
+- (NSDictionary *) connectionDictionary;
 @end
 
 

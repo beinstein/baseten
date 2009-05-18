@@ -30,9 +30,7 @@
 #import "BXTestCase.h"
 
 
-@interface ModificationTests : BXTestCase 
+@interface ModificationTests : BXDatabaseTestCase 
 {
-    BXDatabaseContext* context;
 }
-
 @end

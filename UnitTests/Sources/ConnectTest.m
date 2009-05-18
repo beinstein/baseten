@@ -35,8 +35,11 @@
 
 - (void) setUp
 {
+	[super setUp];
+	
     ctx = [[BXDatabaseContext alloc] init];
 	[ctx setAutocommits: NO];
+	[ctx setDelegate: self];
 	expectedCount = 0;
 }
 
@@ -44,17 +47,23 @@
 {
 	[ctx disconnect];
     [ctx release];
+	[super tearDown];
 }
 
 - (void) testConnect1
 {
-    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]]);
+    MKCAssertNoThrow ([ctx setDatabaseURI: [self databaseURI]]);
     MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
 }
 
 - (void) testConnect2
 {
-    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest/"]]);
+	NSURL* uri = [self databaseURI];
+	NSString* uriString = [uri absoluteString];
+	uriString = [uriString stringByAppendingString: @"/"];
+	uri = [NSURL URLWithString: uriString];
+	
+    MKCAssertNoThrow ([ctx setDatabaseURI: uri]);
     MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
 }
  

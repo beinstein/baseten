@@ -31,9 +31,8 @@
 @class BXDatabaseContext;
 
 
-@interface UndoTests : BXTestCase 
+@interface UndoTests : BXDatabaseTestCase 
 {
-    BXDatabaseContext* context;
 }
 - (void) undoAutocommit: (BOOL) autocommit;
 - (void) undoWithMTORelationshipAutocommit: (BOOL) autocommit;

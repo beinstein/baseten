@@ -28,7 +28,9 @@
 
 #import <SenTestingKit/SenTestingKit.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/PGTSConstants.h>
 #import "BXTestCase.h"
+#import "MKCSenTestCaseAdditions.h"
 
 
 int d_eq (double a, double b)
@@ -65,25 +67,47 @@ bx_test_failed (NSException* exception)
 	}
 	return self;
 }
-@end
 
-
-@implementation BXDatabaseTestCase
 - (NSURL *) databaseURI
 {
 	return [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"];
 }
 
+- (NSDictionary *) connectionDictionary
+{
+	NSDictionary* connectionDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+										  @"localhost", kPGTSHostKey,
+										  @"baseten_test_user", kPGTSUserNameKey,
+										  @"basetentest", kPGTSDatabaseNameKey,
+										  @"disable", kPGTSSSLModeKey,
+										  nil];
+	return connectionDictionary;
+}
+
+- (enum BXSSLMode) SSLModeForDatabaseContext: (BXDatabaseContext *) ctx
+{
+	return kBXSSLModeDisable;
+}
+@end
+
+
+@implementation BXDatabaseTestCase
 - (void) setUp
 {
+	[super setUp];
+	
 	NSURL* databaseURI = [self databaseURI];
 	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
 	[mContext setAutocommits: NO];
+	[mContext setDelegate: self];
+	
+	MKCAssertFalse ([mContext autocommits]);
 }
 
 - (void) tearDown
 {
 	[mContext disconnect];
 	[mContext release];
+	[super tearDown];
 }
 @end

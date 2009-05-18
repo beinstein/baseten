@@ -38,36 +38,27 @@
 
 - (void) setUp
 {
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
-    MKCAssertNotNil (context);
+	[super setUp];
     
-    mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
-    mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
-    MKCAssertNotNil (mtmtest1);
-    MKCAssertNotNil (mtmtest2);
+    mMtmtest1 = [mContext entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
+    mMtmtest2 = [mContext entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
+    MKCAssertNotNil (mMtmtest1);
+    MKCAssertNotNil (mMtmtest2);
     
-    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
-    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
-    MKCAssertNotNil (mtmtest1v);
-    MKCAssertNotNil (mtmtest2v);
-}
-
-- (void) tearDown
-{
-	[context disconnect];
-	[context release];
+    mMtmtest1v = [mContext entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
+    mMtmtest2v = [mContext entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
+    MKCAssertNotNil (mMtmtest1v);
+    MKCAssertNotNil (mMtmtest2v);
 }
 
 - (void) testModMTM
 {
-    [self modMany: mtmtest1 toMany: mtmtest2];
+    [self modMany: mMtmtest1 toMany: mMtmtest2];
 }
 
 - (void) testModMTMView
 {
-    [self modMany: mtmtest1v toMany: mtmtest2v];
+    [self modMany: mMtmtest1v toMany: mMtmtest2v];
 }
 
 - (void) modMany: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2
@@ -76,10 +67,10 @@
     //This time, use a many-to-many relationship.
 
     NSError* error = nil;
-    MKCAssertTrue (NO == [context autocommits]);
+    MKCAssertTrue (NO == [mContext autocommits]);
 	
     //Execute a fetch
-    NSArray* res = [context executeFetchForEntity: entity1
+    NSArray* res = [mContext executeFetchForEntity: entity1
                                     withPredicate: nil error: &error];
 	STAssertNil (error, [error description]);
     MKCAssertTrue (4 == [res count]);
@@ -103,7 +94,7 @@
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     //Get the objects from the second table
-    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: entity2
+    NSSet* objects2 = [NSSet setWithArray: [mContext executeFetchForEntity: entity2
                                                             withPredicate: [NSPredicate predicateWithFormat:  @"value2 != 'd2'"]
                                                                     error: &error]];
     STAssertNil (error, [error description]);
@@ -123,7 +114,7 @@
     MKCAssertTrue ([mock isEqualToSet: foreignObjects]);
     MKCAssertTrue ([mock isEqualToSet: foreignObjects2]);
     
-    [context rollback];
+    [mContext rollback];
 }
 
 @end

@@ -41,6 +41,7 @@
 #import "PGTSNotificationTests.h"
 
 #import "ConnectTest.h"
+#import "BXSSLConnectionTests.h"
 #import "BXDataModelTests.h"
 #import "BXSQLTests.h"
 #import "BXDatabaseObjectTests.h"
@@ -73,6 +74,7 @@
 							[PGTSNotificationTests class],
 							
 							[ConnectTest class],
+							[BXSSLConnectionTests class],
 							[BXDataModelTests class],
 							[BXSQLTests class],
 							[BXDatabaseObjectTests class],

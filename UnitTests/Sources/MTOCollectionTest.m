@@ -38,36 +38,27 @@
 
 - (void) setUp
 {
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
-    MKCAssertNotNil (context);
-    
-    mtocollectiontest1 = [context entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest" error: nil];
-    mtocollectiontest2 = [context entityForTable: @"mtocollectiontest2" inSchema: @"Fkeytest" error: nil];
-    MKCAssertNotNil (mtocollectiontest1);
-    MKCAssertNotNil (mtocollectiontest2);
-    
-    mtocollectiontest1v = [context entityForTable: @"mtocollectiontest1_v" inSchema: @"Fkeytest" error: nil];
-    mtocollectiontest2v = [context entityForTable: @"mtocollectiontest2_v" inSchema: @"Fkeytest" error: nil];
-    MKCAssertNotNil (mtocollectiontest1v);
-    MKCAssertNotNil (mtocollectiontest2v);
-}
+	[super setUp];
 
-- (void) tearDown
-{
-	[context disconnect];
-	[context release];
+    mMtocollectiontest1 = [mContext entityForTable: @"mtocollectiontest1" inSchema: @"Fkeytest" error: nil];
+    mMtocollectiontest2 = [mContext entityForTable: @"mtocollectiontest2" inSchema: @"Fkeytest" error: nil];
+    MKCAssertNotNil (mMtocollectiontest1);
+    MKCAssertNotNil (mMtocollectiontest2);
+    
+    mMtocollectiontest1v = [mContext entityForTable: @"mtocollectiontest1_v" inSchema: @"Fkeytest" error: nil];
+    mMtocollectiontest2v = [mContext entityForTable: @"mtocollectiontest2_v" inSchema: @"Fkeytest" error: nil];
+    MKCAssertNotNil (mMtocollectiontest1v);
+    MKCAssertNotNil (mMtocollectiontest2v);
 }
 
 - (void) testModMTOCollection
 {
-    [self modMany: mtocollectiontest2 toOne: mtocollectiontest1];
+    [self modMany: mMtocollectiontest2 toOne: mMtocollectiontest1];
 }
 
 - (void) testModMTOCollectionView
 {
-    [self modMany: mtocollectiontest2v toOne: mtocollectiontest1v];
+    [self modMany: mMtocollectiontest2v toOne: mMtocollectiontest1v];
 }
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
@@ -75,7 +66,7 @@
     NSError* error = nil;
         
     //Execute a fetch
-    NSArray* res = [context executeFetchForEntity: oneEntity
+    NSArray* res = [mContext executeFetchForEntity: oneEntity
                                     withPredicate: nil error: &error];
     STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [res count]);
@@ -96,7 +87,7 @@
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     //Get the objects from the second table
-    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: manyEntity
+    NSSet* objects2 = [NSSet setWithArray: [mContext executeFetchForEntity: manyEntity
                                                             withPredicate: nil error: &error]];
     STAssertNil (error, [error description]);
     MKCAssertTrue (3 == [objects2 count]);
@@ -108,17 +99,17 @@
     MKCAssertEqualObjects ([NSSet setWithSet: foreignObjects], objects2);
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
-    [context rollback];
+    [mContext rollback];
 }
 
 - (void) testModMTOCollection2
 {
-    [self modMany2: mtocollectiontest2 toOne: mtocollectiontest1];
+    [self modMany2: mMtocollectiontest2 toOne: mMtocollectiontest1];
 }
 
 - (void) testModMTOCollectionView2
 {
-    [self modMany2: mtocollectiontest2v toOne: mtocollectiontest1v];
+    [self modMany2: mMtocollectiontest2v toOne: mMtocollectiontest1v];
 }
 
 - (void) modMany2: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
@@ -126,7 +117,7 @@
     NSError* error = nil;
 
     //Execute a fetch
-    NSArray* res = [context executeFetchForEntity: oneEntity
+    NSArray* res = [mContext executeFetchForEntity: oneEntity
                                     withPredicate: nil error: &error];
     STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [res count]);
@@ -149,7 +140,7 @@
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     //Get the objects from the second table
-    NSSet* objects2 = [NSSet setWithArray: [context executeFetchForEntity: manyEntity
+    NSSet* objects2 = [NSSet setWithArray: [mContext executeFetchForEntity: manyEntity
                                                             withPredicate: nil error: &error]];
     STAssertNil (error, [error description]);
     MKCAssertTrue (3 == [objects2 count]);
@@ -168,7 +159,7 @@
     MKCAssertTrue ([mock isEqualToSet: foreignObjects]);
     MKCAssertTrue ([mock isEqualToSet: foreignObjects2]);
     
-    [context rollback];
+    [mContext rollback];
 }
 
 @end

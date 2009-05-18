@@ -40,8 +40,7 @@
 
 - (void) setUp
 {
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
+    context = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
 	[context setAutocommits: NO];
 	NSError* error = nil;
     entity = [context entityForTable: @"test" error: &error];

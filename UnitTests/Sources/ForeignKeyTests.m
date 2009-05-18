@@ -39,56 +39,47 @@
 
 - (void) setUp
 {
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
-    MKCAssertNotNil (context);
+	[super setUp];
+
+    mTest1 = [mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
+    mTest2 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
+    mOtotest1 = [mContext entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil];
+    mOtotest2 = [mContext entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil];
+    mMtmtest1 = [mContext entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
+    mMtmtest2 = [mContext entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
+
+    MKCAssertNotNil (mTest1);
+    MKCAssertNotNil (mTest2);
+    MKCAssertNotNil (mOtotest1);
+    MKCAssertNotNil (mOtotest2);
+    MKCAssertNotNil (mMtmtest1);
+    MKCAssertNotNil (mMtmtest2);
+
+    mTest1v = [mContext entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil];
+    mTest2v = [mContext entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil];
+    mOtotest1v = [mContext entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil];
+    mOtotest2v = [mContext entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil];
+    mMtmtest1v = [mContext entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
+    mMtmtest2v = [mContext entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
+	mMtmrel1 = [mContext entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil];
     
-    test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
-    test2 = [context entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
-    ototest1 = [context entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil];
-    ototest2 = [context entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil];
-    mtmtest1 = [context entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
-    mtmtest2 = [context entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
-
-    MKCAssertNotNil (test1);
-    MKCAssertNotNil (test2);
-    MKCAssertNotNil (ototest1);
-    MKCAssertNotNil (ototest2);
-    MKCAssertNotNil (mtmtest1);
-    MKCAssertNotNil (mtmtest2);
-
-    test1v = [context entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil];
-    test2v = [context entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil];
-    ototest1v = [context entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil];
-    ototest2v = [context entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil];
-    mtmtest1v = [context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
-    mtmtest2v = [context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
-	mtmrel1 = [context entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil];
-    
-    MKCAssertNotNil (test1v);
-    MKCAssertNotNil (test2v);
-    MKCAssertNotNil (ototest1v);
-    MKCAssertNotNil (ototest2v);
-    MKCAssertNotNil (mtmtest1v);
-    MKCAssertNotNil (mtmtest2v);
-	MKCAssertNotNil (mtmrel1);
-}
-
-- (void) tearDown
-{
-	[context disconnect];
-    [context release];
+    MKCAssertNotNil (mTest1v);
+    MKCAssertNotNil (mTest2v);
+    MKCAssertNotNil (mOtotest1v);
+    MKCAssertNotNil (mOtotest2v);
+    MKCAssertNotNil (mMtmtest1v);
+    MKCAssertNotNil (mMtmtest2v);
+	MKCAssertNotNil (mMtmrel1);
 }
 
 - (void) test1MTO
 {
-    [self many: test2 toOne: test1];
+    [self many: mTest2 toOne: mTest1];
 }
 
 - (void) test4MTOView
 {
-    [self many: test2v toOne: test1v];
+    [self many: mTest2v toOne: mTest1v];
 }
 
 - (void) many: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
@@ -98,7 +89,7 @@
     {
         NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", i];
         MKCAssertNotNil (predicate);
-        NSArray* res = [context executeFetchForEntity: manyEntity
+        NSArray* res = [mContext executeFetchForEntity: manyEntity
                                         withPredicate: predicate
                                                 error: &error];
         STAssertNil (error, [error description]);
@@ -131,12 +122,12 @@
 
 - (void) test1OTM
 {
-    [self one: test1 toMany: test2];
+    [self one: mTest1 toMany: mTest2];
 }
 
 - (void) test4OTMView
 {
-    [self one: test1v toMany: test2v];
+    [self one: mTest1v toMany: mTest2v];
 }
 
 - (void) one: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity
@@ -144,7 +135,7 @@
     NSError* error = nil;
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
     MKCAssertNotNil (predicate);
-    NSArray* res = [context executeFetchForEntity: oneEntity
+    NSArray* res = [mContext executeFetchForEntity: oneEntity
                                     withPredicate: predicate
                                             error: &error];
     STAssertNil (error, [error description]);
@@ -184,19 +175,19 @@
 
 - (void) test2OTO
 {
-    [self one: ototest1 toOne: ototest2];
+    [self one: mOtotest1 toOne: mOtotest2];
 }
 
 - (void) test5OTOView
 {
-    [self one: ototest1v toOne: ototest2v];
+    [self one: mOtotest1v toOne: mOtotest2v];
 }
 
 - (void) one: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
 {
     NSError* error = nil;
 	
-	[context connectIfNeeded: &error];
+	[mContext connectIfNeeded: &error];
 	STAssertNil (error, [error description]);
 	
     BXRelationshipDescription* foobar = [[entity1 relationshipsByName] objectForKey: [entity2 name]];
@@ -204,7 +195,7 @@
     MKCAssertFalse ([foobar isToMany]);
 	MKCAssertFalse ([[foobar inverseRelationship] isToMany]);
 
-    NSArray* res = [context executeFetchForEntity: entity1 
+    NSArray* res = [mContext executeFetchForEntity: entity1 
                                     withPredicate: [NSPredicate predicateWithFormat: @"1 <= id && id <= 2"]
                                             error: &error];
     STAssertNil (error, [error description]);
@@ -242,7 +233,7 @@
         MKCAssertFalse ([value isEqual: value2]);
     }
     
-    res = [context executeFetchForEntity: entity2
+    res = [mContext executeFetchForEntity: entity2
                            withPredicate: [NSPredicate predicateWithFormat: @"id = 3"]
                                    error: &error];
     STAssertNil (error, [error description]);
@@ -254,18 +245,18 @@
 
 - (void) test3MTM
 {
-    [self many: mtmtest1 toMany: mtmtest2];
+    [self many: mMtmtest1 toMany: mMtmtest2];
 }
 
 - (void) test6MTMView
 {
-    [self many: mtmtest1v toMany: mtmtest2v];
+    [self many: mMtmtest1v toMany: mMtmtest2v];
 }
 
 - (void) many: (BXEntityDescription *) entity1 toMany: (BXEntityDescription *) entity2
 {
     NSError* error = nil;
-    NSArray* res = [context executeFetchForEntity: entity1 withPredicate: nil error: &error];
+    NSArray* res = [mContext executeFetchForEntity: entity1 withPredicate: nil error: &error];
     STAssertNil (error, [error description]);
     MKCAssertTrue (4 == [res count]);
     
@@ -317,18 +308,18 @@
 
 - (void) test3MTMHelper
 {
-	[self MTMHelper: mtmtest1];
+	[self MTMHelper: mMtmtest1];
 }
 
 - (void) test6MTMHelperView
 {
-	[self MTMHelper: mtmtest1v];
+	[self MTMHelper: mMtmtest1v];
 }
 
 - (void) MTMHelper: (BXEntityDescription *) entity
 {
 	NSError* error = nil;
-	NSArray* res = [context executeFetchForEntity: entity
+	NSArray* res = [mContext executeFetchForEntity: entity
 									withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
 											error: &error];
 	STAssertNil (error, [error description]);
@@ -337,7 +328,7 @@
 	MKCAssertTrue (3 == [helperObjects count]);
 	BXEnumerate (currentObject, e, [helperObjects objectEnumerator])
 	{
-		MKCAssertTrue ([[currentObject objectID] entity] == mtmrel1);
+		MKCAssertTrue ([[currentObject objectID] entity] == mMtmrel1);
 		MKCAssertTrue (1 == [[currentObject valueForKey: @"id1"] intValue]);
 	}
 }

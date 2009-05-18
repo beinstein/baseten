@@ -32,13 +32,12 @@
 @class BXEntityDescription;
 
 
-@interface MTOCollectionTest : BXTestCase 
+@interface MTOCollectionTest : BXDatabaseTestCase 
 {
-    BXDatabaseContext* context;
-    BXEntityDescription* mtocollectiontest1;
-    BXEntityDescription* mtocollectiontest2;
-    BXEntityDescription* mtocollectiontest1v;
-    BXEntityDescription* mtocollectiontest2v;
+    BXEntityDescription* mMtocollectiontest1;
+    BXEntityDescription* mMtocollectiontest2;
+    BXEntityDescription* mMtocollectiontest1v;
+    BXEntityDescription* mMtocollectiontest2v;
 }
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;

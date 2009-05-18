@@ -32,9 +32,7 @@
 @class BXDatabaseContext;
 
 
-@interface EntityTests : BXTestCase 
+@interface EntityTests : BXDatabaseTestCase
 {
-	BXDatabaseContext* ctx;
 }
-
 @end

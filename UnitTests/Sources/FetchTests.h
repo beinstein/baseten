@@ -32,10 +32,9 @@
 @class BXEntityDescription;
 
 
-@interface FetchTests : BXTestCase 
+@interface FetchTests : BXDatabaseTestCase 
 {
-    BXDatabaseContext* context;
-    BXEntityDescription* entity;
+    BXEntityDescription* mEntity;
 }
 
 @end

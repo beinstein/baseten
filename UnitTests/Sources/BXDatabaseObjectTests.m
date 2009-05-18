@@ -72,6 +72,8 @@
 @implementation BXDatabaseObjectTests
 - (void) setUp
 {
+	[super setUp];
+	
     BXAttributeDescriptionPlaceholder* idDesc = [[[BXAttributeDescriptionPlaceholder alloc] init] autorelease];
     idDesc->mName = @"id";
     idDesc->mIsPkey = YES;
@@ -105,6 +107,8 @@
     [mEntity verify];    
     
     [mObject release];
+	
+	[super tearDown];
 }
 
 - (void) testCachedValue

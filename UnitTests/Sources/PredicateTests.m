@@ -38,10 +38,12 @@
 @implementation PredicateTests
 - (void) setUp
 {
+	[super setUp];
+	
 	mQueryBuilder = [[BXPGQueryBuilder alloc] init];
 	
-	BXDatabaseContext* ctx = [[BXDatabaseContext contextWithDatabaseURI: 
-							   [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]] retain];
+	BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
+	[ctx setDelegate: self];
 	BXEntityDescription* entity = [ctx entityForTable: @"test" inSchema: @"public" error: NULL];
 	[mQueryBuilder addPrimaryRelationForEntity: entity];
 	
@@ -56,6 +58,7 @@
 {
 	[mQueryBuilder release];
 	[mConnection release];
+	[super tearDown];
 }
 
 - (void) testAddition

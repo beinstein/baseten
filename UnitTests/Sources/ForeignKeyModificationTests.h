@@ -31,23 +31,22 @@
 @class BXDatabaseContext;
 
 
-@interface ForeignKeyModificationTests : BXTestCase 
+@interface ForeignKeyModificationTests : BXDatabaseTestCase 
 {
-    BXDatabaseContext* context;
-    BXEntityDescription* test1;
-    BXEntityDescription* test2;
-    BXEntityDescription* ototest1;
-    BXEntityDescription* ototest2;
-    BXEntityDescription* mtmtest1;
-    BXEntityDescription* mtmtest2;
+    BXEntityDescription* mTest1;
+    BXEntityDescription* mTest2;
+    BXEntityDescription* mOtotest1;
+    BXEntityDescription* mOtotest2;
+    BXEntityDescription* mMtmtest1;
+    BXEntityDescription* mMtmtest2;
     
-    BXEntityDescription* test1v;
-    BXEntityDescription* test2v;
-    BXEntityDescription* ototest1v;
-    BXEntityDescription* ototest2v;
-    BXEntityDescription* mtmtest1v;
-    BXEntityDescription* mtmtest2v;
-	BXEntityDescription* mtmrel1;
+    BXEntityDescription* mTest1v;
+    BXEntityDescription* mTest2v;
+    BXEntityDescription* mOtotest1v;
+    BXEntityDescription* mOtotest2v;
+    BXEntityDescription* mMtmtest1v;
+    BXEntityDescription* mMtmtest2v;
+	BXEntityDescription* mMtmrel1;
 }
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity;

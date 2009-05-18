@@ -38,68 +38,64 @@
 
 - (void) setUp
 {
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
-    MKCAssertNotNil (context);
+	[super setUp];
     
-    test1 		= [[context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil] retain];
-    test2 		= [[context entityForTable: @"test2" inSchema: @"Fkeytest" error: nil] retain];
-    ototest1 	= [[context entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil] retain];
-    ototest2 	= [[context entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil] retain];
-    mtmtest1 	= [[context entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil] retain];
-    mtmtest2 	= [[context entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil] retain];
+    mTest1 		= [[mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: nil] retain];
+    mTest2 		= [[mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: nil] retain];
+    mOtotest1 	= [[mContext entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil] retain];
+    mOtotest2 	= [[mContext entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil] retain];
+    mMtmtest1 	= [[mContext entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil] retain];
+    mMtmtest2 	= [[mContext entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil] retain];
 
-    MKCAssertNotNil (test1);
-    MKCAssertNotNil (test2);
-    MKCAssertNotNil (ototest1);
-    MKCAssertNotNil (ototest2);
-    MKCAssertNotNil (mtmtest1);
-    MKCAssertNotNil (mtmtest2);
+    MKCAssertNotNil (mTest1);
+    MKCAssertNotNil (mTest2);
+    MKCAssertNotNil (mOtotest1);
+    MKCAssertNotNil (mOtotest2);
+    MKCAssertNotNil (mMtmtest1);
+    MKCAssertNotNil (mMtmtest2);
 
-    test1v		= [[context entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil] retain];
-    test2v		= [[context entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil] retain];
-    ototest1v	= [[context entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil] retain];
-    ototest2v	= [[context entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil] retain];
-    mtmtest1v	= [[context entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil] retain];
-    mtmtest2v	= [[context entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil] retain];
-	mtmrel1		= [[context entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil] retain];
+    mTest1v		= [[mContext entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil] retain];
+    mTest2v		= [[mContext entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil] retain];
+    mOtotest1v	= [[mContext entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil] retain];
+    mOtotest2v	= [[mContext entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil] retain];
+    mMtmtest1v	= [[mContext entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil] retain];
+    mMtmtest2v	= [[mContext entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil] retain];
+	mMtmrel1	= [[mContext entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil] retain];
     
-    MKCAssertNotNil (test1v);
-    MKCAssertNotNil (test2v);
-    MKCAssertNotNil (ototest1v);
-    MKCAssertNotNil (ototest2v);
-    MKCAssertNotNil (mtmtest1v);
-    MKCAssertNotNil (mtmtest2v);
-	MKCAssertNotNil (mtmrel1);
+    MKCAssertNotNil (mTest1v);
+    MKCAssertNotNil (mTest2v);
+    MKCAssertNotNil (mOtotest1v);
+    MKCAssertNotNil (mOtotest2v);
+    MKCAssertNotNil (mMtmtest1v);
+    MKCAssertNotNil (mMtmtest2v);
+	MKCAssertNotNil (mMtmrel1);
 }
 
 - (void) tearDown
 {
-	[context disconnect];
-    [context release];
-	[test1 release];
-	[test2 release];	
-	[ototest1 release];
-	[ototest2 release];
-	[mtmtest1 release];
-	[mtmtest2 release];
-	[test1v release];
-	[test2v release];
-	[ototest1v release];
-	[ototest2v release];
-	[mtmtest1v release];
-	[mtmtest2v release];
-	[mtmrel1 release];
+	[mTest1 release];
+	[mTest2 release];	
+	[mOtotest1 release];
+	[mOtotest2 release];
+	[mMtmtest1 release];
+	[mMtmtest2 release];
+	[mTest1v release];
+	[mTest2v release];
+	[mOtotest1v release];
+	[mOtotest2v release];
+	[mMtmtest1v release];
+	[mMtmtest2v release];
+	[mMtmrel1 release];
+	[super tearDown];
 }
 
 - (void) modMany: (BXEntityDescription *) manyEntity toOne: (BXEntityDescription *) oneEntity
 {
     //Change reference in foreignObject from id=1 to id=2
     NSError* error = nil;
-    MKCAssertTrue (NO == [context autocommits]);
+    MKCAssertTrue (NO == [mContext autocommits]);
     
-    NSArray* res = [context executeFetchForEntity: manyEntity
+    NSArray* res = [mContext executeFetchForEntity: manyEntity
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                             error: &error];
     MKCAssertNotNil (res);
@@ -108,7 +104,7 @@
     BXDatabaseObject* foreignObject = [res objectAtIndex: 0];
     MKCAssertTrue ([[foreignObject objectID] entity] == manyEntity);
 
-    res = [context executeFetchForEntity: oneEntity
+    res = [mContext executeFetchForEntity: oneEntity
 						   withPredicate: [NSPredicate predicateWithFormat: @"id = 2"]
 								   error: &error];
     STAssertNil (error, [error description]);
@@ -120,7 +116,7 @@
     [foreignObject setPrimitiveValue: object forKey: [oneEntity name]];
     MKCAssertEqualObjects ([foreignObject primitiveValueForKey: [oneEntity name]], object);
     
-    [context rollback];
+    [mContext rollback];
 }
 
 - (void) modOne: (BXEntityDescription *) oneEntity toMany: (BXEntityDescription *) manyEntity
@@ -128,7 +124,7 @@
     //Create an object to oneEntity and add referencing objects to manyEntity
     NSError* error = nil;
         
-    BXDatabaseObject* object = [context createObjectForEntity: oneEntity withFieldValues: nil error: &error];
+    BXDatabaseObject* object = [mContext createObjectForEntity: oneEntity withFieldValues: nil error: &error];
     STAssertNil (error, [error description]);
     MKCAssertNotNil (object);
 	//If the set proxy wasn't created earlier, here it will be. This might be useful for debugging.
@@ -139,7 +135,7 @@
     NSMutableSet* foreignObjects = [NSMutableSet setWithCapacity: count];
     for (int i = 0; i < count; i++)
     {
-        BXDatabaseObject* foreignObject = [context createObjectForEntity: manyEntity withFieldValues: nil error: &error];
+        BXDatabaseObject* foreignObject = [mContext createObjectForEntity: manyEntity withFieldValues: nil error: &error];
         STAssertNil (error, [error description]);
         MKCAssertNotNil (foreignObject);
         MKCAssertTrue ([[foreignObject objectID] entity] == manyEntity);
@@ -152,7 +148,7 @@
     NSSet* referencedObjects = [NSSet setWithSet: [object primitiveValueForKey: [manyEntity name]]];
     MKCAssertEqualObjects (referencedObjects, foreignObjects);
 
-    [context rollback];
+    [mContext rollback];
 }
 
 - (void) modOne: (BXEntityDescription *) entity1 toOne: (BXEntityDescription *) entity2
@@ -160,13 +156,13 @@
     //Change a reference in entity1 and entity2
     
     NSError* error = nil;
-	[context connectSync: &error];
+	[mContext connectSync: &error];
     STAssertNil (error, [error description]);
 	
     MKCAssertFalse ([[[entity1 relationshipsByName] objectForKey: [entity2 name]] isToMany]);
     MKCAssertFalse ([[[entity2 relationshipsByName] objectForKey: [entity1 name]] isToMany]);
     
-    NSArray* res = [context executeFetchForEntity: entity1
+    NSArray* res = [mContext executeFetchForEntity: entity1
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                             error: &error];
     STAssertNil (error, [error description]);
@@ -174,7 +170,7 @@
     BXDatabaseObject* object = [res objectAtIndex: 0];
     MKCAssertTrue ([[object objectID] entity] == entity1);
     
-    res = [context executeFetchForEntity: entity2
+    res = [mContext executeFetchForEntity: entity2
                            withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                    error: &error];
     STAssertNil (error, [error description]);
@@ -195,13 +191,13 @@
     MKCAssertTrue (nil == [foreignObject2 primitiveValueForKey: @"r1"]);
     MKCAssertFalse ([n1 isEqual: [foreignObject2 primitiveValueForKey: @"id"]]);
 
-    [context rollback];
+    [mContext rollback];
 }
 
 - (BXDatabaseObject *) removeRefObject: (BXEntityDescription *) entity
 {
     NSError* error = nil;
-    NSArray* res = [context executeFetchForEntity: entity
+    NSArray* res = [mContext executeFetchForEntity: entity
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
                                             error: &error];
     
@@ -216,7 +212,7 @@
     [object setPrimitiveValue: nil forKey: @"test2"];
 	MKCAssertTrue (0 == [[object primitiveValueForKey: @"test2"] count]);
 
-    [context rollback];
+    [mContext rollback];
 }
 
 - (void) remove2: (BXEntityDescription *) oneEntity
@@ -226,7 +222,7 @@
     BXEnumerate (currentObject, e, [[refObjects allObjects] objectEnumerator])
         [currentObject setPrimitiveValue: nil forKey: @"test1"];
     
-    [context rollback];
+    [mContext rollback];
 }
 
 @end
@@ -236,37 +232,37 @@
 
 - (void) testRemove1
 {
-    [self remove1: test1];
+    [self remove1: mTest1];
 }
 
 - (void) testRemoveView1
 {
-    [self remove1: test1v];
+    [self remove1: mTest1v];
 }
 
 - (void) testRemove2
 {
-    [self remove2: test1];
+    [self remove2: mTest1];
 }
 
 - (void) testRemoveView2
 {
-    [self remove2: test1v];
+    [self remove2: mTest1v];
 }
 
 - (void) testModMTO
 {
-    [self modMany: test2 toOne: test1];
+    [self modMany: mTest2 toOne: mTest1];
 }
 
 - (void) testModMTOView
 {
-    [self modMany: test2v toOne: test1v];
+    [self modMany: mTest2v toOne: mTest1v];
 }
 
 - (void) testModOTM
 {
-    [self modOne: test1 toMany: test2];
+    [self modOne: mTest1 toMany: mTest2];
 }
 
 //FIXME: this doesn't work for views because we don't provide values for the primary key.
@@ -280,12 +276,12 @@
 - (void) testModOTM2
 {
     //FIXME: also write a view test?
-	MKCAssertFalse ([context autocommits]);
+	MKCAssertFalse ([mContext autocommits]);
 	
     NSError* error = nil;
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", 1];
     MKCAssertNotNil (predicate);
-    NSArray* res = [context executeFetchForEntity: test1
+    NSArray* res = [mContext executeFetchForEntity: mTest1
                                     withPredicate: predicate
                                             error: &error];
     STAssertNil (error, [error description]);
@@ -298,21 +294,21 @@
 							[object primitiveValueForKey: @"id"], @"fkt1id",
 							@"test", @"value",
 							nil];
-    [context createObjectForEntity: test2 withFieldValues: values error: &error];
+    [mContext createObjectForEntity: mTest2 withFieldValues: values error: &error];
     STAssertNil (error, [error description]);
     
     collection = nil;
-    [context rollback];
+    [mContext rollback];
 }
 
 - (void) testModOTO
 {
-    [self modOne: ototest1 toOne: ototest2];
+    [self modOne: mOtotest1 toOne: mOtotest2];
 }
 
 - (void) testModOTOView
 {
-    [self modOne: ototest1v toOne: ototest2v];
+    [self modOne: mOtotest1v toOne: mOtotest2v];
 }
 
 @end

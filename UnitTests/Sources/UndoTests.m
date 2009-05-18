@@ -32,24 +32,9 @@
 
 
 @implementation UndoTests
-
-- (void) setUp
-{
-    context = [[BXDatabaseContext alloc] initWithDatabaseURI: 
-        [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"]];
-    [context setAutocommits: NO];
-    MKCAssertFalse ([context autocommits]);
-}
-
-- (void) tearDown
-{
-	[context disconnect];
-    [context release];
-}
-
 - (BXDatabaseObject *) objectWithId: (unsigned int) anId entity: (BXEntityDescription *) entity
 {
-    NSArray* res = [context executeFetchForEntity: entity
+    NSArray* res = [mContext executeFetchForEntity: entity
                                     withPredicate: [NSPredicate predicateWithFormat: @"id = %u", anId]
                                             error: nil];
     BXDatabaseObject* object = [res objectAtIndex: 0];
@@ -60,18 +45,18 @@
 {
     if (autocommit)
     {
-        [context setAutocommits: YES];
-        MKCAssertTrue ([context autocommits]);
+        [mContext setAutocommits: YES];
+        MKCAssertTrue ([mContext autocommits]);
     }
     else
     {
-        MKCAssertFalse ([context autocommits]);
+        MKCAssertFalse ([mContext autocommits]);
     }
     
     const unsigned int objectId = 5;
-	[context connectSync: NULL];
-    NSUndoManager* undoManager = [context undoManager];
-    BXEntityDescription* updatetest = [context entityForTable: @"updatetest" error: nil];
+	[mContext connectSync: NULL];
+    NSUndoManager* undoManager = [mContext undoManager];
+    BXEntityDescription* updatetest = [mContext entityForTable: @"updatetest" error: nil];
 
     MKCAssertNotNil (undoManager);
     MKCAssertNotNil (updatetest);
@@ -96,18 +81,18 @@
 {    
     if (YES == autocommit)
     {
-        [context setAutocommits: YES];
-        MKCAssertTrue ([context autocommits]);
+        [mContext setAutocommits: YES];
+        MKCAssertTrue ([mContext autocommits]);
     }
     else
     {
-        MKCAssertFalse ([context autocommits]);
+        MKCAssertFalse ([mContext autocommits]);
     }
     
 	const unsigned int objectId = 1;
-    [context connectIfNeeded: nil];
-    NSUndoManager* undoManager = [context undoManager];
-    BXEntityDescription* test1 = [context entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
+    [mContext connectIfNeeded: nil];
+    NSUndoManager* undoManager = [mContext undoManager];
+    BXEntityDescription* test1 = [mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
     BXDatabaseObject* object = [self objectWithId: objectId entity: test1];
 
     MKCAssertNotNil (undoManager);	

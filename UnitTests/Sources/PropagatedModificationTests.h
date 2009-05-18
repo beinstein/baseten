@@ -27,10 +27,11 @@
 //
 
 #import <SenTestingKit/SenTestingKit.h>
+#import "BXTestCase.h"
 @class BXDatabaseContext;
 @class BXEntityDescription;
 
-@interface PropagatedModificationTests : SenTestCase 
+@interface PropagatedModificationTests : BXTestCase 
 {
     BXDatabaseContext* context;
     BXEntityDescription* entity;
