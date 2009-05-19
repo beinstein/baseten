@@ -34,6 +34,7 @@
 
 @interface NSObject (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type;
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type columnIndex: (int) columnIndex;
 - (id) PGTSParameter: (PGTSConnection *) connection;
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
 - (BOOL) PGTSIsBinaryParameter;

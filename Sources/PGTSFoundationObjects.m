@@ -32,6 +32,8 @@
 #import "PGTSConnection.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSTypeDescription.h"
+#import "PGTSTableDescription.h"
+#import "PGTSColumnDescription.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSResultSet.h"
 #import "BXLogger.h"
@@ -39,6 +41,11 @@
 
 
 @implementation NSObject (PGTSFoundationObjects)
++ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type columnIndex: (int) columnIndex
+{
+	return [self copyForPGTSResultSet: set withCharacters: value type: type];
+}
+
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
     BXLogWarning (@"Returning a nil from NSObject's implementation.");
@@ -439,10 +446,39 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 
 @implementation NSXMLDocument (PGTSFoundationObjects)
-+ (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type
++ (id) copyForPGTSResultSet: (PGTSResultSet *) result withCharacters: (const char *) value type: (PGTSTypeDescription *) type columnIndex: (int) columnIndex
 {
+	id retval = nil;
+	BOOL shouldReturnDocument = NO;
 	NSData* xmlData = [[[NSData alloc] initWithBytes: value length: strlen (value)] autorelease];
-	NSXMLDocument* retval = [[NSXMLDocument alloc] initWithData: xmlData options: 0 error: NULL];
+	PGresult* res = [result PGresult];
+	Oid relid = PQftable (res, columnIndex);
+	int attnum = PQftablecol (res, columnIndex);
+	
+	if (InvalidOid != relid)
+	{
+		PGTSDatabaseDescription* db = [[result connection] databaseDescription];
+		PGTSTableDescription* rel = [db tableWithOid: relid];
+		PGTSColumnDescription* column = [rel columnAtIndex: attnum];
+		if ([column requiresDocuments])
+			shouldReturnDocument = YES;
+	}
+	
+	if (shouldReturnDocument)
+	{
+		NSError* error = nil;
+		NSXMLDocument* document = [[NSXMLDocument alloc] initWithData: xmlData options: 0 error: &error];
+		
+		if (document)
+			retval = document;
+		else
+			BXLogError (@"Unable to create XML document even though I was supposed to have received one. Error: %@.", error);
+	}
+	else
+	{
+		retval = xmlData;
+	}
+	
 	return retval;
 }
 

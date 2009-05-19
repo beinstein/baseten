@@ -553,7 +553,8 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 		"SET standard_conforming_strings TO true",
 		"SET datestyle TO 'ISO, YMD'",
 		"SET timezone TO 'UTC'",
-		"SET transaction_isolation TO 'read committed'"
+		"SET transaction_isolation TO 'read committed'",
+		"SET regex_flavor TO 'advanced'"
 	};
 	for (int i = 0, count = BXArraySize (queries); i < count; i++)
 	{

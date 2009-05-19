@@ -57,4 +57,19 @@
 - (void) setType: (PGTSTypeDescription *) anOid;
 - (void) setDefaultValue: (NSString *) defaultExpression;
 - (void) setNotNull: (BOOL) aBool;
+
+//Stubs for sub classes' methods.
+- (BOOL) requiresDocuments;
+- (void) setRequiresDocuments: (BOOL) aBool;
+
+@end
+
+
+@interface PGTSXMLColumnDescription : PGTSColumnDescription
+{
+	BOOL mRequiresDocuments;
+}
+- (BOOL) requiresDocuments;
+//Thread un-safe methods.
+- (void) setRequiresDocuments: (BOOL) aBool;
 @end

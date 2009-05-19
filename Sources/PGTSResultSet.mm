@@ -585,7 +585,7 @@ KVCompare (PGTSResultSet* res, void* ctx)
             objectClass = [NSData class];
         char* value = PQgetvalue (mResult, rowIndex, columnIndex);
         PGTSTypeDescription* type = [[mConnection databaseDescription] typeWithOid: PQftype (mResult, columnIndex)];
-        retval = [[objectClass copyForPGTSResultSet: self withCharacters: value type: type] autorelease];
+        retval = [[objectClass copyForPGTSResultSet: self withCharacters: value type: type columnIndex: columnIndex] autorelease];
     }
     return retval;
 }

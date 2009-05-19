@@ -250,36 +250,71 @@
 - (void) fetchColumns: (PGTSConnection *) connection
 {
 	ExpectV (connection);
-	NSString* query = 
-	@"SELECT a.attrelid, a.attname, a.attnum, a.atttypid, a.attnotnull, pg_get_expr (d.adbin, d.adrelid, false) AS default "
-	@" FROM pg_attribute a "
-	@" INNER JOIN pg_class c ON a.attrelid = c.oid "
-	@" INNER JOIN pg_namespace n ON n.oid = c.relnamespace "
-	@" LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid and a.attnum = d.adnum "
-	@" WHERE a.attisdropped = false AND "
-	@"  c.relkind IN ('r', 'v') AND "
-	@"  n.nspname NOT IN ('information_schema', 'baseten') AND "
-	@"  n.nspname NOT LIKE 'pg_%'";
-
-	PGTSResultSet* res = [connection executeQuery: query];
-	ExpectV ([res querySucceeded]);
 	
 	{
+		NSString* query = 
+		@"SELECT a.attrelid, a.attname, a.attnum, a.atttypid, a.attnotnull, pg_get_expr (d.adbin, d.adrelid, false) AS default "
+		@" FROM pg_attribute a "
+		@" INNER JOIN pg_class c ON a.attrelid = c.oid "
+		@" INNER JOIN pg_namespace n ON n.oid = c.relnamespace "
+		@" LEFT JOIN pg_attrdef d ON a.attrelid = d.adrelid and a.attnum = d.adnum "
+		@" WHERE a.attisdropped = false AND "
+		@"  c.relkind IN ('r', 'v') AND "
+		@"  n.nspname NOT IN ('information_schema', 'baseten') AND "
+		@"  n.nspname NOT LIKE 'pg_%'";
+		
+		PGTSResultSet* res = [connection executeQuery: query];
+		ExpectV ([res querySucceeded]);
+		
 		while ([res advanceRow])
 		{
-			Oid relid = [[res valueForKey: @"attrelid"] PGTSOidValue];
+			Oid typeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
+			Oid relid = [[res valueForKey: @"attrelid"] PGTSOidValue];			
+			PGTSTypeDescription* type = [mDatabase typeWithOid: typeOid];
+			PGTSColumnDescription* column = nil;
+			if ([@"xml" isEqualToString: [type name]])
+				column = [[[PGTSXMLColumnDescription alloc] init] autorelease];
+			else
+				column = [[[PGTSColumnDescription alloc] init] autorelease];
 			
-			PGTSColumnDescription* column = [[[PGTSColumnDescription alloc] init] autorelease];
+			[column setType: type];
 			[column setName: [res valueForKey: @"attname"]];
 			[column setIndex: [[res valueForKey: @"attnum"] integerValue]];
 			[column setNotNull: [[res valueForKey: @"attnotnull"] boolValue]];			
 			[column setDefaultValue: [res valueForKey: @"default"]];
-
-			Oid typeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
-			PGTSTypeDescription* type = [mDatabase typeWithOid: typeOid];
-			[column setType: type];
-
+			
 			[[mDatabase tableWithOid: relid] addColumn: column];
+		}
+	}
+	
+	{
+		//Fetch some column-specific constraints.
+		//We can't determine whether a column accepts only XML document from its type.
+		//Instead, we have to look for a constraint like 'CHECK ((column) IS DOCUMENT)'
+		//or 'CHECK ("Column" IS DOCUMENT)'. We do this by comparing the constraint 
+		//definition to an expression, where a number of parentheses is allowed around 
+		//its parts. We use the reconstructed constraint instead of what the user wrote.
+		NSString* query =
+		@"SELECT conrelid, conkey "
+		@"FROM ( "
+		@"  SELECT c.conrelid, c.conkey [1], a.attname, "
+		@"    regexp_matches (pg_get_constraintdef (c.oid, false), "
+		@"	    '^CHECK ?[(]+(?:\"([^\"]+)\")|([^( ][^ )]*)[ )]+IS DOCUMENT[ )]+$' "
+		@"    ) AS matches "
+		@"  FROM pg_constraint c "
+		@"  INNER JOIN pg_attribute a ON (c.conrelid = a.attrelid AND c.conkey [1] = a.attnum) "
+		@"  INNER JOIN pg_type t ON (t.oid = a.atttypid AND t.typname = 'xml') "
+		@"	WHERE c.contype = 'c' AND 1 = array_upper (c.conkey, 1) "
+		@") c "
+		@"WHERE attname = ANY (matches)";
+		PGTSResultSet* res = [connection executeQuery: query];
+		ExpectV ([res querySucceeded])
+		
+		while ([res advanceRow])
+		{
+			Oid relid = [[res valueForKey: @"conrelid"] PGTSOidValue];
+			NSInteger attnum = [[res valueForKey: @"conkey"] integerValue];
+			[[[mDatabase tableWithOid: relid] columnAtIndex: attnum] setRequiresDocuments: YES];
 		}
 	}
 }

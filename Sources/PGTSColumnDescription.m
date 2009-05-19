@@ -28,6 +28,7 @@
 
 #import "PGTSColumnDescription.h"
 #import "NSString+PGTSAdditions.h"
+#import "BXLogger.h"
 
 
 /** 
@@ -127,5 +128,29 @@
 		[mDefaultValue release];
 		mDefaultValue = [anObject retain];
 	}
+}
+
+- (BOOL) requiresDocuments
+{
+	BXAssertLog (NO, @"Didn't expect %s to be called for %@.", _cmd, self);
+	return NO;
+}
+
+- (void) setRequiresDocuments: (BOOL) aBool
+{
+	BXAssertLog (NO, @"Didn't expect %s to be called for %@.", _cmd, self);
+}
+@end
+
+
+@implementation PGTSXMLColumnDescription
+- (BOOL) requiresDocuments
+{
+	return mRequiresDocuments;
+}
+
+- (void) setRequiresDocuments: (BOOL) aBool
+{
+	mRequiresDocuments = aBool;
 }
 @end
