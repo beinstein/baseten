@@ -88,7 +88,7 @@
 @implementation NSString (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    return [[[[NSString alloc] stringWithUTF8String: value] decomposedStringWithCanonicalMapping] retain];
+    return [[[[NSString alloc] initWithUTF8String: value] decomposedStringWithCanonicalMapping] retain];
 }
 
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
