@@ -476,7 +476,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 	}
 	else
 	{
-		retval = xmlData;
+		retval = [xmlData retain];
 	}
 	
 	return retval;
