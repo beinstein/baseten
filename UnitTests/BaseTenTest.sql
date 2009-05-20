@@ -85,6 +85,24 @@ CREATE TABLE int8_test (
 INSERT INTO int8_test VALUES (16);
 GRANT SELECT, INSERT, UPDATE, DELETE ON int8_test TO baseten_test_user;
 
+
+CREATE TABLE xml_document_test (
+    value xml CHECK (value IS DOCUMENT)
+);
+INSERT INTO xml_document_test VALUES ('<doc><el/></doc>');
+GRANT SELECT, INSERT, UPDATE, DELETE ON xml_document_test TO baseten_test_user;
+
+
+CREATE TABLE xml_fragment_test (
+    value xml -- No constraint
+);
+-- Document
+INSERT INTO xml_fragment_test VALUES ('<doc><el/></doc>');
+-- Fragment
+INSERT INTO xml_fragment_test VALUES ('<d1><el/></d1><d2><el/></d2>');
+GRANT SELECT, INSERT, UPDATE, DELETE ON xml_fragment_test TO baseten_test_user;
+
+
 -- BaseTen tests
 
 CREATE TABLE test (

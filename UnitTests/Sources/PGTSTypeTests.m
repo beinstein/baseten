@@ -155,4 +155,30 @@ f_eq (float a, float b)
 	double d = 2.71828;
 	MKCAssertTrue (d_eq (d, [value doubleValue]));
 }
+
+- (void) testXMLDocument
+{
+	PGTSResultSet* res = [mConnection executeQuery: @"SELECT * FROM xml_document_test"];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	
+	while (([res advanceRow]))
+	{
+		NSXMLDocument* value = [res valueForKey: @"value"];
+		MKCAssertNotNil (value);
+		MKCAssertTrue ([value isKindOfClass: [NSXMLDocument class]]);
+	}
+}
+
+- (void) testXMLFragment
+{
+	PGTSResultSet* res = [mConnection executeQuery: @"SELECT * FROM xml_fragment_test"];
+	STAssertTrue ([res querySucceeded], [[res error] description]);
+	
+	while (([res advanceRow]))
+	{
+		NSXMLDocument* value = [res valueForKey: @"value"];
+		MKCAssertNotNil (value);
+		MKCAssertTrue ([value isKindOfClass: [NSData class]]);
+	}
+}
 @end
