@@ -38,7 +38,7 @@
     [super ibPopulateKeyPaths: keyPaths];
     
     [[keyPaths objectForKey: IBAttributeKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
-        @"tableName", @"schemaName", @"databaseObjectClassName", @"fetchesOnConnect", @"fetchPredicate", nil]];
+        @"tableName", @"schemaName", @"databaseObjectClassName", @"fetchesAutomatically", @"fetchPredicate", nil]];
     [[keyPaths objectForKey: IBToOneRelationshipKeyPaths] addObjectsFromArray: [NSArray arrayWithObjects:
         @"databaseContext", @"modalWindow", nil]];
 }
