@@ -167,6 +167,9 @@
 	mEntityDescription = desc;
 }
 
+/**
+ * \brief The array controller's database context.
+ */
 - (BXDatabaseContext *) databaseContext
 {
     return databaseContext;
@@ -222,6 +225,11 @@
 
 /**
  * \brief Set whether this controller fetches on connect.
+ *
+ * Currently this causes the content to be fetched automatically
+ * only when the array controller receives a connection notification.
+ * If the database context passed to #setDatabaseContext: is already
+ * connected, content won't be fetched automatically.
  * \note Controllers the content of which is bound to other 
  *       BXSynchronizedArrayControllers should not fetch on connect.
  * \see #setDatabaseContext:
@@ -242,6 +250,7 @@
 	}
 }
 
+//FIXME: document me after locking functionality has been moved here.
 - (void) objectDidBeginEditing: (id) editor
 {
 	//This is a bit bad. Since we have bound one of our own attributes to 
@@ -255,6 +264,7 @@
 	}
 }
 
+//FIXME: document me after locking functionality has been moved here.
 - (void) objectDidEndEditing: (id) editor
 {
 	//See -objectDidBeginEditing:.
@@ -373,6 +383,19 @@ IsKindOfClass (id self, Class class)
 	return mBXContent;
 }
 
+/**
+ * \brief Create a new object.
+ *
+ * Calls
+ * -[BXDatabaseContext createObjectForEntity:withFieldValues:error:].
+ * If the receiver's contentSet is bound to another BXSynchronizedArrayController using
+ * a key that refers to a to-many relationship, the created object's foreign key values
+ * will be set accordingly.
+ * \param outError Error returned by the database. If NULL is passed and an error occurs,
+ *                 BXDatabaseContext will raise an exception by default.
+ * \return An autoreleased BXDatabaseObject.
+ * \see #newObject
+ */
 - (id) createObject: (NSError **) outError
 {
 	BXAssertValueReturn (NULL != outError, nil, @"Expected outError not to be NULL.");
@@ -441,7 +464,11 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 
 
 @implementation BXSynchronizedArrayController (OverridenMethods)
-
+/**
+ * \brief Exposed bindings
+ *
+ * managedObjectContext is removed from bindings exposed by the superclass.
+ */
 - (NSArray *) exposedBindings
 {
 	NSMutableArray* retval = [[[super exposedBindings] mutableCopy] autorelease];
@@ -469,6 +496,12 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
     return retval;
 }
 
+/**
+ * \brief Perform a fetch.
+ *
+ * Calls -fetchWithRequest:merge:error:. If an error occurs, an alert sheet or panel is displayed.
+ * \param sender Ignored.
+ */
 - (void) fetch: (id) sender
 {
     NSError* error = nil;
@@ -477,6 +510,18 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
         [self BXHandleError: error];
 }
 
+/**
+ * \brief Perform a fetch.
+ *
+ * Fetch objects from the database.
+ * \param fetchReques Currently ignored. Pass nil.
+ * \param merge Whether the content should be replaced. If the receiver already
+ *              has a collection, it won't be re-fetched, because the collection's contents
+ *              will be automatically updated.
+ * \param error Error returned by the database. If NULL is passed and an error occurs,
+ *              BXDatabaseContext will raise an exception by default.
+ * \return      If the fetch was successful or it wasn't needed, the receiver will return YES.
+ */
 - (BOOL) fetchWithRequest: (NSFetchRequest *) fetchRequest merge: (BOOL) merge error: (NSError **) error
 {
 	if (! mEntityDescription)
@@ -506,6 +551,17 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
     return retval;
 }
 
+/**
+ * \brief Create a new object.
+ *
+ * Calls #createObject:, which in turn calls 
+ * -[BXDatabaseContext createObjectForEntity:withFieldValues:error:].
+ * If an error occurs, an alert sheet or panel will be displayed.
+ * If the receiver's contentSet is bound to another BXSynchronizedArrayController using
+ * a key that refers to a to-many relationship, the created object's foreign key values
+ * will be set accordingly. 
+ * \return A retained BXDatabaseObject.
+ */
 - (id) newObject
 {
     mChanging = YES;
@@ -554,6 +610,12 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 #endif	
 }
 
+/**
+ * \brief Delete objects at specified indices.
+ *
+ * Deletes specified rows from the database. The objects will be marked deleted.
+ * If an error occurs, an alert sheet or panel will be displayed.
+ */
 - (void) removeObjectsAtArrangedObjectIndexes: (NSIndexSet *) indexes
 {
     NSError* error = nil;
