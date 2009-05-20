@@ -1413,10 +1413,34 @@ ModTypeToObject (enum BXModificationType value)
 			//Then use the values received from the database with the redo invocation
 			if (nil != retval && nil == localError)
 			{
+				//FIXME: when refactoring different commit modes out of BXDatabaseContext, rethink handling of creating and deleting objects within transactions.
                 //If registration fails, there should be a suitable object in memory.
-                if (NO == [retval registerWithContext: self entity: entity])
-                    retval = [self registeredObjectWithID: [retval objectID]];
+				//In that case, we'll probably want to empty the value cache.
+				if (NO == [retval registerWithContext: self entity: entity])
+				{
+					retval = [self registeredObjectWithID: [retval objectID]];
+					[retval setCachedValuesForKeysWithDictionary: nil];
+				}
 				BXDatabaseObjectID* objectID = [retval objectID];
+				Expect (objectID);
+				
+				//Cache some of the values we got earlier.
+				{
+					NSMutableDictionary* valuesByName = [NSMutableDictionary dictionaryWithCapacity: [fieldValues count]];
+					BXEnumerate (currentKey, e, [fieldValues keyEnumerator])
+					{
+						id value = [fieldValues objectForKey: currentKey];
+						NSString* name = [currentKey name];
+						
+						//NSStrings get special treatment.
+						if ([value isKindOfClass: [NSString class]])
+							value = [value decomposedStringWithCanonicalMapping];
+						
+						[valuesByName setObject: value forKey: name];
+					}
+					[valuesByName addEntriesFromDictionary: [retval cachedValues]];
+					[retval setCachedValuesForKeysWithDictionary: valuesByName];
+				}
 				
 				if (YES == [mDatabaseInterface autocommits])
 				{
@@ -2564,16 +2588,16 @@ ModTypeToObject (enum BXModificationType value)
  */
 - (BOOL) registerObject: (BXDatabaseObject *) anObject
 {
-    BOOL rval = NO;
+    BOOL retval = NO;
     BXDatabaseObjectID* objectID = [anObject objectID];
     if (nil == [mObjects objectForKey: objectID])
     {
-        rval = YES;
+        retval = YES;
         [mObjects setObject: anObject forKey: objectID];
         if (mRetainRegisteredObjects)
             [anObject retain];
     }
-    return rval;
+    return retval;
 }
 
 - (void) unregisterObject: (BXDatabaseObject *) anObject
