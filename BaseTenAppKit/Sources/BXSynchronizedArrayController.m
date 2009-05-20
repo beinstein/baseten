@@ -460,10 +460,14 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 {
 	return (id) [[[self selectedObjects] PGTSCollect] objectID];
 }
-@end
 
 
-@implementation BXSynchronizedArrayController (OverridenMethods)
+#pragma mark OverriddenMethods
+/**
+ * \name Overridden methods
+ * \brief Methods changed from NSArrayController's implementation.
+ */
+//@{
 /**
  * \brief Exposed bindings
  *
@@ -484,17 +488,19 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 	[super bind: binding toObject: observableObject withKeyPath: keyPath options: options];
 }
 
+/** \cond */
+#if 0
 - (BOOL) isEditable
 {
     BOOL retval = [super isEditable];
-#if 0
     if (YES == retval)
     {
         retval = [[[self selection] status] ];
     }
-#endif
     return retval;
 }
+#endif
+/** \endcond */
 
 /**
  * \brief Perform a fetch.
@@ -630,6 +636,7 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
         [self BXHandleError: error];
 }
 @end
+//@}
 
 
 @implementation BXSynchronizedArrayController (NSCoding)

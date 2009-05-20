@@ -502,6 +502,10 @@
  *         <td>uuid</td>
  *         <td>NSString</td>
  *     </tr>
+ *     <tr>
+ *         <td>xml</td>
+ *         <td>NSData or NSXMLDocument</td>
+ *     </tr>
  * </table>
  *
  *
@@ -540,6 +544,13 @@
  *
  * \note In versions earlier than 1.7, date handling depended on several factors, such as the current time zone and the server's time zone. This is no longer the case. Also, all 
  *       date and time types are currently returned as NSDate, not NSCalendarDate.
+ *
+ *
+ * \section xml_handling The XML type
+ *
+ * PostgreSQL's xml data type handles both XML documents and content fragments. BaseTen creates NSData objects from them by default, but if the
+ * table also has a constraint like <em>CHECK (xml_column IS DOCUMENT)</em>, NSXMLDocuments will be created instead. The constraint mustn't
+ * contain any other conditions, but there may be additional CHECK constraints.
  */
 
 /**
