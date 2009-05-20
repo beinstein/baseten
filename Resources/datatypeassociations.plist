@@ -52,5 +52,7 @@
     <string>PGTSACLItem</string>
     <key>uuid</key>
     <string>NSString</string>
+    <key>xml</key>
+    <string>NSXMLDocument</string>
 </dict>
 </plist>
