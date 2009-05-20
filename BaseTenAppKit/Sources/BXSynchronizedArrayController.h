@@ -49,7 +49,7 @@
     NSString* mTableName;
     NSString* mDBObjectClassName;
 
-    BOOL mFetchesOnConnect;
+    BOOL mFetchesAutomatically;
     BOOL mChanging;
 	BOOL mShouldAddToContent;
 }
@@ -65,13 +65,16 @@
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx;
 - (BXEntityDescription *) entityDescription;
 - (void) setEntityDescription: (BXEntityDescription *) desc;
-- (BOOL) fetchesOnConnect;
-- (void) setFetchesOnConnect: (BOOL) aBool;
+- (BOOL) fetchesAutomatically;
+- (void) setFetchesAutomatically: (BOOL) aBool;
 - (NSArray *) selectedObjectIDs;
 
 - (void) setBXContent: (id) anObject;
 - (id) createObject: (NSError **) outError;
 - (NSDictionary *) valuesForBoundRelationship;
+
+- (BOOL) fetchesOnConnect DEPRECATED_ATTRIBUTE;
+- (void) setFetchesOnConnect: (BOOL) aBool DEPRECATED_ATTRIBUTE;
 @end
 
 

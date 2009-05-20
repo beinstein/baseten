@@ -110,7 +110,7 @@
     {
         [self setAutomaticallyPreparesContent: NO];
         [self setEditable: YES];
-        mFetchesOnConnect = NO;
+        mFetchesAutomatically = NO;
         mChanging = NO;
 		mShouldAddToContent = YES;
     }
@@ -179,7 +179,7 @@
 {
 	NSError* error = nil;
 	[self setEntityDescription: nil];
-	BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName] 
+	BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName]
 																	inSchema: [self schemaName]
 																	   error: &error];
 	if (nil != error)
@@ -193,7 +193,7 @@
 
 /**
  * \brief Set the database context.
- * \see #setFetchesOnConnect:
+ * \see #setFetchesAutomatically:
  */
 - (void) setDatabaseContext: (BXDatabaseContext *) ctx
 {
@@ -207,47 +207,60 @@
         [databaseContext release];
         databaseContext = [ctx retain];
 		
-		if (nil != databaseContext)
+		if (databaseContext)
 		{
 			[self setEntityDescription: nil];
 			[[databaseContext notificationCenter] addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
+			
+			if ([databaseContext isConnected] && [self tableName])
+				[self fetch: nil];
 		}
     }
 }
 
 /**
- * \brief Whether this controller fetches on connect.
+ * \brief Whether this controller fetches automatically.
  */
+- (BOOL) fetchesAutomatically
+{
+    return mFetchesAutomatically;
+}
+
 - (BOOL) fetchesOnConnect
 {
-    return mFetchesOnConnect;
+    return [self fetchesAutomatically];
 }
 
 /**
- * \brief Set whether this controller fetches on connect.
+ * \brief Set whether this controller fetches automatically.
  *
- * Currently this causes the content to be fetched automatically
- * only when the array controller receives a connection notification.
- * If the database context passed to #setDatabaseContext: is already
- * connected, content won't be fetched automatically.
+ * This causes the content to be fetched automatically
+ * when the array controller receives a connection notification or
+ * the array controller's database context is set and is already 
+ * connected.
  * \note Controllers the content of which is bound to other 
  *       BXSynchronizedArrayControllers should not fetch on connect.
  * \see #setDatabaseContext:
  */
-- (void) setFetchesOnConnect: (BOOL) aBool
+- (void) setFetchesAutomatically: (BOOL) aBool
 {
-	if (mFetchesOnConnect != aBool)
+	if (mFetchesAutomatically != aBool)
 	{
-		mFetchesOnConnect = aBool;
+		mFetchesAutomatically = aBool;
 		if (nil != databaseContext)
 		{
 			NSNotificationCenter* nc = [databaseContext notificationCenter];
-			if (YES == mFetchesOnConnect)
+			if (mFetchesAutomatically)
 				[nc addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
 			else
 				[nc removeObserver: self name: kBXConnectionSuccessfulNotification object: databaseContext];
 		}
 	}
+}
+
+- (void) setFetchesOnConnect: (BOOL) aBool
+{
+	[self setFetchesAutomatically: aBool];
 }
 
 //FIXME: document me after locking functionality has been moved here.
@@ -349,7 +362,7 @@
 	if (! mEntityDescription)
 		[self prepareEntity];
 	
-	if (mFetchesOnConnect)
+	if (mFetchesAutomatically)
 		[self fetch: nil];
 }
 
@@ -643,8 +656,10 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
+	//Don't change fetchesOnConnect in strings, or users' nibs stop working.
+	
     [super encodeWithCoder: encoder];
-    [encoder encodeBool: mFetchesOnConnect forKey: @"fetchesOnConnect"];
+    [encoder encodeBool: mFetchesAutomatically forKey: @"fetchesOnConnect"];
     
     [encoder encodeObject: mTableName forKey: @"tableName"];
     [encoder encodeObject: mSchemaName forKey: @"schemaName"];
@@ -658,7 +673,7 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
     {
         [self setAutomaticallyPreparesContent: NO];
         [self setEditable: YES];
-        [self setFetchesOnConnect: [decoder decodeBoolForKey: @"fetchesOnConnect"]];
+        [self setFetchesAutomatically: [decoder decodeBoolForKey: @"fetchesOnConnect"]];
         
         [self setTableName:  [decoder decodeObjectForKey: @"tableName"]];
         [self setSchemaName: [decoder decodeObjectForKey: @"schemaName"]];
