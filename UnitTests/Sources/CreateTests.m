@@ -44,17 +44,14 @@
 @implementation CreateTests
 - (void) testCreate
 {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     NSError* error = nil;    
-
-    BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+    BXEntityDescription* entity = [mContext entityForTable: @"test" error: nil];
     MKCAssertNotNil (entity);
     
     BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: nil error: &error];
     STAssertNil (error, [error description]);
     MKCAssertNotNil (object);
     [mContext rollback];
-    [pool release];
 }
 
 - (void) testCreateWithFieldValues
@@ -63,33 +60,52 @@
     MKCAssertNotNil (entity);
 	
 	NSError* error = nil;
-	NSString* key = @"value";
-	NSDictionary* values = [NSDictionary dictionaryWithObjectsAndKeys: @"test", key, nil];
+	NSDictionary* values = [NSDictionary dictionaryWithObject: @"test" forKey: @"value"];
 	BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: values error: &error];
-	MKCAssertNotNil (object);
 	STAssertNil (error, [error description]);
-	MKCAssertTrue ([[object valueForKey: key] isEqual: [values valueForKey: key]]);
+	MKCAssertNotNil (object);
+	
+	MKCAssertFalse ([object isFaultKey: @"value"]);
+	MKCAssertTrue ([[object valueForKey: @"value"] isEqual: [values valueForKey: @"value"]]);
+	[mContext rollback];
+}
+
+- (void) testCreateWithPrecomposedStringValue
+{
+	NSString* precomposed = @"åäöÅÄÖ";
+	NSString* decomposed = @"åäöÅÄÖ";
+	
+	BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+    MKCAssertNotNil (entity);
+	
+	NSError* error = nil;
+	NSDictionary* values = [NSDictionary dictionaryWithObject: precomposed forKey: @"value"];
+	BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: values error: &error];
+	STAssertNil (error, [error description]);
+	MKCAssertNotNil (object);
+	
+	MKCAssertFalse ([object isFaultKey: @"value"]);
+	MKCAssertTrue ([[object valueForKey: @"value"] isEqual: decomposed]);
 	[mContext rollback];
 }
 
 - (void) testCreateCustom
 {
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
     NSError* error = nil;
     Class objectClass = [TestObject class];
     
-	BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+	BXEntityDescription* entity = [mContext entityForTable: @"test" error: NULL];
     MKCAssertNotNil (entity);
 	
     [entity setDatabaseObjectClass: objectClass];
     MKCAssertEqualObjects (objectClass, [entity databaseObjectClass]);
     
     BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: nil error: &error];
-    MKCAssertNotNil (object);
     STAssertNil (error, [error description]);
+    MKCAssertNotNil (object);
+	
     MKCAssertTrue ([object isKindOfClass: objectClass]);    
     [mContext rollback];
-    [pool release];
 }
 
 - (void) testCreateWithRelatedObject
