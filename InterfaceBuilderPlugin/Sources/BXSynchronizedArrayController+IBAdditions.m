@@ -93,4 +93,15 @@
 	return [[[NSImage alloc] initByReferencingFile: path] autorelease];
 }
 
+#if 0
++ (NSSet *) keyPathsForValuesAffectingHasContentBinding
+{
+	return [NSSet setWithObject: @"contentBindingKey"];
+}
+
+- (BOOL) hasContentBinding
+{
+	return ([mContentBindingKey length] ? YES : NO);
+}
+#endif
 @end

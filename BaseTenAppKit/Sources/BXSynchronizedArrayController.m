@@ -457,12 +457,19 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 	return retval;
 }
 
+- (NSString *) contentBindingKey
+{
+	return mContentBindingKey;
+}
+
 - (void) setContentBindingKey: (NSString *) aKey
 {
 	if (aKey != mContentBindingKey)
 	{
 		[mContentBindingKey release];
 		mContentBindingKey = [aKey retain];
+		
+		if ([aKey length]) [self setFetchesAutomatically: NO];
 	}
 }
 
@@ -499,6 +506,13 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 	if ([binding isEqualToString: @"contentSet"] || [binding isEqualToString: @"contentArray"])
 		[self setContentBindingKey: binding];
 	[super bind: binding toObject: observableObject withKeyPath: keyPath options: options];
+}
+
+- (void) unbind: (NSString *) binding
+{
+	[super unbind: binding];
+	if ([binding isEqualToString: @"contentSet"] || [binding isEqualToString: @"contentArray"])
+		[self setContentBindingKey: nil];
 }
 
 /** \cond */

@@ -35,7 +35,7 @@
     return @"BXSynchronizedArrayControllerInspector";
 }
 
-- (BOOL) supportsMultipleObjectInspection
++ (BOOL) supportsMultipleObjectInspection
 {
 	return NO;
 }
