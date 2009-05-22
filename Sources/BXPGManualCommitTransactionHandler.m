@@ -176,8 +176,7 @@
 
 - (void) disconnect
 {
-	if ([[mInterface databaseContext] sendsLockQueries])
-		[mNotifyConnection executeQuery: @"SELECT baseten.lock_unlock ()"];
+	[mNotifyConnection executeQuery: @"SELECT baseten.lock_unlock ()"];
 	[mNotifyConnection disconnect];
 	[mConnection disconnect];
 	[self didDisconnect];
@@ -303,84 +302,6 @@
 
 
 @implementation BXPGManualCommitTransactionHandler (Transactions)
-- (BOOL) save: (NSError **) outError
-{
-	ExpectR(outError, NO);
-	
-	//COMMIT handles all transaction states.
-	BOOL retval = YES;
-	if (PQTRANS_IDLE != [mConnection transactionStatus])
-	{
-		retval = NO;
-		
-		PGTSResultSet* res = nil;
-		NSError* localError = nil;
-
-		if ([[mInterface databaseContext] sendsLockQueries])
-		{
-			res = [mNotifyConnection executeQuery: @"SELECT baseten.lock_unlock ()"];
-			if ((localError = [res error])) *outError = localError;
-		}
-		
-		NSString* query = @"COMMIT";
-		res = [mConnection executeQuery: query];
-		if ((localError = [res error])) *outError = localError;
-		
-		if (BASETEN_SENT_COMMIT_TRANSACTION_ENABLED ())
-		{
-			char* message_s = strdup ([query UTF8String]);
-			BASETEN_SENT_COMMIT_TRANSACTION (mConnection, [res status], message_s);
-			free (message_s);
-		}				
-		
-		if ([res querySucceeded])
-			retval = YES;
-	}
-	[self resetSavepointIndex];	
-	return retval;
-}
-
-
-- (BOOL) rollback: (NSError **) outError
-{
-	ExpectR (outError, NO);
-	BOOL retval = YES;
-	
-    //The locked key should be cleared in any case to cope with the situation
-    //where the lock was acquired after the last savepoint and the same key 
-    //is to be locked again.
-	//COMMIT handles all transaction states.
-	if (PQTRANS_IDLE != [mConnection transactionStatus])
-	{
-		PGTSResultSet* res = nil;
-		NSError* localError = nil;
-		
-		if ([[mInterface databaseContext] sendsLockQueries])
-		{
-			res = [mNotifyConnection executeQuery: @"SELECT baseten.lock_unlock ()"];
-			if ((localError = [res error])) *outError = localError;
-		}
-		
-		NSString* query = @"ROLLBACK";
-		res = [mConnection executeQuery: query];
-		if ((localError = [res error])) 
-		{
-			retval = NO;
-			*outError = localError;
-		}
-		
-		if (BASETEN_SENT_ROLLBACK_TRANSACTION_ENABLED ())
-		{
-			char* message_s = strdup ([query UTF8String]);
-			BASETEN_SENT_ROLLBACK_TRANSACTION (mConnection, [res status], message_s);
-			free (message_s);
-		}		
-	}
-	[self resetSavepointIndex];
-	return retval;
-}
-
-
 - (BOOL) rollbackToLastSavepoint: (NSError **) outError
 {
 	ExpectR (outError, NO);

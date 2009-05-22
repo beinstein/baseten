@@ -486,15 +486,61 @@ SSLMode (enum BXSSLMode mode)
 
 - (BOOL) save: (NSError **) outError
 {
-	[self doesNotRecognizeSelector: _cmd];
-	return NO;
+	ExpectR (outError, NO);
+	
+	//COMMIT handles all transaction errors.
+	BOOL retval = YES;
+	if (PQTRANS_IDLE != [mConnection transactionStatus])
+	{
+		retval = NO;
+		
+		PGTSResultSet* res = nil;		
+		NSString* query = @"COMMIT; SELECT baseten.lock_unlock ();";
+		res = [mConnection executeQuery: query];
+		*outError = [res error];
+		
+		if (BASETEN_SENT_COMMIT_TRANSACTION_ENABLED ())
+		{
+			char* message_s = strdup ([query UTF8String]);
+			BASETEN_SENT_COMMIT_TRANSACTION (mConnection, [res status], message_s);
+			free (message_s);
+		}				
+		
+		if ([res querySucceeded])
+			retval = YES;
+	}
+	[self resetSavepointIndex];	
+	return retval;
 }
 
 
 - (BOOL) rollback: (NSError **) outError
 {
-	[self doesNotRecognizeSelector: _cmd];
-	return NO;
+	ExpectR (outError, NO);
+	BOOL retval = NO;
+	
+    //The locked key should be cleared in any case to cope with the situation
+    //where the lock was acquired  after the last savepoint and the same key 
+    //is to be locked again.
+	//ROLLBACK handles all transaction states.
+	if (PQTRANS_IDLE != [mConnection transactionStatus])
+	{
+		NSString* query = @"ROLLBACK; SELECT baseten.lock_unlock ();";
+		PGTSResultSet* res = [mConnection executeQuery: query];
+		if ([res querySucceeded])
+			retval = YES;
+		else
+			*outError = [res error];
+		
+		if (BASETEN_SENT_ROLLBACK_TRANSACTION_ENABLED ())
+		{
+			char* message_s = strdup ([query UTF8String]);
+			BASETEN_SENT_ROLLBACK_TRANSACTION (mConnection, [res status], message_s);
+			free (message_s);
+		}		
+	}
+	[self resetSavepointIndex];	
+	return retval;
 }
 
 
