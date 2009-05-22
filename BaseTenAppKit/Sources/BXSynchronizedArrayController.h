@@ -52,6 +52,7 @@
     BOOL mFetchesAutomatically;
     BOOL mChanging;
 	BOOL mShouldAddToContent;
+	BOOL mLocksRowsOnBeginEditing;
 }
 
 - (NSString *) schemaName;
@@ -67,6 +68,8 @@
 - (void) setEntityDescription: (BXEntityDescription *) desc;
 - (BOOL) fetchesAutomatically;
 - (void) setFetchesAutomatically: (BOOL) aBool;
+- (BOOL) locksRowsOnBeginEditing;
+- (void) setLocksRowsOnBeginEditing: (BOOL) aBool;
 - (NSArray *) selectedObjectIDs;
 
 - (void) setBXContent: (id) anObject;

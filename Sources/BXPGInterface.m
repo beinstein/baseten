@@ -732,7 +732,8 @@ error:
 	}
 	else
 	{
-		MarkLocked (mTransactionHandler, entity, mQueryBuilder, whereClause, whereClauseParameters, NO);
+		if ([mContext sendsLockQueries])
+			MarkLocked (mTransactionHandler, entity, mQueryBuilder, whereClause, whereClauseParameters, NO);
 		[mTransactionHandler checkSuperEntities: entity];
 		NSArray* objectIDs = ObjectIDs (entity, res);
 
@@ -840,9 +841,10 @@ error:
 	PGTSResultSet* res = [connection executeQuery: query parameterArray: parameters];
 	if ([res querySucceeded])
 	{
-		retval = ObjectIDs (entity, res);
+		if ([mContext sendsLockQueries])
+			MarkLocked (mTransactionHandler, entity, mQueryBuilder, whereClause, parameters, YES);
 		[mTransactionHandler checkSuperEntities: entity];
-		MarkLocked (mTransactionHandler, entity, mQueryBuilder, whereClause, parameters, YES);
+		retval = ObjectIDs (entity, res);
 	}
 	else
 	{
@@ -1119,7 +1121,6 @@ error:
  * Lock notifications should always be listened to, since modifications cause the rows to be locked until
  * the end of the ongoing transaction.
  */
-//FIXME: make this conditional.
 //FIXME: unlock on -discardEditing?
 - (void) lockObject: (BXDatabaseObject *) anObject key: (id) aKey 
 		   lockType: (enum BXObjectLockStatus) type

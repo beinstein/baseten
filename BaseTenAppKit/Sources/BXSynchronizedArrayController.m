@@ -113,6 +113,7 @@
         mFetchesAutomatically = NO;
         mChanging = NO;
 		mShouldAddToContent = YES;
+		mLocksRowsOnBeginEditing = YES;
     }
     return self;
 }
@@ -263,33 +264,32 @@
 	[self setFetchesAutomatically: aBool];
 }
 
-//FIXME: document me after locking functionality has been moved here.
-- (void) objectDidBeginEditing: (id) editor
+/**
+ * \brief Whether the receiver begins a transaction for each editing session.
+ */
+- (BOOL) locksRowsOnBeginEditing
 {
-	//This is a bit bad. Since we have bound one of our own attributes to 
-	//one of our bindings, -commitEditing might get called recursively ad infinitum.
-	//We prevent this by not starting to edit in this object; it doesn't happen
-	//normally in 10.4, either.
-	if (self != editor)
-	{
-		[self BXLockKey: nil status: kBXObjectLockedStatus editor: editor];
-		[super objectDidBeginEditing: editor];
-	}
-}
-
-//FIXME: document me after locking functionality has been moved here.
-- (void) objectDidEndEditing: (id) editor
-{
-	//See -objectDidBeginEditing:.
-	if (self != editor)
-	{
-		[super objectDidEndEditing: editor];
-		[self BXUnlockKey: nil editor: editor];
-	}
+	return mLocksRowsOnBeginEditing;
 }
 
 /**
- * \name Methods used by the IB palette
+ * \brief Set whether the receiver begins a transaction for each editing session.
+ *
+ * Sets whether the receiver asks its database context to begin a transaction
+ * to lock the corresponding row when each editing session begins. Regardless of
+ * the context setting for sending lock notifications, other BaseTen clients will
+ * always be notified. When editing ends, the transaction will end as well. This 
+ * is determined from calls to -objectDidBeginEditing: and -objectDidEndEditing: 
+ * declared in NSEditor protocol. The default is YES.
+ * \see BXDatabaseContext::setSendsLockQueries:
+ */
+- (void) setLocksRowsOnBeginEditing: (BOOL) aBool
+{
+	mLocksRowsOnBeginEditing = aBool;
+}
+
+/**
+ * \name Methods used by the IB plugin
  * \brief The controller will try to get an entity description when its database context
  *        based on these properties. This will occur when the context gets set and when 
  *        the context connects. If a class name has also been set, the controller will
@@ -515,8 +515,37 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 		[self setContentBindingKey: nil];
 }
 
-/** \cond */
+- (void) objectDidBeginEditing: (id) editor
+{
+	if (mLocksRowsOnBeginEditing)
+	{
+		//This is a bit bad. Since we have bound one of our own attributes to 
+		//one of our bindings, -commitEditing might get called recursively ad infinitum.
+		//We prevent this by not starting to edit in this object; it doesn't happen
+		//normally in 10.4, either.
+		if (self != editor)
+		{
+			[self BXLockKey: nil status: kBXObjectLockedStatus editor: editor];
+			[super objectDidBeginEditing: editor];
+		}
+	}
+}
+
+- (void) objectDidEndEditing: (id) editor
+{
+	if (mLocksRowsOnBeginEditing)
+	{
+		//See -objectDidBeginEditing:.
+		if (self != editor)
+		{
+			[super objectDidEndEditing: editor];
+			[self BXUnlockKey: nil editor: editor];
+		}
+	}
+}
+
 #if 0
+/** \cond */
 - (BOOL) isEditable
 {
     BOOL retval = [super isEditable];
@@ -526,8 +555,8 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
     }
     return retval;
 }
-#endif
 /** \endcond */
+#endif
 
 /**
  * \brief Perform a fetch.
@@ -674,6 +703,7 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 	
     [super encodeWithCoder: encoder];
     [encoder encodeBool: mFetchesAutomatically forKey: @"fetchesOnConnect"];
+	[encoder encodeBool: mLocksRowsOnBeginEditing forKey: @"locksRowsOnBeginEditing"];
     
     [encoder encodeObject: mTableName forKey: @"tableName"];
     [encoder encodeObject: mSchemaName forKey: @"schemaName"];
@@ -687,7 +717,18 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
     {
         [self setAutomaticallyPreparesContent: NO];
         [self setEditable: YES];
-        [self setFetchesAutomatically: [decoder decodeBoolForKey: @"fetchesOnConnect"]];
+		
+		//Some reasonable default values for booleans to make existing nibs work.
+		
+		BOOL fetchOnConnect = NO;
+		if ([decoder containsValueForKey: @"fetchesOnConnect"])
+			fetchOnConnect = [decoder decodeBoolForKey: @"fetchesOnConnect"];
+        [self setFetchesAutomatically: fetchOnConnect];
+		
+		BOOL lockOnBeginEditing = YES;
+		if ([decoder containsValueForKey: @"locksRowsOnBeginEditing"])
+			lockOnBeginEditing = [decoder decodeBoolForKey: @"locksRowsOnBeginEditing"];
+		[self setLocksRowsOnBeginEditing: lockOnBeginEditing];
         
         [self setTableName:  [decoder decodeObjectForKey: @"tableName"]];
         [self setSchemaName: [decoder decodeObjectForKey: @"schemaName"]];

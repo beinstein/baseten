@@ -549,11 +549,15 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * \brief Set whether the context should try to lock rows before editing.
+ * \brief Set whether the context should mark rows locked after editing.
  *
- * BaseTen's controller subclasses notify the context in NSEditorRegistration's methods.
- * This method controls whether the context pays attention to those messages.
- * The context may still receive lock notifications from other contexts.
+ * Makes the receiver send notifications to other BaseTen clients
+ * about updated or deleted rows being locked when the receiver
+ * has an ongoing transaction. This causes some additional queries to
+ * be sent. The context may still receive lock notifications from other 
+ * contexts.
+ * \see BXDatabaseObject::isLockedForKey:
+ * \see BXSynchronizedArrayController::setLocksRowsOnBeginEditing:
  */
 - (void) setSendsLockQueries: (BOOL) aBool
 {
@@ -563,7 +567,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 /**
- * \brief Whether the context tries to lock rows before editing.
+ * \brief Whether the context tries to lock rows after editing.
  */
 - (BOOL) sendsLockQueries
 {
