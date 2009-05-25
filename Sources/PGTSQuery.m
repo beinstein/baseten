@@ -203,8 +203,15 @@ CopyParameterString (int nParams, const char** values, int* formats)
 			free (params);
 		}
 		
-		retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
-									paramValues, paramLengths, paramFormats, 0);
+		if (nParams)
+		{
+			retval = PQsendQueryParams ([connection pgConnection], [mQuery UTF8String], nParams, paramTypes,
+										paramValues, paramLengths, paramFormats, 0);
+		}
+		else
+		{
+			retval = PQsendQuery ([connection pgConnection], [mQuery UTF8String]);
+		}
 		
 		if ([connection logsQueries])
 			[(id) [connection delegate] PGTSConnection: connection sentQuery: self];

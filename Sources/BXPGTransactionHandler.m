@@ -487,27 +487,29 @@ SSLMode (enum BXSSLMode mode)
 - (BOOL) save: (NSError **) outError
 {
 	ExpectR (outError, NO);
-	
-	//COMMIT handles all transaction errors.
 	BOOL retval = YES;
+	
+	//COMMIT handles all transaction states.
 	if (PQTRANS_IDLE != [mConnection transactionStatus])
 	{
 		retval = NO;
 		
-		PGTSResultSet* res = nil;		
-		NSString* query = @"COMMIT; SELECT baseten.lock_unlock ();";
-		res = [mConnection executeQuery: query];
-		*outError = [res error];
+		NSString* query = @"COMMIT;";
+		if ([[self databaseDescription] hasBaseTenSchema])
+			query = @"COMMIT; SELECT baseten.lock_unlock ();";
+		
+		PGTSResultSet* res = [mConnection executeQuery: query];
+		if ([res querySucceeded])
+			retval = YES;
+		else
+			*outError = [res error];
 		
 		if (BASETEN_SENT_COMMIT_TRANSACTION_ENABLED ())
 		{
 			char* message_s = strdup ([query UTF8String]);
 			BASETEN_SENT_COMMIT_TRANSACTION (mConnection, [res status], message_s);
 			free (message_s);
-		}				
-		
-		if ([res querySucceeded])
-			retval = YES;
+		}						
 	}
 	[self resetSavepointIndex];	
 	return retval;
@@ -525,7 +527,10 @@ SSLMode (enum BXSSLMode mode)
 	//ROLLBACK handles all transaction states.
 	if (PQTRANS_IDLE != [mConnection transactionStatus])
 	{
-		NSString* query = @"ROLLBACK; SELECT baseten.lock_unlock ();";
+		NSString* query = @"ROLLBACK;";
+		if ([[self databaseDescription] hasBaseTenSchema])
+			query = @"ROLLBACK; SELECT baseten.lock_unlock ();";
+		
 		PGTSResultSet* res = [mConnection executeQuery: query];
 		if ([res querySucceeded])
 			retval = YES;
