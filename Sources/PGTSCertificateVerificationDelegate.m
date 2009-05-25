@@ -66,8 +66,14 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 
 - (void) dealloc
 {
-	[mPolicies release];
+	SafeCFRelease (mPolicies);
 	[super dealloc];
+}
+
+- (void) finalize
+{
+	SafeCFRelease (mPolicies);
+	[super finalize];
 }
 
 - (CSSM_CERT_TYPE) x509Version: (X509 *) x509Cert
@@ -94,13 +100,13 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
  * To find search policies, we need to create a search criteria. To create a search criteria, 
  * we need to give the criteria creation function some constants.
  */
-- (NSArray *) policies
+- (CFArrayRef) policies
 {
-	if (nil == mPolicies)
+	if (! mPolicies)
 	{
 		OSStatus status = noErr;
 		
-		mPolicies = [[NSMutableArray alloc] init];
+		CFMutableArrayRef policies = CFArrayCreateMutable (NULL, 0, &kCFTypeArrayCallBacks);
 		const CSSM_OID* currentOidPtr = NULL;
 		const CSSM_OID* oidPtrs [] = {&CSSMOID_APPLE_TP_SSL, &CSSMOID_APPLE_TP_REVOCATION_CRL};
 		for (int i = 0, count = BXArraySize (oidPtrs); i < count; i++)
@@ -112,20 +118,26 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 			if (noErr != status)
 			{
 				SafeCFRelease (criteria);
-				[mPolicies removeAllObjects];
+				CFArrayRemoveAllValues (policies);
 				break;
 			}
 			
 			//SecPolicySearchCopyNext should only return noErr or errSecPolicyNotFound.
 			while (noErr == SecPolicySearchCopyNext (criteria, &policy))
 			{
-				CFArrayAppendValue ((CFMutableArrayRef) mPolicies, policy);
+				CFArrayAppendValue (policies, policy);
 				CFRelease (policy);
 			}
 			SafeCFRelease (criteria);
 		}
+		
+		if (noErr == status)
+			mPolicies = CFArrayCreateCopy (NULL, policies);
+		
+		SafeCFRelease (policies);
+		
 	}
-	return [[mPolicies copy] autorelease];
+	return mPolicies;
 }
 
 /**
@@ -187,7 +199,7 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 
 error:
 	SafeCFRelease (certificates);
-	SafeCFRelease (trust);	
+	SafeCFRelease (trust);
 	return retval;
 }
 
@@ -201,8 +213,8 @@ error:
 - (SecTrustRef) copyTrustFromCertificates: (CFArrayRef) certificates
 {
 	SecTrustRef trust = NULL;
-	NSArray* policies = [self policies];
-	if (0 < [policies count])
+	CFArrayRef policies = [self policies];
+	if (policies && 0 < CFArrayGetCount (policies))
 	{
 		OSStatus status = SecTrustCreateWithCertificates (certificates, policies, &trust);
 		if (noErr != status)
@@ -229,7 +241,7 @@ error:
 		SecCertificateRef serverCert = [self copyCertificateFromX509: x509_ctx->cert bioOutput: bioOutput];
 		if (serverCert)
 		{
-			certs = (CFMutableArrayRef) [[NSMutableArray alloc] initWithCapacity: count + 1];
+			certs = (CFArrayCreateMutable (NULL, count + 1, &kCFTypeArrayCallBacks));
 			CFArrayAppendValue (certs, serverCert);
 			SafeCFRelease (serverCert);
 			
@@ -252,6 +264,13 @@ error:
 		}
 		BIO_free (bioOutput);
 	}
-	return certs;
+	
+	CFArrayRef retval = NULL;
+	if (certs)
+	{
+		retval = CFArrayCreateCopy (NULL, certs);
+		CFRelease (certs);
+	}
+	return retval;
 }
 @end

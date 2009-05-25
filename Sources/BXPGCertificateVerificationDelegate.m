@@ -64,11 +64,17 @@ end:
 
 
 @implementation BXPGCertificateVerificationDelegate
-
 - (void) dealloc
 {
 	SafeCFRelease (mCertificates);
 	[super dealloc];
+}
+
+
+- (void) finalize
+{
+	SafeCFRelease (mCertificates);
+	[super finalize];
 }
 
 
@@ -82,8 +88,11 @@ end:
 {
 	if (mCertificates != anArray)
 	{
-		[(id) mCertificates release];
-		mCertificates = (CFArrayRef) [(id) anArray retain];
+		if (mCertificates)
+			CFRelease (mCertificates);
+		
+		if (anArray)
+			mCertificates = CFRetain (anArray);
 	}
 }
 

@@ -43,6 +43,7 @@
 		53BCB27C0DF698350011E823 /* MKCPolishedHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */; };
 		53C4228B0B0E87C40008F4F2 /* MKCPolishedSeparatorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C422890B0E87C40008F4F2 /* MKCPolishedSeparatorView.m */; };
 		53C80FEF0E31413300302B3F /* MKCEventPassingTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C80FEE0E31413300302B3F /* MKCEventPassingTextField.m */; };
+		53D3420E0FCAEB6B00DE60BE /* BaseTenAppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53F749980E362E62003C2E55 /* BaseTenAppKit.framework */; };
 		53D7BFEE0D6C787200290858 /* MKCImageAndTextCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D7BFED0D6C787200290858 /* MKCImageAndTextCell.m */; };
 		53DAF3D00E2BC40200085C3E /* BXAPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */; };
 		53DAFF180B4F0DE700C000FE /* View16.tif in Resources */ = {isa = PBXBuildFile; fileRef = 53DAFF170B4F0DE700C000FE /* View16.tif */; };
@@ -258,6 +259,7 @@
 				5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */,
 				5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */,
 				5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */,
+				53D3420E0FCAEB6B00DE60BE /* BaseTenAppKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

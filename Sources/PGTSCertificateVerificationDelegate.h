@@ -34,7 +34,7 @@
 
 @interface PGTSCertificateVerificationDelegate : NSObject <PGTSCertificateVerificationDelegate>
 {
-	NSMutableArray* mPolicies;
+	CFArrayRef mPolicies;
 }
 
 + (id) defaultCertificateVerificationDelegate;

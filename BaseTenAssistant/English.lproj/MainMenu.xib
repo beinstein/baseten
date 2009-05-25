@@ -2,14 +2,16 @@
 <archive type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="7.02">
 	<data>
 		<int key="IBDocument.SystemTarget">1050</int>
-		<string key="IBDocument.SystemVersion">9G55</string>
+		<string key="IBDocument.SystemVersion">9J61</string>
 		<string key="IBDocument.InterfaceBuilderVersion">670</string>
-		<string key="IBDocument.AppKitVersion">949.43</string>
+		<string key="IBDocument.AppKitVersion">949.46</string>
 		<string key="IBDocument.HIToolboxVersion">353.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="1094"/>
+			<integer value="825"/>
+			<integer value="449"/>
 			<integer value="629"/>
+			<integer value="1094"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -33,7 +35,7 @@
 			<object class="BXDatabaseContext" id="418952110">
 				<nil key="databaseURI"/>
 				<bool key="autocommits">YES</bool>
-				<bool key="connectsOnAwake">YES</bool>
+				<bool key="connectsOnAwake">NO</bool>
 			</object>
 			<object class="NSWindowTemplate" id="19005400">
 				<int key="NSWindowStyleMask">15</int>
@@ -425,7 +427,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{350, 200}</string>
 				<object class="NSView" key="NSWindowView" id="18474678">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -833,6 +835,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						</object>
 					</object>
 					<string key="NSFrameSize">{506, 387}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMinSize">{350, 278}</string>
@@ -1311,7 +1314,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				<string key="NSWindowContentMaxSize">{3.40282e+38, 3.40282e+38}</string>
 				<string key="NSWindowContentMinSize">{425, 175}</string>
 				<object class="NSView" key="NSWindowView" id="957137145">
-					<nil key="NSNextResponder"/>
+					<reference key="NSNextResponder"/>
 					<int key="NSvFlags">260</int>
 					<object class="NSMutableArray" key="NSSubviews">
 						<bool key="EncodedWithXMLCoder">YES</bool>
@@ -1432,6 +1435,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 						</object>
 					</object>
 					<string key="NSFrameSize">{425, 233}</string>
+					<reference key="NSSuperview"/>
 				</object>
 				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMinSize">{425, 197}</string>
@@ -3483,6 +3487,22 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 					</object>
 					<int key="connectionID">1111</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">delegate</string>
+						<reference key="source" ref="418952110"/>
+						<reference key="destination" ref="1038163843"/>
+					</object>
+					<int key="connectionID">1112</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">modalWindow</string>
+						<reference key="source" ref="418952110"/>
+						<reference key="destination" ref="19005400"/>
+					</object>
+					<int key="connectionID">1113</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -5457,7 +5477,7 @@ ELIAAAAAAAgACAAIAAgAAQABAAEAAQ</bytes>
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">1111</int>
+			<int key="maxID">1113</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

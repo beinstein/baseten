@@ -734,15 +734,54 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 - (void) databaseContext: (BXDatabaseContext *) ctx failedToConnect: (NSError *) dbError
 {
 	[self hideProgressPanel];
-	NSAlert* alert = [NSAlert alertWithError: dbError];
+	
+	BOOL shouldContinue = YES;
+	BOOL shouldDisplayAlert = YES;
+	
+	if ([kBXErrorDomain isEqualToString: [dbError domain]])
+	{
+		switch ([dbError code])
+		{
+			case kBXErrorSSLCertificateVerificationFailed:
+				shouldContinue = NO;
+				shouldDisplayAlert = NO;
+				break;
+				
+			case kBXErrorUserCancel:
+				shouldContinue = YES;
+				shouldDisplayAlert = NO;
+				break;
+				
+			default:
+				break;
+		}
+	}
+	
+	if (shouldContinue)
+	{
+		if (shouldDisplayAlert)
+		{
+			NSAlert* alert = [NSAlert alertWithError: dbError];
+			
+			//Patch by Tim Bedford 2008-08-11
+			[alert beginSheetModalForWindow: mMainWindow modalDelegate: self didEndSelector: @selector(alertDidEnd:returnCode:contextInfo:) contextInfo: nil];
+			[NSApp runModalForWindow: mMainWindow];
+			//End patch
+		}
+		
+		//Patch by Tim Bedford 2008-08-11
+		// Reopen connection sheet
+		[self displayConnectPanel];
+		//End patch
+	}
+}
 
-	//Patch by Tim Bedford 2008-08-11
-	[alert beginSheetModalForWindow: mMainWindow modalDelegate: self didEndSelector: @selector(alertDidEnd:returnCode:contextInfo:) contextInfo: nil];
-	[NSApp runModalForWindow: mMainWindow];
 
-	// Reopen connection sheet
-	[self displayConnectPanel];
-	//End patch
+- (enum BXCertificatePolicy) databaseContext: (BXDatabaseContext *) ctx 
+						  handleInvalidTrust: (SecTrustRef) trust 
+									  result: (SecTrustResultType) result
+{
+	return kBXCertificatePolicyDisplayTrustPanel;
 }
 
 
