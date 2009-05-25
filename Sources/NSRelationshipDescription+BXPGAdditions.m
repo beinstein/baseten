@@ -78,6 +78,7 @@ ImportError (NSString* message, NSString* reason)
 
 
 @implementation NSRelationshipDescription (BXPGAdditions)
+//FIXME: this method is too long.
 - (NSArray *) BXPGRelationshipConstraintsWithColumns: (BOOL) createColumns 
 										 constraints: (BOOL) createConstraints
 											  schema: (NSString *) schemaName
@@ -95,203 +96,215 @@ ImportError (NSString* message, NSString* reason)
 		NSString* reason = @"Inverse relationships are required for to-many relationships.";
 		[errorMessages addObject: ImportError (message, reason)];
 	}
-	else if (61 < strlen ([[self name] UTF8String]) + strlen ([[[self inverseRelationship] name] UTF8String]))
-	{
-		//PostgreSQL's NAME data type is defined like char [NAMEDATALEN], see src/include/c.h.
-		//It is treated like a C string.
-		NSString* messageFormat = @"Relationship %@ in %@ will be skipped.";
-		NSString* message = [NSString stringWithFormat: messageFormat, [self name], [[self entity] name]];
-		NSString* reason = @"The relationship's and its inverse relationship's names combined exceed 61 bytes.";
-		[errorMessages addObject: ImportError (message, reason)];
-	}
-	else if ([self isToMany] && [[self inverseRelationship] isToMany])
-	{
-		retval = [NSMutableArray array];
-		NSEntityDescription* entity = [self entity];
-		NSRelationshipDescription* inverseRelationship = [self inverseRelationship];
-		
-		//Many-to-many
-		if (! ([self isOptional] && [inverseRelationship isOptional]))
-		{
-			NSString* messageFormat = @"Made relationship %@ optional.";
-			NSString* message = [NSString stringWithFormat: messageFormat, [self name]];
-			NSString* reason = @"Required many-to-many relationships are not supported.";
-			[errorMessages addObject: ImportError (message, reason)];
-		}
-		
-		NSEntityDescription* destinationEntity = [self destinationEntity];
-		NSString* helperTableName = [NSString stringWithFormat: @"%@_%@_rel", [self name], [inverseRelationship name]];
-		
-		NSString* entityName = [entity name];
-		NSString* dstEntityName = [destinationEntity name];
-		NSString* idName = [entityName stringByAppendingString: @"_id"];
-		NSString* dstIdName = [dstEntityName stringByAppendingString: @"_id"];
-		NSString* fkeyName = [self name];
-		NSString* dstFkeyName = [inverseRelationship name];
-				
-		id relationships [2] = {self, inverseRelationship};
-		for (int i = 0; i < BXArraySize (relationships); i++)
-		{
-			if (NSCascadeDeleteRule != [relationships [i] deleteRule])
-			{
-				NSString* messageFormat = @"Made relationship %@ in %@ cascade on delete.";
-				NSString* message = [NSString stringWithFormat: messageFormat, 
-									 [relationships [i] name], [[relationships [i] entity] name]];
-				NSString* reason = @"Delete rules other than cascade on delete are not supported for many-to-many relationships.";
-				[errorMessages addObject: ImportError (message, reason)];
-			}
-		}
-		
-		if (createColumns)
-		{
-			NSString* dropFormat = @"DROP TABLE IF EXISTS \"%@\".\"%@\" CASCADE;";
-			NSString* createFormat = @"CREATE TABLE \"%@\".\"%@\" (\"%@\" integer, \"%@\" integer);";
-			[retval addObject: [NSString stringWithFormat: dropFormat, schemaName, helperTableName]];
-			[retval addObject: [NSString stringWithFormat: createFormat, schemaName, helperTableName, idName, dstIdName]];
-			[enabledRelations addObject: helperTableName];
-		}
-		
-		if (createConstraints)
-		{
-			NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (\"%@\", \"%@\")";
-			[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, helperTableName, idName, dstIdName]];
-			
-			//Saved for implementing required MTM relationships.
-#if 0
-			NSString* createFkeyFormat = 
-			@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
-			"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
-			"  ON UPDATE CASCADE ON DELETE %@ " //For required relationships.
-			"  DEFERRABLE INITIALLY DEFERRED;";
-#endif
-			NSString* createFkeyFormat = 
-			@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
-			"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
-			"  ON UPDATE CASCADE ON DELETE CASCADE;";		
-			[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkeyName, idName, schemaName, entityName]];
-			[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, dstFkeyName, dstIdName, schemaName, dstEntityName]];			
-		}
-	}
 	else
 	{
-		//FIXME: some of the checks below are not necessary since self may not be nil.
-		retval = [NSMutableArray array];
-		NSRelationshipDescription* srcRelationship = self;
-		NSRelationshipDescription* inverseRelationship = [self inverseRelationship];
-		NSEntityDescription* entity = nil;
-		BOOL isOneToOne = NO;
-
-		if ([srcRelationship isToMany] || !inverseRelationship || [inverseRelationship isToMany])
+		NSString* name = [self name];
+		NSString* inverseName = [[self inverseRelationship] name];
+		size_t nameLength = 0;
+		if (name)
+			nameLength = strlen ([name UTF8String]);
+		size_t inverseNameLength = 0;
+		if (inverseName)
+			inverseNameLength = strlen ([inverseName UTF8String]);
+		
+		if (61 < nameLength + inverseNameLength)
 		{
-			//One-to-many
-			//Reorder so that we are in the foreign key's table.
-			if ([self isToMany])
-			{
-				srcRelationship = inverseRelationship;
-				inverseRelationship = self;
-			}
-			entity = [srcRelationship entity];
+			//PostgreSQL's NAME data type is defined like char [NAMEDATALEN], see src/include/c.h.
+			//It is treated like a C string.
+			NSString* messageFormat = @"Relationship %@ in %@ will be skipped.";
+			NSString* message = [NSString stringWithFormat: messageFormat, [self name], [[self entity] name]];
+			NSString* reason = @"The relationship's and its inverse relationship's names combined exceed 61 bytes.";
+			[errorMessages addObject: ImportError (message, reason)];
+		}
+		else if ([self isToMany] && [[self inverseRelationship] isToMany])
+		{
+			retval = [NSMutableArray array];
+			NSEntityDescription* entity = [self entity];
+			NSRelationshipDescription* inverseRelationship = [self inverseRelationship];
 			
-			if (inverseRelationship && NSNullifyDeleteRule != [inverseRelationship deleteRule])
+			//Many-to-many
+			if (! ([self isOptional] && [inverseRelationship isOptional]))
 			{
-				NSString* messageFormat = @"Made delete rule for relationship %@ in %@ nullify.";
-				NSString* message = [NSString stringWithFormat: messageFormat, 
-									 [inverseRelationship name], [[inverseRelationship entity] name]];
-				NSString* explanation = @"Delete rules other than nullify are not supported on to-one side of a one-to-many relationship.";
-				[errorMessages addObject: ImportError (message, explanation)];
+				NSString* messageFormat = @"Made relationship %@ optional.";
+				NSString* message = [NSString stringWithFormat: messageFormat, [self name]];
+				NSString* reason = @"Required many-to-many relationships are not supported.";
+				[errorMessages addObject: ImportError (message, reason)];
+			}
+			
+			NSEntityDescription* destinationEntity = [self destinationEntity];
+			NSString* helperTableName = [NSString stringWithFormat: @"%@_%@_rel", [self name], [inverseRelationship name]];
+			
+			NSString* entityName = [entity name];
+			NSString* dstEntityName = [destinationEntity name];
+			NSString* idName = [entityName stringByAppendingString: @"_id"];
+			NSString* dstIdName = [dstEntityName stringByAppendingString: @"_id"];
+			NSString* fkeyName = [self name];
+			NSString* dstFkeyName = [inverseRelationship name];
+			
+			id relationships [2] = {self, inverseRelationship};
+			for (int i = 0; i < BXArraySize (relationships); i++)
+			{
+				if (NSCascadeDeleteRule != [relationships [i] deleteRule])
+				{
+					NSString* messageFormat = @"Made relationship %@ in %@ cascade on delete.";
+					NSString* message = [NSString stringWithFormat: messageFormat, 
+										 [relationships [i] name], [[relationships [i] entity] name]];
+					NSString* reason = @"Delete rules other than cascade on delete are not supported for many-to-many relationships.";
+					[errorMessages addObject: ImportError (message, reason)];
+				}
+			}
+			
+			if (createColumns)
+			{
+				NSString* dropFormat = @"DROP TABLE IF EXISTS \"%@\".\"%@\" CASCADE;";
+				NSString* createFormat = @"CREATE TABLE \"%@\".\"%@\" (\"%@\" integer, \"%@\" integer);";
+				[retval addObject: [NSString stringWithFormat: dropFormat, schemaName, helperTableName]];
+				[retval addObject: [NSString stringWithFormat: createFormat, schemaName, helperTableName, idName, dstIdName]];
+				[enabledRelations addObject: helperTableName];
+			}
+			
+			if (createConstraints)
+			{
+				NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (\"%@\", \"%@\")";
+				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, helperTableName, idName, dstIdName]];
+				
+				//Saved for implementing required MTM relationships.
+#if 0
+				NSString* createFkeyFormat = 
+				@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
+				"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
+				"  ON UPDATE CASCADE ON DELETE %@ " //For required relationships.
+				"  DEFERRABLE INITIALLY DEFERRED;";
+#endif
+				NSString* createFkeyFormat = 
+				@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
+				"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
+				"  ON UPDATE CASCADE ON DELETE CASCADE;";		
+				[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkeyName, idName, schemaName, entityName]];
+				[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, dstFkeyName, dstIdName, schemaName, dstEntityName]];			
 			}
 		}
 		else
 		{
-			//One-to-one
-			isOneToOne = YES;
+			//FIXME: some of the checks below are not necessary since self may not be nil.
+			retval = [NSMutableArray array];
+			NSRelationshipDescription* srcRelationship = self;
+			NSRelationshipDescription* inverseRelationship = [self inverseRelationship];
+			NSEntityDescription* entity = nil;
+			BOOL isOneToOne = NO;
 			
-			if (inverseRelationship && 
-				! (NSNullifyDeleteRule == [inverseRelationship deleteRule] || [inverseRelationship isOptional]))
+			if ([srcRelationship isToMany] || !inverseRelationship || [inverseRelationship isToMany])
 			{
-				srcRelationship = inverseRelationship;
-				inverseRelationship = self;
-			}
-			entity = [srcRelationship entity];
-			
-			if (inverseRelationship)
-			{
-				if (NSNullifyDeleteRule != [inverseRelationship deleteRule])
+				//One-to-many
+				//Reorder so that we are in the foreign key's table.
+				if ([self isToMany])
+				{
+					srcRelationship = inverseRelationship;
+					inverseRelationship = self;
+				}
+				entity = [srcRelationship entity];
+				
+				if (inverseRelationship && NSNullifyDeleteRule != [inverseRelationship deleteRule])
 				{
 					NSString* messageFormat = @"Made delete rule for relationship %@ in %@ nullify.";
 					NSString* message = [NSString stringWithFormat: messageFormat, 
 										 [inverseRelationship name], [[inverseRelationship entity] name]];
-					NSString* explanation = @"One-to-one relationships need an optional inverse relationship which has to nullify on delete.";
+					NSString* explanation = @"Delete rules other than nullify are not supported on to-one side of a one-to-many relationship.";
 					[errorMessages addObject: ImportError (message, explanation)];
 				}
-				
-				if (! [inverseRelationship isOptional])
-				{
-					NSString* messageFormat = @"Made relationship %@ in %@ optional.";
-					NSString* message = [NSString stringWithFormat: messageFormat, 
-										 [inverseRelationship name], [[inverseRelationship entity] name]];
-					NSString* explanation = @"One-to-one relationships need an optional inverse relationship which has to nullify on delete.";
-					[errorMessages addObject: ImportError (message, explanation)];
-				}
-			}			
-		}
-		
-		//We assume that the schema name is the same for all entities.
-		NSString* dstEntityName = [[srcRelationship destinationEntity] name];
-		NSString* srcRelationshipName = [srcRelationship name];
-		NSString* inverseName = [inverseRelationship name];
-		NSString* columnName = [srcRelationshipName stringByAppendingString: @"_id"];
-		
-		if (createColumns)
-		{
-			NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD COLUMN \"%@\" integer;";
-			[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
-		}
-		
-		if (createConstraints)
-		{
-			if (! [srcRelationship isOptional])
-			{
-				NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ALTER COLUMN \"%@\" SET NOT NULL;";
-				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
-			}
-			
-			if (isOneToOne)
-			{
-				NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD UNIQUE (\"%@\");";
-				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
-			}		
-			
-			
-			NSString* fkeyName = nil;
-			if ([srcRelationshipName length] && [inverseName length])
-				fkeyName = [NSString stringWithFormat: @"%@__%@", srcRelationshipName, inverseName];
-			else if ([srcRelationshipName length])
-				fkeyName = srcRelationshipName;
-			else if ([inverseName length])
-				fkeyName = [@"__" stringByAppendingString: inverseName];
-			
-			if (fkeyName)
-			{
-				NSString* statementFormat = 
-				@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
-				"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
-				"  ON DELETE %@ ON UPDATE CASCADE;";
-				[retval addObject: [NSString stringWithFormat: statementFormat,
-									schemaName, [entity name], fkeyName,
-									columnName, schemaName, dstEntityName,
-									BXPGDeleteRuleName ([srcRelationship deleteRule])]];		
 			}
 			else
 			{
-				NSString* statementFormat = 
-				@"ALTER TABLE \"%@\".\"%@\" ADD "
-				"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
-				"  ON DELETE %@ ON UPDATE CASCADE;";
-				[retval addObject: [NSString stringWithFormat: statementFormat,
-									schemaName, [entity name],
-									columnName, schemaName, dstEntityName,
-									BXPGDeleteRuleName ([srcRelationship deleteRule])]];				
+				//One-to-one
+				isOneToOne = YES;
+				
+				if (inverseRelationship && 
+					! (NSNullifyDeleteRule == [inverseRelationship deleteRule] || [inverseRelationship isOptional]))
+				{
+					srcRelationship = inverseRelationship;
+					inverseRelationship = self;
+				}
+				entity = [srcRelationship entity];
+				
+				if (inverseRelationship)
+				{
+					if (NSNullifyDeleteRule != [inverseRelationship deleteRule])
+					{
+						NSString* messageFormat = @"Made delete rule for relationship %@ in %@ nullify.";
+						NSString* message = [NSString stringWithFormat: messageFormat, 
+											 [inverseRelationship name], [[inverseRelationship entity] name]];
+						NSString* explanation = @"One-to-one relationships need an optional inverse relationship which has to nullify on delete.";
+						[errorMessages addObject: ImportError (message, explanation)];
+					}
+					
+					if (! [inverseRelationship isOptional])
+					{
+						NSString* messageFormat = @"Made relationship %@ in %@ optional.";
+						NSString* message = [NSString stringWithFormat: messageFormat, 
+											 [inverseRelationship name], [[inverseRelationship entity] name]];
+						NSString* explanation = @"One-to-one relationships need an optional inverse relationship which has to nullify on delete.";
+						[errorMessages addObject: ImportError (message, explanation)];
+					}
+				}			
+			}
+			
+			//We assume that the schema name is the same for all entities.
+			NSString* dstEntityName = [[srcRelationship destinationEntity] name];
+			NSString* srcRelationshipName = [srcRelationship name];
+			NSString* inverseName = [inverseRelationship name];
+			NSString* columnName = [srcRelationshipName stringByAppendingString: @"_id"];
+			
+			if (createColumns)
+			{
+				NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD COLUMN \"%@\" integer;";
+				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
+			}
+			
+			if (createConstraints)
+			{
+				if (! [srcRelationship isOptional])
+				{
+					NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ALTER COLUMN \"%@\" SET NOT NULL;";
+					[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
+				}
+				
+				if (isOneToOne)
+				{
+					NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD UNIQUE (\"%@\");";
+					[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, [entity name], columnName]];
+				}		
+				
+				
+				NSString* fkeyName = nil;
+				if ([srcRelationshipName length] && [inverseName length])
+					fkeyName = [NSString stringWithFormat: @"%@__%@", srcRelationshipName, inverseName];
+				else if ([srcRelationshipName length])
+					fkeyName = srcRelationshipName;
+				else if ([inverseName length])
+					fkeyName = [@"__" stringByAppendingString: inverseName];
+				
+				if (fkeyName)
+				{
+					NSString* statementFormat = 
+					@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
+					"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
+					"  ON DELETE %@ ON UPDATE CASCADE;";
+					[retval addObject: [NSString stringWithFormat: statementFormat,
+										schemaName, [entity name], fkeyName,
+										columnName, schemaName, dstEntityName,
+										BXPGDeleteRuleName ([srcRelationship deleteRule])]];		
+				}
+				else
+				{
+					NSString* statementFormat = 
+					@"ALTER TABLE \"%@\".\"%@\" ADD "
+					"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
+					"  ON DELETE %@ ON UPDATE CASCADE;";
+					[retval addObject: [NSString stringWithFormat: statementFormat,
+										schemaName, [entity name],
+										columnName, schemaName, dstEntityName,
+										BXPGDeleteRuleName ([srcRelationship deleteRule])]];				
+				}
 			}
 		}
 	}
