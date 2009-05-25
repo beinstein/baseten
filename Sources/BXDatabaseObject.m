@@ -56,6 +56,11 @@
 #import "BXError.h"
 
 
+//FIXME: remove the prototypes when not needed.
+static void WillChange (id sender, NSString* key);
+static void DidChange (id sender, NSString* key);
+
+
 static NSString* 
 MakeKey (const char* start, const int length)
 {
