@@ -637,9 +637,11 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 					[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				}
 				
+				WillChange (self, aKey);
 				[mContext executeUpdateObject: self entity: nil predicate: nil
 							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: attr]
 										error: &error];
+				DidChange (self, aKey);
 				
 				if (0 < [rels count])
 					[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
@@ -650,7 +652,9 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 			{
 				BXEntityDescription* entity = [mObjectID entity];
 				BXRelationshipDescription* rel = [[entity relationshipsByName] objectForKey: aKey];
+				WillChange (self, aKey); //Calling KVO methods from using inverse to-one relationships sometimes fails.
 				[rel setTarget: aVal forObject: self error: &error];
+				DidChange (self, aKey);
 				break;
 			}
                     
@@ -1330,13 +1334,33 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 static void
 WillChange (id sender, NSString* key)
 {
-	[sender willChangeValueForKey: key];
+	//FIXME: this shouldn't be needed. See also below.
+	@try 
+	{
+		[sender willChangeValueForKey: key];
+	}
+	@catch (id e) 
+	{
+		BXLogWarning (@"Caught an exception while sending willChange notification."
+					  @"\n\tKey: %@\n\tobject: %@\n\texception: %@",
+					  key, sender, e);
+	}
 }
 
 static void
 DidChange (id sender, NSString* key)
 {
-	[sender didChangeValueForKey: key];
+	//FIXME: why does the method call fail sometimes? See also above.
+	@try
+	{
+		[sender didChangeValueForKey: key];
+	}
+	@catch (id e)
+	{
+		BXLogWarning (@"Caught an exception while sending didChange notification."
+					  @"\n\tKey: %@\n\tobject: %@\n\texception: %@",
+					  key, sender, e);
+	}
 }
 
 - (void) willChangeInverseToOneRelationships: (id) relationships from: (NSDictionary *) oldTargets to: (NSDictionary *) newTargets
