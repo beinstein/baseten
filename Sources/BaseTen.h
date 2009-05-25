@@ -874,11 +874,23 @@
  *
  * \section locking_rows Locking rows
  *
- * BXDatabaseContext has a method, -setSendsLockQueries:, for enabling or disabling locking queries. Currently this has 
- * an effect on BXSynchronizedArrayController's behaviour. When its -objectDidBeginEditing: method gets called and
- * locking queries are enabled, an asynchronous SELECT ... FOR UPDATE NOWAIT query will be sent. If locking the row
- * fails, -discardEditing will be called and an error message will be presented to the user. See NSEditor protocol
- * for details.
+ * When a database connection sends UPDATE and DELETE queries, the affected rows will be locked until the connection
+ * ends its transaction. If other connections try to change the rows, their queries will block. To handle this 
+ * situation, BaseTen stores information about locked rows into its internal tables and notifies other BaseTen clients
+ * about them. BXSynchronizedArrayController also tries to lock rows when the editing session begins.
+ *
+ * Lock information will be available using BXDatabaseObject's method -isLockedForKey:.
+ * BXDatabaseContext has a method, -setSendsLockQueries:, for enabling or disabling lock notifications. If the
+ * notifications are disabled, BXDatabaseContext won't notify other clients but still reacts to received notifications.
+ *
+ * When editing rows through BXSynchronizedArrayController, it tries to send a SELECT ... FOR UPDATE NOWAIT query
+ * when the editing session begins. If the context is in autocommit mode, a transaction will also be started.
+ * If the query succeeds, a lock notification will be sent regardless of BXDatabaseContext's setting. If the query
+ * fails, the editing session will be ended using -discardEditing. BXSynchronizedArrayController's method
+ * -setLocksRowsOnBeginEditing: can be used to disable this functionality.
+ *
+ * To make the changes visible in the user interface, BaseTenAppKit has some NSValueTransformer subclasses. See
+ * \ref value_transformers for details.
  */
 
 /**

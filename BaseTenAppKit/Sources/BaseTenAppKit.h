@@ -38,7 +38,7 @@
  */
 
 /**
- * \defgroup balue_transformers Value Transformers
+ * \defgroup value_transformers Value Transformers
  * Transform database objects' status to various information.
  * BXDatabaseObject has BXDatabaseObject#statusInfo method which
  * returns a proxy for retrieving object's status. The status may
