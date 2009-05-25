@@ -801,40 +801,81 @@
  * a partial database URI, it will present a number of connection panels when 
  * \ref BXDatabaseContext::connect: "-connect:" is called.
  *
- * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. However,
- * the initial fetch needs to be performed and the controller has to assigned the result set. To facilitate this,
+ * BXDatabaseObjects may be used much in the same manner as NSManagedObjects to populate various Cocoa views. 
+ * To handle some situations unique to BaseTen,
  * some NSController subclasses have been provided with the framework. For now, the only directly usable one is 
  * BXSynchronizedArrayController. Additionally, there is BXController and additions to NSController for creating
  * controller subclasses.
+ *
+ * Compared to NSArrayController, BXSynchronizedArrayController can do the following things:
+ * <ol>
+ *     <li>It can present errors to the user when creating a new object fails.</li>
+ *     <li>It can get a BXEntityDescription from its database context and fetch objects using it. NSEntityDescriptions cannot be used because they are CoreData-specific.</li>
+ *     <li>It can lock the edited row in the database when an editing session begins.</li>
+ *     <li>It can provide the selected objects' ids.</li>
+ * </ol>
+ *
  *
  * BXSynchronizedArrayController shouldn't be set to entity mode; the user interface for this isn't even available
  * in Interface Builder. It also doesn't make use of a managed object context.
  *
  *
- * \section using_bxsynchronizedarraycontroller Using BXSyncronizedArrayController from Interface Builder
+ * \section related_objects_with_bxsynchronizedarraycontroller Binding to a set of related objects
+ *
+ * The synchronized array controller's Content Set may be bound to another synchronized array controller with
+ * a key path that represents a relationship. In case of a one-to-many relationship, the foreign key field
+ * values will also be set when -newObject or -createObject: gets called.
+ *
+ *
+ * \section using_bxdatabasecontext_ib Using BXDatabaseContext from Interface Builder
  *
  * <ol>
- *     <li>Load the BaseTen plug-in or palette.</li>
+ *     <li>Load the BaseTen plug-in.</li>
  *     <li>Create a new nib file.</li>
- *     <li>Drag a database context and an array controller from the BaseTen palette to the file.</li>
+ *     <li>Drag a database context from the library to the file.</li>
  *     <li>Select the database context and choose Attributes from the inspector's pop-up menu.</li>
- *     <li>Enter a valid database URI, <tt>pgsql:///<em>database_name</em></tt> at minimum.
- *         <ul>
- *             <li>If autocommit is selected from the context settings, the changes will be propagated immediately and
- *                 undo affects most operations but not all. Otherwise, the context's -save: and -revert: methods 
- *                 should be used to commit and rollback. Undo may be used between commits.</li>
- *         </ul>
- *     </li>
+ *     <li>Enter a valid database URI, <tt>pgsql:///<em>database_name</em></tt> at minimum.</li>
+ * </ol>
+ *
+ *
+ * \section using_bxsynchronizedarraycontroller_ib Using BXSynchronizedArrayController from Interface Builder
+ *
+ * <ol>
+ *     <li>Drag a BXSynchronizedArrayController from the library to the file.</li>
  *     <li>Select the array controller and choose Attributes from the inspector's pop-up menu.</li>
  *     <li>Enter a table name into the field.
  *         <ul>
  *             <li>The schema field may be left empty, in which case <em>public</em> will be used.</li>
- *             <li>Please note that the table needs to be enabled for change observing. This can be 
- *                 done using BaseTen Setup.</li>
  *         </ul>
  *     </li>
  *     <li>Bind the Cocoa views to the controller.</li> 
+ *     <li>Bind the array controller to the database context using the Database Context binding or 
+ *         connect the databaseContext outlet.</li>
  *     <li>Test the interface. The views should be populated using the database.</li>
+ * </ol>
+ *
+ *
+ * \section using_value_transformers_ib Using BaseTenAppKit's value transformers from Interface Builder
+ *
+ * When database rows get locked, it might be desirable to disable editing and indicate this visually
+ * in the user interface. Most AppKit's classes, have an Editable binding, and some, like NSTableColumn, 
+ * have bindings that affect the display of their value. Lets say a table column's <em>Value</em> is 
+ * bound to a BXArrayController using <em>my_key</em> as the model key path. BaseTenAppKit could then 
+ * be used to set the rows to be conditionally editable like this:
+ * <ol>
+ *     <li>Select the table column inside its table view</li>
+ *     <li>Open the Bindings Inspector</li>
+ *     <li>Click the Editable binding</li>
+ *     <li>Set the binding to the array controller and set the controller key to <em>arrangedObjects</em>.
+ *     <li>Set the model key to <em>statusInfo.my_key</em>.</li>
+ *     <li>Set the value transformer to <em>BXObjectStatusToEditableTransformer</em>.</li>
+ * </ol>
+ * The rows may also be coloured so that their status is visible:
+ * <ol>
+ *     <li>Inspecting the same column as in the previous example, click the Text Color binding.</li>
+ *     <li>Set the binding to the array controller and set the controller key to <em>arrangedObjects</em>.
+ *     <li>Set the model key to <em>statusInfo.my_key</em>.</li>
+ *     <li>Set the value transformer to <em>BXObjectStatusToColorTransformer</em>.</li>
  * </ol>
  */
 
