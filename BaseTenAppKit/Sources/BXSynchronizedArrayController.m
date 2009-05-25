@@ -419,24 +419,6 @@ IsKindOfClass (id self, Class class)
 }
 
 
-struct value_dictionary_st
-{
-	__strong BXDatabaseObject* vd_object;
-	__strong NSDictionary* vd_attrs;
-	__strong NSMutableDictionary* vd_values;
-};
-
-
-static void
-ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
-{
-	struct value_dictionary_st* ctx = (struct value_dictionary_st *) ctxPtr;
-	BXAttributeDescription* attr = [ctx->vd_attrs objectForKey: srcKey];
-	id value = [ctx->vd_object primitiveValueForKey: dstKey] ?: [NSNull null];
-	[ctx->vd_values setObject: value forKey: attr];
-}
-
-
 - (NSDictionary *) valuesForBoundRelationship
 {
 	NSDictionary* retval = nil;
@@ -446,12 +428,14 @@ ValueDictionary (NSString* srcKey, NSString* dstKey, void* ctxPtr)
 		NSDictionary* bindingInfo = [self infoForBinding: @"contentSet"];
 		id observedObject = [bindingInfo objectForKey: NSObservedObjectKey];
 		id boundObject = [observedObject valueForKeyPath: [bindingInfo objectForKey: NSObservedKeyPathKey]];
-		if ([boundObject BXIsRelationshipProxy] && ![[boundObject relationship] isOptional])
+		if ([boundObject BXIsRelationshipProxy])
 		{
-			NSDictionary* attrs = [mEntityDescription attributesByName];
-			NSMutableDictionary* values = [NSMutableDictionary dictionaryWithCapacity: [attrs count]];
-			struct value_dictionary_st ctx = {[boundObject owner], attrs, values};
-			[[boundObject relationship] iterateForeignKey: &ValueDictionary context: &ctx];
+            //FIXME: many-to-many relationships aren't handled.
+			BXRelationshipDescription* rel = [boundObject relationship];
+			if (! [[rel inverseRelationship] isToMany])
+			{
+				retval = [NSDictionary dictionaryWithObject: [boundObject owner] forKey: rel];
+			}
 		}
 	}
 	return retval;
