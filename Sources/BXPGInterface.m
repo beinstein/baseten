@@ -735,23 +735,14 @@ error:
 		if ([mContext sendsLockQueries])
 			MarkLocked (mTransactionHandler, entity, mQueryBuilder, whereClause, whereClauseParameters, NO);
 		[mTransactionHandler checkSuperEntities: entity];
+		
 		NSArray* objectIDs = ObjectIDs (entity, res);
-
 		NSDictionary* values = (id) [[valueDict PGTSKeyCollectD] name];
-		if (objectID)
+		BXEnumerate (currentID, e, [objectIDs objectEnumerator])
 		{
-			BXDatabaseObject* object = [mContext registeredObjectWithID: objectID];
+			BXDatabaseObject* object = [mContext registeredObjectWithID: currentID];
 			[object setCachedValuesForKeysWithDictionary: values];
-		}
-		else
-		{
-			BXEnumerate (currentID, e, [objectIDs objectEnumerator])
-			{
-				BXDatabaseObject* object = [mContext registeredObjectWithID: currentID];
-				[object setCachedValuesForKeysWithDictionary: values];
-			}
-		}
-													   
+		}													   
 		retval = objectIDs;
 	}
 	

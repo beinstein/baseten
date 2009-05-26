@@ -642,11 +642,9 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 					[self willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
 				}
 				
-				WillChange (self, aKey);
 				[mContext executeUpdateObject: self entity: nil predicate: nil
 							   withDictionary: [NSDictionary dictionaryWithObject: aVal forKey: attr]
 										error: &error];
-				DidChange (self, aKey);
 				
 				if (0 < [rels count])
 					[self didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
@@ -657,9 +655,9 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 			{
 				BXEntityDescription* entity = [mObjectID entity];
 				BXRelationshipDescription* rel = [[entity relationshipsByName] objectForKey: aKey];
-				WillChange (self, aKey); //Calling KVO methods from using inverse to-one relationships sometimes fails.
+				//WillChange (self, aKey); //Calling KVO methods from using inverse to-one relationships sometimes fails.
 				[rel setTarget: aVal forObject: self error: &error];
-				DidChange (self, aKey);
+				//DidChange (self, aKey);
 				break;
 			}
                     
@@ -1073,21 +1071,10 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 - (void) setCachedValue2: (id) aValue forKey: (id) givenKey
 {
 	NSString* key = [givenKey BXAttributeName];
-	
-	//Emptying the cache sends a KVO notification.
-	BOOL changes = NO;
-	id oldValue = [mValues objectForKey: givenKey];
-	if (nil != oldValue && oldValue != aValue)
-		changes = YES;
-	
-	if (changes) [self willChangeValueForKey: key];
-	
-	if (nil == aValue)
+	if (! aValue)
 		[mValues removeObjectForKey: key];
 	else
-		[mValues setObject: aValue forKey: key];
-	
-	if (changes) [self didChangeValueForKey: key];
+		[mValues setObject: aValue forKey: key];	
 }
 
 - (void) setCreatedInCurrentTransaction: (BOOL) aBool

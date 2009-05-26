@@ -405,7 +405,6 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	//Also with one-to-many relationships the false branch is for modifying a collection of objects.
     if (mIsInverse)
     {		
-    	NSPredicate* predicate = [[databaseObject objectID] predicate];
 		NSDictionary* values = BXFkeySrcDictionary (mForeignKey, [self entity], target);
 		
 		BXDatabaseObject* oldTarget = nil;
@@ -416,11 +415,11 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 			[target willChangeValueForKey: inverseName];
 		}
 		
-    	[[databaseObject databaseContext] executeUpdateObject: nil
-    													entity: [self entity]
-    												 predicate: predicate
-    											withDictionary: values
-    													 error: error];
+    	[[databaseObject databaseContext] executeUpdateObject: databaseObject
+													   entity: [self entity]
+													predicate: nil
+											   withDictionary: values
+														error: error];
     	if (! *error)
     		[databaseObject setCachedValue: target forKey: [self name]];
 

@@ -1779,6 +1779,7 @@ ModTypeToObject (enum BXModificationType value)
 	return targetsByObject;
 }
 
+//FIXME: clean me up.
 - (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
 {
     if (0 < [objectIDs count])
@@ -1795,10 +1796,12 @@ ModTypeToObject (enum BXModificationType value)
 			id rels = [entity inverseToOneRelationships];
 			NSDictionary* oldTargets = nil;
 			NSDictionary* newTargets = nil;
+			
 			if (0 < [rels count])
 			{
 				oldTargets = [self targetsByObject: objects forRelationships: rels fireFaults: NO];
 				newTargets = [self targetsByObject: objects forRelationships: rels fireFaults: YES];
+				
 				BXEnumerate (currentObject, e, [objects objectEnumerator])
 				{
 					if ([NSNull null] != currentObject)
@@ -2326,8 +2329,26 @@ ModTypeToObject (enum BXModificationType value)
 		if (updatedPkey)
 			oldPkey = [anObject primaryKeyFieldObjects];
 
+		//Handle KVO.
+		NSArray* updatedObjects = nil;
+		{
+			if (anObject)
+				updatedObjects = [NSArray arrayWithObject: anObject];
+			else
+			{
+				updatedObjects = [self executeFetchForEntity: anEntity withPredicate: predicate returningFaults: YES error: &localError];
+				if (localError)
+					goto bail;
+			}
+		}
+		struct update_kvo_ctx updateCtx = [self handleWillChangeForUpdate: updatedObjects newValues: aDict];
+		
 		objectIDs = [mDatabaseInterface executeUpdateWithDictionary: aDict objectID: [anObject objectID]
 															 entity: anEntity predicate: predicate error: &localError];
+		
+		[self handleDidChangeForUpdate: &updateCtx newValues: aDict 
+					 sendNotifications: !(localError || [mDatabaseInterface autocommits])
+						  targetEntity: anEntity];
 		
 		if (nil == localError)
         {
@@ -2340,8 +2361,11 @@ ModTypeToObject (enum BXModificationType value)
             //Therefore, we need to notify about the change.
             if (YES == [mDatabaseInterface autocommits])
 			{
+#if 0
 				if (! [anEntity getsChangedByTriggers])
 					[self updatedObjectsInDatabase: oldIDs faultObjects: NO];
+#endif			
+				
 				//FIXME: move this to the if block where oldIDs are set.
 				if (updatedPkey)
 				{
@@ -2394,6 +2418,8 @@ ModTypeToObject (enum BXModificationType value)
             }
         }
     }
+	
+bail:
     BXHandleError (error, localError);
     return objectIDs;
 }
@@ -2690,6 +2716,101 @@ ModTypeToObject (enum BXModificationType value)
 		[self setDatabaseObjectModel: [[BXDatabaseObjectModelStorage defaultStorage] objectModelForURI: key]];
 	}
 	return mObjectModel;
+}
+
+- (struct update_kvo_ctx) handleWillChangeForUpdate: (NSArray *) givenObjects newValues: (NSDictionary *) newValues
+{
+	NSMutableArray* changedObjects = [NSMutableArray array];
+	NSMutableDictionary* relsByEntity = [NSMutableDictionary dictionary];
+	NSMutableDictionary* oldTargetsByObject = [NSMutableDictionary dictionary];
+	NSMutableDictionary* newTargetsByObject = [NSMutableDictionary dictionary];
+	NSArray* objectIDs = (id) [[givenObjects PGTSCollect] objectID];
+	NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+	AddObjectIDsForInheritance (idsByEntity);
+	
+	BXEnumerate (entity, e, [idsByEntity keyEnumerator])
+	{
+		NSArray* objectIDs = [idsByEntity objectForKey: entity];
+		NSArray* objects = [self registeredObjectsWithIDs: objectIDs nullObjects: NO];
+		id rels = [entity inverseToOneRelationships];
+		NSDictionary* oldTargets = nil;
+		NSDictionary* newTargets = nil;
+		
+		[changedObjects addObjectsFromArray: objects];
+		
+		BXEnumerate (currentObject, e, [objects objectEnumerator])
+		{
+			BXEnumerate (currentAttr, e, [newValues keyEnumerator])
+			[currentObject willChangeValueForKey: [currentAttr name]];
+		}
+		
+		if (0 < [rels count])
+		{
+			[relsByEntity setObject: rels forKey: entity];
+			BXEnumerate (currentObject, e, [objects objectEnumerator])
+			{
+				oldTargets = [[rels PGTSCollectDK] registeredTargetFor: currentObject fireFault: NO] ?: [NSDictionary dictionary];
+				
+				//FIXME: this seems really bad.
+				NSDictionary* oldValues = [[[currentObject cachedValues] copy] autorelease];
+				[currentObject setCachedValuesForKeysWithDictionary: newValues];
+				
+				newTargets = [[rels PGTSCollectDK] registeredTargetFor: currentObject fireFault: NO] ?: [NSDictionary dictionary];
+				[currentObject setCachedValuesForKeysWithDictionary: oldValues];
+				
+				[currentObject willChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+				
+				[oldTargetsByObject setObject: oldTargets forKey: currentObject];
+				[newTargetsByObject setObject: newTargets forKey: currentObject];
+			}
+		}
+	}
+	
+	struct update_kvo_ctx retval = {relsByEntity, changedObjects, oldTargetsByObject, newTargetsByObject};
+	return retval;
+}
+
+
+- (void) handleDidChangeForUpdate: (struct update_kvo_ctx *) ctx newValues: (NSDictionary *) newValues sendNotifications: (BOOL) shouldSend targetEntity: (BXEntityDescription *) entity
+{
+	NSNotificationCenter* nc = [self notificationCenter];
+	NSArray* changedObjects = ctx->ukc_objects;
+	NSDictionary* relsByEntity = ctx->ukc_rels_by_entity;
+	NSDictionary* oldTargetsByObject = ctx->ukc_old_targets_by_object;
+	NSDictionary* newTargetsByObject = ctx->ukc_new_targets_by_object;
+	
+	BXEnumerate (currentObject, e, [changedObjects objectEnumerator])
+	[currentObject setCachedValuesForKeysWithDictionary: newValues];
+	
+	NSArray* objectIDs = nil;
+	NSDictionary* userInfo = nil;
+	if (shouldSend)
+	{
+		objectIDs = (id) [[changedObjects PGTSCollect] objectID];
+		userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+					objectIDs, kBXObjectIDsKey,
+					changedObjects, kBXObjectsKey,
+					self, kBXDatabaseContextKey,
+					nil];
+	}
+	
+	BXEnumerate (currentObject, e, [changedObjects objectEnumerator])
+	{
+		BXEnumerate (currentAttr, e, [newValues keyEnumerator])
+		[currentObject didChangeValueForKey: [currentAttr name]];
+	}
+	
+	BXEnumerate (currentObject, e, [changedObjects objectEnumerator])
+	{
+		NSDictionary* oldTargets = [oldTargetsByObject objectForKey: currentObject];
+		NSDictionary* newTargets = [newTargetsByObject objectForKey: currentObject];
+		id rels = [relsByEntity objectForKey: [currentObject entity]];
+		if (0 < [rels count])
+			[currentObject didChangeInverseToOneRelationships: rels from: oldTargets to: newTargets];
+	}
+	
+	if (shouldSend)
+		[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
 }
 @end
 

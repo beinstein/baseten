@@ -29,6 +29,15 @@
 #import <BaseTen/BaseTen.h>
 
 
+struct update_kvo_ctx
+{
+	__strong NSDictionary*	ukc_rels_by_entity;
+	__strong NSArray*		ukc_objects;
+	__strong NSDictionary*	ukc_old_targets_by_object;
+	__strong NSDictionary*	ukc_new_targets_by_object;
+};
+
+
 @interface BXDatabaseContext (PrivateMethods)
 /* Moved from the context. */
 - (BOOL) executeDeleteFromEntity: (BXEntityDescription *) anEntity withPredicate: (NSPredicate *) predicate 
@@ -72,6 +81,10 @@
 
 - (void) setDatabaseObjectModel: (BXDatabaseObjectModel *) model;
 - (void) setDatabaseInterface: (id <BXInterface>) interface;
+
+- (struct update_kvo_ctx) handleWillChangeForUpdate: (NSArray *) objects newValues: (NSDictionary *) newValues;
+- (void) handleDidChangeForUpdate: (struct update_kvo_ctx *) ctx newValues: (NSDictionary *) newValues 
+				sendNotifications: (BOOL) shouldSend targetEntity: (BXEntityDescription *) entity;
 @end
 
 
