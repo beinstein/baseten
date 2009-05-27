@@ -110,14 +110,14 @@ ObjectsByEntity (NSArray *objects)
 static void
 AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescription* entity)
 {
-    id subEntities = [entity subEntities];
-    BXEnumerate (currentEntity, e, [subEntities objectEnumerator])
+    id superEntities = [entity inheritedEntities];
+    BXEnumerate (currentEntity, e, [superEntities objectEnumerator])
     {
-        NSMutableArray* subIds = [idsByEntity objectForKey: currentEntity];
-        if (nil == subIds)
+        NSMutableArray* superIds = [idsByEntity objectForKey: currentEntity];
+        if (nil == superIds)
         {
-            subIds = [NSMutableArray array];
-            [idsByEntity setObject: subIds forKey: currentEntity];
+            superIds = [NSMutableArray array];
+            [idsByEntity setObject: superIds forKey: currentEntity];
         }
         
         //Create the corresponding ids.
@@ -132,7 +132,7 @@ AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescripti
 			if (! parsed) break;
 			
             BXDatabaseObjectID* newID = [BXDatabaseObjectID IDWithEntity: currentEntity primaryKeyFields: pkeyFields];
-            [subIds addObject: newID];
+            [superIds addObject: newID];
             [newID release];
         }
         AddObjectIDsForInheritance2 (idsByEntity, currentEntity);
@@ -1780,11 +1780,11 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 //FIXME: clean me up.
-- (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault
+- (void) updatedObjectsInDatabase: (NSArray *) givenObjectIDs faultObjects: (BOOL) shouldFault
 {
-    if (0 < [objectIDs count])
+    if (0 < [givenObjectIDs count])
     {
-		NSMutableDictionary* idsByEntity = ObjectsByEntity (objectIDs);
+		NSMutableDictionary* idsByEntity = ObjectsByEntity (givenObjectIDs);
 		AddObjectIDsForInheritance (idsByEntity);
 		NSNotificationCenter* nc = [self notificationCenter];
 

@@ -395,7 +395,8 @@ ErrorUserInfoKey (char fieldCode)
     while (mFieldIndices->end () != iterator)
     {
         NSString* fieldname = iterator->first;
-        id value = [self valueForKey: fieldname row: rowIndex];
+		int index = iterator->second;
+		id value = [self valueForFieldAtIndex: index row: rowIndex];
         if (! value)
             value = nullPlaceholder;
         @try

@@ -120,13 +120,13 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		month = strtol (buffer, NULL, 10);
 	else
 		month = [gDefaultComponents month];
-
+	
 	long day = 0;
 	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "d", buffer, BXArraySize (buffer)))
 		day = strtol (buffer, NULL, 10);
 	else
 		day = [gDefaultComponents day];
-
+	
 	long hours = 0;
 	if (0 < pcre_copy_named_substring (re->re_expression, subject, ovector, status, "H", buffer, BXArraySize (buffer)))
 		hours = strtol (buffer, NULL, 10);
@@ -247,11 +247,11 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	{
 		tooLate = YES;
 		SetDefaults ();
-
+		
 		//Date format is "yyyy-mm-dd". The year range is 4713 BC - 5874897 AD.
 		//Years are zero-padded to at least four characters.
 		//There might be a trailing 'BC' for years before 1 AD.
-
+		
 		const char* pattern = "^(?<y>\\d{4,7})-(?<m>\\d{2})-(?<d>\\d{2})(?<e> BC)?$";
 		Compile (&gDateExp, pattern);
 	}
@@ -259,17 +259,17 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
+	Expect (gDateExp.re_expression);
+	
 	NSDate* retval = nil;
-	if (gDateExp.re_expression)
-	{
-		int ovector [kOvectorSize] = {};
-		int status = pcre_exec (gDateExp.re_expression, gDateExp.re_extra, value, 
-								strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
-		if (0 < status)
-			retval = CopyDate (&gDateExp, value, ovector, status);
-		else
-			BXLogError (@"Unable to match timestamp string %s with pattern %s.", value, gTimestampExp.re_pattern);
-	}
+	int ovector [kOvectorSize] = {};
+	int status = pcre_exec (gDateExp.re_expression, gDateExp.re_extra, value, 
+							strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
+	if (0 < status)
+		retval = CopyDate (&gDateExp, value, ovector, status);
+	else
+		BXLogError (@"Unable to match timestamp string %s with pattern %s.", value, gTimestampExp.re_pattern);
+	
 	return retval;
 }
 @end
@@ -299,17 +299,17 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
+	Expect (gTimeExp.re_expression)
+	
 	NSDate* retval = nil;
-	if (gDateExp.re_expression)
-	{
-		int ovector [kOvectorSize] = {};
-		int status = pcre_exec (gTimeExp.re_expression, gTimeExp.re_extra, value, 
-								strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
-		if (0 < status)
-			retval = CopyDate (&gTimeExp, value, ovector, status);
-		else
-			BXLogError (@"Unable to match time string %s with pattern %s.", value, gTimeExp.re_pattern);
-	}
+	int ovector [kOvectorSize] = {};
+	int status = pcre_exec (gTimeExp.re_expression, gTimeExp.re_extra, value, 
+							strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
+	if (0 < status)
+		retval = CopyDate (&gTimeExp, value, ovector, status);
+	else
+		BXLogError (@"Unable to match time string %s with pattern %s.", value, gTimeExp.re_pattern);
+	
 	return retval;
 }
 @end
@@ -323,7 +323,7 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 	{
 		tooLate = YES;
 		SetDefaults ();
-
+		
 		const char* pattern = 
 		"^(?<y>\\d{4,7})-(?<m>\\d{2})-(?<d>\\d{2})"                         //Date
 		" "
@@ -337,17 +337,17 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
+	Expect (gTimestampExp.re_expression);
+	
 	NSDate* retval = nil;
-	if (gDateExp.re_expression)
-	{
-		int ovector [kOvectorSize] = {};
-		int status = pcre_exec (gTimestampExp.re_expression, gTimestampExp.re_extra, value, 
-								strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
-		if (0 < status)
-			retval = CopyDate (&gTimestampExp, value, ovector, status);
-		else
-			BXLogError (@"Unable to match date string %s with pattern %s.", value, gTimestampExp.re_pattern);
-	}
+	int ovector [kOvectorSize] = {};
+	int status = pcre_exec (gTimestampExp.re_expression, gTimestampExp.re_extra, value, 
+							strlen (value), 0, PCRE_ANCHORED, ovector, kOvectorSize);
+	if (0 < status)
+		retval = CopyDate (&gTimestampExp, value, ovector, status);
+	else
+		BXLogError (@"Unable to match date string %s with pattern %s.", value, gTimestampExp.re_pattern);
+	
 	return retval;
 }
 @end
