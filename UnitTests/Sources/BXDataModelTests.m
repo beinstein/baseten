@@ -96,6 +96,21 @@
 	MKCAssertEqualObjects (expected, statements);
 }
 
+- (void) testPeopleDepartmentsNoInverse
+{
+	NSArray* statements = [self importStatements: @"people-departments-no-inverse"];
+	NSArray* expected  = [NSArray arrayWithObjects:
+						  @"CREATE SCHEMA \"test_schema\";",
+						  @"CREATE TABLE \"test_schema\".\"Employee\" (id SERIAL, \"room\" smallint , \"salary\" numeric ) ;",
+						  @"ALTER TABLE \"test_schema\".\"Employee\" ADD PRIMARY KEY (id);",
+						  @"CREATE TABLE \"test_schema\".\"Department\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"Department\" ADD PRIMARY KEY (id);",
+						  @"ALTER TABLE \"test_schema\".\"Employee\" ADD COLUMN \"department_id\" integer;",
+						  @"ALTER TABLE \"test_schema\".\"Employee\" ADD CONSTRAINT \"department\"   FOREIGN KEY (\"department_id\") REFERENCES \"test_schema\".\"Department\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						  nil];
+	MKCAssertEqualObjects (expected, statements);
+}	
+
 - (void) testOneToOne
 {
 	NSArray* statements = [self importStatements: @"one-to-one"];

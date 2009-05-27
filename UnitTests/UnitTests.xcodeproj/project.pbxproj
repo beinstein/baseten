@@ -54,6 +54,7 @@
 		53C98A140CF0803A00D6A0A7 /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
 		53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */; };
 		53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538B40F50D634EA40009005B /* BaseTen.framework */; };
+		53DA50F40FCC53960044C961 /* people-departments-no-inverse.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 53DA50F30FCC53960044C961 /* people-departments-no-inverse.xcdatamodel */; };
 		53DAA0590E6EEB46001DC1D9 /* KeyPathComponentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */; };
 		53E21C280FB49CFA00A52F1A /* BXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E21C270FB49CFA00A52F1A /* BXTestCase.m */; };
 		53E21C330FB49E1800A52F1A /* BXGarbageCollectionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E21C320FB49E1800A52F1A /* BXGarbageCollectionRunner.m */; };
@@ -157,6 +158,7 @@
 		53CC514E0EC45F0B003D33BF /* ToOneChangeNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToOneChangeNotificationTests.h; path = Sources/ToOneChangeNotificationTests.h; sourceTree = "<group>"; };
 		53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToOneChangeNotificationTests.m; path = Sources/ToOneChangeNotificationTests.m; sourceTree = "<group>"; };
 		53CEB9EF0B28516F007DAF0D /* MKCSenTestCaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MKCSenTestCaseAdditions.h; path = Sources/MKCSenTestCaseAdditions.h; sourceTree = "<group>"; };
+		53DA50F30FCC53960044C961 /* people-departments-no-inverse.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "people-departments-no-inverse.xcdatamodel"; path = "Sources/people-departments-no-inverse.xcdatamodel"; sourceTree = "<group>"; };
 		53DAA0570E6EEB46001DC1D9 /* KeyPathComponentTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyPathComponentTest.h; path = Sources/KeyPathComponentTest.h; sourceTree = "<group>"; };
 		53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyPathComponentTest.m; path = Sources/KeyPathComponentTest.m; sourceTree = "<group>"; };
 		53DAE20F0AC4A0D200536DD0 /* MTOCollectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTOCollectionTest.h; path = Sources/MTOCollectionTest.h; sourceTree = "<group>"; };
@@ -210,6 +212,7 @@
 				530A438D0A5C0FD000A4722B /* Products */,
 				989B4E790F45D73200CE048A /* xcconfig */,
 				530927A80FA894D2000DC21C /* people-departments.xcdatamodel */,
+				53DA50F30FCC53960044C961 /* people-departments-no-inverse.xcdatamodel */,
 				530928B60FA8A511000DC21C /* one-to-one.xcdatamodel */,
 				534C95EB0FAB623F006BBC8A /* relationship-optionality.xcdatamodel */,
 				530A438E0A5C0FD000A4722B /* UnitTests-Info.plist */,
@@ -512,6 +515,7 @@
 				536205A40FB84DE800ACAE57 /* PGTSParameterTests.m in Sources */,
 				53A0F85A0FB8EAA100F90FA1 /* PGTSValueTests.m in Sources */,
 				5392E6630FC1B0C70056DF6A /* BXSSLConnectionTests.m in Sources */,
+				53DA50F40FCC53960044C961 /* people-departments-no-inverse.xcdatamodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
