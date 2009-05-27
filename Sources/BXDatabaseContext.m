@@ -2787,7 +2787,7 @@ bail:
 	NSDictionary* objectsByEntity = nil;
 	if (shouldSend)
 	{
-		NSDictionary* objectsByEntity = ObjectsByEntity (changedObjects);
+		objectsByEntity = ObjectsByEntity (changedObjects);
 		BXEnumerate (currentEntity, e, [objectsByEntity keyEnumerator])
 		{
 			NSArray* objects = [objectsByEntity objectForKey: currentEntity];

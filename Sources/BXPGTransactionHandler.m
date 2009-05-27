@@ -791,7 +791,7 @@ SSLMode (enum BXSSLMode mode)
 - (void) PGTSConnection: (PGTSConnection *) connection gotNotification: (PGTSNotification *) notification
 {
 	NSString* notificationName = [notification notificationName];
-	BXLogDebug (@"Got notification (%p): %@", self, connection, notificationName);
+	BXLogDebug (@"Got notification (from %p): %@", connection, notificationName);
 	[[mObservers objectForKey: notificationName] handleNotification: notification];
 }
 
