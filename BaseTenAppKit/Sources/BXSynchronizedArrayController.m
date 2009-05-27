@@ -78,7 +78,6 @@
  * \ingroup baseten_appkit
  */
 @implementation BXSynchronizedArrayController
-
 + (void) initialize
 {
 	static BOOL tooLate = NO;
@@ -213,7 +212,7 @@
 			[self setEntityDescription: nil];
 			[[databaseContext notificationCenter] addObserver: self selector: @selector (endConnecting:) name: kBXConnectionSuccessfulNotification object: databaseContext];
 			
-			if ([databaseContext isConnected] && [self tableName])
+			if (mFetchesAutomatically && (mTableName || mEntityDescription) && [databaseContext isConnected])
 				[self fetch: nil];
 		}
     }
@@ -675,12 +674,51 @@ IsKindOfClass (id self, Class class)
     if (nil != error)
         [self BXHandleError: error];
 }
-@end
+
+- (NSString *) entityName
+{
+	return nil;
+}
+
+- (void) setEntityName: (NSString *) name
+{
+}
+
+- (NSManagedObjectContext *) managedObjectContext
+{
+	return nil;
+}
+
+- (void) setManagedObjectContext: (NSManagedObjectContext*) ctx
+{
+}
+
+- (BOOL) usesLazyFetching
+{
+	return NO;
+}
+
+- (void) setUsesLazyFetching: (BOOL) enabled
+{
+}
+
+- (Class) objectClass
+{
+	return [mEntityDescription databaseObjectClass];
+}
+
+- (void) setObjectClass: (Class) cls
+{
+	if (! mEntityDescription)
+		[self prepareEntity];
+	
+	[mEntityDescription setDatabaseObjectClass: cls];
+}
 //@}
+@end
 
 
 @implementation BXSynchronizedArrayController (NSCoding)
-
 - (void) encodeWithCoder: (NSCoder *) encoder
 {
 	//Don't change fetchesOnConnect in strings, or users' nibs stop working.
@@ -721,5 +759,4 @@ IsKindOfClass (id self, Class class)
     }
     return self;
 }
-
 @end
