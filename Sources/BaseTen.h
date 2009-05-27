@@ -808,12 +808,12 @@
  * controller subclasses.
  *
  * Compared to NSArrayController, BXSynchronizedArrayController can do the following things:
- * <ol>
+ * <ul>
  *     <li>It can present errors to the user when creating a new object fails.</li>
  *     <li>It can get a BXEntityDescription from its database context and fetch objects using it. NSEntityDescriptions cannot be used because they are CoreData-specific.</li>
  *     <li>It can lock the edited row in the database when an editing session begins.</li>
  *     <li>It can provide the selected objects' ids.</li>
- * </ol>
+ * </ul>
  *
  *
  * BXSynchronizedArrayController shouldn't be set to entity mode; the user interface for this isn't even available

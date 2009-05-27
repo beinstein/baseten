@@ -90,19 +90,19 @@ BXHandleError2 (id ctx, id <BXDatabaseContextDelegate> delegateProxy, NSError **
 }
 
 static NSMutableDictionary*
-ObjectIDsByEntity (NSArray *ids)
+ObjectsByEntity (NSArray *objects)
 {
     NSMutableDictionary* dict = [NSMutableDictionary dictionary];
-    BXEnumerate (objectID, e, [ids objectEnumerator])
+    BXEnumerate (currentObject, e, [objects objectEnumerator])
     {
-        BXEntityDescription* entity = [(BXDatabaseObjectID *) objectID entity];
+        id entity = [currentObject entity];
         NSMutableArray* array = [dict objectForKey: entity];
         if (nil == array)
         {
             array = [NSMutableArray array];
             [dict setObject: array forKey: entity];
         }
-        [array addObject: objectID];
+        [array addObject: currentObject];
     }
     return dict;
 }
@@ -1784,7 +1784,7 @@ ModTypeToObject (enum BXModificationType value)
 {
     if (0 < [objectIDs count])
     {
-		NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+		NSMutableDictionary* idsByEntity = ObjectsByEntity (objectIDs);
 		AddObjectIDsForInheritance (idsByEntity);
 		NSNotificationCenter* nc = [self notificationCenter];
 
@@ -1844,7 +1844,7 @@ ModTypeToObject (enum BXModificationType value)
 {
     if (0 < [objectIDs count])
     {
-        NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+        NSMutableDictionary* idsByEntity = ObjectsByEntity (objectIDs);
         AddObjectIDsForInheritance (idsByEntity);
         NSNotificationCenter* nc = [self notificationCenter];
         		
@@ -1887,7 +1887,7 @@ ModTypeToObject (enum BXModificationType value)
 {
 	if (0 < [objectIDs count])
     {
-        NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+        NSMutableDictionary* idsByEntity = ObjectsByEntity (objectIDs);
         AddObjectIDsForInheritance (idsByEntity);
         NSNotificationCenter* nc = [self notificationCenter];
 		
@@ -2347,7 +2347,7 @@ ModTypeToObject (enum BXModificationType value)
 															 entity: anEntity predicate: predicate error: &localError];
 		
 		[self handleDidChangeForUpdate: &updateCtx newValues: aDict 
-					 sendNotifications: !(localError || [mDatabaseInterface autocommits])
+					 sendNotifications: !localError && [mDatabaseInterface autocommits]
 						  targetEntity: anEntity];
 		
 		if (nil == localError)
@@ -2725,7 +2725,7 @@ bail:
 	NSMutableDictionary* oldTargetsByObject = [NSMutableDictionary dictionary];
 	NSMutableDictionary* newTargetsByObject = [NSMutableDictionary dictionary];
 	NSArray* objectIDs = (id) [[givenObjects PGTSCollect] objectID];
-	NSMutableDictionary* idsByEntity = ObjectIDsByEntity (objectIDs);
+	NSMutableDictionary* idsByEntity = ObjectsByEntity (objectIDs);
 	AddObjectIDsForInheritance (idsByEntity);
 	
 	BXEnumerate (entity, e, [idsByEntity keyEnumerator])
@@ -2780,18 +2780,25 @@ bail:
 	NSDictionary* newTargetsByObject = ctx->ukc_new_targets_by_object;
 	
 	BXEnumerate (currentObject, e, [changedObjects objectEnumerator])
-	[currentObject setCachedValuesForKeysWithDictionary: newValues];
+	{
+		[currentObject setCachedValuesForKeysWithDictionary: newValues];
+	}
 	
-	NSArray* objectIDs = nil;
-	NSDictionary* userInfo = nil;
+	NSDictionary* objectsByEntity = nil;
 	if (shouldSend)
 	{
-		objectIDs = (id) [[changedObjects PGTSCollect] objectID];
-		userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-					objectIDs, kBXObjectIDsKey,
-					changedObjects, kBXObjectsKey,
-					self, kBXDatabaseContextKey,
-					nil];
+		NSDictionary* objectsByEntity = ObjectsByEntity (changedObjects);
+		BXEnumerate (currentEntity, e, [objectsByEntity keyEnumerator])
+		{
+			NSArray* objects = [objectsByEntity objectForKey: currentEntity];
+			NSArray* objectIDs = (id) [[objects PGTSCollect] objectID];
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  objectIDs, kBXObjectIDsKey,
+									  objects, kBXObjectsKey,
+									  self, kBXDatabaseContextKey,
+									  nil];
+			[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
+		}
 	}
 	
 	BXEnumerate (currentObject, e, [changedObjects objectEnumerator])
@@ -2810,7 +2817,20 @@ bail:
 	}
 	
 	if (shouldSend)
-		[nc postNotificationName: kBXUpdateEarlyNotification object: entity userInfo: userInfo];
+	{
+		ExpectV (objectsByEntity);
+		BXEnumerate (currentEntity, e, [objectsByEntity keyEnumerator])
+		{
+			NSArray* objects = [objectsByEntity objectForKey: currentEntity];
+			NSArray* objectIDs = (id) [[objects PGTSCollect] objectID];
+			NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+									  objectIDs, kBXObjectIDsKey,
+									  objects, kBXObjectsKey,
+									  self, kBXDatabaseContextKey,
+									  nil];
+			[nc postNotificationName: kBXUpdateNotification object: entity userInfo: userInfo];
+		}
+	}
 }
 @end
 
