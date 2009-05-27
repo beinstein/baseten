@@ -49,7 +49,7 @@ fi
 "$CP" -pRP "$SYMROOT"/Release/BaseTen\ Assistant.app /Volumes/BaseTen/.
 
 "$RM" -rf /Volumes/BaseTen/BaseTen.ibplugin
-"$CP" -pRP "$SYMROOT"/Release/"BaseTen.ibplugin" /Volumes/BaseTen/.
+"$CP" -pRP "$SYMROOT"/Release/"BaseTen.ibplugin" /Volumes/BaseTen/BaseTenAppKit.framework/Resources/.
 
 "$RM" -rf /Volumes/BaseTen/Manual.pdf
 "$CP" -pRP ../../Documentation/latex/refman.pdf /Volumes/BaseTen/Manual.pdf
