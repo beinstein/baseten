@@ -213,8 +213,8 @@
 		54D33B2406778DD400C9C163 /* Class Descriptions */ = {
 			isa = PBXGroup;
 			children = (
-				53978F5C0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription */,
 				53978F5D0CEC640200B93B3C /* BXDatabaseContext.classdescription */,
+				53978F5C0CEC640200B93B3C /* BXSynchronizedArrayController.classdescription */,
 			);
 			name = "Class Descriptions";
 			sourceTree = "<group>";
