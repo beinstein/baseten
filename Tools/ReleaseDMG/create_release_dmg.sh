@@ -11,11 +11,17 @@ function exit_on_error
     fi
 }
 
-echo "Using developer tools at path:"
+if [ -e /Volumes/BaseTen ]
+then
+    echo "/Volumes/BaseTen already exists."
+    exit 1
+fi
+
+echo -n "Using developer tools at path: "
 xcode-select -print-path
 exit_on_error
 
-echo "Xcode version:"
+echo -n "Xcode version: "
 xcodebuild -version
 exit_on_error
 
