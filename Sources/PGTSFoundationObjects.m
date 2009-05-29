@@ -48,7 +48,7 @@
 
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    BXLogWarning (@"Returning a nil from NSObject's implementation.");
+    BXLogWarning (@"Returning nil from NSObject's implementation.");
     return nil;
 }
 
@@ -59,6 +59,7 @@
 
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
+    BXLogWarning (@"Returning NULL from NSObject's implementation.");
 	if (length)
 		*length = 0;
 	return NULL;
@@ -485,5 +486,23 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 - (id) PGTSParameter: (PGTSConnection *) connection
 {
 	return [self XMLStringWithOptions: NSXMLNodeCompactEmptyElement | NSXMLNodeUseDoubleQuotes];
+}
+@end
+
+
+@implementation NSValue (PGTSFoundationObjects)
+- (id) PGTSParameter: (PGTSConnection *) connection
+{
+	id retval = nil;
+	if (0 == strcmp (@encode (NSPoint), [self objCType]))
+	{
+		NSPoint point = [self pointValue];
+		retval = [NSString stringWithFormat: @"(%lf,%lf)", point.x, point.y];
+	}
+	else
+	{
+		retval = [super PGTSParameter: connection];
+	}
+	return retval;
 }
 @end
