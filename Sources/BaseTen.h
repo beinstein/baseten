@@ -807,6 +807,16 @@
  * BXSynchronizedArrayController. Additionally, there is BXController and additions to NSController for creating
  * controller subclasses.
  *
+ * BaseTenAppKit contains a plug-in for Interface Builder. The plug-in should get loaded automatically if 
+ * the framework is added to a project.
+ *
+ * \note Under some circumstances the outlets and actions won't show up when the 
+ *       plug-in has been loaded for the first time. If this happens, save and close your document
+ *       and open it again. Also relaunching Interface Builder has solved the issue.
+ *
+ *
+ * \section bxsynchronizedarraycontroller BXSynchronizedArrayController
+ *
  * Compared to NSArrayController, BXSynchronizedArrayController can do the following things:
  * <ul>
  *     <li>It can present errors to the user when creating a new object fails.</li>
@@ -815,14 +825,10 @@
  *     <li>It can provide the selected objects' ids.</li>
  * </ul>
  *
- *
  * BXSynchronizedArrayController shouldn't be set to entity mode; the user interface for this isn't even available
  * in Interface Builder. It also doesn't make use of a managed object context.
  *
- *
- * \section related_objects_with_bxsynchronizedarraycontroller Binding to a set of related objects
- *
- * The synchronized array controller's Content Set may be bound to another synchronized array controller with
+ * BXSynchronizedArrayController's Content Set may be bound to another synchronized array controller with
  * a key path that represents a relationship. In case of a one-to-many relationship, the foreign key field
  * values will also be set when -newObject or -createObject: gets called.
  *
