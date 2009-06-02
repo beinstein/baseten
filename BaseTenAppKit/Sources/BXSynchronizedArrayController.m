@@ -410,7 +410,9 @@ IsKindOfClass (id self, Class class)
  */
 - (id) createObject: (NSError **) outError
 {
-	BXAssertValueReturn (NULL != outError, nil, @"Expected outError not to be NULL.");
+	if (! mEntityDescription)
+		[self prepareEntity];
+	
 	NSDictionary* fieldValues = [self valuesForBoundRelationship];
 	mShouldAddToContent = (nil == fieldValues);
 	return [databaseContext createObjectForEntity: mEntityDescription
