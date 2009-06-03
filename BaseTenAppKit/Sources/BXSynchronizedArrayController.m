@@ -665,16 +665,26 @@ IsKindOfClass (id self, Class class)
  */
 - (void) removeObjectsAtArrangedObjectIndexes: (NSIndexSet *) indexes
 {
-    NSError* error = nil;
-    NSArray* objects = [[self arrangedObjects] objectsAtIndexes: indexes];
-    NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [objects count]];
-    BXEnumerate (currentObject, e, [objects objectEnumerator])
-        [predicates addObject: [[(BXDatabaseObject *) currentObject objectID] predicate]];
-    [databaseContext executeDeleteFromEntity: [self entityDescription]
-                               withPredicate: [NSCompoundPredicate andPredicateWithSubpredicates: predicates]
-                                       error: &error];
-    if (nil != error)
-        [self BXHandleError: error];
+	if (0 < [indexes count])
+	{
+		NSError* error = nil;
+		NSArray* objects = [[self arrangedObjects] objectsAtIndexes: indexes];
+		BXEntityDescription* entity = [(BXDatabaseObject *) [objects lastObject] entity];
+		ExpectV (entity);
+		
+		NSMutableArray* predicates = [NSMutableArray arrayWithCapacity: [objects count]];
+		BXEnumerate (currentObject, e, [objects objectEnumerator])
+		{
+			BXAssertVoidReturn ([(BXDatabaseObject *) currentObject entity] == entity, 
+								@"Expected entities to match. (%@, %@)", entity, [currentObject entityDescription]);
+			[predicates addObject: [[(BXDatabaseObject *) currentObject objectID] predicate]];
+		}
+		
+		NSPredicate* predicate = [NSCompoundPredicate orPredicateWithSubpredicates: predicates];
+		[databaseContext executeDeleteFromEntity: entity withPredicate: predicate error: &error];
+		if (nil != error)
+			[self BXHandleError: error];
+	}
 }
 
 - (NSString *) entityName
