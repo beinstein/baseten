@@ -30,6 +30,7 @@
 #import "Additions.h"
 #import "MKCPolishedHeaderCell.h"
 #import <BaseTen/BXEnumerate.h>
+#import <BaseTen/BXLogger.h>
 
 NSString* kMKCEnabledColoursKey		 = @"kMKCEnabledColoursKey";
 NSString* kMKCDisabledColoursKey	 = @"kMKCDisabledColoursKey";
@@ -281,7 +282,7 @@ MKCShouldDrawEnabled (NSWindow* window)
 - (NSRect) headerRectOfColumn: (int) columnIndex
 {
     NSRect rect = [super headerRectOfColumn: columnIndex];
-    NSAssert (rect.size.height == [self frame].size.height, @"Expected heights to match.");
+    BXAssertLog (rect.size.height == [self frame].size.height, @"Expected heights to match.");
     return rect;
 }
 
@@ -296,7 +297,7 @@ MKCShouldDrawEnabled (NSWindow* window)
         [self setColours: [[self class] darkColours]];
     
     float height = [self bounds].size.height;
-    NSAssert (height >= 3.0, @"This view may not be shorter than 3.0 units.");
+    BXAssertVoidReturn (height >= 3.0, @"This view may not be shorter than 3.0 units.");
     
 	NSDictionary* enabledColours = nil;
 	NSDictionary* selectedColours = nil;
