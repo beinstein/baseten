@@ -89,7 +89,10 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 
 - (void) handleNotification: (PGTSNotification *) notification
 {
-	int backendPID = [mEntity getsChangedByTriggers] ? 0 : [mConnection backendPID];
+	int backendPID = 0;
+	if (![mEntity getsChangedByTriggers] && [mInterface currentlyChangedEntity] == mEntity)
+		backendPID = [mConnection backendPID];
+
 	[self checkModifications: backendPID];
 }
 

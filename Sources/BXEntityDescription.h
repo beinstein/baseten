@@ -85,5 +85,5 @@ enum BXEntityFlag
 - (void) viewGetsUpdatedWith: (NSArray *) entities;
 - (id) viewsUpdated;
 - (BOOL) getsChangedByTriggers;
-- (void) setGetsChangedByTriggers: (BOOL) flag;
+- (void) setGetsChangedByTriggers: (BOOL) flag DEPRECATED_ATTRIBUTE;
 @end

@@ -61,9 +61,15 @@ BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prepen
 	BXPGTransactionHandler* mTransactionHandler;
 	BXPGQueryBuilder* mQueryBuilder;
 	
+	//FIXME: this is a bit of a hack.
+	BXEntityDescription* mCurrentlyChangedEntity;
+	
 	NSMutableSet* mLockedObjects;
 	BOOL mLocking;
 }
+
+- (BXEntityDescription *) currentlyChangedEntity;
+- (void) setCurrentlyChangedEntity: (BXEntityDescription *) entity;
 
 - (BXPGTableDescription *) tableForEntity: (BXEntityDescription *) entity;
 - (BXPGTableDescription *) tableForEntity: (BXEntityDescription *) entity 

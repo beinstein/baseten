@@ -457,6 +457,7 @@ bx_error_during_rollback (id self, NSError* error)
 
 - (void) dealloc
 {
+	[mCurrentlyChangedEntity release];
 	[mTransactionHandler release];
 	[mLockedObjects release];
 	[mQueryBuilder release];
@@ -467,6 +468,22 @@ bx_error_during_rollback (id self, NSError* error)
 - (NSString *) description
 {
 	return [NSString stringWithFormat: @"<%@: %p (%@)>", [self class], self, mTransactionHandler];
+}
+
+
+- (BXEntityDescription *) currentlyChangedEntity
+{
+	return mCurrentlyChangedEntity;
+}
+
+
+- (void) setCurrentlyChangedEntity: (BXEntityDescription *) entity
+{
+	if (mCurrentlyChangedEntity != entity)
+	{
+		[mCurrentlyChangedEntity release];
+		mCurrentlyChangedEntity = [entity retain];
+	}
 }
 
 
@@ -585,7 +602,9 @@ error:
 	}
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
-		
+	
+	[self setCurrentlyChangedEntity: entity];
+	
 	//Inserted values
 	[mQueryBuilder reset];
 	[mQueryBuilder setQueryType: kBXPGQueryTypeInsert];
@@ -602,7 +621,11 @@ error:
 		goto error;
 	}
 	
-	Expect (1 == [res count]);
+	if (1 != [res count])
+	{
+		BXLogError (@"Expected query to return exactly one object.");
+		goto error;
+	}
 	[res setRowClass: aClass];
 	[res advanceRow];
 	retval = [res currentRowAsObject];
@@ -610,6 +633,7 @@ error:
 	[mTransactionHandler checkSuperEntities: entity];
 	
 error:
+	[self setCurrentlyChangedEntity: nil];
 	return retval;
 }
 
@@ -706,6 +730,8 @@ error:
 	if (! [mTransactionHandler canSend: error]) goto error;
 	if (! [mTransactionHandler savepointIfNeeded: error]) goto error;
 
+	[self setCurrentlyChangedEntity: entity];
+
 	PGTSConnection* connection = [mTransactionHandler connection];
 	[mQueryBuilder reset];
 	[mQueryBuilder setQueryType: kBXPGQueryTypeUpdate];
@@ -747,6 +773,7 @@ error:
 	}
 	
 error:
+	[self setCurrentlyChangedEntity: nil];
 	return retval;
 }
 
@@ -814,6 +841,8 @@ error:
 	Expect (table);
 	if ([entity hasCapability: kBXEntityCapabilityAutomaticUpdate])
 		if (! [mTransactionHandler observeIfNeeded: entity error: error]) goto error;
+
+	[self setCurrentlyChangedEntity: entity];
 	
 	PGTSConnection* connection = [mTransactionHandler connection];
 	[mQueryBuilder reset];
@@ -847,6 +876,7 @@ error:
 				   objectID, predicate, retval);
 	
 error:
+	[self setCurrentlyChangedEntity: nil];
 	return retval;
 }
 
@@ -1067,7 +1097,7 @@ error:
 						
 						//The helper entity may get changed by trigger if rows are deleted from source
 						//and destination entities.
-						[helper setGetsChangedByTriggers: YES];                                         
+						//[helper setGetsChangedByTriggers: YES];                                         
 						[rel setHelperEntity: helper];
 					}
 					
