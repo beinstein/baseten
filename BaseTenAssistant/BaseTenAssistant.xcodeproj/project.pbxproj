@@ -27,6 +27,7 @@
 		536CB9CC0B0D217000EBCB39 /* Entity16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C60B0D217000EBCB39 /* Entity16.png */; };
 		536CB9CD0B0D217000EBCB39 /* Schema16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C70B0D217000EBCB39 /* Schema16.png */; };
 		536CB9CE0B0D217000EBCB39 /* Table16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C80B0D217000EBCB39 /* Table16.png */; };
+		536D93E80FDECF6700439719 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53F749980E362E62003C2E55 /* BaseTenAppKit.framework */; };
 		536E603B0E263A8600098C4A /* Import.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429E0D69B70F009FEDCD /* Import.xib */; };
 		5374E69A0B0DC8A4000D353D /* MKCPolishedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E6980B0DC8A4000D353D /* MKCPolishedHeaderView.m */; };
 		5374E9450B0E001C000D353D /* MKCPolishedCornerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */; };
@@ -98,6 +99,13 @@
 			remoteGlobalIDString = 53DC77960E51B6580015691A;
 			remoteInfo = "BaseTen for iPhone";
 		};
+		536D93E90FDECF8200439719 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 535444570D634D9C002A6C47 /* BaseTenAppKit + GC */;
+			remoteInfo = "BaseTenAppKit + GC";
+		};
 		5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
@@ -164,6 +172,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				53F7498F0E362E53003C2E55 /* BaseTen.framework in Copy Frameworks */,
+				536D93E80FDECF6700439719 /* BaseTenAppKit.framework in Copy Frameworks */,
 				5395E8450E2F9FE8006E8441 /* RegexKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
@@ -256,10 +265,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */,
 				5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */,
-				5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */,
+				5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */,
 				53D3420E0FCAEB6B00DE60BE /* BaseTenAppKit.framework in Frameworks */,
+				5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -461,8 +470,9 @@
 			);
 			dependencies = (
 				5388DE670E23AE6C006CDBD8 /* PBXTargetDependency */,
-				5395E8360E2F9F30006E8441 /* PBXTargetDependency */,
+				536D93EA0FDECF8200439719 /* PBXTargetDependency */,
 				530D55820E489F1B006BDEB2 /* PBXTargetDependency */,
+				5395E8360E2F9F30006E8441 /* PBXTargetDependency */,
 			);
 			name = Assistant;
 			productInstallPath = "$(HOME)/Applications";
@@ -669,6 +679,11 @@
 			isa = PBXTargetDependency;
 			name = InterfaceBuilderPlugin;
 			targetProxy = 530D55810E489F1B006BDEB2 /* PBXContainerItemProxy */;
+		};
+		536D93EA0FDECF8200439719 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTenAppKit + GC";
+			targetProxy = 536D93E90FDECF8200439719 /* PBXContainerItemProxy */;
 		};
 		5388DE670E23AE6C006CDBD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

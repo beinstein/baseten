@@ -898,7 +898,7 @@
  * \section autocommit Autocommit
  *
  * When using autocommit, each query creates its own transaction and changes get propagated immediately to other clients. 
- * Undo works at the level of -[BXDatabaseObject setPrimitiveValueForKey:]. For each change an invocation of the method
+ * Undo works at the level of -[BXDatabaseObject setPrimitiveValue:forKey:]. For each change an invocation of the method
  * is added to the undo manager with the earlier value as a parameter.
  *
  *
