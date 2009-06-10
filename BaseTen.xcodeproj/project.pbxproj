@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		5362DB910FDF32D2003CF2AB /* Examples */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 5362DBA00FDF331B003CF2AB /* Build configuration list for PBXAggregateTarget "Examples" */;
+			buildPhases = (
+			);
+			dependencies = (
+				5362DBE60FDF33A0003CF2AB /* PBXTargetDependency */,
+				5362DBE80FDF33A0003CF2AB /* PBXTargetDependency */,
+				5362DBEA0FDF33A0003CF2AB /* PBXTargetDependency */,
+			);
+			name = Examples;
+			productName = Examples;
+		};
 		5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 5362E8C80E1CE4E8005C7654 /* Build configuration list for PBXAggregateTarget "PostgreSQL-universal" */;
@@ -506,6 +519,48 @@
 			remoteGlobalIDString = 1210C8110D4F254C00A9E73B;
 			remoteInfo = "Stack Protector";
 		};
+		5362DBAA0FDF333B003CF2AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5362DBA10FDF333B003CF2AB /* BasicFunctionality.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D1107320486CEB800E47090;
+			remoteInfo = BasicFunctionality;
+		};
+		5362DBB60FDF3348003CF2AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5362DBAE0FDF3348003CF2AB /* Introspection.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8DD76FA10486AA7600D96B5E;
+			remoteInfo = Introspection;
+		};
+		5362DBC10FDF3357003CF2AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5362DBB80FDF3357003CF2AB /* BaseTenStickies.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D1107320486CEB800E47090;
+			remoteInfo = "BaseTen Stickies";
+		};
+		5362DBE50FDF33A0003CF2AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5362DBA10FDF333B003CF2AB /* BasicFunctionality.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = BasicFunctionality;
+		};
+		5362DBE70FDF33A0003CF2AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5362DBAE0FDF3348003CF2AB /* Introspection.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8DD76F960486AA7600D96B5E;
+			remoteInfo = Introspection;
+		};
+		5362DBE90FDF33A0003CF2AB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5362DBB80FDF3357003CF2AB /* BaseTenStickies.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 8D1107260486CEB800E47090;
+			remoteInfo = "BaseTen Stickies";
+		};
 		5362E8700E1CE4A9005C7654 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -685,6 +740,9 @@
 		536206510FB87DDA00ACAE57 /* PGTSValuePlaceholder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSValuePlaceholder.m; path = Sources/PGTSValuePlaceholder.m; sourceTree = "<group>"; };
 		536206540FB87E8C00ACAE57 /* PGTSDates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSDates.h; path = Sources/PGTSDates.h; sourceTree = "<group>"; };
 		536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RegexKit.xcodeproj; path = Contrib/RegexKit/RegexKit.xcodeproj; sourceTree = "<group>"; };
+		5362DBA10FDF333B003CF2AB /* BasicFunctionality.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BasicFunctionality.xcodeproj; path = Examples/BasicFunctionality/BasicFunctionality.xcodeproj; sourceTree = "<group>"; };
+		5362DBAE0FDF3348003CF2AB /* Introspection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Introspection.xcodeproj; path = Examples/Introspection/Introspection.xcodeproj; sourceTree = "<group>"; };
+		5362DBB80FDF3357003CF2AB /* BaseTenStickies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenStickies.xcodeproj; path = Examples/BaseTenStickies/BaseTenStickies.xcodeproj; sourceTree = "<group>"; };
 		5364BB760DDDD01B0040258D /* BXPGAutocommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGAutocommitTransactionHandler.h; path = Sources/BXPGAutocommitTransactionHandler.h; sourceTree = "<group>"; };
 		5364BB770DDDD01B0040258D /* BXPGAutocommitTransactionHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGAutocommitTransactionHandler.m; path = Sources/BXPGAutocommitTransactionHandler.m; sourceTree = "<group>"; };
 		5364BB7C0DDDD02E0040258D /* BXPGManualCommitTransactionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGManualCommitTransactionHandler.h; path = Sources/BXPGManualCommitTransactionHandler.h; sourceTree = "<group>"; };
@@ -967,6 +1025,7 @@
 				53F77DA10A3806580058F7D6 /* xcconfig */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */,
+				5362DBC30FDF336E003CF2AB /* Examples */,
 				034768DFFF38A50411DB9C8B /* Products */,
 			);
 			name = BXDatabase;
@@ -1137,6 +1196,40 @@
 				536207C10FB8E63A00ACAE57 /* libStack Protector.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5362DBA20FDF333B003CF2AB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5362DBAB0FDF333B003CF2AB /* BasicFunctionality.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5362DBAF0FDF3348003CF2AB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5362DBB70FDF3348003CF2AB /* Introspection */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5362DBB90FDF3357003CF2AB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5362DBC20FDF3357003CF2AB /* BaseTen Stickies.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5362DBC30FDF336E003CF2AB /* Examples */ = {
+			isa = PBXGroup;
+			children = (
+				5362DBA10FDF333B003CF2AB /* BasicFunctionality.xcodeproj */,
+				5362DBAE0FDF3348003CF2AB /* Introspection.xcodeproj */,
+				5362DBB80FDF3357003CF2AB /* BaseTenStickies.xcodeproj */,
+			);
+			name = Examples;
 			sourceTree = "<group>";
 		};
 		53666C800E1CD8580028DBEA /* Utility */ = {
@@ -1808,8 +1901,20 @@
 					ProjectRef = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
 				},
 				{
+					ProductGroup = 5362DBB90FDF3357003CF2AB /* Products */;
+					ProjectRef = 5362DBB80FDF3357003CF2AB /* BaseTenStickies.xcodeproj */;
+				},
+				{
+					ProductGroup = 5362DBA20FDF333B003CF2AB /* Products */;
+					ProjectRef = 5362DBA10FDF333B003CF2AB /* BasicFunctionality.xcodeproj */;
+				},
+				{
 					ProductGroup = 5308940E0E4349A50063C5E7 /* Products */;
 					ProjectRef = 5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */;
+				},
+				{
+					ProductGroup = 5362DBAF0FDF3348003CF2AB /* Products */;
+					ProjectRef = 5362DBAE0FDF3348003CF2AB /* Introspection.xcodeproj */;
 				},
 				{
 					ProductGroup = 536207B30FB8E63A00ACAE57 /* Products */;
@@ -1825,6 +1930,7 @@
 				5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */,
 				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
 				53BD79F70E092ABC009CAFE6 /* Documentation */,
+				5362DB910FDF32D2003CF2AB /* Examples */,
 			);
 		};
 /* End PBXProject section */
@@ -1863,6 +1969,27 @@
 			fileType = archive.ar;
 			path = "libStack Protector.a";
 			remoteRef = 536207C00FB8E63A00ACAE57 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5362DBAB0FDF333B003CF2AB /* BasicFunctionality.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = BasicFunctionality.app;
+			remoteRef = 5362DBAA0FDF333B003CF2AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5362DBB70FDF3348003CF2AB /* Introspection */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = Introspection;
+			remoteRef = 5362DBB60FDF3348003CF2AB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		5362DBC20FDF3357003CF2AB /* BaseTen Stickies.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "BaseTen Stickies.app";
+			remoteRef = 5362DBC10FDF3357003CF2AB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -2173,6 +2300,21 @@
 			name = "RegexKit Framework";
 			targetProxy = 532E54C30FB8E868001A2C62 /* PBXContainerItemProxy */;
 		};
+		5362DBE60FDF33A0003CF2AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = BasicFunctionality;
+			targetProxy = 5362DBE50FDF33A0003CF2AB /* PBXContainerItemProxy */;
+		};
+		5362DBE80FDF33A0003CF2AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Introspection;
+			targetProxy = 5362DBE70FDF33A0003CF2AB /* PBXContainerItemProxy */;
+		};
+		5362DBEA0FDF33A0003CF2AB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "BaseTen Stickies";
+			targetProxy = 5362DBE90FDF33A0003CF2AB /* PBXContainerItemProxy */;
+		};
 		5362E8710E1CE4A9005C7654 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */;
@@ -2315,6 +2457,27 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
+			};
+			name = Release;
+		};
+		5362DB920FDF32D2003CF2AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Examples;
+			};
+			name = Debug;
+		};
+		5362DB930FDF32D2003CF2AB /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Examples;
+			};
+			name = Coverage;
+		};
+		5362DB940FDF32D2003CF2AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = Examples;
 			};
 			name = Release;
 		};
@@ -2631,6 +2794,16 @@
 				535444110D634A47002A6C47 /* Debug */,
 				98A6CD690F45C8600029B2C4 /* Coverage */,
 				535444120D634A47002A6C47 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5362DBA00FDF331B003CF2AB /* Build configuration list for PBXAggregateTarget "Examples" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5362DB920FDF32D2003CF2AB /* Debug */,
+				5362DB930FDF32D2003CF2AB /* Coverage */,
+				5362DB940FDF32D2003CF2AB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
