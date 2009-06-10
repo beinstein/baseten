@@ -1342,6 +1342,7 @@
 				<bool key="NSFilterRestrictsInsertion">YES</bool>
 				<bool key="NSClearsFilterPredicateOnInsertion">YES</bool>
 				<bool key="fetchesOnConnect">YES</bool>
+				<bool key="locksRowsOnBeginEditing">YES</bool>
 				<string type="base64-UTF8" key="tableName">8JCEpPCQhKfwkISq8JCEtw</string>
 				<nil key="schemaName"/>
 				<nil key="DBObjectClassName"/>
@@ -1918,6 +1919,22 @@
 						</object>
 					</object>
 					<int key="connectionID">467</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">modalWindow</string>
+						<reference key="source" ref="759846028"/>
+						<reference key="destination" ref="972006081"/>
+					</object>
+					<int key="connectionID">468</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">modalWindow</string>
+						<reference key="source" ref="975477647"/>
+						<reference key="destination" ref="972006081"/>
+					</object>
+					<int key="connectionID">469</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3267,9 +3284,9 @@
 					<reference ref="9"/>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<reference ref="9"/>
-					<string>{{335, 390}, {480, 360}}</string>
+					<string>{{277, 390}, {480, 360}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{335, 390}, {480, 360}}</string>
+					<string>{{277, 390}, {480, 360}}</string>
 					<reference ref="9"/>
 					<string>{{33, 99}, {480, 360}}</string>
 					<string>{3.40282e+38, 3.40282e+38}</string>
@@ -3389,11 +3406,11 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">467</int>
+			<int key="maxID">469</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>
-		<string key="IBDocument.LastKnownRelativeProjectPath">../Basic Functionality.xcodeproj</string>
+		<string key="IBDocument.LastKnownRelativeProjectPath">../BasicFunctionality.xcodeproj</string>
 		<int key="IBDocument.defaultPropertyAccessControl">3</int>
 	</data>
 </archive>
