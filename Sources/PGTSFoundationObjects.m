@@ -48,7 +48,7 @@
 
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    BXLogWarning (@"Returning nil from NSObject's implementation.");
+    BXLogWarning (@"Returning nil from NSObject's implementation for type %@ (%p).", [typeInfo name], typeInfo);
     return nil;
 }
 
