@@ -506,3 +506,13 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 	return retval;
 }
 @end
+
+
+@implementation NSNull (PGTSFoundationObjects)
+- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+{
+	if (length)
+		*length = 0;
+	return NULL;
+}
+@end

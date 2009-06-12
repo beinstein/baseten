@@ -175,6 +175,19 @@
 	MKCAssertThrowsSpecificNamed ([value PGTSParameterLength: &length connection: mConnection], NSException, NSInvalidArgumentException);
 }
 
+- (void) test8Null
+{
+	NSNull* value = [NSNull null];
+	
+	int length = 0;
+	id objectValue = [value PGTSParameter: mConnection];
+	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
+	
+	CFRetain (objectValue);
+	MKCAssertTrue (NULL == paramValue);
+	CFRelease (objectValue);
+}
+
 - (void) testTimestamp
 {
 	NSTimeInterval interval = 263856941.04633799; //This caused problems.
