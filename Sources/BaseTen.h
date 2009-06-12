@@ -364,7 +364,7 @@
  *
  * BXDatabaseObjects implement NSKeyValueCoding and object values may thus be accessed with 
  * -valueForKey: and -setValue:forKey:. The key will be the column name. As with 
- * NSManagedObject, methods like -&lt;key&gt; and -set&lt;Key&gt;: are also automatically available.
+ * NSManagedObject, methods like -<em>key</em> and -set<em>Key</em>: are also automatically available.
  *
  * Column values are converted to Foundation objects based on the column type. Currently, there is no way to 
  * affect the type conversion. Instead, custom getters may be written for preprocessing

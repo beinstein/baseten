@@ -103,7 +103,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 535444570D634D9C002A6C47 /* BaseTenAppKit + GC */;
+			remoteGlobalIDString = 535444570D634D9C002A6C47;
 			remoteInfo = "BaseTenAppKit + GC";
 		};
 		5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */ = {
