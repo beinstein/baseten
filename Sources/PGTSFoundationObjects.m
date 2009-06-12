@@ -59,7 +59,7 @@
 
 - (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
 {
-    BXLogWarning (@"Returning NULL from NSObject's implementation.");
+    BXLogWarning (@"Returning NULL from NSObject's implementation for %@.", [self class]);
 	if (length)
 		*length = 0;
 	return NULL;
