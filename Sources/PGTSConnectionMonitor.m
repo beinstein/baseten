@@ -121,10 +121,10 @@ WorkspaceWillSleep (void* refCon, io_service_t service, natural_t messageType, v
 			
 		case kIOMessageSystemHasPoweredOn:
 		{
-			PGTS_BEGIN_WAKE_PREPARATION ()
+			PGTS_BEGIN_WAKE_PREPARATION ();
 			NSString* note = kPGTSConnectionMonitorAwakeNotification;
 			[[NSNotificationCenter defaultCenter] postNotificationName: note object: monitor];
-			PGTS_END_WAKE_PREPARATION ()
+			PGTS_END_WAKE_PREPARATION ();
 			break;
 		}
 			
