@@ -66,7 +66,7 @@
 		mFile = NULL;
 	}
 	
-	NSString* pathString = (id) CFRetain ([fileURL path]);
+	NSString* pathString = [fileURL path];
 	const char* path = [pathString UTF8String];
 	int fd = open (path, O_RDONLY | O_SHLOCK);
 	struct stat statbuf = {};
@@ -79,7 +79,7 @@
 	}
 	
 	//For GC.
-	CFRelease (pathString);
+	[pathString self];
 	return retval;
 }
 

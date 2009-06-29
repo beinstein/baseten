@@ -2887,7 +2887,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     OSStatus status = noErr;
     NSMutableArray* retval = nil;
     
-    NSMutableData* attributeBuffer = (id) CFRetain ([NSMutableData data]);
+    NSMutableData* attributeBuffer = [NSMutableData data];
     AddKeychainAttributeString (kSecAccountItemAttr, [mDatabaseURI user], attributeBuffer);
     AddKeychainAttributeString (kSecServerItemAttr,  [mDatabaseURI host], attributeBuffer);
     AddKeychainAttributeString (kSecPathItemAttr,    [mDatabaseURI path], attributeBuffer);
@@ -2926,7 +2926,7 @@ AddKeychainAttribute (SecItemAttr tag, void* value, UInt32 length, NSMutableData
     }
 	
 	//For GC.
-	CFRelease (attributeBuffer);
+	[attributeBuffer self];
 	
     return retval;
 }

@@ -45,9 +45,7 @@
 static char*
 CopyConnectionString (NSDictionary* connectionDict)
 {
-	//-UTF8String assigns an internal pointer, hence the CFRetain + CFRelease.
 	NSMutableString* connectionString = [NSMutableString string];
-	CFRetain (connectionString);
 	NSEnumerator* e = [connectionDict keyEnumerator];
 	NSString* currentKey;
 	NSString* format = @"%@ = '%@' ";
@@ -57,7 +55,9 @@ CopyConnectionString (NSDictionary* connectionDict)
 			[connectionString appendFormat: format, currentKey, [connectionDict objectForKey: currentKey]];
 	}
 	char* retval = strdup ([connectionString UTF8String]);
-	CFRelease (connectionString);
+
+	//For GC.
+	[connectionString self];
 	return retval;
 }
 

@@ -149,7 +149,6 @@ static char*
 CopyParameterString (int nParams, const char** values, int* formats)
 {
 	NSMutableString* desc = [NSMutableString string];
-	CFRetain (desc);
 	for (int i = 0; i < nParams; i++)
 	{
 		if (1 == formats [i])
@@ -161,7 +160,9 @@ CopyParameterString (int nParams, const char** values, int* formats)
 			[desc appendString: @", "];
 	}
 	char* retval = strdup ([desc UTF8String] ?: "");
-	CFRelease (desc);
+	
+	//For GC.
+	[desc self];
 	return retval;
 }
 
@@ -174,7 +175,6 @@ CopyParameterString (int nParams, const char** values, int* formats)
 	{
 		NSUInteger nParams = [self parameterCount];
 		NSArray* parameterObjects = [[mParameters PGTSCollect] PGTSParameter: connection];
-		if (parameterObjects) CFRetain (parameterObjects);
 		
 		const char** paramValues  = calloc (nParams, sizeof (char *));
 		Oid*   paramTypes   = calloc (nParams, sizeof (Oid));
@@ -216,11 +216,13 @@ CopyParameterString (int nParams, const char** values, int* formats)
 		if ([connection logsQueries])
 			[(id) [connection delegate] PGTSConnection: connection sentQuery: self];
 		
-		if (parameterObjects) CFRelease (parameterObjects);
 		free (paramTypes);
 		free (paramValues);
 		free (paramLengths);
 		free (paramFormats);
+
+		//For GC.
+		[parameterObjects self];
 	}
     return retval;
 }

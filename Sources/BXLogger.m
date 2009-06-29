@@ -120,16 +120,16 @@ void BXLog_v (const char* fileName, const char* functionName, void* functionAddr
 	char* library = CopyLibraryName (functionAddress);
 	const char* file = LastPathComponent (fileName);
 	
-	NSString* date = (id) CFRetain ([[NSDate date] descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S.%F" timeZone: nil locale: nil]);
-	NSString* message = (id) CFRetain ([[[NSString alloc] initWithFormat: messageFmt arguments: args] autorelease]);
+	NSString* date = [[NSDate date] descriptionWithCalendarFormat: @"%Y-%m-%d %H:%M:%S.%F" timeZone: nil locale: nil];
+	NSString* message = [[[NSString alloc] initWithFormat: messageFmt arguments: args] autorelease];
 		
 	const char isMain = ([NSThread isMainThread] ? 'm' : 's');
 	fprintf (stderr, "%23s  %s (%s) [%d]  %s:%d  %s [%p%c] \t%8s %s\n", 
 		[date UTF8String], executable, library ?: "???", getpid (), file, line, functionName, [NSThread currentThread], isMain, LogLevel (level), [message UTF8String]);
 	
 	//For GC.
-	CFRelease (date);
-	CFRelease (message);
+	[date self];
+	[message self];
 	
 	if (executable)
 		free (executable);
