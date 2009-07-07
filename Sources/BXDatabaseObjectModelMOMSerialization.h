@@ -1,8 +1,8 @@
 //
-// BXRelationshipDescription.h
+// BXDatabaseObjectModelMOMSerialization.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -27,28 +27,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXCoreDataCompatibility.h>
-#import <BaseTen/BXPropertyDescription.h>
+#import <BaseTen/BXConstants.h>
+@class NSManagedObjectModel;
+@class BXDatabaseObjectModel;
 
 
-@protocol BXForeignKey;
-
-
-@interface BXRelationshipDescription : BXPropertyDescription
+@interface BXDatabaseObjectModelMOMSerialization : NSObject 
 {
-    BXEntityDescription* mDestinationEntity; //Weak
-
-	id <BXForeignKey> mForeignKey;
-	NSString* mInverseName;
-	BOOL mIsInverse;
-	BOOL mIsDeprecated;
-	BOOL mUsesRelationNames;
 }
-
-- (BXEntityDescription *) destinationEntity;
-- (BXRelationshipDescription *) inverseRelationship;
-- (NSDeleteRule) deleteRule;
-- (BOOL) isToMany;
-
-- (BOOL) isDeprecated;
++ (NSManagedObjectModel *) managedObjectModelFromDatabaseObjectModel: (BXDatabaseObjectModel *) model 
+															 options: (enum BXDatabaseObjectModelSerializationOptions) options
+															   error: (NSError **) outError;
 @end

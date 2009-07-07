@@ -32,17 +32,25 @@
 #import "BXEntityDescription.h"
 #import "BXAttributeDescription.h"
 #import "BXRelationshipDescription.h"
+#import "BXRelationshipDescriptionPrivate.h"
 
 
 @implementation BXDatabaseObjectModelXMLSerialization
-+ (NSData *) dataFromObjectModel: (BXDatabaseObjectModel *) objectModel error: (NSError **) outError
++ (NSData *) dataFromObjectModel: (BXDatabaseObjectModel *) objectModel 
+						 options: (enum BXDatabaseObjectModelSerializationOptions) options
+						   error: (NSError **) outError
 {
-	return [[self documentFromObjectModel: objectModel error: outError] XMLData];
+	return [[self documentFromObjectModel: objectModel options: options error: outError] XMLData];
 }
 
 
-+ (NSXMLDocument *) documentFromObjectModel: (BXDatabaseObjectModel *) objectModel error: (NSError **) outError
++ (NSXMLDocument *) documentFromObjectModel: (BXDatabaseObjectModel *) objectModel 
+									options: (enum BXDatabaseObjectModelSerializationOptions) options
+									  error: (NSError **) outError
 {
+	const BOOL exportFkeyRelationships    = options & kBXDatabaseObjectModelSerializationOptionRelationshipsUsingFkeyNames;
+	const BOOL exportRelNameRelationships = options & kBXDatabaseObjectModelSerializationOptionRelationshipsUsingTargetRelationNames;
+
 	NSXMLElement* root = [NSXMLElement elementWithName: @"objectModel"];
 	NSXMLDocument* retval = [NSXMLDocument documentWithRootElement: root];
 	
@@ -76,12 +84,15 @@
 		}
 		[entity addChild: attrs];
 		
-		if ([currentEntity hasCapability: kBXEntityCapabilityRelationships])
+		if ((exportFkeyRelationships || exportRelNameRelationships) && [currentEntity hasCapability: kBXEntityCapabilityRelationships])
 		{
 			NSXMLElement* rels = [NSXMLElement elementWithName: @"relationships"];
 			BXEnumerate (currentRel, e, [[currentEntity relationshipsByName] objectEnumerator])
 			{
-				if (! [currentRel isDeprecated])
+				BOOL usesRelNames = [currentRel usesRelationNames];
+				if (((usesRelNames && exportRelNameRelationships) ||
+					 (!usesRelNames && exportFkeyRelationships)) && 
+					! [currentRel isDeprecated])
 				{
 					NSXMLElement* rel = [NSXMLElement elementWithName: @"relationship"];
 					

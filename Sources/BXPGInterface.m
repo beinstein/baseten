@@ -912,6 +912,7 @@ error:
     @"	kind, "
     @"	is_inverse, "
 	@"  is_deprecated, "
+	@"  has_rel_names, "
 	@"	srcnspname, "
     @"	srcrelname, "
 	@"	dstnspname, "
@@ -1081,10 +1082,13 @@ error:
 					//Deprecation
 					[rel setDeprecated: [[currentRel objectForKey: @"is_deprecated"] boolValue]];
 					
+					//Name kind
+					[rel setUsesRelationNames: [[currentRel objectForKey: @"has_rel_names"] boolValue]];
+
 					//Optionality
 					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.
 					[rel setOptional: YES];
-		
+							
 					if ('m' == kind)
 					{
 						NSInteger dstconid = [[currentRel objectForKey: @"dstconid"] integerValue];

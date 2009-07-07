@@ -162,3 +162,10 @@ enum BXPropertyKind
 	kBXPropertyKindAttribute, /**< The property is an attribute. */
 	kBXPropertyKindRelationship /**< The property is a relationship. */
 };
+
+enum BXDatabaseObjectModelSerializationOptions
+{
+	kBXDatabaseObjectModelSerializationOptionNone                                  = 0,
+	kBXDatabaseObjectModelSerializationOptionRelationshipsUsingFkeyNames           = (1 << 0),
+	kBXDatabaseObjectModelSerializationOptionRelationshipsUsingTargetRelationNames = (1 << 1)
+};

@@ -98,11 +98,15 @@
 			
 	BOOL mLastSelectedEntityWasView;
 	BOOL mDeniedSchemaInstall;
+	BOOL mExportUsingFkeyNames;
+	BOOL mExportUsingTargetRelationNames;
 }
 
 @property (readonly) BOOL hasBaseTenSchema;
 @property (readonly) NSWindow* mainWindow;
 @property (readwrite, retain) NSSavePanel* savePanel;
+@property (readwrite, assign) BOOL exportsUsingFkeyNames;
+@property (readwrite, assign) BOOL exportsUsingTargetRelationNames;
 
 
 - (id) init; //Patch by Tim Bedford 2008-08-11

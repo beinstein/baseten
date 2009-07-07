@@ -226,6 +226,16 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	}
 }
 
+- (BOOL) usesRelationNames
+{
+	return mUsesRelationNames;
+}
+
+- (void) setUsesRelationNames: (BOOL) aBool
+{
+	mUsesRelationNames = aBool;
+}
+
 - (void) setIsInverse: (BOOL) aBool
 {
 	mIsInverse = aBool;

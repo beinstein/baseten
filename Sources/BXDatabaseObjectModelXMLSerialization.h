@@ -34,6 +34,10 @@
 @interface BXDatabaseObjectModelXMLSerialization : NSObject 
 {
 }
-+ (NSData *) dataFromObjectModel: (BXDatabaseObjectModel *) objectModel error: (NSError **) outError;
-+ (NSXMLDocument *) documentFromObjectModel: (BXDatabaseObjectModel *) objectModel error: (NSError **) outError;
++ (NSData *) dataFromObjectModel: (BXDatabaseObjectModel *) objectModel 
+						 options: (enum BXDatabaseObjectModelSerializationOptions) options
+						   error: (NSError **) outError;
++ (NSXMLDocument *) documentFromObjectModel: (BXDatabaseObjectModel *) objectModel 
+									options: (enum BXDatabaseObjectModelSerializationOptions) options
+									  error: (NSError **) outError;
 @end

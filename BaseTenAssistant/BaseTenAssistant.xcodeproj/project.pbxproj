@@ -73,7 +73,7 @@
 			outputFiles = (
 				"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}",
 			);
-			script = "m4 ${INPUT_FILE_PATH} > ${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}";
+			script = "m4 \"${INPUT_FILE_PATH}\" > \"${DERIVED_FILES_DIR}/${INPUT_FILE_BASE}\"";
 		};
 /* End PBXBuildRule section */
 

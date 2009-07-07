@@ -50,6 +50,7 @@
 #import <BaseTen/PGTSConstants.h>
 #import <BaseTen/BXLogger.h>
 #import <BaseTen/BXDatabaseObjectModelXMLSerialization.h>
+#import <BaseTen/BXDatabaseObjectModelMOMSerialization.h>
 
 #import <sys/socket.h>
 //Patch by Tim Bedford 2008-08-11
@@ -87,6 +88,8 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 @implementation BXAController
 @synthesize savePanel = mSavePanel;
+@synthesize exportsUsingFkeyNames = mExportUsingFkeyNames;
+@synthesize exportsUsingTargetRelationNames = mExportUsingTargetRelationNames;
 
 //Patch by Tim Bedford 2008-08-11
 - (id) init
@@ -96,7 +99,11 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	
 	mServiceBrowser = [[NSNetServiceBrowser alloc] init];
 	[mServiceBrowser setDelegate:self];
+	//End patch
+	mExportUsingFkeyNames = YES;
+	mExportUsingTargetRelationNames = YES;
 	
+	//Patch by Tim Bedford 2008-08-11
 	return self;
 }
 //End patch
@@ -1160,61 +1167,90 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	{
 		NSError* error = nil;
 		BXDatabaseObjectModel* model = [mContext databaseObjectModel];
-		NSXMLDocument* doc = [BXDatabaseObjectModelXMLSerialization documentFromObjectModel: model error: &error];
 		ExpectV (model);
-		ExpectV (doc);
 		
-		if (error)
+		const NSInteger selectedTag = [mModelFormatButton selectedTag];
+		
+		enum BXDatabaseObjectModelSerializationOptions options = kBXDatabaseObjectModelSerializationOptionNone;
+		if (mExportUsingFkeyNames)
+			options |= kBXDatabaseObjectModelSerializationOptionRelationshipsUsingFkeyNames;
+		if (mExportUsingTargetRelationNames)
+			options |= kBXDatabaseObjectModelSerializationOptionRelationshipsUsingTargetRelationNames;
+		
+		NSData* modelData = nil;
+		if (4 == selectedTag)
 		{
-			[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
-			 didPresentSelector: NULL contextInfo: NULL];
+			NSManagedObjectModel* moModel = 
+			[BXDatabaseObjectModelMOMSerialization managedObjectModelFromDatabaseObjectModel: model options: options error: &error];
+
+			if (error)
+			{
+				[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+				 didPresentSelector: NULL contextInfo: NULL];
+			}
+			else
+			{
+				ExpectV (moModel);
+				modelData = [NSKeyedArchiver archivedDataWithRootObject: moModel];
+				ExpectV (modelData);
+			}	
 		}
 		else
 		{
-			NSBundle* bundle = [NSBundle bundleForClass: [self class]];
-			NSURL* xsltURL = nil;
-			switch ([mModelFormatButton selectedTag]) 
-			{
-				case 1:
-					xsltURL = [NSURL fileURLWithPath: [bundle pathForResource: @"ObjectModel" ofType: @"xsl"]];
-					break;
-					
-				case 2:
-					xsltURL = [NSURL fileURLWithPath: [bundle pathForResource: @"ObjectModelRecords" ofType: @"xsl"]];
-					break;
-					
-				default:
-					break;
-			}
+			NSXMLDocument* doc = [BXDatabaseObjectModelXMLSerialization documentFromObjectModel: model options: options error: &error];
 			
-			if (xsltURL)
+			if (error)
 			{
-				NSData* dotData = [doc objectByApplyingXSLTAtURL: xsltURL arguments: nil error: &error];
-				if (error)
+				[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+				 didPresentSelector: NULL contextInfo: NULL];
+			}
+			else
+			{
+				ExpectV (doc);
+
+				NSBundle* bundle = [NSBundle bundleForClass: [self class]];
+				NSURL* xsltURL = nil;
+				switch (selectedTag) 
 				{
-					[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
-					 didPresentSelector: NULL contextInfo: NULL];
+					case 1:
+						xsltURL = [NSURL fileURLWithPath: [bundle pathForResource: @"ObjectModel" ofType: @"xsl"]];
+						break;
+						
+					case 2:
+						xsltURL = [NSURL fileURLWithPath: [bundle pathForResource: @"ObjectModelRecords" ofType: @"xsl"]];
+						break;
+						
+					default:
+						break;
 				}
-				else
+				
+				if (xsltURL)
 				{
-					[dotData writeToURL: [sheet URL] options: NSAtomicWrite error: &error];
+					modelData = [doc objectByApplyingXSLTAtURL: xsltURL arguments: nil error: &error];
 					if (error)
 					{
 						[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
 						 didPresentSelector: NULL contextInfo: NULL];
+						ExpectV (! modelData);
 					}
 				}
-			}
-			else
-			{
-				NSData* xmlData = [doc XMLData];
-				[xmlData writeToURL: [sheet URL] options: NSAtomicWrite error: &error];
-				if (error)
+				else
 				{
-					[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
-					 didPresentSelector: NULL contextInfo: NULL];
+					modelData = [doc XMLData];
+					ExpectV (modelData);
 				}
 			}
+		}
+		
+		if (modelData)
+		{
+			[modelData writeToURL: [sheet URL] options: NSAtomicWrite error: &error];
+			if (error)
+			{
+				[NSApp presentError: error modalForWindow: mMainWindow delegate: nil
+				 didPresentSelector: NULL contextInfo: NULL];
+			}
+			
 		}
 	}
 	[self setSavePanel: nil];
@@ -1623,6 +1659,9 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 		case 1:
 		case 2:
 			[mSavePanel setRequiredFileType: @"dot"];
+			break;
+		case 4:
+			[mSavePanel setRequiredFileType: @"mom"];
 			break;
 		case 3:
 		default:

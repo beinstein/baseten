@@ -39,6 +39,8 @@
 - (void) setForeignKey: (id <BXForeignKey>) aKey;
 - (BOOL) isInverse;
 - (void) setIsInverse: (BOOL) aBool;
+- (BOOL) usesRelationNames;
+- (void) setUsesRelationNames: (BOOL) aBool;
 - (void) setInverseName: (NSString *) aString;
 - (void) setDeprecated: (BOOL) aBool;
 
