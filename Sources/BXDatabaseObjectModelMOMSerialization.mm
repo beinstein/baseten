@@ -209,7 +209,8 @@ static IdentifierMap gTypeMapping;
 				NSRelationshipDescription* rel = [[entity relationshipsByName] objectForKey: [bxRel name]];
 				if (rel && ! [rel inverseRelationship])
 				{
-					BXRelationshipDescription* bxDst = [(BXRelationshipDescription *) bxRel inverseRelationship];
+					BXRelationshipDescription* bxDstRel = [(BXRelationshipDescription *) bxRel inverseRelationship];
+					BXEntityDescription* bxDst = [bxDstRel entity];
 					NSEntityDescription* dst = [[retval entitiesByName] objectForKey: [bxDst name]];
 					NSString* inverseName = [[bxRel inverseRelationship] name];
 					NSRelationshipDescription* inverse = [[dst relationshipsByName] objectForKey: inverseName];
