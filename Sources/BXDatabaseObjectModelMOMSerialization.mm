@@ -37,6 +37,7 @@
 #import "BXRelationshipDescription.h"
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXLogger.h"
+#import "BXForeignKey.h"
 
 
 typedef std::tr1::unordered_map <id, NSAttributeType,
@@ -89,6 +90,22 @@ static IdentifierMap gTypeMapping;
 }
 
 
+struct attribute_name_st
+{
+	__strong NSMutableSet* an_excludedAttributes;
+	__strong BXEntityDescription* an_entity;
+};
+
+
+static void AttributeNameCallback (NSString* srcName, NSString* dstName, void* ctx)
+{
+	struct attribute_name_st* context = (struct attribute_name_st *) ctx;
+	BXAttributeDescription* attr = [[context->an_entity attributesByName] objectForKey: srcName];
+	ExpectV (attr);
+	[context->an_excludedAttributes addObject: attr];
+}
+
+
 + (NSManagedObjectModel *) managedObjectModelFromDatabaseObjectModel: (BXDatabaseObjectModel *) objectModel 
 															 options: (enum BXDatabaseObjectModelSerializationOptions) options
 															   error: (NSError **) outError
@@ -97,11 +114,14 @@ static IdentifierMap gTypeMapping;
 	
 	const BOOL exportFkeyRelationships    = options & kBXDatabaseObjectModelSerializationOptionRelationshipsUsingFkeyNames;
 	const BOOL exportRelNameRelationships = options & kBXDatabaseObjectModelSerializationOptionRelationshipsUsingTargetRelationNames;
+	const BOOL excludeFkeyAttrs           = options & kBXDatabaseObjectModelSerializationOptionExcludeForeignKeyAttributes;
+	const BOOL relationshipsAsOptional    = options & kBXDatabaseObjectModelSerializationOptionCreateRelationshipsAsOptional;
 	
 	NSArray* bxEntities = [objectModel entities: outError];
 	NSMutableArray* entities = [NSMutableArray arrayWithCapacity: [bxEntities count]];
 	NSMutableSet* entityNames = [NSMutableSet setWithCapacity: [bxEntities count]];
 	NSMutableDictionary* entitiesBySchema = [NSMutableDictionary dictionary];
+	NSMutableSet* excludedAttributes = [NSMutableSet set];
 
 	// Create entity descriptions for all entities.
 	BXEnumerate (bxEntity, e, [bxEntities objectEnumerator])
@@ -142,34 +162,18 @@ static IdentifierMap gTypeMapping;
 	BXEnumerate (bxEntity, e, [bxEntities objectEnumerator])
 	{
 		NSEntityDescription* currentEntity = [[retval entitiesByName] objectForKey: [bxEntity name]];
-		
 		NSDictionary* attributesByName = [bxEntity attributesByName];
+
+		[excludedAttributes removeAllObjects];
+		struct attribute_name_st fkeyContext = {excludedAttributes, bxEntity};
+
 		NSDictionary* relationshipsByName = nil;
 		if ([bxEntity hasCapability: kBXEntityCapabilityRelationships])
 			relationshipsByName = [bxEntity relationshipsByName];
-		NSMutableArray* properties = [NSMutableArray arrayWithCapacity: 
+		
+		NSMutableArray* properties = [NSMutableArray arrayWithCapacity:
 									  [attributesByName count] + [relationshipsByName count]];
 		
-		BXEnumerate (bxAttr, e, [attributesByName objectEnumerator])
-		{
-			if (! [bxAttr isExcluded])
-			{
-				NSAttributeDescription* attr = [[[NSAttributeDescription alloc] init] autorelease];
-				[properties addObject: attr];
-				
-				[attr setName: [bxAttr name]];
-				
-				IdentifierMap::const_iterator it = gTypeMapping.find ([bxAttr databaseTypeName]);
-				if (it != gTypeMapping.end ())
-					[attr setAttributeType: it->second];
-				else
-					[attr setAttributeType: NSUndefinedAttributeType];
-				
-				NSDictionary* userInfo = [NSDictionary dictionaryWithObject: [bxAttr databaseTypeName] forKey: @"Database type"];
-				[attr setUserInfo: userInfo];
-			}
-		}
-
 		BXEnumerate (bxRel, e, [relationshipsByName objectEnumerator])
 		{
 			BOOL usesRelNames = [bxRel usesRelationNames];
@@ -189,12 +193,39 @@ static IdentifierMap gTypeMapping;
 					[rel setDestinationEntity: dst];
 					if (! [bxRel isToMany])
 						[rel setMaxCount: 1];
-					if (! [bxRel isOptional])
+					if (! (relationshipsAsOptional || [bxRel isOptional]))
 						[rel setMinCount: 1];
+
+					// Exclude foreign key fields from attributes. Core Data wouldn't update them anyway.
+					if (excludeFkeyAttrs && (! ([bxRel isToMany] || [bxRel isInverse])))
+					{
+						id <BXForeignKey> fkey = [bxRel foreignKey];
+						[fkey iterateColumnNames: &AttributeNameCallback context: &fkeyContext];
+					}
 				}
 			}
 		}
 		
+		BXEnumerate (bxAttr, e, [attributesByName objectEnumerator])
+		{
+			if (! ([bxAttr isExcluded] || [excludedAttributes containsObject: bxAttr]))
+			{
+				NSAttributeDescription* attr = [[[NSAttributeDescription alloc] init] autorelease];
+				[properties addObject: attr];
+				
+				[attr setName: [bxAttr name]];
+				
+				IdentifierMap::const_iterator it = gTypeMapping.find ([bxAttr databaseTypeName]);
+				if (it != gTypeMapping.end ())
+					[attr setAttributeType: it->second];
+				else
+					[attr setAttributeType: NSUndefinedAttributeType];
+				
+				NSDictionary* userInfo = [NSDictionary dictionaryWithObject: [bxAttr databaseTypeName] forKey: @"Database type"];
+				[attr setUserInfo: userInfo];
+			}
+		}		
+
 		[currentEntity setProperties: properties];
 	}
 	

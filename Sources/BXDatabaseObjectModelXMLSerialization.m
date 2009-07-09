@@ -50,6 +50,11 @@
 {
 	const BOOL exportFkeyRelationships    = options & kBXDatabaseObjectModelSerializationOptionRelationshipsUsingFkeyNames;
 	const BOOL exportRelNameRelationships = options & kBXDatabaseObjectModelSerializationOptionRelationshipsUsingTargetRelationNames;
+	
+	if (options & kBXDatabaseObjectModelSerializationOptionExcludeForeignKeyAttributes)
+		BXLogWarning (@"kBXDatabaseObjectModelSerializationOptionExcludeForeignKeyAttributes is ignored for %@", self);
+	if (options & kBXDatabaseObjectModelSerializationOptionCreateRelationshipsAsOptional)
+		BXLogWarning (@"kBXDatabaseObjectModelSerializationOptionCreateRelationshipsAsOptional is ignored for %@", self);
 
 	NSXMLElement* root = [NSXMLElement elementWithName: @"objectModel"];
 	NSXMLDocument* retval = [NSXMLDocument documentWithRootElement: root];

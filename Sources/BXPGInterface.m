@@ -951,6 +951,25 @@ error:
 }
 
 
+struct fkey_optionality_st {
+	__strong NSDictionary* fo_columns;
+	BOOL fo_is_optional;
+};
+
+
+static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void* context)
+{
+	struct fkey_optionality_st* ctx = (struct fkey_optionality_st *) context;
+	if (! ctx->fo_is_optional)
+	{
+		PGTSColumnDescription* column = [ctx->fo_columns objectForKey: srcName];
+		ExpectV (column);
+		if (! [column isNotNull])
+			ctx->fo_is_optional = YES;
+	}
+}
+
+
 - (BOOL) validateEntities: (NSArray *) entities error: (NSError **) outError
 {
 	BOOL retval = NO;
@@ -1084,13 +1103,11 @@ error:
 					
 					//Name kind
 					[rel setUsesRelationNames: [[currentRel objectForKey: @"has_rel_names"] boolValue]];
-
-					//Optionality
-					//FIXME: all relationships are now treated as optional. NULL constraints should be checked, though.
-					[rel setOptional: YES];
 							
 					if ('m' == kind)
 					{
+						[rel setOptional: YES];
+
 						NSInteger dstconid = [[currentRel objectForKey: @"dstconid"] integerValue];
 						BXPGForeignKeyDescription* dstFkey = [database foreignKeyWithIdentifier: dstconid];
 						[rel setDstForeignKey: dstFkey];
@@ -1103,6 +1120,18 @@ error:
 						//and destination entities.
 						//[helper setGetsChangedByTriggers: YES];                                         
 						[rel setHelperEntity: helper];
+					}
+					else 
+					{
+						//Optionality
+						BOOL isOptional = YES;
+						if (! ([rel isToMany] || [rel isInverse]))
+						{
+							struct fkey_optionality_st ctx = {entity, NO};
+							[fkey iterateColumnNames: &FkeyOptionalityCallback context: &ctx];
+							isOptional = ctx.fo_is_optional;
+						}
+						[rel setOptional: isOptional];
 					}
 					
 					[currentRelationships setObject: rel forKey: name];
