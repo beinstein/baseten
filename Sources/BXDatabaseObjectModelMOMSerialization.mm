@@ -197,7 +197,7 @@ static void AttributeNameCallback (NSString* srcName, NSString* dstName, void* c
 						[rel setMinCount: 1];
 
 					// Exclude foreign key fields from attributes. Core Data wouldn't update them anyway.
-					if (excludeFkeyAttrs && (! ([bxRel isToMany] || [bxRel isInverse])))
+					if (excludeFkeyAttrs && ![bxRel isToMany] && [bxRel isInverse])
 					{
 						id <BXForeignKey> fkey = [bxRel foreignKey];
 						[fkey iterateColumnNames: &AttributeNameCallback context: &fkeyContext];

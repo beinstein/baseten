@@ -952,7 +952,7 @@ error:
 
 
 struct fkey_optionality_st {
-	__strong NSDictionary* fo_columns;
+	__strong NSDictionary* fo_attrs;
 	BOOL fo_is_optional;
 };
 
@@ -962,9 +962,9 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 	struct fkey_optionality_st* ctx = (struct fkey_optionality_st *) context;
 	if (! ctx->fo_is_optional)
 	{
-		PGTSColumnDescription* column = [ctx->fo_columns objectForKey: srcName];
-		ExpectV (column);
-		if (! [column isNotNull])
+		BXAttributeDescription* attr = [ctx->fo_attrs objectForKey: srcName];
+		ExpectV (attr);
+		if ([attr isOptional])
 			ctx->fo_is_optional = YES;
 	}
 }
@@ -1125,9 +1125,9 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 					{
 						//Optionality
 						BOOL isOptional = YES;
-						if (! ([rel isToMany] || [rel isInverse]))
+						if (![rel isToMany] && [rel isInverse])
 						{
-							struct fkey_optionality_st ctx = {entity, NO};
+							struct fkey_optionality_st ctx = {[entity attributesByName], NO};
 							[fkey iterateColumnNames: &FkeyOptionalityCallback context: &ctx];
 							isOptional = ctx.fo_is_optional;
 						}
