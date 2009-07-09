@@ -193,8 +193,13 @@ static void AttributeNameCallback (NSString* srcName, NSString* dstName, void* c
 					[rel setDestinationEntity: dst];
 					if (! [bxRel isToMany])
 						[rel setMaxCount: 1];
-					if (! (relationshipsAsOptional || [bxRel isOptional]))
+					if (relationshipsAsOptional || [bxRel isOptional])
+						[rel setOptional: YES];
+					else
+					{
 						[rel setMinCount: 1];
+						[rel setOptional: NO];
+					}
 
 					// Exclude foreign key fields from attributes. Core Data wouldn't update them anyway.
 					if (excludeFkeyAttrs && ![bxRel isToMany] && [bxRel isInverse])
@@ -214,6 +219,7 @@ static void AttributeNameCallback (NSString* srcName, NSString* dstName, void* c
 				[properties addObject: attr];
 				
 				[attr setName: [bxAttr name]];
+				[attr setOptional: [bxAttr isOptional]];
 				
 				IdentifierMap::const_iterator it = gTypeMapping.find ([bxAttr databaseTypeName]);
 				if (it != gTypeMapping.end ())
