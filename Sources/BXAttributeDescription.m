@@ -117,6 +117,11 @@
 	return NSStringFromClass (mAttributeClass);
 }
 
+- (NSInteger) attributeIndex
+{
+	return mAttributeIndex;
+}
+
 - (enum BXPropertyKind) propertyKind
 {
 	return kBXPropertyKindAttribute;
@@ -209,6 +214,11 @@
 		mFlags |= kBXPropertyExcluded;
 	else
 		mFlags &= ~kBXPropertyExcluded;
+}
+
+- (void) setAttributeIndex: (NSInteger) idx
+{
+	mAttributeIndex = idx;
 }
 
 - (void) setAttributeValueClass: (Class) aClass

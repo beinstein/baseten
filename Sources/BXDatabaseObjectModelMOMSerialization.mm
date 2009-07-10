@@ -38,6 +38,7 @@
 #import "BXRelationshipDescriptionPrivate.h"
 #import "BXLogger.h"
 #import "BXForeignKey.h"
+#import "PGTSHOM.h"
 
 
 typedef std::tr1::unordered_map <id, NSAttributeType,
@@ -106,6 +107,28 @@ static void AttributeNameCallback (NSString* srcName, NSString* dstName, void* c
 }
 
 
+static int FilterVisibleAttrs (id attr)
+{
+	int retval = 0;
+	if (1 <= [attr attributeIndex])
+		retval = 1;
+	return retval;
+}
+
+
+static NSInteger CompareAttrIndices (id lhs, id rhs, void* ctx)
+{
+	NSComparisonResult retval = NSOrderedSame;
+	NSInteger lIdx = [lhs attributeIndex];
+	NSInteger rIdx = [rhs attributeIndex];
+	if (lIdx < rIdx)
+		retval = NSOrderedAscending;
+	else if (lIdx > rIdx)
+		retval = NSOrderedDescending;
+	return retval;
+}
+
+
 + (NSManagedObjectModel *) managedObjectModelFromDatabaseObjectModel: (BXDatabaseObjectModel *) objectModel 
 															 options: (enum BXDatabaseObjectModelSerializationOptions) options
 															   error: (NSError **) outError
@@ -131,6 +154,13 @@ static void AttributeNameCallback (NSString* srcName, NSString* dstName, void* c
 		{
 			NSEntityDescription* currentEntity = [[[NSEntityDescription alloc] init] autorelease];
 			[currentEntity setName: [bxEntity name]];
+			
+			NSMutableArray* attrs = (id) [[bxEntity attributesByName] PGTSValueSelectFunction: &FilterVisibleAttrs];
+			[attrs sortUsingFunction: &CompareAttrIndices context: NULL];
+			attrs = (id) [[attrs PGTSCollect] name];
+			
+			if (attrs)
+				[currentEntity setUserInfo: [NSDictionary dictionaryWithObject: attrs forKey: @"Sorted Attribute Names"]];
 			
 			NSMutableArray* currentSchema = [entitiesBySchema objectForKey: [bxEntity schemaName]];
 			if (! currentSchema)

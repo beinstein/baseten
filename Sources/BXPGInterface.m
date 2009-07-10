@@ -1029,9 +1029,10 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 					NSString* typeName = [[(PGTSColumnDescription *) column type] name];
 					[attr setDatabaseTypeName: typeName];
 					[attr setAttributeValueClass: [classDict objectForKey: typeName] ?: [NSData class]];
-					
-					//Internal fields are excluded by default.
+
+					//Attribute index. Internal fields are excluded by default.
 					NSInteger idx = [column index];
+					[attr setAttributeIndex: idx];
 					if (idx <= 0)
 					{
 						[attr setExcludedByDefault: YES];

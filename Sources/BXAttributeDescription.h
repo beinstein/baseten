@@ -37,11 +37,13 @@
 	Class mAttributeClass;
 	NSString* mDatabaseTypeName;
 	NSMutableSet* mRelationshipsUsing;
+	NSInteger mAttributeIndex;
 }
 
 - (Class) attributeValueClass;
 - (NSString *) attributeValueClassName;
 - (NSString *) databaseTypeName;
+- (NSInteger) attributeIndex;
 - (BOOL) isPrimaryKey;
 - (BOOL) isExcluded;
 - (BOOL) isArray;

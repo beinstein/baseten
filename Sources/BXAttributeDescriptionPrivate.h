@@ -38,6 +38,7 @@
 - (void) setExcluded: (BOOL) aBool;
 - (void) setExcludedByDefault: (BOOL) aBool;
 - (void) setPrimaryKey: (BOOL) aBool;
+- (void) setAttributeIndex: (NSInteger) idx;
 
 - (void) setAttributeValueClass: (Class) aClass;
 - (void) setDatabaseTypeName: (NSString *) typeName;
