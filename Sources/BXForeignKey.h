@@ -36,6 +36,7 @@
 
 
 @protocol BXForeignKey <NSObject>
+- (NSString *) name;
 - (NSDeleteRule) deleteRule;
 - (NSUInteger) numberOfColumns;
 - (void) iterateColumnNames: (void (*)(NSString* srcName, NSString* dstName, void* context)) callback context: (void *) context;

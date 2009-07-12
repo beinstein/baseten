@@ -49,6 +49,7 @@ typedef std::tr1::unordered_map <id, NSAttributeType,
 
 
 static IdentifierMap gTypeMapping;
+__strong static NSDictionary* gNameMapping;
 
 
 @implementation BXDatabaseObjectModelMOMSerialization
@@ -81,6 +82,11 @@ static IdentifierMap gTypeMapping;
 		gTypeMapping [@"varchar"]     = NSStringAttributeType;
 		gTypeMapping [@"bpchar"]      = NSStringAttributeType;
 		gTypeMapping [@"uuid"]        = NSStringAttributeType;
+		
+		gNameMapping = [[NSDictionary alloc] initWithObjectsAndKeys:
+						@"modelDescription", @"description",
+						@"modelObjectID", @"objectID",
+						nil];
 	}
 }
 
@@ -91,19 +97,48 @@ static IdentifierMap gTypeMapping;
 }
 
 
-struct attribute_name_st
++ (NSString *) sanitizedName: (NSString *) dbName
 {
-	__strong NSMutableSet* an_excludedAttributes;
-	__strong BXEntityDescription* an_entity;
+	NSString* retval = [gNameMapping objectForKey: dbName];
+	if (! retval)
+		retval = dbName;
+	return retval;
+}
+
+
++ (void) sanitizeAttrName: (BXAttributeDescription *) attr target: (NSMutableArray *) array
+{
+	[array addObject: [self sanitizedName: [attr name]]];
+}
+
+
+struct fkey_fn_st {
+	__strong NSMutableArray* ff_srcNames;
+	__strong NSMutableArray* ff_dstNames;
 };
 
 
-static void AttributeNameCallback (NSString* srcName, NSString* dstName, void* ctx)
+static void FkeyFnCallback (NSString* srcName, NSString* dstName, void* ctxPtr)
 {
-	struct attribute_name_st* context = (struct attribute_name_st *) ctx;
-	BXAttributeDescription* attr = [[context->an_entity attributesByName] objectForKey: srcName];
+	struct fkey_fn_st* ctx = (struct fkey_fn_st *) ctxPtr;
+	[ctx->ff_srcNames addObject: srcName];
+	[ctx->ff_dstNames addObject: dstName];
+}
+
+
+struct fkey_excl_st
+{
+	__strong NSMutableSet* fn_excludedAttributes;
+	__strong BXEntityDescription* fn_entity;
+};
+
+
+static void FkeyExclusionCallback (NSString* srcName, NSString* dstName, void* ctxPtr)
+{
+	struct fkey_excl_st* ctx = (struct fkey_excl_st *) ctxPtr;
+	BXAttributeDescription* attr = [[ctx->fn_entity attributesByName] objectForKey: srcName];
 	ExpectV (attr);
-	[context->an_excludedAttributes addObject: attr];
+	[ctx->fn_excludedAttributes addObject: attr];
 }
 
 
@@ -157,10 +192,10 @@ static NSInteger CompareAttrIndices (id lhs, id rhs, void* ctx)
 			
 			NSMutableArray* attrs = (id) [[bxEntity attributesByName] PGTSValueSelectFunction: &FilterVisibleAttrs];
 			[attrs sortUsingFunction: &CompareAttrIndices context: NULL];
-			attrs = (id) [[attrs PGTSCollect] name];
+			NSMutableArray* sanitizedNames = [NSMutableArray arrayWithCapacity: [attrs count]];
+			[[attrs PGTSVisit: self] sanitizeAttrName: nil target: sanitizedNames];
 			
-			if (attrs)
-				[currentEntity setUserInfo: [NSDictionary dictionaryWithObject: attrs forKey: @"Sorted Attribute Names"]];
+			[currentEntity setUserInfo: [NSDictionary dictionaryWithObject: sanitizedNames forKey: @"Sorted Attribute Names"]];
 			
 			NSMutableArray* currentSchema = [entitiesBySchema objectForKey: [bxEntity schemaName]];
 			if (! currentSchema)
@@ -195,7 +230,7 @@ static NSInteger CompareAttrIndices (id lhs, id rhs, void* ctx)
 		NSDictionary* attributesByName = [bxEntity attributesByName];
 
 		[excludedAttributes removeAllObjects];
-		struct attribute_name_st fkeyContext = {excludedAttributes, bxEntity};
+		struct fkey_excl_st fkeyContext = {excludedAttributes, bxEntity};
 
 		NSDictionary* relationshipsByName = nil;
 		if ([bxEntity hasCapability: kBXEntityCapabilityRelationships])
@@ -219,7 +254,7 @@ static NSInteger CompareAttrIndices (id lhs, id rhs, void* ctx)
 					
 					NSEntityDescription* dst = [[retval entitiesByName] objectForKey: [bxDst name]];
 
-					[rel setName: [bxRel name]];
+					[rel setName: [self sanitizedName: [bxRel name]]];
 					[rel setDestinationEntity: dst];
 					if (! [bxRel isToMany])
 						[rel setMaxCount: 1];
@@ -231,11 +266,26 @@ static NSInteger CompareAttrIndices (id lhs, id rhs, void* ctx)
 						[rel setOptional: NO];
 					}
 
-					// Exclude foreign key fields from attributes. Core Data wouldn't update them anyway.
-					if (excludeFkeyAttrs && ![bxRel isToMany] && [bxRel isInverse])
+					if (![bxRel isToMany] && [bxRel isInverse])
 					{
 						id <BXForeignKey> fkey = [bxRel foreignKey];
-						[fkey iterateColumnNames: &AttributeNameCallback context: &fkeyContext];
+						
+						// Exclude foreign key fields from attributes. Core Data wouldn't update them anyway.
+						if (excludeFkeyAttrs)
+							[fkey iterateColumnNames: &FkeyExclusionCallback context: &fkeyContext];
+
+						// Add fkey name and field names to relationship's userInfo.
+						NSUInteger count = [fkey numberOfColumns];
+						NSMutableArray* srcNames = [NSMutableArray arrayWithCapacity: count];
+						NSMutableArray* dstNames = [NSMutableArray arrayWithCapacity: count];
+						struct fkey_fn_st fkeyFNames = {srcNames, dstNames};
+						[fkey iterateColumnNames: &FkeyFnCallback context: &fkeyFNames];
+						NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+												  [fkey name], @"Foreign key",
+												  srcNames, @"Foreign key source fields",
+												  dstNames, @"Foreign key destination fields",
+												  nil];
+						[rel setUserInfo: userInfo];						
 					}
 				}
 			}
@@ -248,7 +298,7 @@ static NSInteger CompareAttrIndices (id lhs, id rhs, void* ctx)
 				NSAttributeDescription* attr = [[[NSAttributeDescription alloc] init] autorelease];
 				[properties addObject: attr];
 				
-				[attr setName: [bxAttr name]];
+				[attr setName: [self sanitizedName: [bxAttr name]]];
 				[attr setOptional: [bxAttr isOptional]];
 				
 				IdentifierMap::const_iterator it = gTypeMapping.find ([bxAttr databaseTypeName]);
