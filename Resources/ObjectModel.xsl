@@ -66,11 +66,11 @@
 
     <xsl:template match="//attributes">
         <xsl:comment>Attributes</xsl:comment>
-        <xsl:if test="0 &lt; count (./attribute)">
+        <xsl:if test="0 &lt; count (./attribute [not (@isInherited = 'true')])">
             <xsl:text>&#9;&#9;&#9;&lt;tr&gt;&#10;</xsl:text>
             <xsl:text>&#9;&#9;&#9;&#9;&lt;td&gt;&#10;</xsl:text>
             <xsl:text>&#9;&#9;&#9;&#9;&#9;&lt;table border="0"&gt;&#10;</xsl:text>
-            <xsl:apply-templates select="./attribute" />
+            <xsl:apply-templates select="./attribute [not (@isInherited = 'true')]" />
             <xsl:text>&#9;&#9;&#9;&#9;&#9;&lt;/table&gt;&#10;</xsl:text>
             <xsl:text>&#9;&#9;&#9;&#9;&lt;/td&gt;&#10;</xsl:text>
             <xsl:text>&#9;&#9;&#9;&lt;/tr&gt;&#10;</xsl:text>
@@ -118,7 +118,7 @@
 
         <xsl:text>&#9;&#9;&#9;&#9;&#9;&#9;&lt;/tr&gt;&#10;</xsl:text>
     </xsl:template>
-
+	
     
     <xsl:template match="//relationship" mode="edge">
         <xsl:variable name="entityName" select="../../@id" />

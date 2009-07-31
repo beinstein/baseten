@@ -60,7 +60,7 @@
 
     <xsl:template match="//attributes">
         <xsl:comment>Attributes</xsl:comment>
-        <xsl:apply-templates select="./attribute" />
+        <xsl:apply-templates select="./attribute [not (@isInherited = 'true')]" />
     </xsl:template>
 
 
