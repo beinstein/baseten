@@ -56,6 +56,7 @@ enum BXEntityFlag
     id                      mObjectIDs;    
     id                      mSuperEntities;
     id                      mSubEntities;
+	id						mFetchedSuperEntities; //FIXME: merge with the previous two.
     enum BXEntityFlag       mFlags;
 	enum BXEntityCapability mCapabilities;
 }
@@ -77,7 +78,7 @@ enum BXEntityFlag
 - (NSDictionary *) propertiesByName;
 - (BOOL) hasCapability: (enum BXEntityCapability) aCapability;
 - (BOOL) isEnabled;
-
+   
 - (void) inherits: (NSArray *) entities;
 - (void) addSubEntity: (BXEntityDescription *) entity;
 - (id) inheritedEntities;

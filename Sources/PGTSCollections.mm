@@ -41,6 +41,15 @@ const CFSetCallBacks kNonRetainingSetCallbacks = {
 };
 
 
+const CFArrayCallBacks kNonRetainingArrayCallbacks = {
+	0,
+	NULL,
+	NULL,
+	&CFCopyDescription,
+	&CFEqual
+};
+
+
 const CFDictionaryValueCallBacks kNonRetainingDictionaryValueCallbacks = {
 	0,
 	NULL,
@@ -106,6 +115,19 @@ id PGTSSetCreateMutableStrongRetainingForNSRD ()
 }
 
 
+id PGTSArrayCreateMutableWeakNonretaining ()
+{
+	id retval = nil;
+	if (PGTS::scanned_memory_allocator_env::allocate_scanned)
+		retval = [NSPointerArray pointerArrayWithWeakObjects];
+	else
+	{
+		retval = (id) CFArrayCreateMutable (NULL, 0, &kNonRetainingArrayCallbacks);
+	}
+	return retval;
+}
+
+
 id PGTSDictionaryCreateMutableWeakNonretainedObjects ()
 {
 	id retval = nil;
@@ -121,8 +143,21 @@ id PGTSDictionaryCreateMutableWeakNonretainedObjects ()
 }
 
 
-//By adding the methods to NSObject we don't override NSMapTable's implementation if one gets made.
+//By adding the methods to NSObject we don't override NSMapTable's and NSPointerArray's implementation if one gets made.
 @implementation NSObject (PGTSCollectionAdditions)
+#pragma mark NSPointerArray additions
+- (void) addObject: (id) anObject
+{
+	[(id) self addPointer: anObject];
+}
+
+- (NSEnumerator *) objectEnumerator
+{
+	return [[(id) self allObjects] objectEnumerator];
+}
+
+
+#pragma mark NSMapTable additions
 - (void) makeObjectsPerformSelector: (SEL) selector withObject: (id) object
 {
 	NSEnumerator* e = [(id) self objectEnumerator];

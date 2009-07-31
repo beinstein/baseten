@@ -46,6 +46,8 @@
 - (void) setHasCapability: (enum BXEntityCapability) aCapability to: (BOOL) flag;
 - (void) setEnabled: (BOOL) flag;
 - (id) inverseToOneRelationships;
+- (void) setFetchedSuperEntities: (NSArray *) entities; //FIXME: merge with other super & sub entity methods.
+- (id) fetchedSuperEntities; //FIXME: merge with other super & sub entity methods.
 
 - (BOOL) beginValidation;
 - (void) setValidated: (BOOL) flag;

@@ -84,6 +84,10 @@
 				NSXMLElement* type = [NSXMLElement elementWithName: @"type" stringValue: [currentAttr databaseTypeName]];
 				[attr addChild: name];
 				[attr addChild: type];
+				
+				NSXMLElement* isInherited = [NSXMLElement attributeWithName: @"isInherited" stringValue: ([currentAttr isInherited] ? @"true" : @"false")];
+				[attr addAttribute: isInherited];
+				
 				[attrs addChild: attr];
 			}
 		}

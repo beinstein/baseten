@@ -107,6 +107,11 @@
 	return mIsNotNull;
 }
 
+- (BOOL) isInherited
+{
+	return mIsInherited;
+}
+
 - (void) setType: (PGTSTypeDescription *) type
 {
 	if (mType != type)
@@ -119,6 +124,11 @@
 - (void) setNotNull: (BOOL) aBool
 {
 	mIsNotNull = aBool;
+}
+
+- (void) setInherited: (BOOL) aBool
+{
+	mIsInherited = aBool;
 }
 
 - (void) setDefaultValue: (NSString *) anObject

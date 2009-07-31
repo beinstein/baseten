@@ -65,6 +65,9 @@ using namespace PGTS;
 	
 	delete mUniqueIndexes;
 	
+	if (mInheritedOids)
+		delete mInheritedOids;
+	
 	[super dealloc];
 }
 
@@ -72,6 +75,8 @@ using namespace PGTS;
 {
 	delete mColumnsByIndex;
 	delete mUniqueIndexes;
+	if (mInheritedOids)
+		delete mInheritedOids;
 	[super finalize];
 }
 
@@ -117,6 +122,20 @@ using namespace PGTS;
 	return retval;
 }
 
+
+- (void) iterateInheritedOids: (void (*)(Oid currentOid, void* context)) callback context: (void *) context
+{
+	if (mInheritedOids)
+	{
+		for (OidList::const_iterator it = mInheritedOids->begin (), end = mInheritedOids->end ();
+			it != end; it++)
+		{
+			callback (*it, context);
+		}
+	}
+}
+
+
 - (void) addIndex: (PGTSIndexDescription *) anIndex
 {
 	ExpectV (anIndex);
@@ -139,5 +158,14 @@ using namespace PGTS;
 	int idx = [column index];
 	if (! (* mColumnsByIndex) [idx])
 		(* mColumnsByIndex) [idx] = [column retain];
+}
+
+- (void) addInheritedOid: (Oid) anOid
+{
+	ExpectV (InvalidOid != anOid)
+	
+	if (! mInheritedOids)
+		mInheritedOids = new OidList ();
+	mInheritedOids->push_back (anOid);
 }
 @end

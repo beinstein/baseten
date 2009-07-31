@@ -951,10 +951,26 @@ error:
 }
 
 
+struct table_inheritance_st {
+	__strong BXDatabaseObjectModel* ti_object_model;
+	__strong BXPGDatabaseDescription* ti_database_description;
+	__strong id ti_super_entities;
+};
+
+
 struct fkey_optionality_st {
 	__strong NSDictionary* fo_attrs;
 	BOOL fo_is_optional;
 };
+
+
+static void TableInheritanceCallback (Oid currentOid, void* ctxPointer)
+{
+	struct table_inheritance_st* ctx = (struct table_inheritance_st *) ctxPointer;
+	BXPGTableDescription* table = [ctx->ti_database_description tableWithOid: currentOid];
+	BXEntityDescription* entity = [ctx->ti_object_model entityForTable: [table name] inSchema: [table schemaName] error: NULL];
+	[ctx->ti_super_entities addObject: entity];
+}
 
 
 static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void* context)
@@ -1006,10 +1022,17 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 					[entity setHasCapability: kBXEntityCapabilityAutomaticUpdate to: YES];
 					[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
 				}
+				
+				id superEntities = [PGTSArrayCreateMutableWeakNonretaining () autorelease];
+				struct table_inheritance_st ctx = {objectModel, database, superEntities};
+				[table iterateInheritedOids: &TableInheritanceCallback context: &ctx];
+				[entity setFetchedSuperEntities: superEntities];
 			}
 			
 			//Attributes
 			{
+				//FIXME: Handle inherited attributes!
+				
 				[currentAttributes removeAllObjects];
 				NSDictionary* columns = [table columns];
 				NSSet* pkeyColumns = [[table primaryKey] columns];
@@ -1029,6 +1052,9 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 					NSString* typeName = [[(PGTSColumnDescription *) column type] name];
 					[attr setDatabaseTypeName: typeName];
 					[attr setAttributeValueClass: [classDict objectForKey: typeName] ?: [NSData class]];
+					
+					//Inheritance
+					[attr setInherited: [column isInherited]];
 
 					//Attribute index. Internal fields are excluded by default.
 					NSInteger idx = [column index];

@@ -39,7 +39,8 @@ enum BXPropertyFlag
 	kBXPropertyPrimaryKey			= 1 << 1,
 	kBXPropertyExcluded				= 1 << 2,
 	kBXPropertyIsArray				= 1 << 3,
-	kBXPropertyExcludedByDefault	= 1 << 4
+	kBXPropertyExcludedByDefault	= 1 << 4,
+	kBXPropertyInherited			= 1 << 5
 };
 
 #ifdef __cplusplus

@@ -169,5 +169,6 @@ enum BXDatabaseObjectModelSerializationOptions
 	kBXDatabaseObjectModelSerializationOptionRelationshipsUsingFkeyNames           = (1 << 0),
 	kBXDatabaseObjectModelSerializationOptionRelationshipsUsingTargetRelationNames = (1 << 1),
 	kBXDatabaseObjectModelSerializationOptionExcludeForeignKeyAttributes           = (1 << 2),
-	kBXDatabaseObjectModelSerializationOptionCreateRelationshipsAsOptional         = (1 << 3)
+	kBXDatabaseObjectModelSerializationOptionCreateRelationshipsAsOptional         = (1 << 3),
+	kBXDatabaseObjectModelSerializationOptionIncludeSuperEntities                  = (1 << 4)
 };

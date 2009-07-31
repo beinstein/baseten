@@ -43,6 +43,12 @@ PGTS_EXPORT id PGTSOidAsObject (Oid o);
 
 namespace PGTS 
 {
+	typedef std::list <Oid>
+		OidList;
+	
+	typedef std::tr1::unordered_set <Oid>
+		OidSet;
+	
 	typedef std::tr1::unordered_map <Oid, id, 
 		std::tr1::hash <Oid>, 
 		std::equal_to <Oid>, 
@@ -50,8 +56,12 @@ namespace PGTS
 		OidMap;
 }
 
-#define PGTS_OidMap PGTS::OidMap
+#define PGTS_OidList PGTS::OidList
+#define PGTS_OidSet  PGTS::OidSet
+#define PGTS_OidMap  PGTS::OidMap
 
 #else
-#define PGTS_OidMap void
+#define PGTS_OidList void
+#define PGTS_OidSet  void
+#define PGTS_OidMap  void
 #endif

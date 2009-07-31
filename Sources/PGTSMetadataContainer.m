@@ -247,13 +247,36 @@
 }
 
 
+- (void) fetchInheritance: (PGTSConnection *) connection
+{
+	ExpectV (connection);
+	NSString* query =
+	@"SELECT inhrelid, inhparent FROM pg_inherits ORDER BY inhrelid, inhseqno";
+	PGTSResultSet* res = [connection executeQuery: query];
+	ExpectV ([res querySucceeded]);
+	
+	{
+		while ([res advanceRow])
+		{
+			Oid currentOid = [[res valueForKey: @"inhrelid"] PGTSOidValue];
+			PGTSTableDescription* table = [mDatabase tableWithOid: currentOid];
+			if (table)
+			{
+				Oid parentOid = [[res valueForKey: @"inhparent"] PGTSOidValue];
+				[table addInheritedOid: parentOid];
+			}
+		}
+	}
+}
+
+
 - (void) fetchColumns: (PGTSConnection *) connection
 {
 	ExpectV (connection);
 	
 	{
 		NSString* query = 
-		@"SELECT a.attrelid, a.attname, a.attnum, a.atttypid, a.attnotnull, pg_get_expr (d.adbin, d.adrelid, false) AS default "
+		@"SELECT a.attrelid, a.attname, a.attnum, a.atttypid, a.attnotnull, a.attinhcount, pg_get_expr (d.adbin, d.adrelid, false) AS default "
 		@" FROM pg_attribute a "
 		@" INNER JOIN pg_class c ON a.attrelid = c.oid "
 		@" INNER JOIN pg_namespace n ON n.oid = c.relnamespace "
@@ -269,7 +292,8 @@
 		while ([res advanceRow])
 		{
 			Oid typeOid = [[res valueForKey: @"atttypid"] PGTSOidValue];
-			Oid relid = [[res valueForKey: @"attrelid"] PGTSOidValue];			
+			Oid relid = [[res valueForKey: @"attrelid"] PGTSOidValue];
+			NSInteger inhcount = [[res valueForKey: @"attinhcount"] integerValue];
 			PGTSTypeDescription* type = [mDatabase typeWithOid: typeOid];
 			PGTSColumnDescription* column = nil;
 			if ([@"xml" isEqualToString: [type name]])
@@ -280,8 +304,10 @@
 			[column setType: type];
 			[column setName: [res valueForKey: @"attname"]];
 			[column setIndex: [[res valueForKey: @"attnum"] integerValue]];
-			[column setNotNull: [[res valueForKey: @"attnotnull"] boolValue]];			
+			[column setNotNull: [[res valueForKey: @"attnotnull"] boolValue]];
+			[column setInherited: (0 == inhcount ? NO : YES)];
 			[column setDefaultValue: [res valueForKey: @"default"]];
+			//FIXME: mark inherited columns.
 			
 			[[mDatabase tableWithOid: relid] addColumn: column];
 		}
@@ -351,7 +377,11 @@
 		{
 			NSInteger i = [currentIndex integerValue];
 			if (0 < i)
-				[columns addObject: [table columnAtIndex: i]];
+			{
+				id column = [table columnAtIndex: i];
+				ExpectV (column);
+				[columns addObject: column];
+			}
 		}
 		[index setColumns: columns];
 		
@@ -381,6 +411,7 @@
 	[self fetchSchemas: connection];
 	[self fetchRoles: connection];
 	[self fetchRelations: connection];
+	[self fetchInheritance: connection];
 	[self fetchColumns: connection];
 	[self fetchUniqueIndexes: connection];	
 }

@@ -99,6 +99,11 @@
 	return (mFlags & kBXPropertyExcluded ? YES : NO);
 }
 
+- (BOOL) isInherited
+{
+	return (mFlags & kBXPropertyInherited ? YES : NO);
+}
+
 /** \brief Name of the attribute's database type. */
 - (NSString *) databaseTypeName
 {
@@ -206,6 +211,14 @@
 		else
 			mFlags &= ~kBXPropertyExcludedByDefault;
 	}
+}
+
+- (void) setInherited: (BOOL) aBool
+{
+	if (aBool)
+		mFlags |= kBXPropertyInherited;
+	else
+		mFlags &= ~kBXPropertyInherited;
 }
 
 - (void) resetAttributeExclusion

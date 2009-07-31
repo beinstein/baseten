@@ -139,4 +139,5 @@ namespace PGTS
 
 BX_EXPORT id PGTSSetCreateMutableWeakNonretaining ();
 BX_EXPORT id PGTSSetCreateMutableStrongRetainingForNSRD (); //Has a better comparison function for NSRelationshipDescription.
+BX_EXPORT id PGTSArrayCreateMutableWeakNonretaining ();
 BX_EXPORT id PGTSDictionaryCreateMutableWeakNonretainedObjects ();

@@ -63,6 +63,7 @@
 	[mValidationLock release];
 	[mObjectIDs release];
 	[mRelationships release];
+	[mFetchedSuperEntities release];
 	
 	[super dealloc];
 }
@@ -455,6 +456,24 @@ FilterPkeyAttributes (id attribute, void* arg)
     return nil;
 }
 //@}
+
+
+- (void) setFetchedSuperEntities: (NSArray *) entities
+{
+	if (entities != mFetchedSuperEntities)
+	{
+		[mFetchedSuperEntities release];
+		//FIXME: this should be -copy but NSPointerArray doesn't seem to implement it.
+		mFetchedSuperEntities = [entities retain];
+	}
+}
+
+
+- (id) fetchedSuperEntities
+{
+	return mFetchedSuperEntities;
+}
+
 
 - (void) registerObjectID: (BXDatabaseObjectID *) anID
 {

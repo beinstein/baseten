@@ -41,6 +41,7 @@
 	NSString* mDefaultValue;
     PGTSTypeDescription* mType;
 	BOOL mIsNotNull;
+	BOOL mIsInherited;
 }
 
 - (NSString *) quotedName: (PGTSConnection *) connection;
@@ -51,12 +52,14 @@
 - (PGTSTypeDescription *) type;
 - (NSString *) defaultValue;
 - (BOOL) isNotNull;
+- (BOOL) isInherited;
 
 //Thread un-safe methods.
 - (void) setIndex: (NSInteger) anIndex;
 - (void) setType: (PGTSTypeDescription *) anOid;
 - (void) setDefaultValue: (NSString *) defaultExpression;
 - (void) setNotNull: (BOOL) aBool;
+- (void) setInherited: (BOOL) aBool;
 
 //Stubs for sub classes' methods.
 - (BOOL) requiresDocuments;

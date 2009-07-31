@@ -47,4 +47,5 @@
 - (BOOL) isPrimaryKey;
 - (BOOL) isExcluded;
 - (BOOL) isArray;
+- (BOOL) isInherited;
 @end

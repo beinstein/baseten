@@ -43,6 +43,7 @@
 {
 	PGTS_IndexMap* mColumnsByIndex;
 	PGTS_IdList* mUniqueIndexes;
+	PGTS_OidList* mInheritedOids;
 
 	NSDictionary* mColumnsByName;
 	NSLock* mColumnLock;
@@ -54,7 +55,10 @@
 - (PGTSColumnDescription *) columnAtIndex: (int) anIndex;
 - (NSDictionary *) columns;
 
+- (void) iterateInheritedOids: (void (*)(Oid currentOid, void* context)) callback context: (void *) context;
+
 //Thread un-safe methods.
 - (void) addIndex: (PGTSIndexDescription *) anIndex;
 - (void) addColumn: (PGTSColumnDescription *) aColumn;
+- (void) addInheritedOid: (Oid) anOid;
 @end
