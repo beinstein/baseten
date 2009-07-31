@@ -859,12 +859,12 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
 			ELSE 
-				r2.relname 
+				r2.relname::TEXT
 			END,
 			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
 			ELSE 
-				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
+				r1.relname::TEXT || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
 			END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			true,
@@ -885,12 +885,12 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
 			ELSE 
-				r1.relname || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
+				r1.relname::TEXT || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
 			END,
 			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
 				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
 			ELSE 
-				r2.relname 
+				r2.relname::TEXT
 			END,
 			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
 			false,
