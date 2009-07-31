@@ -203,7 +203,7 @@
 		535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */; };
 		535661D90F02603600920008 /* BXLocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D70F02603600920008 /* BXLocalizedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D80F02603600920008 /* BXSafetyMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		535736C50F3283C200DB3D0B /* BXDatabaseObjectModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 535736C30F3283C200DB3D0B /* BXDatabaseObjectModel.h */; };
+		535736C50F3283C200DB3D0B /* BXDatabaseObjectModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 535736C30F3283C200DB3D0B /* BXDatabaseObjectModel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535736C60F3283C200DB3D0B /* BXDatabaseObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 535736C40F3283C200DB3D0B /* BXDatabaseObjectModel.m */; };
 		535736CB0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 535736C90F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.h */; };
 		535736CC0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 535736CA0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.m */; };
