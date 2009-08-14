@@ -996,8 +996,8 @@ ModTypeToObject (enum BXModificationType value)
 @implementation BXDatabaseContext (Undoing)
 - (void) undoGroupWillClose: (NSNotification *) notification
 {
-	unsigned int groupingLevel = [mUndoManager groupingLevel];
-	unsigned int currentLevel = NSNotFound;
+	NSUInteger groupingLevel = [mUndoManager groupingLevel];
+	NSUInteger currentLevel = NSNotFound;
 	BOOL shouldEstablishSavepoint = NO;
 	while (NSNotFound != (currentLevel = [mUndoGroupingLevels lastIndex]))
 	{
@@ -1043,10 +1043,10 @@ ModTypeToObject (enum BXModificationType value)
 	}
 	else
 	{
-		int lastLevel = [mUndoGroupingLevels lastIndex];
+		NSUInteger lastLevel = [mUndoGroupingLevels lastIndex];
 		if (lastLevel != groupingLevel)
 		{
-			BXAssertValueReturn (NSNotFound == (unsigned) lastLevel || lastLevel < groupingLevel, NO, 
+			BXAssertValueReturn (NSNotFound == lastLevel || lastLevel < groupingLevel, NO, 
 								   @"Undo group level stack is corrupt.");
 			[mUndoGroupingLevels addIndex: groupingLevel];
 		}

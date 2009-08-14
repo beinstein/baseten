@@ -27,7 +27,7 @@
 //
 
 
-#import <BaseTen/postgresql/libpq-fe.h>
+#import <BaseTen/libpq-fe.h>
 #import "PGTSFoundationObjects.h"
 #import "PGTSConnection.h"
 #import "PGTSConnectionPrivate.h"
@@ -302,7 +302,7 @@ continue_iteration:
 static inline void
 AppendBytes (IMP impl, NSMutableData* target, const void* bytes, unsigned int length)
 {
-    (void (*)(id, SEL, const void*, unsigned int)) impl (target, @selector (appendBytes:length:), bytes, length);
+	(void)(void (*)(id, SEL, const void*, unsigned int)) impl (target, @selector (appendBytes:length:), bytes, length);
 }
 
 static inline void

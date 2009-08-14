@@ -231,7 +231,7 @@ bail:
     return mURIRepresentation;
 }
 
-- (unsigned int) hash
+- (NSUInteger) hash
 {
     return mHash;
 }

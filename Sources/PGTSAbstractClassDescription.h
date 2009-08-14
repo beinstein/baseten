@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/postgresql/libpq-fe.h>
+#import <BaseTen/libpq-fe.h>
 #import <BaseTen/PGTSSchemaObjectDescription.h>
 #import <BaseTen/PGTSConstants.h>
 #import <BaseTen/PGTSOids.h>

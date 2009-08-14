@@ -52,7 +52,7 @@
 - (NSString *) schemaName;
 
 - (PGTSIndexDescription *) primaryKey;
-- (PGTSColumnDescription *) columnAtIndex: (int) anIndex;
+- (PGTSColumnDescription *) columnAtIndex: (NSInteger) anIndex;
 - (NSDictionary *) columns;
 
 - (void) iterateInheritedOids: (void (*)(Oid currentOid, void* context)) callback context: (void *) context;

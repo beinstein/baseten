@@ -30,6 +30,9 @@
 #import <BaseTen/BXRelationshipDescription.h>
 
 @class BXDatabaseObject;
+@class BXPGHelperTableRelationshipFromItem;
+@protocol BXPGRelationshipVisitor;
+
 
 @interface BXManyToManyRelationshipDescription : BXRelationshipDescription 
 {
@@ -44,4 +47,9 @@
 - (NSPredicate *) filterPredicateFor: (BXDatabaseObject *) object;
 - (void) iterateForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx;
 - (void) iterateDstForeignKey: (void (*)(NSString*, NSString*, void*)) callback context: (void *) ctx;
+@end
+
+
+@interface BXManyToManyRelationshipDescription (BXPGRelationAliasMapper)
+- (id) BXPGVisitRelationship: (id <BXPGRelationshipVisitor>) visitor fromItem: (BXPGHelperTableRelationshipFromItem *) fromItem;
 @end

@@ -9,9 +9,24 @@ then
 
 	for file in lib/libpq.a bin/psql
 	do
-    	lipo -create -output "$my_build_dir"/universal/"$file" \
-			"$my_build_dir"/i386/"$file" \
-			"$my_build_dir"/ppc/"$file"
+        exec_lipo=0
+        input_files=""
+        for arch in "$ARCHS"
+        do
+            path="$my_build_dir"/"$arch"/"$file"
+            if [ -f "$path" ]
+            then
+                exec_lipo=1
+                input_files="${input_files} ${path}"
+            else
+                echo "Warning: file at '${path}' doesn't exist."
+            fi
+        done
+
+        if [ $exec_lipo ]
+        then
+            lipo ${input_files} -create -output "$my_build_dir"/universal/"$file" $args
+        fi
 	done
 	
 	cp -R "$my_build_dir"/universal/include "$my_build_dir"/postgresql

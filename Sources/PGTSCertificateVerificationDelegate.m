@@ -150,7 +150,7 @@ __strong static id <PGTSCertificateVerificationDelegate> gDefaultCertDelegate = 
 	
 	if (bioOutput && opensslCert)
 	{
-		BIO_reset (bioOutput);
+		(void) BIO_reset (bioOutput);
 		if (i2d_X509_bio (bioOutput, opensslCert))
 		{
 			BUF_MEM* bioBuffer = NULL;

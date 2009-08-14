@@ -1,8 +1,8 @@
 //
-// pg_config.h
+// libpq-fe.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -26,12 +26,16 @@
 // $Id$
 //
 
-#if defined (__ppc__) || defined (__ppc64__)
-#include <machine/ppc/pg_config.h>
-#elif defined (__i386__) || defined(__x86_64__)
-#include <machine/i386/pg_config.h>
-#elif defined (__arm__)
-#include <machine/arm/pg_config.h>
+#if defined (__ppc__) && __ppc__
+#include <BaseTen/postgresql/ppc/libpq-fe.h>
+#elif defined (__ppc64__) && __ppc64__
+#include <BaseTen/postgresql/ppc64/libpq-fe.h>
+#elif defined (__i386__) && __i386__
+#include <BaseTen/postgresql/i386/libpq-fe.h>
+#elif defined (__x86_64__) && __x86_64__
+#include <BaseTen/postgresql/x86_64/libpq-fe.h>
+#elif defined (__arm__) && __arm__
+#include <BaseTen/postgresql/arm/libpq-fe.h>
 #else
-#error architecture not supported
+#error "Unsupported architecture."
 #endif

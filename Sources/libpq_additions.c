@@ -28,7 +28,7 @@
 
 #import "BXOpenSSLCompatibility.h"
 #import "libpq_additions.h"
-#import "postgresql/postgresql/internal/libpq-int.h"
+#import "postgresql/internal/libpq-int.h"
 
 const char* 
 pq_ssl_mode (const PGconn* connection)

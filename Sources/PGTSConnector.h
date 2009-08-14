@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/postgresql/libpq-fe.h>
+#import <BaseTen/libpq-fe.h>
 
 @class PGTSConnector;
 

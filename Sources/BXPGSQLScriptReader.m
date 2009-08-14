@@ -26,12 +26,12 @@
 // $Id$
 //
 
+#import <SQLParser/BXPGSQLScanner.h>
+#import <sys/stat.h>
+
 #import "PGTS.h"
-#import "BXPGSQLScanner.h"
 #import "BXPGSQLScriptReader.h"
 #import "BXPGAdditions.h"
-
-#import <sys/stat.h>
 
 
 @interface BXPGSQLScriptReader (BXPGSQLScannerDelegate) <BXPGSQLScannerDelegate>

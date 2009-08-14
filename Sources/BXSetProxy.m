@@ -52,7 +52,7 @@
     return self;
 }
 
-- (unsigned int) countForObject: (id) anObject
+- (NSUInteger) countForObject: (id) anObject
 {
     return [mContainer countForObject: anObject];
 }

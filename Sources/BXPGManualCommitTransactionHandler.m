@@ -45,9 +45,9 @@
 }
 
 
-- (PGTSDatabaseDescription *) databaseDescription
+- (BXPGDatabaseDescription *) databaseDescription
 {
-	return [mNotifyConnection databaseDescription];
+	return (id) [mNotifyConnection databaseDescription];
 }
 
 

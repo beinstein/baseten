@@ -32,7 +32,7 @@
 #import "PGTSQuery.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSProbes.h"
-#import <BaseTen/postgresql/libpq-fe.h>
+#import <BaseTen/libpq-fe.h>
 
 
 volatile static NSInteger gIdentifier = 0;

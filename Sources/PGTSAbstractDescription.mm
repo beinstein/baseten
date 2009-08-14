@@ -97,7 +97,7 @@ PGTS::InsertConditionally (IdMap* map, PGTSAbstractDescription* description)
     return retval;
 }
 
-- (unsigned int) hash
+- (NSUInteger) hash
 {
     return mHash;
 }

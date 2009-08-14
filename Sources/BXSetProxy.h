@@ -34,6 +34,6 @@
 }
 - (id) mutableSet;
 
-- (unsigned int) countForObject: (id) anObject;
+- (NSUInteger) countForObject: (id) anObject;
 - (id) countedSet;
 @end

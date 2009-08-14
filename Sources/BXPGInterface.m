@@ -1120,7 +1120,9 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 					[rel setForeignKey: fkey];
 
 					//Inverse name
-					[rel setInverseName: [currentRel objectForKey: @"inversename"]];
+					NSString* inverseName = [currentRel objectForKey: @"inversename"];
+					ExpectL (inverseName);
+					[rel setInverseName: inverseName];
 					
 					//Inversity					
 					[rel setIsInverse: [[currentRel objectForKey: @"is_inverse"] boolValue]];

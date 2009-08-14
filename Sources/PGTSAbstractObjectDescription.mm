@@ -67,7 +67,7 @@ void PGTS::InsertConditionally (OidMap* map, PGTSAbstractObjectDescription* desc
     mOid = anOid;
 }
 
-- (unsigned int) hash
+- (NSUInteger) hash
 {
     if (0 == mHash)
         mHash = ([mName hash] ^ mOid);

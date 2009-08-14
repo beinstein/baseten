@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 #import <SystemConfiguration/SCNetworkReachability.h>
 #import <BaseTen/BXOpenSSLCompatibility.h>
-#import <BaseTen/postgresql/libpq-fe.h>
+#import <BaseTen/libpq-fe.h>
 #import <BaseTen/PGTSCertificateVerificationDelegate.h>
 @class PGTSConnection;
 @class PGTSResultSet;

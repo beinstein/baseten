@@ -244,7 +244,7 @@ CompoundPredicateType (NSCompoundPredicateType type)
 			break;
 	}
 		
-	end:
+	//end:
 		;
 }
 
