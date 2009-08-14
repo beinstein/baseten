@@ -55,7 +55,7 @@ static const CGFloat kSizeDiff = 25.0;
 									  backing: NSBackingStoreBuffered defer: YES] autorelease];
 }
 
-- (id) initWithContentRect: (NSRect) contentRect styleMask: (unsigned int) styleMask
+- (id) initWithContentRect: (NSRect) contentRect styleMask: (NSUInteger) styleMask
                    backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
 {
     if ((self = [super initWithContentRect: contentRect styleMask: styleMask 

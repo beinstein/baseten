@@ -53,7 +53,7 @@ __strong static NSNib* gNib = nil;
 	return retval;
 }
 
-- (id) initWithContentRect: (NSRect) contentRect styleMask: (unsigned int) styleMask
+- (id) initWithContentRect: (NSRect) contentRect styleMask: (NSUInteger) styleMask
 				   backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
 {
 	if ((self = [super initWithContentRect: contentRect styleMask: styleMask backing: bufferingType defer: deferCreation]))

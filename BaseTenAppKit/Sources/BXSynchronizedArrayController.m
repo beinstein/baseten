@@ -625,7 +625,7 @@ IsKindOfClass (id self, Class class)
     return object;
 }
 
-- (void) insertObject: (id) object atArrangedObjectIndex: (unsigned int) index
+- (void) insertObject: (id) object atArrangedObjectIndex: (NSUInteger) index
 {
 	if (mShouldAddToContent && mContentBindingKey && ![self BXContent])
 	{

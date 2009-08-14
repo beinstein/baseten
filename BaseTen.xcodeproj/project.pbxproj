@@ -1824,7 +1824,7 @@
 			buildConfigurationList = 535444100D634A47002A6C47 /* Build configuration list for PBXNativeTarget "BaseTen Framework + GC" */;
 			buildPhases = (
 				535443C40D634A47002A6C47 /* Headers */,
-				53ED0E6310355F94000CFECF /* ShellScript */,
+				53ED0E6310355F94000CFECF /* Copy PostgreSQL Headers */,
 				535443EB0D634A47002A6C47 /* Resources */,
 				535443EE0D634A47002A6C47 /* Sources */,
 				535444080D634A47002A6C47 /* Frameworks */,
@@ -1991,7 +1991,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "for x in $ARCHS\ndo\n\tsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh \"$x\"\ndone\n#source \"$PROJECT_DIR\"/PostgreSQL/create-universal-binaries.sh";
+			shellScript = "for x in $ARCHS\ndo\n\tsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh \"$x\"\ndone\nsource \"$PROJECT_DIR\"/PostgreSQL/create-universal-binaries.sh";
 			showEnvVarsInLog = 0;
 		};
 		537934A40E54B71B0006EC54 /* ShellScript */ = {
@@ -2023,18 +2023,20 @@
 			shellScript = "cd \"$SRCDIR\"\nsource Tools/run_doxygen.sh";
 			showEnvVarsInLog = 0;
 		};
-		53ED0E6310355F94000CFECF /* ShellScript */ = {
+		53ED0E6310355F94000CFECF /* Copy PostgreSQL Headers */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Copy PostgreSQL Headers";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/copy-postgresql-headers.sh \"$x\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 

@@ -1,17 +1,14 @@
 . "$SRCROOT"/PostgreSQL/defines.sh
 
-if [ ! -e "$my_build_dir"/universal/lib/libpq.a ] || \
-   [ ! -e "$my_build_dir"/universal/bin/psql ] ||
-   [ ! -e "$my_build_dir"/postgresql ]
+if [ ! -e "$my_build_dir"/universal/bin/psql ]
 then
 	mkdir -p "$my_build_dir"/universal/bin
-	mkdir -p "$my_build_dir"/universal/lib
 
-	for file in lib/libpq.a bin/psql
+	for file in bin/psql
 	do
         exec_lipo=0
         input_files=""
-        for arch in "$ARCHS"
+        for arch in $ARCHS
         do
             path="$my_build_dir"/"$arch"/"$file"
             if [ -f "$path" ]
@@ -28,7 +25,5 @@ then
             lipo ${input_files} -create -output "$my_build_dir"/universal/"$file" $args
         fi
 	done
-	
-	cp -R "$my_build_dir"/universal/include "$my_build_dir"/postgresql
 fi
 return 0

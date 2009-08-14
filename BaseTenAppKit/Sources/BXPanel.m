@@ -31,7 +31,7 @@
 
 
 @implementation BXPanel
-- (id) initWithContentRect: (NSRect) contentRect styleMask: (unsigned int) styleMask
+- (id) initWithContentRect: (NSRect) contentRect styleMask: (NSUInteger) styleMask
 				   backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
 {
 	if ((self = [super initWithContentRect: contentRect styleMask: styleMask

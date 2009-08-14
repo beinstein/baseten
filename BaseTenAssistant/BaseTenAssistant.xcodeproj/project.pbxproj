@@ -113,13 +113,6 @@
 			remoteGlobalIDString = 535444130D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
-		5388DCDC0E23AE22006CDBD8 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
-			remoteInfo = "SQL Parser";
-		};
 		5388DE660E23AE6C006CDBD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
@@ -428,7 +421,6 @@
 			children = (
 				5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */,
 				531282030E51EA9100207E91 /* libBaseTen.a */,
-				5388DCDD0E23AE22006CDBD8 /* SQLParser.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -535,13 +527,6 @@
 			fileType = wrapper.framework;
 			path = BaseTen.framework;
 			remoteRef = 5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5388DCDD0E23AE22006CDBD8 /* SQLParser.o */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.objfile";
-			path = SQLParser.o;
-			remoteRef = 5388DCDC0E23AE22006CDBD8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		5395E82F0E2F9F15006E8441 /* RegexKit.framework */ = {
