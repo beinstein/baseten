@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import <SQLParser/BXPGSQLScanner.h>
+#import <BaseTen/BXPGSQLScanner.h>
 #import <sys/stat.h>
 
 #import "PGTS.h"
