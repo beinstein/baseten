@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.930}})dnl
+define({{_bx_version_}}, {{0.931}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -879,6 +879,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
 		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)))
+		WHERE r1.enabled = true AND r2.enabled = true
 		UNION ALL
 		SELECT -- OTM
 			f.conid,
@@ -904,7 +905,8 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		FROM "baseten".foreign_key f
 		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
-		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)));
+		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)))
+		WHERE r1.enabled = true AND r2.enabled = true;
 		
 	-- MTM
 	INSERT INTO "baseten".relationship
@@ -966,7 +968,8 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		) p ON (p.reloid = ch.oid AND p.attnames @> (f1.conkey || f2.conkey))
 		INNER JOIN "baseten".relation r1 ON (r1.id = f1.confrelid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
-		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = f1.conname OR r1.relname = f2.conname));
+		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = f1.conname OR r1.relname = f2.conname))
+		WHERE r1.enabled = true AND r2.enabled = true;
     
 	-- Views
 	SELECT "baseten".refresh_view_caches ();
@@ -1032,7 +1035,8 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			) rel
 		INNER JOIN "baseten".relation r1 ON (r1.id = rel.srcid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = rel.dstid)
-		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid);
+		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid)
+		WHERE r1.enabled = true AND r2.enabled = true AND r3.enabled = true;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._insert_relationships () TO basetenowner;
