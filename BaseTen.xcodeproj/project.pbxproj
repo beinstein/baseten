@@ -2383,18 +2383,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444210D634A98002A6C47 /* debug-gc.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
 			};
 			name = Debug;
 		};
@@ -2402,11 +2390,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 535444230D634A98002A6C47 /* release-gc.xcconfig */;
 			buildSettings = {
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Debug\"";
 			};
 			name = Release;
 		};
@@ -2532,25 +2515,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 98A6CD650F45C8420029B2C4 /* coverage-gc.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				HEADER_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql",
-					"$(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/postgresql/postgresql/server",
-				);
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/Dependencies/MKCCollections/build/Coverage\"";
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-					"-ObjC",
-					"-headerpad_max_install_names",
-					"-lpq",
-					"-lgcov",
-				);
 			};
 			name = Coverage;
 		};
