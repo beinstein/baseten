@@ -486,40 +486,12 @@
 			remoteGlobalIDString = 5362E86C0E1CE46D005C7654;
 			remoteInfo = PostgreSQL;
 		};
-		532E54C30FB8E868001A2C62 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = "RegexKit Framework";
-		};
 		535444940D634DA9002A6C47 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */;
 			proxyType = 2;
 			remoteGlobalIDString = 535444870D634D9C002A6C47;
 			remoteInfo = "BaseTenAppKit + GC";
-		};
-		536207BC0FB8E63A00ACAE57 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = "RegexKit Framework";
-		};
-		536207BE0FB8E63A00ACAE57 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1264D77F0C7A95B60044B285;
-			remoteInfo = "Unit Tests";
-		};
-		536207C00FB8E63A00ACAE57 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1210C8110D4F254C00A9E73B;
-			remoteInfo = "Stack Protector";
 		};
 		5362DBAA0FDF333B003CF2AB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -748,7 +720,6 @@
 		536206500FB87DDA00ACAE57 /* PGTSValuePlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSValuePlaceholder.h; path = Sources/PGTSValuePlaceholder.h; sourceTree = "<group>"; };
 		536206510FB87DDA00ACAE57 /* PGTSValuePlaceholder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSValuePlaceholder.m; path = Sources/PGTSValuePlaceholder.m; sourceTree = "<group>"; };
 		536206540FB87E8C00ACAE57 /* PGTSDates.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSDates.h; path = Sources/PGTSDates.h; sourceTree = "<group>"; };
-		536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RegexKit.xcodeproj; path = Contrib/RegexKit/RegexKit.xcodeproj; sourceTree = "<group>"; };
 		5362DBA10FDF333B003CF2AB /* BasicFunctionality.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BasicFunctionality.xcodeproj; path = Examples/BasicFunctionality/BasicFunctionality.xcodeproj; sourceTree = "<group>"; };
 		5362DBAE0FDF3348003CF2AB /* Introspection.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Introspection.xcodeproj; path = Examples/Introspection/Introspection.xcodeproj; sourceTree = "<group>"; };
 		5362DBB80FDF3357003CF2AB /* BaseTenStickies.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BaseTenStickies.xcodeproj; path = Examples/BaseTenStickies/BaseTenStickies.xcodeproj; sourceTree = "<group>"; };
@@ -1025,7 +996,6 @@
 				53E11A250A791A8D00D0107C /* ExceptionHandling.framework */,
 				53EFE9E00BA96444008666B7 /* BaseTenAppKit.xcodeproj */,
 				5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */,
-				536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -1193,16 +1163,6 @@
 				536206280FB87A0300ACAE57 /* PGTSDates.m */,
 			);
 			name = "Type conversion";
-			sourceTree = "<group>";
-		};
-		536207B30FB8E63A00ACAE57 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				536207BD0FB8E63A00ACAE57 /* RegexKit.framework */,
-				536207BF0FB8E63A00ACAE57 /* Unit Tests.octest */,
-				536207C10FB8E63A00ACAE57 /* libStack Protector.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		5362DBA20FDF333B003CF2AB /* Products */ = {
@@ -1823,6 +1783,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535444100D634A47002A6C47 /* Build configuration list for PBXNativeTarget "BaseTen Framework + GC" */;
 			buildPhases = (
+				532BC26B1037753A002F337C /* Build PCRE */,
 				535443C40D634A47002A6C47 /* Headers */,
 				53ED0E6310355F94000CFECF /* Copy PostgreSQL Headers */,
 				535443EB0D634A47002A6C47 /* Resources */,
@@ -1835,7 +1796,6 @@
 			);
 			dependencies = (
 				5362E8710E1CE4A9005C7654 /* PBXTargetDependency */,
-				532E54C40FB8E868001A2C62 /* PBXTargetDependency */,
 			);
 			name = "BaseTen Framework + GC";
 			productName = "BXDatabase Static";
@@ -1874,10 +1834,6 @@
 					ProductGroup = 5362DBAF0FDF3348003CF2AB /* Products */;
 					ProjectRef = 5362DBAE0FDF3348003CF2AB /* Introspection.xcodeproj */;
 				},
-				{
-					ProductGroup = 536207B30FB8E63A00ACAE57 /* Products */;
-					ProjectRef = 536207B20FB8E63A00ACAE57 /* RegexKit.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -1905,27 +1861,6 @@
 			fileType = wrapper.framework;
 			path = BaseTenAppKit.framework;
 			remoteRef = 535444940D634DA9002A6C47 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		536207BD0FB8E63A00ACAE57 /* RegexKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = RegexKit.framework;
-			remoteRef = 536207BC0FB8E63A00ACAE57 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		536207BF0FB8E63A00ACAE57 /* Unit Tests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Unit Tests.octest";
-			remoteRef = 536207BE0FB8E63A00ACAE57 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		536207C10FB8E63A00ACAE57 /* libStack Protector.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libStack Protector.a";
-			remoteRef = 536207C00FB8E63A00ACAE57 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		5362DBAB0FDF333B003CF2AB /* BasicFunctionality.app */ = {
@@ -1965,6 +1900,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		532BC26B1037753A002F337C /* Build PCRE */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Build PCRE";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "my_target=PCRE\nsource Tools/build_regexkit.sh";
+			showEnvVarsInLog = 0;
+		};
 		5354440E0D634A47002A6C47 /* Set icon */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2261,11 +2211,6 @@
 			isa = PBXTargetDependency;
 			target = 5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */;
 			targetProxy = 532876C80E1E778600CC507E /* PBXContainerItemProxy */;
-		};
-		532E54C40FB8E868001A2C62 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RegexKit Framework";
-			targetProxy = 532E54C30FB8E868001A2C62 /* PBXContainerItemProxy */;
 		};
 		5362DBE60FDF33A0003CF2AB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

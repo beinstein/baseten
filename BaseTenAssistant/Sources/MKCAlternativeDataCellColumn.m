@@ -38,7 +38,7 @@
 
 @implementation MKCAlternativeDataCellColumn
 
-- (id) dataCellForRow: (int) rowIndex
+- (id) dataCellForRow: (NSInteger) rowIndex
 {
     id retval = nil;
     if (-1 == rowIndex)

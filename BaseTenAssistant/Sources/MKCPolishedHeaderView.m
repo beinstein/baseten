@@ -279,14 +279,14 @@ MKCShouldDrawEnabled (NSWindow* window)
 }
 
 
-- (NSRect) headerRectOfColumn: (int) columnIndex
+- (NSRect) headerRectOfColumn: (NSInteger) columnIndex
 {
     NSRect rect = [super headerRectOfColumn: columnIndex];
     BXAssertLog (rect.size.height == [self frame].size.height, @"Expected heights to match.");
     return rect;
 }
 
-- (int) columnAtPoint: (NSPoint) point
+- (NSInteger) columnAtPoint: (NSPoint) point
 {
     return [super columnAtPoint: point];
 }

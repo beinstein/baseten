@@ -20,6 +20,9 @@
 		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */; };
 		5312A7970F584C560097DAA4 /* BaseTen Assistant Help in Resources */ = {isa = PBXBuildFile; fileRef = 5312A74C0F584C560097DAA4 /* BaseTen Assistant Help */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
+		532BC2E6103777B2002F337C /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
+		532BC2E910377805002F337C /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 532BC2E810377805002F337C /* RegexKit.framework */; };
+		532BC2FC10377820002F337C /* RegexKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 532BC2E810377805002F337C /* RegexKit.framework */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
 		53425B650E2CD237005F6123 /* MKCStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53425B640E2CD237005F6123 /* MKCStackView.m */; };
 		536353D90FAF46AF003AE7D5 /* InspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 536353D70FAF46AF003AE7D5 /* InspectorView.xib */; };
@@ -37,8 +40,6 @@
 		5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
 		5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DE290E23AE48006CDBD8 /* Cocoa.framework */; };
 		538963170EF2A480004391BF /* BXAPortFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 538963160EF2A480004391BF /* BXAPortFormatter.m */; };
-		5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5395E82F0E2F9F15006E8441 /* RegexKit.framework */; };
-		5395E8450E2F9FE8006E8441 /* RegexKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5395E82F0E2F9F15006E8441 /* RegexKit.framework */; };
 		53B94D310B53AD4A00733341 /* MKCForcedSizeToFitButtonCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */; };
 		53BC458E0B19E9F00051A557 /* BaseTenAssistant.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */; };
 		53BCB27C0DF698350011E823 /* MKCPolishedHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BCB27A0DF698350011E823 /* MKCPolishedHeaderCell.m */; };
@@ -58,7 +59,6 @@
 		53EF32B90E23B7220027EA18 /* Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E4B70B0D364E000D353D /* Additions.m */; };
 		53EF33B50E23CC430027EA18 /* BXASchemaCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF33B40E23CC430027EA18 /* BXASchemaCell.m */; };
 		53EF34510E23D83B0027EA18 /* BXAEntityCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EF34500E23D83B0027EA18 /* BXAEntityCell.m */; };
-		53F7498F0E362E53003C2E55 /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 /* End PBXBuildFile section */
@@ -120,34 +120,6 @@
 			remoteGlobalIDString = 535443BB0D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
-		5395E82E0E2F9F15006E8441 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 8DC2EF5B0486A6940098B216;
-			remoteInfo = "RegexKit Framework";
-		};
-		5395E8300E2F9F15006E8441 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1264D77F0C7A95B60044B285;
-			remoteInfo = "Unit Tests";
-		};
-		5395E8320E2F9F15006E8441 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 1210C8110D4F254C00A9E73B;
-			remoteInfo = "Stack Protector";
-		};
-		5395E8350E2F9F30006E8441 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
-			remoteInfo = "RegexKit Framework";
-		};
 		53F749970E362E62003C2E55 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */;
@@ -164,9 +136,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				53F7498F0E362E53003C2E55 /* BaseTen.framework in Copy Frameworks */,
+				532BC2E6103777B2002F337C /* BaseTen.framework in Copy Frameworks */,
 				536D93E80FDECF6700439719 /* BaseTenAppKit.framework in Copy Frameworks */,
-				5395E8450E2F9FE8006E8441 /* RegexKit.framework in Copy Frameworks */,
+				532BC2FC10377820002F337C /* RegexKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -194,6 +166,7 @@
 		5312A74D0F584C560097DAA4 /* English */ = {isa = PBXFileReference; lastKnownFileType = folder; name = English; path = "English.lproj/BaseTen Assistant Help"; sourceTree = "<group>"; };
 		531DCAB70B52818E00200097 /* MKCAlternativeDataCellColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCAlternativeDataCellColumn.h; path = Sources/MKCAlternativeDataCellColumn.h; sourceTree = "<group>"; };
 		531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCAlternativeDataCellColumn.m; path = Sources/MKCAlternativeDataCellColumn.m; sourceTree = "<group>"; };
+		532BC2E810377805002F337C /* RegexKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RegexKit.framework; path = ../Release/RegexKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		532F429B0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		532F429F0D69B70F009FEDCD /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Import.xib; sourceTree = "<group>"; };
 		53425B630E2CD237005F6123 /* MKCStackView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCStackView.h; path = Sources/MKCStackView.h; sourceTree = "<group>"; };
@@ -222,7 +195,6 @@
 		538DF65610373DE100F33B72 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
 		538DF67610373E5400F33B72 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		538DF67710373E5400F33B72 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
-		5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RegexKit.xcodeproj; path = ../Contrib/RegexKit/RegexKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		53B94D2E0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCForcedSizeToFitButtonCell.h; path = Sources/MKCForcedSizeToFitButtonCell.h; sourceTree = "<group>"; };
 		53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCForcedSizeToFitButtonCell.m; path = Sources/MKCForcedSizeToFitButtonCell.m; sourceTree = "<group>"; };
 		53BC458D0B19E9F00051A557 /* BaseTenAssistant.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = BaseTenAssistant.icns; path = Resources/BaseTenAssistant.icns; sourceTree = "<group>"; };
@@ -264,7 +236,7 @@
 				5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */,
 				5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */,
 				53D3420E0FCAEB6B00DE60BE /* BaseTenAppKit.framework in Frameworks */,
-				5395E8340E2F9F1D006E8441 /* RegexKit.framework in Frameworks */,
+				532BC2E910377805002F337C /* RegexKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -355,8 +327,8 @@
 			children = (
 				5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */,
 				53F749930E362E62003C2E55 /* BaseTenAppKit.xcodeproj */,
-				5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */,
 				530D557B0E489F0A006BDEB2 /* InterfaceBuilderPlugin.xcodeproj */,
+				532BC2E810377805002F337C /* RegexKit.framework */,
 				5388DE290E23AE48006CDBD8 /* Cocoa.framework */,
 			);
 			name = Frameworks;
@@ -439,16 +411,6 @@
 			path = xcconfig;
 			sourceTree = "<group>";
 		};
-		5395E8220E2F9F15006E8441 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				5395E82F0E2F9F15006E8441 /* RegexKit.framework */,
-				5395E8310E2F9F15006E8441 /* Unit Tests.octest */,
-				5395E8330E2F9F15006E8441 /* libStack Protector.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		53F749940E362E62003C2E55 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -464,6 +426,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Assistant" */;
 			buildPhases = (
+				532BC2DC10377642002F337C /* Build RegexKit */,
 				5381D25D0E4896B5001574D4 /* Copy IB plugin to built products dir */,
 				530602B90A3F112C00C01351 /* Copy Frameworks */,
 				53341E910F6A6C9700EA666F /* Index help */,
@@ -478,7 +441,6 @@
 				5388DE670E23AE6C006CDBD8 /* PBXTargetDependency */,
 				536D93EA0FDECF8200439719 /* PBXTargetDependency */,
 				530D55820E489F1B006BDEB2 /* PBXTargetDependency */,
-				5395E8360E2F9F30006E8441 /* PBXTargetDependency */,
 			);
 			name = Assistant;
 			productInstallPath = "$(HOME)/Applications";
@@ -509,10 +471,6 @@
 					ProductGroup = 530D557C0E489F0A006BDEB2 /* Products */;
 					ProjectRef = 530D557B0E489F0A006BDEB2 /* InterfaceBuilderPlugin.xcodeproj */;
 				},
-				{
-					ProductGroup = 5395E8220E2F9F15006E8441 /* Products */;
-					ProjectRef = 5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */;
-				},
 			);
 			projectRoot = "";
 			targets = (
@@ -541,27 +499,6 @@
 			fileType = wrapper.framework;
 			path = BaseTen.framework;
 			remoteRef = 5388DCDA0E23AE22006CDBD8 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5395E82F0E2F9F15006E8441 /* RegexKit.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = RegexKit.framework;
-			remoteRef = 5395E82E0E2F9F15006E8441 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5395E8310E2F9F15006E8441 /* Unit Tests.octest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Unit Tests.octest";
-			remoteRef = 5395E8300E2F9F15006E8441 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		5395E8330E2F9F15006E8441 /* libStack Protector.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libStack Protector.a";
-			remoteRef = 5395E8320E2F9F15006E8441 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		53F749980E362E62003C2E55 /* BaseTenAppKit.framework */ = {
@@ -606,6 +543,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		532BC2DC10377642002F337C /* Build RegexKit */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Build RegexKit";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "my_target=\"RegexKit Framework\"\nsource ../Tools/build_regexkit.sh";
+			showEnvVarsInLog = 0;
+		};
 		53341E910F6A6C9700EA666F /* Index help */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -688,11 +640,6 @@
 			isa = PBXTargetDependency;
 			name = "BaseTen Framework + GC";
 			targetProxy = 5388DE660E23AE6C006CDBD8 /* PBXContainerItemProxy */;
-		};
-		5395E8360E2F9F30006E8441 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "RegexKit Framework";
-			targetProxy = 5395E8350E2F9F30006E8441 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
