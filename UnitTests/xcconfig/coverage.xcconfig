@@ -1,0 +1,4 @@
+#include "../../common-xcconfig/common.xcconfig"
+#include "../../common-xcconfig/debug.xcconfig"
+#include "../../common-xcconfig/coverage.xcconfig"
+#include "common.xcconfig"
