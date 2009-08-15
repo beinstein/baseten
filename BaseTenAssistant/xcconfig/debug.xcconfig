@@ -1,3 +1,2 @@
-#include "../../common-xcconfig/non-gc.xcconfig"
 #include "../../common-xcconfig/debug.xcconfig"
 #include "common.xcconfig"

@@ -1,6 +1,4 @@
-#include "../common-xcconfig/common.xcconfig"
 #include "../common-xcconfig/gc.xcconfig"
-#include "../common-xcconfig/framework.xcconfig"
 #include "../common-xcconfig/release.xcconfig"
 #include "common.xcconfig"
 INSTALL_PATH = @executable_path/../Frameworks

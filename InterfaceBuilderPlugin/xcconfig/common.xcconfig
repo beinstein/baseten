@@ -1,0 +1,12 @@
+#include "../../common-xcconfig/common.xcconfig"
+#include "../../common-xcconfig/10.5.xcconfig"
+#include "../../common-xcconfig/gc.xcconfig"
+
+INFOPLIST_FILE = Info.plist
+PRODUCT_NAME = BaseTen
+WRAPPER_EXTENSION = ibplugin
+FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) ../build/$(BUILD_STYLE) $(SYSTEM_DEVELOPER_DIR)/Library/Frameworks
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
+USER_HEADER_SEARCH_PATHS = $(PROJECT_DIR)
+GCC_PREFIX_HEADER = Sources/InterfaceBuilderPlugin_Prefix.pch

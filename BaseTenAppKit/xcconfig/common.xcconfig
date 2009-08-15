@@ -1,12 +1,14 @@
+#include "../../common-xcconfig/10.4.xcconfig"
+#include "../../common-xcconfig/common.xcconfig"
+#include "../../common-xcconfig/framework.xcconfig"
+
 DYLIB_COMPATIBILITY_VERSION = 1
 DYLIB_CURRENT_VERSION = 1
-OTHER_LDFLAGS = $(OTHER_LDFLAGS) -ObjC -headerpad_max_install_names
 FRAMEWORK_VERSION = A
 INFOPLIST_FILE = Info.plist
 PRODUCT_NAME = BaseTenAppKit
 FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) ../build/$(BUILD_STYLE)
-HEADER_SEARCH_PATHS = ../Dependencies/PGTS/Contrib/Log4Cocoa/build/$(BUILD_STYLE) $(BUILT_PRODUCTS_DIR)
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
 USER_HEADER_SEARCH_PATHS = $(PROJECT_DIR)
 GCC_PREFIX_HEADER = Sources/BaseTenAppKit_Prefix.pch
-DEBUG_BUILD = 1

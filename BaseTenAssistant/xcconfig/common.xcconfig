@@ -1,0 +1,12 @@
+#include "../../common-xcconfig/10.5.xcconfig"
+#include "../../common-xcconfig/common.xcconfig"
+#include "../../common-xcconfig/application.xcconfig"
+#include "../../common-xcconfig/gc.xcconfig"
+
+INFOPLIST_FILE = Info.plist
+PRODUCT_NAME = BaseTen Assistant
+FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) ../build/$(BUILD_STYLE) ../Contrib/RegexKit/build/$(BUILD_STYLE)
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
+USER_HEADER_SEARCH_PATHS = $(PROJECT_DIR)
+GCC_PREFIX_HEADER = Sources/BaseTenAssistant_Prefix.pch

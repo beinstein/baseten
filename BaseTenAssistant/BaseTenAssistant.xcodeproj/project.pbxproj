@@ -219,6 +219,9 @@
 		5388DE290E23AE48006CDBD8 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		538963150EF2A480004391BF /* BXAPortFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXAPortFormatter.h; path = Sources/BXAPortFormatter.h; sourceTree = "<group>"; };
 		538963160EF2A480004391BF /* BXAPortFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXAPortFormatter.m; path = Sources/BXAPortFormatter.m; sourceTree = "<group>"; };
+		538DF65610373DE100F33B72 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
+		538DF67610373E5400F33B72 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
+		538DF67710373E5400F33B72 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
 		5395E8210E2F9F15006E8441 /* RegexKit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RegexKit.xcodeproj; path = ../Contrib/RegexKit/RegexKit.xcodeproj; sourceTree = SOURCE_ROOT; };
 		53B94D2E0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MKCForcedSizeToFitButtonCell.h; path = Sources/MKCForcedSizeToFitButtonCell.h; sourceTree = "<group>"; };
 		53B94D2F0B53AD4900733341 /* MKCForcedSizeToFitButtonCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MKCForcedSizeToFitButtonCell.m; path = Sources/MKCForcedSizeToFitButtonCell.m; sourceTree = "<group>"; };
@@ -303,6 +306,7 @@
 				532490C00F058B9000BF17C1 /* Controllers */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				538DF65510373DE100F33B72 /* xcconfig */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -423,6 +427,16 @@
 				531282030E51EA9100207E91 /* libBaseTen.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		538DF65510373DE100F33B72 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				538DF65610373DE100F33B72 /* common.xcconfig */,
+				538DF67610373E5400F33B72 /* release.xcconfig */,
+				538DF67710373E5400F33B72 /* debug.xcconfig */,
+			);
+			path = xcconfig;
 			sourceTree = "<group>";
 		};
 		5395E8220E2F9F15006E8441 /* Products */ = {
@@ -736,67 +750,15 @@
 /* Begin XCBuildConfiguration section */
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 538DF67710373E5400F33B72 /* debug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"../build/$(BUILD_STYLE)",
-					"../Contrib/RegexKit/build/$(BUILD_STYLE)",
-				);
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = required;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				IBC_PLUGINS = "$(BUILT_PRODUCTS_DIR)/BaseTen.ibplugin";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "BaseTen Assistant";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wundeclared-selector",
-				);
-				WRAPPER_EXTENSION = app;
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 538DF67610373E5400F33B72 /* release.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					ppc,
-					i386,
-				);
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILT_PRODUCTS_DIR)",
-					"../build/$(BUILD_STYLE)",
-					"../Contrib/RegexKit/build/$(BUILD_STYLE)",
-				);
-				GCC_C_LANGUAGE_STANDARD = c99;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_OBJC_GC = required;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				IBC_PLUGINS = "$(BUILT_PRODUCTS_DIR)/BaseTen.ibplugin";
-				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "BaseTen Assistant";
-				WARNING_CFLAGS = (
-					"-Wall",
-					"-Wundeclared-selector",
-				);
-				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};

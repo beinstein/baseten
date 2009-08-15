@@ -2433,9 +2433,6 @@
 		537385730DD9FBAE006F965A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = "BaseTen + GC";
 			};
 			name = Debug;
@@ -2443,11 +2440,7 @@
 		537385740DD9FBAE006F965A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = "BaseTen + GC";
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -2477,9 +2470,6 @@
 		53BD79F80E092ABD009CAFE6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = Documentation;
 			};
 			name = Debug;
@@ -2487,11 +2477,7 @@
 		53BD79F90E092ABD009CAFE6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = Documentation;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
@@ -2504,9 +2490,6 @@
 		98A6CD680F45C8600029B2C4 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = "BaseTen + GC";
 			};
 			name = Coverage;
@@ -2545,6 +2528,7 @@
 		};
 		98A6CD6C0F45C8600029B2C4 /* Coverage */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 98A6CD660F45C8420029B2C4 /* coverage-non-gc.xcconfig */;
 			buildSettings = {
 				PRODUCT_NAME = PostgreSQL;
 			};
@@ -2564,9 +2548,6 @@
 		98A6CD6E0F45C8600029B2C4 /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = Documentation;
 			};
 			name = Coverage;

@@ -89,6 +89,9 @@
 		5373A24C0CECA493006B581B /* BXDatabaseContextInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextInspector.m; path = Sources/BXDatabaseContextInspector.m; sourceTree = "<group>"; };
 		5373A24E0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSynchronizedArrayControllerInspector.h; path = Sources/BXSynchronizedArrayControllerInspector.h; sourceTree = "<group>"; };
 		5373A24F0CECA4B9006B581B /* BXSynchronizedArrayControllerInspector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSynchronizedArrayControllerInspector.m; path = Sources/BXSynchronizedArrayControllerInspector.m; sourceTree = "<group>"; };
+		538DF6B710374F9800F33B72 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
+		538DF6B810374F9800F33B72 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
+		538DF6B910374F9800F33B72 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		53978F520CEC63DD00B93B3C /* BXIBPlugin.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXIBPlugin.m; path = Sources/BXIBPlugin.m; sourceTree = "<group>"; };
 		53978F530CEC63DD00B93B3C /* BXDatabaseContext+IBAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "BXDatabaseContext+IBAdditions.h"; path = "Sources/BXDatabaseContext+IBAdditions.h"; sourceTree = "<group>"; };
 		53978F540CEC63DD00B93B3C /* InterfaceBuilderPlugin_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InterfaceBuilderPlugin_Prefix.pch; path = Sources/InterfaceBuilderPlugin_Prefix.pch; sourceTree = "<group>"; };
@@ -136,6 +139,7 @@
 				54D33B2506778DF000C9C163 /* Classes */,
 				32DBCF9F0370C38200C91783 /* Other Sources */,
 				0259C582FE90428111CA0C5A /* Resources */,
+				538DF6B610374F9800F33B72 /* xcconfig */,
 				1ED78706FE9D4A0611CA0C5A /* Products */,
 				2E58F364FFB232C311CA0CBA /* Frameworks */,
 			);
@@ -183,6 +187,16 @@
 				53978F540CEC63DD00B93B3C /* InterfaceBuilderPlugin_Prefix.pch */,
 			);
 			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		538DF6B610374F9800F33B72 /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				538DF6B710374F9800F33B72 /* common.xcconfig */,
+				538DF6B810374F9800F33B72 /* debug.xcconfig */,
+				538DF6B910374F9800F33B72 /* release.xcconfig */,
+			);
+			path = xcconfig;
 			sourceTree = "<group>";
 		};
 		53978FA60CEC763800B93B3C /* Products */ = {
@@ -439,45 +453,15 @@
 /* Begin XCBuildConfiguration section */
 		C056398408A954F8003078D8 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 538DF6B810374F9800F33B72 /* debug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					$inherited,
-					"$(SYSTEM_DEVELOPER_DIR)/Library/Frameworks",
-					"$(BUILD_DIR)/$(CONFIGURATION)",
-				);
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/InterfaceBuilderPlugin_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = BaseTen;
-				WRAPPER_EXTENSION = ibplugin;
-				ZERO_LINK = YES;
 			};
 			name = Debug;
 		};
 		C056398508A954F8003078D8 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 538DF6B910374F9800F33B72 /* release.xcconfig */;
 			buildSettings = {
-				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)$(CONFIGURATION)";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				FRAMEWORK_SEARCH_PATHS = (
-					$inherited,
-					"$(SYSTEM_DEVELOPER_DIR)/Library/Frameworks",
-					"$(BUILD_DIR)/$(CONFIGURATION)",
-				);
-				GCC_ENABLE_OBJC_GC = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = Sources/InterfaceBuilderPlugin_Prefix.pch;
-				INFOPLIST_FILE = Info.plist;
-				PRODUCT_NAME = BaseTen;
-				WRAPPER_EXTENSION = ibplugin;
 			};
 			name = Release;
 		};

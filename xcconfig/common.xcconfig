@@ -1,11 +1,15 @@
+#include "../common-xcconfig/10.4.xcconfig"
+#include "../common-xcconfig/common.xcconfig"
+#include "../common-xcconfig/framework.xcconfig"
+
 DYLIB_COMPATIBILITY_VERSION = 1
 DYLIB_CURRENT_VERSION = 1
-FRAMEWORK_SEARCH_PATHS = $(SDKROOT)/System/Library/Frameworks $(BUILT_PRODUCTS_DIR) Contrib/RegexKit/build/$(BUILD_STYLE)
+FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) Contrib/RegexKit/build/$(BUILD_STYLE)
 FRAMEWORK_VERSION = A
 GCC_PREFIX_HEADER = Sources/BaseTen_Prefix.pch
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include/postgresql/internal $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include/postgresql/server $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include/postgresql/server/libpq .
 INFOPLIST_FILE = Resources/Info.plist
-LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/lib $(BUILT_PRODUCTS_DIR)/pcre-7.6/lib Contrib/RegexKit/build/$(BUILD_STYLE)/pcre-7.6/lib $(SDKROOT)/usr/lib .
+LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/lib $(BUILT_PRODUCTS_DIR)/pcre-7.6/lib Contrib/RegexKit/build/$(BUILD_STYLE)/pcre-7.6/lib .
 OTHER_LDFLAGS = $(COVERAGE_LDFLAGS) -ObjC -headerpad_max_install_names -lpq -lpcre
 PRODUCT_NAME = BaseTen
 WRAPPER_EXTENSION = framework

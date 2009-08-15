@@ -1,6 +1,4 @@
-#include "../common-xcconfig/common.xcconfig"
 #include "../common-xcconfig/non-gc.xcconfig"
-#include "../common-xcconfig/framework.xcconfig"
 #include "../common-xcconfig/debug.xcconfig"
 #include "../common-xcconfig/coverage.xcconfig"
 #include "common.xcconfig"

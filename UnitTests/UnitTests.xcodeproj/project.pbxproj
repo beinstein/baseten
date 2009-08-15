@@ -83,13 +83,6 @@
 			remoteGlobalIDString = 530A438B0A5C0FD000A4722B;
 			remoteInfo = UnitTests;
 		};
-		53A59ACE0E34DFD20026D7E1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 538A82C10E1D16AC0025B3C8;
-			remoteInfo = "SQL Parser";
-		};
 		53D03BB80DE82987002D14C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
@@ -158,6 +151,10 @@
 		53CC514E0EC45F0B003D33BF /* ToOneChangeNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToOneChangeNotificationTests.h; path = Sources/ToOneChangeNotificationTests.h; sourceTree = "<group>"; };
 		53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToOneChangeNotificationTests.m; path = Sources/ToOneChangeNotificationTests.m; sourceTree = "<group>"; };
 		53CEB9EF0B28516F007DAF0D /* MKCSenTestCaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MKCSenTestCaseAdditions.h; path = Sources/MKCSenTestCaseAdditions.h; sourceTree = "<group>"; };
+		53D870391037521B0062A580 /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
+		53D8703A1037521B0062A580 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = debug.xcconfig; sourceTree = "<group>"; };
+		53D8703B1037521B0062A580 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
+		53D87041103754970062A580 /* coverage-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "coverage-target.xcconfig"; sourceTree = "<group>"; };
 		53DA50F30FCC53960044C961 /* people-departments-no-inverse.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "people-departments-no-inverse.xcdatamodel"; path = "Sources/people-departments-no-inverse.xcdatamodel"; sourceTree = "<group>"; };
 		53DAA0570E6EEB46001DC1D9 /* KeyPathComponentTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyPathComponentTest.h; path = Sources/KeyPathComponentTest.h; sourceTree = "<group>"; };
 		53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyPathComponentTest.m; path = Sources/KeyPathComponentTest.m; sourceTree = "<group>"; };
@@ -169,13 +166,6 @@
 		53E21C320FB49E1800A52F1A /* BXGarbageCollectionRunner.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXGarbageCollectionRunner.m; path = Sources/BXGarbageCollectionRunner.m; sourceTree = "<group>"; };
 		53EAD1B40A668733008F3CE5 /* ForeignKeyTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForeignKeyTests.h; path = Sources/ForeignKeyTests.h; sourceTree = "<group>"; };
 		53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ForeignKeyTests.m; path = Sources/ForeignKeyTests.m; sourceTree = "<group>"; };
-		989B4E7A0F45D73200CE048A /* common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = common.xcconfig; sourceTree = "<group>"; };
-		989B4E7B0F45D73200CE048A /* coverage-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "coverage-gc.xcconfig"; sourceTree = "<group>"; };
-		989B4E7C0F45D73200CE048A /* coverage-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "coverage-non-gc.xcconfig"; sourceTree = "<group>"; };
-		989B4E7D0F45D73200CE048A /* debug-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "debug-gc.xcconfig"; sourceTree = "<group>"; };
-		989B4E7E0F45D73200CE048A /* debug-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "debug-non-gc.xcconfig"; sourceTree = "<group>"; };
-		989B4E7F0F45D73200CE048A /* release-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-gc.xcconfig"; sourceTree = "<group>"; };
-		989B4E800F45D73200CE048A /* release-non-gc.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "release-non-gc.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -209,8 +199,8 @@
 				5357179C0CDE69950084DD92 /* Tests requiring a connection */,
 				539C4FA20C4E39F700080667 /* Disabled tests */,
 				53BD96D30A5C2506001C950C /* Dependencies */,
+				53D870381037521B0062A580 /* xcconfig */,
 				530A438D0A5C0FD000A4722B /* Products */,
-				989B4E790F45D73200CE048A /* xcconfig */,
 				530927A80FA894D2000DC21C /* people-departments.xcdatamodel */,
 				53DA50F30FCC53960044C961 /* people-departments-no-inverse.xcdatamodel */,
 				530928B60FA8A511000DC21C /* one-to-one.xcdatamodel */,
@@ -224,7 +214,6 @@
 			children = (
 				538B40F50D634EA40009005B /* BaseTen.framework */,
 				535627AE0E6E7FD8002EA3FD /* libBaseTen.a */,
-				53A59ACF0E34DFD20026D7E1 /* SQLParser.o */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -335,20 +324,16 @@
 			name = Dependencies;
 			sourceTree = "<group>";
 		};
-		989B4E790F45D73200CE048A /* xcconfig */ = {
+		53D870381037521B0062A580 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
-				989B4E7A0F45D73200CE048A /* common.xcconfig */,
-				989B4E7B0F45D73200CE048A /* coverage-gc.xcconfig */,
-				989B4E7C0F45D73200CE048A /* coverage-non-gc.xcconfig */,
-				989B4E7D0F45D73200CE048A /* debug-gc.xcconfig */,
-				989B4E7E0F45D73200CE048A /* debug-non-gc.xcconfig */,
-				989B4E7F0F45D73200CE048A /* release-gc.xcconfig */,
-				989B4E800F45D73200CE048A /* release-non-gc.xcconfig */,
+				53D870391037521B0062A580 /* common.xcconfig */,
+				53D8703A1037521B0062A580 /* debug.xcconfig */,
+				53D8703B1037521B0062A580 /* release.xcconfig */,
+				53D87041103754970062A580 /* coverage-target.xcconfig */,
 			);
-			name = xcconfig;
-			path = ../xcconfig;
-			sourceTree = SOURCE_ROOT;
+			path = xcconfig;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -410,13 +395,6 @@
 			fileType = wrapper.framework;
 			path = BaseTen.framework;
 			remoteRef = 538B40F40D634EA40009005B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		53A59ACF0E34DFD20026D7E1 /* SQLParser.o */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.objfile";
-			path = SQLParser.o;
-			remoteRef = 53A59ACE0E34DFD20026D7E1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -551,110 +529,47 @@
 		};
 		530A43900A5C0FD200A4722B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53D8703A1037521B0062A580 /* debug.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_BUILD = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/Release",
-					"../build/$(BUILD_STYLE)",
-					"../Contrib/OCMock/OCMock-current-source/build/Release",
-					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
-				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INFOPLIST_FILE = "UnitTests-Info.plist";
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					OCMock,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = UnitTests;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = octest;
-				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
 		530A43910A5C0FD200A4722B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_BUILD = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/Release",
-					"../build/$(BUILD_STYLE)",
-					"../Contrib/OCMock/OCMock-current-source/build/Release",
+					"$(value)",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_MODEL_TUNING = G4;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INFOPLIST_FILE = "UnitTests-Info.plist";
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				OTHER_LDFLAGS = (
-					"-framework",
-					OCMock,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = UnitTests;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = octest;
-				ZERO_LINK = NO;
 			};
 			name = Release;
 		};
 		53A0DAD50F4B6DDC00434E4E /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53D87041103754970062A580 /* coverage-target.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = "Run unit tests";
+				PRODUCT_NAME = Coverage;
 			};
 			name = Debug;
 		};
 		53A0DAD60F4B6DDC00434E4E /* Coverage */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53D87041103754970062A580 /* coverage-target.xcconfig */;
 			buildSettings = {
-				PRODUCT_NAME = "Run unit tests";
+				PRODUCT_NAME = Coverage;
 			};
 			name = Coverage;
 		};
 		53A0DAD70F4B6DDC00434E4E /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 53D87041103754970062A580 /* coverage-target.xcconfig */;
 			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = "Run unit tests";
-				ZERO_LINK = NO;
+				PRODUCT_NAME = Coverage;
 			};
 			name = Release;
 		};
 		989B4E810F45D73C00CE048A /* Coverage */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 989B4E7B0F45D73200CE048A /* coverage-gc.xcconfig */;
 			buildSettings = {
 			};
 			name = Coverage;
@@ -662,41 +577,10 @@
 		989B4E820F45D73C00CE048A /* Coverage */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				DEBUG_BUILD = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
 				FRAMEWORK_SEARCH_PATHS = (
-					"$(BUILD_DIR)/Release",
-					"../build/$(BUILD_STYLE)",
-					"../Contrib/OCMock/OCMock-current-source/build/Release",
+					"$(value)",
 					"$(DEVELOPER_FRAMEWORKS_DIR_QUOTED)",
 				);
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DEBUGGING_SYMBOLS = full;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_ENABLE_SYMBOL_SEPARATION = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_MODEL_TUNING = G4;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h";
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				INFOPLIST_FILE = "UnitTests-Info.plist";
-				INSTALL_PATH = "$(USER_LIBRARY_DIR)/Bundles";
-				MACOSX_DEPLOYMENT_TARGET_i386 = 10.5;
-				MACOSX_DEPLOYMENT_TARGET_ppc = 10.5;
-				OTHER_LDFLAGS = (
-					"-framework",
-					OCMock,
-				);
-				PREBINDING = NO;
-				PRODUCT_NAME = UnitTests;
-				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
-				WARNING_CFLAGS = "-Wall";
-				WRAPPER_EXTENSION = octest;
-				ZERO_LINK = NO;
 			};
 			name = Coverage;
 		};
