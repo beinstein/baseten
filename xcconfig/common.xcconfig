@@ -10,6 +10,6 @@ GCC_PREFIX_HEADER = Sources/BaseTen_Prefix.pch
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include/postgresql/internal $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include/postgresql/server $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/include/postgresql/server/libpq .
 INFOPLIST_FILE = Resources/Info.plist
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILT_PRODUCTS_DIR)/BaseTen-PostgreSQL/$(CURRENT_ARCH)/lib $(BUILD_DIR)/Release/pcre-7.6/lib .
-OTHER_LDFLAGS = $(COVERAGE_LDFLAGS) -ObjC -headerpad_max_install_names -lpq -lpcre
+OTHER_LDFLAGS = $(COVERAGE_LDFLAGS) -ObjC -headerpad_max_install_names -lpq
 PRODUCT_NAME = BaseTen
 WRAPPER_EXTENSION = framework

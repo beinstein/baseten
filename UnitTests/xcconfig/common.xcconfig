@@ -1,12 +1,11 @@
 #include "../../common-xcconfig/10.5.xcconfig"
-#include "../../common-xcconfig/gc.xcconfig"
+#include "../../common-xcconfig/non-gc.xcconfig"
 
 INFOPLIST_FILE = UnitTests-Info.plist
 PRODUCT_NAME = UnitTests
 WRAPPER_EXTENSION = octest
-FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) $(BUILD_DIR)/Release ../build/$(BUILD_STYLE) $(DEVELOPER_FRAMEWORKS_DIR_QUOTED)
+FRAMEWORK_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR) ../build/$(BUILD_STYLE) $(BUILD_DIR)/Release $(DEVELOPER_FRAMEWORKS_DIR_QUOTED)
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
 LIBRARY_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)
 USER_HEADER_SEARCH_PATHS = $(PROJECT_DIR)
 GCC_PREFIX_HEADER = $(SYSTEM_LIBRARY_DIR)/Frameworks/Foundation.framework/Headers/Foundation.h
-OTHER_LDFLAGS = $(COVERAGE_LDFLAGS) -framework OCMock

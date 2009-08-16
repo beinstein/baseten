@@ -57,6 +57,17 @@
 			name = "PostgreSQL-arm";
 			productName = "PostgreSQL-arm";
 		};
+		53AA54021037922A00073825 /* RegexKit */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 53AA54061037923600073825 /* Build configuration list for PBXAggregateTarget "RegexKit" */;
+			buildPhases = (
+				53AA54011037922A00073825 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = RegexKit;
+			productName = RegexKit;
+		};
 		53BD79F70E092ABC009CAFE6 /* Documentation */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 53BD79FA0E092ADB009CAFE6 /* Build configuration list for PBXAggregateTarget "Documentation" */;
@@ -207,6 +218,7 @@
 		535736C60F3283C200DB3D0B /* BXDatabaseObjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = 535736C40F3283C200DB3D0B /* BXDatabaseObjectModel.m */; };
 		535736CB0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 535736C90F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.h */; };
 		535736CC0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = 535736CA0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.m */; };
+		535B3E1E1038146500A5FB7E /* libpcre.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 535B3E1D1038146500A5FB7E /* libpcre.a */; };
 		535F23570E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F23550E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h */; };
 		535F23580E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m in Sources */ = {isa = PBXBuildFile; fileRef = 535F23560E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m */; };
 		535F235B0E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h in Headers */ = {isa = PBXBuildFile; fileRef = 535F23590E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h */; };
@@ -556,6 +568,13 @@
 			remoteGlobalIDString = 537934A50E54B71B0006EC54;
 			remoteInfo = "PostgreSQL-arm";
 		};
+		53AA540D1037930D00073825 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 53AA54021037922A00073825;
+			remoteInfo = RegexKit;
+		};
 		53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -684,6 +703,7 @@
 		5359D1860C4BCA2A000F9DE2 /* BXOneToOneRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXOneToOneRelationshipDescription.m; path = Sources/BXOneToOneRelationshipDescription.m; sourceTree = "<group>"; };
 		5359D18B0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXManyToManyRelationshipDescription.h; path = Sources/BXManyToManyRelationshipDescription.h; sourceTree = "<group>"; };
 		5359D18C0C4BCA3A000F9DE2 /* BXManyToManyRelationshipDescription.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXManyToManyRelationshipDescription.m; path = Sources/BXManyToManyRelationshipDescription.m; sourceTree = "<group>"; };
+		535B3E1D1038146500A5FB7E /* libpcre.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpcre.a; path = "../Release/pcre-7.6/lib/libpcre.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		535F23550E8A8D4900311CB5 /* BXPGArrayExpressionValueType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGArrayExpressionValueType.h; path = Sources/BXPGArrayExpressionValueType.h; sourceTree = "<group>"; };
 		535F23560E8A8D4900311CB5 /* BXPGArrayExpressionValueType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGArrayExpressionValueType.m; path = Sources/BXPGArrayExpressionValueType.m; sourceTree = "<group>"; };
 		535F23590E8A8D5900311CB5 /* BXPGRelationshipExpressionValueType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGRelationshipExpressionValueType.h; path = Sources/BXPGRelationshipExpressionValueType.h; sourceTree = "<group>"; };
@@ -951,6 +971,7 @@
 				537920580E3F519000423965 /* CoreData.framework in Frameworks */,
 				53D69A880EAE072A00C4C22D /* SystemConfiguration.framework in Frameworks */,
 				5354F9410F00537200422613 /* AppKit.framework in Frameworks */,
+				535B3E1E1038146500A5FB7E /* libpcre.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -987,6 +1008,7 @@
 				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
 				53DBE8120B666C7900C3D20A /* libssl.dylib */,
 				538679870DE31C1D000C9A78 /* libstdc++.6.dylib */,
+				535B3E1D1038146500A5FB7E /* libpcre.a */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				5354F9400F00537200422613 /* AppKit.framework */,
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
@@ -1783,7 +1805,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 535444100D634A47002A6C47 /* Build configuration list for PBXNativeTarget "BaseTen Framework + GC" */;
 			buildPhases = (
-				532BC26B1037753A002F337C /* Build PCRE */,
 				535443C40D634A47002A6C47 /* Headers */,
 				53ED0E6310355F94000CFECF /* Copy PostgreSQL Headers */,
 				535443EB0D634A47002A6C47 /* Resources */,
@@ -1796,6 +1817,7 @@
 			);
 			dependencies = (
 				5362E8710E1CE4A9005C7654 /* PBXTargetDependency */,
+				53AA540E1037930D00073825 /* PBXTargetDependency */,
 			);
 			name = "BaseTen Framework + GC";
 			productName = "BXDatabase Static";
@@ -1840,10 +1862,11 @@
 				537385720DD9FBAE006F965A /* BaseTen + GC */,
 				535443BB0D634A47002A6C47 /* BaseTen Framework + GC */,
 				534EE22E0E53213300B079B0 /* BaseTen for iPhone */,
-				5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */,
-				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
 				53BD79F70E092ABC009CAFE6 /* Documentation */,
 				5362DB910FDF32D2003CF2AB /* Examples */,
+				5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */,
+				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
+				53AA54021037922A00073825 /* RegexKit */,
 			);
 		};
 /* End PBXProject section */
@@ -1900,21 +1923,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		532BC26B1037753A002F337C /* Build PCRE */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Build PCRE";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "my_target=PCRE\nsource Tools/build_regexkit.sh";
-			showEnvVarsInLog = 0;
-		};
 		5354440E0D634A47002A6C47 /* Set icon */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1956,6 +1964,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-openssl.sh\nsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh arm\nif [ ! -d \"$my_build_dir\"/postgresql ]\nthen\n\tcp -R \"$my_build_dir\"/universal/include \"$my_build_dir\"/postgresql\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		53AA54011037922A00073825 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "my_target=\"RegexKit Framework\"\nsource Tools/build_regexkit.sh";
 			showEnvVarsInLog = 0;
 		};
 		53BD79F60E092ABC009CAFE6 /* Run doxygen */ = {
@@ -2242,6 +2264,11 @@
 			target = 537934A50E54B71B0006EC54 /* PostgreSQL-arm */;
 			targetProxy = 537934C20E54BDDD0006EC54 /* PBXContainerItemProxy */;
 		};
+		53AA540E1037930D00073825 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 53AA54021037922A00073825 /* RegexKit */;
+			targetProxy = 53AA540D1037930D00073825 /* PBXContainerItemProxy */;
+		};
 		53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 53BD79F70E092ABC009CAFE6 /* Documentation */;
@@ -2412,6 +2439,27 @@
 			};
 			name = Release;
 		};
+		53AA54031037922A00073825 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Debug;
+		};
+		53AA54041037922A00073825 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Coverage;
+		};
+		53AA54051037922A00073825 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Release;
+		};
 		53BD79F80E092ABD009CAFE6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2566,6 +2614,16 @@
 				537934A60E54B71C0006EC54 /* Debug */,
 				98A6CD6D0F45C8600029B2C4 /* Coverage */,
 				537934A70E54B71C0006EC54 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53AA54061037923600073825 /* Build configuration list for PBXAggregateTarget "RegexKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53AA54031037922A00073825 /* Debug */,
+				53AA54041037922A00073825 /* Coverage */,
+				53AA54051037922A00073825 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
