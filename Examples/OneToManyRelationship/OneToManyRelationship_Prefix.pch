@@ -1,0 +1,9 @@
+//
+// Prefix header for all source files of the 'OneToManyRelationship' target in the 'OneToManyRelationship' project
+//
+
+#ifdef __OBJC__
+	#import <BaseTen/BaseTen.h>
+	#import <BaseTenAppKit/BaseTenAppKit.h>
+    #import <Cocoa/Cocoa.h>
+#endif
