@@ -177,6 +177,8 @@
 
 - (void) prepareEntity
 {
+	BXAssertVoidReturn (databaseContext, @"Expected databaseContext not to be nil. Was it set or bound in Interface Builder?");
+	
 	NSError* error = nil;
 	[self setEntityDescription: nil];
 	BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName]
@@ -433,9 +435,10 @@ IsKindOfClass (id self, Class class)
 		{
             //FIXME: many-to-many relationships aren't handled.
 			BXRelationshipDescription* rel = [boundObject relationship];
-			if (! [[rel inverseRelationship] isToMany])
+			BXRelationshipDescription* inverse = [rel inverseRelationship];
+			if (! [inverse isToMany])
 			{
-				retval = [NSDictionary dictionaryWithObject: [boundObject owner] forKey: rel];
+				retval = [NSDictionary dictionaryWithObject: [boundObject owner] forKey: inverse];
 			}
 		}
 	}
