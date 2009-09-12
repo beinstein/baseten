@@ -1,0 +1,35 @@
+Index: Source/Build/Xcode/RegexKit_Build_Settings.xcconfig
+===================================================================
+--- Source/Build/Xcode/RegexKit_Build_Settings.xcconfig (revision 51)
++++ Source/Build/Xcode/RegexKit_Build_Settings.xcconfig (working copy)
+@@ -33,24 +33,28 @@
+ 
+ // The SDK for the current Mac OS X release
+ 
+-SDKROOT_1040                    = /Developer/SDKs/MacOSX10.4u.sdk
+-SDKROOT_1050                    = /Developer/SDKs/MacOSX10.5.sdk
++SDKROOT_1040                    = ${DEVELOPER_SDK_DIR}/MacOSX10.4u.sdk
++SDKROOT_1050                    = ${DEVELOPER_SDK_DIR}/MacOSX10.5.sdk
++SDKROOT_1060                    = ${DEVELOPER_SDK_DIR}/MacOSX10.5.sdk
+ SDKROOT                         = ${SDKROOT_${MAC_OS_X_VERSION_MAJOR}}
+ 
+ // Compiler flags dependent on the current Mac OS X release
+ 
+ XCODE_CFLAGS_1040               = 
+ XCODE_CFLAGS_1050               = -fstack-protector-all
++XCODE_CFLAGS_1060               = -fstack-protector-all
+ XCODE_CFLAGS_FOR_OS             = ${XCODE_CFLAGS_${MAC_OS_X_VERSION_MAJOR}}
+ 
+ PCRE_CFLAGS_1040                = 
+ PCRE_CFLAGS_1050                = -fstack-protector-all
++PCRE_CFLAGS_1060                = -fstack-protector-all
+ PCRE_CFLAGS_FOR_OS              = ${PCRE_CFLAGS_${MAC_OS_X_VERSION_MAJOR}}
+ 
+ // The architectures we build for for the current Mac OS X release
+ 
+ ARCHS_1040                      = ppc i386
+ ARCHS_1050                      = ppc ppc64 i386 x86_64
++ARCHS_1060                      = ppc ppc64 i386 x86_64
+ ARCHS                           = ${ARCHS_${MAC_OS_X_VERSION_MAJOR}}
+ 
+ // MACOSX_DEPLOYMENT_TARGET is also set in Makefile.pcre, ppc & i386 @ 10.4, ppc64 & x86_64 @ 10.5

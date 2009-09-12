@@ -57,17 +57,6 @@
 			name = "PostgreSQL-arm";
 			productName = "PostgreSQL-arm";
 		};
-		53AA54021037922A00073825 /* RegexKit */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 53AA54061037923600073825 /* Build configuration list for PBXAggregateTarget "RegexKit" */;
-			buildPhases = (
-				53AA54011037922A00073825 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = RegexKit;
-			productName = RegexKit;
-		};
 		53BD79F70E092ABC009CAFE6 /* Documentation */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 53BD79FA0E092ADB009CAFE6 /* Build configuration list for PBXAggregateTarget "Documentation" */;
@@ -568,19 +557,19 @@
 			remoteGlobalIDString = 537934A50E54B71B0006EC54;
 			remoteInfo = "PostgreSQL-arm";
 		};
-		53AA540D1037930D00073825 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 53AA54021037922A00073825;
-			remoteInfo = RegexKit;
-		};
 		53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 53BD79F70E092ABC009CAFE6;
 			remoteInfo = Documentation;
+		};
+		53F1C60F105C4DDD00A610A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 53F1C5DF105C4BF200A610A8 /* RegexKit-test */;
+			remoteInfo = "RegexKit-test";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1780,6 +1769,23 @@
 		};
 /* End PBXHeadersBuildPhase section */
 
+/* Begin PBXLegacyTarget section */
+		53F1C5DF105C4BF200A610A8 /* RegexKit */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-f \"$(SRCROOT)/Tools/RegexKit.mk\" $(ACTION)";
+			buildConfigurationList = 53F1C5E3105C4C1000A610A8 /* Build configuration list for PBXLegacyTarget "RegexKit" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = "/Users/tsnorri/Checkout/baseten-trunk/Contrib/RegexKit";
+			dependencies = (
+			);
+			name = RegexKit;
+			passBuildSettingsInEnvironment = 1;
+			productName = "RegexKit-test";
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		534EE22E0E53213300B079B0 /* BaseTen for iPhone */ = {
 			isa = PBXNativeTarget;
@@ -1817,7 +1823,7 @@
 			);
 			dependencies = (
 				5362E8710E1CE4A9005C7654 /* PBXTargetDependency */,
-				53AA540E1037930D00073825 /* PBXTargetDependency */,
+				53F1C610105C4DDD00A610A8 /* PBXTargetDependency */,
 			);
 			name = "BaseTen Framework + GC";
 			productName = "BXDatabase Static";
@@ -1866,7 +1872,7 @@
 				5362DB910FDF32D2003CF2AB /* Examples */,
 				5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */,
 				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
-				53AA54021037922A00073825 /* RegexKit */,
+				53F1C5DF105C4BF200A610A8 /* RegexKit */,
 			);
 		};
 /* End PBXProject section */
@@ -1964,20 +1970,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-openssl.sh\nsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh arm\nif [ ! -d \"$my_build_dir\"/postgresql ]\nthen\n\tcp -R \"$my_build_dir\"/universal/include \"$my_build_dir\"/postgresql\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		53AA54011037922A00073825 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "my_target=\"RegexKit Framework\"\nsource Tools/build_regexkit.sh";
 			showEnvVarsInLog = 0;
 		};
 		53BD79F60E092ABC009CAFE6 /* Run doxygen */ = {
@@ -2264,15 +2256,15 @@
 			target = 537934A50E54B71B0006EC54 /* PostgreSQL-arm */;
 			targetProxy = 537934C20E54BDDD0006EC54 /* PBXContainerItemProxy */;
 		};
-		53AA540E1037930D00073825 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 53AA54021037922A00073825 /* RegexKit */;
-			targetProxy = 53AA540D1037930D00073825 /* PBXContainerItemProxy */;
-		};
 		53BD7A010E092BD5009CAFE6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 53BD79F70E092ABC009CAFE6 /* Documentation */;
 			targetProxy = 53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */;
+		};
+		53F1C610105C4DDD00A610A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 53F1C5DF105C4BF200A610A8 /* RegexKit */;
+			targetProxy = 53F1C60F105C4DDD00A610A8 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2439,27 +2431,6 @@
 			};
 			name = Release;
 		};
-		53AA54031037922A00073825 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = RegexKit;
-			};
-			name = Debug;
-		};
-		53AA54041037922A00073825 /* Coverage */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = RegexKit;
-			};
-			name = Coverage;
-		};
-		53AA54051037922A00073825 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = RegexKit;
-			};
-			name = Release;
-		};
 		53BD79F80E092ABD009CAFE6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2471,6 +2442,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				PRODUCT_NAME = Documentation;
+			};
+			name = Release;
+		};
+		53F1C5E0105C4BF200A610A8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Debug;
+		};
+		53F1C5E1105C4BF200A610A8 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Coverage;
+		};
+		53F1C5E2105C4BF200A610A8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
 			};
 			name = Release;
 		};
@@ -2618,22 +2610,22 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		53AA54061037923600073825 /* Build configuration list for PBXAggregateTarget "RegexKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				53AA54031037922A00073825 /* Debug */,
-				53AA54041037922A00073825 /* Coverage */,
-				53AA54051037922A00073825 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		53BD79FA0E092ADB009CAFE6 /* Build configuration list for PBXAggregateTarget "Documentation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				53BD79F80E092ABD009CAFE6 /* Debug */,
 				98A6CD6E0F45C8600029B2C4 /* Coverage */,
 				53BD79F90E092ABD009CAFE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53F1C5E3105C4C1000A610A8 /* Build configuration list for PBXLegacyTarget "RegexKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53F1C5E0105C4BF200A610A8 /* Debug */,
+				53F1C5E1105C4BF200A610A8 /* Coverage */,
+				53F1C5E2105C4BF200A610A8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

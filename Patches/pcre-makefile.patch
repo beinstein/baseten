@@ -1,0 +1,27 @@
+Index: Source/Build/Makefiles/Makefile.pcre
+===================================================================
+--- Source/Build/Makefiles/Makefile.pcre	(revision 51)
++++ Source/Build/Makefiles/Makefile.pcre	(working copy)
+@@ -199,8 +199,12 @@
+ #
+ # Fetches the pcre tarball if it doesn't exist and untars it.  Makes a timestamp so if the tarball is updated it causes an untaring of the newer tarball.
+ #
++empty:=
++s1:= $(empty) $(empty)
++s2:= \$(empty) $(empty)
++tarball_target:= $(subst $(s1),$(s2),$(PCRE_TARBALL_FILE_PATH))
+ 
+-${PCRE_TARBALL_FILE_PATH}:
++$(tarball_target):
+ 	@echo "${MAKEFILE_PCRE}:204: note: The pcre library distribution file '${PCRE_TARBALL_FILE_NAME}' does not exist.  Downloading from '${PCRE_TARBALL_URL}'."; \
+ 	mkdir -p '${PCRE_TARBALL_DISTRIBUTIONS_DIR}'; \
+ 	${PCRE_FETCH_COMMAND} || \
+@@ -213,7 +217,7 @@
+ 		  exit 1; \
+ 	  fi;
+ 		
+-${PCRE_TEMP_DIR}: ${PCRE_TARBALL_FILE_PATH}
++${PCRE_TEMP_DIR}: ${tarball_target}
+ 	@echo "${MAKEFILE_PCRE}:217: note: Untaring '${PCRE_TARBALL_FILE_NAME}'."; \
+ 	cd '${PCRE_TEMP_ROOT}' && \
+ 	  ${PCRE_UNTAR_COMMAND};
