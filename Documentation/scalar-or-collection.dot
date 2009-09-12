@@ -1,0 +1,53 @@
+digraph G
+{
+	rankdir = "TB";
+	{
+		node []
+		start [label = "Begin"]
+		end [label = "End"]
+	}
+	{
+		node [shape = box]
+		P1 [label = "Set type to scalar"]
+		P2 [label = "Set type to collection"]
+		P3 [label = "Set type to unexpected"]
+		P4 [label = "Set type to function's cardinality"]
+		P5 [label = "Get function object\n(based on cardinality)"]
+		P6 [label = "Get node"]
+	}
+	{
+		node [shape = diamond]
+		D1 [label = "Node type?"]
+		D2 [label = "Is to-many?"]
+		D3 [label = "Nodes left?"]
+		D4 [label = "Function value?"]
+		D5 [label = "Nodes left?"]
+		D6 [label = "Got node?"]
+		D7 [label = "Have at least one\nproperty node?"]
+	}
+	{
+		node [shape = parallelogram]
+		R1 [label = "Get current node name"]
+		R2 [label = "Get current function name"]
+	}
+	
+	start -> P1 -> R1 -> P6 -> D6
+	D6 -> D1 [label=y]
+	D6 -> D7 [label=n]
+	D7 -> P5 [label=y]
+	D7 -> P3 [label=n]
+	D1 -> R2 [label = "Attribute"]
+	D1 -> D2 [label = "Relationship"]
+	D2 -> P2 [label=y]
+	D2 -> D3 [label=n]
+	P2 -> D3
+	D3 -> R1 [label=y]
+	D3 -> R2 [label=n]
+	R2 -> P5 -> D4
+	D4 -> P4 [label = "non-nil"]
+	D4 -> P3 [label = nil]
+	P4 -> D5
+	D5 -> R2 [label=y]
+	P3 -> end
+	D5 -> end [label=n]
+}
