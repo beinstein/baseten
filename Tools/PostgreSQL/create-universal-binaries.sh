@@ -1,4 +1,4 @@
-. "$SRCROOT"/PostgreSQL/defines.sh
+. "$SRCROOT"/Tools/defines.sh
 
 if [ ! -e "$my_build_dir"/universal/bin/psql ]
 then

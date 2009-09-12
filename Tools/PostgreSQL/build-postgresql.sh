@@ -1,4 +1,4 @@
-. "$SRCROOT"/PostgreSQL/defines.sh
+. "$SRCROOT"/Tools/defines.sh
 my_architecture="$1"
 
 

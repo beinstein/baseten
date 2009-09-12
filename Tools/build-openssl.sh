@@ -1,4 +1,4 @@
-. "$SRCROOT"/PostgreSQL/defines.sh
+. "$SRCROOT"/Tools/defines.sh
 openssl_source_file=openssl-0.9.8h.tar.gz
 openssl_dir=openssl-0.9.8h
 openssl_root="$my_build_dir"/"$openssl_dir"
