@@ -38,6 +38,7 @@ int main (int argc, const char * argv [])
 	int retval = 0;
 	
 	// We use garbage collection, so no autorelease pool is needed.
+    objc_startCollectorThread ();
 	
 	if (2 != argc)
 	{
