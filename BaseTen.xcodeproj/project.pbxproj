@@ -1777,7 +1777,7 @@
 			buildPhases = (
 			);
 			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = "/Users/tsnorri/Checkout/baseten-trunk/Contrib/RegexKit";
+			buildWorkingDirectory = "\"$(SRCROOT)/Contrib/RegexKit\"";
 			dependencies = (
 			);
 			name = RegexKit;
