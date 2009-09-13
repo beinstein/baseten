@@ -19,12 +19,6 @@ then
     exit 1
 fi
 
-if [ -e "$SYMROOT" ]
-then
-    echo "$SYMROOT already exists."
-    exit 1
-fi
-
 echo -n "Using developer tools at path: "
 xcode-select -print-path
 exit_on_error
