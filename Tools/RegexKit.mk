@@ -5,11 +5,6 @@ ENV = /usr/bin/env
 PATCH = /usr/bin/patch
 XCODEBUILD = xcodebuild
 
-XC_TARGET := $(MAKECMDGOALS)
-ifndef XC_TARGET
-	XC_TARGET := build
-endif
-
 BUILD_SETTINGS_DIR = RegexKit-patched-source/Source/Build/Xcode
 
 
@@ -34,7 +29,7 @@ RegexKit-xc:
 		cd RegexKit-patched-source; \
 		$(ENV) -i PATH="$(PATH)" \
 			$(XCODEBUILD) -configuration Release -target "RegexKit Framework" \
-				$(XC_TARGET) \
+				$(MAKECMDGOALS) \
 				SYMROOT="$(BUILD_DIR)" \
 				OBJROOT="$(OBJROOT)" \
 				GCC_VERSION=4.0; \
