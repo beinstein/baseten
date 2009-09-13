@@ -1,0 +1,10 @@
+--- src/makefiles/Makefile.darwin
++++ src/makefiles/Makefile.darwin
+@@ -13,6 +13,6 @@
+ # Rule for building shared libs (currently used only for regression test
+ # shlib ... should go away, since this is not really enough knowledge)
+ %.so: %.o
+-	$(CC) $(CFLAGS) -bundle -o $@ $< $(BE_DLLLIBS)
++	$(CC) $(CFLAGS) $(LDFLAGS) -bundle -o $@ $< $(BE_DLLLIBS)
+ 
+ sqlmansect = 7

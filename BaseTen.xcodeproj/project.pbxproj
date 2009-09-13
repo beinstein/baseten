@@ -568,7 +568,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 53F1C5DF105C4BF200A610A8 /* RegexKit-test */;
+			remoteGlobalIDString = 53F1C5DF105C4BF200A610A8;
 			remoteInfo = "RegexKit-test";
 		};
 /* End PBXContainerItemProxy section */
@@ -1955,7 +1955,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "for x in $ARCHS\ndo\n\tsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh \"$x\"\ndone\nsource \"$PROJECT_DIR\"/PostgreSQL/create-universal-binaries.sh";
+			shellScript = "for x in $ARCHS\ndo\n\tsource \"$PROJECT_DIR\"/Tools/PostgreSQL/build-postgresql.sh \"$x\"\ndone\nsource \"$PROJECT_DIR\"/Tools/PostgreSQL/create-universal-binaries.sh";
 			showEnvVarsInLog = 0;
 		};
 		537934A40E54B71B0006EC54 /* ShellScript */ = {
@@ -1969,7 +1969,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/build-openssl.sh\nsource \"$PROJECT_DIR\"/PostgreSQL/build-postgresql.sh arm\nif [ ! -d \"$my_build_dir\"/postgresql ]\nthen\n\tcp -R \"$my_build_dir\"/universal/include \"$my_build_dir\"/postgresql\nfi\n";
+			shellScript = "source \"$PROJECT_DIR\"/Tools/PostgreSQL/build-openssl.sh\nsource \"$PROJECT_DIR\"/Tools/PostgreSQL/build-postgresql.sh arm\nif [ ! -d \"$my_build_dir\"/postgresql ]\nthen\n\tcp -R \"$my_build_dir\"/universal/include \"$my_build_dir\"/postgresql\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		53BD79F60E092ABC009CAFE6 /* Run doxygen */ = {
@@ -1999,7 +1999,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "source \"$PROJECT_DIR\"/PostgreSQL/copy-postgresql-headers.sh \"$x\"\n";
+			shellScript = "source \"$PROJECT_DIR\"/Tools/PostgreSQL/copy-postgresql-headers.sh \"$x\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

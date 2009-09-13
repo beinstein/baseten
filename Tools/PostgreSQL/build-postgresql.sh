@@ -13,8 +13,11 @@ function extract
             exit 1
         fi
         gnutar -jxf "$postgresql_source_file" -C "$my_build_dir"
-        ln -s "postgresql-${postgresql_version}" "$my_build_dir"/postgresql-src
-        patch -p1 -d "$postgresql_root" < "$SRCROOT"/PostgreSQL/libpq.patch
+        ln -s "postgresql-${postgresql_version}" "$my_build_dir/postgresql-src"
+        patch -p0 -d "$postgresql_root" < "$SRCROOT/Patches/libpq.patch"
+        exit_on_error
+        patch -p0 -d "$postgresql_root" < "$SRCROOT/Patches/pg-makefile.patch"
+        exit_on_error
     fi
 }
 
