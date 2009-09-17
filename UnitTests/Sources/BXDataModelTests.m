@@ -114,25 +114,47 @@
 - (void) testOneToOne
 {
 	NSArray* statements = [self importStatements: @"one-to-one"];
-	NSArray* expected = [NSArray arrayWithObjects:
-						 @"CREATE SCHEMA \"test_schema\";",
-						 @"CREATE TABLE \"test_schema\".\"a\" (id SERIAL) ;",
-						 @"ALTER TABLE \"test_schema\".\"a\" ADD PRIMARY KEY (id);",
-						 @"CREATE TABLE \"test_schema\".\"b\" (id SERIAL) ;",
-						 @"ALTER TABLE \"test_schema\".\"b\" ADD PRIMARY KEY (id);",
-						 @"CREATE TABLE \"test_schema\".\"c\" (id SERIAL) ;",
-						 @"ALTER TABLE \"test_schema\".\"c\" ADD PRIMARY KEY (id);",
-						 @"CREATE TABLE \"test_schema\".\"d\" (id SERIAL) ;",
-						 @"ALTER TABLE \"test_schema\".\"d\" ADD PRIMARY KEY (id);",
-						 @"ALTER TABLE \"test_schema\".\"a\" ADD COLUMN \"ab_id\" integer;",
-						 @"ALTER TABLE \"test_schema\".\"a\" ALTER COLUMN \"ab_id\" SET NOT NULL;",
-						 @"ALTER TABLE \"test_schema\".\"a\" ADD UNIQUE (\"ab_id\");",
-						 @"ALTER TABLE \"test_schema\".\"a\" ADD CONSTRAINT \"ab__ba\"   FOREIGN KEY (\"ab_id\") REFERENCES \"test_schema\".\"b\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
-						 @"ALTER TABLE \"test_schema\".\"c\" ADD COLUMN \"cd_id\" integer;",
-						 @"ALTER TABLE \"test_schema\".\"c\" ADD UNIQUE (\"cd_id\");",
-						 @"ALTER TABLE \"test_schema\".\"c\" ADD CONSTRAINT \"cd__dc\"   FOREIGN KEY (\"cd_id\") REFERENCES \"test_schema\".\"d\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
-						 nil];
-	MKCAssertEqualObjects (expected, statements);
+	NSArray* expected1 = [NSArray arrayWithObjects:
+						  @"CREATE SCHEMA \"test_schema\";",
+						  @"CREATE TABLE \"test_schema\".\"a\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"a\" ADD PRIMARY KEY (id);",
+						  @"CREATE TABLE \"test_schema\".\"b\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"b\" ADD PRIMARY KEY (id);",
+						  @"CREATE TABLE \"test_schema\".\"c\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"c\" ADD PRIMARY KEY (id);",
+						  @"CREATE TABLE \"test_schema\".\"d\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"d\" ADD PRIMARY KEY (id);",
+						  @"ALTER TABLE \"test_schema\".\"a\" ADD COLUMN \"ab_id\" integer;",
+						  @"ALTER TABLE \"test_schema\".\"a\" ALTER COLUMN \"ab_id\" SET NOT NULL;",
+						  @"ALTER TABLE \"test_schema\".\"a\" ADD UNIQUE (\"ab_id\");",
+						  @"ALTER TABLE \"test_schema\".\"a\" ADD CONSTRAINT \"ab__ba\"   FOREIGN KEY (\"ab_id\") REFERENCES \"test_schema\".\"b\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						  @"ALTER TABLE \"test_schema\".\"c\" ADD COLUMN \"cd_id\" integer;",
+						  @"ALTER TABLE \"test_schema\".\"c\" ADD UNIQUE (\"cd_id\");",
+						  @"ALTER TABLE \"test_schema\".\"c\" ADD CONSTRAINT \"cd__dc\"   FOREIGN KEY (\"cd_id\") REFERENCES \"test_schema\".\"d\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						  nil];
+	NSArray* expected2 = [NSArray arrayWithObjects:
+						  @"CREATE SCHEMA \"test_schema\";",
+						  @"CREATE TABLE \"test_schema\".\"d\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"d\" ADD PRIMARY KEY (id);",
+						  @"CREATE TABLE \"test_schema\".\"b\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"b\" ADD PRIMARY KEY (id);",
+						  @"CREATE TABLE \"test_schema\".\"c\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"c\" ADD PRIMARY KEY (id);",
+						  @"CREATE TABLE \"test_schema\".\"a\" (id SERIAL) ;",
+						  @"ALTER TABLE \"test_schema\".\"a\" ADD PRIMARY KEY (id);",
+						  @"ALTER TABLE \"test_schema\".\"d\" ADD COLUMN \"dc_id\" integer;",
+						  @"ALTER TABLE \"test_schema\".\"d\" ADD UNIQUE (\"dc_id\");",
+						  @"ALTER TABLE \"test_schema\".\"d\" ADD CONSTRAINT \"dc__cd\"   FOREIGN KEY (\"dc_id\") REFERENCES \"test_schema\".\"c\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						  @"ALTER TABLE \"test_schema\".\"b\" ADD COLUMN \"ba_id\" integer;",
+						  @"ALTER TABLE \"test_schema\".\"b\" ALTER COLUMN \"ba_id\" SET NOT NULL;",
+						  @"ALTER TABLE \"test_schema\".\"b\" ADD UNIQUE (\"ba_id\");",
+						  @"ALTER TABLE \"test_schema\".\"b\" ADD CONSTRAINT \"ba__ab\"   FOREIGN KEY (\"ba_id\") REFERENCES \"test_schema\".\"a\" (id)   ON DELETE SET NULL ON UPDATE CASCADE;",
+						  nil];
+						  
+	STAssertTrue ([expected1 isEqual: statements] || [expected2 isEqual: statements],
+				  @"Expected statements to equal one of the following."
+				  @"statements: %@\nexpected1: %@\nexpected2: %@",
+				  statements, expected1, expected2);
 }
 
 - (void) testRelationshipOptionality
