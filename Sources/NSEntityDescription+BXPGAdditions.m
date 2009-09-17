@@ -42,23 +42,27 @@
 
 	NSString* name = [self name];
 	NSEntityDescription* superentity = [self superentity];
-	NSDictionary* attributes = [self attributesByName];
-    NSMutableArray* attributeDefs = [NSMutableArray arrayWithCapacity: 1 + [attributes count]];    
+	//-attributesByName would return only attribute descriptions, but we need an ordered collection.
+	NSArray* properties = [self properties];
+    NSMutableArray* attributeDefs = [NSMutableArray arrayWithCapacity: 1 + [properties count]];
     if (YES == addSerialIDColumn)
         [attributeDefs addObject: @"id SERIAL"];
-	
-	BXEnumerate (currentAttribute, e, [attributes objectEnumerator])
+
+	BXEnumerate (currentProperty, e, [properties objectEnumerator])
 	{
+		if (! [currentProperty isKindOfClass: [NSAttributeDescription class]])
+			continue;
+		
 		//Transient values are not stored
 		if ([currentAttribute isTransient])
 			continue;
 		
 		//Superentities' attributes won't be repeated here.
-		if (! [[currentAttribute entity] isEqual: self])
+		if (! [[currentProperty entity] isEqual: self])
 			continue;
 		
 		NSError* attrError = nil;
-		if (! [currentAttribute BXCanAddAttribute: &attrError])
+		if (! [currentProperty BXCanAddAttribute: &attrError])
 			[errors addObject: attrError];
 		else
 		{
