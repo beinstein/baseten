@@ -185,7 +185,7 @@ ImportError (NSString* message, NSString* reason)
 	NSMutableSet* handledRelationships = PGTSSetCreateMutableStrongRetainingForNSRD ();
 	BXEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
-		BXEnumerate (currentProperty, e, [currentEntity properties] objectEnumerator])
+		BXEnumerate (currentProperty, e, [[currentEntity properties] objectEnumerator])
 		{
 			BOOL isRelationship = [currentProperty isKindOfClass: [NSRelationshipDescription class]];
 			BOOL isHandled = [handledRelationships containsObject: currentProperty];

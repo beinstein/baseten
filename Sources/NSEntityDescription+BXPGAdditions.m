@@ -54,7 +54,7 @@
 			continue;
 		
 		//Transient values are not stored
-		if ([currentAttribute isTransient])
+		if ([currentProperty isTransient])
 			continue;
 		
 		//Superentities' attributes won't be repeated here.
@@ -66,7 +66,7 @@
 			[errors addObject: attrError];
 		else
 		{
-			NSString* attrDef = [currentAttribute BXPGAttributeDefinition];
+			NSString* attrDef = [currentProperty BXPGAttributeDefinition];
 			[attributeDefs addObject: attrDef];
 		}
 	}
