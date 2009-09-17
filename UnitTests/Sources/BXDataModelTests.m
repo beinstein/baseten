@@ -86,7 +86,7 @@
 						 @"CREATE SCHEMA \"test_schema\";",
 						 @"CREATE TABLE \"test_schema\".\"Person\" (id SERIAL, \"surname\" text , \"birthday\" timestamp with time zone ) ;",
 						 @"ALTER TABLE \"test_schema\".\"Person\" ADD PRIMARY KEY (id);",
-						 @"CREATE TABLE \"test_schema\".\"Employee\" (id SERIAL, \"salary\" numeric , \"room\" smallint ) INHERITS (\"test_schema\".\"Person\");",
+						 @"CREATE TABLE \"test_schema\".\"Employee\" (id SERIAL, \"room\" smallint , \"salary\" numeric ) INHERITS (\"test_schema\".\"Person\");",
 						 @"ALTER TABLE \"test_schema\".\"Employee\" ADD PRIMARY KEY (id);",
 						 @"CREATE TABLE \"test_schema\".\"Department\" (id SERIAL) ;",
 						 @"ALTER TABLE \"test_schema\".\"Department\" ADD PRIMARY KEY (id);",
