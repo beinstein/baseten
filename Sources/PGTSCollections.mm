@@ -148,12 +148,16 @@ id PGTSDictionaryCreateMutableWeakNonretainedObjects ()
 #pragma mark NSPointerArray additions
 - (void) addObject: (id) anObject
 {
-	[(id) self addPointer: anObject];
+	if ([self respondsToSelector: @selector (addPointer:)])
+		[(id) self addPointer: anObject];
 }
 
 - (NSEnumerator *) objectEnumerator
 {
-	return [[(id) self allObjects] objectEnumerator];
+	id retval = nil;
+	if ([self respondsToSelector: @selector (allObjects)])
+		retval = [[(id) self allObjects] objectEnumerator];
+	return retval;
 }
 
 

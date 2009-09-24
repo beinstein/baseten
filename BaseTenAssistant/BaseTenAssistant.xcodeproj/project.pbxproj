@@ -6,20 +6,6 @@
 	objectVersion = 44;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		53AA54DE10379CA100073825 /* RegexKit */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 53AA54E910379CE100073825 /* Build configuration list for PBXAggregateTarget "RegexKit" */;
-			buildPhases = (
-				53AA54DD10379CA100073825 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = RegexKit;
-			productName = RegexKit;
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
 		220DCE2B0E4B081100E688DC /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 220DCE2A0E4B081100E688DC /* Localizable.strings */; };
 		227A5C2A0E4BB4CD0009CC08 /* ClearLog32.tiff in Resources */ = {isa = PBXBuildFile; fileRef = 227A5C290E4BB4CD0009CC08 /* ClearLog32.tiff */; };
@@ -134,11 +120,11 @@
 			remoteGlobalIDString = 535443BB0D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
-		53AA54E110379CCD00073825 /* PBXContainerItemProxy */ = {
+		53E9B36E106C300100A5E95B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
+			containerPortal = 5388DCD20E23AE22006CDBD8 /* BaseTen.xcodeproj */;
 			proxyType = 1;
-			remoteGlobalIDString = 53AA54DE10379CA100073825;
+			remoteGlobalIDString = 53F1C5DF105C4BF200A610A8;
 			remoteInfo = RegexKit;
 		};
 		53F749970E362E62003C2E55 /* PBXContainerItemProxy */ = {
@@ -449,8 +435,8 @@
 			buildPhases = (
 				5381D25D0E4896B5001574D4 /* Copy IB plugin to built products dir */,
 				530602B90A3F112C00C01351 /* Copy Frameworks */,
-				53341E910F6A6C9700EA666F /* Index help */,
 				8D1107290486CEB800E47090 /* Resources */,
+				53341E910F6A6C9700EA666F /* Index help */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 			);
@@ -461,7 +447,7 @@
 				5388DE670E23AE6C006CDBD8 /* PBXTargetDependency */,
 				536D93EA0FDECF8200439719 /* PBXTargetDependency */,
 				530D55820E489F1B006BDEB2 /* PBXTargetDependency */,
-				53AA54E210379CCD00073825 /* PBXTargetDependency */,
+				53E9B36F106C300100A5E95B /* PBXTargetDependency */,
 			);
 			name = Assistant;
 			productInstallPath = "$(HOME)/Applications";
@@ -496,7 +482,6 @@
 			projectRoot = "";
 			targets = (
 				8D1107260486CEB800E47090 /* Assistant */,
-				53AA54DE10379CA100073825 /* RegexKit */,
 			);
 		};
 /* End PBXProject section */
@@ -577,7 +562,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"$SYSTEM_DEVELOPER_UTILITIES_DIR\"/\"Help Indexer.app\"/Contents/MacOS/\"Help Indexer\" ./English.lproj/\"BaseTen Assistant Help\" ";
+			shellScript = "pushd \"$BUILT_PRODUCTS_DIR/BaseTen Assistant.app/Contents/Resources/English.lproj/BaseTen Assistant Help\"\nhiutil -Cf \"BaseTen Assistant Help.helpindex\" -a -g .\npopd";
 			showEnvVarsInLog = 0;
 		};
 		5381D25D0E4896B5001574D4 /* Copy IB plugin to built products dir */ = {
@@ -593,20 +578,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nIBPlugin=\"$PROJECT_DIR\"/../InterfaceBuilderPlugin/build/\"$CONFIGURATION\"/BaseTen.ibplugin\n\nif [ -e \"$IBPlugin\" ] && [ \"$IBPlugin\" -nt \"$BUILT_PRODUCTS_DIR\"/BaseTen.ibplugin ] \nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR\"/BaseTen.ibplugin\n\tcp -pfR \"$IBPlugin\" \"$BUILT_PRODUCTS_DIR\"\nfi";
-			showEnvVarsInLog = 0;
-		};
-		53AA54DD10379CA100073825 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "my_target=\"RegexKit Framework\"\ncd \"$PROJECT_DIR/..\"\nsource Tools/build_regexkit.sh";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -662,10 +633,10 @@
 			name = "BaseTen Framework + GC";
 			targetProxy = 5388DE660E23AE6C006CDBD8 /* PBXContainerItemProxy */;
 		};
-		53AA54E210379CCD00073825 /* PBXTargetDependency */ = {
+		53E9B36F106C300100A5E95B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 53AA54DE10379CA100073825 /* RegexKit */;
-			targetProxy = 53AA54E110379CCD00073825 /* PBXContainerItemProxy */;
+			name = RegexKit;
+			targetProxy = 53E9B36E106C300100A5E95B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -721,20 +692,6 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		53AA54DF10379CA100073825 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = RegexKit;
-			};
-			name = Debug;
-		};
-		53AA54E010379CA100073825 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = RegexKit;
-			};
-			name = Release;
-		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 538DF67710373E5400F33B72 /* debug.xcconfig */;
@@ -772,15 +729,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		53AA54E910379CE100073825 /* Build configuration list for PBXAggregateTarget "RegexKit" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				53AA54DF10379CA100073825 /* Debug */,
-				53AA54E010379CA100073825 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Assistant" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
