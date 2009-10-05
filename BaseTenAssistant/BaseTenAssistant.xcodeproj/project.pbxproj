@@ -19,18 +19,16 @@
 		227A5F4C0E4C5B9D0009CC08 /* BXAInspectorPanelController.m in Sources */ = {isa = PBXBuildFile; fileRef = 227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */; };
 		2B66D97D0B1C664300F8C64A /* BaseTenModifications.sql.m4 in Resources */ = {isa = PBXBuildFile; fileRef = 2B66D97C0B1C664300F8C64A /* BaseTenModifications.sql.m4 */; };
 		531DCABA0B52818E00200097 /* MKCAlternativeDataCellColumn.m in Sources */ = {isa = PBXBuildFile; fileRef = 531DCAB80B52818E00200097 /* MKCAlternativeDataCellColumn.m */; };
-		532BC2E6103777B2002F337C /* BaseTen.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
+		532BC2E6103777B2002F337C /* BaseTen.framework in Copy BaseTen Frameworks */ = {isa = PBXBuildFile; fileRef = 5388DCDB0E23AE22006CDBD8 /* BaseTen.framework */; };
 		532D067E106C3B0800E09397 /* BaseTen Assistant Help in Resources */ = {isa = PBXBuildFile; fileRef = 532D062E106C3B0800E09397 /* BaseTen Assistant Help */; };
 		532F42A00D69B70F009FEDCD /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429A0D69B70F009FEDCD /* MainMenu.xib */; };
 		53425B650E2CD237005F6123 /* MKCStackView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53425B640E2CD237005F6123 /* MKCStackView.m */; };
-		535B3E01103813FC00A5FB7E /* RegexKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 535B3E00103813FC00A5FB7E /* RegexKit.framework */; };
-		535B3E161038143200A5FB7E /* RegexKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 535B3E00103813FC00A5FB7E /* RegexKit.framework */; };
 		536353D90FAF46AF003AE7D5 /* InspectorView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 536353D70FAF46AF003AE7D5 /* InspectorView.xib */; };
 		536CB9CB0B0D217000EBCB39 /* ImportModel32.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C50B0D217000EBCB39 /* ImportModel32.png */; };
 		536CB9CC0B0D217000EBCB39 /* Entity16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C60B0D217000EBCB39 /* Entity16.png */; };
 		536CB9CD0B0D217000EBCB39 /* Schema16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C70B0D217000EBCB39 /* Schema16.png */; };
 		536CB9CE0B0D217000EBCB39 /* Table16.png in Resources */ = {isa = PBXBuildFile; fileRef = 536CB9C80B0D217000EBCB39 /* Table16.png */; };
-		536D93E80FDECF6700439719 /* BaseTenAppKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 53F749980E362E62003C2E55 /* BaseTenAppKit.framework */; };
+		536D93E80FDECF6700439719 /* BaseTenAppKit.framework in Copy BaseTen Frameworks */ = {isa = PBXBuildFile; fileRef = 53F749980E362E62003C2E55 /* BaseTenAppKit.framework */; };
 		536E603B0E263A8600098C4A /* Import.xib in Resources */ = {isa = PBXBuildFile; fileRef = 532F429E0D69B70F009FEDCD /* Import.xib */; };
 		5374E69A0B0DC8A4000D353D /* MKCPolishedHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E6980B0DC8A4000D353D /* MKCPolishedHeaderView.m */; };
 		5374E9450B0E001C000D353D /* MKCPolishedCornerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5374E9430B0E001C000D353D /* MKCPolishedCornerView.m */; };
@@ -137,17 +135,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		530602B90A3F112C00C01351 /* Copy Frameworks */ = {
+		530602B90A3F112C00C01351 /* Copy BaseTen Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				532BC2E6103777B2002F337C /* BaseTen.framework in Copy Frameworks */,
-				536D93E80FDECF6700439719 /* BaseTenAppKit.framework in Copy Frameworks */,
-				535B3E161038143200A5FB7E /* RegexKit.framework in Copy Frameworks */,
+				532BC2E6103777B2002F337C /* BaseTen.framework in Copy BaseTen Frameworks */,
+				536D93E80FDECF6700439719 /* BaseTenAppKit.framework in Copy BaseTen Frameworks */,
 			);
-			name = "Copy Frameworks";
+			name = "Copy BaseTen Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -243,7 +240,6 @@
 				5388DE2A0E23AE48006CDBD8 /* Cocoa.framework in Frameworks */,
 				5388DCDE0E23AE27006CDBD8 /* BaseTen.framework in Frameworks */,
 				53D3420E0FCAEB6B00DE60BE /* BaseTenAppKit.framework in Frameworks */,
-				535B3E01103813FC00A5FB7E /* RegexKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,8 +429,8 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "Assistant" */;
 			buildPhases = (
-				5381D25D0E4896B5001574D4 /* Copy IB plugin to built products dir */,
-				530602B90A3F112C00C01351 /* Copy Frameworks */,
+				530602B90A3F112C00C01351 /* Copy BaseTen Frameworks */,
+				53F83767107A85F20017FB36 /* Copy RegexKit.framework */,
 				8D1107290486CEB800E47090 /* Resources */,
 				53341E910F6A6C9700EA666F /* Index help */,
 				8D11072C0486CEB800E47090 /* Sources */,
@@ -565,19 +561,19 @@
 			shellScript = "pushd \"$BUILT_PRODUCTS_DIR/BaseTen Assistant.app/Contents/Resources/English.lproj/BaseTen Assistant Help\"\nhiutil -Cf \"BaseTen Assistant Help.helpindex\" -a -g .\npopd";
 			showEnvVarsInLog = 0;
 		};
-		5381D25D0E4896B5001574D4 /* Copy IB plugin to built products dir */ = {
+		53F83767107A85F20017FB36 /* Copy RegexKit.framework */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy IB plugin to built products dir";
+			name = "Copy RegexKit.framework";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nIBPlugin=\"$PROJECT_DIR\"/../InterfaceBuilderPlugin/build/\"$CONFIGURATION\"/BaseTen.ibplugin\n\nif [ -e \"$IBPlugin\" ] && [ \"$IBPlugin\" -nt \"$BUILT_PRODUCTS_DIR\"/BaseTen.ibplugin ] \nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR\"/BaseTen.ibplugin\n\tcp -pfR \"$IBPlugin\" \"$BUILT_PRODUCTS_DIR\"\nfi";
+			shellScript = "source \"$SRCROOT/../Tools/copy-regexkit-for-assistant.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
