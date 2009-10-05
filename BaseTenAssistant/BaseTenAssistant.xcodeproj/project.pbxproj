@@ -558,7 +558,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "pushd \"$BUILT_PRODUCTS_DIR/BaseTen Assistant.app/Contents/Resources/English.lproj/BaseTen Assistant Help\"\nhiutil -Cf \"BaseTen Assistant Help.helpindex\" -a -g .\npopd";
+			shellScript = "source \"$SRCROOT/../Tools/index-assistant-help.sh\"";
 			showEnvVarsInLog = 0;
 		};
 		53F83767107A85F20017FB36 /* Copy RegexKit.framework */ = {
