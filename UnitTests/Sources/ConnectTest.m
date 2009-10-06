@@ -107,7 +107,7 @@
 	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
 	[ctx connectAsync];
 	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
-	MKCAssertTrue (3 == expectedCount);
+	STAssertTrue (3 == expectedCount, @"Expected 3 connection attempts while there were %d.", expectedCount);
 }
 
 - (void) expected: (NSNotification *) n
