@@ -77,6 +77,22 @@ ImportError (NSString* message, NSString* reason)
 }
 
 
+static void
+SortRelationships (NSRelationshipDescription* r1, NSRelationshipDescription* r2, NSRelationshipDescription* rels [2])
+{
+	if (NSOrderedAscending == [[r1 name] compare: [r2  name]])
+	{
+		rels [0] = r1;
+		rels [1] = r2;
+	}
+	else
+	{
+		rels [0] = r2;
+		rels [1] = r1;
+	}
+}
+
+
 @implementation NSRelationshipDescription (BXPGAdditions)
 //FIXME: this method is too long.
 - (NSArray *) BXPGRelationshipConstraintsWithColumns: (BOOL) createColumns 
@@ -118,55 +134,51 @@ ImportError (NSString* message, NSString* reason)
 		}
 		else if ([self isToMany] && [[self inverseRelationship] isToMany])
 		{
-			retval = [NSMutableArray array];
-			NSEntityDescription* entity = [self entity];
-			NSRelationshipDescription* inverseRelationship = [self inverseRelationship];
-			
 			//Many-to-many
-			if (! ([self isOptional] && [inverseRelationship isOptional]))
+
+			retval = [NSMutableArray array];
+			NSRelationshipDescription* rels [2] = {};
+			SortRelationships (self, [self inverseRelationship], rels);
+			
+			NSString* rel1Name = [rels [0] name];
+			NSString* rel2Name = [rels [1] name];
+			NSString* entity1Name = [[rels [0] entity] name];
+			NSString* entity2Name = [[rels [1] entity] name];
+			NSString* id1Name = [entity1Name stringByAppendingString: @"_id"];
+			NSString* id2Name = [entity2Name stringByAppendingString: @"_id"];
+			NSString* fkey1Name = rel1Name;
+			NSString* fkey2Name = rel2Name;
+			NSString* helperTableName = [NSString stringWithFormat: @"%@_%@_rel", rel1Name, rel2Name];
+
+			if (! ([rels [0] isOptional] && [rels [1] isOptional]))
 			{
 				NSString* messageFormat = @"Made relationship %@ optional.";
-				NSString* message = [NSString stringWithFormat: messageFormat, [self name]];
+				NSString* message = [NSString stringWithFormat: messageFormat, rel1Name];
 				NSString* reason = @"Required many-to-many relationships are not supported.";
 				[errorMessages addObject: ImportError (message, reason)];
 			}
 			
-			NSEntityDescription* destinationEntity = [self destinationEntity];
-			NSString* helperTableName = [NSString stringWithFormat: @"%@_%@_rel", [self name], [inverseRelationship name]];
-			
-			NSString* entityName = [entity name];
-			NSString* dstEntityName = [destinationEntity name];
-			NSString* idName = [entityName stringByAppendingString: @"_id"];
-			NSString* dstIdName = [dstEntityName stringByAppendingString: @"_id"];
-			NSString* fkeyName = [self name];
-			NSString* dstFkeyName = [inverseRelationship name];
-			
-			id relationships [2] = {self, inverseRelationship};
-			for (int i = 0; i < BXArraySize (relationships); i++)
+			if (! (NSCascadeDeleteRule == [rels [0] deleteRule] && NSCascadeDeleteRule == [rels [1] deleteRule]))
 			{
-				if (NSCascadeDeleteRule != [relationships [i] deleteRule])
-				{
-					NSString* messageFormat = @"Made relationship %@ in %@ cascade on delete.";
-					NSString* message = [NSString stringWithFormat: messageFormat, 
-										 [relationships [i] name], [[relationships [i] entity] name]];
-					NSString* reason = @"Delete rules other than cascade on delete are not supported for many-to-many relationships.";
-					[errorMessages addObject: ImportError (message, reason)];
-				}
+				NSString* messageFormat = @"Made relationship %@ cascade on delete.";
+				NSString* message = [NSString stringWithFormat: messageFormat, rel1Name];
+				NSString* reason = @"Delete rules other than cascade on delete are not supported for many-to-many relationships.";
+				[errorMessages addObject: ImportError (message, reason)];
 			}
-			
+									
 			if (createColumns)
 			{
 				NSString* dropFormat = @"DROP TABLE IF EXISTS \"%@\".\"%@\" CASCADE;";
 				NSString* createFormat = @"CREATE TABLE \"%@\".\"%@\" (\"%@\" integer, \"%@\" integer);";
 				[retval addObject: [NSString stringWithFormat: dropFormat, schemaName, helperTableName]];
-				[retval addObject: [NSString stringWithFormat: createFormat, schemaName, helperTableName, idName, dstIdName]];
+				[retval addObject: [NSString stringWithFormat: createFormat, schemaName, helperTableName, id2Name, id1Name]];
 				[enabledRelations addObject: helperTableName];
 			}
 			
 			if (createConstraints)
 			{
 				NSString* statementFormat = @"ALTER TABLE \"%@\".\"%@\" ADD PRIMARY KEY (\"%@\", \"%@\")";
-				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, helperTableName, idName, dstIdName]];
+				[retval addObject: [NSString stringWithFormat: statementFormat, schemaName, helperTableName, id2Name, id1Name]];
 				
 				//Saved for implementing required MTM relationships.
 #if 0
@@ -180,8 +192,8 @@ ImportError (NSString* message, NSString* reason)
 				@"ALTER TABLE \"%@\".\"%@\" ADD CONSTRAINT \"%@\" "
 				"  FOREIGN KEY (\"%@\") REFERENCES \"%@\".\"%@\" (id) "
 				"  ON UPDATE CASCADE ON DELETE CASCADE;";		
-				[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkeyName, idName, schemaName, entityName]];
-				[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, dstFkeyName, dstIdName, schemaName, dstEntityName]];			
+				[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkey1Name, id1Name, schemaName, entity1Name]];
+				[retval addObject: [NSString stringWithFormat: createFkeyFormat, schemaName, helperTableName, fkey2Name, id2Name, schemaName, entity2Name]];			
 			}
 		}
 		else
