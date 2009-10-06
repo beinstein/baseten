@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.931}})dnl
+define({{_bx_version_}}, {{0.932}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -1036,7 +1036,9 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 		INNER JOIN "baseten".relation r1 ON (r1.id = rel.srcid)
 		INNER JOIN "baseten".relation r2 ON (r2.id = rel.dstid)
 		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid)
-		WHERE r1.enabled = true AND r2.enabled = true AND r3.enabled = true;
+		WHERE r1.enabled = true AND r2.enabled = true AND (
+            r3.id IS NULL OR r3.enabled = true
+        );
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._insert_relationships () TO basetenowner;
