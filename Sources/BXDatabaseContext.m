@@ -484,8 +484,10 @@ ModTypeToObject (enum BXModificationType value)
 	mDidDisconnect = NO;
 	if ([self checkDatabaseURI: &localError])
 	{
+		NSLog (@"Checking whether to connect.");
 		if (NO == [self isConnected])
 		{
+			NSLog (@"Making database interface connect.");
 			[self lazyInit];
 			[mDatabaseInterface connectAsync];
 		}

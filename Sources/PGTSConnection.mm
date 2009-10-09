@@ -181,6 +181,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	[connector setDelegate: self];
 	[connector setTraceFile: [mDelegate PGTSConnectionTraceFile: self]];
 	[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
+	NSLog (@"Making %@ connect.", [connector class]);
 	return [connector connect: connectionDictionary];
 }
 
