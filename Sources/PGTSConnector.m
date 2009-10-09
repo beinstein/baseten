@@ -554,12 +554,14 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 - (BOOL) connect: (NSDictionary *) connectionDictionary
 {
+	BXLogDebug (@"Beginning connecting.");
+	
 	BOOL retval = NO;
 	mExpectedCallBack = 0;
 	[self prepareForConnect];
 	[self setConnectionDictionary: connectionDictionary];
 	
-	//CFSocket etc. do some nice things for us that prevent libpq for noticing
+	//CFSocket etc. do some nice things for us that prevent libpq from noticing
 	//connection problems. This causes SIGPIPE to be sent to us, and we get
 	//"Broken pipe" as the error message. To cope with this, we check the socket's
 	//status after connecting but before giving it to CFSocket.
@@ -609,6 +611,8 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 - (BOOL) startNegotiation: (const char *) conninfo
 {
+	BXLogDebug (@"Beginning negotiation.");
+	
 	mNegotiationStarted = NO;
 	BOOL retval = NO;
 	if ([self start: conninfo])
@@ -700,7 +704,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 - (void) negotiateConnection
 {
-	BXLogDebug (@"Beginning negotiation.");
+	BXLogDebug (@"Negotiating.");
 	
 	if (mTraceFile)
 		PQtrace (mConnection, mTraceFile);
