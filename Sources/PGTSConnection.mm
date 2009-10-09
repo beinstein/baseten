@@ -124,7 +124,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 {
 	//Don't release the connection. Delegate will handle it.
 	
-	//NSLog (@"removing socket: %p socketSource: %p", mSocket, mSocketSource);
+	//BXLogDebug (@"removing socket: %p socketSource: %p", mSocket, mSocketSource);
 
 	if (mReachability)
 	{
@@ -181,7 +181,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	[connector setDelegate: self];
 	[connector setTraceFile: [mDelegate PGTSConnectionTraceFile: self]];
 	[[PGTSConnectionMonitor sharedInstance] monitorConnection: self];
-	NSLog (@"Making %@ connect.", [connector class]);
+	BXLogDebug (@"Making %@ connect.", [connector class]);
 	return [connector connect: connectionDictionary];
 }
 
@@ -584,7 +584,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 		CFOptionFlags flags = ~kCFSocketCloseOnInvalidate & CFSocketGetSocketFlags (mSocket);
 		CFSocketSetSocketFlags (mSocket, flags);
 		mSocketSource = CFSocketCreateRunLoopSource (NULL, mSocket, 0);
-		//NSLog (@"created socket: %p socketSource: %p", mSocket, mSocketSource);
+		//BXLogDebug (@"created socket: %p socketSource: %p", mSocket, mSocketSource);
 		
 		BXAssertLog (mSocket, @"Expected source to have been created.");
 		BXAssertLog (CFSocketIsValid (mSocket), @"Expected socket to be valid.");

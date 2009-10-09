@@ -1360,7 +1360,7 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 - (void) connectAsync
 {
 	[self prepareForConnecting];
-	NSLog (@"Making transaction handler connect.");
+	BXLogDebug (@"Making transaction handler connect.");
 	[mTransactionHandler connectAsync];
 }
 

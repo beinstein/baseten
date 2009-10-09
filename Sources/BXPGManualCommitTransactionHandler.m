@@ -204,9 +204,9 @@
 	mAsync = YES;
 	
 	NSDictionary* connectionDictionary = [self connectionDictionary];
-	NSLog (@"Making main connection connect.");
+	BXLogDebug (@"Making main connection connect.");
 	[mConnection connectAsync: connectionDictionary];
-	NSLog (@"Making notification connection connect.");
+	BXLogDebug (@"Making notification connection connect.");
 	[mNotifyConnection connectAsync: connectionDictionary];
 }
 

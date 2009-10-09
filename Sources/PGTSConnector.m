@@ -192,7 +192,7 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 
 - (void) finishedConnecting: (BOOL) status
 {
-	NSLog (@"Finished connecting (%d).", status);
+	BXLogDebug (@"Finished connecting (%d).", status);
 	
 	if (status)
 	{
@@ -404,7 +404,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	//If the resolution succeeded, iterate addresses and try to connect to each. Stop when a server gets reached.
 	
 	BOOL reachedServer = NO;
-	NSLog (@"Continuing from name resolution.");
+	BXLogDebug (@"Continuing from name resolution.");
 	
 	if (streamError && streamError->domain)
 	{
@@ -502,7 +502,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 - (void) socketReady: (CFSocketCallBackType) callBackType
 {
-	NSLog (@"Socket got ready.");
+	BXLogDebug (@"Socket got ready.");
 	
 	//Sometimes the wrong callback type gets called. We cope with this
 	//by checking against an expected type and re-enabling it if needed.
@@ -584,7 +584,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		status = CFHostSetClient (mHost, &HostReady, &ctx);
 		CFHostScheduleWithRunLoop (mHost, runloop, kCFRunLoopCommonModes);
 		
-		NSLog (@"Starting host info resolution.");
+		BXLogDebug (@"Starting host info resolution.");
 		if (! CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError))
 			[self continueFromNameResolution: &mHostError];
 	}
@@ -700,7 +700,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 - (void) negotiateConnection
 {
-	NSLog (@"Beginning negotiation.");
+	BXLogDebug (@"Beginning negotiation.");
 	
 	if (mTraceFile)
 		PQtrace (mConnection, mTraceFile);
