@@ -28,6 +28,7 @@
 
 #import "TestLoader.h"
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXLogger.h>
 #import "MKCSenTestCaseAdditions.h"
 
 #import "KeyPathComponentTest.h"
@@ -62,6 +63,8 @@
 @implementation BXTestLoader
 - (void) test
 {
+	BXSetLogLevel (kBXLogLevelDebug);
+	
 	NSArray* testClasses = [NSArray arrayWithObjects:
 							[KeyPathComponentTest class],
 							[PredicateTests class],
@@ -91,7 +94,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [ToOneChangeNotificationTests class]];
+	//testClasses = [NSArray arrayWithObject: [ConnectTest class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
