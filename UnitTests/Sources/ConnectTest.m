@@ -52,7 +52,7 @@
 
 - (void) waitForConnectionAttempts: (NSInteger) count
 {
-	for (NSInteger i = 0; i < 15; i++)
+	for (NSInteger i = 0; i < 300; i++)
 	{
 		NSLog (@"Attempt %d, count %d, expected %d", i, expectedCount, count);
 		if (count == expectedCount)
