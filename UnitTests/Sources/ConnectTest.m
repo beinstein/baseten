@@ -54,6 +54,7 @@
 {
 	for (NSInteger i = 0; i < 15; i++)
 	{
+		NSLog (@"Attempt %d, count %d, expected %d", i, expectedCount, i);
 		if (count == expectedCount)
 			break;
 		
