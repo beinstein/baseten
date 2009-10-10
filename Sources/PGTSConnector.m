@@ -279,6 +279,7 @@ static void
 HostReady (CFHostRef theHost, CFHostInfoType typeInfo, const CFStreamError *error, void *self)
 {
 	BXLogDebug (@"CFHost got ready.");
+	CFHostUnscheduleFromRunLoop (theHost, [(id) self CFRunLoop], kCFRunLoopCommonModes);
 	[(id) self continueFromNameResolution: error];
 }
 
@@ -297,6 +298,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		mExpectedCallBack = 0;
 	}
 	return self;
+}
+
+
+- (CFRunLoopRef) CFRunLoop
+{
+	return mRunLoop;
 }
 
 
@@ -591,7 +598,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		status = CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError);
 		BXLogDebug (@"Started host info resolution: %d.", status);
 		if (! status)
+		{
+			CFHostUnscheduleFromRunLoop (mHost, runloop, kCFRunLoopCommonModes);
 			[self continueFromNameResolution: &mHostError];
+		}
 	}
 	else
 	{

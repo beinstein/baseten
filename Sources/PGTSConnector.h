@@ -75,6 +75,10 @@
 	CFSocketCallBackType mExpectedCallBack;
 	CFStreamError mHostError;
 }
+
+- (CFRunLoopRef) CFRunLoop;
+- (void) setCFRunLoop: (CFRunLoopRef) aRef;
+
 - (void) socketReady: (CFSocketCallBackType) callBackType;
 - (void) continueFromNameResolution: (const CFStreamError *) error;
 - (BOOL) startNegotiation: (const char *) conninfo;
