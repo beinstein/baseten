@@ -36,7 +36,7 @@
 }
 
 - (NSString *) name;
-- (unsigned int) hash;
+- (NSUInteger) hash;
 - (id) initWithName: (NSString *) aName;
 //- (void) setName: (NSString *) aName;
 @end

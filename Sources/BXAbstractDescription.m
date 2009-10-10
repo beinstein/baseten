@@ -75,7 +75,7 @@
     return [[mName retain] autorelease];
 }
 
-- (unsigned int) hash
+- (NSUInteger) hash
 {
     return mHash;
 }
