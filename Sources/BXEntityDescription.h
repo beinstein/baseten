@@ -64,7 +64,7 @@ enum BXEntityFlag
 - (NSURL *) databaseURI;
 - (NSString *) schemaName;
 - (BOOL) isEqual: (BXEntityDescription *) desc;
-- (unsigned int) hash;
+- (NSUInteger) hash;
 - (void) setDatabaseObjectClass: (Class) cls;
 - (Class) databaseObjectClass;
 - (NSDictionary *) attributesByName;

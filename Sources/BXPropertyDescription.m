@@ -79,7 +79,7 @@
 	[super encodeWithCoder: coder];
 }
 
-- (unsigned int) hash
+- (NSUInteger) hash
 {
 	return mHash;
 }

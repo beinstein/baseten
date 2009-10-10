@@ -145,7 +145,7 @@ bail:
     return retval;
 }
 
-- (unsigned int) hash
+- (NSUInteger) hash
 {
     return mHash;
 }

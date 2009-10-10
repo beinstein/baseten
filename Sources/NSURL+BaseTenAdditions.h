@@ -30,7 +30,7 @@
 #import <Foundation/Foundation.h>
 
 @interface NSURL (BaseTenAdditions)
-- (unsigned int) BXHash;
+- (NSUInteger) BXHash;
 - (NSURL *) BXURIForHost: (NSString *) host 
 				database: (NSString *) dbName 
 				username: (NSString *) username 

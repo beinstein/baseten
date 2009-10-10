@@ -36,7 +36,7 @@
 @interface BXDatabaseObjectID : NSObject 
 {
     BOOL                        mRegistered;
-    unsigned int                mHash;
+    NSUInteger                  mHash;
     NSURL*                      mURIRepresentation;
     BXEntityDescription*		mEntity;
 }

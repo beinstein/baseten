@@ -32,9 +32,9 @@
 
 
 @implementation NSURL (BaseTenAdditions)
-- (unsigned int) BXHash
+- (NSUInteger) BXHash
 {
-    unsigned int u = 0;
+    NSUInteger u = 0;
 	u = [[self scheme] hash];
 	u ^= [[self host] hash];
 	u ^= [[self port] hash];

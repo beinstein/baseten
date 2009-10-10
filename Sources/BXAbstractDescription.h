@@ -31,7 +31,7 @@
 
 @interface BXAbstractDescription : NSObject <NSCoding>
 {
-    unsigned int    mHash;
+    NSUInteger      mHash;
     NSString*       mName;
 }
 
