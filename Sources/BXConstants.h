@@ -68,6 +68,7 @@ BX_EXPORT NSString* const kBXRelationshipKey;
 BX_EXPORT NSString* const kBXRelationshipsKey;
 BX_EXPORT NSString* const kBXPredicateKey;
 BX_EXPORT NSString* const kBXOwnerObjectVariableName;
+BX_EXPORT NSString* const kBXRunLoopCommonMode;
 
 BX_EXPORT NSString* const kBXErrorDomain;
 BX_EXPORT NSString* const kBXErrorMessageKey;

@@ -31,6 +31,7 @@
 #import "PGTSProbes.h"
 #import "BXLogger.h"
 #import "BXArraySize.h"
+#import "BXConstants.h"
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <IOKit/IOMessage.h>
 #import <AppKit/AppKit.h>
@@ -145,9 +146,15 @@ WorkspaceWillSleep (void* refCon, io_service_t service, natural_t messageType, v
 		IONotificationPortRef ioNotificationPort = NULL;
 		mIOPowerSession = IORegisterForSystemPower (self, &ioNotificationPort, &WorkspaceWillSleep, &ioNotifier);
 		if (mIOPowerSession)
-			CFRunLoopAddSource (CFRunLoopGetCurrent(), IONotificationPortGetRunLoopSource (ioNotificationPort), kCFRunLoopCommonModes);
+		{
+			CFRunLoopRef rl = CFRunLoopGetCurrent ();
+			CFRunLoopAddCommonMode (rl, (CFStringRef) kBXRunLoopCommonMode);
+			CFRunLoopAddSource (rl, IONotificationPortGetRunLoopSource (ioNotificationPort), (CFStringRef) kBXRunLoopCommonMode);
+		}
 		else
+		{
 			BXLogError (@"Failed to register for system sleep.");
+		}
 	}
 	return self;
 }

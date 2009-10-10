@@ -120,6 +120,7 @@ enum PGTSConnectionError
 - (SSL *) SSLStruct;
 - (CFSocketRef) socket;
 - (BOOL) canSend;
+- (void) setCFRunLoop: (CFRunLoopRef) aRef;
 
 - (id <PGTSCertificateVerificationDelegate>) certificateVerificationDelegate;
 - (void) setCertificateVerificationDelegate: (id <PGTSCertificateVerificationDelegate>) anObject;

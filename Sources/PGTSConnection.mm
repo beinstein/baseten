@@ -47,6 +47,7 @@
 #import "BXLogger.h"
 #import "BXEnumerate.h"
 #import "BXArraySize.h"
+#import "BXConstants.h"
 
 #import "NSString+PGTSAdditions.h"
 
@@ -116,8 +117,23 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 	{
 		mQueue = [[NSMutableArray alloc] init];
 		mCertificateVerificationDelegate = [PGTSCertificateVerificationDelegate defaultCertificateVerificationDelegate];
+		[self setCFRunLoop: CFRunLoopGetCurrent ()];
 	}
 	return self;
+}
+
+- (void) setCFRunLoop: (CFRunLoopRef) aRef
+{
+	if (mRunLoop != aRef)
+	{
+		if (mRunLoop) CFRelease (mRunLoop);
+		if (aRef)
+		{
+			mRunLoop = aRef;
+			CFRetain (mRunLoop);
+			CFRunLoopAddCommonMode (mRunLoop, (CFStringRef) kBXRunLoopCommonMode);
+		}
+	}
 }
 
 - (void) freeCFTypes
@@ -591,13 +607,11 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 		BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
 		BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
 		
-		CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
-		CFStringRef mode = kCFRunLoopCommonModes;
 		CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
 		CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
-		CFRunLoopAddSource (runloop, mSocketSource, mode);
+		CFRunLoopAddSource (mRunLoop, mSocketSource, (CFStringRef) kBXRunLoopCommonMode);
 		
-		[self beginTrackingNetworkStatusIn: runloop mode: mode];
+		[self beginTrackingNetworkStatusIn: mRunLoop mode: (CFStringRef) kBXRunLoopCommonMode];
 		
 		if (0 < [mQueue count])
 			[self sendNextQuery];

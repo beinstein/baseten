@@ -30,6 +30,7 @@
 #import "PGTSConnector.h"
 #import "PGTSConnection.h"
 #import "PGTSConstants.h"
+#import "BXConstants.h"
 #import "PGTSCertificateVerificationDelegateProtocol.h"
 #import "BXLogger.h"
 #import "BXError.h"
@@ -279,7 +280,7 @@ static void
 ScheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
 {
 	if (theHost && theRunLoop)
-		CFHostUnscheduleFromRunLoop (theHost, theRunLoop, kCFRunLoopCommonModes);
+		CFHostUnscheduleFromRunLoop (theHost, theRunLoop, (CFStringRef) kBXRunLoopCommonMode);
 }
 
 
@@ -287,7 +288,7 @@ static void
 UnscheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
 {
 	if (theHost && theRunLoop)
-		CFHostScheduleWithRunLoop (theHost, theRunLoop, kCFRunLoopCommonModes);
+		CFHostScheduleWithRunLoop (theHost, theRunLoop, (CFStringRef) kBXRunLoopCommonMode);
 }
 
 
@@ -312,6 +313,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	if ((self = [super init]))
 	{
 		mExpectedCallBack = 0;
+		[self setCFRunLoop: CFRunLoopGetCurrent ()];
 	}
 	return self;
 }
@@ -332,6 +334,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		{
 			mRunLoop = aRef;
 			CFRetain (mRunLoop);
+			CFRunLoopAddCommonMode (mRunLoop, (CFStringRef) kBXRunLoopCommonMode);
 		}
 	}
 }
@@ -596,7 +599,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	if (0 < [name length] && '/' != [name characterAtIndex: 0])
 	{
 		Boolean status = FALSE;
-		CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
 		CFHostClientContext ctx = {
 			0,
 			self,
@@ -609,13 +611,13 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		mHost = CFHostCreateWithName (NULL, (CFStringRef) name);
 		status = CFHostSetClient (mHost, &HostReady, &ctx);
 		BXLogDebug (@"Set host client: %d.", status);
-		ScheduleHost (mHost, runloop);
+		ScheduleHost (mHost, mRunLoop);
 		
 		status = CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError);
 		BXLogDebug (@"Started host info resolution: %d.", status);
 		if (! status)
 		{
-			UnscheduleHost (mHost, runloop);
+			UnscheduleHost (mHost, mRunLoop);
 			[self continueFromNameResolution: &mHostError];
 		}
 	}
@@ -755,11 +757,10 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	BXAssertLog (mSocketSource, @"Expected socketSource to have been created.");
 	BXAssertLog (CFRunLoopSourceIsValid (mSocketSource), @"Expected socketSource to be valid.");
 	
-	CFRunLoopRef runloop = mRunLoop ?: CFRunLoopGetCurrent ();
 	CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
 	CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
 	mExpectedCallBack = kCFSocketWriteCallBack;
-	CFRunLoopAddSource (runloop, mSocketSource, kCFRunLoopCommonModes);
+	CFRunLoopAddSource (mRunLoop, mSocketSource, (CFStringRef) kBXRunLoopCommonMode);
 }
 @end
 
