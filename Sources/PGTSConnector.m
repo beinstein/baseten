@@ -278,6 +278,7 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 static void 
 HostReady (CFHostRef theHost, CFHostInfoType typeInfo, const CFStreamError *error, void *self)
 {
+	BXLogDebug (@"CFHost got ready.");
 	[(id) self continueFromNameResolution: error];
 }
 
@@ -584,10 +585,12 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		[self removeHost];
 		mHost = CFHostCreateWithName (NULL, (CFStringRef) name);
 		status = CFHostSetClient (mHost, &HostReady, &ctx);
+		BXLogDebug (@"Set host client: %d.", status);
 		CFHostScheduleWithRunLoop (mHost, runloop, kCFRunLoopCommonModes);
 		
-		BXLogDebug (@"Starting host info resolution.");
-		if (! CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError))
+		status = CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError);
+		BXLogDebug (@"Started host info resolution: %d.", status);
+		if (! status)
 			[self continueFromNameResolution: &mHostError];
 	}
 	else
