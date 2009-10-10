@@ -121,7 +121,7 @@
     NSString* path = [anURI path];
     
     NSArray* pathComponents = [path pathComponents];
-    unsigned int count = [pathComponents count];
+    NSUInteger count = [pathComponents count];
     NSString* tableName = [pathComponents objectAtIndex: count - 1];
     NSString* schemaName = [pathComponents objectAtIndex: count - 2];
     //FIXME: object address and context address should be compared.

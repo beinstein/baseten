@@ -387,7 +387,7 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 {
     id rval = nil;
 	NSArray* components = BXKeyPathComponents (keyPath);
-    unsigned int count = [components count];
+    NSUInteger count = [components count];
     BXEntityDescription* entity = [mObjectID entity];
     
     if (1 == count)

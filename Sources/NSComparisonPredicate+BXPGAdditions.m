@@ -109,7 +109,7 @@ MarkUnused (NSComparisonPredicate* predicate, NSMutableDictionary* ctx)
 	if (! (lval && rval))
 		goto end;
 	
-	unsigned int comparisonOptions = [self options];
+	NSUInteger comparisonOptions = [self options];
 	if (comparisonOptions & ~NSCaseInsensitivePredicateOption)
 		goto end;
 

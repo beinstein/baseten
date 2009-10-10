@@ -254,7 +254,7 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 		
 		if ([queryDescription finished])
 		{
-			unsigned int count = [mQueue count];
+			NSUInteger count = [mQueue count];
 			if (count)
 			{
 				if ([mQueue objectAtIndex: 0] == queryDescription)

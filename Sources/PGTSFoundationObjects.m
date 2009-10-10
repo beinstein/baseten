@@ -300,9 +300,9 @@ continue_iteration:
 }
 
 static inline void
-AppendBytes (IMP impl, NSMutableData* target, const void* bytes, unsigned int length)
+AppendBytes (IMP impl, NSMutableData* target, const void* bytes, NSUInteger length)
 {
-	(void)(void (*)(id, SEL, const void*, unsigned int)) impl (target, @selector (appendBytes:length:), bytes, length);
+	(void)(void (*)(id, SEL, const void*, NSUInteger)) impl (target, @selector (appendBytes:length:), bytes, length);
 }
 
 static inline void

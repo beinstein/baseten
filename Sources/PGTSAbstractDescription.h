@@ -35,7 +35,7 @@
 @interface PGTSAbstractDescription : NSObject <NSCopying>
 {
     NSString* mName;
-    unsigned int mHash;
+    NSUInteger mHash;
 }
 + (BOOL) accessInstanceVariablesDirectly;
 - (NSString *) name;

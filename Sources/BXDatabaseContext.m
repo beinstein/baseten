@@ -741,7 +741,7 @@ ModTypeToObject (enum BXModificationType value)
 - (NSArray *) faultsWithIDs: (NSArray *) anArray
 {
     NSMutableArray* rval = nil;
-    unsigned int count = [anArray count];
+    NSUInteger count = [anArray count];
     if (0 < count)
     {
         rval = [NSMutableArray arrayWithCapacity: count];
@@ -1941,7 +1941,7 @@ ModTypeToObject (enum BXModificationType value)
 		
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectLockStatus) status
 {
-    unsigned int count = [objectIDs count];
+    NSUInteger count = [objectIDs count];
     if (0 < count)
     {
         NSMutableArray* foundObjects = [NSMutableArray arrayWithCapacity: count];
@@ -1978,7 +1978,7 @@ ModTypeToObject (enum BXModificationType value)
 
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs
 {
-    unsigned int count = [objectIDs count];
+    NSUInteger count = [objectIDs count];
     if (0 < count)
     {
         NSArray* foundObjects = [self registeredObjectsWithIDs: objectIDs];

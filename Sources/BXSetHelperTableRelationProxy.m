@@ -101,7 +101,7 @@ SetPkeyFValues (NSString* helperFName, NSString* fName, void* ctx)
 
 	for (int i = 0; i < count; i++)
 	{
-		unsigned int count = [filtered [i] count];
+		NSUInteger count = [filtered [i] count];
 		if (0 < count)
 		{
 			BXEnumerate (currentObject, e, [filtered [i] objectEnumerator])
