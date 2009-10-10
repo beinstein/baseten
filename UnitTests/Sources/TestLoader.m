@@ -63,7 +63,7 @@
 @implementation BXTestLoader
 - (void) test
 {
-	BXSetLogLevel (kBXLogLevelDebug);
+	BXSetLogLevel (kBXLogLevelWarning);
 	
 	NSArray* testClasses = [NSArray arrayWithObjects:
 							[KeyPathComponentTest class],

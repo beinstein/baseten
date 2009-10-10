@@ -50,6 +50,17 @@
 	[super tearDown];
 }
 
+- (void) waitForConnectionAttempts: (NSInteger) count
+{
+	for (NSInteger i = 0; i < 15; i++)
+	{
+		if (count == expectedCount)
+			break;
+		
+		[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2.0]];
+	}
+}
+
 - (void) testConnect1
 {
     MKCAssertNoThrow ([ctx setDatabaseURI: [self databaseURI]]);
@@ -102,11 +113,11 @@
 	[[ctx notificationCenter] addObserver: self selector: @selector (expected:) name: kBXConnectionFailedNotification object: nil];
 	[[ctx notificationCenter] addObserver: self selector: @selector (unexpected:) name: kBXConnectionSuccessfulNotification object: nil];
 	[ctx connectAsync];
-	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 10.0]];
+	[self waitForConnectionAttempts: 1];
 	[ctx connectAsync];
-	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 10.0]];
+	[self waitForConnectionAttempts: 2];
 	[ctx connectAsync];
-	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 10.0]];
+	[self waitForConnectionAttempts: 3];
 	STAssertTrue (3 == expectedCount, @"Expected 3 connection attempts while there were %d.", expectedCount);
 }
 
