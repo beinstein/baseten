@@ -275,11 +275,27 @@ VerifySSLCertificate (int preverify_ok, X509_STORE_CTX *x509_ctx)
 
 @implementation PGTSAsynchronousConnector
 
+static void
+ScheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
+{
+	if (theHost && theRunLoop)
+		CFHostUnscheduleFromRunLoop (theHost, theRunLoop, kCFRunLoopCommonModes);
+}
+
+
+static void
+UnscheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
+{
+	if (theHost && theRunLoop)
+		CFHostScheduleWithRunLoop (theHost, theRunLoop, kCFRunLoopCommonModes);
+}
+
+
 static void 
 HostReady (CFHostRef theHost, CFHostInfoType typeInfo, const CFStreamError *error, void *self)
 {
 	BXLogDebug (@"CFHost got ready.");
-	CFHostUnscheduleFromRunLoop (theHost, [(id) self CFRunLoop], kCFRunLoopCommonModes);
+	UnscheduleHost (theHost, [(id) self CFRunLoop]);
 	[(id) self continueFromNameResolution: error];
 }
 
@@ -336,7 +352,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	if (mHost)
 	{
 		CFHostCancelInfoResolution (mHost, kCFHostReachability);
-		CFHostUnscheduleFromRunLoop (mHost, CFRunLoopGetCurrent (), kCFRunLoopCommonModes);
+		UnscheduleHost (mHost, mRunLoop);
 		CFRelease (mHost);
 		mHost = NULL;
 	}		
@@ -593,13 +609,13 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		mHost = CFHostCreateWithName (NULL, (CFStringRef) name);
 		status = CFHostSetClient (mHost, &HostReady, &ctx);
 		BXLogDebug (@"Set host client: %d.", status);
-		CFHostScheduleWithRunLoop (mHost, runloop, kCFRunLoopCommonModes);
+		ScheduleHost (mHost, runloop);
 		
 		status = CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError);
 		BXLogDebug (@"Started host info resolution: %d.", status);
 		if (! status)
 		{
-			CFHostUnscheduleFromRunLoop (mHost, runloop, kCFRunLoopCommonModes);
+			UnscheduleHost (mHost, runloop);
 			[self continueFromNameResolution: &mHostError];
 		}
 	}
