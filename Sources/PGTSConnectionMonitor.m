@@ -148,8 +148,7 @@ WorkspaceWillSleep (void* refCon, io_service_t service, natural_t messageType, v
 		if (mIOPowerSession)
 		{
 			CFRunLoopRef rl = CFRunLoopGetCurrent ();
-			CFRunLoopAddCommonMode (rl, (CFStringRef) kBXRunLoopCommonMode);
-			CFRunLoopAddSource (rl, IONotificationPortGetRunLoopSource (ioNotificationPort), (CFStringRef) kBXRunLoopCommonMode);
+			CFRunLoopAddSource (rl, IONotificationPortGetRunLoopSource (ioNotificationPort), (CFStringRef) kCFRunLoopCommonModes);
 		}
 		else
 		{

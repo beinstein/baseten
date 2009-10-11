@@ -280,7 +280,7 @@ static void
 ScheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
 {
 	if (theHost && theRunLoop)
-		CFHostUnscheduleFromRunLoop (theHost, theRunLoop, (CFStringRef) kBXRunLoopCommonMode);
+		CFHostScheduleWithRunLoop (theHost, theRunLoop, (CFStringRef) kCFRunLoopCommonModes);
 }
 
 
@@ -288,7 +288,7 @@ static void
 UnscheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
 {
 	if (theHost && theRunLoop)
-		CFHostScheduleWithRunLoop (theHost, theRunLoop, (CFStringRef) kBXRunLoopCommonMode);
+		CFHostUnscheduleFromRunLoop (theHost, theRunLoop, (CFStringRef) kCFRunLoopCommonModes);
 }
 
 
@@ -334,7 +334,6 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 		{
 			mRunLoop = aRef;
 			CFRetain (mRunLoop);
-			CFRunLoopAddCommonMode (mRunLoop, (CFStringRef) kBXRunLoopCommonMode);
 		}
 	}
 }
@@ -760,7 +759,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	CFSocketDisableCallBacks (mSocket, kCFSocketReadCallBack);
 	CFSocketEnableCallBacks (mSocket, kCFSocketWriteCallBack);
 	mExpectedCallBack = kCFSocketWriteCallBack;
-	CFRunLoopAddSource (mRunLoop, mSocketSource, (CFStringRef) kBXRunLoopCommonMode);
+	CFRunLoopAddSource (mRunLoop, mSocketSource, (CFStringRef) kCFRunLoopCommonModes);
 }
 @end
 

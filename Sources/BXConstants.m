@@ -67,5 +67,3 @@ NSString* const kBXEntityDescriptionWillDeallocNotification = @"kBXEntityDescrip
 NSString* const kBXErrorDomain = @"kBXErrorDomain";
 NSString* const kBXErrorMessageKey = @"kBXErrorMessageKey";
 NSString* const kBXObjectKey = @"kBXObjectKey";
-
-NSString* const kBXRunLoopCommonMode = @"kBXRunLoopCommonMode";

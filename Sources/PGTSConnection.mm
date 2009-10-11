@@ -131,7 +131,6 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 		{
 			mRunLoop = aRef;
 			CFRetain (mRunLoop);
-			CFRunLoopAddCommonMode (mRunLoop, (CFStringRef) kBXRunLoopCommonMode);
 		}
 	}
 }
@@ -609,9 +608,9 @@ NetworkStatusChanged (SCNetworkReachabilityRef target, SCNetworkConnectionFlags 
 		
 		CFSocketDisableCallBacks (mSocket, kCFSocketWriteCallBack);
 		CFSocketEnableCallBacks (mSocket, kCFSocketReadCallBack);
-		CFRunLoopAddSource (mRunLoop, mSocketSource, (CFStringRef) kBXRunLoopCommonMode);
+		CFRunLoopAddSource (mRunLoop, mSocketSource, (CFStringRef) kCFRunLoopCommonModes);
 		
-		[self beginTrackingNetworkStatusIn: mRunLoop mode: (CFStringRef) kBXRunLoopCommonMode];
+		[self beginTrackingNetworkStatusIn: mRunLoop mode: (CFStringRef) kCFRunLoopCommonModes];
 		
 		if (0 < [mQueue count])
 			[self sendNextQuery];
