@@ -1445,6 +1445,11 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 	return [mTransactionHandler observedOids];
 }
 
+- (NSArray *) observedRelids
+{
+	return [mTransactionHandler observedRelids];
+}
+
 /**
  * \internal
  * \brief Create an insert query.

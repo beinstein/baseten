@@ -63,6 +63,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 	NSMutableDictionary* mObservers;
 	NSMutableDictionary* mChangeHandlers;
 	NSMutableDictionary* mLockHandlers;
+	NSMutableDictionary* mDatabaseIdentifiers;
 	
 	NSUInteger mSavepointIndex;
 	NSError** mSyncErrorPtr;
@@ -107,6 +108,7 @@ BX_EXPORT NSString* kBXPGCallbackSelectorStringKey;
 - (void) checkSuperEntities: (BXEntityDescription *) entity;
 - (void) checkSuperEntities: (BXEntityDescription *) entity connection: (PGTSConnection *) connection;
 - (NSArray *) observedOids;
+- (NSArray *) observedRelids;
 
 - (BOOL) logsQueries;
 - (void) setLogsQueries: (BOOL) shouldLog;

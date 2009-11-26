@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.932}})dnl
+define({{_bx_version_}}, {{0.933}})dnl
 define({{_bx_compat_version_}}, {{0.19}})dnl
 
 
@@ -446,7 +446,6 @@ CREATE SEQUENCE "baseten".modification_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".modification (
 	"baseten_modification_id"				INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."modification_id_seq"'),
 	"baseten_modification_relid"			INTEGER NOT NULL REFERENCES "baseten".relation (id),
-	"baseten_modification_reloid"			OID NOT NULL,
 	"baseten_modification_timestamp"		TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
 	"baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_modification_type"				CHAR NOT NULL,
@@ -463,7 +462,6 @@ CREATE SEQUENCE "baseten".lock_id_seq MAXVALUE 2147483647 CYCLE;
 CREATE TABLE "baseten".lock (
 	"baseten_lock_id"				INTEGER PRIMARY KEY DEFAULT nextval ('"baseten"."lock_id_seq"'),
 	"baseten_lock_relid"			INTEGER NOT NULL REFERENCES "baseten".relation (id),
-	"baseten_lock_reloid"			OID NOT NULL,
 	"baseten_lock_timestamp"		TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_lock_query_type"		CHAR (1) NOT NULL DEFAULT 'U',	 -- U == UPDATE, D == DELETE
 	"baseten_lock_cleared"			BOOLEAN NOT NULL DEFAULT FALSE,
@@ -1266,12 +1264,12 @@ GRANT EXECUTE ON FUNCTION "baseten"._lock_notification (OID) TO basetenread;
 
 CREATE VIEW "baseten".pending_locks AS
 	SELECT 
-		baseten_lock_reloid AS reloid, 
+		baseten_lock_relid AS relid, 
 		max (baseten_lock_timestamp) AS last_date, 
 		"baseten"._lock_table (baseten_lock_relid) AS lock_table_name 
 	FROM "baseten".lock 
 	WHERE baseten_lock_cleared = true AND baseten_lock_backend_pid != pg_backend_pid ()
-	GROUP BY reloid, lock_table_name;
+	GROUP BY relid, lock_table_name;
 REVOKE ALL PRIVILEGES ON "baseten".pending_locks FROM PUBLIC;
 GRANT SELECT ON "baseten".pending_locks TO basetenread;
 
@@ -1711,7 +1709,6 @@ BEGIN
 	query := 
 		'CREATE TABLE "baseten".' || quote_ident (lock_table) || ' (' ||
 			'"baseten_lock_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
-			'"baseten_lock_reloid" OID NOT NULL DEFAULT ' || reloid || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".lock)';
 	EXECUTE query;
@@ -1734,7 +1731,6 @@ BEGIN
 	query :=
 		'CREATE TABLE "baseten".' || quote_ident (mod_table) || ' (' ||
 			'"baseten_modification_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
-			'"baseten_modification_reloid" OID NOT NULL DEFAULT ' || reloid || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".modification)';
 	EXECUTE query;

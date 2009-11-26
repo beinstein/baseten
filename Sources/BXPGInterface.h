@@ -80,6 +80,7 @@ BX_EXPORT NSString* BXPGReturnList (NSArray* attrs, NSString* alias, BOOL prepen
 - (NSArray *) executeFetchForEntity: (BXEntityDescription *) entity withPredicate: (NSPredicate *) predicate 
 					returningFaults: (BOOL) returnFaults class: (Class) aClass forUpdate: (BOOL) forUpdate error: (NSError **) error;
 - (NSArray *) observedOids;
+- (NSArray *) observedRelids;
 - (NSString *) insertQuery: (BXEntityDescription *) entity fieldValues: (NSDictionary *) fieldValues error: (NSError **) error;
 
 - (NSString *) viewDefaultValue: (BXAttributeDescription *) attr error: (NSError **) error;

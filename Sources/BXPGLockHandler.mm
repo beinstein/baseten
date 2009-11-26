@@ -40,10 +40,10 @@ struct lock_st
 	__strong NSMutableArray* l_for_update;
 	__strong NSMutableArray* l_for_delete;
 };
-typedef std::tr1::unordered_map <Oid, lock_st, 
-	std::tr1::hash <Oid>, 
-	std::equal_to <Oid>, 
-	PGTS::scanned_memory_allocator <std::pair <const Oid, lock_st> > > 
+typedef std::tr1::unordered_map <long, lock_st, 
+	std::tr1::hash <long>, 
+	std::equal_to <long>, 
+	PGTS::scanned_memory_allocator <std::pair <const long, lock_st> > > 
 	LockMap;
 
 
@@ -102,9 +102,9 @@ typedef std::tr1::unordered_map <Oid, lock_st,
 		{
 			NSDictionary* row = [res currentRowAsDictionary];
 			unichar lockType = [[row valueForKey: @"baseten_lock_query_type"] characterAtIndex: 0];
-			Oid reloid = [[row valueForKey: @"baseten_lock_reloid"] PGTSOidValue];
+			long relid = [[row valueForKey: @"baseten_lock_relid"] longValue];
 			
-			struct lock_st ls = (* locks) [reloid];
+			struct lock_st ls = (* locks) [relid];
 			
 			NSMutableArray* ids = nil;
 			switch (lockType) 

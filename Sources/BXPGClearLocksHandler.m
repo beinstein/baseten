@@ -59,15 +59,15 @@ bx_error_during_clear_notification (id self, NSError* error)
 		goto error;
 	}
 	
-	NSArray* oids = [mInterface observedOids];
+	NSArray* relids = [mInterface observedRelids];
     
     //Which tables have pending locks?
     NSString* query = 
-	@"SELECT reloid, last_date, lock_table_name "
+	@"SELECT relid, last_date, lock_table_name "
 	@" FROM baseten.pending_locks "
 	@" WHERE last_date > COALESCE ($1, '-infinity')::timestamp "
-	@"  AND reloid = ANY ($2) ";
-    PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, oids];
+	@"  AND relid = ANY ($2) ";
+    PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, relids];
     if (NO == [res querySucceeded])
 	{
 		error = [res error];

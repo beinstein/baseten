@@ -172,6 +172,7 @@ SSLMode (enum BXSSLMode mode)
 	[mObservers release];
 	[mChangeHandlers release];
 	[mLockHandlers release];
+	[mDatabaseIdentifiers release];
 	[super dealloc];
 }
 
@@ -624,6 +625,8 @@ SSLMode (enum BXSSLMode mode)
 			mChangeHandlers = [[NSMutableDictionary alloc] init];
 		if (! mLockHandlers)
 			mLockHandlers = [[NSMutableDictionary alloc] init];
+		if (! mDatabaseIdentifiers)
+			mDatabaseIdentifiers = [[NSMutableDictionary alloc] init];
 		
 		BXPGDatabaseDescription* database = (id) [connection databaseDescription];
 		BXPGTableDescription* table = [mInterface tableForEntity: entity inDatabase: database];
@@ -654,6 +657,7 @@ SSLMode (enum BXSSLMode mode)
 				{
 					[res advanceRow];
 					NSString* notificationName = [res valueForKey: @"n_name"];
+					NSNumber* dbIdentifier = [res valueForKey: @"relid"];
 					BXPGModificationHandler* handler = [[[BXPGModificationHandler alloc] init] autorelease];
 					
 					[handler setInterface: mInterface];
@@ -666,6 +670,7 @@ SSLMode (enum BXSSLMode mode)
 					
 					[mObservers setObject: handler forKey: notificationName];
 					[mChangeHandlers setObject: handler forKey: entity];
+					[mDatabaseIdentifiers setObject: dbIdentifier forKey: entity];
 				}
 				
 				{
@@ -752,6 +757,13 @@ SSLMode (enum BXSSLMode mode)
 - (void) checkSuperEntities: (BXEntityDescription *) entity
 {
 	[self doesNotRecognizeSelector: _cmd];
+}
+
+
+- (NSArray *) observedRelids
+{
+	NSArray* retval = [mDatabaseIdentifiers allValues];
+	return retval;
 }
 
 
