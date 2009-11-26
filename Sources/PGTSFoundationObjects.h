@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXCoreDataCompatibility.h>
+#import <CoreData/CoreData.h>
 @class PGTSResultSet;
 @class PGTSConnection;
 @class PGTSTypeDescription;

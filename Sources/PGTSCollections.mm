@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import "BXCoreDataCompatibility.h"
+#import <CoreData/CoreData.h>
 #import "PGTSCollections.h"
 #import "PGTSScannedMemoryAllocator.h"
 #import "PGTSCFScannedMemoryAllocator.h"

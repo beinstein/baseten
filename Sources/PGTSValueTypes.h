@@ -27,7 +27,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXCoreDataCompatibility.h>
 #import <BaseTen/PGTSValuePlaceholder.h>
 
 

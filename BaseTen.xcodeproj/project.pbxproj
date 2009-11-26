@@ -86,8 +86,6 @@
 		533BAACB0F2C000A0030CD05 /* PGTSDatabaseDescription.mm in Sources */ = {isa = PBXBuildFile; fileRef = 533BAAC90F2C000A0030CD05 /* PGTSDatabaseDescription.mm */; };
 		533BAACC0F2C000A0030CD05 /* PGTSTableDescription.mm in Sources */ = {isa = PBXBuildFile; fileRef = 533BAACA0F2C000A0030CD05 /* PGTSTableDescription.mm */; };
 		533F88410F35482000041C02 /* BXForeignKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 536892570F30B9E800AAC65D /* BXForeignKey.m */; };
-		5348B7060F57547F00B2655E /* BXCoreDataCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		5348B7070F5754B100B2655E /* BXCoreDataCompatibility.h in Copy Headers */ = {isa = PBXBuildFile; fileRef = 5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */; };
 		5348B7110F575A3C00B2655E /* BXKeyPathParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 53680C0D0E59922C00A53B26 /* BXKeyPathParser.m */; };
 		5348B7130F575A3F00B2655E /* BXURLEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 5354F7DD0F00417400422613 /* BXURLEncoding.m */; };
 		5348B7150F575A4300B2655E /* PGTSInvocationRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 53937B660EFD097700510DBD /* PGTSInvocationRecorder.m */; };
@@ -582,7 +580,6 @@
 			files = (
 				53C7113B0F57636E00C6481F /* BXOpenSSLCompatibility.h in Copy Headers */,
 				5348B7DC0F575DA900B2655E /* PGTSMetadataContainer.h in Copy Headers */,
-				5348B7070F5754B100B2655E /* BXCoreDataCompatibility.h in Copy Headers */,
 				53E3AEC10E55B7AB001A99B5 /* BXInvocation.h in Copy Headers */,
 				53E3AEC20E55B7AC001A99B5 /* BXWeakNotification.h in Copy Headers */,
 				53E3AEC30E55B7AC001A99B5 /* BXDelegateProxy.h in Copy Headers */,
@@ -654,7 +651,6 @@
 		533BAAC90F2C000A0030CD05 /* PGTSDatabaseDescription.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGTSDatabaseDescription.mm; path = Sources/PGTSDatabaseDescription.mm; sourceTree = "<group>"; };
 		533BAACA0F2C000A0030CD05 /* PGTSTableDescription.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PGTSTableDescription.mm; path = Sources/PGTSTableDescription.mm; sourceTree = "<group>"; };
 		5347BB510B37F78000D963E7 /* BXDatabaseObjectIDPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXDatabaseObjectIDPrivate.h; path = Sources/BXDatabaseObjectIDPrivate.h; sourceTree = "<group>"; };
-		5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXCoreDataCompatibility.h; path = Sources/BXCoreDataCompatibility.h; sourceTree = "<group>"; };
 		534A14AE0F0FBBE6002A9F68 /* BaseTenModifications.sql.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = BaseTenModifications.sql.m4; path = Resources/BaseTenModifications.sql.m4; sourceTree = "<group>"; };
 		534EE22F0E53213300B079B0 /* libBaseTen.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libBaseTen.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5350CC360EFBE66500EBC328 /* PGTSCollections.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSCollections.h; path = Sources/PGTSCollections.h; sourceTree = "<group>"; };
@@ -1213,7 +1209,6 @@
 		53666C800E1CD8580028DBEA /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				5348B7050F57547F00B2655E /* BXCoreDataCompatibility.h */,
 				538FA0240F576278005EBFAC /* BXOpenSSLCompatibility.h */,
 				5354F87A0F004A6600422613 /* BXExport.h */,
 				536C9D5F0EFD94D10041422F /* BXEnumerate.h */,
@@ -1752,7 +1747,6 @@
 				535736C50F3283C200DB3D0B /* BXDatabaseObjectModel.h in Headers */,
 				535736CB0F333CCD00DB3D0B /* BXDatabaseObjectModelStorage.h in Headers */,
 				534BE4680F34F7130098951C /* BXForeignKey.h in Headers */,
-				5348B7060F57547F00B2655E /* BXCoreDataCompatibility.h in Headers */,
 				538FA0250F576278005EBFAC /* BXOpenSSLCompatibility.h in Headers */,
 				53B934DE0F98BDFA006BD87D /* BXDeprecationWarning.h in Headers */,
 				53671B4B0FABAC5F002FD0B4 /* BXDatabaseObjectModelXMLSerialization.h in Headers */,
