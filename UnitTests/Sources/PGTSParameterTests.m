@@ -58,7 +58,7 @@
 	//Decomposed and astral characters.
 	const char* expected = "teståäöÅÄÖ𐄤𐄧𐄪𐄷";
 	
-	int length = 0;
+	size_t length = 0;
 	id objectValue = [value PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
 	
@@ -74,7 +74,7 @@
 	const char* value = "\000\001\002\003";
 	size_t valueLength = strlen (value);
 	
-	int length = 0;
+	size_t length = 0;
 	NSData* object = [NSData dataWithBytes: value length: length];
 	id objectValue = [object PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
@@ -91,7 +91,7 @@
 {
 	NSInteger value = -15;
 	
-	int length = 0;
+	size_t length = 0;
 	NSNumber* object = [NSNumber numberWithInteger: value];
 	id objectValue = [object PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
@@ -107,7 +107,7 @@
 {
 	double value = -15.2;
 	
-	int length = 0;
+	size_t length = 0;
 	NSNumber* object = [NSNumber numberWithDouble: value];
 	id objectValue = [object PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
@@ -124,7 +124,7 @@
 	//20010105 8:02 am
 	NSDate* object = [NSDate dateWithTimeIntervalSinceReferenceDate: 4 * 86400 + 8 * 3600 + 2 * 60];
 	
-	int length = 0;
+	size_t length = 0;
 	id objectValue = [object PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
 	
@@ -141,7 +141,7 @@
 	NSTimeZone* tz = [NSTimeZone timeZoneForSecondsFromGMT: -3600];
 	NSDate* object = [NSCalendarDate dateWithYear: 2001 month: 1 day: 5 hour: 8 minute: 2 second: 0 timeZone: tz];
 	
-	int length = 0;
+	size_t length = 0;
 	id objectValue = [object PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
 	
@@ -156,7 +156,7 @@
 {
 	NSArray* value = [NSArray arrayWithObjects: @"test", @"-1", nil];
 	
-	int length = 0;
+	size_t length = 0;
 	id objectValue = [value PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
 	
@@ -170,7 +170,7 @@
 - (void) test7Set
 {
 	NSSet* value = [NSSet set];
-	int length = 0;
+	size_t length = 0;
 	MKCAssertThrowsSpecificNamed ([value PGTSParameter: mConnection], NSException, NSInvalidArgumentException);
 	MKCAssertThrowsSpecificNamed ([value PGTSParameterLength: &length connection: mConnection], NSException, NSInvalidArgumentException);
 }
@@ -179,7 +179,7 @@
 {
 	NSNull* value = [NSNull null];
 	
-	int length = 0;
+	size_t length = 0;
 	id objectValue = [value PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
 	
@@ -193,7 +193,7 @@
 	NSTimeInterval interval = 263856941.04633799; //This caused problems.
 	NSDate* value = [NSDate dateWithTimeIntervalSinceReferenceDate: interval];
 	
-	int length = 0;
+	size_t length = 0;
 	id objectValue = [value PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
 	
@@ -209,7 +209,7 @@
 	NSTimeInterval interval = 263856941.0000002; //Fractional part that rounds to six zeros.
 	NSDate* value = [NSDate dateWithTimeIntervalSinceReferenceDate: interval];
 	
-	int length = 0;
+	size_t length = 0;
 	id objectValue = [value PGTSParameter: mConnection];
 	const char* paramValue = [objectValue PGTSParameterLength: &length connection: mConnection];
 	
