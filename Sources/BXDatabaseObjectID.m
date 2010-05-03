@@ -326,7 +326,10 @@ bail:
  * \internal
  * \name Creating object IDs */
 //@{
-/** \brief A convenience method. */
+/**
+ * \internal
+ * \brief A convenience method.
+ */
 + (id) IDWithEntity: (BXEntityDescription *) aDesc primaryKeyFields: (NSDictionary *) pkeyFValues
 {
     NSArray* keys = [pkeyFValues allKeys];
