@@ -77,7 +77,6 @@ struct update_kvo_ctx
 - (void) setCanConnect: (BOOL) aBool;
 - (BOOL) checkErrorHandling;
 - (void) setLastConnectionError: (NSError *) anError;
-- (BXDatabaseObjectModel *) databaseObjectModel;
 
 - (void) setDatabaseObjectModel: (BXDatabaseObjectModel *) model;
 - (void) setDatabaseInterface: (id <BXInterface>) interface;

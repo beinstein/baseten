@@ -2,7 +2,7 @@
 // BXDatabaseObjectModel.h
 // BaseTen
 //
-// Copyright (C) 2009 Marko Karppinen & Co. LLC.
+// Copyright (C) 2009-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -40,11 +40,8 @@
 	NSMutableDictionary* mEntitiesBySchemaAndName;
 	BOOL mCanCreateEntities;
 }
-- (id) initWithStorage: (BXDatabaseObjectModelStorage *) storage key: (NSURL *) key;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) outError;
 - (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) outError;
 - (NSArray *) entities: (NSError **) outError;
-- (BOOL) contextConnectedUsingDatabaseInterface: (id <BXInterface>) interface error: (NSError **) outError;
 - (NSDictionary *) entitiesBySchemaAndName: (id <BXInterface>) interface reload: (BOOL) shouldReload error: (NSError **) outError;
-- (void) setCanCreateEntityDescriptions: (BOOL) aBool;
 @end

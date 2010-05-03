@@ -99,6 +99,8 @@
 - (NSURL *) databaseURI;
 - (BOOL) isConnected;
 
+- (BXDatabaseObjectModel *) databaseObjectModel;
+
 - (BOOL) retainsRegisteredObjects;
 - (void) setRetainsRegisteredObjects:(BOOL)flag;
 

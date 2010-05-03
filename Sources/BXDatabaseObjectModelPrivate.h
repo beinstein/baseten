@@ -1,8 +1,8 @@
 //
-// BXDatabaseObjectModelStorage.h
+// BXDatabaseObjectModelPrivate.h
 // BaseTen
 //
-// Copyright (C) 2009-2010 Marko Karppinen & Co. LLC.
+// Copyright (C) 2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,15 +26,11 @@
 // $Id$
 //
 
-#import <Foundation/Foundation.h>
-
-@class BXDatabaseObjectModel;
+#import <BaseTen/BXDatabaseObjectModel.h>
 
 
-@interface BXDatabaseObjectModelStorage : NSObject 
-{
-	id mModelsByURI;
-}
-+ (id) defaultStorage;
-- (BXDatabaseObjectModel *) objectModelForURI: (NSURL *) databaseURI;
+@interface BXDatabaseObjectModel (PrivateMethods)
+- (id) initWithStorage: (BXDatabaseObjectModelStorage *) storage key: (NSURL *) key;
+- (BOOL) contextConnectedUsingDatabaseInterface: (id <BXInterface>) interface error: (NSError **) outError;
+- (void) setCanCreateEntityDescriptions: (BOOL) aBool;
 @end

@@ -11,6 +11,9 @@ digraph baseten_class_hierarchy
 		BXDatabaseObject
 		BXDatabaseObjectID
 		BXException
+
+        BXDatabaseObjectModel
+        BXDatabaseObjectModelStorage
 		
 		BXAbstractDescription
 		BXEntityDescription
@@ -32,6 +35,9 @@ digraph baseten_class_hierarchy
 		BXDatabaseContext -> NSObject
 		BXDatabaseObject -> NSObject
 		BXDatabaseObjectID -> NSObject
+
+        BXDatabaseObjectModel -> NSObject
+        BXDatabaseObjectModelStorage -> NSObject
 
 		NSException:w -> NSObject
 		BXException -> NSException

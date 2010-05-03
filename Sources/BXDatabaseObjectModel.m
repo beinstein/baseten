@@ -28,25 +28,22 @@
 
 #import "BXDatabaseObjectModel.h"
 #import "BXDatabaseObjectModelStorage.h"
+#import "BXDatabaseObjectModelStoragePrivate.h"
 #import "BXEnumerate.h"
 #import "BXEntityDescriptionPrivate.h"
 #import "BXInterface.h"
 #import "BXLogger.h"
 
 
+/** 
+ * \brief The database object model. 
+ * 
+ * A database object model stores the entity descriptions for a database at a certain URI.
+ *
+ * \note This class is thread-safe.
+ * \ingroup baseten
+ */
 @implementation BXDatabaseObjectModel
-- (id) initWithStorage: (BXDatabaseObjectModelStorage *) storage key: (NSURL *) key
-{
-	if ((self = [super init]))
-	{
-		mStorage = [storage retain];
-		mStorageKey = [key retain];
-		mEntitiesBySchemaAndName = [[NSMutableDictionary alloc] init];
-		mCanCreateEntities = YES;
-	}
-	return self;
-}
-
 - (id) init
 {
 	[self doesNotRecognizeSelector: _cmd];
@@ -60,11 +57,21 @@
 	[super dealloc];
 }
 
+
+/** 
+ * \brief Entity for a table in the schema \em public
+ */
 - (BXEntityDescription *) entityForTable: (NSString *) name error: (NSError **) outError
 {
 	return [self entityForTable: name inSchema: @"public" error: outError];
 }
 
+
+/** 
+ * \brief Entity for a table in the given schema.
+ * \note Unlike PostgreSQL, leaving \em schemaName unspecified does not cause the search path to be used but 
+ *       instead will search the \em public schema.
+ */
 - (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName error: (NSError **) outError
 {
 	NSMutableDictionary* schemaDict = nil;
@@ -96,6 +103,14 @@
 	return retval;
 }
 
+
+/**
+ * \brief All entities found in the database.
+ *
+ * Entities in private and metadata schemata won't be included.
+ * \param outError If an error occurs, this pointer is set to an NSError instance. May be NULL.
+ * \return An NSArray containing BXEntityDescriptions.
+ */
 - (NSArray *) entities: (NSError **) outError
 {
 	NSMutableArray* retval = [NSMutableArray array];
@@ -116,6 +131,17 @@
 	return retval;
 }
 
+
+/**
+ * \brief All entities found in the database.
+ *
+ * Entities in private and metadata schemata won't be included.
+ * \param reload Whether the entity list should be reloaded.
+ * \param outError If an error occurs, this pointer is set to an NSError instance. May be NULL.
+ * \return An NSDictionary with NSStrings corresponding to schema names as keys and NSDictionarys as objects. 
+ *         Each of them will have NSStrings corresponding to relation names as keys and BXEntityDescriptions
+ *         as objects.
+ */
 - (NSDictionary *) entitiesBySchemaAndName: (id <BXInterface>) interface reload: (BOOL) shouldReload error: (NSError **) outError
 {
 	id retval = nil;
@@ -146,6 +172,23 @@
 	}
 	return retval;
 }
+@end
+
+
+
+@implementation BXDatabaseObjectModel (PrivateMethods)
+- (id) initWithStorage: (BXDatabaseObjectModelStorage *) storage key: (NSURL *) key
+{
+	if ((self = [super init]))
+	{
+		mStorage = [storage retain];
+		mStorageKey = [key retain];
+		mEntitiesBySchemaAndName = [[NSMutableDictionary alloc] init];
+		mCanCreateEntities = YES;
+	}
+	return self;
+}
+
 
 - (BOOL) contextConnectedUsingDatabaseInterface: (id <BXInterface>) interface error: (NSError **) outError
 {
@@ -159,6 +202,7 @@
 		retval = [interface validateEntities: entities error: outError];
 	return retval;
 }
+
 
 - (void) setCanCreateEntityDescriptions: (BOOL) aBool
 {

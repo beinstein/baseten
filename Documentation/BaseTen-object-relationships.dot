@@ -1,0 +1,43 @@
+digraph baseten_relationships 
+{	
+	compound = true;
+	
+	node [shape = box]
+        BXArrayProxy
+        BXDatabaseObjectModel
+        BXDatabaseObjectModelStorage
+		BXEntityDescription
+		BXDatabaseObject
+		BXDatabaseObjectID
+        BXAttributeDescription
+        BXRelationshipDescription
+        BXSetProxy
+        BXDatabaseContext;		
+	
+	node [shape = ellipse]
+		"Object URI"
+		"Owning object"
+        "Column values"
+        "Related objects";
+	
+	BXDatabaseContext -> BXDatabaseObject [arrowtail = normal, arrowhead = normalnormal];	
+    BXDatabaseContext -> BXDatabaseObjectModel [arrowhead = normal];
+
+    BXDatabaseObjectModelStorage -> BXDatabaseObjectModel [arrowtail = normal, arrowhead = normalnormal];
+	BXDatabaseObjectModel -> BXEntityDescription [arrowtail = normal, arrowhead = normalnormal];
+
+	BXArrayProxy -> BXDatabaseObject [arrowhead = normalnormal]
+	
+	BXDatabaseObject -> "Column values" [arrowhead = normalnormal];
+	BXDatabaseObject -> BXDatabaseObjectID:n [arrowhead = normal];
+    BXDatabaseObject -> BXSetProxy [arrowtail = normal, arrowhead = normalnormal];
+	BXSetProxy -> "Related objects" [arrowhead = normalnormal];
+	
+	BXDatabaseObjectID:s -> BXEntityDescription;
+	BXDatabaseObjectID -> "Object URI";
+	
+	BXEntityDescription -> BXAttributeDescription [arrowhead = normalnormal, arrowtail = normal];
+	BXEntityDescription -> BXRelationshipDescription [arrowhead = normalnormal, arrowtail = normal];
+	
+	"Owning object" -> BXArrayProxy [arrowhead = normal, arrowtail = normal];
+}

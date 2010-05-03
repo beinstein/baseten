@@ -30,6 +30,8 @@
 #import <BaseTen/BXConstants.h>
 #import <BaseTen/BXDatabaseContext.h>
 #import <BaseTen/BXDatabaseContextDelegateProtocol.h>
+#import <BaseTen/BXDatabaseObjectModel.h>
+#import <BaseTen/BXDatabaseObjectModelStorage.h>
 #import <BaseTen/BXDatabaseObject.h>
 #import <BaseTen/BXDatabaseObjectID.h>
 #import <BaseTen/BXEntityDescription.h>

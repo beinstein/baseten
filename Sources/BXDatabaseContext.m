@@ -62,6 +62,7 @@
 #import "BXEnumerate.h"
 #import "BXLocalizedString.h"
 #import "BXDatabaseObjectModel.h"
+#import "BXDatabaseObjectModelPrivate.h"
 #import "BXDatabaseObjectModelStorage.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXError.h"
@@ -988,6 +989,22 @@ ModTypeToObject (enum BXModificationType value)
 - (void) setLogsQueries: (BOOL) shouldLog
 {
 	[mDatabaseInterface setLogsQueries: shouldLog];
+}
+
+
+/** \brief The database objectModel for the current database URI. */
+- (BXDatabaseObjectModel *) databaseObjectModel
+{
+	if (! mObjectModel && mDatabaseURI)
+	{
+		NSNumber* port = [mDatabaseURI port];
+		if (! port)
+			port = [mDatabaseInterface defaultPort];
+		
+		NSURL* key = [mDatabaseURI BXURIForHost: nil port: port database: nil username: @"" password: @""];
+		[self setDatabaseObjectModel: [[BXDatabaseObjectModelStorage defaultStorage] objectModelForURI: key]];
+	}
+	return mObjectModel;
 }
 @end
 
@@ -2704,20 +2721,6 @@ bail:
 		[mObjectModel release];
 		mObjectModel = [model retain];
 	}
-}
-
-- (BXDatabaseObjectModel *) databaseObjectModel
-{
-	if (! mObjectModel && mDatabaseURI)
-	{
-		NSNumber* port = [mDatabaseURI port];
-		if (! port)
-			port = [mDatabaseInterface defaultPort];
-		
-		NSURL* key = [mDatabaseURI BXURIForHost: nil port: port database: nil username: @"" password: @""];
-		[self setDatabaseObjectModel: [[BXDatabaseObjectModelStorage defaultStorage] objectModelForURI: key]];
-	}
-	return mObjectModel;
 }
 
 - (struct update_kvo_ctx) handleWillChangeForUpdate: (NSArray *) givenObjects newValues: (NSDictionary *) newValues

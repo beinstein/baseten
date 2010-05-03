@@ -28,9 +28,19 @@
 
 #import "BXDatabaseObjectModelStorage.h"
 #import "BXDatabaseObjectModel.h"
+#import "BXDatabaseObjectModelPrivate.h"
 #import "PGTSCollections.h"
 
 
+
+/** 
+ * \brief The database object model storage.
+ * 
+ * A database object model storage associates a common database object model with each database URI.
+ *
+ * \note This class is thread-safe.
+ * \ingroup baseten
+ */
 @implementation BXDatabaseObjectModelStorage
 __strong static volatile id gSharedInstance = nil;
 
@@ -44,6 +54,10 @@ __strong static volatile id gSharedInstance = nil;
 	}
 }
 
+
+/** 
+ * \brief The default storage.
+ */
 + (id) defaultStorage
 {
 	// No synchronization needed because this gets called from +initialize.
@@ -54,6 +68,7 @@ __strong static volatile id gSharedInstance = nil;
 	return gSharedInstance;
 }
 
+
 - (id) init
 {
 	if ((self = [super init]))
@@ -63,12 +78,19 @@ __strong static volatile id gSharedInstance = nil;
 	return self;
 }
 
+
 - (void) dealloc
 {
 	[mModelsByURI release];
 	[super dealloc];
 }
 
+
+/** 
+ * \brief The object model for a given database URI.
+ * \param databaseURI The database URI.
+ * \return The common BXDatabaseObjectModel.
+ */
 - (BXDatabaseObjectModel *) objectModelForURI: (NSURL *) databaseURI
 {
 	id retval = nil;
@@ -85,7 +107,11 @@ __strong static volatile id gSharedInstance = nil;
 	}
 	return retval;
 }
+@end
 
+
+
+@implementation BXDatabaseObjectModelStorage (PrivateMethods)
 - (void) objectModelWillDeallocate: (NSURL *) key
 {
 	@synchronized (mModelsByURI)
