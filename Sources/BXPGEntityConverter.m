@@ -164,7 +164,7 @@ ImportError (NSString* message, NSString* reason)
         if (error)
             [errors addObject: error];
 		
-		[retval addObject: [currentEntity BXPGCreateStatementWithIDColumn: YES inSchema: schemaName errors: errors]];
+		[retval addObject: [currentEntity BXPGCreateStatementWithIDColumn: YES inSchema: schemaName connection: connection errors: errors]];
 		[retval addObject: [currentEntity BXPGPrimaryKeyConstraintInSchema: schemaName]];
 		[enabledRelations addObject: [currentEntity name]];
 		

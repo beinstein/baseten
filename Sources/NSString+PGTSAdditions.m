@@ -33,8 +33,18 @@
 #import "PGTSConnection.h"
 
 
-PGTS_EXPORT
-NSString* PGTSReformatErrorMessage (NSString* message)
+char *
+PGTSCopyEscapedString (PGTSConnection *conn, const char *from)
+{
+	size_t length = strlen (from);
+    char* to = (char *) calloc (1 + 2 * length, sizeof (char));
+    PQescapeStringConn ([conn pgConnection], to, from, length, NULL);
+	return to;
+}
+
+
+NSString* 
+PGTSReformatErrorMessage (NSString* message)
 {
 	NSMutableString* result = [NSMutableString string];
 	NSCharacterSet* skipSet = [NSCharacterSet characterSetWithCharactersInString: @"\t"];
@@ -80,10 +90,8 @@ NSString* PGTSReformatErrorMessage (NSString* message)
  */
 - (NSString *) escapeForPGTSConnection: (PGTSConnection *) connection
 {
-    const char* from = [self UTF8String];
-    size_t length = strlen (from);
-    char* to = (char *) calloc (1 + 2 * length, sizeof (char));
-    PQescapeStringConn ([connection pgConnection], to, from, length, NULL);
+    const char *from = [self UTF8String];
+	char *to = PGTSCopyEscapedString (connection, from);
     NSString* retval = [NSString stringWithUTF8String: to];
     free (to);
     return retval;

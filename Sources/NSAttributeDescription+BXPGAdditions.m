@@ -297,15 +297,16 @@ CharLengthExpression (NSString* name)
 }
 
 
-- (NSString *) BXPGAttributeDefinition
+- (NSString *) BXPGAttributeDefinition: (PGTSConnection *) connection
 {
 	NSString* typeDefinition = [self BXPGValueType];
 	NSString* addition = @"";
 	id defaultValue = [self defaultValue];
 	if (defaultValue)
 	{
-		NSString* defaultExp = [defaultValue PGTSExpressionOfType: [self attributeType]];
-		addition = [NSString stringWithFormat: @"DEFAULT %@", defaultExp];
+		NSString* defaultExp = [defaultValue PGTSExpressionOfType: [self attributeType] connection: connection];
+		if (defaultExp)
+			addition = [NSString stringWithFormat: @"DEFAULT %@", defaultExp];
 	}
 	return [NSString stringWithFormat: @"\"%@\" %@ %@", [self name], typeDefinition, addition];
 }

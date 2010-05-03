@@ -36,8 +36,10 @@
 #import "PGTSColumnDescription.h"
 #import "PGTSDatabaseDescription.h"
 #import "PGTSResultSet.h"
+#import "NSString+PGTSAdditions.h"
 #import "BXLogger.h"
 #import "BXEnumerate.h"
+
 
 
 @implementation NSObject (PGTSFoundationObjects)
@@ -57,7 +59,7 @@
 	return self;
 }
 
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (size_t *) length connection: (PGTSConnection *) connection
 {
     BXLogWarning (@"Returning NULL from NSObject's implementation for %@.", [self class]);
 	if (length)
@@ -75,9 +77,32 @@
 	return NO;
 }
 
-- (id) PGTSExpressionOfType: (NSAttributeType) attrType
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType connection: (PGTSConnection *) connection
 {
-	return nil;
+	NSString *retval = nil;
+	size_t length = 0;
+	id param = [self PGTSParameter: connection];
+	
+	if ([param PGTSIsBinaryParameter])
+	{
+		size_t resultLength = 0;
+		unsigned char *escapedValue = NULL;
+		const unsigned char *value = (const unsigned char *) [param PGTSParameterLength: &length connection: connection];
+		escapedValue = PQescapeByteaConn ([connection pgConnection], value, length, &resultLength);
+		retval = [NSString stringWithFormat: @"'%s'", escapedValue];
+		PQfreemem (escapedValue);
+	}
+	else
+	{
+		char *escapedValue = NULL;
+		const char *value = [param PGTSParameterLength: &length connection: connection];
+		escapedValue = PGTSCopyEscapedString (connection, value);
+		retval = [NSString stringWithFormat: @"'%s'", escapedValue];
+		free (escapedValue);
+	}
+	
+	[param self]; // For GC.
+	return retval;
 }
 @end
 
@@ -99,7 +124,7 @@
     return [[[[NSString alloc] initWithUTF8String: value] decomposedStringWithCanonicalMapping] retain];
 }
 
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (size_t *) length connection: (PGTSConnection *) connection
 {
     if (connection)
     {
@@ -116,15 +141,6 @@
     if (NULL != length)
         *length = strlen (retval);
     return retval;
-}
-
-- (id) PGTSExpressionOfType: (NSAttributeType) attrType
-{
-	NSMutableString* retval = [NSMutableString stringWithString: self];
-	[retval replaceOccurrencesOfString: @"'" withString: @"\\'" options: 0 range: NSMakeRange (0, [retval length])];
-	[retval insertString: @"'" atIndex: 0];
-	[retval appendString: @"'"];
-	return retval;
 }
 @end
 
@@ -159,7 +175,7 @@
 	return retval;
 }
 
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (size_t *) length connection: (PGTSConnection *) connection
 {
     const char* retval = [self bytes];
     if (NULL != length)
@@ -343,7 +359,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 			}
             else
             {
-                int length = -1;
+                size_t length = SIZE_T_MAX;
                 const char* value = [[currentObject PGTSParameter: connection] 
 									 PGTSParameterLength: &length connection: connection];
                 
@@ -357,7 +373,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
                 {
                     //If the length isn't known, wait for a NUL byte.
                     AppendBytes (impl, contents, "\"", 1);
-                    if ([currentObject PGTSIsBinaryParameter] && -1 != length)
+                    if ([currentObject PGTSIsBinaryParameter] && SIZE_T_MAX != length)
                     {
                         const char* end = value + length;
                         while (value < end)
@@ -415,11 +431,13 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
     return [[NSNumber alloc] initWithLongLong: strtoll (value, NULL, 10)];
 }
 
-- (id) PGTSExpressionOfType: (NSAttributeType) attrType
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType connection: (PGTSConnection *) connection
 {
-	id retval = self;
+	id retval = nil;
 	if (NSBooleanAttributeType == attrType)
 		retval = ([self boolValue] ? @"true" : @"false");
+	else
+		retval = [super PGTSExpressionOfType: attrType connection: connection];
 	return retval;
 }
 @end
@@ -438,7 +456,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 	return nil;
 }
 
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (size_t *) length connection: (PGTSConnection *) connection
 {
 	[self doesNotRecognizeSelector: _cmd];
 	return NULL;
@@ -509,7 +527,7 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 
 
 @implementation NSNull (PGTSFoundationObjects)
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection
+- (const char *) PGTSParameterLength: (size_t *) length connection: (PGTSConnection *) connection
 {
 	if (length)
 		*length = 0;

@@ -32,7 +32,7 @@
 
 
 @implementation BXDatabaseObjectModelStorage
-__strong static id gSharedInstance = nil;
+__strong static volatile id gSharedInstance = nil;
 
 + (void) initialize
 {
@@ -46,6 +46,7 @@ __strong static id gSharedInstance = nil;
 
 + (id) defaultStorage
 {
+	// No synchronization needed because this gets called from +initialize.
 	if (! gSharedInstance)
 	{
 		gSharedInstance = [[self alloc] init];

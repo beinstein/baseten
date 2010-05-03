@@ -185,7 +185,7 @@ CopyParameterString (int nParams, const char** values, int* formats)
 		{
 			BOOL isBinary = [[mParameters objectAtIndex: i] PGTSIsBinaryParameter];
 			id parameter = [parameterObjects objectAtIndex: i];
-			int length = 0;
+			size_t length = 0;
 			const char* value = [parameter PGTSParameterLength: &length connection: connection];
 			
 			paramTypes   [i] = InvalidOid;

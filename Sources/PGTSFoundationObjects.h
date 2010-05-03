@@ -32,12 +32,13 @@
 @class PGTSConnection;
 @class PGTSTypeDescription;
 
+
 @interface NSObject (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type;
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) type columnIndex: (int) columnIndex;
 - (id) PGTSParameter: (PGTSConnection *) connection;
-- (const char *) PGTSParameterLength: (int *) length connection: (PGTSConnection *) connection;
+- (const char *) PGTSParameterLength: (size_t *) length connection: (PGTSConnection *) connection;
+- (id) PGTSExpressionOfType: (NSAttributeType) attrType connection: (PGTSConnection *) connection;
 - (BOOL) PGTSIsBinaryParameter;
 - (BOOL) PGTSIsCollection;
-- (id) PGTSExpressionOfType: (NSAttributeType) attrType;
 @end

@@ -29,10 +29,13 @@
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
 
+@class PGTSConnection;
+
 
 @interface NSEntityDescription (BXPGAdditions)
 - (NSString *) BXPGCreateStatementWithIDColumn: (BOOL) addSerialIDColumn 
 									  inSchema: (NSString *) schemaName
+									connection: (PGTSConnection *) connection
 										errors: (NSMutableArray *) errors;
 - (NSString *) BXPGPrimaryKeyConstraintInSchema: (NSString *) schemaName;
 @end

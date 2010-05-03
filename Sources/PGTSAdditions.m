@@ -49,7 +49,7 @@
 - (NSString *) PGTSEscapedObjectParameter: (PGTSConnection *) connection
 {
 	NSString* retval = nil;
-	int length = 0;
+	size_t length = 0;
 	const char* charParameter = [[self PGTSParameter: connection] PGTSParameterLength: &length connection: connection];
 	if (charParameter)
 	{

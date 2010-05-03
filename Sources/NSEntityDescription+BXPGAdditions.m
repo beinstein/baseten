@@ -36,6 +36,7 @@
 @implementation NSEntityDescription (BXPGAdditions)
 - (NSString *) BXPGCreateStatementWithIDColumn: (BOOL) addSerialIDColumn 
 									  inSchema: (NSString *) schemaName
+									connection: (PGTSConnection *) connection
 										errors: (NSMutableArray *) errors
 {
 	Expect (schemaName);
@@ -66,7 +67,7 @@
 			[errors addObject: attrError];
 		else
 		{
-			NSString* attrDef = [currentProperty BXPGAttributeDefinition];
+			NSString* attrDef = [currentProperty BXPGAttributeDefinition: connection];
 			[attributeDefs addObject: attrDef];
 		}
 	}
