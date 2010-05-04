@@ -28,18 +28,17 @@
 // $Id$
 //
 
+#import "BXAController.h"
 #import "BXAGetInfoWindowController.h"
-#import <BaseTen/BXEntityDescriptionPrivate.h>
 
 
 @implementation BXAGetInfoWindowController
-
 #pragma mark Initialisation & Dealloc
-
 + (id) getInfoWindowController
 {
 	return [[[BXAGetInfoWindowController alloc] init] autorelease];
 }
+
 
 - (NSWindow *) windowPrototype: (NSRect) contentRect
 {
@@ -48,15 +47,21 @@
 													  backing: NSBackingStoreBuffered defer: YES] autorelease];
 	return window;
 }
+
+
+- (void) displayProperty: (BXPropertyDescription *) property
+{
+	BXAGetInfoWindowController *windowController = [[NSApp delegate] displayInfoForEntity: [property entity]];
+	[windowController selectProperty: property];
+}
 @end
 
 
-@implementation BXAGetInfoWindowController (NSWindowDelegate)
 
+@implementation BXAGetInfoWindowController (NSWindowDelegate)
 - (void) windowWillClose: (NSNotification *) notification
 {
 	// Dispose of get info windows after they are closed
 	[self autorelease];
 }
-
 @end

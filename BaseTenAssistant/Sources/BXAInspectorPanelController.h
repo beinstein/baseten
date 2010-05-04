@@ -31,15 +31,17 @@
 #import <Cocoa/Cocoa.h>
 
 @class BXEntityDescription;
+@class BXPropertyDescription;
 
 
 @interface BXAInspectorPanelController : NSWindowController
 {
-	IBOutlet NSView* mEntityAttributesView;
-	IBOutlet NSImageView* mEntityTypeImageView;
-	IBOutlet NSTableView* mAttributesTableView;
+	IBOutlet NSView *mEntityAttributesView;
+	IBOutlet NSImageView *mEntityTypeImageView;
+	IBOutlet NSTableView *mAttributesTableView;
+	IBOutlet NSDictionaryController *mPropertyController;
 	
-	BXEntityDescription* mEntity;
+	BXEntityDescription *mEntity;
 }
 
 + (id) inspectorPanelController;
@@ -54,5 +56,8 @@
 @property(readonly) BOOL isWindowVisible;
 
 - (IBAction) closeWindow: (id) sender;
+- (IBAction) propertyDoubleClick: (id) sender;
 - (void) bindEntityToObject: (id) observable withKeyPath: (NSString *) keypath;
+- (void) displayProperty: (BXPropertyDescription *) property;
+- (void) selectProperty: (BXPropertyDescription *) property;
 @end

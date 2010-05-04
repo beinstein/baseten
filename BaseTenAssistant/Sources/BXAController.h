@@ -34,6 +34,7 @@
 @class MKCBackgroundView;
 @class MKCPolishedCornerView;
 @class BXAImportController;
+@class BXAGetInfoWindowController;
 @class MKCStackView;
 @class RKRegex;
 
@@ -118,6 +119,8 @@
 - (BOOL) schemaInstallDenied;
 - (void) upgradeBaseTenSchema;
 - (void) refreshCaches: (SEL) callback;
+- (void) selectEntity: (BXEntityDescription *) entity;
+- (BXAGetInfoWindowController *) displayInfoForEntity: (BXEntityDescription *) entity;
 @end
 
 

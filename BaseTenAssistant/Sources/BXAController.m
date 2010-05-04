@@ -139,6 +139,9 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 
 - (void) setupTableViews
 {
+	[mDBTableView setTarget: self];
+	[mDBTableView setDoubleAction: @selector (getInfo:)];
+	
 	//Table headers
 	{
 		NSMutableDictionary* colours = [[MKCPolishedHeaderView darkColours] mutableCopy];
@@ -592,6 +595,45 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[mProgressIndicator setIndeterminate: YES];
 	[self displayProgressPanel: NSLocalizedString(@"Refreshing caches", @"Progress panel message")]; //Patch by Tim Bedford 2008-08-11
 	[connection sendQuery: @"SELECT baseten.refresh_caches ();" delegate: self callback: callback];
+}
+
+
+- (void) selectEntity: (BXEntityDescription *) entity
+{
+	// The dictionary controller seems to require the key-value-pair for selection.
+	NSArray *arrangedObjects = [mEntities arrangedObjects];
+	for (id pair in arrangedObjects)
+	{
+		if ([pair value] == entity)
+		{
+			[mEntities setSelectedObjects: [NSArray arrayWithObject: pair]];
+			break;
+		}
+	}	
+}
+
+
+- (BXAGetInfoWindowController *) displayInfoForEntity: (BXEntityDescription *) entity
+{
+	// Check if there is an info window for this entity already
+	for (NSWindow *window in [NSApp windows])
+	{
+		NSWindowController *windowController = [window windowController];
+		if ([windowController isKindOfClass: [BXAGetInfoWindowController class]])
+		{
+			if ([(BXAGetInfoWindowController *) windowController entity] == entity)
+			{
+				[window makeKeyAndOrderFront:self];
+				return (BXAGetInfoWindowController *) windowController;
+			}
+		}
+	}
+	
+	// Otherwise create a new one
+	BXAGetInfoWindowController *getInfo = [BXAGetInfoWindowController getInfoWindowController];
+	[getInfo setEntity: entity];
+	[getInfo showWindow: self];
+	return getInfo;
 }
 @end
 
@@ -1112,6 +1154,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 @end
 
 
+
 //Patch by Tim Bedford 2008-08-11
 @implementation BXAController (NSSplitViewDelegate)
 
@@ -1575,25 +1618,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	if([selectedObjects count] == 1)
 	{
 		BXEntityDescription* entity = (BXEntityDescription *)[[selectedObjects objectAtIndex:0] value];
-		
-		// Check if there is an info window for this entity already
-		for(NSWindow* window in [NSApp windows])
-		{
-			NSWindowController* windowController = [window windowController];
-			if([windowController isKindOfClass:[BXAGetInfoWindowController class]])
-			{
-				if([(BXAGetInfoWindowController *)windowController entity] == entity)
-				{
-					[window makeKeyAndOrderFront:self];
-					return;
-				}
-			}
-		}
-		
-		// Otherwise create a new one
-		BXAGetInfoWindowController* getInfo = [BXAGetInfoWindowController getInfoWindowController];
-		[getInfo setEntity:entity];
-		[getInfo showWindow:self];
+		[self displayInfoForEntity: entity];
 	}
 }
 

@@ -28,8 +28,9 @@
 // $Id$
 //
 
+#import "BXAController.h"
 #import "BXAGetInfoWindowController.h"
-#import <BaseTen/BXEntityDescriptionPrivate.h>
+#import <BaseTen/BaseTen.h>
 
 
 __strong static NSString* kBXAInspectorPanelControllerKVOContext = @"kBXAInspectorPanelControllerKVOContext";
@@ -119,6 +120,9 @@ static NSPoint gLastPoint = {};
 	NSArray* descriptors = [NSArray arrayWithObject:descriptor];
 	[mAttributesTableView setSortDescriptors:descriptors];
 	
+	[mAttributesTableView setTarget: self];
+	[mAttributesTableView setDoubleAction: @selector (propertyDoubleClick:)];
+	
 	[self moveTableViewUp: NO];
 	[self addObserver: self	forKeyPath: @"entity" 
 			  options: NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionInitial
@@ -178,6 +182,37 @@ static NSPoint gLastPoint = {};
 {
 	[[self window] performClose: sender];
 }
+
+
+- (IBAction) propertyDoubleClick: (id) sender
+{
+	BXPropertyDescription *property = [[[mPropertyController selectedObjects] lastObject] value];
+	if (property && [property propertyKind] == kBXPropertyKindRelationship)
+		[self displayProperty: [(BXRelationshipDescription *) property inverseRelationship]];
+}
+
+
+- (void) displayProperty: (BXPropertyDescription *) property
+{
+	[[NSApp delegate] selectEntity: [property entity]];
+	[self selectProperty: property];
+}
+
+
+- (void) selectProperty: (BXPropertyDescription *) property
+{
+	// The dictionary controller seems to require the key-value-pair for selection.
+	NSArray *arrangedObjects = [mPropertyController arrangedObjects];
+	for (id pair in arrangedObjects)
+	{
+		if ([pair value] == property)
+		{
+			[mPropertyController setSelectedObjects: [NSArray arrayWithObject: pair]];
+			break;
+		}
+	}	
+}
+
 
 - (void) bindEntityToObject: (id) observable withKeyPath: (NSString *) keypath
 {
