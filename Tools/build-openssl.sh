@@ -1,7 +1,7 @@
-. "$SRCROOT"/Tools/defines.sh
+source "${SRCROOT}/Tools/defines.sh"
 openssl_source_file=openssl-1.0.0.tar.gz
 openssl_dir=openssl-1.0.0
-openssl_root="$my_build_dir"/"$openssl_dir"
+openssl_root="$my_build_dir/$openssl_dir"
 
 
 function extract
