@@ -1,9 +1,9 @@
---- openssl-0.9.8h-orig/Configure	2008-05-02 02:11:30.000000000 +0300
-+++ openssl-0.9.8h/Configure	2008-08-15 00:48:03.000000000 +0300
-@@ -514,6 +514,7 @@
- "darwin-i386-cc","cc:-arch i386 -O3 -fomit-frame-pointer -fno-common::-D_REENTRANT:MACOSX:-Wl,-search_paths_first%:BN_LLONG RC4_CHAR RC4_CHUNK DES_UNROLL BF_PTR:${no_asm}:dlfcn:darwin-shared:-fPIC -fno-common:-arch i386 -dynamiclib:.\$(SHLIB_MAJOR).\$(SHLIB_MINOR).dylib",
- "darwin64-x86_64-cc","cc:-arch x86_64 -O3 -fomit-frame-pointer -DL_ENDIAN -DMD32_REG_T=int -Wall::-D_REENTRANT:MACOSX:-Wl,-search_paths_first%:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK BF_PTR2 DES_INT DES_UNROLL:${no_asm}:dlfcn:darwin-shared:-fPIC -fno-common:-arch x86_64 -dynamiclib:.\$(SHLIB_MAJOR).\$(SHLIB_MINOR).dylib",
- "debug-darwin-ppc-cc","cc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DCRYPTO_MDEBUG -DB_ENDIAN -g -Wall -O::-D_REENTRANT:MACOSX::BN_LLONG RC4_CHAR RC4_CHUNK DES_UNROLL BF_PTR::osx_ppc32.o::::::::::dlfcn:darwin-shared:-fPIC -fno-common:-dynamiclib:.\$(SHLIB_MAJOR).\$(SHLIB_MINOR).dylib",
+--- openssl-1.0.0-orig/Configure	2010-05-04 02:06:04.000000000 +0300
++++ openssl-1.0.0/Configure 2010-05-04 02:06:25.000000000 +0300
+@@ -553,6 +553,7 @@
+ "debug-darwin-i386-cc","cc:-arch i386 -g3 -DL_ENDIAN::-D_REENTRANT:MACOSX:-Wl,-search_paths_first%:BN_LLONG RC4_INT RC4_CHUNK DES_UNROLL BF_PTR:${x86_asm}:macosx:dlfcn:darwin-shared:-fPIC -fno-common:-arch i386 -dynamiclib:.\$(SHLIB_MAJOR).\$(SHLIB_MINOR).dylib",
+ "darwin64-x86_64-cc","cc:-arch x86_64 -O3 -DL_ENDIAN -DMD32_REG_T=int -Wall::-D_REENTRANT:MACOSX:-Wl,-search_paths_first%:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL:${x86_64_asm}:macosx:dlfcn:darwin-shared:-fPIC -fno-common:-arch x86_64 -dynamiclib:.\$(SHLIB_MAJOR).\$(SHLIB_MINOR).dylib",
+ "debug-darwin-ppc-cc","cc:-DBN_DEBUG -DREF_CHECK -DCONF_DEBUG -DCRYPTO_MDEBUG -DB_ENDIAN -g -Wall -O::-D_REENTRANT:MACOSX::BN_LLONG RC4_CHAR RC4_CHUNK DES_UNROLL BF_PTR:${ppc32_asm}:osx32:dlfcn:darwin-shared:-fPIC:-dynamiclib:.\$(SHLIB_MAJOR).\$(SHLIB_MINOR).dylib",
 +"darwin-arm-gcc","$ENV{'CC'}:-arch armv6 -mthumb -O3 -fomit-frame-pointer -fno-common -D_DARWIN_C_SOURCE -isysroot $ENV{'SDKROOT'}::-D_REENTRANT:MACOSX:-Wl,-syslibroot,$ENV{'SDKROOT'},-search_paths_first%:BN_LLONG RC4_CHAR RC4_CHUNK DES_UNROLL BF_PTR:${no_asm}:dlfcn:darwin-static:-fPIC -fno-common:-arch armv6 -dynamiclib:.\$(SHLIB_MAJOR).\$(SHLIB_MINOR).dylib",
  
  ##### A/UX

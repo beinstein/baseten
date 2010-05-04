@@ -1,6 +1,6 @@
 . "$SRCROOT"/Tools/defines.sh
-openssl_source_file=openssl-0.9.8h.tar.gz
-openssl_dir=openssl-0.9.8h
+openssl_source_file=openssl-1.0.0.tar.gz
+openssl_dir=openssl-1.0.0
 openssl_root="$my_build_dir"/"$openssl_dir"
 
 
@@ -17,7 +17,7 @@ function extract
 
 		gnutar -zxf "$openssl_source_file" -C "$my_build_dir"
 		exit_on_error
-		patch -p1 -d "$openssl_root" < "$SRCROOT"/PostgreSQL/openssl.patch
+		patch -p1 -d "$openssl_root" < "$SRCROOT"/Patches/openssl.patch
 		exit_on_error
 		
 		pushd "$my_build_dir"
@@ -33,7 +33,7 @@ if [ ! -e "$openssl_root"/libssl.a ] || \
 then
     echo "yes."
 
-	export CC="${PLATFORM_DEVELOPER_BIN_DIR}/gcc-4.0"
+	export CC="${DEVELOPER_DIR}/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2"
 	mkdir -p "$my_build_dir"
 	
 	pushd "$SRCROOT"/Contrib/OpenSSL

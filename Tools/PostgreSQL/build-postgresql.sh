@@ -200,7 +200,7 @@ then
 		opts=(
 			arm
 			arm-apple-darwin
-			"${PLATFORM_DEVELOPER_BIN_DIR}/gcc-4.2"
+            "${DEVELOPER_DIR}/Platforms/iPhoneOS.platform/Developer/usr/bin/gcc-4.2"
 			"-arch armv6 -mthumb"
 			"-arch armv6 -isysroot ${SDKROOT}"
 			"-Wl,-syslibroot,${SDKROOT}"
