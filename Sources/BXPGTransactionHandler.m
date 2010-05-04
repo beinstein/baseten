@@ -2,7 +2,7 @@
 // BXPGTransactionHandler.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -637,7 +637,6 @@ SSLMode (enum BXSSLMode mode)
 			NSString* query = 
 			@"SELECT "
 			@" CURRENT_TIMESTAMP::TIMESTAMP WITHOUT TIME ZONE AS ts, "
-			@" null AS reloid, "
 			@" null AS relid, "
 			@" null AS n_name, "
 			@" null AS fn_name, "

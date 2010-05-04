@@ -2,7 +2,7 @@
 // BXPGClearLocksHandler.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -63,10 +63,11 @@ bx_error_during_clear_notification (id self, NSError* error)
     
     //Which tables have pending locks?
     NSString* query = 
-	@"SELECT relid, last_date, lock_table_name "
-	@" FROM baseten.pending_locks "
-	@" WHERE last_date > COALESCE ($1, '-infinity')::timestamp "
-	@"  AND relid = ANY ($2) ";
+	@"SELECT l.last_date, l.lock_table_name, r.relname, r.nspname "
+	@" FROM baseten.pending_locks l "
+	@" INNER JOIN baseten.relation r ON (r.id = l.relid) "
+	@" WHERE l.last_date > COALESCE ($1, '-infinity')::timestamp "
+	@"  AND l.relid = ANY ($2) ";
     PGTSResultSet* res = [mConnection executeQuery: query parameters: mLastCheck, relids];
     if (NO == [res querySucceeded])
 	{
@@ -85,9 +86,10 @@ bx_error_during_clear_notification (id self, NSError* error)
 	while ([res advanceRow])
 	{
 		[ids removeAllObjects];
-		NSString* query = nil;
-		NSNumber* reloid = [res valueForKey: @"reloid"];
-		PGTSTableDescription* table = [[mConnection databaseDescription] tableWithOid: [reloid PGTSOidValue]];
+		NSString *query = nil;
+		NSString *relname = [res valueForKey: @"relname"];
+		NSString *nspname = [res valueForKey: @"nspname"];
+		PGTSTableDescription *table = [[mConnection databaseDescription] table: relname inSchema: nspname];
 		
 		{
 			NSString* queryFormat =

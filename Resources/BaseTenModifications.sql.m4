@@ -2,7 +2,7 @@
 -- BaseTenModifications.sql.m4
 -- BaseTen
 --
--- Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+-- Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 --
 -- Before using this software, please review the available licensing options
 -- by visiting http://basetenframework.org/licensing/ or by contacting
@@ -1411,7 +1411,7 @@ BEGIN
 	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
-	retval := (reloid, relid, nname, null::TEXT, null::TEXT);
+	retval := (relid, nname, null::TEXT, null::TEXT);
 	RETURN retval;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
@@ -1446,7 +1446,7 @@ BEGIN
 	--RAISE NOTICE 'Observing: %', nname;
 	EXECUTE 'LISTEN ' || quote_ident (nname);
 
-	retval := (reloid, relid, nname, "baseten"._lock_fn (relid), "baseten"._lock_table (relid));
+	retval := (relid, nname, "baseten"._lock_fn (relid), "baseten"._lock_table (relid));
 	RETURN retval;
 END;
 $$ VOLATILE LANGUAGE PLPGSQL;
