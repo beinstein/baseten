@@ -35,8 +35,8 @@ __strong static NSString* kNSKVOContext = @"kBXAuthenticationPanelNSKVOContext";
 static const CGFloat kSizeDiff = 25.0;
 
 
-@implementation BXAuthenticationPanel
 
+@implementation BXAuthenticationPanel
 + (void) initialize
 {
     [super initialize];
@@ -49,11 +49,13 @@ static const CGFloat kSizeDiff = 25.0;
     }
 }
 
+
 + (id) authenticationPanel
 {
 	return [[[self alloc] initWithContentRect: NSZeroRect styleMask: NSTitledWindowMask
 									  backing: NSBackingStoreBuffered defer: YES] autorelease];
 }
+
 
 - (id) initWithContentRect: (NSRect) contentRect styleMask: (NSUInteger) styleMask
                    backing: (NSBackingStoreType) bufferingType defer: (BOOL) deferCreation
@@ -62,18 +64,25 @@ static const CGFloat kSizeDiff = 25.0;
                                    backing: bufferingType defer: deferCreation]))
     {
         [gAuthenticationViewNib instantiateNibWithOwner: self topLevelObjects: NULL];
+		
 		NSRect contentFrame = [mPasswordAuthenticationView frame];
         contentFrame.size.height -= kSizeDiff;
-		[self setContentView: mPasswordAuthenticationView];
 		NSRect windowFrame = [self frameRectForContentRect: contentFrame];
 		[self setFrame: windowFrame display: NO];
 		[self setMinSize: windowFrame.size];
+		
+		[self setContentView: mPasswordAuthenticationView];
+		[mPasswordAuthenticationView setAutoresizingMask:
+		 NSViewMinXMargin | NSViewMaxXMargin | NSViewWidthSizable |
+		 NSViewMinYMargin | NSViewMaxYMargin | NSViewHeightSizable];
+
 		[self addObserver: self forKeyPath: @"message" 
 				  options: NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew 
 				  context: kNSKVOContext];
     }
     return self;
 }
+
 
 - (void) dealloc
 {
@@ -91,30 +100,42 @@ static const CGFloat kSizeDiff = 25.0;
     [super dealloc];
 }
 
+
+- (id <BXAuthenticationPanelDelegate>) delegate
+{
+	return mDelegate;
+}
+
+
 - (void) setDelegate: (id <BXAuthenticationPanelDelegate>) object
 {
 	mDelegate = object;
 }
+
 
 - (BOOL) isAuthenticating
 {
     return mIsAuthenticating;
 }
 
+
 - (void) setAuthenticating: (BOOL) aBool
 {
 	mIsAuthenticating = aBool;
 }
+
 
 - (BOOL) shouldStorePasswordInKeychain
 {
 	return mShouldStorePasswordInKeychain;
 }
 
+
 - (void) setShouldStorePasswordInKeychain: (BOOL) aBool
 {
 	mShouldStorePasswordInKeychain = aBool;
 }
+
 
 - (NSString *) username
 {
@@ -124,6 +145,7 @@ static const CGFloat kSizeDiff = 25.0;
 	return retval;
 }
 
+
 - (NSString *) password
 {
 	NSString* retval = mPassword;
@@ -132,6 +154,7 @@ static const CGFloat kSizeDiff = 25.0;
 	return retval;
 }
 
+
 - (NSString *) message
 {
 	NSString* retval = mMessage;
@@ -139,6 +162,16 @@ static const CGFloat kSizeDiff = 25.0;
 		retval = nil;
 	return retval;
 }
+
+
+- (NSString *) address
+{
+	NSString *retval = mAddress;
+	if (0 == [retval length])
+		retval = nil;
+	return retval;
+}
+
 
 - (void) setUsername: (NSString *) aString
 {
@@ -149,6 +182,7 @@ static const CGFloat kSizeDiff = 25.0;
 	}
 }
 
+
 - (void) setPassword: (NSString *) aString
 {
 	if (mPassword != aString)
@@ -158,6 +192,7 @@ static const CGFloat kSizeDiff = 25.0;
 	}
 }
 
+
 - (void) setMessage: (NSString *) aString
 {
 	if (mMessage != aString)
@@ -166,6 +201,17 @@ static const CGFloat kSizeDiff = 25.0;
 		mMessage = [aString retain];
 	}
 }
+
+
+- (void) setAddress: (NSString *) aString
+{
+	if (mAddress != aString)
+	{
+		[mAddress release];
+		mAddress = [aString retain];
+	}
+}
+
 
 - (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object change: (NSDictionary *) change context: (void *) context
 {
@@ -198,8 +244,8 @@ static const CGFloat kSizeDiff = 25.0;
 		[super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
 	}
 }
-
 @end
+
 
 
 @implementation BXAuthenticationPanel (IBActions)
@@ -209,6 +255,7 @@ static const CGFloat kSizeDiff = 25.0;
 	[self setAuthenticating: YES];
 	[self setPassword: nil];
 }
+
 
 - (void) cancelAuthentication2
 {
@@ -222,6 +269,7 @@ static const CGFloat kSizeDiff = 25.0;
 		[mDelegate authenticationPanelEndPanel: self];
 	}
 }
+
 
 - (IBAction) cancelAuthentication: (id) sender
 {

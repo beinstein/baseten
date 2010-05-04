@@ -45,6 +45,7 @@
 	NSString*							mUsername;
 	NSString*							mPassword;
 	NSString*							mMessage;
+	NSString*							mAddress;
 	
     //Top-level objects
     IBOutlet NSView*                	mPasswordAuthenticationView;
@@ -71,8 +72,13 @@
 - (void) setUsername: (NSString *) aString;
 - (NSString *) password;
 - (void) setPassword: (NSString *) aString;
+- (NSString *) message;
 - (void) setMessage: (NSString *) aString;
+- (NSString *) address;
+- (void) setAddress: (NSString *) aString;
+- (BOOL) isAuthenticating;
 - (void) setAuthenticating: (BOOL) aBool;
+- (id <BXAuthenticationPanelDelegate>) delegate;
 - (void) setDelegate: (id <BXAuthenticationPanelDelegate>) object;
 @end
 

@@ -309,6 +309,7 @@ MakeInvocation (const id target, const SEL selector)
 		[mAuthenticationPanel setDelegate: self];
 	}
 	
+	[mAuthenticationPanel setAddress: mHostName];
 	return mAuthenticationPanel;
 }
 
