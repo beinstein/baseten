@@ -1819,6 +1819,7 @@
 				535443EE0D634A47002A6C47 /* Sources */,
 				535444080D634A47002A6C47 /* Frameworks */,
 				5354440E0D634A47002A6C47 /* Set icon */,
+				53CA7BC411903F9100DDBD5B /* Set version numbers */,
 			);
 			buildRules = (
 				53F5B8170E32B97C000F527B /* PBXBuildRule */,
@@ -1987,6 +1988,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SRCDIR\"\nsource Tools/run_doxygen.sh";
+			showEnvVarsInLog = 0;
+		};
+		53CA7BC411903F9100DDBD5B /* Set version numbers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set version numbers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "source Tools/set-version-numbers.sh";
 			showEnvVarsInLog = 0;
 		};
 		53ED0E6310355F94000CFECF /* Copy PostgreSQL Headers */ = {
@@ -2314,7 +2330,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = BaseTen;
 				PRODUCT_NAME = BaseTen;
 				PUBLIC_HEADERS_FOLDER_PATH = BaseTen;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Debug;
@@ -2339,7 +2355,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = BaseTen;
 				PRODUCT_NAME = BaseTen;
 				PUBLIC_HEADERS_FOLDER_PATH = BaseTen;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
 				WARNING_CFLAGS = "-Wall";
 				ZERO_LINK = NO;
 			};
@@ -2417,7 +2433,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = "PostgreSQL-arm";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Debug;
 		};
@@ -2428,7 +2444,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				PRODUCT_NAME = "PostgreSQL-arm";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2508,7 +2524,7 @@
 				PRIVATE_HEADERS_FOLDER_PATH = BaseTen;
 				PRODUCT_NAME = BaseTen;
 				PUBLIC_HEADERS_FOLDER_PATH = BaseTen;
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
 				WARNING_CFLAGS = "-Wall";
 			};
 			name = Coverage;
@@ -2528,7 +2544,7 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				PRODUCT_NAME = "PostgreSQL-arm";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
 			};
 			name = Coverage;
 		};

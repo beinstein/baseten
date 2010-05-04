@@ -435,6 +435,7 @@
 				53341E910F6A6C9700EA666F /* Index help */,
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
+				53CA7B681190391800DDBD5B /* Set version numbers */,
 			);
 			buildRules = (
 				531C01780E32AF7900E43208 /* PBXBuildRule */,
@@ -559,6 +560,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "source \"$SRCROOT/../Tools/index-assistant-help.sh\"";
+			showEnvVarsInLog = 0;
+		};
+		53CA7B681190391800DDBD5B /* Set version numbers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set version numbers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pushd ..\nsource Tools/set-version-numbers.sh";
 			showEnvVarsInLog = 0;
 		};
 		53F83767107A85F20017FB36 /* Copy Dependencies */ = {

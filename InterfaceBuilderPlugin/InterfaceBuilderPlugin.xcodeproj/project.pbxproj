@@ -256,6 +256,7 @@
 				8D1AC96E0486D14A00FE50C9 /* Frameworks */,
 				53C8C30A0CEDD31000676C98 /* Run install_name_tool */,
 				53C8C30C0CEDD34500676C98 /* Set plug-in icon */,
+				53CA7BE21190409800DDBD5B /* Set version numbers */,
 			);
 			buildRules = (
 			);
@@ -383,6 +384,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "#\n# Copies items from per project build directories (if they exist) to this project's build directory,\n# so they can be copied by other build phases.\n#\n\nBASE_TEN_FRAMEWORK=\"$PROJECT_DIR/../build/$BUILD_STYLE/BaseTen.framework\"\n\nif [ -e \"$BASE_TEN_FRAMEWORK\" ] && [ \"$BASE_TEN_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTen.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTen.framework\"\n\tcp -pfR \"$BASE_TEN_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\nBASE_TEN_APPKIT_FRAMEWORK=\"$PROJECT_DIR/../BaseTenAppKit/build/$BUILD_STYLE/BaseTenAppKit.framework\"\n\nif [ -e \"$BASE_TEN_APPKIT_FRAMEWORK\" ] && [ \"$BASE_TEN_APPKIT_FRAMEWORK\" -nt \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\" ]\nthen\n\trm -rf \"$BUILT_PRODUCTS_DIR/BaseTenAppKit.framework\"\n\tcp -pfR \"$BASE_TEN_APPKIT_FRAMEWORK\" \"$BUILT_PRODUCTS_DIR\"\nfi\n\n\n";
+			showEnvVarsInLog = 0;
+		};
+		53CA7BE21190409800DDBD5B /* Set version numbers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set version numbers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pushd ..\nsource Tools/set-version-numbers.sh";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */

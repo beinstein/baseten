@@ -305,6 +305,7 @@
 				535444710D634D9C002A6C47 /* Sources */,
 				5354447F0D634D9C002A6C47 /* Frameworks */,
 				535444830D634D9C002A6C47 /* Set icon */,
+				53CA7BD61190404A00DDBD5B /* Set version numbers */,
 			);
 			buildRules = (
 			);
@@ -389,6 +390,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "ICON_FOLDER_PATH=\"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon\n\nif [ ! -e \"$ICON_FOLDER_PATH\" ]\nthen\n\tditto -xk \"$PROJECT_DIR\"/../Resources/BaseTenFrameworkIcon.zip \"$ICON_FOLDER_PATH\" \"$PROJECT_DIR\"/../Resources/\nfi\nsh \"$PROJECT_DIR\"/../Tools/set_icon.sh \"$ICON_FOLDER_PATH\" \"$TARGET_BUILD_DIR\"/\"$WRAPPER_NAME\"\n";
+			showEnvVarsInLog = 0;
+		};
+		53CA7BD61190404A00DDBD5B /* Set version numbers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Set version numbers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "pushd ..\nsource Tools/set-version-numbers.sh";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
