@@ -176,6 +176,11 @@
 			[self fetchViewPrimaryKeys: connection];
 			[self fetchForeignKeys: connection];
 		}
+		else
+		{
+			BXLogInfo (@"BaseTen schema is installed but its compatibility version is %@ while the framework's is %@.", 
+					   [mDatabase schemaCompatibilityVersion], currentCompatVersion);
+		}
 	}
 }
 

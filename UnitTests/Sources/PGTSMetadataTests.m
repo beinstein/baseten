@@ -35,6 +35,7 @@
 #import <BaseTen/PGTSColumnDescription.h>
 #import <BaseTen/PGTSIndexDescription.h>
 #import <BaseTen/PGTSTypeDescription.h>
+#import <BaseTen/BXPGInterface.h>
 #import <BaseTen/BXEnumerate.h>
 
 
@@ -42,6 +43,9 @@
 - (void) setUp
 {
 	[super setUp];
+	
+	[BXPGInterface class]; // Run +initialize.
+	
 	NSDictionary* connectionDictionary = [self connectionDictionary];
 	PGTSConnection* connection = [[[PGTSConnection alloc] init] autorelease];
 	BOOL status = [connection connectSync: connectionDictionary];
