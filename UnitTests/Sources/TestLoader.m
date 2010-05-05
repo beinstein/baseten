@@ -40,6 +40,7 @@
 #import "PGTSTypeTests.h"
 #import "PGTSParameterTests.h"
 #import "PGTSNotificationTests.h"
+#import "PGTSPgBouncerTests.h"
 
 #import "ConnectTest.h"
 #import "BXSSLConnectionTests.h"
@@ -75,6 +76,7 @@
 							[PGTSTypeTests class],
 							[PGTSParameterTests class],
 							[PGTSNotificationTests class],
+							[PGTSPgBouncerTests class],
 							
 							[ConnectTest class],
 							[BXSSLConnectionTests class],
