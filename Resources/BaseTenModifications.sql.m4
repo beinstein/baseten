@@ -105,7 +105,7 @@ GRANT USAGE ON SCHEMA "baseten" TO basetenread;
 CREATE FUNCTION "baseten".array_cat (anyarray, anyarray)
 	RETURNS anyarray AS $$
 	SELECT $1 || $2;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_cat (anyarray, anyarray) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_cat (anyarray, anyarray) TO basetenread;
 
@@ -149,15 +149,13 @@ BEGIN
 	END LOOP;
 	RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES 
-	ON FUNCTION "baseten".array_cat_each (TEXT [], TEXT [], TEXT) FROM PUBLIC;
+$$ IMMUTABLE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_cat_each (TEXT [], TEXT [], TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_cat_each (TEXT [], TEXT [], TEXT) TO basetenread;
 
 
 -- Prepends each element of an array with the first parameter
-CREATE FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])
-	RETURNS TEXT [] AS $$
+CREATE FUNCTION "baseten".array_prepend_each (TEXT, TEXT []) RETURNS TEXT [] AS $$
 DECLARE
 	prefix ALIAS FOR $1;
 	source ALIAS FOR $2;
@@ -168,14 +166,13 @@ BEGIN
 	END LOOP;
 	RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL;
+$$ IMMUTABLE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT [])  FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_prepend_each (TEXT, TEXT []) TO basetenread;
 
 
 -- Appends each element of an array with the first parameter
-CREATE FUNCTION "baseten".array_append_each (TEXT, TEXT [])
-	RETURNS TEXT [] AS $$
+CREATE FUNCTION "baseten".array_append_each (TEXT, TEXT []) RETURNS TEXT [] AS $$
 DECLARE
 	suffix ALIAS FOR $1;
 	source ALIAS FOR $2;
@@ -186,8 +183,8 @@ BEGIN
 	END LOOP;
 	RETURN destination;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_append_each (TEXT, TEXT [])	 FROM PUBLIC;
+$$ IMMUTABLE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".array_append_each (TEXT, TEXT []) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".array_append_each (TEXT, TEXT []) TO basetenread;
 
 
@@ -201,19 +198,115 @@ BEGIN
 	END IF;
 	RETURN retval;
 END;
-$$ IMMUTABLE LANGUAGE PLPGSQL;
+$$ IMMUTABLE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".split_part (TEXT, TEXT, INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".split_part (TEXT, TEXT, INTEGER) TO basetenread;
 
 
-CREATE FUNCTION "baseten".running_backend_pids () 
-RETURNS SETOF INTEGER AS $$
+CREATE FUNCTION "baseten".running_backend_pids () RETURNS SETOF INTEGER AS $$
 	SELECT 
 		pg_stat_get_backend_pid (idset.id) AS pid 
 	FROM pg_stat_get_backend_idset () AS idset (id);
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".running_backend_pids () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".running_backend_pids () TO basetenread;
+
+
+CREATE FUNCTION "baseten".false_indices (BOOLEAN [], INT2 []) RETURNS INT2 [] AS $$
+DECLARE
+	comparisons ALIAS FOR $1;
+	indices ALIAS FOR $2;
+	retval INT2 [] DEFAULT ARRAY []::INT2 [];
+BEGIN
+	FOR i IN array_lower (comparisons, 1)..array_upper (comparisons, 1) LOOP
+		IF NOT (comparisons [i]) THEN
+			retval := array_append (retval, indices [i]);
+		END IF;
+	END LOOP;
+	
+	IF 0 = COALESCE (array_upper (retval, 1), 0) THEN
+		retval := null;
+	END IF;
+	
+	RETURN retval;
+END;
+$$ IMMUTABLE STRICT LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".false_indices (BOOLEAN [], INT2 []) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".false_indices (BOOLEAN [], INT2 []) TO basetenread;
+
+
+CREATE FUNCTION "baseten".neq (box, box) RETURNS BOOLEAN AS $$
+	SELECT NOT (($1 [0] ~= $2 [0]) AND ($1 [1] ~= $2 [1]));
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq (box, box) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".neq (box, box) TO basetenread;
+
+
+define({{neq_function}}, {{
+CREATE FUNCTION "baseten".neq ($1, $1) RETURNS BOOLEAN AS $$
+BEGIN
+	IF isopen (${{}}1) <> isopen (${{}}2) THEN
+		RETURN true;
+	END IF;
+	
+	IF npoints (${{}}1) <> npoints (${{}}2) THEN
+		RETURN true;
+	END IF;
+	
+	FOR i IN 0..npoints (${{}}1) LOOP
+		IF NOT ((${{}}1 [0] ~= ${{}}2 [0]) AND (${{}}1 [1] ~= ${{}}2 [1])) THEN
+			RETURN true;
+		END IF;
+	END LOOP;
+	
+	RETURN false;
+END;
+$$ IMMUTABLE STRICT LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq ($1, $1) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".neq ($1, $1) TO basetenread
+}})dnl
+neq_function({{path}});
+neq_function({{polygon}});
+
+
+define({{neq_function}}, {{
+CREATE FUNCTION "baseten".neq ($1, $1) RETURNS BOOLEAN AS $$
+	SELECT ${{}}1 <> ${{}}2;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq ($1, $1) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".neq ($1, $1) TO basetenread
+}})dnl
+neq_function({{anyelement}});
+neq_function({{anyarray}});
+
+
+define({{neq_operator}}, {{
+CREATE OPERATOR "baseten".<> (
+	PROCEDURE = "baseten".neq,
+	LEFTARG = $1,
+	RIGHTARG = $1,
+	HASHES
+)}})dnl
+neq_operator({{box}});
+neq_operator({{path}});
+neq_operator({{polygon}});
+neq_operator({{anyelement}});
+neq_operator({{anyarray}});
+
+
+define({{same_function}}, {{
+CREATE FUNCTION "baseten".same ($1, $1) RETURNS BOOLEAN AS $$
+	SELECT (${{}}1 IS NULL AND ${{}}2 IS NULL) OR (
+		${{}}1 IS NOT NULL AND
+		${{}}2 IS NOT NULL AND
+		NOT (${{}}1 OPERATOR ("baseten".<>) ${{}}2)
+	);
+$$ IMMUTABLE CALLED ON NULL INPUT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".same ($1, $1) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".same ($1, $1) TO basetenread
+}})dnl
+same_function({{anyelement}});
+same_function({{anyarray}});
 
 
 define({{between_operator}}, {{
@@ -260,7 +353,6 @@ CREATE TYPE "baseten".view_type AS (
 
 
 CREATE TYPE "baseten".observation_type AS (
-	oid OID,
 	identifier INTEGER,
 	notification_name TEXT,
 	function_name TEXT,
@@ -270,7 +362,7 @@ CREATE TYPE "baseten".observation_type AS (
 
 CREATE FUNCTION "baseten".reltype (OID, NAME, NAME) RETURNS "baseten".reltype AS $$
 	SELECT $1, $2, $3;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".reltype (OID, NAME, NAME) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".reltype (OID, NAME, NAME) TO basetenread;
 
@@ -286,9 +378,23 @@ BEGIN
 		INTO STRICT retval;
 	RETURN retval;
 END;
-$$ STABLE LANGUAGE PLPGSQL;
+$$ STABLE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".reltype (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".reltype (OID) TO basetenread;
+
+
+CREATE FUNCTION "baseten".quote_ident ("baseten".reltype) RETURNS TEXT AS $$
+	SELECT quote_ident ($1.nspname) || '.' || quote_ident ($1.relname);
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".quote_ident ("baseten".reltype) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".quote_ident ("baseten".reltype) TO basetenread;
+
+
+CREATE FUNCTION "baseten".quote_ident (TEXT, TEXT) RETURNS TEXT AS $$
+	SELECT quote_ident ($1) || '.' || quote_ident ($2);
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".quote_ident (TEXT, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".quote_ident (TEXT, TEXT) TO basetenread;
 
 
 -- Debugging helpers
@@ -297,14 +403,14 @@ CREATE FUNCTION "baseten".oidof (TEXT, TEXT) RETURNS "baseten".reltype AS $$
 	FROM pg_class c
 	INNER JOIN pg_namespace n ON (c.relnamespace = n.oid)
 	WHERE c.relname = $2 AND n.nspname = $1;
-$$ STABLE LANGUAGE SQL;
+$$ STABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".oidof (TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".oidof (TEXT, TEXT) TO basetenread;
 
 
 CREATE FUNCTION "baseten".oidof (TEXT) RETURNS "baseten".reltype AS $$
 	SELECT "baseten".oidof ('public', $1);
-$$ STABLE LANGUAGE SQL;
+$$ STABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".oidof (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".oidof (TEXT) TO basetenread;
 
@@ -449,6 +555,7 @@ CREATE TABLE "baseten".modification (
 	"baseten_modification_timestamp"		TIMESTAMP (6) WITHOUT TIME ZONE NULL DEFAULT NULL,
 	"baseten_modification_insert_timestamp" TIMESTAMP (6) WITHOUT TIME ZONE NOT NULL DEFAULT clock_timestamp (),
 	"baseten_modification_type"				CHAR NOT NULL,
+	"baseten_modification_cols"				INT2 [],
 	"baseten_modification_backend_pid"		INTEGER NOT NULL DEFAULT pg_backend_pid ()
 );
 ALTER SEQUENCE "baseten".modification_id_seq OWNED BY "baseten".modification."baseten_modification_id";
@@ -499,7 +606,7 @@ CREATE FUNCTION "baseten".relation_id (OID) RETURNS INTEGER AS $$
 	INNER JOIN pg_namespace n ON (n.oid = c.relnamespace)
 	INNER JOIN "baseten".relation r USING (relname, nspname)
 	WHERE c.oid = $1;
-$$ STABLE LANGUAGE SQL;
+$$ STABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".relation_id (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".relation_id (OID) TO basetenread;
 
@@ -515,7 +622,7 @@ BEGIN
 	END IF;
 	RETURN retval;
 END;
-$$ STABLE LANGUAGE PLPGSQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".relation_id_ex (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".relation_id_ex (OID) TO basetenread;
 
@@ -548,7 +655,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._view_hierarchy (OID, OID, INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._view_hierarchy (OID, OID, INTEGER) TO basetenread;
 
@@ -572,7 +679,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;
-$$ STABLE LANGUAGE PLPGSQL;
+$$ STABLE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._view_hierarchy (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._view_hierarchy (OID) TO basetenread;
 
@@ -1184,21 +1291,21 @@ GRANT EXECUTE ON FUNCTION "baseten"._remove_ambiguous_relationships () TO basete
 
 CREATE FUNCTION "baseten"._mod_notification (OID) RETURNS TEXT AS $$
 	SELECT 'baseten_mod__' || "baseten".relation_id_ex ($1);
-$$ STABLE LANGUAGE SQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_notification (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._mod_notification (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._mod_table (INTEGER) RETURNS TEXT AS $$
 	SELECT 'mod__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_table (INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._mod_table (INTEGER) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._mod_table (OID) RETURNS TEXT AS $$
 	SELECT 'mod__' || "baseten".relation_id_ex ($1);
-$$ STABLE LANGUAGE SQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_table (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._mod_table (OID) TO basetenread;
 
@@ -1207,7 +1314,7 @@ GRANT EXECUTE ON FUNCTION "baseten"._mod_table (OID) TO basetenread;
 CREATE FUNCTION "baseten"._mod_rule (TEXT)
 RETURNS TEXT AS $$
 	SELECT '~baseten_modification_' || upper ($1);
-$$ IMMUTABLE LANGUAGE SQL;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_rule (TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._mod_rule (TEXT) TO basetenread;
 
@@ -1215,49 +1322,49 @@ GRANT EXECUTE ON FUNCTION "baseten"._mod_rule (TEXT) TO basetenread;
 CREATE FUNCTION "baseten"._mod_insert_fn (OID)
 RETURNS TEXT AS $$
 	SELECT 'mod_insert_fn__' || "baseten".relation_id_ex ($1);
-$$ STABLE LANGUAGE SQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._mod_insert_fn (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._mod_insert_fn (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._lock_fn (INTEGER) RETURNS TEXT AS $$
 	SELECT 'lock_fn__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_fn (INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_fn (INTEGER) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._lock_fn (OID) RETURNS TEXT AS $$
 	SELECT 'lock_fn__' || "baseten".relation_id_ex ($1);
-$$ STABLE LANGUAGE SQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_fn (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_fn (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._lock_table (INTEGER) RETURNS TEXT AS $$
 	SELECT 'lock__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_table (INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_table (INTEGER) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._lock_table (OID) RETURNS TEXT AS $$
 	SELECT 'lock__' || "baseten".relation_id_ex ($1);
-$$ STABLE LANGUAGE SQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_table (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_table (OID) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._lock_notification (INTEGER) RETURNS TEXT AS $$
 	SELECT 'baseten_lock__' || $1;
-$$ IMMUTABLE LANGUAGE SQL;
+$$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_notification (INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_notification (INTEGER) TO basetenread;
 
 
 CREATE FUNCTION "baseten"._lock_notification (OID) RETURNS TEXT AS $$
 	SELECT 'baseten_lock__' || "baseten".relation_id_ex ($1);
-$$ STABLE LANGUAGE SQL;
+$$ STABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._lock_notification (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._lock_notification (OID) TO basetenread;
 
@@ -1288,7 +1395,7 @@ CREATE FUNCTION "baseten".mod_cleanup (BOOLEAN) RETURNS VOID AS $$
 		WHERE "baseten_modification_timestamp" < CURRENT_TIMESTAMP - INTERVAL '5 minutes';
 	UPDATE "baseten".modification SET "baseten_modification_timestamp" = clock_timestamp ()
 		WHERE "baseten_modification_timestamp" IS NULL AND ($1 OR "baseten_modification_backend_pid" != pg_backend_pid ());
-$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
+$$ VOLATILE CALLED ON NULL INPUT LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_cleanup (BOOLEAN) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_cleanup (BOOLEAN) TO basetenread;
 
@@ -1358,7 +1465,7 @@ CREATE FUNCTION "baseten".is_enabled (INTEGER) RETURNS boolean AS $$
 	SELECT CASE WHEN 1 = COUNT (r.id) THEN true ELSE false END
 	FROM "baseten".relation r
 	WHERE r.id = $1 AND r.enabled = true;
-$$ STABLE LANGUAGE SQL;
+$$ STABLE STRICT LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".is_enabled (INTEGER) IS 'Checks for observing compatibility. Returns a boolean.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled (INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".is_enabled (INTEGER) TO basetenread;
@@ -1366,7 +1473,7 @@ GRANT EXECUTE ON FUNCTION "baseten".is_enabled (INTEGER) TO basetenread;
 
 CREATE FUNCTION "baseten".is_enabled (OID) RETURNS boolean AS $$
 	SELECT "baseten".is_enabled ("baseten".relation_id ($1));
-$$ STABLE LANGUAGE SQL;
+$$ STABLE STRICT LANGUAGE SQL;
 COMMENT ON FUNCTION "baseten".is_enabled (OID) IS 'Checks for observing compatibility. Returns a boolean.';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".is_enabled (OID) TO basetenread;
@@ -1379,7 +1486,7 @@ BEGIN
 	END IF;
 	RETURN;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled_ex (INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".is_enabled_ex (INTEGER) TO basetenread;
 
@@ -1391,7 +1498,7 @@ BEGIN
 	END IF;
 	RETURN;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".is_enabled_ex (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".is_enabled_ex (OID) TO basetenread;
 
@@ -1414,7 +1521,7 @@ BEGIN
 	retval := (relid, nname, null::TEXT, null::TEXT);
 	RETURN retval;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_observe (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_observe (OID) TO basetenread;
 
@@ -1426,7 +1533,7 @@ BEGIN
 	EXECUTE 'UNLISTEN ' || quote_ident ("baseten"._mod_notification (relid));
 	RETURN;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".mod_observe_stop (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".mod_observe_stop (OID) TO basetenread;
 
@@ -1449,7 +1556,7 @@ BEGIN
 	retval := (relid, nname, "baseten"._lock_fn (relid), "baseten"._lock_table (relid));
 	RETURN retval;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE CALLED ON NULL INPUT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_observe (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_observe (OID) TO basetenuser;
 
@@ -1461,7 +1568,7 @@ BEGIN
 	EXECUTE 'UNLISTEN ' || quote_ident ("baseten"._lock_notification (relid));
 	RETURN;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".lock_observe_stop (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".lock_observe_stop (OID) TO basetenuser;
 
@@ -1478,7 +1585,7 @@ BEGIN
 	retval := "baseten".reltype ($1);
 	RETURN retval;
 END;
-$$ VOLATILE LANGUAGE PLPGSQL SECURITY DEFINER;
+$$ VOLATILE CALLED ON NULL INPUT LANGUAGE PLPGSQL SECURITY DEFINER;
 COMMENT ON FUNCTION "baseten".disable (OID) IS 'Removes BaseTen tables for a specific relation';
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".disable (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".disable (OID) TO basetenowner;
@@ -1503,28 +1610,29 @@ BEGIN
 	fdecl :=
 		'CREATE OR REPLACE FUNCTION "baseten".' || quote_ident (fname) || ' () RETURNS TRIGGER AS $$ ' ||
 		'BEGIN ' ||
-			'INSERT INTO "baseten".' || quote_ident (mtable) || ' ' ||
-				'("baseten_modification_type", ' || array_to_string (pkey, ', ') || ') ' ||
-				'VALUES ' || 
-				'(''I'', ' || array_to_string ("baseten".array_prepend_each ('NEW.', pkey), ', ') || '); ' ||
+			'INSERT INTO ' || "baseten".quote_ident ('baseten', mtable) || ' (' ||
+				'"baseten_modification_type", "baseten_modification_cols", ' || array_to_string (pkey, ', ') ||
+			') VALUES (' || 
+				'''I'', null, ' || array_to_string ("baseten".array_prepend_each ('NEW.', pkey), ', ') || 
+			'); ' ||
 			'RETURN NEW; ' ||
 		'END; ' ||
 		'$$ VOLATILE LANGUAGE PLPGSQL SECURITY DEFINER';
 	query := 
 		'CREATE TRIGGER ' || quote_ident ("baseten"._mod_rule ('INSERT')) || ' ' ||
-			'AFTER INSERT ON ' || quote_ident (rel.nspname) || '.' || quote_ident (rel.relname) || ' ' || 
-			'FOR EACH ROW EXECUTE PROCEDURE "baseten".' || quote_ident (fname) || ' ()'; 
+			'AFTER INSERT ON ' || "baseten".quote_ident (rel) || ' ' || 
+			'FOR EACH ROW EXECUTE PROCEDURE ' || "baseten".quote_ident ('baseten', fname) || ' ()'; 
 	EXECUTE fdecl;
 	EXECUTE query;
-	EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION "baseten".' || quote_ident (fname) || ' () FROM PUBLIC';
+	EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || "baseten".quote_ident ('baseten', fname) || ' () FROM PUBLIC';
 	RETURN;
 END;
-$marker$ VOLATILE LANGUAGE PLPGSQL;
+$marker$ VOLATILE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_table_insert (OID, TEXT []) FROM PUBLIC;
 
 
 -- Another helper function
-CREATE FUNCTION "baseten".enable_view_insert (OID, TEXT) 
+CREATE FUNCTION "baseten".enable_view_insert_default (OID, TEXT) 
 RETURNS VOID AS $marker$
 DECLARE
 	relid			ALIAS FOR $1;
@@ -1535,24 +1643,84 @@ DECLARE
 BEGIN
 	rel := "baseten".reltype (relid);
 	insertion := 
-		'INSERT INTO "baseten".' || quote_ident ("baseten"._mod_table (relid)) || ' ' ||
-			'("baseten_modification_type", id) ' || 
-			'VALUES ' || 
-			'(''I'', ' || default_value || ')';
+		'INSERT INTO ' || "baseten".quote_ident ('baseten', "baseten"._mod_table (relid)) || ' (' ||
+			'"baseten_modification_type", "baseten_modification_cols", id' ||
+		') VALUES (' || 
+			'''I'', null, ' || default_value || 
+		')';
 	query := 
 		'CREATE RULE ' || quote_ident ("baseten"._mod_rule ('INSERT')) || ' ' ||
-			'AS ON INSERT TO ' || quote_ident (rel.nspname) || '.' || quote_ident (rel.relname) || ' ' ||
-			'DO ALSO (' || insertion || ');';
+		'AS ON INSERT TO ' || quote_ident (rel) || ' ' ||
+		'DO ALSO (' || insertion || ');';
 	EXECUTE query;
 	RETURN;
 END;
-$marker$ VOLATILE LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_view_insert (OID, TEXT) FROM PUBLIC;
+$marker$ VOLATILE STRICT LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_view_insert_default (OID, TEXT) FROM PUBLIC;
 
 
 -- Another helper function
-CREATE FUNCTION "baseten".enable_other (TEXT, OID, TEXT []) 
-RETURNS VOID AS $marker$
+CREATE FUNCTION "baseten".enable_update_non_pkey (OID, TEXT []) RETURNS VOID AS $$
+DECLARE
+	relid				ALIAS FOR $1;
+	pkey				TEXT [] DEFAULT $2;
+	rel					"baseten".reltype;
+	atts				INTEGER DEFAULT 0;
+	query				TEXT;
+	comparisons_decl	TEXT;
+	indices_decl		TEXT;
+BEGIN
+	SELECT
+		COUNT (a.attname),
+		array_to_string (
+			"baseten".array_accum (
+				'"baseten".same (OLD.' || quote_ident (a.attname) || ', NEW.' || quote_ident (a.attname) || ')'
+			), ', '
+		),
+		'ARRAY [' || array_to_string (
+			"baseten".array_accum (
+				a.attnum
+			), ', '
+		) || ']::INT2 []'
+	FROM pg_attribute a
+	LEFT JOIN "baseten"._primary_key pk ON (
+		pk.oid = relid AND
+		pk.attnum = a.attnum
+	)
+	WHERE (
+		a.attrelid = relid AND 
+		1 <= a.attnum AND
+		pk.id IS NULL
+	)
+	INTO STRICT atts, comparisons_decl, indices_decl;
+
+	IF 0 < atts THEN
+		-- Row-wise comparison cannot be used in the WHERE clause because it requires a btree operator.
+		rel := "baseten".reltype (relid);
+		query := 
+			'CREATE RULE ' || quote_ident ("baseten"._mod_rule ('UPDATE')) || ' ' ||
+			'AS ON UPDATE TO ' || "baseten".quote_ident (rel) || ' ' ||
+			'WHERE ' || "baseten".enable_update_where_clause (pkey) || ' ' ||
+			'DO ALSO (' ||
+				'INSERT INTO ' || "baseten".quote_ident ('baseten', "baseten"._mod_table (relid)) || ' (' ||
+					'"baseten_modification_type", "baseten_modification_cols", ' || array_to_string (pkey, ', ') ||
+				') SELECT ' ||
+					'''U'', ' ||
+					'"baseten".false_indices (ARRAY [' || comparisons_decl || ']::BOOLEAN [], ' || indices_decl || '), ' ||
+					array_to_string ("baseten".array_prepend_each ('NEW.', pkey), ', ') || ' ' ||
+				'WHERE false IN (' || comparisons_decl || ')' ||
+			');';
+		EXECUTE query;
+	END IF;
+	RETURN;
+END;
+$$ VOLATILE STRICT LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_update_non_pkey (OID, TEXT []) FROM PUBLIC;
+
+
+-- Another helper function
+CREATE FUNCTION "baseten".enable_other (TEXT, OID, TEXT [])
+RETURNS VOID AS $$
 DECLARE
 	querytype		TEXT DEFAULT $1;
 	relid			ALIAS FOR $2;
@@ -1569,7 +1737,7 @@ BEGIN
 		insertion := "baseten".enable_insert_query (relid, 'I', 'NEW.', pkey);
 	ELSIF querytype = 'DELETE' THEN
 		insertion := "baseten".enable_insert_query (relid, 'D', 'OLD.', pkey);
-	ELSE -- UPDATE, UPDATE_PK
+	ELSIF (querytype = 'UPDATE') OR (querytype = 'UPDATE_PK') THEN
 		whereclause := array_to_string (
 			"baseten".array_cat_each (
 				"baseten".array_prepend_each ('OLD.', pkey),
@@ -1581,50 +1749,66 @@ BEGIN
 			insertion := "baseten".enable_insert_query (relid, 'U', 'NEW.', pkey);
 		ELSIF querytype = 'UPDATE_PK' THEN
 			querytype := 'UPDATE';
-			insertion := 
+			insertion :=
 				"baseten".enable_insert_query (relid, 'D', 'OLD.', pkey) || '; ' ||
 				"baseten".enable_insert_query (relid, 'I', 'NEW.', pkey);
 			whereclause := 'NOT (' || whereclause || ')';
 		END IF;
 		whereclause := ' WHERE ' || whereclause;
+	ELSE
+		RAISE EXCEPTION 'Unexpected query type %', querytype;
 	END IF;
 
-	query := 
-		'CREATE RULE ' || quote_ident ("baseten"._mod_rule ($1)) || ' AS ON ' || querytype ||
-		' TO ' || quote_ident (rel.nspname) || '.' || quote_ident (rel.relname) ||
-		whereclause || ' DO ALSO (' || insertion || ')';
+	query :=
+		'CREATE RULE ' || quote_ident ("baseten"._mod_rule ($1)) || ' ' || 
+		'AS ON ' || querytype || ' ' ||
+		'TO ' || "baseten".quote_ident (rel) || whereclause || ' ' || 
+		'DO ALSO (' || insertion || ')';
 	EXECUTE query;
 	RETURN;
 END;
-$marker$ VOLATILE LANGUAGE PLPGSQL;
+$$ VOLATILE LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_other (TEXT, OID, TEXT []) FROM PUBLIC;
 
 
 -- Another helper function
-CREATE FUNCTION "baseten".enable_insert_query (OID, CHAR, TEXT, TEXT [])
-RETURNS TEXT AS $$
+CREATE FUNCTION "baseten".enable_update_where_clause (TEXT []) RETURNS TEXT AS $$
+	SELECT array_to_string (
+		"baseten".array_cat_each (
+			"baseten".array_prepend_each ('OLD.', $1),
+			"baseten".array_prepend_each ('NEW.', $1),
+			' = ' -- primary keys are required to have this operator.
+		), ' AND '
+	);
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_update_where_clause (TEXT []) FROM PUBLIC;
+
+
+-- Another helper function
+CREATE FUNCTION "baseten".enable_insert_query (OID, CHAR, TEXT, TEXT []) RETURNS TEXT AS $$
 DECLARE
 	relid		ALIAS FOR $1;
 	operation	ALIAS FOR $2;
 	refname		ALIAS FOR $3;
+	pkey_fields ALIAS FOR $4;
 	pkey		TEXT;
 	pkey_values TEXT;
 BEGIN
-	pkey := array_to_string ($4, ', ');
-	pkey_values := array_to_string ("baseten".array_prepend_each (refname, $4), ', ');
+	pkey := array_to_string (pkey_fields, ', ');
+	pkey_values := array_to_string ("baseten".array_prepend_each (refname, pkey_fields), ', ');
 
 	RETURN
-		'INSERT INTO "baseten".' || quote_ident ("baseten"._mod_table (relid)) || ' ' ||
-			'("baseten_modification_type", ' || pkey || ') ' ||
-			'VALUES ' || 
-			'(''' || operation || ''',' || pkey_values || ')';
+		'INSERT INTO ' || "baseten".quote_ident ('baseten', "baseten"._mod_table (relid)) || ' (' ||
+			'"baseten_modification_type", "baseten_modification_cols", ' || pkey ||
+		') VALUES (' || 
+			'''' || operation || ''', null, ' || pkey_values || 
+		')';
 END;
-$$ STABLE LANGUAGE PLPGSQL;
+$$ STABLE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_insert_query (OID, CHAR, TEXT, TEXT []) FROM PUBLIC;
 
 
-CREATE FUNCTION "baseten".enable_lock_fn (OID) 
-RETURNS VOID AS $marker$
+CREATE FUNCTION "baseten".enable_lock_fn (OID) RETURNS VOID AS $marker$
 DECLARE
 	relid							ALIAS FOR $1;
 	lock_table						TEXT;
@@ -1667,7 +1851,7 @@ BEGIN
 	EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION "baseten".' || quote_ident (lock_fn) || ' ' || fn_args || ' FROM PUBLIC';
 	EXECUTE 'GRANT EXECUTE ON FUNCTION "baseten".' || quote_ident (lock_fn) || ' ' || fn_args || ' TO basetenuser';
 END;
-$marker$ VOLATILE LANGUAGE PLPGSQL;
+$marker$ VOLATILE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable_lock_fn (OID) FROM PUBLIC;
 
 
@@ -1675,7 +1859,7 @@ CREATE FUNCTION "baseten".enable (OID, BOOLEAN, TEXT)
 RETURNS "baseten".reltype AS $marker$
 DECLARE
 	reloid							ALIAS FOR $1;
-	handle_view_serial_id_column	ALIAS FOR $2;
+	handle_view_default_value		ALIAS FOR $2;
 	view_id_default_value			ALIAS FOR $3;
 	is_view							BOOL;
 	query							TEXT;
@@ -1699,7 +1883,7 @@ BEGIN
 	
 	SELECT
 		"baseten".array_accum (quote_ident (p.attname)),
-		array_to_string ("baseten".array_accum (quote_ident (p.attname) || ' ' || quote_ident (p.typnspname) || '.' || quote_ident (p.typname) || ' NOT NULL'), ', ')
+		array_to_string ("baseten".array_accum (quote_ident (p.attname) || ' ' || "baseten".quote_ident (p.typnspname, p.typname) || ' NOT NULL'), ', ')
 		FROM "baseten"._primary_key p
 		WHERE p.oid = reloid
 		GROUP BY p.oid
@@ -1707,20 +1891,20 @@ BEGIN
 
 	-- Locking
 	query := 
-		'CREATE TABLE "baseten".' || quote_ident (lock_table) || ' (' ||
+		'CREATE TABLE ' || "baseten".quote_ident ('baseten', lock_table) || ' (' ||
 			'"baseten_lock_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".lock)';
 	EXECUTE query;
-	EXECUTE 'REVOKE ALL PRIVILEGES ON "baseten".' || quote_ident (lock_table) || ' FROM PUBLIC';
-	EXECUTE 'GRANT SELECT ON "baseten".' || quote_ident (lock_table) || ' TO basetenread';
-	EXECUTE 'GRANT INSERT ON "baseten".' || quote_ident (lock_table) || ' TO basetenuser';
-	EXECUTE 'COMMENT ON TABLE "baseten".' || quote_ident (lock_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
+	EXECUTE 'REVOKE ALL PRIVILEGES ON ' || "baseten".quote_ident ('baseten', lock_table) || ' FROM PUBLIC';
+	EXECUTE 'GRANT SELECT ON ' || "baseten".quote_ident ('baseten', lock_table) || ' TO basetenread';
+	EXECUTE 'GRANT INSERT ON ' || "baseten".quote_ident ('baseten', lock_table) || ' TO basetenuser';
+	EXECUTE 'COMMENT ON TABLE ' || "baseten".quote_ident ('baseten', lock_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
 
 	-- Trigger for the _lock_ table
 	query :=
 		'CREATE TRIGGER "lock_row" ' ||
-		'AFTER INSERT ON "baseten".' || quote_ident (lock_table) || ' ' ||
+		'AFTER INSERT ON ' || "baseten".quote_ident ('baseten', lock_table) || ' ' ||
 		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".lock_notify (''' || "baseten"._lock_notification (reloid) || ''')';
 	EXECUTE query;
 
@@ -1729,48 +1913,49 @@ BEGIN
 
 	-- Modifications
 	query :=
-		'CREATE TABLE "baseten".' || quote_ident (mod_table) || ' (' ||
+		'CREATE TABLE ' || "baseten".quote_ident ('baseten', mod_table) || ' (' ||
 			'"baseten_modification_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".modification)';
 	EXECUTE query;
-	EXECUTE 'REVOKE ALL PRIVILEGES ON "baseten".' || quote_ident (mod_table) || ' FROM PUBLIC';
-	EXECUTE 'GRANT INSERT ON "baseten".' || quote_ident (mod_table) || ' TO basetenuser';
-	EXECUTE 'GRANT SELECT ON "baseten".' || quote_ident (mod_table) || ' TO basetenread';
-	EXECUTE 'COMMENT ON TABLE "baseten".' || quote_ident (mod_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
+	EXECUTE 'REVOKE ALL PRIVILEGES ON ' || "baseten".quote_ident ('baseten', mod_table) || ' FROM PUBLIC';
+	EXECUTE 'GRANT INSERT ON ' || "baseten".quote_ident ('baseten', mod_table) || ' TO basetenuser';
+	EXECUTE 'GRANT SELECT ON ' || "baseten".quote_ident ('baseten', mod_table) || ' TO basetenread';
+	EXECUTE 'COMMENT ON TABLE ' || "baseten".quote_ident ('baseten', mod_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
 	
 	-- Triggers for the _modification_ table
 	query :=
 		'CREATE TRIGGER "modify_table" ' ||
-		'AFTER INSERT ON "baseten".' || quote_ident (mod_table) || ' ' ||
+		'AFTER INSERT ON ' || "baseten".quote_ident ('baseten', mod_table) || ' ' ||
 		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".mod_notify (''' || "baseten"._mod_notification (reloid) || ''')';
 	EXECUTE query;
 	
 	-- Triggers for the enabled relation.
 	IF is_view THEN
-		IF handle_view_serial_id_column THEN
-			PERFORM "baseten".enable_view_insert (reloid, view_id_default_value);
+		IF handle_view_default_value THEN
+			PERFORM "baseten".enable_view_insert_default (reloid, view_id_default_value);
 		ELSE
 			PERFORM "baseten".enable_other ('insert', reloid, pkey);
 		END IF;
 	ELSE
 		PERFORM "baseten".enable_table_insert (reloid, pkey) ;
 	END IF;
-	PERFORM "baseten".enable_other ('delete', reloid, pkey);
+	--PERFORM "baseten".enable_update_non_pkey (reloid, pkey);
 	PERFORM "baseten".enable_other ('update', reloid, pkey);
 	PERFORM "baseten".enable_other ('update_pk', reloid, pkey);
+	PERFORM "baseten".enable_other ('delete', reloid, pkey);
 
 	retval := "baseten".reltype (reloid);
 	RETURN retval;
 END;
-$marker$ VOLATILE LANGUAGE PLPGSQL SECURITY DEFINER;
+$marker$ VOLATILE CALLED ON NULL INPUT LANGUAGE PLPGSQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable (OID, BOOLEAN, TEXT) FROM PUBLIC;	
 GRANT EXECUTE ON FUNCTION "baseten".enable (OID, BOOLEAN, TEXT) TO basetenowner;
 
 
 CREATE FUNCTION "baseten".enable (OID) RETURNS "baseten".reltype AS $$
 	SELECT "baseten".enable ($1, false, null);
-$$ VOLATILE LANGUAGE SQL SECURITY DEFINER;
+$$ VOLATILE STRICT LANGUAGE SQL SECURITY DEFINER;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".enable (OID) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".enable (OID) TO basetenowner;
 COMMENT ON FUNCTION "baseten".enable (OID) IS 'BaseTen-enables a relation';
@@ -1807,7 +1992,7 @@ BEGIN
 	query :=
 		'SELECT ' || columns || ' FROM (' ||
 			'SELECT DISTINCT ON (' || pkey || ') ' || columns || ' ' ||
-			'FROM "baseten".' || quote_ident (mtable) || ' ' ||
+			'FROM ' || "baseten".quote_ident ('baseten', mtable) || ' ' ||
 			'WHERE ("baseten_modification_timestamp" > ''' || date_str || '''::timestamp OR "baseten_modification_timestamp" IS NULL) AND ' ||
 				'baseten_modification_backend_pid != ' || ignored_be_pid || ' ' ||
 			'ORDER BY ' || order_by || ', "baseten_modification_type" ASC' ||
@@ -1815,7 +2000,7 @@ BEGIN
 		'UNION ' || -- Not UNION ALL
 		'SELECT ' || columns || ' FROM (' ||
 			'SELECT DISTINCT ON (' || pkey || ') ' || columns || ' ' ||
-			'FROM "baseten".' || quote_ident (mtable) || ' ' ||
+			'FROM ' || "baseten".quote_ident ('baseten', mtable) || ' ' ||
 			'WHERE ("baseten_modification_type" = ''D'' OR "baseten_modification_type" = ''I'') AND ' ||
 				'("baseten_modification_timestamp" > ''' || date_str || '''::timestamp OR "baseten_modification_timestamp" IS NULL) AND ' ||
 				'baseten_modification_backend_pid != ' || ignored_be_pid || ' ' ||
@@ -1832,7 +2017,7 @@ BEGIN
 	END LOOP;
 	RETURN;
 END;		 
-$marker$ VOLATILE LANGUAGE PLPGSQL;
+$marker$ VOLATILE STRICT LANGUAGE PLPGSQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".modification (INTEGER, BOOL, TIMESTAMP, INTEGER) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".modification (INTEGER, BOOL, TIMESTAMP, INTEGER) TO basetenread;
 
