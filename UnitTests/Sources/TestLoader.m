@@ -76,7 +76,7 @@
 							[PGTSTypeTests class],
 							[PGTSParameterTests class],
 							[PGTSNotificationTests class],
-							[PGTSPgBouncerTests class],
+							//[PGTSPgBouncerTests class],
 							
 							[ConnectTest class],
 							[BXSSLConnectionTests class],
