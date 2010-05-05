@@ -216,7 +216,7 @@ CREATE FUNCTION "baseten".false_indices (BOOLEAN [], INT2 []) RETURNS INT2 [] AS
 DECLARE
 	comparisons ALIAS FOR $1;
 	indices ALIAS FOR $2;
-	retval INT2 [] DEFAULT ARRAY []::INT2 [];
+	retval INT2 [] DEFAULT '{}'::INT2 [];
 BEGIN
 	FOR i IN array_lower (comparisons, 1)..array_upper (comparisons, 1) LOOP
 		IF NOT (comparisons [i]) THEN
