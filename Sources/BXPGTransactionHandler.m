@@ -647,7 +647,7 @@ SSLMode (enum BXSSLMode mode)
 			@"SELECT null, l.* FROM baseten.lock_observe ($1) l";
 			
 			PGTSResultSet* res = [connection executeQuery: query parameters: oid];
-			ExpectL ([res querySucceeded]);
+			BXAssertLog ([res querySucceeded], @"Expected query to succeed but got error: %@", [res error]);
 			if ([res querySucceeded] && 3 == [res count])
 			{
 				[res advanceRow];
