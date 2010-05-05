@@ -269,15 +269,34 @@ neq_function({{path}});
 neq_function({{polygon}});
 
 
-define({{neq_function}}, {{
-CREATE FUNCTION "baseten".neq ($1, $1) RETURNS BOOLEAN AS $$
-	SELECT ${{}}1 <> ${{}}2;
+CREATE FUNCTION "baseten".neq (anynonarray, anynonarray) RETURNS BOOLEAN AS $$
+	SELECT $1 <> $2;
 $$ IMMUTABLE STRICT LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq ($1, $1) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".neq ($1, $1) TO basetenread
-}})dnl
-neq_function({{anyelement}});
-neq_function({{anyarray}});
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq (anynonarray, anynonarray) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".neq (anynonarray, anynonarray) TO basetenread;
+
+
+CREATE FUNCTION "baseten".neq (anyarray, anyarray) RETURNS BOOLEAN AS $$
+BEGIN
+	IF array_ndims ($1) <> array_ndims ($2) THEN
+		RETURN true;
+	END IF;
+	
+	IF array_upper ($1, 1) <> array_upper ($2, 1) THEN
+		RETURN true;
+	END IF;
+	
+	FOR i IN 0..array_upper ($1, 1) LOOP
+		IF $1 [i] OPERATOR ("baseten".<>) $2 [i] THEN
+			RETURN true;
+		END IF;
+	END LOOP;
+	
+	RETURN false;
+END;
+$$ IMMUTABLE STRICT LANGUAGE PLPGSQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq (anyarray, anyarray) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".neq (anyarray, anyarray) TO basetenread;
 
 
 define({{neq_operator}}, {{
@@ -285,12 +304,12 @@ CREATE OPERATOR "baseten".<> (
 	PROCEDURE = "baseten".neq,
 	LEFTARG = $1,
 	RIGHTARG = $1,
-	HASHES
+	COMMUTATOR = OPERATOR ("baseten".<>)
 )}})dnl
 neq_operator({{box}});
 neq_operator({{path}});
 neq_operator({{polygon}});
-neq_operator({{anyelement}});
+neq_operator({{anynonarray}});
 neq_operator({{anyarray}});
 
 
@@ -305,7 +324,7 @@ $$ IMMUTABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".same ($1, $1) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".same ($1, $1) TO basetenread
 }})dnl
-same_function({{anyelement}});
+same_function({{anynonarray}});
 same_function({{anyarray}});
 
 
@@ -319,8 +338,7 @@ GRANT EXECUTE ON FUNCTION "baseten".between ($1 [2], $1) TO basetenread;
 CREATE OPERATOR "baseten".<<>> (
 	PROCEDURE = "baseten".between,
 	LEFTARG = $1[2],
-	RIGHTARG = $1,
-	HASHES
+	RIGHTARG = $1
 )}})dnl
 between_operator({{SMALLINT}});
 between_operator({{INTEGER}});
