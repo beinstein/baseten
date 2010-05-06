@@ -28,8 +28,8 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.935}})dnl
-define({{_bx_compat_version_}}, {{0.21}})dnl
+define({{_bx_version_}}, {{0.936}})dnl
+define({{_bx_compat_version_}}, {{0.22}})dnl
 
 
 \unset ON_ERROR_ROLLBACK
@@ -235,90 +235,105 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".false_indices (BOOLEAN [], INT2 []) 
 GRANT EXECUTE ON FUNCTION "baseten".false_indices (BOOLEAN [], INT2 []) TO basetenread;
 
 
-CREATE FUNCTION "baseten".neq (box, box) RETURNS BOOLEAN AS $$
-	SELECT NOT (($1 [0] ~= $2 [0]) AND ($1 [1] ~= $2 [1]));
+define({{eq_function}}, {{
+CREATE FUNCTION "baseten".eq ($1, $1) RETURNS BOOLEAN AS $$
+	SELECT ${{}}1 ~= ${{}}2;
 $$ IMMUTABLE STRICT LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq (box, box) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".neq (box, box) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".eq ($1, $1) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".eq ($1, $1) TO basetenread
+}})dnl
+eq_function({{point}});
+eq_function({{box}});
+eq_function({{polygon}});
+eq_function({{circle}});
 
 
-define({{neq_function}}, {{
-CREATE FUNCTION "baseten".neq ($1, $1) RETURNS BOOLEAN AS $$
+CREATE FUNCTION "baseten".eq (lseg, lseg) RETURNS BOOLEAN AS $$
+	SELECT ($1 [0] ~= $2 [0]) AND ($1 [1] ~= $2 [1]);
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".eq (lseg, lseg) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".eq (lseg, lseg) TO basetenread;
+
+
+CREATE FUNCTION "baseten".eq (path, path) RETURNS BOOLEAN AS $$
 BEGIN
-	IF isopen (${{}}1) <> isopen (${{}}2) THEN
-		RETURN true;
+	IF isopen ($1) <> isopen ($2) THEN
+		RETURN false;
 	END IF;
 	
-	IF npoints (${{}}1) <> npoints (${{}}2) THEN
-		RETURN true;
+	IF npoints ($1) <> npoints ($2) THEN
+		RETURN false;
 	END IF;
 	
-	FOR i IN 0..npoints (${{}}1) LOOP
-		IF NOT ((${{}}1 [0] ~= ${{}}2 [0]) AND (${{}}1 [1] ~= ${{}}2 [1])) THEN
-			RETURN true;
+	FOR i IN 0..npoints ($1) LOOP
+		IF NOT (($1 [0] ~= $2 [0]) AND ($1 [1] ~= $2 [1])) THEN
+			RETURN false;
 		END IF;
 	END LOOP;
 	
-	RETURN false;
+	RETURN true;
 END;
 $$ IMMUTABLE STRICT LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq ($1, $1) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".neq ($1, $1) TO basetenread
-}})dnl
-neq_function({{path}});
-neq_function({{polygon}});
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".eq (path, path) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".eq (path, path) TO basetenread;
 
 
-CREATE FUNCTION "baseten".neq (anynonarray, anynonarray) RETURNS BOOLEAN AS $$
-	SELECT $1 <> $2;
+CREATE FUNCTION "baseten".eq (anynonarray, anynonarray) RETURNS BOOLEAN AS $$
+	SELECT $1 = $2;
 $$ IMMUTABLE STRICT LANGUAGE SQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq (anynonarray, anynonarray) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".neq (anynonarray, anynonarray) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".eq (anynonarray, anynonarray) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".eq (anynonarray, anynonarray) TO basetenread;
 
 
-CREATE FUNCTION "baseten".neq (anyarray, anyarray) RETURNS BOOLEAN AS $$
+CREATE FUNCTION "baseten".eq (anyarray, anyarray) RETURNS BOOLEAN AS $$
 BEGIN
-	IF array_ndims ($1) <> array_ndims ($2) THEN
-		RETURN true;
+	IF array_ndims ($1) = array_ndims ($2) THEN
+		RETURN false;
 	END IF;
 	
-	IF array_upper ($1, 1) <> array_upper ($2, 1) THEN
-		RETURN true;
+	IF array_upper ($1, 1) = array_upper ($2, 1) THEN
+		RETURN false;
 	END IF;
 	
 	FOR i IN 0..array_upper ($1, 1) LOOP
-		IF $1 [i] OPERATOR ("baseten".<>) $2 [i] THEN
-			RETURN true;
+		IF $1 [i] OPERATOR ("baseten".=) $2 [i] THEN
+			RETURN false;
 		END IF;
 	END LOOP;
 	
-	RETURN false;
+	RETURN true;
 END;
 $$ IMMUTABLE STRICT LANGUAGE PLPGSQL;
-REVOKE ALL PRIVILEGES ON FUNCTION "baseten".neq (anyarray, anyarray) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION "baseten".neq (anyarray, anyarray) TO basetenread;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".eq (anyarray, anyarray) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".eq (anyarray, anyarray) TO basetenread;
 
 
-define({{neq_operator}}, {{
-CREATE OPERATOR "baseten".<> (
-	PROCEDURE = "baseten".neq,
+define({{eq_operator}}, {{
+CREATE OPERATOR "baseten".= (
+	PROCEDURE = "baseten".eq,
 	LEFTARG = $1,
 	RIGHTARG = $1,
-	COMMUTATOR = OPERATOR ("baseten".<>)
+	COMMUTATOR = OPERATOR ("baseten".=),
+	HASHES
 )}})dnl
-neq_operator({{box}});
-neq_operator({{path}});
-neq_operator({{polygon}});
-neq_operator({{anynonarray}});
-neq_operator({{anyarray}});
+eq_operator({{point}});
+eq_operator({{box}});
+eq_operator({{polygon}});
+eq_operator({{circle}});
+eq_operator({{lseg}});
+eq_operator({{path}});
+eq_operator({{anynonarray}});
+eq_operator({{anyarray}});
 
 
 define({{same_function}}, {{
 CREATE FUNCTION "baseten".same ($1, $1) RETURNS BOOLEAN AS $$
-	SELECT (${{}}1 IS NULL AND ${{}}2 IS NULL) OR (
+	SELECT (
+		${{}}1 IS NULL AND ${{}}2 IS NULL
+	) OR (
 		${{}}1 IS NOT NULL AND
 		${{}}2 IS NOT NULL AND
-		NOT (${{}}1 OPERATOR ("baseten".<>) ${{}}2)
+		${{}}1 OPERATOR ("baseten".=) ${{}}2
 	);
 $$ IMMUTABLE CALLED ON NULL INPUT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".same ($1, $1) FROM PUBLIC;
