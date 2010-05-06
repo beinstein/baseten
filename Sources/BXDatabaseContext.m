@@ -451,6 +451,9 @@ ModTypeToObject (enum BXModificationType value)
  * Hand over the connection setup to \em mConnectionSetupManager. In BaseTenAppKit 
  * applications, a BXNetServiceConnector will be created automatically if 
  * one doesn't exist.
+ *
+ * \image html connect.png "Message sequence when using -connect:"
+ * \image latex connect.eps "Message sequence when using -connect:" width=\textwidth
  */
 - (IBAction) connect: (id) sender
 {

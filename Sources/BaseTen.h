@@ -141,10 +141,10 @@
  * Since BaseTen relies on database introspection, SQL may be used to define the database schema.
  * Another option is to create a data model using Xcode's data modeler and import it using BaseTen Assistant.
  *
- * \image html BaseTen-object-relationships.png "Relationships between BaseTen's objects"
- * \image html BaseTen-class-hierarchy.png "BaseTen class hierarchy"
- * \image latex BaseTen-object-relationships.pdf "Relationships between BaseTen's objects" width=\textwidth
- * \image latex BaseTen-class-hierarchy.pdf "BaseTen class hierarchy" width=\textwidth 
+ * \image html object-relationships.png "Relationships between BaseTen's objects"
+ * \image html class-hierarchy.png "BaseTen class hierarchy"
+ * \image latex object-relationships.pdf "Relationships between BaseTen's objects" width=\textwidth
+ * \image latex class-hierarchy.pdf "BaseTen class hierarchy" width=\textwidth 
  */
 
 /**
@@ -375,6 +375,16 @@
  * -setPrimitiveValue:forKey: may be used to set a column value.
  *
  * Currently handled data types are listed in \ref database_types.
+ *
+ *
+ * \latexonly
+ * \begin{sidewaysfigure}
+ * \endlatexonly
+ * \image latex update-change-propagation.eps "Objects being accessed by other clients are automatically faulted as part of the update process." width=\textheight
+ * \latexonly
+ * \end{sidewaysfigure}
+ * \endlatexonly
+ * \image html update-change-propagation.png "Objects being accessed by other clients are automatically faulted as part of the update process"
  */
 
 /**
@@ -553,6 +563,18 @@
  * PostgreSQL's xml data type handles both XML documents and content fragments. BaseTen creates NSData objects from them by default, but if the
  * table also has a constraint like <em>CHECK (xml_column IS DOCUMENT)</em>, NSXMLDocuments will be created instead. The constraint mustn't
  * contain any other conditions, but there may be additional CHECK constraints.
+ *
+ *
+ * \section custom_database_types Requirements for custom base data types
+ *
+ * In case of BaseTen-enabled tables, column contents are compared on update to determine, which columns did actually change.
+ * Thus, any custom base data types (created with <em>CREATE TYPE</em>) used in these tables need to have the equality 
+ * operator <em>=</em>. Currently, the operator needs to be accessible using the default search path. In case the custom type
+ * is such that the concept of equality doesn't apply, the operator may always return <em>false</em>. In this case
+ * the value for the column will always be fetched when the corresponding row changes.
+ *
+ * BaseTen provides custom equality operators for PostgreSQL's geometric types,
+ * for which the default equality operator would only compare equal areas.
  */
 
 /**
@@ -1051,6 +1073,7 @@
  * \li Altering relations' names after having them enabled will not work. To rename relations, they need
  *     to be disabled first and re-enabled afterwards.
  * \li Altering relations' primary keys will not work. Again, disabling and re-enabling is required.
+ * \li Altering relations' columns keys will not work. Again, disabling and re-enabling is required.
  * \li Altering relations' foreign keys causes BaseTen's relationship information to become out-of-date
  *     and needing to be refreshed.
  *
