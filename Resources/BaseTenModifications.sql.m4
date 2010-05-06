@@ -28,8 +28,8 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.934}})dnl
-define({{_bx_compat_version_}}, {{0.20}})dnl
+define({{_bx_version_}}, {{0.935}})dnl
+define({{_bx_compat_version_}}, {{0.21}})dnl
 
 
 \unset ON_ERROR_ROLLBACK
