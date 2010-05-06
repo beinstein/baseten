@@ -28,8 +28,8 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.936}})dnl
-define({{_bx_compat_version_}}, {{0.22}})dnl
+define({{_bx_version_}}, {{0.937}})dnl
+define({{_bx_compat_version_}}, {{0.23}})dnl
 
 
 \unset ON_ERROR_ROLLBACK
@@ -428,6 +428,13 @@ CREATE FUNCTION "baseten".quote_ident (TEXT, TEXT) RETURNS TEXT AS $$
 $$ IMMUTABLE STRICT LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten".quote_ident (TEXT, TEXT) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".quote_ident (TEXT, TEXT) TO basetenread;
+
+
+CREATE FUNCTION "baseten".quote_ident_bx (TEXT) RETURNS TEXT AS $$
+	SELECT "baseten".quote_ident ('baseten', $1);
+$$ IMMUTABLE STRICT LANGUAGE SQL;
+REVOKE ALL PRIVILEGES ON FUNCTION "baseten".quote_ident_bx (TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION "baseten".quote_ident_bx (TEXT) TO basetenread;
 
 
 -- Debugging helpers
@@ -1643,7 +1650,7 @@ BEGIN
 	fdecl :=
 		'CREATE OR REPLACE FUNCTION "baseten".' || quote_ident (fname) || ' () RETURNS TRIGGER AS $$ ' ||
 		'BEGIN ' ||
-			'INSERT INTO ' || "baseten".quote_ident ('baseten', mtable) || ' (' ||
+			'INSERT INTO ' || "baseten".quote_ident_bx (mtable) || ' (' ||
 				'"baseten_modification_type", "baseten_modification_cols", ' || array_to_string (pkey, ', ') ||
 			') VALUES (' || 
 				'''I'', null, ' || array_to_string ("baseten".array_prepend_each ('NEW.', pkey), ', ') || 
@@ -1654,10 +1661,10 @@ BEGIN
 	query := 
 		'CREATE TRIGGER ' || quote_ident ("baseten"._mod_rule ('INSERT')) || ' ' ||
 			'AFTER INSERT ON ' || "baseten".quote_ident (rel) || ' ' || 
-			'FOR EACH ROW EXECUTE PROCEDURE ' || "baseten".quote_ident ('baseten', fname) || ' ()'; 
+			'FOR EACH ROW EXECUTE PROCEDURE ' || "baseten".quote_ident_bx (fname) || ' ()'; 
 	EXECUTE fdecl;
 	EXECUTE query;
-	EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || "baseten".quote_ident ('baseten', fname) || ' () FROM PUBLIC';
+	EXECUTE 'REVOKE ALL PRIVILEGES ON FUNCTION ' || "baseten".quote_ident_bx (fname) || ' () FROM PUBLIC';
 	RETURN;
 END;
 $marker$ VOLATILE STRICT LANGUAGE PLPGSQL;
@@ -1676,7 +1683,7 @@ DECLARE
 BEGIN
 	rel := "baseten".reltype (relid);
 	insertion := 
-		'INSERT INTO ' || "baseten".quote_ident ('baseten', "baseten"._mod_table (relid)) || ' (' ||
+		'INSERT INTO ' || "baseten".quote_ident_bx ("baseten"._mod_table (relid)) || ' (' ||
 			'"baseten_modification_type", "baseten_modification_cols", id' ||
 		') VALUES (' || 
 			'''I'', null, ' || default_value || 
@@ -1735,7 +1742,7 @@ BEGIN
 			'AS ON UPDATE TO ' || "baseten".quote_ident (rel) || ' ' ||
 			'WHERE ' || "baseten".enable_update_where_clause (pkey) || ' ' ||
 			'DO ALSO (' ||
-				'INSERT INTO ' || "baseten".quote_ident ('baseten', "baseten"._mod_table (relid)) || ' (' ||
+				'INSERT INTO ' || "baseten".quote_ident_bx ("baseten"._mod_table (relid)) || ' (' ||
 					'"baseten_modification_type", "baseten_modification_cols", ' || array_to_string (pkey, ', ') ||
 				') SELECT ' ||
 					'''U'', ' ||
@@ -1831,7 +1838,7 @@ BEGIN
 	pkey_values := array_to_string ("baseten".array_prepend_each (refname, pkey_fields), ', ');
 
 	RETURN
-		'INSERT INTO ' || "baseten".quote_ident ('baseten', "baseten"._mod_table (relid)) || ' (' ||
+		'INSERT INTO ' || "baseten".quote_ident_bx ("baseten"._mod_table (relid)) || ' (' ||
 			'"baseten_modification_type", "baseten_modification_cols", ' || pkey ||
 		') VALUES (' || 
 			'''' || operation || ''', null, ' || pkey_values || 
@@ -1924,20 +1931,20 @@ BEGIN
 
 	-- Locking
 	query := 
-		'CREATE TABLE ' || "baseten".quote_ident ('baseten', lock_table) || ' (' ||
+		'CREATE TABLE ' || "baseten".quote_ident_bx (lock_table) || ' (' ||
 			'"baseten_lock_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".lock)';
 	EXECUTE query;
-	EXECUTE 'REVOKE ALL PRIVILEGES ON ' || "baseten".quote_ident ('baseten', lock_table) || ' FROM PUBLIC';
-	EXECUTE 'GRANT SELECT ON ' || "baseten".quote_ident ('baseten', lock_table) || ' TO basetenread';
-	EXECUTE 'GRANT INSERT ON ' || "baseten".quote_ident ('baseten', lock_table) || ' TO basetenuser';
-	EXECUTE 'COMMENT ON TABLE ' || "baseten".quote_ident ('baseten', lock_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
+	EXECUTE 'REVOKE ALL PRIVILEGES ON ' || "baseten".quote_ident_bx (lock_table) || ' FROM PUBLIC';
+	EXECUTE 'GRANT SELECT ON ' || "baseten".quote_ident_bx (lock_table) || ' TO basetenread';
+	EXECUTE 'GRANT INSERT ON ' || "baseten".quote_ident_bx (lock_table) || ' TO basetenuser';
+	EXECUTE 'COMMENT ON TABLE ' || "baseten".quote_ident_bx (lock_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
 
 	-- Trigger for the _lock_ table
 	query :=
 		'CREATE TRIGGER "lock_row" ' ||
-		'AFTER INSERT ON ' || "baseten".quote_ident ('baseten', lock_table) || ' ' ||
+		'AFTER INSERT ON ' || "baseten".quote_ident_bx (lock_table) || ' ' ||
 		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".lock_notify (''' || "baseten"._lock_notification (reloid) || ''')';
 	EXECUTE query;
 
@@ -1946,20 +1953,20 @@ BEGIN
 
 	-- Modifications
 	query :=
-		'CREATE TABLE ' || "baseten".quote_ident ('baseten', mod_table) || ' (' ||
+		'CREATE TABLE ' || "baseten".quote_ident_bx (mod_table) || ' (' ||
 			'"baseten_modification_relid" INTEGER NOT NULL DEFAULT ' || relid_ || ', ' ||
 			pkey_decl ||
 		') INHERITS ("baseten".modification)';
 	EXECUTE query;
-	EXECUTE 'REVOKE ALL PRIVILEGES ON ' || "baseten".quote_ident ('baseten', mod_table) || ' FROM PUBLIC';
-	EXECUTE 'GRANT INSERT ON ' || "baseten".quote_ident ('baseten', mod_table) || ' TO basetenuser';
-	EXECUTE 'GRANT SELECT ON ' || "baseten".quote_ident ('baseten', mod_table) || ' TO basetenread';
-	EXECUTE 'COMMENT ON TABLE ' || "baseten".quote_ident ('baseten', mod_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
+	EXECUTE 'REVOKE ALL PRIVILEGES ON ' || "baseten".quote_ident_bx (mod_table) || ' FROM PUBLIC';
+	EXECUTE 'GRANT INSERT ON ' || "baseten".quote_ident_bx (mod_table) || ' TO basetenuser';
+	EXECUTE 'GRANT SELECT ON ' || "baseten".quote_ident_bx (mod_table) || ' TO basetenread';
+	EXECUTE 'COMMENT ON TABLE ' || "baseten".quote_ident_bx (mod_table) || ' IS ''' || rel.nspname || '.' || rel.relname || '''';
 	
 	-- Triggers for the _modification_ table
 	query :=
 		'CREATE TRIGGER "modify_table" ' ||
-		'AFTER INSERT ON ' || "baseten".quote_ident ('baseten', mod_table) || ' ' ||
+		'AFTER INSERT ON ' || "baseten".quote_ident_bx (mod_table) || ' ' ||
 		'FOR EACH STATEMENT EXECUTE PROCEDURE "baseten".mod_notify (''' || "baseten"._mod_notification (reloid) || ''')';
 	EXECUTE query;
 	
@@ -1973,8 +1980,8 @@ BEGIN
 	ELSE
 		PERFORM "baseten".enable_table_insert (reloid, pkey) ;
 	END IF;
-	--PERFORM "baseten".enable_update_non_pkey (reloid, pkey);
-	PERFORM "baseten".enable_other ('update', reloid, pkey);
+	--PERFORM "baseten".enable_other ('update', reloid, pkey);
+	PERFORM "baseten".enable_update_non_pkey (reloid, pkey);
 	PERFORM "baseten".enable_other ('update_pk', reloid, pkey);
 	PERFORM "baseten".enable_other ('delete', reloid, pkey);
 
@@ -2019,13 +2026,13 @@ BEGIN
 		INTO STRICT pkey, order_by;
 	date_str := COALESCE (earliest_date, '-infinity');
 	ignored_be_pid := COALESCE (ignored_be_pid, 0);
-	columns := '"baseten_modification_type", "baseten_modification_timestamp", "baseten_modification_insert_timestamp", ' || pkey;
+	columns := '"baseten_modification_type", "baseten_modification_cols", "baseten_modification_timestamp", "baseten_modification_insert_timestamp", ' || pkey;
 	
 	PERFORM "baseten".mod_cleanup (idle_xact);
 	query :=
 		'SELECT ' || columns || ' FROM (' ||
 			'SELECT DISTINCT ON (' || pkey || ') ' || columns || ' ' ||
-			'FROM ' || "baseten".quote_ident ('baseten', mtable) || ' ' ||
+			'FROM ' || "baseten".quote_ident_bx (mtable) || ' ' ||
 			'WHERE ("baseten_modification_timestamp" > ''' || date_str || '''::timestamp OR "baseten_modification_timestamp" IS NULL) AND ' ||
 				'baseten_modification_backend_pid != ' || ignored_be_pid || ' ' ||
 			'ORDER BY ' || order_by || ', "baseten_modification_type" ASC' ||
@@ -2033,7 +2040,7 @@ BEGIN
 		'UNION ' || -- Not UNION ALL
 		'SELECT ' || columns || ' FROM (' ||
 			'SELECT DISTINCT ON (' || pkey || ') ' || columns || ' ' ||
-			'FROM ' || "baseten".quote_ident ('baseten', mtable) || ' ' ||
+			'FROM ' || "baseten".quote_ident_bx (mtable) || ' ' ||
 			'WHERE ("baseten_modification_type" = ''D'' OR "baseten_modification_type" = ''I'') AND ' ||
 				'("baseten_modification_timestamp" > ''' || date_str || '''::timestamp OR "baseten_modification_timestamp" IS NULL) AND ' ||
 				'baseten_modification_backend_pid != ' || ignored_be_pid || ' ' ||

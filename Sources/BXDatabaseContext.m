@@ -1114,6 +1114,7 @@ ModTypeToObject (enum BXModificationType value)
 
 - (void) undoUpdateObjects: (NSArray *) objectIDs 
 					oldIDs: (NSArray *) oldIDs 
+				attributes: (NSArray *) updatedAttributes
 		  createdSavepoint: (BOOL) createdSavepoint 
 			   updatedPkey: (BOOL) updatedPkey 
 				   oldPkey: (NSDictionary *) oldPkey
@@ -1137,7 +1138,7 @@ ModTypeToObject (enum BXModificationType value)
 			}
 		}
 	}
-	[self updatedObjectsInDatabase: oldIDs faultObjects: YES];
+	[self updatedObjectsInDatabase: oldIDs attributes: updatedAttributes faultObjects: YES];
 }
 @end
 
@@ -1799,7 +1800,7 @@ ModTypeToObject (enum BXModificationType value)
 }
 
 //FIXME: clean me up.
-- (void) updatedObjectsInDatabase: (NSArray *) givenObjectIDs faultObjects: (BOOL) shouldFault
+- (void) updatedObjectsInDatabase: (NSArray *) givenObjectIDs attributes: (NSArray *) attrs faultObjects: (BOOL) shouldFault
 {
     if (0 < [givenObjectIDs count])
     {
@@ -2398,7 +2399,7 @@ ModTypeToObject (enum BXModificationType value)
                 if (nil == localError)
                 {
                     //This is needed for self-updating collections. See the deletion method.
-					[self updatedObjectsInDatabase: oldIDs faultObjects: NO];
+					[self updatedObjectsInDatabase: oldIDs attributes: [aDict allKeys] faultObjects: NO];
                     
                     //For redo
                     BXInvocationRecorder* recorder = [BXInvocationRecorder recorder];
@@ -2414,6 +2415,7 @@ ModTypeToObject (enum BXModificationType value)
                     //Undo manager does things in reverse order.
 					[[mUndoManager prepareWithInvocationTarget: self] undoUpdateObjects: objectIDs
 																				 oldIDs: oldIDs
+																			 attributes: [aDict allKeys]
 																	   createdSavepoint: createdSavepoint
 																			updatedPkey: updatedPkey
 																				oldPkey: oldPkey

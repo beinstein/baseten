@@ -48,7 +48,7 @@ struct BXTrustResult
 - (BOOL) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
 - (void) connectionLost: (NSError *) error;
 - (void) addedObjectsToDatabase: (NSArray *) objectIDs;
-- (void) updatedObjectsInDatabase: (NSArray *) objectIDs faultObjects: (BOOL) shouldFault;
+- (void) updatedObjectsInDatabase: (NSArray *) objectIDs attributes: (NSArray *) changedAttributes faultObjects: (BOOL) shouldFault;
 - (void) deletedObjectsFromDatabase: (NSArray *) objectIDs;
 - (void) lockedObjectsInDatabase: (NSArray *) objectIDs status: (enum BXObjectLockStatus) status;
 - (void) unlockedObjectsInDatabase: (NSArray *) objectIDs;

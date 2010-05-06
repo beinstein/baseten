@@ -31,6 +31,7 @@
 #import "BXDatabaseObjectIDPrivate.h"
 #import "PGTSScannedMemoryAllocator.h"
 #import "PGTSHOM.h"
+#import "BXEnumerate.h"
 #import <tr1/unordered_map>
 
 typedef std::tr1::unordered_map <unichar, NSMutableArray*,
@@ -80,9 +81,10 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 	NSString* queryFormat = 
 	@"SELECT * FROM \"baseten\".modification ($1, $2, $3, $4) "
 	@"AS m ( "
-	@"\"baseten_modification_type\" character (1), "
-	@"\"baseten_modification_timestamp\" timestamp (6) without time zone, "
-	@"\"baseten_modification_insert_timestamp\" timestamp (6) without time zone, "
+	@"\"baseten_modification_type\" CHARACTER (1), "
+	@"\"baseten_modification_cols\" INT2 [], "
+	@"\"baseten_modification_timestamp\" TIMESTAMP (6) WITHOUT TIME ZONE, "
+	@"\"baseten_modification_insert_timestamp\" TIMESTAMP (6) WITHOUT TIME ZONE, "
 	@"%@)";
     mQueryString = [[NSString alloc] initWithFormat: queryFormat, pkeyString];
 }
@@ -105,6 +107,8 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 	PGTSResultSet* res = [mConnection executeQuery: mQueryString parameters: 
 						  [NSNumber numberWithInteger: mIdentifier], [NSNumber numberWithBool: isIdle], 
 						  mLastCheck, [NSNumber numberWithInt: backendPID]];
+	BXPGTableDescription *rel = [mInterface tableForEntity: mEntity];
+	NSDictionary *attributesByName = [mEntity attributesByName];
 	BXAssertVoidReturn ([res querySucceeded], @"Expected query to succeed: %@", [res error]);
 	
 	//Update the timestamp.
@@ -113,11 +117,11 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 	
 	//Sort the changes by type.
 	ChangeMap* changes = new ChangeMap (3);
+	NSMutableArray *changedAttrs = [NSMutableArray arrayWithCapacity: [res count]];
 	[res goBeforeFirstRow];
     while ([res advanceRow])
     {
-		NSDictionary* row = [res currentRowAsDictionary];
-		unichar modificationType = [[row valueForKey: @"baseten_modification_type"] characterAtIndex: 0];                            
+		unichar modificationType = [[res valueForKey: @"baseten_modification_type"] characterAtIndex: 0];                            
 		NSMutableArray* objectIDs = (* changes) [modificationType];
 		if (! objectIDs)
 		{
@@ -125,8 +129,22 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 			(* changes) [modificationType] = objectIDs;
 		}
 		
-		BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: mEntity primaryKeyFields: row];
+		BXDatabaseObjectID* objectID = [BXDatabaseObjectID IDWithEntity: mEntity primaryKeyFields: [res currentRowAsDictionary]];
 		[objectIDs addObject: objectID];
+		
+		if ('U' == modificationType)
+		{
+			NSArray *columnIndices = [res valueForKey: @"baseten_modification_cols"];
+			NSMutableArray *attrs = [NSMutableArray arrayWithCapacity: [columnIndices count]];
+			BXEnumerate (currentIndex, e, [columnIndices objectEnumerator])
+			{
+				PGTSColumnDescription *col = [rel columnAtIndex: [currentIndex integerValue]];
+				BXAttributeDescription *attr = [attributesByName objectForKey: [col name]];
+				[attrs addObject: attr];
+			}
+			
+			[changedAttrs addObject: attrs];
+		}
 	}
 	
 	//Send changes.
@@ -140,9 +158,9 @@ typedef std::tr1::unordered_map <unichar, NSMutableArray*,
 			case 'I':
 				[[mInterface databaseContext] addedObjectsToDatabase: objectIDs];
 				break;
-				
+								
 			case 'U':
-				[[mInterface databaseContext] updatedObjectsInDatabase: objectIDs faultObjects: YES];
+				[[mInterface databaseContext] updatedObjectsInDatabase: objectIDs attributes: changedAttrs faultObjects: YES];
 				break;
 				
 			case 'D':

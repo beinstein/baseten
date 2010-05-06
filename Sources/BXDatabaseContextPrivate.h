@@ -96,6 +96,7 @@ struct update_kvo_ctx
 //- (void) reregisterObjects: (NSArray *) objectIDs values: (NSDictionary *) pkeyValues;
 - (void) undoUpdateObjects: (NSArray *) objectIDs 
 					oldIDs: (NSArray *) oldIDs 
+				attributes: (NSArray *) updatedAttributes
 		  createdSavepoint: (BOOL) createdSavepoint 
 			   updatedPkey: (BOOL) updatedPkey 
 				   oldPkey: (NSDictionary *) oldPkey
