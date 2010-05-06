@@ -46,13 +46,13 @@ public:
 	ArgumentCardinalityMap* fc_arguments;
 	BOOL fc_variable_argument_count;
 	
-	NSInteger argumentCardinality (NSInteger idx);
+	NSInteger argumentCardinality (NSInteger idx) const;
 };
 
 typedef std::tr1::unordered_map <SEL, bx_function_cardinality_st> SelectorCardinalityMap;
 
 NSInteger 
-bx_function_cardinality_st::argumentCardinality (NSInteger idx)
+bx_function_cardinality_st::argumentCardinality (NSInteger idx) const
 {
 	NSInteger retval = -1;
 	if (fc_variable_argument_count)
@@ -147,7 +147,7 @@ AddSelector (SEL selector, NSInteger cardinality, BOOL acceptsVariableArgs, ...)
 	//See if we can handle the function call.
 	if (sig && gSelectorCardinality->end () != it)
 	{
-		struct bx_function_cardinality_st* function = &(it->second);
+		const struct bx_function_cardinality_st* function = &(it->second);
 		NSArray* arguments = [expression arguments];
 		NSUInteger argumentCount = [arguments count];
 		BOOL varargs = function->fc_variable_argument_count;
@@ -185,7 +185,7 @@ end:
 	NSString* functionName = [valueType value];
 	SEL selector = NSSelectorFromString (functionName);
 	SelectorCardinalityMap::const_iterator it = gSelectorCardinality->find (selector);
-	struct bx_function_cardinality_st* function = &(it->second);
+	const struct bx_function_cardinality_st* function = &(it->second);
 	
 	NSMethodSignature* sig = [self methodSignatureForSelector: selector];
 	NSInvocation* invocation = [NSInvocation invocationWithMethodSignature: sig];

@@ -35,7 +35,7 @@
 #elif defined (__x86_64__) && __x86_64__
 #include <BaseTen/postgresql/x86_64/libpq-fe.h>
 #elif defined (__arm__) && __arm__
-#include <BaseTen/postgresql/arm/libpq-fe.h>
+#include <BaseTen/postgresql/armv6/libpq-fe.h>
 #else
 #error "Unsupported architecture."
 #endif

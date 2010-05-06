@@ -42,8 +42,8 @@ then
 	
 	## Make tells that jobserver is unavailable and that -j may not be used.
 	pushd "$openssl_root"
-	make distclean
-	./Configure darwin-arm-gcc
+	make distclean || echo "Continuing..."
+	./Configure darwin-arm-gcc no-asm no-shared threads zlib-dynamic no-gost
 	exit_on_error
 	make
 	exit_on_error

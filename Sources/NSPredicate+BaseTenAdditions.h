@@ -26,6 +26,8 @@
 // $Id$
 //
 
+#import <Foundation/Foundation.h>
+
 
 @interface NSPredicate (BaseTenAdditions)
 - (BOOL) BXEvaluateWithObject: (id) anObject substitutionVariables: (NSMutableDictionary *) dictionary;
