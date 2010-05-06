@@ -58,6 +58,8 @@
 	strncpy(sessionid, PQgetvalue(res, 0, 0), sizeof(sessionid));
 	PQclear(res);
 	
+	MKCAssertTrue(strlen(sessionid) == 32);
+	
 	/* Begin a transansaction and memorize its txid. */
 	res = PQexec(conn1, "BEGIN");
 	MKCAssertTrue(res && PQresultStatus(res) == PGRES_COMMAND_OK);
