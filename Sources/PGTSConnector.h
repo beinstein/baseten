@@ -27,7 +27,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <CFNetwork/CFHost.h>
+#import <BaseTen/BXCFHostCompatibility.h> 
 #import <BaseTen/libpq-fe.h>
 
 @class PGTSConnector;
