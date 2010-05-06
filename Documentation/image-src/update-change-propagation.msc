@@ -1,0 +1,29 @@
+msc
+{
+    hscale = "3";
+
+    a    [ label = "Client A" ],
+    obja [ label = "Database object" ],
+    ctxa [ label = "A's Database context" ],
+    db   [ label = "Database server" ],
+    ctxb [ label = "B's Database context" ],
+    objb [ label = "Database object" ],
+    b    [ label = "Client B" ];
+     
+    a=>obja    [ label = "-setPrimitiveValue:forKey:" ];
+    obja=>obja [ label = "Cache the given value" ];
+    obja=>ctxa [ label = "Update the database" ];
+    ctxa=>db   [ label = "Send the UPDATE query" ];
+    db=>ctxb   [ label = "Notify the other clients about rows being changed" ];
+    ctxb=>db   [ label = "Send a SELECT query" ];
+    db>>ctxb   [ label = "Return changed rows' primary keys" ];
+    ctxb=>objb [ label = "Fault the corresponding object" ];
+    ...;
+    ...;
+    b=>objb    [ label = "-primitiveValueForKey:" ];
+    objb=>ctxb [ label = "Fire the fault" ];
+    ctxb=>db   [ label = "Send a SELECT query" ];
+    db>>ctxb   [ label = "Return the corresponding row" ];
+    ctxb=>objb [ label = "Cache the received values" ];
+    objb>>b    [ label = "Return the value" ];
+}
