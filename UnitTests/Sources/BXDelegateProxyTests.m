@@ -52,6 +52,7 @@
 
 - (void) test1
 {
+	[[mDelegateImpl expect] respondsToSelector: @selector (nonretainedObjectValue)];
 	[[mDelegateImpl expect] nonretainedObjectValue];
 	[mDelegateProxy nonretainedObjectValue];
 	[mDelegateImpl verify];
@@ -60,6 +61,7 @@
 
 - (void) test2
 {
+	[[mDelegateImpl expect] respondsToSelector: @selector (stringValue)];
 	[[mDefaultImpl expect] stringValue];
 	[mDelegateProxy stringValue];
 	[mDelegateImpl verify];

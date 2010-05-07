@@ -49,6 +49,7 @@
 
 #import "ConnectTest.h"
 #import "BXSSLConnectionTests.h"
+#import "BXMetadataTests.h"
 #import "BXDataModelTests.h"
 #import "BXSQLTests.h"
 #import "BXDatabaseObjectTests.h"
@@ -89,6 +90,7 @@
 							
 							[ConnectTest class],
 							[BXSSLConnectionTests class],
+							[BXMetadataTests class],
 							[BXDataModelTests class],
 							[BXSQLTests class],
 							[BXDatabaseObjectTests class],
@@ -105,7 +107,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [ConnectTest class]];
+	//testClasses = [NSArray arrayWithObject: [PGTSHOMTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
