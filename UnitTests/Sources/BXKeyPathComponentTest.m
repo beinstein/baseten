@@ -1,5 +1,5 @@
 //
-// KeyPathComponentTest.m
+// BXKeyPathComponentTest.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,12 +26,12 @@
 // $Id$
 //
 
-#import "KeyPathComponentTest.h"
+#import "BXKeyPathComponentTest.h"
 #import "MKCSenTestCaseAdditions.h"
 #import <BaseTen/BXKeyPathParser.h>
 
 
-@implementation KeyPathComponentTest
+@implementation BXKeyPathComponentTest
 - (void) testKeyPath
 {
 	NSString* keyPath = @"aa.bb.cc";

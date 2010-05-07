@@ -30,10 +30,30 @@
 #import "MKCSenTestCaseAdditions.h"
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXEnumerate.h>
+#import <BaseTen/BXDatabaseContextPrivate.h>
+#import <BaseTen/BXPGInterface.h>
+#import <BaseTen/BXPGTransactionHandler.h>
 
 
 @implementation EntityTests
-- (void) testValidName
+- (void) test0SchemaVersion
+{
+	NSNumber *currentVersion = [BXPGVersion currentVersionNumber];
+	NSNumber *currentCompatVersion = [BXPGVersion currentCompatibilityVersionNumber];
+	
+	NSError *error = nil;
+	STAssertTrue ([mContext connectSync: &error], [error description]);
+	
+	BXPGInterface *interface = (id) [mContext databaseInterface];
+	BXPGTransactionHandler *handler = [interface transactionHandler];
+	BXPGDatabaseDescription *desc = [handler databaseDescription];
+	
+	MKCAssertEqualObjects (currentCompatVersion, [desc schemaCompatibilityVersion]);
+	MKCAssertEqualObjects (currentVersion, [desc schemaVersion]);
+}
+
+
+- (void) test1ValidName
 {
 	NSError* error = nil;
 	NSString* schemaName = @"Fkeytest";
@@ -45,7 +65,7 @@
 	MKCAssertEqualObjects ([entity schemaName], schemaName);
 }
 
-- (void) testInvalidName
+- (void) test2InvalidName
 {
 	NSError* error = nil;
 	NSString* schemaName = @"public";
@@ -56,7 +76,7 @@
 	MKCAssertNil (entity);
 }
 
-- (void) testValidation
+- (void) test3Validation
 {
 	NSError* error = nil;
 	[mContext connectIfNeeded: &error];
@@ -69,7 +89,7 @@
 	MKCAssertNotNil ([entity primaryKeyFields]);	
 }
 
-- (void) testSharing
+- (void) test4Sharing
 {
 	NSError* error = nil;
 	NSString* entityName = @"mtocollectiontest1";
@@ -84,7 +104,7 @@
 	MKCAssertTrue (entity == entity2);
 }
 
-- (void) testExclusion
+- (void) test5Exclusion
 {
 	[mContext connectSync: NULL];
 	
@@ -103,7 +123,7 @@
 	MKCAssertFalse ([attr isExcluded]);
 }
 
-- (void) testHash
+- (void) test6Hash
 {
     BXEntityDescription* e1 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
     BXEntityDescription* e2 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
@@ -143,7 +163,7 @@
     MKCAssertFalse ([container2 containsObject: e2]);    
 }
 
-- (void) testViewPkey
+- (void) test7ViewPkey
 {
 	NSError* error = nil;
 	[mContext connectIfNeeded: &error];

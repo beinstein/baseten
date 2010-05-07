@@ -31,10 +31,15 @@
 #import <BaseTen/BXLogger.h>
 #import "MKCSenTestCaseAdditions.h"
 
-#import "KeyPathComponentTest.h"
-#import "PredicateTests.h"
-#import "BXDatabaseContextTests.h"
+#import "PGTSInvocationRecorderTests.h"
+#import "PGTSHOMTests.h"
+#import "BXDelegateProxyTests.h"
+#import "NSPredicate+BaseTenAdditionsTests.h"
+#import "NSArray+BaseTenAdditionsTests.h"
 #import "PGTSValueTests.h"
+#import "BXKeyPathComponentTest.h"
+#import "BXPredicateTests.h"
+#import "BXDatabaseContextTests.h"
 
 #import "PGTSMetadataTests.h"
 #import "PGTSTypeTests.h"
@@ -49,15 +54,14 @@
 #import "BXDatabaseObjectTests.h"
 #import "EntityTests.h"
 #import "ObjectIDTests.h"
-#import "FetchTests.h"
 #import "CreateTests.h"
+#import "FetchTests.h"
 #import "ModificationTests.h"
 #import "ForeignKeyTests.h"
 #import "ForeignKeyModificationTests.h"
 #import "MTOCollectionTest.h"
 #import "MTMCollectionTest.h"
 #import "UndoTests.h"
-#import "BXDatabaseObjectTests.h"
 #import "ToOneChangeNotificationTests.h"
 
 
@@ -67,10 +71,15 @@
 	BXSetLogLevel (kBXLogLevelWarning);
 	
 	NSArray* testClasses = [NSArray arrayWithObjects:
-							[KeyPathComponentTest class],
-							[PredicateTests class],
-							[BXDatabaseContextTests class],
+							[PGTSInvocationRecorderTests class],
+							[PGTSHOMTests class],
+							[BXDelegateProxyTests class],
+							[NSPredicate_BaseTenAdditionsTests class],
+							[NSArray_BaseTenAdditionsTests class],
 							[PGTSValueTests class],
+							[BXKeyPathComponentTest class],
+							[BXPredicateTests class],
+							[BXDatabaseContextTests class],
 							
 							[PGTSMetadataTests class],
 							[PGTSTypeTests class],

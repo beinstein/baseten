@@ -62,13 +62,13 @@
 	}
 }
 
-- (void) testConnect1
+- (void) test1Connect
 {
     MKCAssertNoThrow ([ctx setDatabaseURI: [self databaseURI]]);
     MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
 }
 
-- (void) testConnect2
+- (void) test2Connect
 {
 	NSURL* uri = [self databaseURI];
 	NSString* uriString = [uri absoluteString];
@@ -79,25 +79,25 @@
     MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
 }
  
-- (void) testConnectFail1
+- (void) test3ConnectFail
 {
     MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]]);
     MKCAssertThrows ([ctx connectIfNeeded: nil]);
 }
  
-- (void) testConnectFail2
+- (void) test4ConnectFail
 {
     MKCAssertNoThrow ([ctx setDatabaseURI: 
         [NSURL URLWithString: @"pgsql://user@localhost/basetentest/a/malformed/database/uri"]]);
     MKCAssertThrows ([ctx connectIfNeeded: nil]);
 }
 
-- (void) testConnectFail3
+- (void) test5ConnectFail
 {
     MKCAssertThrows ([ctx setDatabaseURI: [NSURL URLWithString: @"invalid://user@localhost/invalid"]]);
 }
 
-- (void) testNilURI
+- (void) test7NilURI
 {
 	NSError* error = nil;
 	id rval = nil;
@@ -108,7 +108,7 @@
 	MKCAssertNotNil (error);
 }
 
-- (void) testConnectFail4
+- (void) test6ConnectFail
 {
 	[ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]];
 	[[ctx notificationCenter] addObserver: self selector: @selector (expected:) name: kBXConnectionFailedNotification object: nil];

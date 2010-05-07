@@ -1,8 +1,8 @@
 //
-// PredicateTests.h
+// PGTSInvocationRecorderTests.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -30,13 +30,7 @@
 #import "BXTestCase.h"
 
 
-@class BXPGQueryBuilder;
-@class PGTSConnection;
-
-
-@interface PredicateTests : BXTestCase 
+@interface PGTSInvocationRecorderTests : BXTestCase
 {
-	BXPGQueryBuilder* mQueryBuilder;
-	PGTSConnection* mConnection;
 }
 @end

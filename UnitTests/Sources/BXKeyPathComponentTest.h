@@ -1,5 +1,5 @@
 //
-// KeyPathComponentTest.h
+// BXKeyPathComponentTest.h
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -30,7 +30,7 @@
 #import "BXTestCase.h"
 
 
-@interface KeyPathComponentTest : BXTestCase 
+@interface BXKeyPathComponentTest : BXTestCase 
 {
 }
 @end

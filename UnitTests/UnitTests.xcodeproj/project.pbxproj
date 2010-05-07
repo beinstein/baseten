@@ -49,7 +49,7 @@
 		5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
 		53193F0A0BC51702009A77EC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 53193E8D0BC51701009A77EC /* Foundation.framework */; };
 		534C95EC0FAB623F006BBC8A /* relationship-optionality.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 534C95EB0FAB623F006BBC8A /* relationship-optionality.xcdatamodel */; };
-		535627B90E6E805D002EA3FD /* PredicateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535627B80E6E805D002EA3FD /* PredicateTests.m */; };
+		535627B90E6E805D002EA3FD /* BXPredicateTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535627B80E6E805D002EA3FD /* BXPredicateTests.m */; };
 		535B3EA1103817FB00A5FB7E /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 535B3EA0103817FB00A5FB7E /* OCMock.framework */; };
 		535B3EAE1038182E00A5FB7E /* OCMock.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 535B3EA0103817FB00A5FB7E /* OCMock.framework */; };
 		536205A40FB84DE800ACAE57 /* PGTSParameterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 536205A30FB84DE800ACAE57 /* PGTSParameterTests.m */; };
@@ -65,11 +65,16 @@
 		53A0F85A0FB8EAA100F90FA1 /* PGTSValueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A0F8590FB8EAA100F90FA1 /* PGTSValueTests.m */; };
 		53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BD965B0A5C1BA5001C950C /* FetchTests.m */; };
 		53BCC1D80F5EE90D00BD717A /* PGTSTypeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BCC1D70F5EE90D00BD717A /* PGTSTypeTests.m */; };
+		53C4C544119376A5003FB842 /* BXDelegateProxyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C543119376A5003FB842 /* BXDelegateProxyTests.m */; };
+		53C4C55011937A1F003FB842 /* PGTSHOMTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C54F11937A1F003FB842 /* PGTSHOMTests.m */; };
+		53C4C61711943369003FB842 /* PGTSInvocationRecorderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C61611943369003FB842 /* PGTSInvocationRecorderTests.m */; };
+		53C4C61C119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C61B119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m */; };
+		53C4C62111943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C62011943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m */; };
 		53C98A140CF0803A00D6A0A7 /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
 		53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */; };
 		53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538B40F50D634EA40009005B /* BaseTen.framework */; };
 		53DA50F40FCC53960044C961 /* people-departments-no-inverse.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 53DA50F30FCC53960044C961 /* people-departments-no-inverse.xcdatamodel */; };
-		53DAA0590E6EEB46001DC1D9 /* KeyPathComponentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */; };
+		53DAA0590E6EEB46001DC1D9 /* BXKeyPathComponentTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAA0580E6EEB46001DC1D9 /* BXKeyPathComponentTest.m */; };
 		53E21C280FB49CFA00A52F1A /* BXTestCase.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E21C270FB49CFA00A52F1A /* BXTestCase.m */; };
 		53E21C330FB49E1800A52F1A /* BXGarbageCollectionRunner.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E21C320FB49E1800A52F1A /* BXGarbageCollectionRunner.m */; };
 		53F8E1DD0CBF7FF100C000C5 /* UnitTestAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A494840BD4D92F008E850E /* UnitTestAdditions.m */; };
@@ -151,8 +156,8 @@
 		534C95EB0FAB623F006BBC8A /* relationship-optionality.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "relationship-optionality.xcdatamodel"; path = "Sources/relationship-optionality.xcdatamodel"; sourceTree = "<group>"; };
 		535059B20CDA1CFC00DA25EC /* TestLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestLoader.h; path = Sources/TestLoader.h; sourceTree = "<group>"; };
 		535059B30CDA1CFC00DA25EC /* TestLoader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestLoader.m; path = Sources/TestLoader.m; sourceTree = "<group>"; };
-		535627B70E6E805D002EA3FD /* PredicateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PredicateTests.h; path = Sources/PredicateTests.h; sourceTree = "<group>"; };
-		535627B80E6E805D002EA3FD /* PredicateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PredicateTests.m; path = Sources/PredicateTests.m; sourceTree = "<group>"; };
+		535627B70E6E805D002EA3FD /* BXPredicateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPredicateTests.h; path = Sources/BXPredicateTests.h; sourceTree = "<group>"; };
+		535627B80E6E805D002EA3FD /* BXPredicateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPredicateTests.m; path = Sources/BXPredicateTests.m; sourceTree = "<group>"; };
 		535717AC0CDE69C60084DD92 /* BXDatabaseObjectTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectTests.h; path = Sources/BXDatabaseObjectTests.h; sourceTree = "<group>"; };
 		535717AD0CDE69C60084DD92 /* BXDatabaseObjectTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseObjectTests.m; path = Sources/BXDatabaseObjectTests.m; sourceTree = "<group>"; };
 		535B3EA0103817FB00A5FB7E /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = ../Release/OCMock.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -187,6 +192,16 @@
 		53BD96750A5C1DC3001C950C /* CreateTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateTests.h; path = Sources/CreateTests.h; sourceTree = "<group>"; };
 		53BD96760A5C1DC3001C950C /* CreateTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CreateTests.m; path = Sources/CreateTests.m; sourceTree = "<group>"; };
 		53BD96BE0A5C2501001C950C /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = /System/Library/Frameworks/SenTestingKit.framework; sourceTree = "<absolute>"; };
+		53C4C542119376A5003FB842 /* BXDelegateProxyTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDelegateProxyTests.h; path = Sources/BXDelegateProxyTests.h; sourceTree = "<group>"; };
+		53C4C543119376A5003FB842 /* BXDelegateProxyTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDelegateProxyTests.m; path = Sources/BXDelegateProxyTests.m; sourceTree = "<group>"; };
+		53C4C54E11937A1F003FB842 /* PGTSHOMTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSHOMTests.h; path = Sources/PGTSHOMTests.h; sourceTree = "<group>"; };
+		53C4C54F11937A1F003FB842 /* PGTSHOMTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSHOMTests.m; path = Sources/PGTSHOMTests.m; sourceTree = "<group>"; };
+		53C4C61511943369003FB842 /* PGTSInvocationRecorderTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSInvocationRecorderTests.h; path = Sources/PGTSInvocationRecorderTests.h; sourceTree = "<group>"; };
+		53C4C61611943369003FB842 /* PGTSInvocationRecorderTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSInvocationRecorderTests.m; path = Sources/PGTSInvocationRecorderTests.m; sourceTree = "<group>"; };
+		53C4C61A119439BF003FB842 /* NSArray+BaseTenAdditionsTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+BaseTenAdditionsTests.h"; path = "Sources/NSArray+BaseTenAdditionsTests.h"; sourceTree = "<group>"; };
+		53C4C61B119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+BaseTenAdditionsTests.m"; path = "Sources/NSArray+BaseTenAdditionsTests.m"; sourceTree = "<group>"; };
+		53C4C61F11943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSPredicate+BaseTenAdditionsTests.h"; path = "Sources/NSPredicate+BaseTenAdditionsTests.h"; sourceTree = "<group>"; };
+		53C4C62011943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSPredicate+BaseTenAdditionsTests.m"; path = "Sources/NSPredicate+BaseTenAdditionsTests.m"; sourceTree = "<group>"; };
 		53CC514E0EC45F0B003D33BF /* ToOneChangeNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToOneChangeNotificationTests.h; path = Sources/ToOneChangeNotificationTests.h; sourceTree = "<group>"; };
 		53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToOneChangeNotificationTests.m; path = Sources/ToOneChangeNotificationTests.m; sourceTree = "<group>"; };
 		53CEB9EF0B28516F007DAF0D /* MKCSenTestCaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MKCSenTestCaseAdditions.h; path = Sources/MKCSenTestCaseAdditions.h; sourceTree = "<group>"; };
@@ -195,8 +210,8 @@
 		53D8703B1037521B0062A580 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		53D8715010375CD70062A580 /* coverage.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = coverage.xcconfig; sourceTree = "<group>"; };
 		53DA50F30FCC53960044C961 /* people-departments-no-inverse.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "people-departments-no-inverse.xcdatamodel"; path = "Sources/people-departments-no-inverse.xcdatamodel"; sourceTree = "<group>"; };
-		53DAA0570E6EEB46001DC1D9 /* KeyPathComponentTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyPathComponentTest.h; path = Sources/KeyPathComponentTest.h; sourceTree = "<group>"; };
-		53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KeyPathComponentTest.m; path = Sources/KeyPathComponentTest.m; sourceTree = "<group>"; };
+		53DAA0570E6EEB46001DC1D9 /* BXKeyPathComponentTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXKeyPathComponentTest.h; path = Sources/BXKeyPathComponentTest.h; sourceTree = "<group>"; };
+		53DAA0580E6EEB46001DC1D9 /* BXKeyPathComponentTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXKeyPathComponentTest.m; path = Sources/BXKeyPathComponentTest.m; sourceTree = "<group>"; };
 		53DAE20F0AC4A0D200536DD0 /* MTOCollectionTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MTOCollectionTest.h; path = Sources/MTOCollectionTest.h; sourceTree = "<group>"; };
 		53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MTOCollectionTest.m; path = Sources/MTOCollectionTest.m; sourceTree = "<group>"; };
 		53E21C260FB49CFA00A52F1A /* BXTestCase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXTestCase.h; path = Sources/BXTestCase.h; sourceTree = "<group>"; };
@@ -269,14 +284,24 @@
 		535627B10E6E8015002EA3FD /* Tests not requiring a connection */ = {
 			isa = PBXGroup;
 			children = (
-				53DAA0570E6EEB46001DC1D9 /* KeyPathComponentTest.h */,
-				53DAA0580E6EEB46001DC1D9 /* KeyPathComponentTest.m */,
-				535627B70E6E805D002EA3FD /* PredicateTests.h */,
-				535627B80E6E805D002EA3FD /* PredicateTests.m */,
-				5375C2500F3BAD88002CBF78 /* BXDatabaseContextTests.h */,
-				5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */,
+				53C4C61511943369003FB842 /* PGTSInvocationRecorderTests.h */,
+				53C4C61611943369003FB842 /* PGTSInvocationRecorderTests.m */,
+				53C4C54E11937A1F003FB842 /* PGTSHOMTests.h */,
+				53C4C54F11937A1F003FB842 /* PGTSHOMTests.m */,
+				53C4C542119376A5003FB842 /* BXDelegateProxyTests.h */,
+				53C4C543119376A5003FB842 /* BXDelegateProxyTests.m */,
+				53C4C61F11943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.h */,
+				53C4C62011943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m */,
+				53C4C61A119439BF003FB842 /* NSArray+BaseTenAdditionsTests.h */,
+				53C4C61B119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m */,
 				53A0F8580FB8EAA100F90FA1 /* PGTSValueTests.h */,
 				53A0F8590FB8EAA100F90FA1 /* PGTSValueTests.m */,
+				53DAA0570E6EEB46001DC1D9 /* BXKeyPathComponentTest.h */,
+				53DAA0580E6EEB46001DC1D9 /* BXKeyPathComponentTest.m */,
+				535627B70E6E805D002EA3FD /* BXPredicateTests.h */,
+				535627B80E6E805D002EA3FD /* BXPredicateTests.m */,
+				5375C2500F3BAD88002CBF78 /* BXDatabaseContextTests.h */,
+				5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */,
 			);
 			name = "Tests not requiring a connection";
 			sourceTree = "<group>";
@@ -519,8 +544,8 @@
 				5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */,
 				5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */,
 				53A59C560E3509CE0026D7E1 /* FetchTests.m in Sources */,
-				535627B90E6E805D002EA3FD /* PredicateTests.m in Sources */,
-				53DAA0590E6EEB46001DC1D9 /* KeyPathComponentTest.m in Sources */,
+				535627B90E6E805D002EA3FD /* BXPredicateTests.m in Sources */,
+				53DAA0590E6EEB46001DC1D9 /* BXKeyPathComponentTest.m in Sources */,
 				53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */,
 				536C463A0F2E1CED003A8231 /* PGTSMetadataTests.m in Sources */,
 				5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */,
@@ -540,6 +565,11 @@
 				5392E6630FC1B0C70056DF6A /* BXSSLConnectionTests.m in Sources */,
 				53DA50F40FCC53960044C961 /* people-departments-no-inverse.xcdatamodel in Sources */,
 				3FC3D13211918C3D00D3CA68 /* PGTSPgBouncerTests.m in Sources */,
+				53C4C544119376A5003FB842 /* BXDelegateProxyTests.m in Sources */,
+				53C4C55011937A1F003FB842 /* PGTSHOMTests.m in Sources */,
+				53C4C61711943369003FB842 /* PGTSInvocationRecorderTests.m in Sources */,
+				53C4C61C119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m in Sources */,
+				53C4C62111943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,5 @@
 //
-// PredicateTests.m
+// BXPredicateTests.m
 // BaseTen
 //
 // Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
@@ -26,7 +26,7 @@
 // $Id$
 //
 
-#import "PredicateTests.h"
+#import "BXPredicateTests.h"
 #import "MKCSenTestCaseAdditions.h"
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>
@@ -35,7 +35,7 @@
 #import <BaseTen/BXPredicateVisitor.h>
 
 
-@implementation PredicateTests
+@implementation BXPredicateTests
 - (void) setUp
 {
 	[super setUp];
