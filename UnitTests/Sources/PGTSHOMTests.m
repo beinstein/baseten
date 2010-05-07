@@ -298,9 +298,9 @@
 						   nil];
 	NSDictionary *dict2 = (id) [[dict1 PGTSKeyCollectD] uppercaseString];
 	MKCAssertEqualObjects (dict2, ([NSDictionary dictionaryWithObjectsAndKeys:
-									@"a", @"A",
-									@"b", @"B",
-									@"c", @"C",
+									@"1", @"A",
+									@"2", @"B",
+									@"3", @"C",
 									nil]));	
 }
 
