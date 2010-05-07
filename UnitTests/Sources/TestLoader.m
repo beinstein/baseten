@@ -111,8 +111,9 @@
 	
 	for (Class testCaseClass in testClasses)
 	{
-		SenTestSuite* suite = [SenTestSuite testSuiteForTestCaseClass: testCaseClass];
-		[suite run];
+		SenTestSuite *suite = [SenTestSuite testSuiteForTestCaseClass: testCaseClass];
+		SenTestRun *testRun = [suite run];
+		STAssertTrue (0 == [testRun unexpectedExceptionCount], @"Had %u unexpected exceptions.", [testRun unexpectedExceptionCount]);
 	}
 }
 @end

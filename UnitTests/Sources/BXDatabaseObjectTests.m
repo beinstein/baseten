@@ -28,8 +28,8 @@
 
 #import "BXDatabaseObjectTests.h"
 #import "MKCSenTestCaseAdditions.h"
-
 #import <OCMock/OCMock.h>
+
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXDatabaseObjectPrivate.h>
 #import <BaseTen/BXDatabaseContextPrivate.h>

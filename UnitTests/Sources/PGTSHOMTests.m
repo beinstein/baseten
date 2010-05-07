@@ -28,8 +28,8 @@
 
 #import "PGTSHOMTests.h"
 #import "MKCSenTestCaseAdditions.h"
-#import <BaseTen/PGTSHOM.h>
 #import <OCMock/OCMock.h>
+#import <BaseTen/PGTSHOM.h>
 
 
 @implementation PGTSHOMTests
