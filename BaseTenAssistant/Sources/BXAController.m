@@ -870,14 +870,14 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	{
 		retval = YES; // YES by default
 		if(action == @selector(upgradeSchema:))
-			retval = ([self canUpgradeSchema] || ![self hasBaseTenSchema]);
+			retval = ([mContext isConnected] && ([self canUpgradeSchema] || ![self hasBaseTenSchema]));
 		else if(action == @selector(removeSchema:))
-			retval = [self hasBaseTenSchema];
+			retval = ([mContext isConnected] && [self hasBaseTenSchema]);
 		else if(action == @selector(exportLog:))
 			retval = [self canExportLog];
 		else if(action == @selector(importDataModel:))
 			retval = [self canImportDataModel];
-		else if(action == @selector(disconnect:) || action == @selector(reload:))
+		else if(action == @selector(disconnect:) || action == @selector(reload:) || action == @selector (refreshCacheTables:) || action == @selector (prune:))
 			retval = ([mContext isConnected] && ![mProgressPanel isVisible]);
 		else if(action == @selector(getInfo:))
 			retval = ([[mEntities selectedObjects] count] > 0);

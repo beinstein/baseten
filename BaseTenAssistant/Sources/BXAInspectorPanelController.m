@@ -58,6 +58,7 @@ static NSPoint gLastPoint = {};
 	}
 }
 
+
 #pragma mark Initialisation & Dealloc
 
 + (void)initialize
@@ -69,12 +70,9 @@ static NSPoint gLastPoint = {};
 		
 		NSRect frame = [[NSScreen mainScreen] frame];
 		gLastPoint = NSMakePoint (0.0, frame.origin.y + frame.size.height);
-								  
-		[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityTitle"];
-		[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityName"];
-		[self setKeys:[NSArray arrayWithObject:@"entity"] triggerChangeNotificationsForDependentKey:@"entityIcon"];		
 	}	
 }
+
 
 + (id) inspectorPanelController
 {
@@ -88,6 +86,7 @@ static NSPoint gLastPoint = {};
 	return sInspector;
 }
 
+
 - (NSWindow *) windowPrototype: (NSRect) contentRect
 {
 	NSUInteger windowStyle = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSUtilityWindowMask;
@@ -97,6 +96,7 @@ static NSPoint gLastPoint = {};
 	return window;
 }
 
+
 - (id) init
 {
 	if ((self = [super initWithWindowNibName: @"InspectorView"]))
@@ -104,6 +104,7 @@ static NSPoint gLastPoint = {};
 	}
 	return self;
 }
+
 
 - (void) awakeFromNib
 {
@@ -139,6 +140,13 @@ static NSPoint gLastPoint = {};
 	return [NSPredicate predicateWithFormat: @"value.isExcluded == false && value.isDeprecated == false"];
 }
 
+
++ (NSSet *) keyPathsForValuesAffectingEntityTitle
+{
+	return [NSSet setWithObject: @"entity"];
+}
+
+
 - (NSString *) entityTitle
 {
 	NSString* outTitle;
@@ -153,6 +161,13 @@ static NSPoint gLastPoint = {};
 	return outTitle;
 }
 
+
++ (NSSet *) keyPathsForValuesAffectingEntityName
+{
+	return [NSSet setWithObject: @"entity"];
+}
+
+
 - (NSString *) entityName
 {
 	if([self entity] == nil)
@@ -160,6 +175,13 @@ static NSPoint gLastPoint = {};
 	else
 		return [[self entity] name];
 }
+
+
++ (NSSet *) keyPathsForValuesAffectingEntityIcon
+{
+	return [NSSet setWithObject: @"entity"];
+}
+
 
 - (NSImage *) entityIcon
 {
@@ -173,10 +195,12 @@ static NSPoint gLastPoint = {};
 	return outImage;
 }
 
+
 - (BOOL) isWindowVisible
 {
 	return [[self window] isVisible];
 }
+
 
 - (IBAction) closeWindow: (id) sender;
 {
@@ -220,6 +244,7 @@ static NSPoint gLastPoint = {};
 	[self bind:@"entity" toObject: observable withKeyPath: keypath options:nil];
 }
 
+
 - (void) observeValueForKeyPath: (NSString *) keyPath ofObject: (id) object 
 						 change: (NSDictionary *) change context: (void *) context
 {
@@ -240,6 +265,4 @@ static NSPoint gLastPoint = {};
 		[super observeValueForKeyPath: keyPath ofObject: object change: change context: context];
 	}
 }
-
-
 @end
