@@ -70,6 +70,7 @@
 		53C4C61711943369003FB842 /* PGTSInvocationRecorderTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C61611943369003FB842 /* PGTSInvocationRecorderTests.m */; };
 		53C4C61C119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C61B119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m */; };
 		53C4C62111943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C62011943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m */; };
+		53C4C67B119443E1003FB842 /* BXMetadataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53C4C67A119443E1003FB842 /* BXMetadataTests.m */; };
 		53C98A140CF0803A00D6A0A7 /* TestLoader.m in Sources */ = {isa = PBXBuildFile; fileRef = 535059B30CDA1CFC00DA25EC /* TestLoader.m */; };
 		53CC51500EC45F0B003D33BF /* ToOneChangeNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */; };
 		53D03BA90DE828CB002D14C4 /* BaseTen.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 538B40F50D634EA40009005B /* BaseTen.framework */; };
@@ -202,6 +203,8 @@
 		53C4C61B119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+BaseTenAdditionsTests.m"; path = "Sources/NSArray+BaseTenAdditionsTests.m"; sourceTree = "<group>"; };
 		53C4C61F11943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSPredicate+BaseTenAdditionsTests.h"; path = "Sources/NSPredicate+BaseTenAdditionsTests.h"; sourceTree = "<group>"; };
 		53C4C62011943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSPredicate+BaseTenAdditionsTests.m"; path = "Sources/NSPredicate+BaseTenAdditionsTests.m"; sourceTree = "<group>"; };
+		53C4C679119443E1003FB842 /* BXMetadataTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXMetadataTests.h; path = Sources/BXMetadataTests.h; sourceTree = "<group>"; };
+		53C4C67A119443E1003FB842 /* BXMetadataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXMetadataTests.m; path = Sources/BXMetadataTests.m; sourceTree = "<group>"; };
 		53CC514E0EC45F0B003D33BF /* ToOneChangeNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToOneChangeNotificationTests.h; path = Sources/ToOneChangeNotificationTests.h; sourceTree = "<group>"; };
 		53CC514F0EC45F0B003D33BF /* ToOneChangeNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ToOneChangeNotificationTests.m; path = Sources/ToOneChangeNotificationTests.m; sourceTree = "<group>"; };
 		53CEB9EF0B28516F007DAF0D /* MKCSenTestCaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 5; lastKnownFileType = sourcecode.c.h; name = MKCSenTestCaseAdditions.h; path = Sources/MKCSenTestCaseAdditions.h; sourceTree = "<group>"; };
@@ -322,6 +325,8 @@
 				530A439E0A5C114E00A4722B /* ConnectTest.m */,
 				5392E6610FC1B0C70056DF6A /* BXSSLConnectionTests.h */,
 				5392E6620FC1B0C70056DF6A /* BXSSLConnectionTests.m */,
+				53C4C679119443E1003FB842 /* BXMetadataTests.h */,
+				53C4C67A119443E1003FB842 /* BXMetadataTests.m */,
 				530925270FA89023000DC21C /* BXDataModelTests.h */,
 				530925280FA89023000DC21C /* BXDataModelTests.m */,
 				537E32C30FAF078600539A83 /* BXSQLTests.h */,
@@ -570,6 +575,7 @@
 				53C4C61711943369003FB842 /* PGTSInvocationRecorderTests.m in Sources */,
 				53C4C61C119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m in Sources */,
 				53C4C62111943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m in Sources */,
+				53C4C67B119443E1003FB842 /* BXMetadataTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

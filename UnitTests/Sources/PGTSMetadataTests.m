@@ -44,8 +44,6 @@
 {
 	[super setUp];
 	
-	[BXPGInterface class]; // Run +initialize.
-	
 	NSDictionary* connectionDictionary = [self connectionDictionary];
 	PGTSConnection* connection = [[[PGTSConnection alloc] init] autorelease];
 	BOOL status = [connection connectSync: connectionDictionary];
@@ -122,22 +120,5 @@
 	MKCAssertTrue (1 == [columns count]);
 	
 	MKCAssertEqualObjects (@"id", [[columns anyObject] name]);
-}
-
-- (void) test4ViewPkey
-{
-	MKCAssertNotNil (mDatabaseDescription);
-	PGTSTableDescription* table = [mDatabaseDescription table: @"test_v" inSchema: @"public"];
-	MKCAssertNotNil (table);
-	PGTSIndexDescription* pkey = [table primaryKey];
-	
-	MKCAssertNotNil (pkey);
-	MKCAssertFalse ([pkey isUnique]);
-	MKCAssertTrue ([pkey isPrimaryKey]);
-	
-	NSSet* columns = [pkey columns];
-	MKCAssertTrue (1 == [columns count]);
-	
-	MKCAssertEqualObjects (@"id", [[columns anyObject] name]);	
 }
 @end

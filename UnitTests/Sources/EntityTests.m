@@ -30,29 +30,9 @@
 #import "MKCSenTestCaseAdditions.h"
 #import <BaseTen/BaseTen.h>
 #import <BaseTen/BXEnumerate.h>
-#import <BaseTen/BXDatabaseContextPrivate.h>
-#import <BaseTen/BXPGInterface.h>
-#import <BaseTen/BXPGTransactionHandler.h>
 
 
 @implementation EntityTests
-- (void) test0SchemaVersion
-{
-	NSNumber *currentVersion = [BXPGVersion currentVersionNumber];
-	NSNumber *currentCompatVersion = [BXPGVersion currentCompatibilityVersionNumber];
-	
-	NSError *error = nil;
-	STAssertTrue ([mContext connectSync: &error], [error description]);
-	
-	BXPGInterface *interface = (id) [mContext databaseInterface];
-	BXPGTransactionHandler *handler = [interface transactionHandler];
-	BXPGDatabaseDescription *desc = [handler databaseDescription];
-	
-	MKCAssertEqualObjects (currentCompatVersion, [desc schemaCompatibilityVersion]);
-	MKCAssertEqualObjects (currentVersion, [desc schemaVersion]);
-}
-
-
 - (void) test1ValidName
 {
 	NSError* error = nil;
