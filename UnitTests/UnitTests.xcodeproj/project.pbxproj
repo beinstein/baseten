@@ -85,11 +85,11 @@
 			remoteGlobalIDString = 535444130D634A47002A6C47;
 			remoteInfo = "BaseTen Framework + GC";
 		};
-		538F8F351194D0DC00FB956D /* PBXContainerItemProxy */ = {
+		538F90521194DFD100FB956D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 530A435E0A5C0E0100A4722B /* BaseTen.xcodeproj */;
+			containerPortal = 530A43530A5C0DC500A4722B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 538F8F2F1194D09100FB956D;
+			remoteGlobalIDString = 538F904E1194DF9E00FB956D /* OCMock */;
 			remoteInfo = OCMock;
 		};
 		53A0DAD80F4B6DE500434E4E /* PBXContainerItemProxy */ = {
@@ -400,6 +400,23 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXLegacyTarget section */
+		538F904E1194DF9E00FB956D /* OCMock */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-f \"$(SRCROOT)/../Tools/OCMock.mk\" $(ACTION)";
+			buildConfigurationList = 538F906C1194DFE900FB956D /* Build configuration list for PBXLegacyTarget "OCMock" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = ../Contrib/OCMock;
+			dependencies = (
+			);
+			name = OCMock;
+			passBuildSettingsInEnvironment = 1;
+			productName = OCMock;
+		};
+/* End PBXLegacyTarget section */
+
 /* Begin PBXNativeTarget section */
 		530A438B0A5C0FD000A4722B /* UnitTests */ = {
 			isa = PBXNativeTarget;
@@ -414,7 +431,7 @@
 			);
 			dependencies = (
 				53D03BB90DE82987002D14C4 /* PBXTargetDependency */,
-				538F8F361194D0DC00FB956D /* PBXTargetDependency */,
+				538F90531194DFD100FB956D /* PBXTargetDependency */,
 			);
 			name = UnitTests;
 			productName = UnitTests;
@@ -442,6 +459,7 @@
 			targets = (
 				530A438B0A5C0FD000A4722B /* UnitTests */,
 				53A0DAD40F4B6DDC00434E4E /* Coverage */,
+				538F904E1194DF9E00FB956D /* OCMock */,
 			);
 		};
 /* End PBXProject section */
@@ -556,10 +574,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		538F8F361194D0DC00FB956D /* PBXTargetDependency */ = {
+		538F90531194DFD100FB956D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = OCMock;
-			targetProxy = 538F8F351194D0DC00FB956D /* PBXContainerItemProxy */;
+			target = 538F904E1194DF9E00FB956D /* OCMock */;
+			targetProxy = 538F90521194DFD100FB956D /* PBXContainerItemProxy */;
 		};
 		53A0DAD90F4B6DE500434E4E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -601,6 +619,27 @@
 			baseConfigurationReference = 53D8703B1037521B0062A580 /* release.xcconfig */;
 			buildSettings = {
 				GCC_ENABLE_OBJC_GC = YES;
+			};
+			name = Release;
+		};
+		538F904F1194DF9E00FB956D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = OCMock;
+			};
+			name = Debug;
+		};
+		538F90501194DF9E00FB956D /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = OCMock;
+			};
+			name = Coverage;
+		};
+		538F90511194DF9E00FB956D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = OCMock;
 			};
 			name = Release;
 		};
@@ -658,6 +697,16 @@
 				530A43900A5C0FD200A4722B /* Debug */,
 				989B4E820F45D73C00CE048A /* Coverage */,
 				530A43910A5C0FD200A4722B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		538F906C1194DFE900FB956D /* Build configuration list for PBXLegacyTarget "OCMock" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				538F904F1194DF9E00FB956D /* Debug */,
+				538F90501194DF9E00FB956D /* Coverage */,
+				538F90511194DF9E00FB956D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

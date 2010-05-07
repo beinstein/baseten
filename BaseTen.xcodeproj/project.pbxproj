@@ -2053,20 +2053,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXLegacyTarget section */
-		538F8F2F1194D09100FB956D /* OCMock */ = {
-			isa = PBXLegacyTarget;
-			buildArgumentsString = "-f \"$(SRCROOT)/Tools/OCMock.mk\" $(ACTION)";
-			buildConfigurationList = 538F8F301194D09100FB956D /* Build configuration list for PBXLegacyTarget "OCMock" */;
-			buildPhases = (
-			);
-			buildToolPath = /usr/bin/make;
-			buildWorkingDirectory = Contrib/OCMock;
-			dependencies = (
-			);
-			name = OCMock;
-			passBuildSettingsInEnvironment = 1;
-			productName = "RegexKit-test";
-		};
 		53C4E2441194B2BE003FB842 /* PCRE */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "-f \"$(SRCROOT)/Tools/pcre.mk\" $(ACTION)";
@@ -2186,7 +2172,6 @@
 				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
 				53F1C5DF105C4BF200A610A8 /* RegexKit */,
 				53C4E2441194B2BE003FB842 /* PCRE */,
-				538F8F2F1194D09100FB956D /* OCMock */,
 			);
 		};
 /* End PBXProject section */
@@ -2845,27 +2830,6 @@
 			};
 			name = Release;
 		};
-		538F8F311194D09100FB956D /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = OCMock;
-			};
-			name = Debug;
-		};
-		538F8F321194D09100FB956D /* Coverage */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = RegexKit;
-			};
-			name = Coverage;
-		};
-		538F8F331194D09100FB956D /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = RegexKit;
-			};
-			name = Release;
-		};
 		53BD79F80E092ABD009CAFE6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3067,16 +3031,6 @@
 				537934A60E54B71C0006EC54 /* Debug */,
 				98A6CD6D0F45C8600029B2C4 /* Coverage */,
 				537934A70E54B71C0006EC54 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		538F8F301194D09100FB956D /* Build configuration list for PBXLegacyTarget "OCMock" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				538F8F311194D09100FB956D /* Debug */,
-				538F8F321194D09100FB956D /* Coverage */,
-				538F8F331194D09100FB956D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
