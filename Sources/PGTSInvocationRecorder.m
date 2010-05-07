@@ -82,8 +82,11 @@
 
 - (void) setTarget: (id) target
 {
-	[mHelper->mTarget release];
-	mHelper->mTarget = [target retain];
+	if (mHelper->mTarget != target)
+	{
+		[mHelper->mTarget release];
+		mHelper->mTarget = [target retain];
+	}
 }
 
 - (void) gotInvocation

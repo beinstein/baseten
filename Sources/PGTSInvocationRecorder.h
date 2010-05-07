@@ -59,7 +59,7 @@
 	SEL mCallback;
 }
 - (void) setCallbackTarget: (id) target;
-- (void) setCallback: (SEL) callback;
+- (void) setCallback: (SEL) callback; //- (void) myCallback: (NSInvocation *) invocation userInfo: (id) userInfo;
 - (void) setUserInfo: (id) anObject;
 - (id) userInfo;
 @end

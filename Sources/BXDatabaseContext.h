@@ -102,9 +102,9 @@
 - (BXDatabaseObjectModel *) databaseObjectModel;
 
 - (BOOL) retainsRegisteredObjects;
-- (void) setRetainsRegisteredObjects:(BOOL)flag;
+- (void) setRetainsRegisteredObjects: (BOOL) flag;
 
-- (void) setAutocommits: (BOOL) aBool;
+- (void) setAutocommits: (BOOL) flag;
 - (BOOL) autocommits;
 - (void) rollback;
 - (BOOL) save: (NSError **) error;
@@ -135,10 +135,10 @@
 
 - (BOOL) canConnect;
 
-- (void) setConnectsOnAwake: (BOOL) aBool;
+- (void) setConnectsOnAwake: (BOOL) flag;
 - (BOOL) connectsOnAwake;
 
-- (void) setSendsLockQueries: (BOOL) aBool;
+- (void) setSendsLockQueries: (BOOL) flag;
 - (BOOL) sendsLockQueries;
 
 - (void) refreshObject: (BXDatabaseObject *) object mergeChanges: (BOOL) flag;

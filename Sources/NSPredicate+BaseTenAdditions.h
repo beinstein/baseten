@@ -30,5 +30,5 @@
 
 
 @interface NSPredicate (BaseTenAdditions)
-- (BOOL) BXEvaluateWithObject: (id) anObject substitutionVariables: (NSMutableDictionary *) dictionary;
+- (BOOL) BXEvaluateWithObject: (id) anObject substitutionVariables: (NSDictionary *) dictionary;
 @end

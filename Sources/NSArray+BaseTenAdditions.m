@@ -35,12 +35,12 @@
 @implementation NSArray (BaseTenAdditions)
 - (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
 											others: (NSMutableArray *) otherArray
-							 substitutionVariables: (NSMutableDictionary *) variables
+							 substitutionVariables: (NSDictionary *) variables
 {
     NSMutableArray* retval = [NSMutableArray arrayWithCapacity: [self count]];
     BXEnumerate (currentObject, e, [self objectEnumerator])
     {
-		if ([predicate BXEvaluateWithObject: currentObject substitutionVariables: [[variables mutableCopy] autorelease]])
+		if ([predicate BXEvaluateWithObject: currentObject substitutionVariables: variables])
             [retval addObject: currentObject];
         else
             [otherArray addObject: currentObject];

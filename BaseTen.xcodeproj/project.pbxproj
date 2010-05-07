@@ -194,10 +194,10 @@
 		5356277D0E6E7D1F002EA3FD /* BXPGInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = 530132E209D460230037C485 /* BXPGInterface.m */; };
 		535661D10F025DD800920008 /* NSURL+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CB0F025DD800920008 /* NSURL+BaseTenAdditions.m */; };
 		535661D20F025DD800920008 /* NSURL+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CC0F025DD800920008 /* NSURL+BaseTenAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		535661D30F025DD800920008 /* NSArray+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CD0F025DD800920008 /* NSArray+BaseTenAdditions.h */; };
+		535661D30F025DD800920008 /* NSArray+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661CD0F025DD800920008 /* NSArray+BaseTenAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535661D40F025DD800920008 /* NSArray+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CE0F025DD800920008 /* NSArray+BaseTenAdditions.m */; };
 		535661D50F025DD800920008 /* NSPredicate+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 535661CF0F025DD800920008 /* NSPredicate+BaseTenAdditions.m */; };
-		535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */; };
+		535661D60F025DD800920008 /* NSPredicate+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D00F025DD800920008 /* NSPredicate+BaseTenAdditions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535661D90F02603600920008 /* BXLocalizedString.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D70F02603600920008 /* BXLocalizedString.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535661DA0F02603600920008 /* BXSafetyMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 535661D80F02603600920008 /* BXSafetyMacros.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		535736C50F3283C200DB3D0B /* BXDatabaseObjectModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 535736C30F3283C200DB3D0B /* BXDatabaseObjectModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -541,8 +541,6 @@
 		539FB3F00F2BF20600717F71 /* PGTSMetadataStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB3EC0F2BF20600717F71 /* PGTSMetadataStorage.h */; };
 		539FB3F10F2BF20600717F71 /* PGTSMetadataContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 539FB3ED0F2BF20600717F71 /* PGTSMetadataContainer.h */; };
 		539FB3F20F2BF20600717F71 /* PGTSMetadataContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 539FB3EE0F2BF20600717F71 /* PGTSMetadataContainer.m */; };
-		53A59B250E34EB570026D7E1 /* BXWeakNotification.h in Headers */ = {isa = PBXBuildFile; fileRef = 53A59B230E34EB570026D7E1 /* BXWeakNotification.h */; };
-		53A59B260E34EB570026D7E1 /* BXWeakNotification.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A59B240E34EB570026D7E1 /* BXWeakNotification.m */; };
 		53AA8BF30E6B65B7007A64FC /* BXPGFunctionExpressionEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AA8BF10E6B65B7007A64FC /* BXPGFunctionExpressionEvaluator.h */; };
 		53AA8BF40E6B65B7007A64FC /* BXPGFunctionExpressionEvaluator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 53AA8BF20E6B65B7007A64FC /* BXPGFunctionExpressionEvaluator.mm */; };
 		53B143DE0E65A5D80043B75D /* BXPGRelationAliasMapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 53B143DC0E65A5D80043B75D /* BXPGRelationAliasMapper.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1847,7 +1845,6 @@
 				53877EEB0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.h in Headers */,
 				53D9DDED0E2B4F310009D370 /* BXPGEntityConverter.h in Headers */,
 				5395E7260E2F77DF006E8441 /* BXPGEntityImporter.h in Headers */,
-				53A59B250E34EB570026D7E1 /* BXWeakNotification.h in Headers */,
 				539ACEC80E3B3FF7006602B5 /* BXDelegateProxy.h in Headers */,
 				539ACFE20E3B44BB006602B5 /* BXDatabaseContextDelegateProtocol.h in Headers */,
 				539AD0270E3B4C3F006602B5 /* BXDatabaseContextDelegateDefaultImplementation.h in Headers */,
@@ -2507,7 +2504,6 @@
 				53877EEC0E2773E30097C35F /* NSRelationshipDescription+BXPGAdditions.m in Sources */,
 				53D9DDEC0E2B4F300009D370 /* BXPGEntityConverter.m in Sources */,
 				5395E7270E2F77DF006E8441 /* BXPGEntityImporter.m in Sources */,
-				53A59B260E34EB570026D7E1 /* BXWeakNotification.m in Sources */,
 				539ACEC90E3B3FF7006602B5 /* BXDelegateProxy.m in Sources */,
 				539AD0280E3B4C3F006602B5 /* BXDatabaseContextDelegateDefaultImplementation.m in Sources */,
 				53915F9F0E3FD22D0098B419 /* libpq_additions.c in Sources */,

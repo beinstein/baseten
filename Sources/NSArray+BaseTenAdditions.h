@@ -32,5 +32,5 @@
 @interface NSArray (BaseTenAdditions)
 - (NSMutableArray *) BXFilteredArrayUsingPredicate: (NSPredicate *) predicate 
 											others: (NSMutableArray *) otherArray
-							 substitutionVariables: (NSMutableDictionary *) variables;
+							 substitutionVariables: (NSDictionary *) variables;
 @end

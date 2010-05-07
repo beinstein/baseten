@@ -84,12 +84,12 @@ static NSString* kPGTSConnectionMonitorExitNotification = @"PGTSConnectionMonito
 
 - (void) monitorConnection: (PGTSConnection *) connection
 {
-	[NSException raise: NSInvalidArgumentException format: @"-[PGTSConnectionMonitor monitorConnection:] called!"];
+	[self doesNotRecognizeSelector: _cmd];
 }
 
 - (void) unmonitorConnection: (PGTSConnection *) connection
 {
-	[NSException raise: NSInvalidArgumentException format: @"-[PGTSConnectionMonitor unmonitorConnection:] called!"];
+	[self doesNotRecognizeSelector: _cmd];
 }
 @end
 

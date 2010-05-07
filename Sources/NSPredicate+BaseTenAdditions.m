@@ -36,14 +36,14 @@
 
 
 @implementation NSPredicate (BaseTenAdditions)
-- (BOOL) BXEvaluateWithObject: (id) object substitutionVariables: (NSMutableDictionary *) ctx
+- (BOOL) BXEvaluateWithObject: (id) object substitutionVariables: (NSDictionary *) ctx
 {
 	//10.5 and 10.4 have the same method but it's named differently.
 	BOOL retval = NO;
 	if ([self respondsToSelector: @selector (evaluateWithObject:substitutionVariables:)])
 		retval = [self evaluateWithObject: object substitutionVariables: ctx];
 	else
-		retval = [self evaluateWithObject: object variableBindings: ctx];
+		retval = [self evaluateWithObject: object variableBindings: [[ctx mutableCopy] autorelease]];
 	
 	return retval;
 }
