@@ -103,6 +103,8 @@ function build
 	exit_on_error
 	make -j "$my_availcpu" -C src/backend ../../src/include/utils/fmgroids.h
 	exit_on_error
+    make -j "$my_availcpu" -C src/port
+    exit_on_error
     
     for x in src/include src/interfaces/libpq src/bin/psql
     do
