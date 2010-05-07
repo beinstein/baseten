@@ -27,7 +27,7 @@
 //
 
 
-#import <RegexKit/pcre.h>
+#import "pcre.h"
 #import "PGTSDates.h"
 #import "PGTSConnection.h"
 #import "PGTSTypeDescription.h"

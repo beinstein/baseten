@@ -740,12 +740,12 @@
 			remoteGlobalIDString = 53BD79F70E092ABC009CAFE6;
 			remoteInfo = Documentation;
 		};
-		53F1C60F105C4DDD00A610A8 /* PBXContainerItemProxy */ = {
+		53C4E24D1194B2EE003FB842 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 53F1C5DF105C4BF200A610A8;
-			remoteInfo = "RegexKit-test";
+			remoteGlobalIDString = 53C4E2441194B2BE003FB842 /* PCRE */;
+			remoteInfo = PCRE;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1056,6 +1056,7 @@
 		53BFE53B0FAF2EFA0004533F /* BXError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXError.h; path = Sources/BXError.h; sourceTree = "<group>"; };
 		53BFE53C0FAF2EFA0004533F /* BXError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXError.m; path = Sources/BXError.m; sourceTree = "<group>"; };
 		53C4C3F31192EC10003FB842 /* BXCFHostCompatibility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXCFHostCompatibility.h; path = Sources/BXCFHostCompatibility.h; sourceTree = "<group>"; };
+		53C4E26B1194C757003FB842 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = "Contrib/RegexKit/RegexKit-patched-source/Source/Headers/RegexKit/pcre.h"; sourceTree = "<group>"; };
 		53C8CC63118F1B8800E7AF88 /* BXDatabaseObjectModelStoragePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectModelStoragePrivate.h; path = Sources/BXDatabaseObjectModelStoragePrivate.h; sourceTree = "<group>"; };
 		53C8CC64118F1B8800E7AF88 /* BXDatabaseObjectModelPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseObjectModelPrivate.h; path = Sources/BXDatabaseObjectModelPrivate.h; sourceTree = "<group>"; };
 		53CE79690E87F29C00D5A310 /* BXPGQueryHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGQueryHandler.h; path = Sources/BXPGQueryHandler.h; sourceTree = "<group>"; };
@@ -1140,10 +1141,11 @@
 		0867D69AFE84028FC02AAC07 /* External Frameworks and Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				53C4E26B1194C757003FB842 /* pcre.h */,
+				535B3E1D1038146500A5FB7E /* libpcre.a */,
 				53DBE8010B666C3B00C3D20A /* libcrypto.dylib */,
 				53DBE8120B666C7900C3D20A /* libssl.dylib */,
 				538679870DE31C1D000C9A78 /* libstdc++.6.dylib */,
-				535B3E1D1038146500A5FB7E /* libpcre.a */,
 				0867D69BFE84028FC02AAC07 /* Foundation.framework */,
 				5354F9400F00537200422613 /* AppKit.framework */,
 				D2F7E79907B2D74100F64583 /* CoreData.framework */,
@@ -2051,6 +2053,20 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXLegacyTarget section */
+		53C4E2441194B2BE003FB842 /* PCRE */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "-f \"$(SRCROOT)/Tools/pcre.mk\" $(ACTION)";
+			buildConfigurationList = 53C4E2451194B2BE003FB842 /* Build configuration list for PBXLegacyTarget "PCRE" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			buildWorkingDirectory = Contrib/RegexKit;
+			dependencies = (
+			);
+			name = PCRE;
+			passBuildSettingsInEnvironment = 1;
+			productName = "RegexKit-test";
+		};
 		53F1C5DF105C4BF200A610A8 /* RegexKit */ = {
 			isa = PBXLegacyTarget;
 			buildArgumentsString = "-f \"$(SRCROOT)/Tools/RegexKit.mk\" $(ACTION)";
@@ -2105,7 +2121,7 @@
 			);
 			dependencies = (
 				5362E8710E1CE4A9005C7654 /* PBXTargetDependency */,
-				53F1C610105C4DDD00A610A8 /* PBXTargetDependency */,
+				53C4E24E1194B2EE003FB842 /* PBXTargetDependency */,
 			);
 			name = "BaseTen Framework + GC";
 			productName = "BXDatabase Static";
@@ -2155,6 +2171,7 @@
 				5362E86C0E1CE46D005C7654 /* PostgreSQL-universal */,
 				537934A50E54B71B0006EC54 /* PostgreSQL-arm */,
 				53F1C5DF105C4BF200A610A8 /* RegexKit */,
+				53C4E2441194B2BE003FB842 /* PCRE */,
 			);
 		};
 /* End PBXProject section */
@@ -2633,10 +2650,10 @@
 			target = 53BD79F70E092ABC009CAFE6 /* Documentation */;
 			targetProxy = 53BD7A000E092BD5009CAFE6 /* PBXContainerItemProxy */;
 		};
-		53F1C610105C4DDD00A610A8 /* PBXTargetDependency */ = {
+		53C4E24E1194B2EE003FB842 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 53F1C5DF105C4BF200A610A8 /* RegexKit */;
-			targetProxy = 53F1C60F105C4DDD00A610A8 /* PBXContainerItemProxy */;
+			target = 53C4E2441194B2BE003FB842 /* PCRE */;
+			targetProxy = 53C4E24D1194B2EE003FB842 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -2827,6 +2844,27 @@
 			};
 			name = Release;
 		};
+		53C4E2461194B2BE003FB842 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Debug;
+		};
+		53C4E2471194B2BE003FB842 /* Coverage */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Coverage;
+		};
+		53C4E2481194B2BE003FB842 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = RegexKit;
+			};
+			name = Release;
+		};
 		53F1C5E0105C4BF200A610A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -3003,6 +3041,16 @@
 				53BD79F80E092ABD009CAFE6 /* Debug */,
 				98A6CD6E0F45C8600029B2C4 /* Coverage */,
 				53BD79F90E092ABD009CAFE6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53C4E2451194B2BE003FB842 /* Build configuration list for PBXLegacyTarget "PCRE" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53C4E2461194B2BE003FB842 /* Debug */,
+				53C4E2471194B2BE003FB842 /* Coverage */,
+				53C4E2481194B2BE003FB842 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
