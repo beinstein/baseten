@@ -237,7 +237,7 @@
 					@"b", @"2",
 					@"c", @"3",
 					nil];
-	NSDictionary *dict2 = (id) [[dict1 PGTSCollectD] uppercaseString];
+	NSDictionary *dict2 = (id) [[dict1 PGTSCollectDK] uppercaseString];
 	MKCAssertEqualObjects (dict2, ([NSDictionary dictionaryWithObjectsAndKeys:
 									@"A", @"a",
 									@"B", @"b",
