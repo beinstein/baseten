@@ -8,20 +8,17 @@ XCODEBUILD = xcodebuild
 BUILD_SETTINGS_DIR = RegexKit-patched-source/Source/Build/Xcode
 
 
-.PHONY: all build clean RegexKit-build RegexKit-clean RegexKit-xc
+.PHONY: all build clean RegexKit-xc
 
 
-build: RegexKit-build
+build: $(BUILD_DIR)/Release/$(RESULT)
 
 
-clean: RegexKit-clean
+clean: RegexKit-xc
 	$(RM) -rf RegexKit-patched-source
 
 
-RegexKit-build: RegexKit-patched-source RegexKit-xc
-
-
-RegexKit-clean: RegexKit-xc
+$(BUILD_DIR)/Release/$(RESULT): RegexKit-patched-source RegexKit-xc
 
 
 RegexKit-xc: RegexKit-patched-source
