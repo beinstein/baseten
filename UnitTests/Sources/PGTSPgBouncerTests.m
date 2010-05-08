@@ -58,7 +58,9 @@
 	strncpy(sessionid, PQgetvalue(res, 0, 0), sizeof(sessionid));
 	PQclear(res);
 	
-	MKCAssertTrue(strlen(sessionid) == 32);
+	STAssertTrue(strlen(sessionid) == 32, 
+				 @"Expected sessionID's length to be 32 bytes; got %s instead.",
+				 sessionid);
 	
 	/* Begin a transansaction and memorize its txid. */
 	res = PQexec(conn1, "BEGIN");

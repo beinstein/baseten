@@ -89,7 +89,7 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = 530A43530A5C0DC500A4722B /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 538F904E1194DF9E00FB956D /* OCMock */;
+			remoteGlobalIDString = 538F904E1194DF9E00FB956D;
 			remoteInfo = OCMock;
 		};
 		53A0DAD80F4B6DE500434E4E /* PBXContainerItemProxy */ = {
