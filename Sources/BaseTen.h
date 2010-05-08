@@ -816,6 +816,14 @@
  *
  * At the time the notifications are posted, database objects and self-updating collections will 
  * already have been updated.
+ *
+ *
+ * \section trigger_effects Effects of triggers
+ *
+ * When inserting, updating or deleting rows, BaseTen notices (and posts notifications of) changes 
+ * that occur as a result of database triggers or rules firing. The only requirement is that said 
+ * changes are to entities other than the one being changed by BaseTen; changes to the same entity 
+ * will be ignored.
  */
 
 /**
