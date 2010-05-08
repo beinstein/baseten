@@ -33,6 +33,8 @@
 #import <BaseTen/BXPGInterface.h>
 #import <BaseTen/BXPGQueryBuilder.h>
 #import <BaseTen/BXPredicateVisitor.h>
+#import <BaseTen/BXAttributeDescriptionPrivate.h>
+#import <OCMock/OCMock.h>
 
 
 @implementation BXPredicateTests
@@ -44,8 +46,13 @@
 	
 	BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
 	[ctx setDelegate: self];
+	
 	BXEntityDescription* entity = [ctx entityForTable: @"test" inSchema: @"public" error: NULL];
-	[mQueryBuilder addPrimaryRelationForEntity: entity];
+	OCMockObject *entityMock = [OCMockObject partialMockForObject: entity];
+	BXAttributeDescription *attr = [BXAttributeDescription attributeWithName: @"id" entity: (id) entityMock];
+	[[[entityMock stub] andReturn: [NSDictionary dictionaryWithObject: attr forKey: @"id"]] attributesByName];
+	  
+	[mQueryBuilder addPrimaryRelationForEntity: (id) entityMock];
 	
 	BXPGInterface* interface = (id)[ctx databaseInterface];
 	[interface prepareForConnecting];
@@ -205,18 +212,17 @@
 	MKCAssertEqualObjects (parameters, expected);
 }
 
-//We need a validated entity for this test.
-#if 0
 - (void) testAdditionWithKeyPath
 {
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"1 + id == 2"];
-	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate entity: nil connection: mConnection].p_where_clause;
-	MKCAssertEqualObjects (whereClause, @"$1 = ($2 + $3)");
+	NSString* whereClause = [mQueryBuilder whereClauseForPredicate: predicate 
+															entity: [[mQueryBuilder primaryRelation] entity] 
+														connection: mConnection].p_where_clause;
+	MKCAssertEqualObjects (whereClause, @"$1 = ($2 + te1.\"id\")");
 	NSArray* parameters = [mQueryBuilder parameters];
-	NSArray* expected = [NSArray arrayWithObjects: [NSNumber numberWithInt: 3], [NSNumber numberWithInt: 1], [NSNumber numberWithInt: 2], nil];
+	NSArray* expected = [NSArray arrayWithObjects: [NSNumber numberWithInteger: 2], [NSNumber numberWithInteger: 1], nil];
 	MKCAssertEqualObjects (parameters, expected);	
 }
-#endif
 
 - (void) testDiacriticInsensitivity
 {

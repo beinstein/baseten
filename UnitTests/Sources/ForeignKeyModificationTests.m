@@ -262,16 +262,9 @@
 
 - (void) testModOTM
 {
+	//This doesn't work for views (mTest1v, mTest2v) because we don't provide values for the primary key.
     [self modOne: mTest1 toMany: mTest2];
 }
-
-//FIXME: this doesn't work for views because we don't provide values for the primary key.
-#if 0
-- (void) testModOTMView
-{
-    [self modOne: test1v toMany: test2v];
-}
-#endif
 
 - (void) testModOTM2
 {

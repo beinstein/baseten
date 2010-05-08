@@ -223,36 +223,6 @@
 	MKCAssertEqualObjects ([[res objectAtIndex: 0] valueForKey: @"name"], @"nzhuk");
 }
 
-#if 0
-- (void) testJoin2
-{
-	NSError* error = nil;	
-	[mContext connectIfNeeded: &error];
-	STAssertNil (error, [error description]);
-	
-	BXEntityDescription* order = [mContext entityForTable: @"order" error: &error];
-	STAssertNil (error, [error description]);
-	BXEntityDescription* supplier = [mContext entityForTable: @"supplier" error: &error];
-	STAssertNil (error, [error description]);
-	
-	BXPropertyDescription* supplierName = [[supplier attributesByName] objectForKey: @"supplier_name"];
-	BXPropertyDescription* poNumber = [[order attributesByName] objectForKey: @"po_number"];
-	BXPropertyDescription* supplierId = [[supplier attributesByName] objectForKey: @"supplier_id"];
-	BXPropertyDescription* orderSupplierId = [[order attributesByName] objectForKey: @"supplier_id"];
-	MKCAssertNotNil (supplierName);
-	MKCAssertNotNil (poNumber);
-	MKCAssertNotNil (supplierId);
-	MKCAssertNotNil (orderSupplierId);
-	
-    NSPredicate* predicate = [NSPredicate predicateWithFormat: 
-        @"%@ == %@ AND ((NOT %@ MATCHES[c] \"test\") OR %@ MATCHES[c] \"ferg\")", 
-		supplierId, orderSupplierId, poNumber, supplierName];
-    
-	NSArray* res = [mContext executeFetchForEntity: order withPredicate: predicate error: &error];
-	res = nil;
-}
-#endif
-
 - (void) testFault
 {
 	NSError* error = nil;

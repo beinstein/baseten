@@ -107,7 +107,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [PGTSHOMTests class]];
+	testClasses = [NSArray arrayWithObject: [BXPredicateTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
