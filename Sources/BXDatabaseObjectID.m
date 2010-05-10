@@ -26,6 +26,7 @@
 // $Id$
 //
 
+#import "BXDatabaseObjectModel.h"
 #import "BXDatabaseObjectID.h"
 #import "BXDatabaseObjectIDPrivate.h"
 #import "BXEntityDescription.h"
@@ -38,6 +39,7 @@
 #import "BXLogger.h"
 #import "BXEnumerate.h"
 #import "BXURLEncoding.h"
+#import "BXException.h"
 #import "NSURL+BaseTenAdditions.h"
 
 
@@ -188,7 +190,7 @@ bail:
  * \brief Create an object identifier from an NSURL.
  * \note This is not the designated initializer.
  */
-- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error
+- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context
 {
     NSString* entityName = nil;
     NSString* schemaName = nil;
@@ -197,11 +199,23 @@ bail:
     if ([[self class] parseURI: anURI entity: &entityName
                         schema: &schemaName primaryKeyFields: &pkeyDict])
     {
-        BXEntityDescription* entity = [context entityForTable: entityName inSchema: schemaName error: error];
+		BXEntityDescription *entity = [[context databaseObjectModel] entityForTable: entityName inSchema: schemaName];
+		if (! entity)
+		{
+			NSError *error = [BXDatabaseObjectModel errorForMissingEntity: entityName inSchema: schemaName];
+			@throw [error BXExceptionWithName: NSInvalidArgumentException];
+		}
+		
         [[self class] verifyPkey: pkeyDict entity: entity];
         self = [self initWithEntity: entity objectURI: anURI];
     }
     return self;
+}
+
+- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error
+{
+	BXDeprecationLog ();
+	return [self initWithURI: anURI context: context];
 }
 
 - (NSString *) description

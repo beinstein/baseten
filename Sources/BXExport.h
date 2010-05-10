@@ -44,3 +44,6 @@
 #define BX_EXPORT extern
 #endif
 #endif
+
+
+#define BX_DEPRECATED DEPRECATED_ATTRIBUTE

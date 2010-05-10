@@ -78,8 +78,8 @@ static BOOL gHaveAppKitFramework = NO;
 
 #define BXHandleError( ERROR, LOCAL_ERROR ) BXHandleError2( self, mDelegateProxy, ERROR, LOCAL_ERROR )
 
-static void
-BXHandleError2 (id ctx, id <BXDatabaseContextDelegate> delegateProxy, NSError **error, NSError *localError)
+void
+BXHandleError2 (BXDatabaseContext *ctx, id <BXDatabaseContextDelegate> delegateProxy, NSError **error, NSError *localError)
 {
     if (nil != localError)
     {
@@ -2127,27 +2127,11 @@ ModTypeToObject (enum BXModificationType value)
  */
 - (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName error: (NSError **) outError
 {
-	NSError* localError = nil;
+	BXDeprecationLog ();
 	if (! schemaName) schemaName = @"public";
-	id retval = [mObjectModel entityForTable: name inSchema: schemaName error: &localError];
-	
-	//FIXME: should this be here or in the object model?
-	if (! retval && ! localError)
-	{
-		NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
-		NSString* errorFormat = BXLocalizedString (@"relationNotFound", @"Relation %@ was not found in schema %@.", @"Error message for getting or using an entity description.");
-		NSString* reason = [NSString stringWithFormat: errorFormat, name, schemaName];
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								  title, NSLocalizedDescriptionKey,
-								  title, NSLocalizedFailureReasonErrorKey, 
-								  reason, NSLocalizedRecoverySuggestionErrorKey, 
-								  self, kBXDatabaseContextKey,
-								  nil];
-		localError = [BXError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
-	}
-	
-	BXHandleError (outError, localError);
-	
+	id retval = [mObjectModel entityForTable: name inSchema: schemaName];
+	if (! retval)
+		BXHandleError (outError, [BXDatabaseObjectModel errorForMissingEntity: name inSchema: schemaName]);
 	return retval;
 }
 
@@ -2158,7 +2142,8 @@ ModTypeToObject (enum BXModificationType value)
  */
 - (BXEntityDescription *) entityForTable: (NSString *) name error: (NSError **) outError
 {
-	return [self entityForTable: name inSchema: nil error: outError];
+	BXDeprecationLog ();
+	return [mObjectModel entityForTable: name inSchema: @"public"];
 }
 
 /**
@@ -2173,6 +2158,7 @@ ModTypeToObject (enum BXModificationType value)
  */
 - (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) outError
 {
+	BXDeprecationLog ();
 	NSError* localError = nil;
 	NSDictionary* retval = [mObjectModel entitiesBySchemaAndName: mDatabaseInterface reload: reload error: &localError];
 	[mObjectModel setCanCreateEntityDescriptions: NO];
@@ -2181,19 +2167,24 @@ ModTypeToObject (enum BXModificationType value)
 }
 //@}
 
+
 - (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName error: (NSError **) error
 {
-	return ([self matchingEntity: entity inSchema: schemaName error: error] ? YES : NO);
+	BXDeprecationLog ();
+	return [mObjectModel entity: entity existsInSchema: schemaName];
 }
+
 
 - (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName error: (NSError **) error
 {
-	NSDictionary* entities = [self entitiesBySchemaAndName: NO error: error];
-	return [[entities objectForKey: schemaName] objectForKey: [entity name]];
+	BXDeprecationLog ();
+	return [mObjectModel entityForTable: [entity name] inSchema: schemaName];
 }
+
 
 - (BOOL) canGiveEntities
 {
+	BXDeprecationLog ();
 	NSError* localError = nil;
 	return ([self checkDatabaseURI: &localError] && [mDatabaseURI host] && [mDatabaseURI path]);
 }
@@ -2841,6 +2832,12 @@ bail:
 			[nc postNotificationName: kBXUpdateNotification object: entity userInfo: userInfo];
 		}
 	}
+}
+
+
+- (void) handleError: (NSError *) error outError: (NSError **) outError
+{
+	BXHandleError (outError, error);
 }
 @end
 

@@ -27,6 +27,7 @@
 //
 
 #import <BaseTen/BXDatabaseObjectModel.h>
+@protocol BXInterface;
 
 
 @interface BXDatabaseObjectModel (PrivateMethods)

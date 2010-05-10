@@ -26,6 +26,7 @@
 // $Id$
 //
 
+#import "BXDatabaseContextPrivate.h"
 #import "BXDatabaseObjectModel.h"
 #import "BXDatabaseObjectModelStorage.h"
 #import "BXDatabaseObjectModelStoragePrivate.h"
@@ -33,6 +34,8 @@
 #import "BXEntityDescriptionPrivate.h"
 #import "BXInterface.h"
 #import "BXLogger.h"
+#import "BXLocalizedString.h"
+#import "BXError.h"
 
 
 /** 
@@ -58,12 +61,39 @@
 }
 
 
++ (NSError *) errorForMissingEntity: (NSString *) name inSchema: (NSString *) schemaName
+{
+	NSString* title = BXLocalizedString (@"databaseError", @"Database error", @"Title for a sheet");
+	NSString* errorFormat = BXLocalizedString (@"relationNotFound", @"Relation %@ was not found in schema %@.", @"Error message for getting or using an entity description.");
+	NSString* reason = [NSString stringWithFormat: errorFormat, name, schemaName];
+	NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+							  title, NSLocalizedDescriptionKey,
+							  title, NSLocalizedFailureReasonErrorKey, 
+							  reason, NSLocalizedRecoverySuggestionErrorKey, 
+							  self, kBXDatabaseContextKey,
+							  nil];
+	NSError *retval = [BXError errorWithDomain: kBXErrorDomain code: kBXErrorNoTableForEntity userInfo: userInfo];
+	return retval;
+}
+
+
+- (BOOL) canCreateEntityDescriptions
+{
+	BOOL retval = NO;
+	@synchronized (mEntitiesBySchemaAndName)
+	{
+		retval = mCanCreateEntities;
+	}
+	return retval;
+}
+
+
 /** 
  * \brief Entity for a table in the schema \em public
  */
-- (BXEntityDescription *) entityForTable: (NSString *) name error: (NSError **) outError
+- (BXEntityDescription *) entityForTable: (NSString *) name
 {
-	return [self entityForTable: name inSchema: @"public" error: outError];
+	return [self entityForTable: name inSchema: @"public"];
 }
 
 
@@ -72,7 +102,7 @@
  * \note Unlike PostgreSQL, leaving \em schemaName unspecified does not cause the search path to be used but 
  *       instead will search the \em public schema.
  */
-- (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName error: (NSError **) outError
+- (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName
 {
 	NSMutableDictionary* schemaDict = nil;
 	BXEntityDescription* retval = nil;
@@ -111,7 +141,7 @@
  * \param outError If an error occurs, this pointer is set to an NSError instance. May be NULL.
  * \return An NSArray containing BXEntityDescriptions.
  */
-- (NSArray *) entities: (NSError **) outError
+- (NSArray *) entities
 {
 	NSMutableArray* retval = [NSMutableArray array];
 	NSDictionary* schemas = nil;
@@ -142,24 +172,28 @@
  *         Each of them will have NSStrings corresponding to relation names as keys and BXEntityDescriptions
  *         as objects.
  */
-- (NSDictionary *) entitiesBySchemaAndName: (id <BXInterface>) interface reload: (BOOL) shouldReload error: (NSError **) outError
+- (NSDictionary *) entitiesBySchemaAndName: (BXDatabaseContext *) context reload: (BOOL) shouldReload error: (NSError **) outError
 {
 	id retval = nil;
+	NSError *localError = nil;
 	if (shouldReload)
 	{
+		id <BXInterface> interface = [context databaseInterface];
 		[interface reloadDatabaseMetadata];
 		@synchronized (mEntitiesBySchemaAndName)
 		{			
 			mCanCreateEntities = YES;
 			[interface prepareForEntityValidation];
-			NSArray* entities = [self entities: outError];
+			NSArray* entities = [self entities];
 			if (entities)
 			{
 				BXEnumerate (currentEntity, e, [entities objectEnumerator])
 					[currentEntity removeValidation];
 				
-				if ([interface validateEntities: entities error: outError])
+				if ([interface validateEntities: entities error: &localError])
 					retval = [[mEntitiesBySchemaAndName copy] autorelease];
+				else
+					[context handleError: localError outError: outError];
 			}
 		}
 	}
@@ -170,6 +204,19 @@
 			retval = [[mEntitiesBySchemaAndName copy] autorelease];
 		}
 	}
+	return retval;
+}
+
+
+- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName
+{
+	return ([self matchingEntity: entity inSchema: schemaName] ? YES : NO);
+}
+
+
+- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName
+{
+	BXEntityDescription *retval = [self entityForTable: [entity name] inSchema: schemaName];
 	return retval;
 }
 @end
@@ -197,7 +244,7 @@
 	BOOL retval = NO;
 	[interface prepareForEntityValidation];
 	
-	NSArray* entities = [self entities: outError];
+	NSArray* entities = [self entities];
 	if (entities)
 		retval = [interface validateEntities: entities error: outError];
 	return retval;

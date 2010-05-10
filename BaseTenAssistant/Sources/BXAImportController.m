@@ -93,7 +93,7 @@ conflictingEntities = mConflictingEntities;
 	
 	for (NSEntityDescription* entity in [mEntities arrangedObjects])
 	{
-		BXEntityDescription* bxEntity = [mContext matchingEntity: entity inSchema: schemaName error: NULL];
+		BXEntityDescription* bxEntity = [[mContext databaseObjectModel] matchingEntity: entity inSchema: schemaName];
 		if (bxEntity)
 		{
 			if (! conflictingEntities)

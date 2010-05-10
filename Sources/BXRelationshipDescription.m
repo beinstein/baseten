@@ -41,7 +41,6 @@
 #import "BXProbes.h"
 #import "BXAttributeDescriptionPrivate.h"
 #import "BXEnumerate.h"
-#import "BXDeprecationWarning.h"
 
 
 /**
@@ -365,7 +364,11 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
     BXAssertValueReturn ([[self entity] isEqual: [databaseObject entity]], nil, 
 						 @"Expected object's entity to match. Self: %@ aDatabaseObject: %@", self, databaseObject);
 	
-	if (mIsDeprecated) BXDeprecationWarning ();
+	if (mIsDeprecated) 
+	{
+		BXDeprecationLogSpecific (@"The relationship name %@ in %@.%@ has been deprecated.",
+								  mName, [mEntity schemaName], [mEntity name]);
+	}
 	
 	id retval = nil;
 	//If we can determine an object ID, fetch the target object from the context's cache.
@@ -405,7 +408,11 @@ AddRelToAttribute (NSString* srcKey, NSString* dstKey, void* context)
 	ExpectR (databaseObject, NO);
 	ExpectR ([[self entity] isEqual: [databaseObject entity]], NO);
 	
-	if (mIsDeprecated) BXDeprecationWarning ();
+	if (mIsDeprecated) 
+	{
+		BXDeprecationLogSpecific (@"The relationship name %@ in %@.%@ has been deprecated.",
+								  mName, [mEntity schemaName], [mEntity name]);
+	}
 	
 	BOOL retval = NO;
 	BXRelationshipDescription* inverse = [self inverseRelationship];

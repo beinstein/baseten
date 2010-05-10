@@ -121,7 +121,7 @@ bx_error_during_clear_notification (id self, NSError* error)
 			//Get the entity.
 			NSString* tableName = [table name];
 			NSString* schemaName = [table schemaName];
-			BXEntityDescription* entity = [ctx entityForTable: tableName inSchema: schemaName error: &error];
+			BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: tableName inSchema: schemaName];
 			if (! entity) goto error;
 			
 			while ([unlockedRows advanceRow])

@@ -36,7 +36,6 @@
 #import "BXLogger.h"
 #import "BXDatabaseObjectPrivate.h"
 #import "BXEnumerate.h"
-#import "BXDeprecationWarning.h"
 
 
 @implementation BXManyToManyRelationshipDescription

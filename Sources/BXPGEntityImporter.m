@@ -231,7 +231,7 @@
 								 inSchema: (NSString *) schemaName
 									error: (NSError **) outError
 {
-	return [mContext matchingEntity: importedEntity inSchema: schemaName error: outError];
+	return [[mContext databaseObjectModel] matchingEntity: importedEntity inSchema: schemaName];
 }
 
 

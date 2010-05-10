@@ -59,7 +59,7 @@
 	NSXMLElement* root = [NSXMLElement elementWithName: @"objectModel"];
 	NSXMLDocument* retval = [NSXMLDocument documentWithRootElement: root];
 	
-	NSArray* entities = [objectModel entities: outError];
+	NSArray* entities = [objectModel entities];
 	BXEnumerate (currentEntity, e, [entities objectEnumerator])
 	{
 		NSXMLElement* entity = [NSXMLElement elementWithName: @"entity"];

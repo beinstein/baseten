@@ -84,6 +84,7 @@ struct update_kvo_ctx
 - (struct update_kvo_ctx) handleWillChangeForUpdate: (NSArray *) objects newValues: (NSDictionary *) newValues;
 - (void) handleDidChangeForUpdate: (struct update_kvo_ctx *) ctx newValues: (NSDictionary *) newValues 
 				sendNotifications: (BOOL) shouldSend targetEntity: (BXEntityDescription *) entity;
+- (void) handleError: (NSError *) error outError: (NSError **) outError;
 @end
 
 

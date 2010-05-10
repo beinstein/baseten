@@ -38,11 +38,11 @@
 
 
 @implementation NSError (BXDatabaseAdditions)
-- (NSException *) BXExceptionWithName: (NSString *) aName
+- (NSException *) BXExceptionWithName: (NSString *) name
 {
     NSMutableDictionary* userInfo = [NSMutableDictionary dictionaryWithDictionary: [self userInfo]];
     [userInfo setObject: self forKey: kBXErrorKey];
-    return [BXException exceptionWithName: kBXExceptionUnhandledError 
+    return [BXException exceptionWithName: name 
 								   reason: [self localizedFailureReason]
 								 userInfo: userInfo];
 }

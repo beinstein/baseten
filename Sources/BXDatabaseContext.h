@@ -182,14 +182,16 @@
 
 
 @interface BXDatabaseContext (HelperMethods)
-- (BOOL) canGiveEntities;
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity error: (NSError **) error;
 - (NSArray *) objectIDsForEntity: (BXEntityDescription *) anEntity predicate: (NSPredicate *) predicate error: (NSError **) error;
-- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error;
-- (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error;
-- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error;
-- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName error: (NSError **) error;
-- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName error: (NSError **) error;
+
+- (BOOL) canGiveEntities BX_DEPRECATED;
+- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) error BX_DEPRECATED;
+- (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) error BX_DEPRECATED;
+- (NSDictionary *) entitiesBySchemaAndName: (BOOL) reload error: (NSError **) error BX_DEPRECATED;
+
+- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName error: (NSError **) error BX_DEPRECATED;
+- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName error: (NSError **) error BX_DEPRECATED;
 @end
 
 

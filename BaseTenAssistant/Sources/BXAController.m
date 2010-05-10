@@ -510,7 +510,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[connection executeQuery: @"DROP TABLE IF EXISTS baseten_view_pkey"];
 	[connection executeQuery: @"DROP TABLE IF EXISTS baseten_enabled_oids"];
 	
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
+	NSDictionary *entities = [[mContext databaseObjectModel] entitiesBySchemaAndName: mContext reload: YES error: NULL];
 	[mEntitiesBySchema setContent: entities];
 }
 
@@ -754,7 +754,7 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 	[self hideProgressPanel];
 	//End patch
 
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: NULL];
+	NSDictionary *entities = [[mContext databaseObjectModel] entitiesBySchemaAndName: mContext reload: YES error: NULL];
 	[mEntitiesBySchema setContent: entities];
 	
 	BXPGInterface* interface = (id) [mContext databaseInterface];
@@ -1474,7 +1474,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	
 	NSModalSession session = [NSApp beginModalSessionForWindow: mMainWindow];
 	
-	NSDictionary* entities = [mContext entitiesBySchemaAndName: YES error: &error];
+	NSDictionary *entities = [[mContext databaseObjectModel] entitiesBySchemaAndName: mContext reload: YES error: NULL];
 	[self setProgressMin: 1.0 max: 1.0];
 	
 	[NSApp endModalSession: session];

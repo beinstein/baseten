@@ -179,18 +179,19 @@
 {
 	BXAssertVoidReturn (databaseContext, @"Expected databaseContext not to be nil. Was it set or bound in Interface Builder?");
 	
-	NSError* error = nil;
 	[self setEntityDescription: nil];
-	BXEntityDescription* entityDescription = [databaseContext entityForTable: [self tableName]
-																	inSchema: [self schemaName]
-																	   error: &error];
-	if (nil != error)
-		[self BXHandleError: error];
-	else
+	BXDatabaseObjectModel *objectModel = [databaseContext databaseObjectModel];
+	BXEntityDescription* entityDescription = [objectModel entityForTable: [self tableName] inSchema: [self schemaName]];
+
+	if (entityDescription)
 	{
 		[entityDescription setDatabaseObjectClass: NSClassFromString ([self databaseObjectClassName])];                
 		[self setEntityDescription: entityDescription];
-	}	
+	}
+	else
+	{
+		[self BXHandleError: [BXDatabaseObjectModel errorForMissingEntity: [self tableName] inSchema: [self schemaName]]];
+	}
 }
 
 /**

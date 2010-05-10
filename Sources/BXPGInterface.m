@@ -891,11 +891,12 @@ error:
 {
 	//Warm-up the cache by ensuring that an entity exists for each table.
 	BXDatabaseObjectModel* objectModel = [mContext databaseObjectModel];
+	ExpectV ([objectModel canCreateEntityDescriptions]);
 	BXEnumerate (schema, e, [[[mTransactionHandler databaseDescription] schemasByName] objectEnumerator])
 	{
 		BXEnumerate (table, e, [[schema allTables] objectEnumerator])
 		{
-			[objectModel entityForTable: [table name] inSchema: [table schemaName] error: NULL];
+			[objectModel entityForTable: [table name] inSchema: [table schemaName]];
 		}
 	}
 }
@@ -968,7 +969,7 @@ static void TableInheritanceCallback (Oid currentOid, void* ctxPointer)
 {
 	struct table_inheritance_st* ctx = (struct table_inheritance_st *) ctxPointer;
 	BXPGTableDescription* table = [ctx->ti_database_description tableWithOid: currentOid];
-	BXEntityDescription* entity = [ctx->ti_object_model entityForTable: [table name] inSchema: [table schemaName] error: NULL];
+	BXEntityDescription* entity = [ctx->ti_object_model entityForTable: [table name] inSchema: [table schemaName]];
 	[ctx->ti_super_entities addObject: entity];
 }
 
@@ -1088,7 +1089,7 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 					NSString* name = [currentRel objectForKey: @"name"];
 					NSString* dstrelname = [currentRel objectForKey: @"dstrelname"];
 					NSString* dstnspname = [currentRel objectForKey: @"dstnspname"];
-					BXEntityDescription* dstEntity = [objectModel entityForTable: dstrelname inSchema: dstnspname error: NULL];
+					BXEntityDescription* dstEntity = [objectModel entityForTable: dstrelname inSchema: dstnspname];
 					switch (kind)
 					{
 						case 't':
@@ -1143,7 +1144,7 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 						
 						NSString* helperrelname = [currentRel objectForKey: @"helperrelname"];
 						NSString* helpernspname = [currentRel objectForKey: @"helpernspname"];
-						BXEntityDescription* helper = [objectModel entityForTable: helperrelname inSchema: helpernspname error: NULL];
+						BXEntityDescription* helper = [objectModel entityForTable: helperrelname inSchema: helpernspname];
 						
 						//The helper entity may get changed by trigger if rows are deleted from source
 						//and destination entities.

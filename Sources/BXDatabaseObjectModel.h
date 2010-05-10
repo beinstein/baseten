@@ -28,9 +28,10 @@
 
 #import <Foundation/Foundation.h>
 
-@class BXEntityDescription;
 @class BXDatabaseObjectModelStorage;
-@protocol BXInterface;
+@class BXDatabaseContext;
+@class BXEntityDescription;
+@class NSEntityDescription;
 
 
 @interface BXDatabaseObjectModel : NSObject 
@@ -40,8 +41,15 @@
 	NSMutableDictionary* mEntitiesBySchemaAndName;
 	BOOL mCanCreateEntities;
 }
-- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName error: (NSError **) outError;
-- (BXEntityDescription *) entityForTable: (NSString *) tableName error: (NSError **) outError;
-- (NSArray *) entities: (NSError **) outError;
-- (NSDictionary *) entitiesBySchemaAndName: (id <BXInterface>) interface reload: (BOOL) shouldReload error: (NSError **) outError;
++ (NSError *) errorForMissingEntity: (NSString *) name inSchema: (NSString *) schemaName;
+
+- (BOOL) canCreateEntityDescriptions;
+
+- (NSArray *) entities;
+- (BXEntityDescription *) entityForTable: (NSString *) tableName;
+- (BXEntityDescription *) entityForTable: (NSString *) tableName inSchema: (NSString *) schemaName;
+- (NSDictionary *) entitiesBySchemaAndName: (BXDatabaseContext *) context reload: (BOOL) shouldReload error: (NSError **) outError;
+
+- (BOOL) entity: (NSEntityDescription *) entity existsInSchema: (NSString *) schemaName;
+- (BXEntityDescription *) matchingEntity: (NSEntityDescription *) entity inSchema: (NSString *) schemaName;
 @end

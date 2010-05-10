@@ -2,7 +2,7 @@
 // BXLogger.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -49,15 +49,23 @@
 #define BXLogFatal(message, ...)   do { if (BXLogLevel >= kBXLogLevelFatal)   BXLog (BX_LOG_ARGS, kBXLogLevelFatal,   message , ##__VA_ARGS__); } while (0)
 
 #define BXAssertLog(assertion, message, ...) \
-	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); }} while (0)
+	do { if (! (assertion)) { BXLogError (message , ##__VA_ARGS__); BXAssertionDebug (); }} while (0)
 #define BXAssertVoidReturn(assertion, message, ...) \
-	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return; }} while (0)
+	do { if (! (assertion)) { BXLogError (message , ##__VA_ARGS__); BXAssertionDebug (); return; }} while (0)
 #define BXAssertValueReturn(assertion, retval, message, ...) \
-	do { if (! (assertion)) { BXLog (BX_LOG_ARGS, kBXLogLevelError, message , ##__VA_ARGS__); BXAssertionDebug (); return (retval); }} while (0)
+	do { if (! (assertion)) { BXLogError (message , ##__VA_ARGS__); BXAssertionDebug (); return (retval); }} while (0)
+
+#define BXDeprecationLogSpecific(...) \
+	do { BXLogWarning (__VA_ARGS__); BXDeprecationWarning (); } while (0)
+#define BXDeprecationLog() BXDeprecationLogSpecific(@"This method or function has been deprecated.");
+
+
 //C function variants.
-#define BXCAssertLog(...) BXCAssertLog(__VA_ARGS__)
+#define BXCAssertLog(...) BXAssertLog(__VA_ARGS__)
 #define BXCAssertValueReturn(...) BXAssertValueReturn(__VA_ARGS__)
 #define BXCAssertVoidReturn(...) BXAssertVoidReturn(__VA_ARGS__)
+#define BXCDeprecationLogSpecific(...) BXDeprecationLogSpecific(__VA_ARGS__)
+#define BXCDeprecationLog() BXDeprecationLog()
 
 
 #define Expect( X )	BXAssertValueReturn( X, nil, @"Expected " #X " to evaluate to true.");
@@ -96,8 +104,7 @@ BX_EXPORT enum BXLogLevel BXLogLevel;
  * \warning This function is not thread-safe.
  */
 BX_EXPORT void BXSetLogLevel (enum BXLogLevel level);
-BX_EXPORT void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...);
-BX_EXPORT void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args);
+
 
 /**
  * \brief A debugging helper.
@@ -107,3 +114,17 @@ BX_EXPORT void BXLog_v (const char* fileName, const char* functionName, void* fu
  * user code.
  */
 BX_EXPORT void BXAssertionDebug ();
+
+
+/**
+ * \brief A debugging helper.
+ *
+ * This function provides a convenient breakpoint. It will be called when
+ * deprecated functionality is invoked, presently when relationships with
+ * deprecated names are used.
+ */
+BX_EXPORT void BXDeprecationWarning ();
+
+
+BX_EXPORT void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...);
+BX_EXPORT void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args);

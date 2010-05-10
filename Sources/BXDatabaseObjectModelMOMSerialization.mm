@@ -175,7 +175,7 @@ static NSInteger CompareAttrIndices (id lhs, id rhs, void* ctx)
 	const BOOL excludeFkeyAttrs           = options & kBXDatabaseObjectModelSerializationOptionExcludeForeignKeyAttributes;
 	const BOOL relationshipsAsOptional    = options & kBXDatabaseObjectModelSerializationOptionCreateRelationshipsAsOptional;
 	
-	NSArray* bxEntities = [objectModel entities: outError];
+	NSArray* bxEntities = [objectModel entities];
 	NSMutableArray* entities = [NSMutableArray arrayWithCapacity: [bxEntities count]];
 	NSMutableSet* entityNames = [NSMutableSet setWithCapacity: [bxEntities count]];
 	NSMutableDictionary* entitiesBySchema = [NSMutableDictionary dictionary];

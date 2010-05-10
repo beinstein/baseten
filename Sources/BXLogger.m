@@ -102,7 +102,13 @@ static char* CopyExecutableName ()
 
 void BXAssertionDebug ()
 {
-	BXLogInfo (@"Break on BXAssertionDebug to inspect.");
+	BXLogError (@"Break on BXAssertionDebug to inspect.");
+}
+
+void
+BXDeprecationWarning ()
+{
+	BXLogError (@"Break on BXDeprecationWarning to inspect.");
 }
 
 void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...)
