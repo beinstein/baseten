@@ -109,7 +109,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	testClasses = [NSArray arrayWithObject: [BXArbitrarySQLTests class]];
+	//testClasses = [NSArray arrayWithObject: [BXArbitrarySQLTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
