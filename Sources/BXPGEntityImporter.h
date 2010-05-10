@@ -2,7 +2,7 @@
 // BXPGEntityImporter.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -27,8 +27,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <BaseTen/BXPGEntityConverter.h>
 @class BXDatabaseContext;
-@class BXPGEntityConverter;
 @class BXPGEntityImporter;
 
 
@@ -58,4 +58,8 @@
 - (void) importEntities;
 - (BOOL) enableEntities: (NSError **) outError;
 - (BOOL) disableEntities: (NSArray *) entities error: (NSError **) outError;
+@end
+
+
+@interface BXPGEntityImporter (BXPGEntityConverterDelegate) <BXPGEntityConverterDelegate>
 @end

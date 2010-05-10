@@ -2,7 +2,7 @@
 // BXPGEntityImporter.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -34,6 +34,7 @@
 #import "BXPGEntityConverter.h"
 #import "PGTSResultSet.h"
 #import "PGTSHOM.h"
+#import "PGTSDatabaseDescription.h"
 
 
 @implementation BXPGEntityImporter
@@ -61,8 +62,10 @@
 {
 	if (mEntityConverter != aConverter)
 	{
+		[mEntityConverter setDelegate: nil];
 		[mEntityConverter release];
 		mEntityConverter = [aConverter retain];
+		[mEntityConverter setDelegate: self];
 	}
 }
 
@@ -123,11 +126,15 @@
 		[self setSchemaName: @"public"];
 
 	if (! mEntityConverter)
+	{
 		mEntityConverter = [[BXPGEntityConverter alloc] init];
+		[mEntityConverter setDelegate: self];
+	}
 	
 	NSArray* enabledRelations = nil;
-	NSArray* statements = [mEntityConverter statementsForEntities: mEntities schemaName: mSchemaName
-														  context: mContext enabledRelations: &enabledRelations
+	NSArray* statements = [mEntityConverter statementsForEntities: mEntities 
+													   schemaName: mSchemaName
+												 enabledRelations: &enabledRelations
 														   errors: outErrors];
 	[self setStatements: statements];
 	[self setEnabledRelations: enabledRelations];
@@ -213,5 +220,33 @@
 		}
 	}
 	return retval;
+}
+@end
+
+
+
+@implementation BXPGEntityImporter (BXPGEntityConverterDelegate)
+- (BXEntityDescription *) entityConverter: (BXPGEntityConverter *) converter 
+ shouldAddDropStatementFromEntityMatching: (NSEntityDescription *) importedEntity
+								 inSchema: (NSString *) schemaName
+									error: (NSError **) outError
+{
+	return [mContext matchingEntity: importedEntity inSchema: schemaName error: outError];
+}
+
+
+- (BOOL) entityConverter: (BXPGEntityConverter *) converter shouldCreateSchema: (NSString *) schemaName
+{
+	ExpectR (mContext, NO);
+	PGTSConnection* connection = [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
+	PGTSDatabaseDescription* database = [connection databaseDescription];
+	return ([database schemaNamed: schemaName] ? NO : YES);
+}
+
+
+- (PGTSConnection *) connectionForEntityConverter: (BXPGEntityConverter *) converter
+{
+	Expect (mContext);
+	return [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
 }
 @end

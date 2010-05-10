@@ -2,7 +2,7 @@
 // BXPGEntityConverter.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -28,15 +28,30 @@
 
 #import <Foundation/Foundation.h>
 
-@class BXDatabaseContext;
+@class BXPGEntityConverter;
+@class BXEntityDescription;
+@class NSEntityDescription;
+@class PGTSConnection;
+
+
+@protocol BXPGEntityConverterDelegate <NSObject>
+- (BXEntityDescription *) entityConverter: (BXPGEntityConverter *) converter 
+ shouldAddDropStatementFromEntityMatching: (NSEntityDescription *) importedEntity
+								 inSchema: (NSString *) schemaName
+									error: (NSError **) outError;
+- (BOOL) entityConverter: (BXPGEntityConverter *) converter shouldCreateSchema: (NSString *) schemaName;
+- (PGTSConnection *) connectionForEntityConverter: (BXPGEntityConverter *) converter;
+@end
 
 
 @interface BXPGEntityConverter : NSObject
 {
+	id <BXPGEntityConverterDelegate> mDelegate;
 }
+- (id <BXPGEntityConverterDelegate>) delegate;
+- (void) setDelegate: (id <BXPGEntityConverterDelegate>) delegate;
 - (NSArray *) statementsForEntities: (NSArray *) entityArray 
 						 schemaName: (NSString *) schemaName
-						 	context: (BXDatabaseContext *) context
 				   enabledRelations: (NSArray **) outArray
 							 errors: (NSArray **) outErrors;
 @end

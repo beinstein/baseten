@@ -2,7 +2,7 @@
 // BXPGEntityConverter.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -45,6 +45,18 @@
 
 
 @implementation BXPGEntityConverter
+- (void) setDelegate: (id <BXPGEntityConverterDelegate>) delegate
+{
+	mDelegate = delegate;
+}
+
+
+- (id <BXPGEntityConverterDelegate>) delegate
+{
+	return mDelegate;
+}
+
+
 - (NSMutableArray *) add: (NSString *) aName fromUnsatisfied: (NSMutableDictionary *) unsatisfied
 {
     NSMutableArray* retval = [NSMutableArray array];
@@ -129,12 +141,11 @@ ImportError (NSString* message, NSString* reason)
 
 - (NSArray *) statementsForEntities: (NSArray *) entityArray 
 						 schemaName: (NSString *) schemaName
-						 	context: (BXDatabaseContext *) context
 				   enabledRelations: (NSArray **) outArray
 							 errors: (NSArray **) outErrors
 {
+	Expect (mDelegate);
 	Expect (entityArray);
-	Expect (context);
 	
 	if (! [schemaName length])
 		schemaName = @"public";
@@ -142,17 +153,18 @@ ImportError (NSString* message, NSString* reason)
 	NSMutableArray* errors = [NSMutableArray array];
 	NSMutableArray* retval = [NSMutableArray array];
 	NSMutableArray* enabledRelations = [NSMutableArray array];
-	PGTSConnection* connection = [[(BXPGInterface *) [context databaseInterface] transactionHandler] connection];
-	PGTSDatabaseDescription* database = [connection databaseDescription];
 	entityArray = [self sortedEntities: entityArray errors: errors];
 	
-	if (! [database schemaNamed: schemaName])
+	if ([mDelegate entityConverter: self shouldCreateSchema: schemaName])
 		[retval addObject: [NSString stringWithFormat: @"CREATE SCHEMA \"%@\";", schemaName]];
 	
 	BXEnumerate (currentEntity, e, [entityArray objectEnumerator])
 	{
         NSError* error = nil;
-		BXEntityDescription* match = [context matchingEntity: currentEntity inSchema: schemaName error: &error];
+		BXEntityDescription *match = [mDelegate entityConverter: self 
+					   shouldAddDropStatementFromEntityMatching: currentEntity 
+													   inSchema: schemaName
+														  error: &error];
 		if (match)
 		{
 			if ([match isView])
@@ -164,7 +176,7 @@ ImportError (NSString* message, NSString* reason)
         if (error)
             [errors addObject: error];
 		
-		[retval addObject: [currentEntity BXPGCreateStatementWithIDColumn: YES inSchema: schemaName connection: connection errors: errors]];
+		[retval addObject: [currentEntity BXPGCreateStatementWithIDColumn: YES inSchema: schemaName connection: [mDelegate connectionForEntityConverter: self] errors: errors]];
 		[retval addObject: [currentEntity BXPGPrimaryKeyConstraintInSchema: schemaName]];
 		[enabledRelations addObject: [currentEntity name]];
 		
@@ -174,7 +186,7 @@ ImportError (NSString* message, NSString* reason)
 			if ([currentAttr BXCanAddAttribute: &error])
 			{
 				[retval addObjectsFromArray: [currentAttr BXPGAttributeConstraintsInSchema: schemaName]];
-				[retval addObjectsFromArray: [currentAttr BXPGConstraintsForValidationPredicatesInSchema: schemaName connection: connection]];
+				[retval addObjectsFromArray: [currentAttr BXPGConstraintsForValidationPredicatesInSchema: schemaName connection: [mDelegate connectionForEntityConverter: self]]];
 			}
 
             if (error)
