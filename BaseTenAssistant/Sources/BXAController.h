@@ -119,6 +119,7 @@
 - (BOOL) schemaInstallDenied;
 - (void) upgradeBaseTenSchema;
 - (void) refreshCaches: (SEL) callback;
+- (void) confirmRefreshCachesWithCallback: (SEL) callback cancelCallback: (SEL) cancelCallback;
 - (void) selectEntity: (BXEntityDescription *) entity;
 - (BXAGetInfoWindowController *) displayInfoForEntity: (BXEntityDescription *) entity;
 @end

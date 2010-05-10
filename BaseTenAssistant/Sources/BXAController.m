@@ -598,6 +598,29 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 }
 
 
+- (void) confirmRefreshCachesWithCallback: (SEL) callback cancelCallback: (SEL) cancelCallback
+{
+	NSString *message = NSLocalizedString (@"BaseTen stores some of its required information into the database. "
+										   @"The cache tables need to be up-to-date for BaseTen to function correctly.",
+										   @"Panel message");
+	NSAlert *alert = [NSAlert alertWithMessageText: NSLocalizedString (@"Refresh database caches?", @"Panel message")
+									 defaultButton: NSLocalizedString (@"Refresh", @"Button title")
+								   alternateButton: NSLocalizedString (@"Don't refresh", @"Button title") 
+									   otherButton: nil 
+						 informativeTextWithFormat: message];
+	[alert setAlertStyle: NSInformationalAlertStyle];
+	[alert beginSheetModalForWindow: mMainWindow 
+					  modalDelegate: self 
+					 didEndSelector: @selector (alertDidEnd:returnCode:contextInfo:) 
+						contextInfo: NULL];
+	NSInteger retval = [NSApp runModalForWindow: mMainWindow];
+	if (NSAlertDefaultReturn == retval)
+		[self refreshCaches: callback];
+	else
+		[self performSelector: cancelCallback];
+}
+
+
 - (void) selectEntity: (BXEntityDescription *) entity
 {
 	// The dictionary controller seems to require the key-value-pair for selection.
@@ -1516,7 +1539,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 - (IBAction) disconnect: (id) sender
 {
 	if ([mContext isConnected] && [self hasBaseTenSchema])
-		[self refreshCaches: @selector (disconnectAfterRefresh:)];
+		[self confirmRefreshCachesWithCallback: @selector (disconnectAfterRefresh:) cancelCallback: @selector (finishDisconnect)];
 	else
 		[self finishDisconnect]; //Patch by Tim Bedford 2008-08-11
 }
@@ -1525,11 +1548,9 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 - (IBAction) terminate: (id) sender
 {
 	if ([mContext isConnected] && [self hasBaseTenSchema])
-		[self refreshCaches: @selector (terminateAfterRefresh:)]; // Method name could be a bit more descriptive //Patch by Tim Bedford 2008-08-11
+		[self confirmRefreshCachesWithCallback: @selector (terminateAfterRefresh:) cancelCallback: @selector (finishTermination)];
 	else
-	{
 		[self finishTermination]; //Patch by Tim Bedford 2008-08-11
-	}
 }
 
 

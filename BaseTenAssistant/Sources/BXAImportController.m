@@ -83,8 +83,11 @@ static NSString* kBXATextColorKey = @"kBXATextColorKey";
 
 
 @implementation BXAImportController
-@synthesize objectModel = mModel, schemaName = mSchemaName, databaseContext = mContext, controller = mController, 
-conflictingEntities = mConflictingEntities;
+@synthesize objectModel = mModel;
+@synthesize schemaName = mSchemaName;
+@synthesize databaseContext = mContext;
+@synthesize controller = mController;
+@synthesize conflictingEntities = mConflictingEntities;
 
 - (void) checkNameConflicts
 {
