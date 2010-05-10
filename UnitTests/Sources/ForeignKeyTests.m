@@ -41,12 +41,12 @@
 {
 	[super setUp];
 
-    mTest1 = [mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
-    mTest2 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: nil];
-    mOtotest1 = [mContext entityForTable: @"ototest1" inSchema: @"Fkeytest" error: nil];
-    mOtotest2 = [mContext entityForTable: @"ototest2" inSchema: @"Fkeytest" error: nil];
-    mMtmtest1 = [mContext entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
-    mMtmtest2 = [mContext entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
+    mTest1 = [[mContext databaseObjectModel] entityForTable: @"test1" inSchema: @"Fkeytest"];
+    mTest2 = [[mContext databaseObjectModel] entityForTable: @"test2" inSchema: @"Fkeytest"];
+    mOtotest1 = [[mContext databaseObjectModel] entityForTable: @"ototest1" inSchema: @"Fkeytest"];
+    mOtotest2 = [[mContext databaseObjectModel] entityForTable: @"ototest2" inSchema: @"Fkeytest"];
+    mMtmtest1 = [[mContext databaseObjectModel] entityForTable: @"mtmtest1" inSchema: @"Fkeytest"];
+    mMtmtest2 = [[mContext databaseObjectModel] entityForTable: @"mtmtest2" inSchema: @"Fkeytest"];
 
     MKCAssertNotNil (mTest1);
     MKCAssertNotNil (mTest2);
@@ -55,13 +55,13 @@
     MKCAssertNotNil (mMtmtest1);
     MKCAssertNotNil (mMtmtest2);
 
-    mTest1v = [mContext entityForTable: @"test1_v" inSchema: @"Fkeytest" error: nil];
-    mTest2v = [mContext entityForTable: @"test2_v" inSchema: @"Fkeytest" error: nil];
-    mOtotest1v = [mContext entityForTable: @"ototest1_v" inSchema: @"Fkeytest" error: nil];
-    mOtotest2v = [mContext entityForTable: @"ototest2_v" inSchema: @"Fkeytest" error: nil];
-    mMtmtest1v = [mContext entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
-    mMtmtest2v = [mContext entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
-	mMtmrel1 = [mContext entityForTable: @"mtmrel1" inSchema: @"Fkeytest" error: nil];
+    mTest1v = [[mContext databaseObjectModel] entityForTable: @"test1_v" inSchema: @"Fkeytest"];
+    mTest2v = [[mContext databaseObjectModel] entityForTable: @"test2_v" inSchema: @"Fkeytest"];
+    mOtotest1v = [[mContext databaseObjectModel] entityForTable: @"ototest1_v" inSchema: @"Fkeytest"];
+    mOtotest2v = [[mContext databaseObjectModel] entityForTable: @"ototest2_v" inSchema: @"Fkeytest"];
+    mMtmtest1v = [[mContext databaseObjectModel] entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest"];
+    mMtmtest2v = [[mContext databaseObjectModel] entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest"];
+	mMtmrel1 = [[mContext databaseObjectModel] entityForTable: @"mtmrel1" inSchema: @"Fkeytest"];
     
     MKCAssertNotNil (mTest1v);
     MKCAssertNotNil (mTest2v);
@@ -89,10 +89,11 @@
     {
         NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = %d", i];
         MKCAssertNotNil (predicate);
+		
         NSArray* res = [mContext executeFetchForEntity: manyEntity
                                         withPredicate: predicate
                                                 error: &error];
-        STAssertNil (error, [error description]);
+        STAssertNotNil (res, [error description]);
         MKCAssertTrue (1 == [res count]);
     
         BXDatabaseObject* object = [res objectAtIndex: 0];
@@ -138,7 +139,7 @@
     NSArray* res = [mContext executeFetchForEntity: oneEntity
                                     withPredicate: predicate
                                             error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil (res, [error description]);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
 
@@ -153,7 +154,7 @@
     MKCAssertTrue ([rel isToMany]);
         
     NSSet* foreignObjects = [rel targetForObject: object error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil (foreignObjects, [error description]);
     MKCAssertTrue (2 == [foreignObjects count]);
     NSArray* values = [foreignObjects valueForKey: @"value"];
     MKCAssertTrue ([values containsObject: @"21"]);
@@ -163,7 +164,6 @@
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 
     foreignObjects = [object valueForKey: [manyEntity name]];
-    STAssertNil (error, [error description]);
     MKCAssertTrue (2 == [foreignObjects count]);
     values = [foreignObjects valueForKey: @"value"];
     MKCAssertTrue ([values containsObject: @"21"]);
@@ -187,8 +187,7 @@
 {
     NSError* error = nil;
 	
-	[mContext connectIfNeeded: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext connectIfNeeded: &error], [error description]);
 	
     BXRelationshipDescription* foobar = [[entity1 relationshipsByName] objectForKey: [entity2 name]];
     MKCAssertNotNil (foobar);
@@ -198,7 +197,7 @@
     NSArray* res = [mContext executeFetchForEntity: entity1 
                                     withPredicate: [NSPredicate predicateWithFormat: @"1 <= id && id <= 2"]
                                             error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil (res, [error description]);
     MKCAssertTrue (2 == [res count]);
     for (int i = 0; i < 2; i++)
     {
@@ -206,11 +205,11 @@
         
         BXDatabaseObject* foreignObject  = [object primitiveValueForKey: [entity2 name]];
         BXDatabaseObject* foreignObject2 = [foobar targetForObject: object error: &error];
-        STAssertNil (error, [error description]);
+        STAssertNotNil (foreignObject2, [error description]);
         
         BXDatabaseObject* object2 = [foreignObject primitiveValueForKey: [entity1 name]];
         BXDatabaseObject* object3 = [[foobar inverseRelationship] targetForObject: foreignObject error: &error];
-        STAssertNil (error, [error description]);
+        STAssertNotNil (object3, [error description]);
         
         MKCAssertTrue ([[foreignObject  objectID] entity] == entity2);
         MKCAssertTrue ([[foreignObject2 objectID] entity] == entity2);
@@ -236,7 +235,7 @@
     res = [mContext executeFetchForEntity: entity2
                            withPredicate: [NSPredicate predicateWithFormat: @"id = 3"]
                                    error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil (res, [error description]);
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
     MKCAssertNil ([object valueForKey: [entity1 name]]);
@@ -257,7 +256,7 @@
 {
     NSError* error = nil;
     NSArray* res = [mContext executeFetchForEntity: entity1 withPredicate: nil error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil (res, [error description]);
     MKCAssertTrue (4 == [res count]);
     
     NSSet* expected1 = [NSSet setWithObjects: @"a1", @"b1", @"c1", nil];
@@ -322,7 +321,7 @@
 	NSArray* res = [mContext executeFetchForEntity: entity
 									withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
 											error: &error];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (res, [error description]);
 	BXDatabaseObject* object = [res objectAtIndex: 0];
 	NSSet* helperObjects = [object primitiveValueForKey: @"mtmrel1"];
 	MKCAssertTrue (3 == [helperObjects count]);

@@ -53,10 +53,10 @@ __strong static NSString *kKVOCtx = @"BXArbitrarySQLTestsKVOObservingContext";
 	}
 	
 	{
-		NSError *error = nil;
-		mEntity = [[mContext entityForTable: @"test" error: &error] retain];
-		STAssertNotNil (mEntity, [error description]);
+		mEntity = [[[mContext databaseObjectModel] entityForTable: @"test"] retain];
+		MKCAssertNotNil (mEntity);
 		
+		NSError *error = nil;
 		NSArray *res = [mContext executeFetchForEntity: mEntity withPredicate: nil error: &error];
 		STAssertNotNil (res, [error description]);
 		

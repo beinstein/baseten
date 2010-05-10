@@ -34,10 +34,10 @@
 @implementation ObjectIDTests
 - (void) testObjectIDWithURI
 {
-	NSError* error = nil;
-	BXEntityDescription* entity = [mContext entityForTable: @"test" inSchema: @"public" error: &error];
-	STAssertNotNil (entity, [NSString stringWithFormat: @"Entity was nil (error: %@)", error]);
+	BXEntityDescription* entity = [[mContext databaseObjectModel] entityForTable: @"test" inSchema: @"public"];
+	MKCAssertNotNil (entity);
 	
+	NSError *error = nil;
 	BXDatabaseObject* object = [[mContext executeFetchForEntity: entity 
 											 withPredicate: [NSPredicate predicateWithFormat: @"id == 1"]
 													 error: &error] objectAtIndex: 0];
@@ -51,7 +51,7 @@
 	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [mContext databaseURI]];
 	[ctx2 setDelegate: self];
 	BXDatabaseObjectID* objectID2 = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx2 error: &error] autorelease];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (objectID2, [error description]);
 	MKCAssertEqualObjects (objectID, objectID2);
 	
 	BXDatabaseObject* fault = [[ctx2 faultsWithIDs: [NSArray arrayWithObject: objectID2]] objectAtIndex: 0];
@@ -64,10 +64,9 @@
 	NSError* error = nil;
 	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=12345" relativeToURL: [mContext databaseURI]];
 	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: mContext error: &error] autorelease];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (anId, [error description]);
 	
-	[mContext connectIfNeeded: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext connectIfNeeded: &error], [error description]);
 	
 	BXDatabaseObject* object = [mContext objectWithID: anId error: &error];
 	MKCAssertNil (object);
@@ -81,39 +80,36 @@
 	NSError* error = nil;
 	NSURL* uri = [NSURL URLWithString: @"/public/test?id,n=1" relativeToURL: [mContext databaseURI]];
 	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: uri context: mContext error: &error] autorelease];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (anId, [error description]);
 	
-	[mContext connectIfNeeded: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext connectIfNeeded: &error], [error description]);
 	
 	BXDatabaseObject* object = [mContext objectWithID: anId error: &error];
-	MKCAssertNotNil (object);
-	STAssertNil (error, [error description]);
+	STAssertNotNil (object, [error description]);
 }
 
 - (void) testObjectIDFromAnotherContext
 {
 	BXDatabaseContext* ctx2 = [[[BXDatabaseContext alloc] initWithDatabaseURI: [mContext databaseURI]] autorelease];
 	[ctx2 setDelegate: self];
-	NSError* error = nil;
 	MKCAssertNotNil (ctx2);
 	
-	BXEntityDescription* entity = [ctx2 entityForTable: @"test" inSchema: @"public" error: &error];
+	BXEntityDescription* entity = [[ctx2 databaseObjectModel] entityForTable: @"test" inSchema: @"public"];
+	MKCAssertNotNil (entity);
+	
+	NSError *error = nil;
 	id objectArray = [ctx2 executeFetchForEntity: entity 
 						  		   withPredicate: [NSPredicate predicateWithFormat: @"id == 1"]
 								 		   error: &error];
-	STAssertNil (error, [error description]);
-	MKCAssertNotNil (objectArray);
+	STAssertNotNil (objectArray, [error description]);
 	
 	BXDatabaseObjectID* anId = (id) [[objectArray objectAtIndex: 0] objectID];
 	MKCAssertNotNil (anId);
 	
-	[mContext connectIfNeeded: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext connectIfNeeded: &error], [error description]);
 	
 	BXDatabaseObject* anObject = [mContext objectWithID: anId error: &error];
-	STAssertNil (error, [error description]);
-	MKCAssertNotNil (anObject);
+	STAssertNotNil (anObject, [error description]);
 	
 	[ctx2 disconnect];
 }

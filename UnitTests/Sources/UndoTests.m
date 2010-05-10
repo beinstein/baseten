@@ -56,7 +56,7 @@
     const unsigned int objectId = 5;
 	[mContext connectSync: NULL];
     NSUndoManager* undoManager = [mContext undoManager];
-    BXEntityDescription* updatetest = [mContext entityForTable: @"updatetest" error: nil];
+    BXEntityDescription* updatetest = [[mContext databaseObjectModel] entityForTable: @"updatetest"];
 
     MKCAssertNotNil (undoManager);
     MKCAssertNotNil (updatetest);
@@ -92,10 +92,13 @@
 	const unsigned int objectId = 1;
     [mContext connectIfNeeded: nil];
     NSUndoManager* undoManager = [mContext undoManager];
-    BXEntityDescription* test1 = [mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: nil];
+    MKCAssertNotNil (undoManager);	
+
+    BXEntityDescription* test1 = [[mContext databaseObjectModel] entityForTable: @"test1" inSchema: @"Fkeytest"];
+	MKCAssertNotNil (test1);
+
     BXDatabaseObject* object = [self objectWithId: objectId entity: test1];
 
-    MKCAssertNotNil (undoManager);	
     MKCAssertNotNil (object);
     
     NSMutableSet* foreignObjects = [object primitiveValueForKey: @"test2"];

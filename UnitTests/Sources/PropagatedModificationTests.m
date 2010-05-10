@@ -43,8 +43,7 @@
     context = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
 	[context setAutocommits: NO];
 	NSError* error = nil;
-    entity = [context entityForTable: @"test" error: &error];
-	STAssertNil (error, [error description]);
+    entity = [[context databaseObjectModel] entityForTable: @"test"];
     MKCAssertNotNil (entity);
 }
 
@@ -60,21 +59,20 @@
     NSString* oldValue = nil;
     [context setAutocommits: YES];
 
-    BXEntityDescription* viewEntity = [context entityForTable: @"test_v" error: nil];
+    BXEntityDescription* viewEntity = [[context databaseObjectModel] entityForTable: @"test_v"];
+	MKCAssertNotNil (viewEntity);
 
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"id = 1"];
     MKCAssertNotNil (predicate);
     
     NSError* error = nil;
     NSArray* res = [context executeFetchForEntity: entity withPredicate: predicate error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (res);
+    STAssertNotNil (res, [error description]);
     MKCAssertTrue (1 == [res count]);
     
     NSArray* res2 = [context executeFetchForEntity: viewEntity withPredicate: predicate error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (res);
-    MKCAssertTrue (1 == [res count]);
+    STAssertNotNil (res2, [error description]);
+    MKCAssertTrue (1 == [res2 count]);
     
     BXDatabaseObject* object = [res objectAtIndex: 0];
     BXDatabaseObject* viewObject = [res2 objectAtIndex: 0];

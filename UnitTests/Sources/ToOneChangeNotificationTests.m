@@ -53,8 +53,8 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 	mReceivedForB2 = 0;
 	
 	[mContext connectSync: NULL];
-	mTest1 = [[mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: NULL] retain];
-	mTest2 = [[mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: NULL] retain];
+	mTest1 = [[[mContext databaseObjectModel] entityForTable: @"test1" inSchema: @"Fkeytest"] retain];
+	mTest2 = [[[mContext databaseObjectModel] entityForTable: @"test2" inSchema: @"Fkeytest"] retain];
 }
 
 
@@ -146,8 +146,8 @@ static NSString* kObservingContext = @"ToOneChangeNotificationTestsObservingCont
 {
 	NSPredicate* p1 = [NSPredicate predicateWithFormat: @"id == 1"];
 	NSPredicate* p2 = [NSPredicate predicateWithFormat: @"id == 3"];
-	BXEntityDescription* ototest1 = [mContext entityForTable: @"ototest1" inSchema: @"Fkeytest" error: NULL];
-	BXEntityDescription* ototest2 = [mContext entityForTable: @"ototest2" inSchema: @"Fkeytest" error: NULL];
+	BXEntityDescription* ototest1 = [[mContext databaseObjectModel] entityForTable: @"ototest1" inSchema: @"Fkeytest"];
+	BXEntityDescription* ototest2 = [[mContext databaseObjectModel] entityForTable: @"ototest2" inSchema: @"Fkeytest"];
 	NSArray* r1 = [mContext executeFetchForEntity: ototest1 withPredicate: p1 error: NULL];
 	NSArray* r2 = [mContext executeFetchForEntity: ototest2 withPredicate: p2 error: NULL];
 	

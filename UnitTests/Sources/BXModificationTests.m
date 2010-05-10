@@ -37,7 +37,7 @@
 @implementation BXModificationTests
 - (void) test1PkeyModification
 {    
-    BXEntityDescription* pkeytest = [mContext entityForTable: @"Pkeytest" error: nil];
+    BXEntityDescription* pkeytest = [[mContext databaseObjectModel] entityForTable: @"Pkeytest"];
     NSError* error = nil;
     MKCAssertNotNil (mContext);
     MKCAssertNotNil (pkeytest);
@@ -45,8 +45,7 @@
     NSArray* res = [mContext executeFetchForEntity: pkeytest
                                     withPredicate: [NSPredicate predicateWithFormat: @"Id = 1"]
                                             error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (res);
+    STAssertNotNil (res, [error description]);
     
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
@@ -60,8 +59,7 @@
     res = [[mContext executeFetchForEntity: pkeytest withPredicate: nil error: &error]
         sortedArrayUsingDescriptors: [NSArray arrayWithObject: 
             [[[NSSortDescriptor alloc] initWithKey: @"Id" ascending: YES] autorelease]]];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (res);
+    STAssertNotNil (res, [error description]);
 
     MKCAssertTrue (3 == [res count]);
     for (int i = 0; i < 3; i++)
@@ -79,14 +77,14 @@
 
 - (void) test2MassUpdateAndDelete
 {
-    BXEntityDescription* updatetest = [mContext entityForTable: @"updatetest" error: nil];
+    BXEntityDescription* updatetest = [[mContext databaseObjectModel] entityForTable: @"updatetest"];
+	MKCAssertNotNil (updatetest);
+	
     NSError* error = nil;
-    
     NSArray* res = [mContext executeFetchForEntity: updatetest withPredicate: nil
                                   returningFaults: NO error: &error];
     NSArray* originalResult = res;
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (res);
+    STAssertNotNil (res, [error description]);
     MKCAssertTrue (5 == [res count]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"value1"]] count]);
 
@@ -98,23 +96,22 @@
 
     //First update just one object
 	id value1Attr = [[updatetest attributesByName] objectForKey: @"value1"];
-    [mContext executeUpdateObject: nil
-						  entity: updatetest 
-                       predicate: predicate
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
-                           error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil ([mContext executeUpdateObject: nil
+										   entity: updatetest 
+										predicate: predicate
+								   withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
+											error: &error], [error description]);
     MKCAssertEqualObjects (number, [object valueForKey: @"value1"]);
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"value1"]] count]);
     
     //Then update multiple objects
     number = [NSNumber numberWithInt: 2];
-    [mContext executeUpdateObject: nil
-						  entity: updatetest 
-                       predicate: nil
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
-                           error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil ([mContext executeUpdateObject: nil
+										   entity: updatetest 
+										predicate: nil
+								   withDictionary: [NSDictionary dictionaryWithObject: number forKey: value1Attr]
+											error: &error], [error description]);
+	
     NSArray* values = [res valueForKey: @"value1"];
     MKCAssertTrue (1 == [[NSSet setWithArray: values] count]);
     MKCAssertEqualObjects (number, [values objectAtIndex: 0]);
@@ -123,19 +120,18 @@
     number = [NSNumber numberWithInt: -1];
 	id idattr = [[updatetest attributesByName] objectForKey: @"id"];
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
-    [mContext executeUpdateObject: object
-						  entity: updatetest
-                       predicate: predicate
-                  withDictionary: [NSDictionary dictionaryWithObject: number forKey: idattr]
-                           error: &error];
-    STAssertNil (error, [error description]);
+    STAssertNotNil ([mContext executeUpdateObject: object
+										   entity: updatetest
+										predicate: predicate
+								   withDictionary: [NSDictionary dictionaryWithObject: number forKey: idattr]
+											error: &error], [error description]);
+	
     MKCAssertTrue (5 == [[NSSet setWithArray: [res valueForKey: @"id"]] count]);
     MKCAssertEqualObjects ([object valueForKey: @"id"], number);
     
     //Then delete an object
     predicate = [NSPredicate predicateWithFormat: @"id = -1"];
-    [mContext executeDeleteFromEntity: updatetest withPredicate: predicate error: &error];
-    STAssertNil (error, [error description]);
+    STAssertTrue ([mContext executeDeleteFromEntity: updatetest withPredicate: predicate error: &error], [error description]);
     res = [mContext executeFetchForEntity: updatetest withPredicate: nil
                          returningFaults: NO error: &error];
     MKCAssertTrue (4 == [res count]);
@@ -144,8 +140,7 @@
     MKCAssertTrue (0 == [res count]);
     
     //Finally delete all objects
-    [mContext executeDeleteFromEntity: updatetest withPredicate: nil error: &error];
-    STAssertNil (error, [error description]);
+    STAssertTrue ([mContext executeDeleteFromEntity: updatetest withPredicate: nil error: &error], [error description]);
     res = [mContext executeFetchForEntity: updatetest withPredicate: nil
                          returningFaults: NO error: &error];
     MKCAssertTrue (0 == [res count]);
@@ -158,12 +153,12 @@
 - (void) test3CreateAndDeleteWithArray
 {	
 	//Fetch a self-updating collection and expect its contents to change.
-    NSError* error = nil;
-    NSArray* array = nil;
-    BXEntityDescription* entity = [[mContext entityForTable: @"test" error: &error] retain];
-	STAssertNotNil (entity, [error description]);
-	array = [mContext executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
-					   updateAutomatically: YES error: &error];
+    BXEntityDescription* entity = [[[mContext databaseObjectModel] entityForTable: @"test"] retain];
+	MKCAssertNotNil (entity);
+	
+    NSError *error = nil;
+	NSArray *array = [mContext executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
+								 updateAutomatically: YES error: &error];
     STAssertNotNil (array, [error description]);
     NSUInteger count = [array count];
     

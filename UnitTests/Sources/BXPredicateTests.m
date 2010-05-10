@@ -47,7 +47,9 @@
 	BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
 	[ctx setDelegate: self];
 	
-	BXEntityDescription* entity = [ctx entityForTable: @"test" inSchema: @"public" error: NULL];
+	BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: @"test" inSchema: @"public"];
+	MKCAssertNotNil (entity);
+	
 	OCMockObject *entityMock = [OCMockObject partialMockForObject: entity];
 	BXAttributeDescription *attr = [BXAttributeDescription attributeWithName: @"id" entity: (id) entityMock];
 	[[[entityMock stub] andReturn: [NSDictionary dictionaryWithObject: attr forKey: @"id"]] attributesByName];

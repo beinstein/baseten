@@ -40,13 +40,13 @@
 {
 	[super setUp];
     
-    mMtmtest1 = [mContext entityForTable: @"mtmtest1" inSchema: @"Fkeytest" error: nil];
-    mMtmtest2 = [mContext entityForTable: @"mtmtest2" inSchema: @"Fkeytest" error: nil];
+    mMtmtest1 = [[mContext databaseObjectModel] entityForTable: @"mtmtest1" inSchema: @"Fkeytest"];
+    mMtmtest2 = [[mContext databaseObjectModel] entityForTable: @"mtmtest2" inSchema: @"Fkeytest"];
     MKCAssertNotNil (mMtmtest1);
     MKCAssertNotNil (mMtmtest2);
     
-    mMtmtest1v = [mContext entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest" error: nil];
-    mMtmtest2v = [mContext entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest" error: nil];
+    mMtmtest1v = [[mContext databaseObjectModel] entityForTable: @"mtmtest1_v" inSchema: @"Fkeytest"];
+    mMtmtest2v = [[mContext databaseObjectModel] entityForTable: @"mtmtest2_v" inSchema: @"Fkeytest"];
     MKCAssertNotNil (mMtmtest1v);
     MKCAssertNotNil (mMtmtest2v);
 }
@@ -71,8 +71,9 @@
 	
     //Execute a fetch
     NSArray* res = [mContext executeFetchForEntity: entity1
-                                    withPredicate: nil error: &error];
-	STAssertNil (error, [error description]);
+									 withPredicate: nil 
+											 error: &error];
+	STAssertNotNil (res, [error description]);
     MKCAssertTrue (4 == [res count]);
     
     //Get an object from the result
@@ -94,10 +95,11 @@
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
     //Get the objects from the second table
-    NSSet* objects2 = [NSSet setWithArray: [mContext executeFetchForEntity: entity2
-                                                            withPredicate: [NSPredicate predicateWithFormat:  @"value2 != 'd2'"]
-                                                                    error: &error]];
-    STAssertNil (error, [error description]);
+	NSArray *res2 = [mContext executeFetchForEntity: entity2
+									  withPredicate: [NSPredicate predicateWithFormat:  @"value2 != 'd2'"]
+											  error: &error];
+    STAssertNotNil (res2, [error description]);
+    NSSet *objects2 = [NSSet setWithArray: res2];
     MKCAssertTrue (3 == [objects2 count]);
     
     NSMutableSet* mock = [NSMutableSet set];

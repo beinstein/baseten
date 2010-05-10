@@ -55,8 +55,7 @@
 - (void) testDisableEnable
 {
 	NSError* error = nil;
-	[mContext connectSync: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext connectSync: &error], [error description]);
 	
 	BXPGTransactionHandler* handler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
 	PGTSConnection* connection = [handler connection];
@@ -98,8 +97,7 @@
 - (void) testPrune
 {
 	NSError* error = nil;
-	[mContext connectSync: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext connectSync: &error], [error description]);
 	
 	BXPGTransactionHandler* handler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
 	PGTSConnection* connection = [handler connection];

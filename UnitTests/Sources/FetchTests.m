@@ -63,9 +63,7 @@
 - (void) setUp
 {
 	[super setUp];
-	NSError* error = nil;
-    mEntity = [mContext entityForTable: @"test" error: &error];
-	STAssertNil (error, [error description]);
+    mEntity = [[mContext databaseObjectModel] entityForTable: @"test"];
     MKCAssertNotNil (mEntity);
 }
 
@@ -76,11 +74,12 @@
 	uriString = [uriString stringByAppendingString: @"/public/test?id,n=1"];
 	NSURL* objectURI = [NSURL URLWithString: uriString];
 	BXDatabaseObjectID* anId = [[[BXDatabaseObjectID alloc] initWithURI: objectURI
-																context: mContext 
-																  error: &error] autorelease];
-	STAssertNil (error, [error description]);
+																context: mContext] autorelease];
+	MKCAssertNotNil (anId);
+	
     BXDatabaseObject* object = [mContext objectWithID: anId error: &error];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (object, [error description]);
+	
     MKCAssertEqualObjects ([object primitiveValueForKey: @"id"], [NSNumber numberWithInt: 1]);
     //if this is not nil, then another test has failed or the database is not in known state
     STAssertEqualObjects ([object valueForKey: @"value"], nil, @"Database is not in known state!");
@@ -91,12 +90,11 @@
     NSError* error = nil;
     [mContext connectIfNeeded: nil];
     
-    BXEntityDescription* multicolumnpkey = [mContext entityForTable: @"multicolumnpkey" error: nil];
+    BXEntityDescription* multicolumnpkey = [[mContext databaseObjectModel] entityForTable: @"multicolumnpkey"];
     MKCAssertNotNil (multicolumnpkey);
     NSArray* multicolumnpkeys = [mContext executeFetchForEntity: multicolumnpkey withPredicate: nil error: &error];
-    MKCAssertNotNil (multicolumnpkeys);
+    STAssertNotNil (multicolumnpkeys, [error description]);
     MKCAssertTrue (3 == [multicolumnpkeys  count]);
-    STAssertNil (error, [error description]);
     
     NSSortDescriptor* s1 = [[[NSSortDescriptor alloc] initWithKey: @"id1" ascending: YES] autorelease];
     NSSortDescriptor* s2 = [[[NSSortDescriptor alloc] initWithKey: @"id2" ascending: YES] autorelease];
@@ -123,18 +121,17 @@
     NSError* error = nil;
     [mContext connectIfNeeded: nil];
     
-    BXEntityDescription* datetest = [mContext entityForTable: @"datetest" error: nil];
+    BXEntityDescription* datetest = [[mContext databaseObjectModel] entityForTable: @"datetest"];
     MKCAssertNotNil (datetest);
     NSArray* dateobjects = [mContext executeFetchForEntity: datetest withPredicate: nil error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (dateobjects);
+    STAssertNotNil (dateobjects, [error description]);
 }
 
 - (void) testQuery
 {
 	NSError* error = nil;
 	NSArray* result = [mContext executeQuery: [NSString stringWithUTF8String: "SELECT * FROM ♨"] error: &error];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (result, [error description]);
 	MKCAssertTrue (3 == [result count]);
 	BXEnumerate (currentRow, e, [result objectEnumerator])
 		MKCAssertTrue (2 == [currentRow count]);
@@ -144,14 +141,16 @@
 {
 	NSError* error = nil;
 	unsigned long long count = [mContext executeCommand: [NSString stringWithUTF8String: "UPDATE ♨ SET value = 'test'"] error: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue (0 < count, [error description]);
 	MKCAssertTrue (3 == count);
 }
 
 - (void) testNullValidation
 {
 	NSError* error = nil;
-	BXEntityDescription* person = [mContext entityForTable: @"person" error: &error];
+	BXEntityDescription* person = [[mContext databaseObjectModel] entityForTable: @"person"];
+	MKCAssertNotNil (person);
+	
 	NSArray* people = [mContext executeFetchForEntity: person withPredicate: nil error: &error];
 	BXDatabaseObject* personObject = [people objectAtIndex: 0];
 	
@@ -169,30 +168,28 @@
 	
 	error = nil;
 	value = [NSNumber numberWithInt: 1];
-	[personObject validateValue: &value forKey: @"soulmate" error: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([personObject validateValue: &value forKey: @"soulmate" error: &error], [error description]);
 }
 
 - (void) testExclusion
 {
 	NSError* error = nil;
+	STAssertTrue ([mContext connectIfNeeded: &error], [error description]);
+
 	NSString* fieldname = @"value";
-	[mContext connectIfNeeded: &error];
-	STAssertNil (error, [error description]);
 	BXAttributeDescription* property = [[mEntity attributesByName] objectForKey: fieldname];
 	MKCAssertFalse ([property isExcluded]);
 
 	NSArray* result = [mContext executeFetchForEntity: mEntity withPredicate: nil 
 									 excludingFields: [NSArray arrayWithObject: fieldname]
 											   error: &error];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (result, [error description]);
 	MKCAssertTrue ([property isExcluded]);
 	
 	//Quite the same, which object we get
 	BXDatabaseObject* object = [result objectAtIndex: 0]; 
 	MKCAssertTrue (1 == [object isFaultKey: fieldname]);
-	[mContext fireFault: object key: fieldname error: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext fireFault: object key: fieldname error: &error], [error description]);
 	MKCAssertTrue (0 == [object isFaultKey: fieldname]);
 	
 	[mEntity resetAttributeExclusion];
@@ -201,11 +198,10 @@
 - (void) testJoin
 {
 	NSError* error = nil;
-	[mContext connectIfNeeded: &error];
-	STAssertNil (error, [error description]);
+	STAssertTrue ([mContext connectIfNeeded: &error], [error description]);
 	
-	BXEntityDescription* person = [mContext entityForTable: @"person" error: &error];
-	STAssertNil (error, [error description]);
+	BXEntityDescription* person = [[mContext databaseObjectModel] entityForTable: @"person"];
+	MKCAssertNotNil (person);
 	
 	NSPredicate* predicate = [NSPredicate predicateWithFormat: @"person_address.address = 'Mannerheimintie 1'"];
 	MKCAssertNotNil (predicate);
@@ -217,7 +213,7 @@
 		[NSArray arrayWithObjects: predicate, truePredicate, nil]];
 	
 	NSArray* res = [mContext executeFetchForEntity: person withPredicate: compound error: &error];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (res, [error description]);
 	
 	MKCAssertTrue (1 == [res count]);
 	MKCAssertEqualObjects ([[res objectAtIndex: 0] valueForKey: @"name"], @"nzhuk");
@@ -229,7 +225,7 @@
 	[mEntity setDatabaseObjectClass: [FetchTestObject class]];
 	NSArray* res = [mContext executeFetchForEntity: mEntity withPredicate: [NSPredicate predicateWithFormat: @"id = 1"]
 								  returningFaults: NO error: &error];
-	STAssertNil (error, [error description]);
+	STAssertNotNil (res, [error description]);
 	
 	FetchTestObject* object = [res objectAtIndex: 0];
 	MKCAssertFalse ([object isFaultKey: @"value"]);

@@ -45,25 +45,23 @@
 - (void) testCreate
 {
     NSError* error = nil;    
-    BXEntityDescription* entity = [mContext entityForTable: @"test" error: nil];
+    BXEntityDescription* entity = [[mContext databaseObjectModel] entityForTable: @"test"];
     MKCAssertNotNil (entity);
     
     BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: nil error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (object);
+    STAssertNotNil (object, [error description]);
     [mContext rollback];
 }
 
 - (void) testCreateWithFieldValues
 {
-	BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+	BXEntityDescription* entity = [[[mContext databaseObjectModel] entityForTable: @"test"] retain];
     MKCAssertNotNil (entity);
 	
 	NSError* error = nil;
 	NSDictionary* values = [NSDictionary dictionaryWithObject: @"test" forKey: @"value"];
 	BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: values error: &error];
-	STAssertNil (error, [error description]);
-	MKCAssertNotNil (object);
+	STAssertNotNil (object, [error description]);
 	
 	MKCAssertFalse ([object isFaultKey: @"value"]);
 	MKCAssertTrue ([[object valueForKey: @"value"] isEqual: [values valueForKey: @"value"]]);
@@ -75,14 +73,13 @@
 	NSString* precomposed = @"åäöÅÄÖ";
 	NSString* decomposed = @"åäöÅÄÖ";
 	
-	BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
+	BXEntityDescription* entity = [[[mContext databaseObjectModel] entityForTable: @"test"] retain];
     MKCAssertNotNil (entity);
 	
 	NSError* error = nil;
 	NSDictionary* values = [NSDictionary dictionaryWithObject: precomposed forKey: @"value"];
 	BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: values error: &error];
-	STAssertNil (error, [error description]);
-	MKCAssertNotNil (object);
+	STAssertNotNil (object, [error description]);
 	
 	MKCAssertFalse ([object isFaultKey: @"value"]);
 	MKCAssertTrue ([[object valueForKey: @"value"] isEqual: decomposed]);
@@ -94,15 +91,14 @@
     NSError* error = nil;
     Class objectClass = [TestObject class];
     
-	BXEntityDescription* entity = [mContext entityForTable: @"test" error: NULL];
+	BXEntityDescription* entity = [[mContext databaseObjectModel] entityForTable: @"test"];
     MKCAssertNotNil (entity);
 	
     [entity setDatabaseObjectClass: objectClass];
     MKCAssertEqualObjects (objectClass, [entity databaseObjectClass]);
     
     BXDatabaseObject* object = [mContext createObjectForEntity: entity withFieldValues: nil error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (object);
+    STAssertNotNil (object, [error description]);
 	
     MKCAssertTrue ([object isKindOfClass: objectClass]);    
     [mContext rollback];
@@ -113,8 +109,8 @@
 	[mContext connectSync: NULL];
 	MKCAssertTrue ([mContext isConnected]);
 	
-	BXEntityDescription* test1 = [mContext entityForTable: @"test1" inSchema: @"Fkeytest" error: NULL];
-	BXEntityDescription* test2 = [mContext entityForTable: @"test2" inSchema: @"Fkeytest" error: NULL];
+	BXEntityDescription* test1 = [[mContext databaseObjectModel] entityForTable: @"test1" inSchema: @"Fkeytest"];
+	BXEntityDescription* test2 = [[mContext databaseObjectModel] entityForTable: @"test2" inSchema: @"Fkeytest"];
 	MKCAssertNotNil (test1);
 	MKCAssertNotNil (test2);
 	
