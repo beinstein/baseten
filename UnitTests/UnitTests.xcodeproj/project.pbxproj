@@ -32,7 +32,7 @@
 		5317CEB40D1ACB0B00A48792 /* ObjectIDTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530987C70B57B1C30010765D /* ObjectIDTests.m */; };
 		5317CEB50D1ACB0C00A48792 /* MTOCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 53DAE2100AC4A0D200536DD0 /* MTOCollectionTest.m */; };
 		5317CEB60D1ACB0D00A48792 /* MTMCollectionTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5321BEAC0AD4DCDD0011D0C8 /* MTMCollectionTest.m */; };
-		5317CEB70D1ACB0E00A48792 /* ModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* ModificationTests.m */; };
+		5317CEB70D1ACB0E00A48792 /* BXModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5373A65D0A6D3F9A0036424B /* BXModificationTests.m */; };
 		5317CEB80D1ACB0E00A48792 /* ForeignKeyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */; };
 		5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 531E118C0A6A3A6C003A0F23 /* EntityTests.m */; };
 		5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A439E0A5C114E00A4722B /* ConnectTest.m */; };
@@ -46,6 +46,7 @@
 		5375C2520F3BAD88002CBF78 /* BXDatabaseContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */; };
 		537E32C50FAF078600539A83 /* BXSQLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 537E32C40FAF078600539A83 /* BXSQLTests.m */; };
 		537E35CA0FAF280D00539A83 /* BXDatabaseObjectTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 535717AD0CDE69C60084DD92 /* BXDatabaseObjectTests.m */; };
+		538102BE119823D8006A6017 /* BXArbitrarySQLTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 538102BD119823D8006A6017 /* BXArbitrarySQLTests.m */; };
 		538263C80CD0EC8100CF7E2D /* ForeignKeyModificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 539C51290C4E4EE000080667 /* ForeignKeyModificationTests.m */; };
 		5387ACFC0FA8F56A00866E19 /* PGTSNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */; };
 		5392E6630FC1B0C70056DF6A /* BXSSLConnectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5392E6620FC1B0C70056DF6A /* BXSSLConnectionTests.m */; };
@@ -155,12 +156,14 @@
 		536205A30FB84DE800ACAE57 /* PGTSParameterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSParameterTests.m; path = Sources/PGTSParameterTests.m; sourceTree = "<group>"; };
 		536C46380F2E1CED003A8231 /* PGTSMetadataTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSMetadataTests.h; path = Sources/PGTSMetadataTests.h; sourceTree = "<group>"; };
 		536C46390F2E1CED003A8231 /* PGTSMetadataTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSMetadataTests.m; path = Sources/PGTSMetadataTests.m; sourceTree = "<group>"; };
-		5373A65C0A6D3F9A0036424B /* ModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModificationTests.h; path = Sources/ModificationTests.h; sourceTree = "<group>"; };
-		5373A65D0A6D3F9A0036424B /* ModificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ModificationTests.m; path = Sources/ModificationTests.m; sourceTree = "<group>"; };
+		5373A65C0A6D3F9A0036424B /* BXModificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXModificationTests.h; path = Sources/BXModificationTests.h; sourceTree = "<group>"; };
+		5373A65D0A6D3F9A0036424B /* BXModificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXModificationTests.m; path = Sources/BXModificationTests.m; sourceTree = "<group>"; };
 		5375C2500F3BAD88002CBF78 /* BXDatabaseContextTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDatabaseContextTests.h; path = Sources/BXDatabaseContextTests.h; sourceTree = "<group>"; };
 		5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDatabaseContextTests.m; path = Sources/BXDatabaseContextTests.m; sourceTree = "<group>"; };
 		537E32C30FAF078600539A83 /* BXSQLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSQLTests.h; path = Sources/BXSQLTests.h; sourceTree = "<group>"; };
 		537E32C40FAF078600539A83 /* BXSQLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXSQLTests.m; path = Sources/BXSQLTests.m; sourceTree = "<group>"; };
+		538102BC119823D8006A6017 /* BXArbitrarySQLTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXArbitrarySQLTests.h; path = Sources/BXArbitrarySQLTests.h; sourceTree = "<group>"; };
+		538102BD119823D8006A6017 /* BXArbitrarySQLTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXArbitrarySQLTests.m; path = Sources/BXArbitrarySQLTests.m; sourceTree = "<group>"; };
 		5387ACFA0FA8F56A00866E19 /* PGTSNotificationTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSNotificationTests.h; path = Sources/PGTSNotificationTests.h; sourceTree = "<group>"; };
 		5387ACFB0FA8F56A00866E19 /* PGTSNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSNotificationTests.m; path = Sources/PGTSNotificationTests.m; sourceTree = "<group>"; };
 		5392E6610FC1B0C70056DF6A /* BXSSLConnectionTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXSSLConnectionTests.h; path = Sources/BXSSLConnectionTests.h; sourceTree = "<group>"; };
@@ -330,8 +333,10 @@
 				53BD96760A5C1DC3001C950C /* CreateTests.m */,
 				53BD965A0A5C1BA5001C950C /* FetchTests.h */,
 				53BD965B0A5C1BA5001C950C /* FetchTests.m */,
-				5373A65C0A6D3F9A0036424B /* ModificationTests.h */,
-				5373A65D0A6D3F9A0036424B /* ModificationTests.m */,
+				5373A65C0A6D3F9A0036424B /* BXModificationTests.h */,
+				5373A65D0A6D3F9A0036424B /* BXModificationTests.m */,
+				538102BC119823D8006A6017 /* BXArbitrarySQLTests.h */,
+				538102BD119823D8006A6017 /* BXArbitrarySQLTests.m */,
 				53EAD1B40A668733008F3CE5 /* ForeignKeyTests.h */,
 				53EAD1B50A668733008F3CE5 /* ForeignKeyTests.m */,
 				539C51280C4E4EE000080667 /* ForeignKeyModificationTests.h */,
@@ -536,7 +541,7 @@
 				5317CEB40D1ACB0B00A48792 /* ObjectIDTests.m in Sources */,
 				5317CEB50D1ACB0C00A48792 /* MTOCollectionTest.m in Sources */,
 				5317CEB60D1ACB0D00A48792 /* MTMCollectionTest.m in Sources */,
-				5317CEB70D1ACB0E00A48792 /* ModificationTests.m in Sources */,
+				5317CEB70D1ACB0E00A48792 /* BXModificationTests.m in Sources */,
 				5317CEB80D1ACB0E00A48792 /* ForeignKeyTests.m in Sources */,
 				5317CEBA0D1ACB1000A48792 /* EntityTests.m in Sources */,
 				5317CEBC0D1ACB1100A48792 /* ConnectTest.m in Sources */,
@@ -568,6 +573,7 @@
 				53C4C61C119439BF003FB842 /* NSArray+BaseTenAdditionsTests.m in Sources */,
 				53C4C62111943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m in Sources */,
 				53C4C67B119443E1003FB842 /* BXMetadataTests.m in Sources */,
+				538102BE119823D8006A6017 /* BXArbitrarySQLTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

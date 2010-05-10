@@ -57,7 +57,8 @@
 #import "ObjectIDTests.h"
 #import "CreateTests.h"
 #import "FetchTests.h"
-#import "ModificationTests.h"
+#import "BXModificationTests.h"
+#import "BXArbitrarySQLTests.h"
 #import "ForeignKeyTests.h"
 #import "ForeignKeyModificationTests.h"
 #import "MTOCollectionTest.h"
@@ -98,7 +99,8 @@
 							[ObjectIDTests class],
 							[CreateTests class],
 							[FetchTests class],
-							[ModificationTests class],
+							[BXModificationTests class],
+							[BXArbitrarySQLTests class],
 							[ForeignKeyTests class],
 							[ForeignKeyModificationTests class],
 							[MTOCollectionTest class],
@@ -107,7 +109,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	testClasses = [NSArray arrayWithObject: [BXPredicateTests class]];
+	testClasses = [NSArray arrayWithObject: [BXArbitrarySQLTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{

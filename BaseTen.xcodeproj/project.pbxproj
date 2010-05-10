@@ -71,7 +71,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		53015A850FBEF22400E52C1E /* BXArraySize.h in Headers */ = {isa = PBXBuildFile; fileRef = 53015A830FBEF18800E52C1E /* BXArraySize.h */; };
+		53015A850FBEF22400E52C1E /* BXArraySize.h in Headers */ = {isa = PBXBuildFile; fileRef = 53015A830FBEF18800E52C1E /* BXArraySize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		531A21500DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A214E0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h */; };
 		531A21510DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A214F0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m */; };
 		531A21560DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A21540DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h */; };

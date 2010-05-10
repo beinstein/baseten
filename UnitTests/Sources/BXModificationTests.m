@@ -1,8 +1,8 @@
 //
-// ModificationTests.m
+// BXModificationTests.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -30,12 +30,12 @@
 #import <BaseTen/BXDatabaseContextPrivate.h>
 #import <Foundation/Foundation.h>
 
-#import "ModificationTests.h"
+#import "BXModificationTests.h"
 #import "MKCSenTestCaseAdditions.h";
 
 
-@implementation ModificationTests
-- (void) testPkeyModification
+@implementation BXModificationTests
+- (void) test1PkeyModification
 {    
     BXEntityDescription* pkeytest = [mContext entityForTable: @"Pkeytest" error: nil];
     NSError* error = nil;
@@ -76,7 +76,8 @@
     [mContext rollback];
 }
 
-- (void) testMassUpdateAndDelete
+
+- (void) test2MassUpdateAndDelete
 {
     BXEntityDescription* updatetest = [mContext entityForTable: @"updatetest" error: nil];
     NSError* error = nil;
@@ -153,17 +154,18 @@
     [mContext rollback];
 }
 
-- (void) testCreateAndDeleteWithArray
+
+- (void) test3CreateAndDeleteWithArray
 {	
 	//Fetch a self-updating collection and expect its contents to change.
     NSError* error = nil;
     NSArray* array = nil;
-    BXEntityDescription* entity = [[mContext entityForTable: @"test" error: nil] retain];
-    array = [mContext executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
+    BXEntityDescription* entity = [[mContext entityForTable: @"test" error: &error] retain];
+	STAssertNotNil (entity, [error description]);
+	array = [mContext executeFetchForEntity: entity withPredicate: nil returningFaults: NO 
 					   updateAutomatically: YES error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (array);
-    unsigned int count = [array count];
+    STAssertNotNil (array, [error description]);
+    NSUInteger count = [array count];
     
     //Create an object into the array using another connection.
     BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
@@ -172,26 +174,21 @@
     MKCAssertNotNil (context2);
     
     BXDatabaseObject* object = [context2 createObjectForEntity: entity withFieldValues: nil error: &error];
-    STAssertNil (error, [error description]);
-    MKCAssertNotNil (object);
+    STAssertNotNil (object, [error description]);
     
     //Commit the modification so we can see some results.
-    [context2 save: &error];
-    STAssertNil (error, [error description]);
+    STAssertTrue ([context2 save: &error], [error description]);
 	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
     MKCAssertEquals ([array count], count + 1);
     
-    [context2 executeDeleteObject: object error: &error];
-    STAssertNil (error, [error description]);
+    STAssertTrue ([context2 executeDeleteObject: object error: &error], [error description]);
     
     //Again, commit.
-    [context2 save: &error];
-    STAssertNil (error, [error description]);    
+    STAssertTrue ([context2 save: &error], [error description]);    
 	[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
     MKCAssertEquals (count, [array count]);
 	
 	[context2 disconnect];
 	[context2 release];
 }
-
 @end

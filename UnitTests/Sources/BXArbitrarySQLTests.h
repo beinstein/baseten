@@ -1,8 +1,8 @@
 //
-// ModificationTests.h
+// BXArbitrarySQLTests.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -29,8 +29,15 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import "BXTestCase.h"
 
+@class PGTSConnection;
+@class OCMockObject;
 
-@interface ModificationTests : BXDatabaseTestCase 
+
+@interface BXArbitrarySQLTests : BXDatabaseTestCase
 {
+	PGTSConnection *mConnection;
+	BXEntityDescription *mEntity;
+	BXDatabaseObject *mT1, *mT2, *mT3, *mT4;
+	OCMockObject *mMock;
 }
 @end
