@@ -186,4 +186,48 @@
 	[context2 disconnect];
 	[context2 release];
 }
+
+
+- (void) test3Inheritance
+{
+	NSError *error = nil;
+	BXDatabaseContext *context2 = nil;
+	BXDatabaseObject *object1 = nil, *object2 = nil;
+
+	BXEntityDescription *entity = [[mContext databaseObjectModel] entityForTable: @"inheritanceTest2"];
+	MKCAssertNotNil (entity);
+
+	{
+		context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
+		[context2 setDelegate: self];
+		[context2 setAutocommits: YES];
+		MKCAssertNotNil (context2);
+		
+		STAssertTrue ([context2 connectSync: &error], [error description]);
+		
+		object2 = [[context2 executeFetchForEntity: entity
+									 withPredicate: [NSPredicate predicateWithFormat: @"7 == id"]
+											 error: &error] lastObject];
+		STAssertNotNil (object2, [error description]);
+		
+		[object2 setPrimitiveValue: [NSNumber numberWithInteger: 9] forKey: @"b"];
+		MKCAssertEqualObjects ([object2 primitiveValueForKey: @"b"], [NSNumber numberWithInteger: 9]);
+	}
+		
+	{
+		object1 = [[mContext executeFetchForEntity: entity 
+									 withPredicate: [NSPredicate predicateWithFormat: @"7 == id"]
+											 error: &error] lastObject];
+		STAssertNotNil (object1, [error description]);
+		MKCAssertEqualObjects ([object1 primitiveValueForKey: @"b"], [NSNumber numberWithInteger: 9]);
+	}
+	
+	{
+		[object2 setPrimitiveValue: [NSNumber numberWithInteger: 10] forKey: @"b"];
+		[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 1.0]];
+	
+		MKCAssertEqualObjects ([object2 primitiveValueForKey: @"b"], [NSNumber numberWithInteger: 10]);
+		MKCAssertEqualObjects ([object1 primitiveValueForKey: @"b"], [NSNumber numberWithInteger: 10]);
+	}
+}
 @end

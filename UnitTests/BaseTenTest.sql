@@ -438,6 +438,27 @@ INSERT INTO fkeytest_add (id, value) VALUES (1, 'fkeytest_add');
 GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add TO baseten_test_user;
 GRANT SELECT, INSERT, UPDATE, DELETE ON fkeytest_add_rel TO baseten_test_user;
 
+
+CREATE TABLE "inheritanceTest1" (
+    id INTEGER PRIMARY KEY,
+    a INTEGER,
+    b INTEGER
+);
+CREATE TABLE "inheritanceTest2" (
+    c INTEGER,
+    d INTEGER
+) INHERITS ("inheritanceTest1");
+ALTER TABLE "inheritanceTest2" ADD PRIMARY KEY (id);
+SELECT baseten.enable (c.oid) FROM pg_class c, pg_namespace n
+    WHERE c.relnamespace = n.oid AND n.nspname = 'public' AND c.relname IN ('inheritanceTest1', 'inheritanceTest2');
+INSERT INTO "inheritanceTest1" (id, a, b) VALUES (1, 2, 3);
+INSERT INTO "inheritanceTest1" (id, a, b) VALUES (4, 5, 6);
+INSERT INTO "inheritanceTest2" (id, a, b, c, d) VALUES (7, 8, 9, 10, 11);
+INSERT INTO "inheritanceTest2" (id, a, b, c, d) VALUES (12, 13, 14, 15, 16);
+GRANT SELECT, INSERT, UPDATE, DELETE ON "inheritanceTest1" TO baseten_test_user;
+GRANT SELECT, INSERT, UPDATE, DELETE ON "inheritanceTest2" TO baseten_test_user;
+
+
 SELECT baseten.refresh_caches ();
 
 COMMIT;

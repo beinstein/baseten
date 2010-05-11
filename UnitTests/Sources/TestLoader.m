@@ -110,7 +110,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [ConnectTest class]];
+	//testClasses = [NSArray arrayWithObject: [BXModificationTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
