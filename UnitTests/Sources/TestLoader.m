@@ -47,7 +47,7 @@
 #import "PGTSNotificationTests.h"
 #import "PGTSPgBouncerTests.h"
 
-#import "ConnectTest.h"
+#import "BXConnectionTests.h"
 #import "BXSSLConnectionTests.h"
 #import "BXMetadataTests.h"
 #import "BXDataModelTests.h"
@@ -90,7 +90,7 @@
 							[PGTSNotificationTests class],
 							[PGTSPgBouncerTests class],
 							
-							[ConnectTest class],
+							[BXConnectionTests class],
 							[BXSSLConnectionTests class],
 							[BXMetadataTests class],
 							[BXDataModelTests class],
@@ -110,7 +110,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [BXArbitrarySQLTests class]];
+	//testClasses = [NSArray arrayWithObject: [ConnectTest class]];
 	
 	for (Class testCaseClass in testClasses)
 	{

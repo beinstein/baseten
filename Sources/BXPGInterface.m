@@ -891,12 +891,14 @@ error:
 {
 	//Warm-up the cache by ensuring that an entity exists for each table.
 	BXDatabaseObjectModel* objectModel = [mContext databaseObjectModel];
-	ExpectV ([objectModel canCreateEntityDescriptions]);
-	BXEnumerate (schema, e, [[[mTransactionHandler databaseDescription] schemasByName] objectEnumerator])
+	if ([objectModel canCreateEntityDescriptions])
 	{
-		BXEnumerate (table, e, [[schema allTables] objectEnumerator])
+		BXEnumerate (schema, e, [[[mTransactionHandler databaseDescription] schemasByName] objectEnumerator])
 		{
-			[objectModel entityForTable: [table name] inSchema: [table schemaName]];
+			BXEnumerate (table, e, [[schema allTables] objectEnumerator])
+			{
+				[objectModel entityForTable: [table name] inSchema: [table schemaName]];
+			}
 		}
 	}
 }
@@ -1003,6 +1005,7 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 	
 	BXEnumerate (entity, e, [entities objectEnumerator])
 	{
+		// Return YES if the entity needs to be validated.
 		if ([entity beginValidation])
 		{
 			BXPGTableDescription* table = [self tableForEntity: entity];

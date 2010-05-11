@@ -33,5 +33,4 @@
 @interface BXDatabaseObjectModel (PrivateMethods)
 - (id) initWithStorage: (BXDatabaseObjectModelStorage *) storage key: (NSURL *) key;
 - (BOOL) contextConnectedUsingDatabaseInterface: (id <BXInterface>) interface error: (NSError **) outError;
-- (void) setCanCreateEntityDescriptions: (BOOL) aBool;
 @end

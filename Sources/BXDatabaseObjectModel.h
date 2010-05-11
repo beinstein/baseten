@@ -39,7 +39,8 @@
 	BXDatabaseObjectModelStorage* mStorage;
 	NSURL* mStorageKey;
 	NSMutableDictionary* mEntitiesBySchemaAndName;
-	BOOL mCanCreateEntities;
+	volatile NSInteger mConnectionCount;
+	volatile BOOL mReloading;
 }
 + (NSError *) errorForMissingEntity: (NSString *) name inSchema: (NSString *) schemaName;
 

@@ -97,7 +97,9 @@ bx_test_failed (NSException* exception)
 	[super setUp];
 	
 	NSURL* databaseURI = [self databaseURI];
-	mContext = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
+
+	mContext = [[BXDatabaseContext alloc] init];
+	[mContext setDatabaseURI: databaseURI];
 	[mContext setAutocommits: NO];
 	[mContext setDelegate: self];
 	

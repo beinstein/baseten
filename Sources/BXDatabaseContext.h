@@ -53,6 +53,7 @@
 @class BXEntityDescription;
 @class BXDatabaseObjectID;
 @class BXDatabaseObjectModel;
+@class BXDatabaseObjectModelStorage;
 @class NSEntityDescription;
 
 
@@ -66,6 +67,7 @@
 	NSMutableIndexSet*						mUndoGroupingLevels;
 	BXHiddenId <BXConnector>				mConnectionSetupManager;
 	BXDatabaseObjectModel*					mObjectModel;
+	BXDatabaseObjectModelStorage*			mObjectModelStorage;
 	
     SecKeychainItemRef                      mKeychainPasswordItem;
     NSNotificationCenter*                   mNotificationCenter;
@@ -150,6 +152,9 @@
 
 - (BOOL) logsQueries;
 - (void) setLogsQueries: (BOOL) shouldLog;
+
+- (BXDatabaseObjectModelStorage *) databaseObjectModelStorage;
+- (void) setDatabaseObjectModelStorage: (BXDatabaseObjectModelStorage *) storage;
 @end
 
 

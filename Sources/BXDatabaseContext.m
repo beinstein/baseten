@@ -290,6 +290,7 @@ ModTypeToObject (enum BXModificationType value)
     [mObjects makeObjectsPerformSelector: @selector (BXDatabaseContextWillDealloc) withObject: nil];
     
 	[mObjectModel release];
+	[mObjectModelStorage release];
     [mDatabaseInterface release];
     [mDatabaseURI release];
     [mObjects release];
@@ -348,27 +349,30 @@ ModTypeToObject (enum BXModificationType value)
  * \param   uri     The database URI
  * \throw   NSException named \em kBXUnsupportedDatabaseException in case the given URI cannot be handled.
  */
-- (void) setDatabaseURI: (NSURL *) uri
+- (void) setDatabaseURI: (NSURL *) URI
 {
-	[self setKeychainPasswordItem: NULL];
-	if (! [[uri scheme] isEqual: [mDatabaseURI scheme]])
+	if (mDatabaseURI != URI)
 	{
-		[self setDatabaseInterface: nil];
-		[self databaseInterface];
-	}
+		[self setKeychainPasswordItem: NULL];
+		if (! [[URI scheme] isEqual: [mDatabaseURI scheme]])
+		{
+			[self setDatabaseInterface: nil];
+			[self databaseInterface];
+		}
 
-	if (mDatabaseURI && 0 < [[mDatabaseURI host] length])
-		[self setDatabaseObjectModel: nil];
+		if (mDatabaseURI && 0 < [[mDatabaseURI host] length])
+			[self setDatabaseObjectModel: nil];
 	
-	[self setDatabaseURIInternal: uri];
+		[self setDatabaseURIInternal: URI];
 
-	if (0 < [[mDatabaseURI host] length])
-	{
-		[self databaseObjectModel];
+		if (0 < [[mDatabaseURI host] length])
+		{
+			[self databaseObjectModel];
 
-		[[self internalDelegate] databaseContextGotDatabaseURI: self];
-		NSNotificationCenter* nc = [self notificationCenter];
-		[nc postNotificationName: kBXGotDatabaseURINotification object: self];	
+			[mDelegateProxy databaseContextGotDatabaseURI: self];
+			NSNotificationCenter* nc = [self notificationCenter];
+			[nc postNotificationName: kBXGotDatabaseURINotification object: self];	
+		}
 	}
 }
 
@@ -1005,9 +1009,31 @@ ModTypeToObject (enum BXModificationType value)
 			port = [mDatabaseInterface defaultPort];
 		
 		NSURL* key = [mDatabaseURI BXURIForHost: nil port: port database: nil username: @"" password: @""];
-		[self setDatabaseObjectModel: [[BXDatabaseObjectModelStorage defaultStorage] objectModelForURI: key]];
+		BXDatabaseObjectModelStorage *storage = mObjectModelStorage;
+		if (! storage)
+			storage = [BXDatabaseObjectModelStorage defaultStorage];
+		[self setDatabaseObjectModel: [storage objectModelForURI: key]];
 	}
 	return mObjectModel;
+}
+
+
+- (BXDatabaseObjectModelStorage *) databaseObjectModelStorage
+{
+	return mObjectModelStorage;
+}
+
+
+- (void) setDatabaseObjectModelStorage: (BXDatabaseObjectModelStorage *) storage
+{
+	if (! ([[mDatabaseURI host] length]))
+	{
+		if (storage != mObjectModelStorage)
+		{
+			[mObjectModelStorage release];
+			mObjectModelStorage = [storage retain];
+		}
+	}
 }
 @end
 
@@ -1659,10 +1685,12 @@ ModTypeToObject (enum BXModificationType value)
 	return [BXError errorWithDomain: kBXErrorDomain code: kBXErrorUnsuccessfulQuery userInfo: userInfo];	
 }
 
+
 - (void) connectionLost: (NSError *) error
 {
 	[mDelegateProxy databaseContext: self lostConnection: error];
 }
+
 
 //FIXME: We do too many things in this method. It should be refactored.
 - (BOOL) connectedToDatabase: (BOOL) connected async: (BOOL) async error: (NSError **) error;
@@ -1759,7 +1787,6 @@ ModTypeToObject (enum BXModificationType value)
 		NSNotification* notification = nil;
 		if ([[self databaseObjectModel] contextConnectedUsingDatabaseInterface: mDatabaseInterface error: &localError])
 		{
-			[mObjectModel setCanCreateEntityDescriptions: NO];
 			notification = [NSNotification notificationWithName: kBXConnectionSuccessfulNotification object: self userInfo: nil];
 			if (async)
 				[mDelegateProxy databaseContextConnectionSucceeded: self];
@@ -2098,7 +2125,7 @@ ModTypeToObject (enum BXModificationType value)
 
 - (void) networkStatusChanged: (SCNetworkConnectionFlags) newFlags
 {
-	[[self internalDelegate] databaseContext: self networkStatusChanged: newFlags];
+	[mDelegateProxy databaseContext: self networkStatusChanged: newFlags];
 }
 @end
 
@@ -2161,7 +2188,6 @@ ModTypeToObject (enum BXModificationType value)
 	BXDeprecationLog ();
 	NSError* localError = nil;
 	NSDictionary* retval = [mObjectModel entitiesBySchemaAndName: mDatabaseInterface reload: reload error: &localError];
-	[mObjectModel setCanCreateEntityDescriptions: NO];
 	BXHandleError (outError, localError);
 	return retval;
 }
@@ -2701,6 +2727,7 @@ bail:
 	return retval;
 }
 
+
 - (void) setLastConnectionError: (NSError *) anError
 {
 	if (mLastConnectionError != anError)
@@ -2709,6 +2736,7 @@ bail:
 		mLastConnectionError = [anError retain];
 	}
 }
+
 
 - (void) setDatabaseObjectModel: (BXDatabaseObjectModel *) model
 {

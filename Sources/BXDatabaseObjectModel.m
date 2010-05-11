@@ -36,6 +36,7 @@
 #import "BXLogger.h"
 #import "BXLocalizedString.h"
 #import "BXError.h"
+#import "NSDictionary+BaseTenAdditions.h"
 
 
 /** 
@@ -52,6 +53,7 @@
 	[self doesNotRecognizeSelector: _cmd];
 	return nil;
 }
+
 
 - (void) dealloc
 {	
@@ -82,7 +84,7 @@
 	BOOL retval = NO;
 	@synchronized (mEntitiesBySchemaAndName)
 	{
-		retval = mCanCreateEntities;
+		retval = ((0 == mConnectionCount) || mReloading ? YES : NO);
 	}
 	return retval;
 }
@@ -106,30 +108,22 @@
 {
 	NSMutableDictionary* schemaDict = nil;
 	BXEntityDescription* retval = nil;
-	BOOL canCreateEntityDesc = NO;
 	@synchronized (mEntitiesBySchemaAndName)
 	{
-		//We need the lock for this.
-		canCreateEntityDesc = mCanCreateEntities;
-		
 		schemaDict = [[[mEntitiesBySchemaAndName objectForKey: schemaName] retain] autorelease];
 		if (! schemaDict)
 		{
 			schemaDict = [NSMutableDictionary dictionary];
 			[mEntitiesBySchemaAndName setObject: schemaDict forKey: schemaName];
 		}
-	}
-	
-	@synchronized (schemaDict)
-	{
+		
 		retval = [[[schemaDict objectForKey: name] retain] autorelease];
-		if (! retval && canCreateEntityDesc)
+		if (! retval && [self canCreateEntityDescriptions])
 		{
 			retval = [[[BXEntityDescription alloc] initWithDatabaseURI: mStorageKey table: name inSchema: schemaName] autorelease];
 			[schemaDict setObject: retval forKey: name];
 		}
 	}
-	
 	return retval;
 }
 
@@ -144,21 +138,12 @@
 - (NSArray *) entities
 {
 	NSMutableArray* retval = [NSMutableArray array];
-	NSDictionary* schemas = nil;
 	@synchronized (mEntitiesBySchemaAndName)
 	{
-		schemas = [[mEntitiesBySchemaAndName copy] autorelease];
-	}
-	
-	BXEnumerate (currentSchema, e, [schemas objectEnumerator])
-	{
-		@synchronized (currentSchema)
-		{
+		BXEnumerate (currentSchema, e, [mEntitiesBySchemaAndName objectEnumerator])
 			[retval addObjectsFromArray: currentSchema];
-		}
 	}
-	
-	return retval;
+	return [[retval copy] autorelease];
 }
 
 
@@ -181,8 +166,9 @@
 		id <BXInterface> interface = [context databaseInterface];
 		[interface reloadDatabaseMetadata];
 		@synchronized (mEntitiesBySchemaAndName)
-		{			
-			mCanCreateEntities = YES;
+		{
+			mReloading = YES;
+
 			[interface prepareForEntityValidation];
 			NSArray* entities = [self entities];
 			if (entities)
@@ -191,17 +177,19 @@
 					[currentEntity removeValidation];
 				
 				if ([interface validateEntities: entities error: &localError])
-					retval = [[mEntitiesBySchemaAndName copy] autorelease];
+					retval = [[mEntitiesBySchemaAndName BXDeepCopy] autorelease];
 				else
 					[context handleError: localError outError: outError];
 			}
+			
+			mReloading = NO;
 		}
 	}
 	else
 	{
 		@synchronized (mEntitiesBySchemaAndName)
 		{
-			retval = [[mEntitiesBySchemaAndName copy] autorelease];
+			retval = [[mEntitiesBySchemaAndName BXDeepCopy] autorelease];
 		}
 	}
 	return retval;
@@ -231,7 +219,6 @@
 		mStorage = [storage retain];
 		mStorageKey = [key retain];
 		mEntitiesBySchemaAndName = [[NSMutableDictionary alloc] init];
-		mCanCreateEntities = YES;
 	}
 	return self;
 }
@@ -245,17 +232,14 @@
 	[interface prepareForEntityValidation];
 	
 	NSArray* entities = [self entities];
-	if (entities)
-		retval = [interface validateEntities: entities error: outError];
-	return retval;
-}
-
-
-- (void) setCanCreateEntityDescriptions: (BOOL) aBool
-{
-	@synchronized (mEntitiesBySchemaAndName)
+	if (entities && [interface validateEntities: entities error: outError])
 	{
-		mCanCreateEntities = aBool;
+		retval = YES;
+		@synchronized (mEntitiesBySchemaAndName)
+		{
+			mConnectionCount++;
+		}
 	}
+	return retval;
 }
 @end

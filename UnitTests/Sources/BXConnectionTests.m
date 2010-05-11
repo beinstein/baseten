@@ -1,8 +1,8 @@
 //
-// ConnectTest.m
+// BXConnectTests.m
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -26,47 +26,49 @@
 // $Id$
 //
 
-#import "ConnectTest.h"
-#import <BaseTen/BaseTen.h>
+#import "BXConnectionTests.h"
 #import "MKCSenTestCaseAdditions.h"
+#import <BaseTen/BaseTen.h>
 
 
-@implementation ConnectTest
-
+@implementation BXConnectionTests
 - (void) setUp
 {
 	[super setUp];
-	
-    ctx = [[BXDatabaseContext alloc] init];
-	[ctx setAutocommits: NO];
-	[ctx setDelegate: self];
-	expectedCount = 0;
+
+    mContext = [[BXDatabaseContext alloc] init];
+	[mContext setAutocommits: NO];
+	[mContext setDelegate: self];
 }
+
 
 - (void) tearDown
 {
-	[ctx disconnect];
-    [ctx release];
+	[mContext disconnect];
+    [mContext release];
 	[super tearDown];
 }
+
 
 - (void) waitForConnectionAttempts: (NSInteger) count
 {
 	for (NSInteger i = 0; i < 300; i++)
 	{
-		NSLog (@"Attempt %d, count %d, expected %d", i, expectedCount, count);
-		if (count == expectedCount)
+		NSLog (@"Attempt %d, count %d, expected %d", i, mExpectedCount, count);
+		if (count == mExpectedCount)
 			break;
 		
 		[[NSRunLoop currentRunLoop] runUntilDate: [NSDate dateWithTimeIntervalSinceNow: 2.0]];
 	}
 }
 
+
 - (void) test1Connect
 {
-    MKCAssertNoThrow ([ctx setDatabaseURI: [self databaseURI]]);
-    MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
+    MKCAssertNoThrow ([mContext setDatabaseURI: [self databaseURI]]);
+    MKCAssertNoThrow ([mContext connectIfNeeded: nil]);
 }
+
 
 - (void) test2Connect
 {
@@ -75,61 +77,67 @@
 	uriString = [uriString stringByAppendingString: @"/"];
 	uri = [NSURL URLWithString: uriString];
 	
-    MKCAssertNoThrow ([ctx setDatabaseURI: uri]);
-    MKCAssertNoThrow ([ctx connectIfNeeded: nil]);
+    MKCAssertNoThrow ([mContext setDatabaseURI: uri]);
+    MKCAssertNoThrow ([mContext connectIfNeeded: nil]);
 }
- 
+
+
 - (void) test3ConnectFail
 {
-    MKCAssertNoThrow ([ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]]);
-    MKCAssertThrows ([ctx connectIfNeeded: nil]);
+    MKCAssertNoThrow ([mContext setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]]);
+    MKCAssertThrows ([mContext connectIfNeeded: nil]);
 }
- 
+
+
 - (void) test4ConnectFail
 {
-    MKCAssertNoThrow ([ctx setDatabaseURI: 
+    MKCAssertNoThrow ([mContext setDatabaseURI: 
         [NSURL URLWithString: @"pgsql://user@localhost/basetentest/a/malformed/database/uri"]]);
-    MKCAssertThrows ([ctx connectIfNeeded: nil]);
+    MKCAssertThrows ([mContext connectIfNeeded: nil]);
 }
+
 
 - (void) test5ConnectFail
 {
-    MKCAssertThrows ([ctx setDatabaseURI: [NSURL URLWithString: @"invalid://user@localhost/invalid"]]);
+    MKCAssertThrows ([mContext setDatabaseURI: [NSURL URLWithString: @"invalid://user@localhost/invalid"]]);
 }
+
 
 - (void) test7NilURI
 {
 	NSError* error = nil;
 	id fetched = nil;
-	BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: @"test"];
-	fetched = [ctx executeFetchForEntity: entity withPredicate: nil error: &error];
+	BXEntityDescription* entity = [[mContext databaseObjectModel] entityForTable: @"test"];
+	fetched = [mContext executeFetchForEntity: entity withPredicate: nil error: &error];
 	MKCAssertNotNil (error);
-	fetched = [ctx createObjectForEntity: entity withFieldValues: nil error: &error];
+	fetched = [mContext createObjectForEntity: entity withFieldValues: nil error: &error];
 	MKCAssertNotNil (error);
 }
+
 
 - (void) test6ConnectFail
 {
-	[ctx setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]];
-	[[ctx notificationCenter] addObserver: self selector: @selector (expected:) name: kBXConnectionFailedNotification object: nil];
-	[[ctx notificationCenter] addObserver: self selector: @selector (unexpected:) name: kBXConnectionSuccessfulNotification object: nil];
-	[ctx connectAsync];
+	[mContext setDatabaseURI: [NSURL URLWithString: @"pgsql://localhost/anonexistantdatabase"]];
+	[[mContext notificationCenter] addObserver: self selector: @selector (expected:) name: kBXConnectionFailedNotification object: nil];
+	[[mContext notificationCenter] addObserver: self selector: @selector (unexpected:) name: kBXConnectionSuccessfulNotification object: nil];
+	[mContext connectAsync];
 	[self waitForConnectionAttempts: 1];
-	[ctx connectAsync];
+	[mContext connectAsync];
 	[self waitForConnectionAttempts: 2];
-	[ctx connectAsync];
+	[mContext connectAsync];
 	[self waitForConnectionAttempts: 3];
-	STAssertTrue (3 == expectedCount, @"Expected 3 connection attempts while there were %d.", expectedCount);
+	STAssertTrue (3 == mExpectedCount, @"Expected 3 connection attempts while there were %d.", mExpectedCount);
 }
+
 
 - (void) expected: (NSNotification *) n
 {
-	expectedCount++;
+	mExpectedCount++;
 }
+
 
 - (void) unexpected: (NSNotification *) n
 {
 	STAssertTrue (NO, @"Expected connection not to have been made.");
 }
-
 @end

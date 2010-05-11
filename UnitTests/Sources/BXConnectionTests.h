@@ -1,8 +1,8 @@
 //
-// ConnectTest.h
+// BXConnectionTests.h
 // BaseTen
 //
-// Copyright (C) 2006-2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2006-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://basetenframework.org/licensing/ or by contacting
@@ -30,10 +30,10 @@
 #import "BXTestCase.h"
 @class BXDatabaseContext;
 
-@interface ConnectTest : BXTestCase 
-{
-    BXDatabaseContext* ctx;
-	int expectedCount;
-}
 
+@interface BXConnectionTests : BXTestCase 
+{
+    BXDatabaseContext* mContext;
+	NSInteger mExpectedCount;
+}
 @end
