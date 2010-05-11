@@ -2,7 +2,7 @@
 // PGTSConnector.h
 // BaseTen
 //
-// Copyright (C) 2008 Marko Karppinen & Co. LLC.
+// Copyright (C) 2008-2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
 // by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
@@ -28,9 +28,13 @@
 
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXCFHostCompatibility.h> 
+#import <BaseTen/BXExport.h>
 #import <BaseTen/libpq-fe.h>
 
 @class PGTSConnector;
+
+
+BX_INTERNAL char *PGTSCopyConnectionString (NSDictionary *);
 
 
 @protocol PGTSConnectorDelegate <NSObject>
@@ -63,43 +67,8 @@
 
 - (NSError *) connectionError;
 - (void) setConnectionError: (NSError *) anError;
-@end
 
-
-@interface PGTSAsynchronousConnector : PGTSConnector
-{
-	NSDictionary* mConnectionDictionary;
-	CFRunLoopRef mRunLoop;
-	CFHostRef mHost;
-	CFSocketRef mSocket;
-	CFRunLoopSourceRef mSocketSource;
-	CFSocketCallBackType mExpectedCallBack;
-	CFStreamError mHostError;
-}
-
-- (CFRunLoopRef) CFRunLoop;
-- (void) setCFRunLoop: (CFRunLoopRef) aRef;
-
-- (void) socketReady: (CFSocketCallBackType) callBackType;
-- (void) continueFromNameResolution: (const CFStreamError *) error;
-- (BOOL) startNegotiation: (const char *) conninfo;
-- (void) negotiateConnection;
-@end
-
-
-@interface PGTSSynchronousConnector : PGTSConnector
-{
-}
-@end
-
-
-@interface PGTSAsynchronousReconnector : PGTSAsynchronousConnector
-{
-}
-@end
-
-
-@interface PGTSSynchronousReconnector : PGTSSynchronousConnector
-{
-}
+- (void) finishedConnecting: (BOOL) status;
+- (void) setUpSSL;
+- (void) prepareForConnect;
 @end

@@ -74,6 +74,10 @@
 		53015A850FBEF22400E52C1E /* BXArraySize.h in Headers */ = {isa = PBXBuildFile; fileRef = 53015A830FBEF18800E52C1E /* BXArraySize.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		530A69831199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 530A69811199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.h */; };
 		530A69841199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A69821199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.m */; };
+		530A6A561199B9CA00ED63FD /* PGTSAsynchronousConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 530A6A521199B9CA00ED63FD /* PGTSAsynchronousConnector.h */; };
+		530A6A571199B9CA00ED63FD /* PGTSAsynchronousConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A6A531199B9CA00ED63FD /* PGTSAsynchronousConnector.m */; };
+		530A6A581199B9CA00ED63FD /* PGTSSynchronousConnector.h in Headers */ = {isa = PBXBuildFile; fileRef = 530A6A541199B9CA00ED63FD /* PGTSSynchronousConnector.h */; };
+		530A6A591199B9CA00ED63FD /* PGTSSynchronousConnector.m in Sources */ = {isa = PBXBuildFile; fileRef = 530A6A551199B9CA00ED63FD /* PGTSSynchronousConnector.m */; };
 		531A21500DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A214E0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h */; };
 		531A21510DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 531A214F0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.m */; };
 		531A21560DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 531A21540DE4324D006C757A /* BXPGAutocommitConnectionResetRecoveryAttempter.h */; };
@@ -763,6 +767,10 @@
 		5308940D0E4349A50063C5E7 /* InterfaceBuilderPlugin.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = InterfaceBuilderPlugin.xcodeproj; path = InterfaceBuilderPlugin/InterfaceBuilderPlugin.xcodeproj; sourceTree = "<group>"; };
 		530A69811199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSDictionary+BaseTenAdditions.h"; path = "Sources/NSDictionary+BaseTenAdditions.h"; sourceTree = "<group>"; };
 		530A69821199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSDictionary+BaseTenAdditions.m"; path = "Sources/NSDictionary+BaseTenAdditions.m"; sourceTree = "<group>"; };
+		530A6A521199B9CA00ED63FD /* PGTSAsynchronousConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSAsynchronousConnector.h; path = Sources/PGTSAsynchronousConnector.h; sourceTree = "<group>"; };
+		530A6A531199B9CA00ED63FD /* PGTSAsynchronousConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSAsynchronousConnector.m; path = Sources/PGTSAsynchronousConnector.m; sourceTree = "<group>"; };
+		530A6A541199B9CA00ED63FD /* PGTSSynchronousConnector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSSynchronousConnector.h; path = Sources/PGTSSynchronousConnector.h; sourceTree = "<group>"; };
+		530A6A551199B9CA00ED63FD /* PGTSSynchronousConnector.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSSynchronousConnector.m; path = Sources/PGTSSynchronousConnector.m; sourceTree = "<group>"; };
 		530ADD8309ED21EF004A13C3 /* BaseTen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BaseTen.h; path = Sources/BaseTen.h; sourceTree = "<group>"; };
 		531266E40B68F9CA00637EDA /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		531A214E0DE431D1006C757A /* BXPGConnectionResetRecoveryAttempter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGConnectionResetRecoveryAttempter.h; path = Sources/BXPGConnectionResetRecoveryAttempter.h; sourceTree = "<group>"; };
@@ -1458,6 +1466,10 @@
 				53666CC70E1CD8D20028DBEA /* PGTSNotification.m */,
 				53666CB20E1CD8D20028DBEA /* PGTSConnector.h */,
 				53666CB30E1CD8D20028DBEA /* PGTSConnector.m */,
+				530A6A541199B9CA00ED63FD /* PGTSSynchronousConnector.h */,
+				530A6A551199B9CA00ED63FD /* PGTSSynchronousConnector.m */,
+				530A6A521199B9CA00ED63FD /* PGTSAsynchronousConnector.h */,
+				530A6A531199B9CA00ED63FD /* PGTSAsynchronousConnector.m */,
 				53666CAA0E1CD8D20028DBEA /* PGTSConnection.h */,
 				53666CB10E1CD8D20028DBEA /* PGTSConnectionPrivate.h */,
 				53666CAB0E1CD8D20028DBEA /* PGTSConnection.mm */,
@@ -1913,6 +1925,8 @@
 				53C8CC66118F1B8800E7AF88 /* BXDatabaseObjectModelPrivate.h in Headers */,
 				53C4C3F41192EC10003FB842 /* BXCFHostCompatibility.h in Headers */,
 				530A69831199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.h in Headers */,
+				530A6A561199B9CA00ED63FD /* PGTSAsynchronousConnector.h in Headers */,
+				530A6A581199B9CA00ED63FD /* PGTSSynchronousConnector.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2590,6 +2604,8 @@
 				53617F931035B89D003CE4F5 /* variables.c in Sources */,
 				53E8985E1035B97D0062AA4D /* psqlscan.l in Sources */,
 				530A69841199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.m in Sources */,
+				530A6A571199B9CA00ED63FD /* PGTSAsynchronousConnector.m in Sources */,
+				530A6A591199B9CA00ED63FD /* PGTSSynchronousConnector.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

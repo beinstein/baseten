@@ -32,6 +32,8 @@
 #import "PGTSConnection.h"
 #import "PGTSConnectionPrivate.h"
 #import "PGTSConnector.h"
+#import "PGTSSynchronousConnector.h"
+#import "PGTSAsynchronousConnector.h"
 #import "PGTSConstants.h"
 #import "PGTSQuery.h"
 #import "PGTSQueryDescription.h"
