@@ -93,7 +93,8 @@ enum BXLogLevel
 	kBXLogLevelDebug    /**< Debugging information */
 };
 
-//Do not use outside this file in case we decide to change the implementation.
+// Do not use outside this file in case we decide to change the implementation.
+// The symbol is also needed by BaseTenAppKit.
 BX_EXPORT enum BXLogLevel BXLogLevel;
 
 
@@ -103,7 +104,16 @@ BX_EXPORT enum BXLogLevel BXLogLevel;
  *
  * \warning This function is not thread-safe.
  */
-BX_EXPORT void BXSetLogLevel (enum BXLogLevel level);
+BX_EXPORT void BXLogSetLevel (enum BXLogLevel level);
+BX_EXPORT void BXSetLogLevel (enum BXLogLevel level) BX_DEPRECATED_IN_1_8;
+
+/**
+ * \brief
+ * Set whether the logger should call abort() on assertion failure
+ *
+ * \warning This function is not thread-safe.
+ */
+BX_EXPORT void BXLogSetAbortsOnAssertionFailure (BOOL);
 
 
 /**

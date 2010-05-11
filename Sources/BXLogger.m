@@ -32,12 +32,27 @@
 #import <unistd.h>
 
 enum BXLogLevel BXLogLevel = kBXLogLevelWarning;
+static BOOL stAbortOnAssertionFailure = NO;
 
 
 void BXSetLogLevel (enum BXLogLevel level)
 {
+	BXDeprecationLog ();
 	BXLogLevel = level;
 }
+
+
+void BXLogSetLevel (enum BXLogLevel level)
+{
+	BXLogLevel = level;
+}
+
+
+void BXLogSetAbortsOnAssertionFailure (BOOL flag)
+{
+	stAbortOnAssertionFailure = flag;
+}
+
 
 static inline const char* LogLevel (enum BXLogLevel level)
 {
@@ -102,7 +117,10 @@ static char* CopyExecutableName ()
 
 void BXAssertionDebug ()
 {
-	BXLogError (@"Break on BXAssertionDebug to inspect.");
+	if (stAbortOnAssertionFailure)
+		abort ();
+	else
+		BXLogError (@"Break on BXAssertionDebug to inspect.");
 }
 
 void

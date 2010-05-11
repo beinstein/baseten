@@ -48,7 +48,7 @@
  primaryKeyFields: (NSDictionary **) outPkeyDict;
 
 - (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context;
-- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error BX_DEPRECATED;
+- (id) initWithURI: (NSURL *) anURI context: (BXDatabaseContext *) context error: (NSError **) error BX_DEPRECATED_IN_1_8;
 - (NSURL *) URIRepresentation;
 
 - (BXEntityDescription *) entity;

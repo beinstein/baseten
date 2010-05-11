@@ -30,7 +30,7 @@
 #import <BaseTen/BXExport.h>
 #import <BaseTen/libpq-fe.h>
 
-PGTS_EXPORT id PGTSOidAsObject (Oid o);
+BX_INTERNAL id PGTSOidAsObject (Oid o);
 
 @interface NSNumber (PGTSOidAdditions)
 - (Oid) PGTSOidValue;

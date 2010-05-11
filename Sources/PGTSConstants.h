@@ -29,88 +29,91 @@
 #import <Foundation/Foundation.h>
 #import <BaseTen/BXExport.h>
 
+// Some of the following symbols are used in the unit tests,
+// which is why they have been exported.
+
 
 #define kPGTSPUBLICOid InvalidOid
 
 
-PGTS_EXPORT NSDictionary* kPGTSDefaultConnectionDictionary;
+BX_INTERNAL NSDictionary* kPGTSDefaultConnectionDictionary;
 
-PGTS_EXPORT NSString* const kPGTSHostKey;
-PGTS_EXPORT NSString* const kPGTSHostAddressKey;
-PGTS_EXPORT NSString* const kPGTSPortKey;
-PGTS_EXPORT NSString* const kPGTSDatabaseNameKey;
-PGTS_EXPORT NSString* const kPGTSUserNameKey;
-PGTS_EXPORT NSString* const kPGTSPasswordKey;
-PGTS_EXPORT NSString* const kPGTSConnectTimeoutKey;
-PGTS_EXPORT NSString* const kPGTSOptionsKey;
-PGTS_EXPORT NSString* const kPGTSSSLModeKey;
-PGTS_EXPORT NSString* const kPGTSServiceNameKey;
-PGTS_EXPORT NSArray* kPGTSConnectionDictionaryKeys;
+BX_EXPORT   NSString* const kPGTSHostKey;
+BX_INTERNAL NSString* const kPGTSHostAddressKey;
+BX_INTERNAL NSString* const kPGTSPortKey;
+BX_EXPORT   NSString* const kPGTSDatabaseNameKey;
+BX_EXPORT   NSString* const kPGTSUserNameKey;
+BX_INTERNAL NSString* const kPGTSPasswordKey;
+BX_INTERNAL NSString* const kPGTSConnectTimeoutKey;
+BX_INTERNAL NSString* const kPGTSOptionsKey;
+BX_EXPORT   NSString* const kPGTSSSLModeKey;
+BX_INTERNAL NSString* const kPGTSServiceNameKey;
+BX_INTERNAL NSArray* kPGTSConnectionDictionaryKeys;
 
-PGTS_EXPORT NSString* const kPGTSRetrievedResultNotification;
-PGTS_EXPORT NSString* const kPGTSBackendPIDKey;
-PGTS_EXPORT NSString* const kPGTSNotificationNameKey;
-PGTS_EXPORT NSString* const kPGTSNotificationExtraKey;
-PGTS_EXPORT NSString* const kPGTSWillDisconnectNotification;
-PGTS_EXPORT NSString* const kPGTSDidDisconnectNotification;
-PGTS_EXPORT NSString* const kPGTSNotice;
-PGTS_EXPORT NSString* const kPGTSNoticeMessageKey;
-PGTS_EXPORT NSString* const kPGTSConnectionPoolItemDidRemoveConnectionNotification;
-PGTS_EXPORT NSString* const kPGTSConnectionPoolItemDidAddConnectionNotification;
-PGTS_EXPORT NSString* const kPGTSRowKey;
-PGTS_EXPORT NSString* const kPGTSRowsKey;
-PGTS_EXPORT NSString* const kPGTSTableKey;
+BX_INTERNAL NSString* const kPGTSRetrievedResultNotification;
+BX_INTERNAL NSString* const kPGTSBackendPIDKey;
+BX_INTERNAL NSString* const kPGTSNotificationNameKey;
+BX_INTERNAL NSString* const kPGTSNotificationExtraKey;
+BX_INTERNAL NSString* const kPGTSWillDisconnectNotification;
+BX_INTERNAL NSString* const kPGTSDidDisconnectNotification;
+BX_INTERNAL NSString* const kPGTSNotice;
+BX_INTERNAL NSString* const kPGTSNoticeMessageKey;
+BX_INTERNAL NSString* const kPGTSConnectionPoolItemDidRemoveConnectionNotification;
+BX_INTERNAL NSString* const kPGTSConnectionPoolItemDidAddConnectionNotification;
+BX_INTERNAL NSString* const kPGTSRowKey;
+BX_INTERNAL NSString* const kPGTSRowsKey;
+BX_INTERNAL NSString* const kPGTSTableKey;
 
-PGTS_EXPORT NSString* const kPGTSConnectionKey;
-PGTS_EXPORT NSString* const kPGTSConnectionDelegateKey;
+BX_INTERNAL NSString* const kPGTSConnectionKey;
+BX_INTERNAL NSString* const kPGTSConnectionDelegateKey;
 
-PGTS_EXPORT NSString* const kPGTSFieldnameKey;
-PGTS_EXPORT NSString* const kPGTSFieldKey;
-PGTS_EXPORT NSString* const kPGTSValueKey;
-PGTS_EXPORT NSString* const kPGTSRowIndexKey;
-PGTS_EXPORT NSString* const kPGTSResultSetKey;
-PGTS_EXPORT NSString* const kPGTSDataSourceKey;
+BX_INTERNAL NSString* const kPGTSFieldnameKey;
+BX_INTERNAL NSString* const kPGTSFieldKey;
+BX_INTERNAL NSString* const kPGTSValueKey;
+BX_INTERNAL NSString* const kPGTSRowIndexKey;
+BX_INTERNAL NSString* const kPGTSResultSetKey;
+BX_INTERNAL NSString* const kPGTSDataSourceKey;
 
-PGTS_EXPORT NSString* const kPGTSNoKeyFieldsException;
-PGTS_EXPORT NSString* const kPGTSNoKeyFieldException;
-PGTS_EXPORT NSString* const kPGTSFieldNotFoundException;
-PGTS_EXPORT NSString* const kPGTSNoPrimaryKeyException;
-PGTS_EXPORT NSString* const kPGTSQueryFailedException;
-PGTS_EXPORT NSString* const kPGTSConnectionFailedException;
+BX_INTERNAL NSString* const kPGTSNoKeyFieldsException;
+BX_INTERNAL NSString* const kPGTSNoKeyFieldException;
+BX_INTERNAL NSString* const kPGTSFieldNotFoundException;
+BX_INTERNAL NSString* const kPGTSNoPrimaryKeyException;
+BX_INTERNAL NSString* const kPGTSQueryFailedException;
+BX_INTERNAL NSString* const kPGTSConnectionFailedException;
 
-PGTS_EXPORT NSString* const kPGTSModificationNameKey;
-PGTS_EXPORT NSString* const kPGTSInsertModification;
-PGTS_EXPORT NSString* const kPGTSUpdateModification;
-PGTS_EXPORT NSString* const kPGTSDeleteModification;
+BX_INTERNAL NSString* const kPGTSModificationNameKey;
+BX_INTERNAL NSString* const kPGTSInsertModification;
+BX_INTERNAL NSString* const kPGTSUpdateModification;
+BX_INTERNAL NSString* const kPGTSDeleteModification;
 
-PGTS_EXPORT NSString* const kPGTSLockedForUpdate;
-PGTS_EXPORT NSString* const kPGTSLockedForDelete;
-PGTS_EXPORT NSString* const kPGTSUnlockedRowsNotification;
-PGTS_EXPORT NSString* const kPGTSRowShareLock;
+BX_INTERNAL NSString* const kPGTSLockedForUpdate;
+BX_INTERNAL NSString* const kPGTSLockedForDelete;
+BX_INTERNAL NSString* const kPGTSUnlockedRowsNotification;
+BX_INTERNAL NSString* const kPGTSRowShareLock;
 
-PGTS_EXPORT NSString* const kPGTSUnsupportedPredicateOperatorTypeException;
-PGTS_EXPORT NSString* const kPGTSParametersKey;
-PGTS_EXPORT NSString* const kPGTSParameterIndexKey;
-PGTS_EXPORT NSString* const kPGTSExpressionParametersVerbatimKey;
+BX_INTERNAL NSString* const kPGTSUnsupportedPredicateOperatorTypeException;
+BX_INTERNAL NSString* const kPGTSParametersKey;
+BX_INTERNAL NSString* const kPGTSParameterIndexKey;
+BX_INTERNAL NSString* const kPGTSExpressionParametersVerbatimKey;
 
-PGTS_EXPORT NSString* const kPGTSErrorSeverity;
-PGTS_EXPORT NSString* const kPGTSErrorSQLState;
-PGTS_EXPORT NSString* const kPGTSErrorPrimaryMessage;
-PGTS_EXPORT NSString* const kPGTSErrorDetailMessage;
-PGTS_EXPORT NSString* const kPGTSErrorHint;
-PGTS_EXPORT NSString* const kPGTSErrorInternalQuery;
-PGTS_EXPORT NSString* const kPGTSErrorContext;
-PGTS_EXPORT NSString* const kPGTSErrorSourceFile;
-PGTS_EXPORT NSString* const kPGTSErrorSourceFunction;
-PGTS_EXPORT NSString* const kPGTSErrorStatementPosition;
-PGTS_EXPORT NSString* const kPGTSErrorInternalPosition;
-PGTS_EXPORT NSString* const kPGTSErrorSourceLine;
-PGTS_EXPORT NSString* const kPGTSErrorMessage;
-PGTS_EXPORT NSString* const kPGTSSSLAttemptedKey;
+BX_INTERNAL NSString* const kPGTSErrorSeverity;
+BX_INTERNAL NSString* const kPGTSErrorSQLState;
+BX_INTERNAL NSString* const kPGTSErrorPrimaryMessage;
+BX_INTERNAL NSString* const kPGTSErrorDetailMessage;
+BX_INTERNAL NSString* const kPGTSErrorHint;
+BX_INTERNAL NSString* const kPGTSErrorInternalQuery;
+BX_INTERNAL NSString* const kPGTSErrorContext;
+BX_INTERNAL NSString* const kPGTSErrorSourceFile;
+BX_INTERNAL NSString* const kPGTSErrorSourceFunction;
+BX_INTERNAL NSString* const kPGTSErrorStatementPosition;
+BX_INTERNAL NSString* const kPGTSErrorInternalPosition;
+BX_INTERNAL NSString* const kPGTSErrorSourceLine;
+BX_INTERNAL NSString* const kPGTSErrorMessage;
+BX_INTERNAL NSString* const kPGTSSSLAttemptedKey;
     
 
-PGTS_EXPORT NSString* const kPGTSErrorDomain;
-PGTS_EXPORT NSString* const kPGTSConnectionErrorDomain;
+BX_INTERNAL NSString* const kPGTSErrorDomain;
+BX_INTERNAL NSString* const kPGTSConnectionErrorDomain;
 enum PGTSErrors
 {
     kPGTSUnsuccessfulQueryError = 1

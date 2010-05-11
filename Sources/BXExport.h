@@ -27,23 +27,22 @@
 //
 
 
-//FIXME: change this to private_extern?
-#ifndef PGTS_EXPORT
+#ifndef BX_INTERNAL
 #ifdef __cplusplus
-#define PGTS_EXPORT extern "C"
+#define BX_INTERNAL extern "C" __attribute__((visibility("hidden")))
 #else
-#define PGTS_EXPORT extern
+#define BX_INTERNAL extern     __attribute__((visibility("hidden")))
 #endif
 #endif
 
 
 #ifndef BX_EXPORT
 #ifdef __cplusplus
-#define BX_EXPORT extern "C"
+#define BX_EXPORT extern "C"   __attribute__((visibility("default")))
 #else
-#define BX_EXPORT extern
+#define BX_EXPORT extern       __attribute__((visibility("default")))
 #endif
 #endif
 
 
-#define BX_DEPRECATED DEPRECATED_ATTRIBUTE
+#define BX_DEPRECATED_IN_1_8 DEPRECATED_ATTRIBUTE

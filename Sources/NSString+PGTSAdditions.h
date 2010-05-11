@@ -31,8 +31,8 @@
 
 @class PGTSConnection;
 
-PGTS_EXPORT char *PGTSCopyEscapedString (PGTSConnection *, const char *);
-PGTS_EXPORT NSString *PGTSReformatErrorMessage (NSString* message);
+BX_INTERNAL char *PGTSCopyEscapedString (PGTSConnection *, const char *);
+BX_INTERNAL NSString *PGTSReformatErrorMessage (NSString* message);
 
 @interface NSString (PGTSAdditions)
 - (NSString *) escapeForPGTSConnection: (PGTSConnection *) connection;

@@ -70,7 +70,8 @@
 @implementation BXTestLoader
 - (void) test
 {
-	BXSetLogLevel (kBXLogLevelWarning);
+	BXLogSetLevel (kBXLogLevelWarning);
+	BXLogSetAbortsOnAssertionFailure (YES);
 	
 	NSArray* testClasses = [NSArray arrayWithObjects:
 							[PGTSInvocationRecorderTests class],

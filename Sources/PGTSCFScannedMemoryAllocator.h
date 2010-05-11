@@ -30,5 +30,5 @@
 #import <BaseTen/BXExport.h>
 
 
-PGTS_EXPORT CFAllocatorRef PGTSScannedMemoryAllocator ();
-PGTS_EXPORT CFSetCallBacks PGTSScannedSetCallbacks ();
+BX_INTERNAL CFAllocatorRef PGTSScannedMemoryAllocator ();
+BX_INTERNAL CFSetCallBacks PGTSScannedSetCallbacks ();

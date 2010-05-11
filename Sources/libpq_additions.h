@@ -30,4 +30,4 @@
 #import <BaseTen/BXExport.h>
 
 
-PGTS_EXPORT const char* pq_ssl_mode (const PGconn* connection);
+BX_INTERNAL const char* pq_ssl_mode (const PGconn* connection);
