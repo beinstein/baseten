@@ -123,7 +123,7 @@ BX_EXPORT void BXLogSetAbortsOnAssertionFailure (BOOL);
  * an assertion fails. The reason might be a bug in either BaseTen or in
  * user code.
  */
-BX_EXPORT void BXAssertionDebug ();
+BX_EXPORT void BXAssertionDebug () BX_ANALYZER_NORETURN;
 
 
 /**
@@ -136,5 +136,18 @@ BX_EXPORT void BXAssertionDebug ();
 BX_EXPORT void BXDeprecationWarning ();
 
 
-BX_EXPORT void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...);
-BX_EXPORT void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args);
+BX_EXPORT void BXLogSetLogFile (NSBundle *bundle);
+BX_EXPORT void BXLog (const char *fileName, 
+					  const char *functionName, 
+					  void *functionAddress, 
+					  int line, 
+					  enum BXLogLevel level, 
+					  id messageFmt, 
+					  ...) BX_FORMAT_FUNCTION(6,7);
+BX_EXPORT void BXLog_v (const char *fileName, 
+						const char *functionName, 
+						void *functionAddress, 
+						int line, 
+						enum BXLogLevel level, 
+						id messageFmt, 
+						va_list args) BX_FORMAT_FUNCTION(6,0);

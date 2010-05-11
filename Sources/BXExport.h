@@ -45,4 +45,24 @@
 #endif
 
 
+#ifndef BX_ANALYZER_NORETURN
+#if __clang__
+#define BX_ANALYZER_NORETURN   __attribute__((analyzer_noreturn))
+#else
+#define BX_ANALYZER_NORETURN
+#endif
+#endif
+
+
+#ifndef BX_FORMAT_FUNCTION(X,Y)
+#ifdef NS_FORMAT_FUNCTION
+#define BX_FORMAT_FUNCTION(X,Y) NS_FORMAT_FUNCTION(X,Y)
+#else
+#define BX_FORMAT_FUNCTION(X,Y)
+#endif
+#endif
+
+
+#ifndef BX_DEPRECATED_IN_1_8
 #define BX_DEPRECATED_IN_1_8 DEPRECATED_ATTRIBUTE
+#endif

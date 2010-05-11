@@ -31,32 +31,60 @@
 #import <dlfcn.h>
 #import <unistd.h>
 
+
 enum BXLogLevel BXLogLevel = kBXLogLevelWarning;
 static BOOL stAbortOnAssertionFailure = NO;
+// If the log file will be larger than this amount of bytes then it'll be truncated
+static const unsigned long long kLogFileMaxSize = 1024 * 1024;
+// When the log file will be truncated, this amount of bytes will be left to the beginning of the file
+static const unsigned long long kLogFileTruncateSize = 1024 * 128; 
 
 
-void BXSetLogLevel (enum BXLogLevel level)
+static void TruncateLogFile (NSString *filePath)
 {
-	BXDeprecationLog ();
-	BXLogLevel = level;
+	NSFileManager *fm = [[NSFileManager alloc] init];
+	if ([fm fileExistsAtPath: filePath])
+	{
+		NSNumber *sizeAttr = nil;
+		NSError *error = nil;
+		if ([fm respondsToSelector: @selector (attributesOfItemAtPath:error:)])
+			sizeAttr = [[fm attributesOfItemAtPath: filePath error: &error] objectForKey: NSFileSize];
+		else
+			sizeAttr = [[fm fileAttributesAtPath: filePath traverseLink: NO] objectForKey: NSFileSize];
+		
+		if (sizeAttr)
+		{
+			unsigned long long fileSize = [sizeAttr unsignedLongLongValue];
+			if (kLogFileMaxSize < fileSize)
+			{
+				NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath: filePath];
+				[fileHandle seekToFileOffset: (fileSize - kLogFileTruncateSize)];
+				NSData *dataToLeave = [fileHandle readDataToEndOfFile];
+				
+				[fileHandle seekToFileOffset: 0];
+				[fileHandle writeData: dataToLeave];
+				[fileHandle truncateFileAtOffset: kLogFileTruncateSize];
+				[fileHandle synchronizeFile];
+				[fileHandle closeFile];
+			}
+		}
+		else if (error)
+		{
+			BXLogError (@"Couldn't get attributes of file at path '%@', error: '%@'.", filePath, error);
+		}
+		else
+		{
+			BXLogError (@"Couldn't get attributes of file at path '%@'.", filePath);
+		}
+	}	
+	[fm release];
 }
 
 
-void BXLogSetLevel (enum BXLogLevel level)
+static inline
+const char* LogLevel (enum BXLogLevel level)
 {
-	BXLogLevel = level;
-}
-
-
-void BXLogSetAbortsOnAssertionFailure (BOOL flag)
-{
-	stAbortOnAssertionFailure = flag;
-}
-
-
-static inline const char* LogLevel (enum BXLogLevel level)
-{
-	char* retval = NULL;
+	const char* retval = NULL;
 	switch (level)
 	{
 		case kBXLogLevelDebug:
@@ -84,13 +112,17 @@ static inline const char* LogLevel (enum BXLogLevel level)
 	return retval;
 }
 
-static inline const char* LastPathComponent (const char* path)
+
+static inline
+const char* LastPathComponent (const char* path)
 {
 	const char* retval = ((strrchr (path, '/') ?: path - 1) + 1);
 	return retval;
 }
 
-static char* CopyLibraryName (const void* addr)
+
+static char*
+CopyLibraryName (const void* addr)
 {
 	Dl_info info = {};
 	char* retval = NULL;
@@ -99,7 +131,9 @@ static char* CopyLibraryName (const void* addr)
 	return retval;
 }
 
-static char* CopyExecutableName ()
+
+static char*
+CopyExecutableName ()
 {
 	uint32_t pathLength = 0;
 	_NSGetExecutablePath (NULL, &pathLength);
@@ -115,7 +149,61 @@ static char* CopyExecutableName ()
 	return retval;
 }
 
-void BXAssertionDebug ()
+
+void
+BXLogSetLogFile (NSBundle *bundle)
+{
+    FSRef fileRef = {};
+    OSErr err = FSFindFolder (kUserDomain, kLogsFolderType, (Boolean) YES, &fileRef);
+	if (noErr == err)
+	{
+		CFURLRef URL = CFURLCreateFromFSRef (kCFAllocatorSystemDefault, &fileRef);
+		CFStringRef logsFolder = CFURLCopyFileSystemPath (URL, kCFURLPOSIXPathStyle);
+		NSString *bundleName = [bundle objectForInfoDictionaryKey: (NSString *) kCFBundleNameKey];
+		NSString *logPath = [NSString stringWithFormat: @"%@/%@.%@", logsFolder, bundleName, @"log"];
+		
+		if (freopen ([logPath fileSystemRepresentation], "a", stderr))
+			TruncateLogFile (logPath);		
+		else
+		{
+			BXLogError (@"Couldn't redirect stderr stream to file at path '%@', errno: %d, error: '%s'.", 
+						logPath, errno, strerror (errno));
+		}
+		
+		if (logsFolder) 
+			CFRelease (logsFolder);
+		if (URL)
+			CFRelease (URL);
+	}
+	else
+	{
+		BXLogError (@"Unable to get logs folder in the user domain: %s.",
+					GetMacOSStatusCommentString (err));
+	}
+}
+
+
+void BXSetLogLevel (enum BXLogLevel level)
+{
+	BXDeprecationLog ();
+	BXLogLevel = level;
+}
+
+
+void BXLogSetLevel (enum BXLogLevel level)
+{
+	BXLogLevel = level;
+}
+
+
+void BXLogSetAbortsOnAssertionFailure (BOOL flag)
+{
+	stAbortOnAssertionFailure = flag;
+}
+
+
+void
+BXAssertionDebug ()
 {
 	if (stAbortOnAssertionFailure)
 		abort ();
@@ -123,13 +211,16 @@ void BXAssertionDebug ()
 		BXLogError (@"Break on BXAssertionDebug to inspect.");
 }
 
+
 void
 BXDeprecationWarning ()
 {
 	BXLogError (@"Break on BXDeprecationWarning to inspect.");
 }
 
-void BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...)
+
+void
+BXLog (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, ...)
 {
 	va_list args;
     va_start (args, messageFmt);
@@ -137,7 +228,9 @@ void BXLog (const char* fileName, const char* functionName, void* functionAddres
 	va_end (args);
 }
 
-void BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args)
+
+void
+BXLog_v (const char* fileName, const char* functionName, void* functionAddress, int line, enum BXLogLevel level, id messageFmt, va_list args)
 {
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	char* executable = CopyExecutableName ();
