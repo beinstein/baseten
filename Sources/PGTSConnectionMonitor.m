@@ -140,8 +140,16 @@ WorkspaceWillSleep (void* refCon, io_service_t service, natural_t messageType, v
 {
 	if ((self = [super init]))
 	{
-		atexit (&ProcessWillExit);
-
+		@synchronized ([self class])
+		{
+			static BOOL tooLate = NO;
+			if (! tooLate)
+			{
+				tooLate = YES;
+				atexit (&ProcessWillExit);		
+			}
+		}
+		
 		io_object_t ioNotifier = 0;
 		IONotificationPortRef ioNotificationPort = NULL;
 		mIOPowerSession = IORegisterForSystemPower (self, &ioNotificationPort, &WorkspaceWillSleep, &ioNotifier);
