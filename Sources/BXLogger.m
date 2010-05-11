@@ -243,6 +243,7 @@ BXLog_v (const char* fileName, const char* functionName, void* functionAddress, 
 	const char isMain = ([NSThread isMainThread] ? 'm' : 's');
 	fprintf (stderr, "%23s  %s (%s) [%d]  %s:%d  %s [%p%c] \t%8s %s\n", 
 		[date UTF8String], executable, library ?: "???", getpid (), file, line, functionName, [NSThread currentThread], isMain, LogLevel (level), [message UTF8String]);
+	fflush (stderr);
 	
 	//For GC.
 	[date self];
