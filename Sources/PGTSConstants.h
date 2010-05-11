@@ -98,7 +98,7 @@ BX_INTERNAL NSString* const kPGTSExpressionParametersVerbatimKey;
 
 BX_INTERNAL NSString* const kPGTSErrorSeverity;
 BX_INTERNAL NSString* const kPGTSErrorSQLState;
-BX_INTERNAL NSString* const kPGTSErrorPrimaryMessage;
+BX_EXPORT   NSString* const kPGTSErrorPrimaryMessage;
 BX_INTERNAL NSString* const kPGTSErrorDetailMessage;
 BX_INTERNAL NSString* const kPGTSErrorHint;
 BX_INTERNAL NSString* const kPGTSErrorInternalQuery;
