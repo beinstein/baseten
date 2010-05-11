@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.937}})dnl
+define({{_bx_version_}}, {{0.938}})dnl
 define({{_bx_compat_version_}}, {{0.23}})dnl
 
 
@@ -545,6 +545,35 @@ REVOKE ALL PRIVILEGES ON "baseten"._fkey_column_names FROM PUBLIC;
 GRANT SELECT ON "baseten"._fkey_column_names TO basetenread;
 
 
+CREATE VIEW "baseten"._foreign_keys AS
+SELECT
+    c.conname,
+    r1.id AS conrelid,
+    r2.id AS confrelid,
+    f.conkey,
+    f.confkey,
+    c.confdeltype,
+    c2.oid IS NOT NULL AS conkey_is_unique
+FROM pg_constraint c
+INNER JOIN "baseten"._fkey_column_names f ON (f.oid = c.oid)
+INNER JOIN pg_class cl1 ON (cl1.oid = c.conrelid)
+INNER JOIN pg_class cl2 ON (cl2.oid = c.confrelid)
+INNER JOIN pg_namespace n1 ON (n1.oid = cl1.relnamespace)
+INNER JOIN pg_namespace n2 ON (n2.oid = cl2.relnamespace)
+INNER JOIN "baseten".relation r1 ON (r1.nspname = n1.nspname AND r1.relname = cl1.relname)
+INNER JOIN "baseten".relation r2 ON (r2.nspname = n2.nspname AND r2.relname = cl2.relname)
+LEFT OUTER JOIN pg_constraint c2 ON (
+    c2.conrelid = c.conrelid AND
+    c2.conkey = c.conkey AND
+    c2.contype = 'u'
+)
+WHERE (
+    c.contype = 'f'
+);
+REVOKE ALL PRIVILEGES ON "baseten"._foreign_keys FROM PUBLIC;
+GRANT SELECT ON "baseten"._foreign_keys TO basetenread;
+
+
 CREATE TABLE "baseten".ignored_fkey (
 	nspname NAME,
 	relname NAME,
@@ -893,65 +922,54 @@ GRANT EXECUTE ON FUNCTION "baseten"._assign_relation_ids () TO basetenowner;
 
 
 CREATE FUNCTION "baseten"._assign_foreign_key_ids () RETURNS VOID AS $$
-	DELETE FROM "baseten".foreign_key f
-	USING "baseten".relation r
-	WHERE (
-		r.id = f.conrelid AND
-		ROW (r.nspname, r.relname, f.conname) NOT IN (
-			SELECT
-				n.nspname,
-				cl.relname,
-				co.conname
-			FROM pg_constraint co
-			INNER JOIN pg_class cl ON (cl.oid = co.conrelid)
-			INNER JOIN pg_namespace n ON (n.oid = cl.relnamespace)
-			WHERE co.contype = 'f'
-		)
-	);
-	
-	INSERT INTO "baseten".foreign_key 
-		(
-			conname,
-			conrelid,
-			confrelid,
-			conkey,
-			confkey,
-			confdeltype,
-			conkey_is_unique
-		)
-		SELECT
-			c.conname,
-			r1.id,
-			r2.id,
-			f.conkey,
-			f.confkey,
-			c.confdeltype,
-			c2.oid IS NOT NULL
-		FROM pg_constraint c
-		INNER JOIN "baseten"._fkey_column_names f ON (f.oid = c.oid)
-		INNER JOIN pg_class cl1 ON (cl1.oid = c.conrelid)
-		INNER JOIN pg_class cl2 ON (cl2.oid = c.confrelid)
-		INNER JOIN pg_namespace n1 ON (n1.oid = cl1.relnamespace)
-		INNER JOIN pg_namespace n2 ON (n2.oid = cl2.relnamespace)
-		INNER JOIN "baseten".relation r1 ON (r1.nspname = n1.nspname AND r1.relname = cl1.relname)
-		INNER JOIN "baseten".relation r2 ON (r2.nspname = n2.nspname AND r2.relname = cl2.relname)
-		LEFT OUTER JOIN pg_constraint c2 ON (
-			c2.conrelid = c.conrelid AND
-			c2.conkey = c.conkey AND
-			c2.contype = 'u'
-		)
-		WHERE (
-			c.contype = 'f' AND
-			ROW (n1.nspname, cl1.relname, c.conname) NOT IN (SELECT * FROM "baseten".ignored_fkey) AND
-			ROW (n1.nspname, cl1.relname, c.conname) NOT IN (
-				SELECT
-					r.nspname,
-					r.relname,
-					f.conname
-				FROM "baseten".foreign_key f
-				INNER JOIN "baseten".relation r ON (r.id = f.conrelid)
-			)
-		);
+    -- Remove foreign keys where they don't match exactly.
+    DELETE FROM "baseten".foreign_key
+    WHERE ROW (
+        conname,
+        conrelid,
+        confrelid,
+        conkey,
+        confkey,
+        confdeltype,
+        conkey_is_unique
+    ) NOT IN (
+        SELECT
+            conname,
+            conrelid,
+            confrelid,
+            conkey,
+            confkey,
+            confdeltype,
+            conkey_is_unique
+        FROM "baseten"._foreign_keys
+    );
+
+    INSERT INTO "baseten".foreign_key (
+        conname,
+        conrelid,
+        confrelid,
+        conkey,
+        confkey,
+        confdeltype,
+        conkey_is_unique
+    )
+    SELECT
+        fk.conname,
+        fk.conrelid,
+        fk.confrelid,
+        fk.conkey,
+        fk.confkey,
+        fk.confdeltype,
+        fk.conkey_is_unique
+    FROM "baseten"._foreign_keys fk
+    INNER JOIN "baseten".relation r ON (r.id = fk.conrelid)
+    WHERE (NOT (
+        (ROW (r.nspname, r.relname, fk.conname) IN (SELECT * FROM "baseten".ignored_fkey)) OR
+        (ROW (fk.conrelid, fk.conname) IN (
+            SELECT conrelid, conname
+            FROM "baseten".foreign_key
+        ))
+    ));
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._assign_foreign_key_ids () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._assign_foreign_key_ids () TO basetenowner;
@@ -2078,6 +2096,7 @@ GRANT EXECUTE ON FUNCTION "baseten".prune () TO basetenowner;
 
 CREATE FUNCTION "baseten".refresh_caches () RETURNS VOID AS $$
 	TRUNCATE "baseten".relationship, "baseten"._deprecated_relationship_name;
+	SELECT "baseten".assign_internal_ids ();
 	SELECT "baseten"._insert_relationships ();
 	
 	-- Deprecated names.
