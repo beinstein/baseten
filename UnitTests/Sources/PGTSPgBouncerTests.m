@@ -83,6 +83,9 @@
 	MKCAssertTrue(res && PQresultStatus(res) == PGRES_COMMAND_OK);
 	PQclear(res);
 	
+	/* Check that the transaction status is reported correctly. */
+	MKCAssertTrue(PQtransactionStatus(conn2) == PQTRANS_INTRANS);
+	
 	/*
 	 * Check that this is indeed the same transaction left open by the
 	 * previous connection.
@@ -105,6 +108,75 @@
 	PQclear(res);
 
 	PQfinish(conn2);
+}
+
+/*
+ * Make sure our changes to runtime parameters are reported back from
+ * pgbouncer when a session is restored.  The way we do this currently
+ * is a bit ugly: we check the default client_encoding for LATIN1 and
+ * use either that or LATIN2, depending on the default encoding.  This
+ * could be done much more cleanly with the application_name parameter
+ * but that's currently only in PostgreSQL 9.0.
+ */
+- (void) testRuntimeParams
+{
+	PGresult* res;
+	PGconn* conn;
+	char sessionid[64];
+	char str[64];
+	const char* encoding;
+	
+	conn = PQconnectdb("port=6432");
+	MKCAssertTrue(PQstatus(conn) == CONNECTION_OK);
+	
+	res = PQexec(conn, "START SESSION");
+	MKCAssertTrue(res && PQresultStatus(res) == PGRES_TUPLES_OK);
+	
+	strncpy(sessionid, PQgetvalue(res, 0, 0), sizeof(sessionid));
+	PQclear(res);
+	
+	res = PQexec(conn, "BEGIN");
+	MKCAssertTrue(res && PQresultStatus(res) == PGRES_COMMAND_OK);
+	PQclear(res);
+	
+	res = PQexec(conn, "SHOW client_encoding");
+	MKCAssertTrue(res && PQresultStatus(res) == PGRES_TUPLES_OK);
+	
+	if (strcmp(PQgetvalue(res, 0, 0), "LATIN1") == 0)
+		encoding = "LATIN2";
+	else
+		encoding = "LATIN1";
+	PQclear(res);
+	
+	sprintf(str, "SET LOCAL client_encoding TO '%s'", encoding);
+	
+	res = PQexec(conn, str);
+	MKCAssertTrue(res && PQresultStatus(res) == PGRES_COMMAND_OK);
+	PQclear(res);
+	
+	MKCAssertTrue(strcmp(PQparameterStatus(conn, "client_encoding"), encoding) == 0);
+	PQfinish(conn);
+	
+	/* Now reconnect and check PQparameterStatus. */
+	
+	conn = PQconnectdb("port=6432");
+	MKCAssertTrue(PQstatus(conn) == CONNECTION_OK);
+
+	sprintf(str, "RESTORE SESSION %s", sessionid);
+	
+	res = PQexec(conn, str);
+	MKCAssertTrue(res && PQresultStatus(res) == PGRES_COMMAND_OK);
+	PQclear(res);
+	
+	/* PgBouncer should report the params to us after RESTORE SESSION. */
+	MKCAssertTrue(strcmp(PQparameterStatus(conn, "client_encoding"), encoding) == 0);
+	
+	/* End this session. */
+	res = PQexec(conn, "END SESSION");
+	MKCAssertTrue(res && PQresultStatus(res) == PGRES_COMMAND_OK);
+	PQclear(res);
+	
+	PQfinish(conn);
 }
 
 @end
