@@ -39,31 +39,6 @@
 
 
 @implementation PGTSAsynchronousConnector
-static void
-ScheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
-{
-	if (theHost && theRunLoop)
-		CFHostScheduleWithRunLoop (theHost, theRunLoop, (CFStringRef) kCFRunLoopCommonModes);
-}
-
-
-static void
-UnscheduleHost (CFHostRef theHost, CFRunLoopRef theRunLoop)
-{
-	if (theHost && theRunLoop)
-		CFHostUnscheduleFromRunLoop (theHost, theRunLoop, (CFStringRef) kCFRunLoopCommonModes);
-}
-
-
-static void 
-HostReady (CFHostRef theHost, CFHostInfoType typeInfo, const CFStreamError *error, void *self)
-{
-	BXLogDebug (@"CFHost got ready.");
-	UnscheduleHost (theHost, [(id) self CFRunLoop]);
-	[(id) self continueFromNameResolution: error];
-}
-
-
 static void 
 SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address, const void* data, void* self)
 {
@@ -75,6 +50,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 {
 	if ((self = [super init]))
 	{
+		mHostResolver = [[BXHostResolver alloc] init];
+		[mHostResolver setDelegate: self];
+		
 		mExpectedCallBack = 0;
 		[self setCFRunLoop: CFRunLoopGetCurrent ()];
 	}
@@ -112,23 +90,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 }
 
 
-- (void) removeHost
-{
-	if (mHost)
-	{
-		CFHostCancelInfoResolution (mHost, kCFHostReachability);
-		UnscheduleHost (mHost, mRunLoop);
-		CFRelease (mHost);
-		mHost = NULL;
-	}		
-}
-
-
 - (void) freeCFTypes
 {
 	//Don't release the connection. Delegate will handle it.
-	
-	[self removeHost];
 	
 	if (mSocketSource)
 	{
@@ -154,7 +118,7 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 - (void) cancel
 {
-	[self removeHost];
+	[mHostResolver cancelResolution];
     if (mConnection)
     {
         PQfinish (mConnection);
@@ -188,96 +152,53 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 
 #pragma mark Callbacks
 
-- (void) continueFromNameResolution: (const CFStreamError *) streamError
+- (void) hostResolverDidSucceed: (BXHostResolver *) resolver addresses: (NSArray *) addresses
 {
-	//If the resolution succeeded, iterate addresses and try to connect to each. Stop when a server gets reached.
-	
 	BOOL reachedServer = NO;
-	BXLogDebug (@"Continuing from name resolution.");
-	
-	if (streamError && streamError->domain)
+	if (addresses)
 	{
-		NSString* errorTitle = NSLocalizedStringWithDefaultValue (@"connectionError", nil, [NSBundle bundleForClass: [self class]],
-																  @"Connection error", @"Title for a sheet.");
+		char addressBuffer [40] = {}; // 8 x 4 (hex digits in IPv6 address) + 7 (colons) + 1 (nul character)
 		
-		//FIXME: localization.
-		NSString* messageFormat = nil;
-		const char* reason = NULL;
-		if (streamError->domain == kCFStreamErrorDomainNetDB)
-		{
-			reason = (gai_strerror (streamError->error));
-			if (reason)
-				messageFormat = @"The server %@ wasn't found: %s.";
-			else
-				messageFormat = @"The server %@ wasn't found.";
-		}
-		else if (streamError->domain == kCFStreamErrorDomainSystemConfiguration)
-		{
-			messageFormat = @"The server %@ wasn't found. Network might be unreachable.";
-		}
-		else
-		{
-			messageFormat = @"The server %@ wasn't found.";
-		}
-		NSString* message = [NSString stringWithFormat: messageFormat, [mConnectionDictionary objectForKey: kPGTSHostKey], reason];
+		NSMutableDictionary* connectionDictionary = [[mConnectionDictionary mutableCopy] autorelease];
+		[connectionDictionary removeObjectForKey: kPGTSHostKey];
 		
-		NSDictionary* userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-								  errorTitle, NSLocalizedDescriptionKey,
-								  errorTitle, NSLocalizedFailureReasonErrorKey,
-								  message, NSLocalizedRecoverySuggestionErrorKey,
-								  nil];
-		//FIXME: error code
-		NSError* error = [BXError errorWithDomain: kPGTSConnectionErrorDomain code: kPGTSConnectionErrorUnknown userInfo: userInfo];
-		[self setConnectionError: error];		
-	}
-	else
-	{		
-		NSArray* addresses = (id) CFHostGetAddressing (mHost, NULL);
-		if (addresses)
+		//This is safe because each address is owned by the addresses CFArray which is owned 
+		//by mHost which is CFRetained.
+		BXEnumerate (addressData, e, [addresses objectEnumerator])
 		{
-			char addressBuffer [40] = {}; // 8 x 4 (hex digits in IPv6 address) + 7 (colons) + 1 (nul character)
+			const struct sockaddr* address = [addressData bytes];
+			sa_family_t family = address->sa_family;
+			void* addressBytes = NULL;
 			
-			NSMutableDictionary* connectionDictionary = [[mConnectionDictionary mutableCopy] autorelease];
-			[connectionDictionary removeObjectForKey: kPGTSHostKey];
-			
-			//This is safe because each address is owned by the addresses CFArray which is owned 
-			//by mHost which is CFRetained.
-			BXEnumerate (addressData, e, [addresses objectEnumerator])
+			switch (family)
 			{
-				const struct sockaddr* address = [addressData bytes];
-				sa_family_t family = address->sa_family;
-				void* addressBytes = NULL;
-				
-				switch (family)
-				{
-					case AF_INET:
-						addressBytes = &((struct sockaddr_in *) address)->sin_addr.s_addr;
-						break;
-						
-					case AF_INET6:
-						addressBytes = ((struct sockaddr_in6 *) address)->sin6_addr.s6_addr;
-						break;
-						
-					default:
-						break;
-				}
-				
-				if (addressBytes && inet_ntop (family, addressBytes, addressBuffer, BXArraySize (addressBuffer)))
-				{
-					NSString* humanReadableAddress = [NSString stringWithUTF8String: addressBuffer];
-					BXLogInfo (@"Trying '%@'", humanReadableAddress);
-					[connectionDictionary setObject: humanReadableAddress forKey: kPGTSHostAddressKey];
-					char* conninfo = PGTSCopyConnectionString (connectionDictionary);
+				case AF_INET:
+					addressBytes = &((struct sockaddr_in *) address)->sin_addr.s_addr;
+					break;
 					
-					if ([self startNegotiation: conninfo])
-					{
-						reachedServer = YES;
-						free (conninfo);
-						break;
-					}
+				case AF_INET6:
+					addressBytes = ((struct sockaddr_in6 *) address)->sin6_addr.s6_addr;
+					break;
 					
+				default:
+					break;
+			}
+			
+			if (addressBytes && inet_ntop (family, addressBytes, addressBuffer, BXArraySize (addressBuffer)))
+			{
+				NSString* humanReadableAddress = [NSString stringWithUTF8String: addressBuffer];
+				BXLogInfo (@"Trying '%@'", humanReadableAddress);
+				[connectionDictionary setObject: humanReadableAddress forKey: kPGTSHostAddressKey];
+				char* conninfo = PGTSCopyConnectionString (connectionDictionary);
+				
+				if ([self startNegotiation: conninfo])
+				{
+					reachedServer = YES;
 					free (conninfo);
+					break;
 				}
+				
+				free (conninfo);
 			}
 		}
 	}
@@ -285,7 +206,14 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	if (reachedServer)
 		[self negotiateConnection];
 	else
-		[self finishedConnecting: NO];
+		[self finishedConnecting: NO];	
+}
+
+
+- (void) hostResolverDidFail: (BXHostResolver *) resolver error: (NSError *) error
+{
+	[self setConnectionError: error];		
+	[self finishedConnecting: NO];
 }
 
 
@@ -360,28 +288,9 @@ SocketReady (CFSocketRef s, CFSocketCallBackType callBackType, CFDataRef address
 	NSString* name = [connectionDictionary objectForKey: kPGTSHostKey];
 	if (0 < [name length] && '/' != [name characterAtIndex: 0])
 	{
-		Boolean status = FALSE;
-		CFHostClientContext ctx = {
-			0,
-			self,
-			NULL,
-			NULL,
-			NULL
-		};
-				
-		[self removeHost];
-		mHost = CFHostCreateWithName (NULL, (CFStringRef) name);
-		status = CFHostSetClient (mHost, &HostReady, &ctx);
-		BXLogDebug (@"Set host client: %d.", status);
-		ScheduleHost (mHost, mRunLoop);
-		
-		status = CFHostStartInfoResolution (mHost, kCFHostAddresses, &mHostError);
-		BXLogDebug (@"Started host info resolution: %d.", status);
-		if (! status)
-		{
-			UnscheduleHost (mHost, mRunLoop);
-			[self continueFromNameResolution: &mHostError];
-		}
+		[mHostResolver setRunLoop: mRunLoop];
+		[mHostResolver setRunLoopMode: (id) kCFRunLoopCommonModes];
+		[mHostResolver resolveHost: name];
 	}
 	else
 	{

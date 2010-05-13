@@ -29,6 +29,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <BaseTen/BaseTen.h>
+#import <BaseTen/BXHostResolver.h>
 #import <BaseTen/BXConnectionSetupManagerProtocol.h>
 #import <BaseTenAppKit/BXHostPanel.h>
 #import <BaseTenAppKit/BXAuthenticationPanel.h>
@@ -45,6 +46,7 @@ enum BXNSConnectorCurrentPanel
 };
 
 
+
 @protocol BXNSConnectorImplementation <NSObject>
 - (void) beginConnectionAttempt;
 - (void) endConnectionAttempt;
@@ -57,6 +59,7 @@ enum BXNSConnectorCurrentPanel
 @end
 
 
+
 @interface BXNSConnectorImplementation : NSObject
 {
 	BXNetServiceConnector* mConnector;
@@ -65,26 +68,21 @@ enum BXNSConnectorCurrentPanel
 @end
 
 
-@interface BXNetServiceConnector : NSObject <BXConnector, BXHostPanelDelegate, BXAuthenticationPanelDelegate>
+
+@interface BXNetServiceConnector : NSObject <BXConnector, BXHostPanelDelegate, BXAuthenticationPanelDelegate, BXHostResolverDelegate>
 {
 	NSWindow* mModalWindow; //Weak
 	BXDatabaseContext* mContext; //Weak
 	BXNSConnectorImplementation <BXNSConnectorImplementation> *mConnectorImpl;
+	BXHostResolver *mHostResolver;
 	
 	BXHostPanel* mHostPanel;
 	BXAuthenticationPanel* mAuthenticationPanel;
 	enum BXNSConnectorCurrentPanel mCurrentPanel;
 	
-	CFHostRef mHost;
-	NSString* mRunLoopMode;
-	
 	NSString* mHostName;
 	NSInteger mPort;
-	
-	CFStreamError mHostError;
 }
-- (void) checkHostReachability: (NSString *) name;
-- (void) reachabilityCheckDidComplete: (const CFStreamError *) error;
 - (NSWindow *) modalWindow;
 - (void) recoveredFromConnectionError: (BOOL) didRecover;
 - (void) endConnectionAttempt;

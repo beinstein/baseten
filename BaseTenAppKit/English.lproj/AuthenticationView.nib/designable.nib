@@ -40,7 +40,7 @@
 						<object class="NSTextFieldCell" key="NSCell" id="1073193702">
 							<int key="NSCellFlags">67239424</int>
 							<int key="NSCellFlags2">272633856</int>
-							<string key="NSContents">Connecting to %{value1}@.</string>
+							<string key="NSContents">Connecting to %{value1}@</string>
 							<object class="NSFont" key="NSSupport" id="90753729">
 								<string key="NSName">LucidaGrande</string>
 								<double key="NSSize">13</double>
@@ -569,26 +569,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">displayPatternValue1: address</string>
-						<reference key="source" ref="849032855"/>
-						<reference key="destination" ref="471421227"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="849032855"/>
-							<reference key="NSDestination" ref="471421227"/>
-							<string key="NSLabel">displayPatternValue1: address</string>
-							<string key="NSBinding">displayPatternValue1</string>
-							<string key="NSKeyPath">address</string>
-							<object class="NSDictionary" key="NSOptions">
-								<string key="NS.key.0">NSDisplayPattern</string>
-								<string key="NS.object.0">Connecting to %{value1}@.</string>
-							</object>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">184</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
 						<string key="label">hidden: message</string>
 						<reference key="source" ref="793473531"/>
 						<reference key="destination" ref="471421227"/>
@@ -606,6 +586,26 @@
 						</object>
 					</object>
 					<int key="connectionID">187</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">displayPatternValue1: address</string>
+						<reference key="source" ref="849032855"/>
+						<reference key="destination" ref="471421227"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="849032855"/>
+							<reference key="NSDestination" ref="471421227"/>
+							<string key="NSLabel">displayPatternValue1: address</string>
+							<string key="NSBinding">displayPatternValue1</string>
+							<string key="NSKeyPath">address</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSDisplayPattern</string>
+								<string key="NS.object.0">Connecting to %{value1}@</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">188</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -820,7 +820,7 @@
 				<string key="179.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="179.ImportedFromIB2"/>
 				<string key="180.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
-				<string key="5.IBEditorWindowLastContentRect">{{466, 732}, {342, 197}}</string>
+				<string key="5.IBEditorWindowLastContentRect">{{466, 659}, {342, 197}}</string>
 				<string key="5.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<boolean value="YES" key="5.ImportedFromIB2"/>
 				<string key="52.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -832,7 +832,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">187</int>
+			<int key="maxID">188</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

@@ -106,6 +106,9 @@
  */
 - (BXEntityDescription *) entityForTable: (NSString *) name inSchema: (NSString *) schemaName
 {
+	if (! [schemaName length])
+		schemaName = @"public";
+	
 	NSMutableDictionary* schemaDict = nil;
 	BXEntityDescription* retval = nil;
 	@synchronized (mEntitiesBySchemaAndName)

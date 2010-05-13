@@ -1,11 +1,11 @@
 //
-// PGTSAsynchronousConnector.h
+// BXHostResolver.h
 // BaseTen
 //
-// Copyright (C) 2008-2010 Marko Karppinen & Co. LLC.
+// Copyright (C) 2010 Marko Karppinen & Co. LLC.
 //
 // Before using this software, please review the available licensing options
-// by visiting http://www.karppinen.fi/baseten/licensing/ or by contacting
+// by visiting http://basetenframework.org/licensing/ or by contacting
 // us at sales@karppinen.fi. Without an additional license, this software
 // may be distributed only in compliance with the GNU General Public License.
 //
@@ -27,31 +27,45 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/PGTSConnector.h>
-#import <BaseTen/BXHostResolver.h>
+#import <SystemConfiguration/SystemConfiguration.h>
+
+@class BXHostResolver;
 
 
-@interface PGTSAsynchronousConnector : PGTSConnector <BXHostResolverDelegate>
-{
-	NSDictionary *mConnectionDictionary;
-	BXHostResolver *mHostResolver;
-	CFRunLoopRef mRunLoop;
-	CFSocketRef mSocket;
-	CFRunLoopSourceRef mSocketSource;
-	CFSocketCallBackType mExpectedCallBack;
-	CFStreamError mHostError;
-}
-
-- (CFRunLoopRef) CFRunLoop;
-- (void) setCFRunLoop: (CFRunLoopRef) aRef;
-
-- (void) socketReady: (CFSocketCallBackType) callBackType;
-- (BOOL) startNegotiation: (const char *) conninfo;
-- (void) negotiateConnection;
+@protocol BXHostResolverDelegate
+- (void) hostResolverDidSucceed: (BXHostResolver *) resolver addresses: (NSArray *) addresses;
+- (void) hostResolverDidFail: (BXHostResolver *) resolver error: (NSError *) error;
 @end
 
 
-@interface PGTSAsynchronousReconnector : PGTSAsynchronousConnector
+
+@interface BXHostResolver : NSObject
 {
+	CFRunLoopRef mRunLoop;
+	NSString *mRunLoopMode;
+	
+	NSString *mNodeName;
+	NSArray *mAddresses;
+	
+	SCNetworkReachabilityRef mReachability;
+	CFHostRef mHost;
+	CFStreamError mHostError;
+	
+	id <BXHostResolverDelegate> mDelegate;
 }
+- (void) resolveHost: (NSString *) host;
+- (void) cancelResolution;
+@end
+
+
+
+@interface BXHostResolver (Accessors)
+- (CFRunLoopRef) runLoop;
+- (void) setRunLoop: (CFRunLoopRef) runLoop;
+
+- (NSString *) runLoopMode;
+- (void) setRunLoopMode: (NSString *) mode;
+
+- (id <BXHostResolverDelegate>) delegate;
+- (void) setDelegate: (id <BXHostResolverDelegate>) delegate;
 @end

@@ -88,6 +88,8 @@
 		5328754B0E1E515500CC507E /* BXPGSQLScriptReader.m in Sources */ = {isa = PBXBuildFile; fileRef = 532875490E1E515500CC507E /* BXPGSQLScriptReader.m */; };
 		5331CB5B0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h in Headers */ = {isa = PBXBuildFile; fileRef = 5331CB570DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.h */; };
 		5331CB5C0DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m in Sources */ = {isa = PBXBuildFile; fileRef = 5331CB580DEDA843003AF2A9 /* BXPGReconnectionRecoveryAttempter.m */; };
+		53372E2A119AD74D0006F0A3 /* BXHostResolver.m in Sources */ = {isa = PBXBuildFile; fileRef = 53372E29119AD74D0006F0A3 /* BXHostResolver.m */; };
+		53372E2C119AD77C0006F0A3 /* BXHostResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 53372E2B119AD77C0006F0A3 /* BXHostResolver.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5338E5540E5EE69E0045B6D7 /* BXPGInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 530132E109D460230037C485 /* BXPGInterface.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		533BAACB0F2C000A0030CD05 /* PGTSDatabaseDescription.mm in Sources */ = {isa = PBXBuildFile; fileRef = 533BAAC90F2C000A0030CD05 /* PGTSDatabaseDescription.mm */; };
 		533BAACC0F2C000A0030CD05 /* PGTSTableDescription.mm in Sources */ = {isa = PBXBuildFile; fileRef = 533BAACA0F2C000A0030CD05 /* PGTSTableDescription.mm */; };
@@ -799,6 +801,8 @@
 		533229E40A024C2500BDB151 /* BXEntityDescription.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXEntityDescription.h; path = Sources/BXEntityDescription.h; sourceTree = "<group>"; };
 		533307E20A2283AD00EE9280 /* BXObjectStatusInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXObjectStatusInfo.h; path = Sources/BXObjectStatusInfo.h; sourceTree = "<group>"; };
 		533307E30A2283AD00EE9280 /* BXObjectStatusInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXObjectStatusInfo.m; path = Sources/BXObjectStatusInfo.m; sourceTree = "<group>"; };
+		53372E29119AD74D0006F0A3 /* BXHostResolver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXHostResolver.m; path = Sources/BXHostResolver.m; sourceTree = "<group>"; };
+		53372E2B119AD77C0006F0A3 /* BXHostResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXHostResolver.h; path = Sources/BXHostResolver.h; sourceTree = "<group>"; };
 		5338E5C80E62CEAE0045B6D7 /* BXPGSQLFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXPGSQLFunction.h; path = Sources/BXPGSQLFunction.h; sourceTree = "<group>"; };
 		5338E5C90E62CEAE0045B6D7 /* BXPGSQLFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXPGSQLFunction.m; path = Sources/BXPGSQLFunction.m; sourceTree = "<group>"; };
 		5339AB910A7542EC00994B1A /* BXException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = BXException.h; path = Sources/BXException.h; sourceTree = "<group>"; };
@@ -1390,6 +1394,8 @@
 				53BFE53C0FAF2EFA0004533F /* BXError.m */,
 				5339AB910A7542EC00994B1A /* BXException.h */,
 				5339AB920A7542EC00994B1A /* BXException.m */,
+				53372E2B119AD77C0006F0A3 /* BXHostResolver.h */,
+				53372E29119AD74D0006F0A3 /* BXHostResolver.m */,
 				53666CC20E1CD8D20028DBEA /* PGTSHOM.h */,
 				53666CC30E1CD8D20028DBEA /* PGTSHOM.m */,
 				53937B650EFD097700510DBD /* PGTSInvocationRecorder.h */,
@@ -1927,6 +1933,7 @@
 				530A69831199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.h in Headers */,
 				530A6A561199B9CA00ED63FD /* PGTSAsynchronousConnector.h in Headers */,
 				530A6A581199B9CA00ED63FD /* PGTSSynchronousConnector.h in Headers */,
+				53372E2C119AD77C0006F0A3 /* BXHostResolver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2606,6 +2613,7 @@
 				530A69841199A5BA00ED63FD /* NSDictionary+BaseTenAdditions.m in Sources */,
 				530A6A571199B9CA00ED63FD /* PGTSAsynchronousConnector.m in Sources */,
 				530A6A591199B9CA00ED63FD /* PGTSSynchronousConnector.m in Sources */,
+				53372E2A119AD74D0006F0A3 /* BXHostResolver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

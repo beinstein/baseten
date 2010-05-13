@@ -58,6 +58,7 @@ BX_EXPORT NSString* const kBXObjectKey;
 BX_EXPORT NSString* const kBXObjectLockStatusKey;
 BX_EXPORT NSString* const kBXObjectIDKey;
 BX_EXPORT NSString* const kBXPrimaryKeyFieldsKey;
+BX_EXPORT NSString* const kBXStreamErrorKey;
 BX_EXPORT NSString* const kBXConnectionSuccessfulNotification;
 BX_EXPORT NSString* const kBXConnectionFailedNotification;
 BX_EXPORT NSString* const kBXConnectionSetupAlertDidEndNotification;
@@ -94,7 +95,8 @@ enum BXErrorCode
 	kBXErrorObjectAlreadyDeleted,
 	kBXErrorSSLUnavailable,
 	kBXErrorSSLCertificateVerificationFailed,
-	kBXErrorUserCancel
+	kBXErrorUserCancel,
+	kBXErrorHostResolutionFailed
 };
 
 enum BXModificationType
