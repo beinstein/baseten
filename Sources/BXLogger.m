@@ -215,7 +215,7 @@ BXAssertionDebug ()
 void
 BXDeprecationWarning ()
 {
-	BXLogError (@"Break on BXDeprecationWarning to inspect.");
+	BXLogWarning (@"Break on BXDeprecationWarning to inspect.");
 }
 
 

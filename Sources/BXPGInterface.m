@@ -1035,8 +1035,6 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 			
 			//Attributes
 			{
-				//FIXME: Handle inherited attributes!
-				
 				[currentAttributes removeAllObjects];
 				NSDictionary* columns = [table columns];
 				NSSet* pkeyColumns = [[table primaryKey] columns];

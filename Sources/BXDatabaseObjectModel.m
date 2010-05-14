@@ -109,11 +109,10 @@
 	if (! [schemaName length])
 		schemaName = @"public";
 	
-	NSMutableDictionary* schemaDict = nil;
 	BXEntityDescription* retval = nil;
 	@synchronized (mEntitiesBySchemaAndName)
 	{
-		schemaDict = [[[mEntitiesBySchemaAndName objectForKey: schemaName] retain] autorelease];
+		NSMutableDictionary *schemaDict = [mEntitiesBySchemaAndName objectForKey: schemaName];
 		if (! schemaDict)
 		{
 			schemaDict = [NSMutableDictionary dictionary];

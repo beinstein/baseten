@@ -231,7 +231,9 @@
 								 inSchema: (NSString *) schemaName
 									error: (NSError **) outError
 {
-	return [[mContext databaseObjectModel] matchingEntity: importedEntity inSchema: schemaName];
+	BXEntityDescription *retval = [[mContext databaseObjectModel] matchingEntity: importedEntity inSchema: schemaName];
+	ExpectL ([retval isValidated]);
+	return retval;
 }
 
 
