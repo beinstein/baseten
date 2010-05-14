@@ -126,7 +126,8 @@
     BXDatabaseObject* object = [mContext createObjectForEntity: oneEntity withFieldValues: nil error: &error];
     STAssertNotNil (object, [error description]);
 	//If the set proxy wasn't created earlier, here it will be. This might be useful for debugging.
-    STAssertTrue (0 == [[object valueForKey: [manyEntity name]] count], [[object valueForKey: [manyEntity name]] description]);
+	NSString *relationshipName = [[manyEntity name] stringByAppendingString: @"Set"];
+    STAssertTrue (0 == [[object valueForKey: relationshipName] count], [[object valueForKey: relationshipName] description]);
     MKCAssertTrue ([[object objectID] entity] == oneEntity);
     
     const int count = 2;
@@ -140,9 +141,9 @@
     }
     MKCAssertTrue (count == [foreignObjects count]);
     
-	[object setPrimitiveValue: foreignObjects forKey: [manyEntity name]];
+	[object setPrimitiveValue: foreignObjects forKey: relationshipName];
     
-    NSSet* referencedObjects = [NSSet setWithSet: [object primitiveValueForKey: [manyEntity name]]];
+    NSSet* referencedObjects = [NSSet setWithSet: [object primitiveValueForKey: relationshipName]];
     MKCAssertEqualObjects (referencedObjects, foreignObjects);
 
     [mContext rollback];
@@ -204,9 +205,9 @@
 - (void) remove1: (BXEntityDescription *) oneEntity
 {
     BXDatabaseObject* object = [self removeRefObject: oneEntity];
-	MKCAssertTrue (0 < [[object primitiveValueForKey: @"test2"] count]);
-    [object setPrimitiveValue: nil forKey: @"test2"];
-	MKCAssertTrue (0 == [[object primitiveValueForKey: @"test2"] count]);
+	MKCAssertTrue (0 < [[object primitiveValueForKey: @"test2Set"] count]);
+    [object setPrimitiveValue: nil forKey: @"test2Set"];
+	MKCAssertTrue (0 == [[object primitiveValueForKey: @"test2Set"] count]);
 
     [mContext rollback];
 }
@@ -214,7 +215,7 @@
 - (void) remove2: (BXEntityDescription *) oneEntity
 {
     BXDatabaseObject* object = [self removeRefObject: oneEntity];
-    NSSet* refObjects = [object primitiveValueForKey: @"test2"];
+    NSSet* refObjects = [object primitiveValueForKey: @"test2Set"];
     BXEnumerate (currentObject, e, [[refObjects allObjects] objectEnumerator])
         [currentObject setPrimitiveValue: nil forKey: @"test1"];
     
@@ -277,7 +278,7 @@
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
     //Create a self-updating container to see if it interferes with object creation.
-    id collection = [object valueForKey: @"test2"];
+    id collection = [object valueForKey: @"test2Set"];
     
     NSDictionary* values = [NSDictionary dictionaryWithObjectsAndKeys:
 							[object primitiveValueForKey: @"id"], @"fkt1id",

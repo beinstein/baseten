@@ -101,12 +101,12 @@
 
     MKCAssertNotNil (object);
     
-    NSMutableSet* foreignObjects = [object primitiveValueForKey: @"test2"];
+    NSMutableSet* foreignObjects = [object primitiveValueForKey: @"test2Set"];
     BXDatabaseObject* foreignObject = [foreignObjects anyObject];
     [foreignObjects removeObject: foreignObject];
     MKCAssertTrue (1 == [foreignObjects count]);
 	//FIXME: this should really be fetched from a different database context since now we get the same object we fetched earlier.
-    NSMutableSet* foreignObjects2 = [[self objectWithId: objectId entity: test1] primitiveValueForKey: @"test2"];
+    NSMutableSet* foreignObjects2 = [[self objectWithId: objectId entity: test1] primitiveValueForKey: @"test2Set"];
     MKCAssertEqualObjects (foreignObjects, foreignObjects2);
     
     [undoManager undo];

@@ -163,7 +163,7 @@
     BXEnumerate (currentObject, e, [foreignObjects objectEnumerator])
         MKCAssertTrue ([[currentObject objectID] entity] == manyEntity);
 
-    foreignObjects = [object valueForKey: [manyEntity name]];
+    foreignObjects = [object valueForKey: [[manyEntity name] stringByAppendingString: @"Set"]];
     MKCAssertTrue (2 == [foreignObjects count]);
     values = [foreignObjects valueForKey: @"value"];
     MKCAssertTrue ([values containsObject: @"21"]);
@@ -266,7 +266,7 @@
     {
         MKCAssertTrue ([[object objectID] entity] == entity1);
         
-        NSSet* foreignObjects = [object primitiveValueForKey: [entity2 name]];
+        NSSet* foreignObjects = [object primitiveValueForKey: [[entity2 name] stringByAppendingString: @"Set"]];
         MKCAssertNotNil (foreignObjects);
         if ([@"d1" isEqualToString: [object valueForKey: @"value1"]])
         {
@@ -275,7 +275,7 @@
             MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
 
             MKCAssertEqualObjects ([foreignObject valueForKey: @"value2"], @"d2");
-            NSSet* objects = [foreignObject valueForKey: [entity1 name]];
+            NSSet* objects = [foreignObject valueForKey: [[entity1 name] stringByAppendingString: @"Set"]];
             MKCAssertTrue (1 == [objects count]);
             BXDatabaseObject* backRef = [objects anyObject];
             MKCAssertTrue ([[backRef objectID] entity] == entity1);
@@ -291,7 +291,7 @@
             BXEnumerate (foreignObject, e, [foreignObjects objectEnumerator])
             {
                 MKCAssertTrue ([[foreignObject objectID] entity] == entity2);
-                NSArray* objects = [foreignObject valueForKey: [entity1 name]];
+                NSArray* objects = [foreignObject valueForKey: [[entity1 name] stringByAppendingString: @"Set"]];
                 MKCAssertNotNil (objects);
                 MKCAssertTrue (3 == [objects count]);
                 
@@ -323,7 +323,7 @@
 											error: &error];
 	STAssertNotNil (res, [error description]);
 	BXDatabaseObject* object = [res objectAtIndex: 0];
-	NSSet* helperObjects = [object primitiveValueForKey: @"mtmrel1"];
+	NSSet* helperObjects = [object primitiveValueForKey: @"mtmrel1Set"];
 	MKCAssertTrue (3 == [helperObjects count]);
 	BXEnumerate (currentObject, e, [helperObjects objectEnumerator])
 	{

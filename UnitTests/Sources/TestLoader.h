@@ -33,10 +33,10 @@
  * 3. Run otest with like this: `otest -SenTest BXTestLoader your_custom_path/UnitTests.octest`.
  */
 
-#import <SenTestingKit/SenTestingKit.h>
+#import "BXTestCase.h"
 
 
-@interface BXTestLoader : SenTestCase 
+@interface BXTestLoader : BXTestCase 
 {
 }
 

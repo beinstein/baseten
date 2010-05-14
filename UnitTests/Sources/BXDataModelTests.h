@@ -29,11 +29,11 @@
 #import <SenTestingKit/SenTestingKit.h>
 #import "BXTestCase.h"
 #import <BaseTen/BaseTen.h>
-#import <BaseTen/BXPGEntityImporter.h>
+#import <BaseTen/BXPGEntityConverter.h>
 
 
-@interface BXDataModelTests : BXDatabaseTestCase <BXPGEntityImporterDelegate>
+@interface BXDataModelTests : BXDatabaseTestCase <BXPGEntityConverterDelegate>
 {
-	BXPGEntityImporter* mImporter;
+	BXPGEntityConverter *mConverter;
 }
 @end

@@ -77,12 +77,13 @@
     MKCAssertTrue (4 == [res count]);
     
     //Get an object from the result
+	NSString *relationshipName = [[entity2 name] stringByAppendingString: @"Set"];
     NSPredicate* predicate = [NSPredicate predicateWithFormat: @"value1 = 'a1'"];
     res =  [res filteredArrayUsingPredicate: predicate];
     MKCAssertTrue (1 == [res count]);
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    NSCountedSet* foreignObjects = [object valueForKey: [entity2 name]];
-    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: [entity2 name]];
+    NSCountedSet* foreignObjects = [object valueForKey: relationshipName];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: relationshipName];
 	
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);

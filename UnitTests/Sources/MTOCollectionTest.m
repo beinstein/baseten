@@ -74,16 +74,17 @@
     
     //Get an object from the result
     //Here it doesn't matter, whether there are any objects in the relationship or not.
+	NSString *relationshipName = [[manyEntity name] stringByAppendingString: @"Set"];
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    NSCountedSet* foreignObjects = [object primitiveValueForKey: [manyEntity name]];
-    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: [manyEntity name]];
+    NSCountedSet* foreignObjects = [object primitiveValueForKey: relationshipName];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: relationshipName];
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
 
     //Remove the referenced objects
-    [object setValue: nil forKey: [manyEntity name]];
+    [object setValue: nil forKey: relationshipName];
     MKCAssertTrue (0 == [foreignObjects count]);
     MKCAssertTrue ([foreignObjects isEqualToSet: foreignObjects2]);
     
@@ -96,7 +97,7 @@
     MKCAssertTrue (3 == [objects2 count]);
     
     //Set the referenced objects. The self-updating collection should get notified when objects are added.
-    [object setPrimitiveValue: objects2 forKey: [manyEntity name]];
+    [object setPrimitiveValue: objects2 forKey: relationshipName];
     
     MKCAssertTrue (3 == [foreignObjects count]);
     MKCAssertEqualObjects ([NSSet setWithSet: foreignObjects], objects2);
@@ -126,9 +127,10 @@
     MKCAssertTrue (2 == [res count]);
     
     //Get an object from the result
+	NSString *relationshipName = [[manyEntity name] stringByAppendingString: @"Set"];
     BXDatabaseObject* object = [res objectAtIndex: 0];
-    NSCountedSet* foreignObjects = [object valueForKey: [manyEntity name]];
-    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: [manyEntity name]];
+    NSCountedSet* foreignObjects = [object valueForKey: relationshipName];
+    NSCountedSet* foreignObjects2 = [object resolveNoncachedRelationshipNamed: relationshipName];
     MKCAssertNotNil (foreignObjects);
     MKCAssertNotNil (foreignObjects2);
     MKCAssertTrue (foreignObjects != foreignObjects2);

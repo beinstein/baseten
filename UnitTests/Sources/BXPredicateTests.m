@@ -44,8 +44,11 @@
 	
 	mQueryBuilder = [[BXPGQueryBuilder alloc] init];
 	
-	BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
+	BXDatabaseObjectModelStorage *storage = [[[BXDatabaseObjectModelStorage alloc] init] autorelease];
+	BXDatabaseContext *ctx = [[[BXDatabaseContext alloc] init] autorelease];
 	[ctx setDelegate: self];
+	[ctx setDatabaseObjectModelStorage: storage];
+	[ctx setDatabaseURI: [self databaseURI]];
 	
 	BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: @"test" inSchema: @"public"];
 	MKCAssertNotNil (entity);

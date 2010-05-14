@@ -114,9 +114,11 @@
 	
 	for (Class testCaseClass in testClasses)
 	{
+		NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 		SenTestSuite *suite = [SenTestSuite testSuiteForTestCaseClass: testCaseClass];
 		SenTestRun *testRun = [suite run];
 		STAssertTrue (0 == [testRun unexpectedExceptionCount], @"Had %u unexpected exceptions.", [testRun unexpectedExceptionCount]);
+		[pool drain];
 	}
 }
 @end

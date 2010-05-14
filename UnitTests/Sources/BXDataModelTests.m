@@ -27,8 +27,10 @@
 //
 
 #import "BXDataModelTests.h"
+#import <BaseTen/BXDatabaseContextPrivate.h>
 #import <BaseTen/BXDataModelCompiler.h>
-#import <BaseTen/BXPGEntityConverter.h>
+#import <BaseTen/BXPGInterface.h>
+#import <BaseTen/BXPGTransactionHandler.h>
 #import <BaseTen/BXEnumerate.h>
 #import "MKCSenTestCaseAdditions.h"
 
@@ -38,23 +40,36 @@
 {
 	[super setUp];
 	
-	mImporter = [[BXPGEntityImporter alloc] init];
-	[mImporter setDelegate: self];
-	[mImporter setDatabaseContext: mContext];
+	mConverter = [[BXPGEntityConverter alloc] init];
+	[mConverter setDelegate: self];
 }
+
 
 - (void) tearDown
 {
-	[mImporter release];
+	[mConverter release];
 	[super tearDown];
 }
 
-- (void) entityImporterAdvanced: (BXPGEntityImporter *) importer
+
+- (BXEntityDescription *) entityConverter: (BXPGEntityConverter *) converter 
+ shouldAddDropStatementFromEntityMatching: (NSEntityDescription *) importedEntity
+								 inSchema: (NSString *) schemaName
+									error: (NSError **) outError
 {
+	return NO;
 }
 
-- (void) entityImporter: (BXPGEntityImporter *) importer finishedImporting: (BOOL) succeeded error: (NSError *) error
+
+- (BOOL) entityConverter: (BXPGEntityConverter *) converter shouldCreateSchema: (NSString *) schemaName
 {
+	return YES;
+}
+
+
+- (PGTSConnection *) connectionForEntityConverter: (BXPGEntityConverter *) converter
+{
+	return [[(BXPGInterface *) [mContext databaseInterface] transactionHandler] connection];
 }
 
 
@@ -72,13 +87,17 @@
 	MKCAssertNotNil (model);
 	MKCAssertNotNil (entities);
 	
-	[mImporter setSchemaName: @"test_schema"];
-	[mImporter setEntities: entities];
-	NSArray* statements = [mImporter importStatements];
+	NSArray *enabledRelations = nil;
+	NSArray *errors = nil;
+	NSArray *statements = [mConverter statementsForEntities: entities
+												 schemaName: @"test_schema"
+										   enabledRelations: &enabledRelations 
+													 errors: &errors];
 	MKCAssertNotNil (statements);
 	
 	return statements;
 }
+
 
 - (void) testPeopleDepartments
 {
@@ -97,6 +116,7 @@
 	MKCAssertEqualObjects (expected, statements);
 }
 
+
 - (void) testPeopleDepartmentsNoInverse
 {
 	NSArray* statements = [self importStatements: @"people-departments-no-inverse"];
@@ -111,6 +131,7 @@
 						  nil];
 	MKCAssertEqualObjects (expected, statements);
 }	
+
 
 - (void) testOneToOne
 {
@@ -157,6 +178,7 @@
 				  @"statements: %@\nexpected1: %@\nexpected2: %@",
 				  statements, expected1, expected2);
 }
+
 
 - (void) testRelationshipOptionality
 {

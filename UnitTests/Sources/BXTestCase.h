@@ -27,6 +27,7 @@
 //
 
 #import <BaseTen/BaseTen.h>
+#import <SenTestingKit/SenTestingKit.h>
 
 
 extern int d_eq (double a, double b);
