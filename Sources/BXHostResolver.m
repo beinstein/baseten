@@ -31,6 +31,7 @@
 #import "BXLogger.h"
 #import "BXError.h"
 #import "BXConstants.h"
+#import "BXCFHostCompatibility.h"
 #import <SystemConfiguration/SystemConfiguration.h>
 #import <netdb.h>
 

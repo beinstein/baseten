@@ -27,7 +27,6 @@
 //
 
 #import <Foundation/Foundation.h>
-#import <BaseTen/BXCFHostCompatibility.h> 
 #import <BaseTen/BXExport.h>
 #import <BaseTen/libpq-fe.h>
 

@@ -24,6 +24,7 @@
 
 /* Begin PBXBuildFile section */
 		3FC3D13211918C3D00D3CA68 /* PGTSPgBouncerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FC3D13111918C3D00D3CA68 /* PGTSPgBouncerTests.m */; };
+		5304521E119D9BC5000B89CF /* BXHostResolverTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5304521D119D9BC5000B89CF /* BXHostResolverTests.m */; };
 		530925290FA89023000DC21C /* BXDataModelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 530925280FA89023000DC21C /* BXDataModelTests.m */; };
 		530927A90FA894D2000DC21C /* people-departments.xcdatamodel in Sources */ = {isa = PBXBuildFile; fileRef = 530927A80FA894D2000DC21C /* people-departments.xcdatamodel */; };
 		530927BB0FA89BBE000DC21C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 530927BA0FA89BBE000DC21C /* CoreData.framework */; };
@@ -127,6 +128,8 @@
 		3FC3D13011918C3D00D3CA68 /* PGTSPgBouncerTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGTSPgBouncerTests.h; path = Sources/PGTSPgBouncerTests.h; sourceTree = "<group>"; };
 		3FC3D13111918C3D00D3CA68 /* PGTSPgBouncerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGTSPgBouncerTests.m; path = Sources/PGTSPgBouncerTests.m; sourceTree = "<group>"; };
 		3FC3D243119190D000D3CA68 /* libpq-fe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "libpq-fe.h"; path = "../Sources/libpq-fe.h"; sourceTree = SOURCE_ROOT; };
+		5304521C119D9BC5000B89CF /* BXHostResolverTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXHostResolverTests.h; path = Sources/BXHostResolverTests.h; sourceTree = "<group>"; };
+		5304521D119D9BC5000B89CF /* BXHostResolverTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXHostResolverTests.m; path = Sources/BXHostResolverTests.m; sourceTree = "<group>"; };
 		530925270FA89023000DC21C /* BXDataModelTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BXDataModelTests.h; path = Sources/BXDataModelTests.h; sourceTree = "<group>"; };
 		530925280FA89023000DC21C /* BXDataModelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BXDataModelTests.m; path = Sources/BXDataModelTests.m; sourceTree = "<group>"; };
 		530927A80FA894D2000DC21C /* people-departments.xcdatamodel */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = wrapper.xcdatamodel; name = "people-departments.xcdatamodel"; path = "Sources/people-departments.xcdatamodel"; sourceTree = "<group>"; };
@@ -295,6 +298,8 @@
 				53DAA0580E6EEB46001DC1D9 /* BXKeyPathComponentTest.m */,
 				535627B70E6E805D002EA3FD /* BXPredicateTests.h */,
 				535627B80E6E805D002EA3FD /* BXPredicateTests.m */,
+				5304521C119D9BC5000B89CF /* BXHostResolverTests.h */,
+				5304521D119D9BC5000B89CF /* BXHostResolverTests.m */,
 				5375C2500F3BAD88002CBF78 /* BXDatabaseContextTests.h */,
 				5375C2510F3BAD88002CBF78 /* BXDatabaseContextTests.m */,
 			);
@@ -574,6 +579,7 @@
 				53C4C62111943C8E003FB842 /* NSPredicate+BaseTenAdditionsTests.m in Sources */,
 				53C4C67B119443E1003FB842 /* BXMetadataTests.m in Sources */,
 				538102BE119823D8006A6017 /* BXArbitrarySQLTests.m in Sources */,
+				5304521E119D9BC5000B89CF /* BXHostResolverTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

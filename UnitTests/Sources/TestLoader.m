@@ -39,6 +39,7 @@
 #import "PGTSValueTests.h"
 #import "BXKeyPathComponentTest.h"
 #import "BXPredicateTests.h"
+#import "BXHostResolverTests.h"
 #import "BXDatabaseContextTests.h"
 
 #import "PGTSMetadataTests.h"
@@ -82,6 +83,7 @@
 							[PGTSValueTests class],
 							[BXKeyPathComponentTest class],
 							[BXPredicateTests class],
+							[BXHostResolverTests class],
 							[BXDatabaseContextTests class],
 							
 							[PGTSMetadataTests class],
@@ -110,7 +112,7 @@
 							[ToOneChangeNotificationTests class],
 							nil];
 	
-	//testClasses = [NSArray arrayWithObject: [BXModificationTests class]];
+	//testClasses = [NSArray arrayWithObject: [BXHostResolverTests class]];
 	
 	for (Class testCaseClass in testClasses)
 	{
