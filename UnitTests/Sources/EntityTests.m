@@ -73,7 +73,9 @@
 	BXEntityDescription* entity = [[mContext databaseObjectModel] entityForTable: entityName inSchema: schemaName];
 	MKCAssertNotNil (entity);
 	
-	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [mContext databaseURI]];
+	BXDatabaseContext* ctx2 = [[[BXDatabaseContext alloc] init] autorelease];
+	[ctx2 setDatabaseObjectModelStorage: mStorage];
+	[ctx2 setDatabaseURI: [mContext databaseURI]];
 	[ctx2 setDelegate: self];
 	BXEntityDescription* entity2 = [[ctx2 databaseObjectModel] entityForTable: entityName inSchema: schemaName];
 	MKCAssertNotNil (entity2);

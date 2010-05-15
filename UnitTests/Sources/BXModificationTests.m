@@ -163,7 +163,9 @@
     NSUInteger count = [array count];
     
     //Create an object into the array using another connection.
-    BXDatabaseContext* context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
+	BXDatabaseContext *context2 = [[[BXDatabaseContext alloc] init] autorelease];
+	[context2 setDatabaseObjectModelStorage: mStorage];
+	[context2 setDatabaseURI: [self databaseURI]];
 	[context2 setDelegate: self];
     [context2 setAutocommits: NO];
     MKCAssertNotNil (context2);
@@ -184,7 +186,6 @@
     MKCAssertEquals (count, [array count]);
 	
 	[context2 disconnect];
-	[context2 release];
 }
 
 
@@ -198,7 +199,9 @@
 	MKCAssertNotNil (entity);
 
 	{
-		context2 = [[BXDatabaseContext alloc] initWithDatabaseURI: [self databaseURI]];
+		context2 = [[[BXDatabaseContext alloc] init] autorelease];
+		[context2 setDatabaseObjectModelStorage: mStorage];
+		[context2 setDatabaseURI: [self databaseURI]];
 		[context2 setDelegate: self];
 		[context2 setAutocommits: YES];
 		MKCAssertNotNil (context2);

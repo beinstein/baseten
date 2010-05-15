@@ -41,9 +41,11 @@ int d_eq (double a, double b)
 }
 
 
+
 @interface SenTestCase (UndocumentedMethods)
 - (void) logException:(NSException *) anException;
 @end
+
 
 
 @implementation BXTestCase
@@ -53,11 +55,13 @@ bx_test_failed (NSException* exception)
 	abort ();
 }
 
+
 - (void) logAndCallBXTestFailed: (NSException *) exception
 {
 	[self logException: exception];
 	bx_test_failed (exception);
 }
+
 
 - (id) initWithInvocation: (NSInvocation *) anInvocation
 {
@@ -68,10 +72,12 @@ bx_test_failed (NSException* exception)
 	return self;
 }
 
+
 - (NSURL *) databaseURI
 {
 	return [NSURL URLWithString: @"pgsql://baseten_test_user@localhost/basetentest"];
 }
+
 
 - (NSDictionary *) connectionDictionary
 {
@@ -88,17 +94,33 @@ bx_test_failed (NSException* exception)
 {
 	return kBXSSLModeDisable;
 }
+
+
+- (void) setUp
+{
+	[super setUp];
+	mPool = [[NSAutoreleasePool alloc] init];
+}
+
+
+- (void) tearDown
+{
+	[mPool drain];
+	[super tearDown];
+}
 @end
+
 
 
 @implementation BXDatabaseTestCase
 - (void) setUp
 {
 	[super setUp];
+	mStorage = [[BXDatabaseObjectModelStorage alloc] init];
 	
 	NSURL* databaseURI = [self databaseURI];
-
 	mContext = [[BXDatabaseContext alloc] init];
+	[mContext setDatabaseObjectModelStorage: mStorage];
 	[mContext setDatabaseURI: databaseURI];
 	[mContext setAutocommits: NO];
 	[mContext setDelegate: self];
@@ -106,10 +128,12 @@ bx_test_failed (NSException* exception)
 	MKCAssertFalse ([mContext autocommits]);
 }
 
+
 - (void) tearDown
 {
 	[mContext disconnect];
 	[mContext release];
+	[mStorage release];
 	[super tearDown];
 }
 @end

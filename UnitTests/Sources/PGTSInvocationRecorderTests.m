@@ -95,7 +95,7 @@
 	NSString *b = @"b";
 	OCMockObject *callbackTarget = [OCMockObject mockForProtocol: @protocol (PGTSInvocationRecorderTestCallback)];
 	
-	PGTSCallbackInvocationRecorder *recorder = [[PGTSCallbackInvocationRecorder alloc] init];
+	PGTSCallbackInvocationRecorder *recorder = [[[PGTSCallbackInvocationRecorder alloc] init] autorelease];
 	[recorder setCallback: @selector (myCallback:userInfo:)];
 	[recorder setCallbackTarget: callbackTarget];
 	[recorder setUserInfo: b];

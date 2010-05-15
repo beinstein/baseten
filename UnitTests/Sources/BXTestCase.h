@@ -35,14 +35,17 @@ extern int d_eq (double a, double b);
 
 @interface BXTestCase : SenTestCase <BXDatabaseContextDelegate>
 {
+	NSAutoreleasePool *mPool;
 }
 - (NSURL *) databaseURI;
 - (NSDictionary *) connectionDictionary;
 @end
 
 
+
 @interface BXDatabaseTestCase: BXTestCase
 {
-	BXDatabaseContext* mContext;
+	BXDatabaseContext *mContext;
+	BXDatabaseObjectModelStorage *mStorage;
 }
 @end

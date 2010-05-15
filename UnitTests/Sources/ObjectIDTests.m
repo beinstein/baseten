@@ -48,7 +48,9 @@
 	MKCAssertNotNil (uri);
 	
 	//Change the URI back to a object id
-	BXDatabaseContext* ctx2 = [BXDatabaseContext contextWithDatabaseURI: [mContext databaseURI]];
+	BXDatabaseContext* ctx2 = [[[BXDatabaseContext alloc] init] autorelease];
+	[ctx2 setDatabaseObjectModelStorage: mStorage];
+	[ctx2 setDatabaseURI: [mContext databaseURI]];
 	[ctx2 setDelegate: self];
 	BXDatabaseObjectID* objectID2 = [[[BXDatabaseObjectID alloc] initWithURI: uri context: ctx2] autorelease];
 	MKCAssertNotNil (objectID2);
@@ -90,7 +92,9 @@
 
 - (void) testObjectIDFromAnotherContext
 {
-	BXDatabaseContext* ctx2 = [[[BXDatabaseContext alloc] initWithDatabaseURI: [mContext databaseURI]] autorelease];
+	BXDatabaseContext *ctx2 = [[[BXDatabaseContext alloc] init] autorelease];
+	[ctx2 setDatabaseObjectModelStorage: mStorage];
+	[ctx2 setDatabaseURI: [mContext databaseURI]];
 	[ctx2 setDelegate: self];
 	MKCAssertNotNil (ctx2);
 	
