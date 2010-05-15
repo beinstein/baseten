@@ -121,7 +121,10 @@
 @implementation NSString (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) set withCharacters: (const char *) value type: (PGTSTypeDescription *) typeInfo
 {
-    return [[[[NSString alloc] initWithUTF8String: value] decomposedStringWithCanonicalMapping] retain];
+	NSString *string = [[NSString alloc] initWithUTF8String: value];
+	NSString *retval = [[string decomposedStringWithCanonicalMapping] retain];
+	[string release];
+	return retval;
 }
 
 - (const char *) PGTSParameterLength: (size_t *) length connection: (PGTSConnection *) connection
@@ -467,9 +470,9 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 @implementation NSXMLDocument (PGTSFoundationObjects)
 + (id) copyForPGTSResultSet: (PGTSResultSet *) result withCharacters: (const char *) value type: (PGTSTypeDescription *) type columnIndex: (int) columnIndex
 {
-	id retval = nil;
 	BOOL shouldReturnDocument = NO;
-	NSData* xmlData = [[[NSData alloc] initWithBytes: value length: strlen (value)] autorelease];
+	NSData* xmlData = [[NSData alloc] initWithBytes: value length: strlen (value)];
+	id retval = xmlData;
 	PGresult* res = [result PGresult];
 	Oid relid = PQftable (res, columnIndex);
 	int attnum = PQftablecol (res, columnIndex);
@@ -486,16 +489,14 @@ EscapeAndAppendByte (IMP appendImpl, NSMutableData* target, const char* src)
 	if (shouldReturnDocument)
 	{
 		NSError* error = nil;
+		retval = nil;
 		NSXMLDocument* document = [[NSXMLDocument alloc] initWithData: xmlData options: 0 error: &error];
+		[xmlData release];
 		
 		if (document)
 			retval = document;
 		else
 			BXLogError (@"Unable to create XML document even though I was supposed to have received one. Error: %@.", error);
-	}
-	else
-	{
-		retval = [xmlData retain];
 	}
 	
 	return retval;

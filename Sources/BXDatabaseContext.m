@@ -134,7 +134,6 @@ AddObjectIDsForInheritance2 (NSMutableDictionary *idsByEntity, BXEntityDescripti
 			
             BXDatabaseObjectID* newID = [BXDatabaseObjectID IDWithEntity: currentEntity primaryKeyFields: pkeyFields];
             [superIds addObject: newID];
-            [newID release];
         }
         AddObjectIDsForInheritance2 (idsByEntity, currentEntity);
     }    
@@ -1700,6 +1699,7 @@ ModTypeToObject (enum BXModificationType value)
 	
 	if (NO == connected)
 	{
+		ExpectR (error, NO);
 		[self setLastConnectionError: *error];
 		if (NO == mDisplayingSheet)
 		{
@@ -2304,7 +2304,8 @@ ModTypeToObject (enum BXModificationType value)
 				BASETEN_BEGIN_FETCH ();
 							
 			Class databaseObjectClass = [entity databaseObjectClass];
-			retval = [mDatabaseInterface executeFetchForEntity: entity withPredicate: predicate 
+			retval = [mDatabaseInterface executeFetchForEntity: entity 
+												 withPredicate: predicate 
 											   returningFaults: returnFaults 
 														 class: databaseObjectClass
 														 error: &localError];

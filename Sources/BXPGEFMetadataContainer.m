@@ -117,7 +117,7 @@
 	
 	while ([res advanceRow])
 	{
-		BXPGForeignKeyDescription* fkey = [[BXPGForeignKeyDescription alloc] init];
+		BXPGForeignKeyDescription* fkey = [[[BXPGForeignKeyDescription alloc] init] autorelease];
 		[fkey setIdentifier: [[res valueForKey: @"conid"] integerValue]];
 		[fkey setName: [res valueForKey: @"conname"]];
 		
