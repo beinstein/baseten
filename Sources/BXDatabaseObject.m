@@ -1120,19 +1120,19 @@ DatabaseError (NSInteger errorCode, NSString* localizedTitle, NSString* localize
 	return retval;
 }
 
-- (id) valueForUndefinedKey: (NSString *) aKey
+- (id) valueForUndefinedKey: (NSString *) key
 {
-    return [self primitiveValueForKey: aKey];
+    return [self primitiveValueForKey: key];
 }
 
-- (id) valueForUndefinedKey2: (NSString *) aKey
+- (id) valueForUndefinedKey2: (NSString *) key
 {
-    return [super valueForUndefinedKey: aKey];
+    return [super valueForUndefinedKey: key];
 }
 
-- (void) setValue: (id) aValue forUndefinedKey: (NSString *) aKey
+- (void) setValue: (id) value forUndefinedKey: (NSString *) key
 {
-    [self setPrimitiveValue: aValue forKey: aKey];
+    [self setPrimitiveValue: value forKey: key];
 }
 
 - (void) BXDatabaseContextWillDealloc
