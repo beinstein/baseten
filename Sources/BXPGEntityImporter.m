@@ -122,7 +122,7 @@
 	Expect (mContext);
 	Expect (mEntities);
 	
-	if (! mSchemaName)
+	if (! [mSchemaName length])
 		[self setSchemaName: @"public"];
 
 	if (! mEntityConverter)

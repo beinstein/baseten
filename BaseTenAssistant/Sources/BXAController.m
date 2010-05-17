@@ -526,40 +526,45 @@ NSInvocation* MakeInvocation (id target, SEL selector)
 		BXPGTransactionHandler* handler = [(BXPGInterface *) [mContext databaseInterface] transactionHandler];
 		BXPGDatabaseDescription* desc = [handler databaseDescription];
 		PGTSConnection* connection = [handler connection];
-
-		//If version is less than 0.922, we have old-style table and function names.
-		NSNumber* version = [desc schemaVersion];
-		NSNumber* threshold = [NSDecimalNumber decimalNumberWithString: @"0.922"];
-		NSComparisonResult res = [threshold compare: version];
-		switch (res)
+		
+		NSNumber *version = [desc schemaVersion];
+		NSString *query = nil;
+		PGTSResultSet *res = nil;
+		if (NSOrderedAscending != [version compare: [NSDecimalNumber decimalNumberWithString: @"0.926"]])
 		{
-			case NSOrderedDescending:
-			{
-				NSString* query = nil;
-				query = @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.viewprimarykey";
-				[connection executeQuery: query];
-				query = 
-				@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
-				@" SELECT oid FROM pg_class WHERE baseten.isobservingcompatible (oid) = true";
-				[connection executeQuery: query];
-				break;
-			}
-				
-			case NSOrderedSame:
-			case NSOrderedAscending:
-			{
-				NSString* query = nil;
-				query = @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.view_pkey";
-				[connection executeQuery: query];
-				query = 
-				@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
-				@" SELECT relid AS oid FROM baseten.enabled_relation";
-				[connection executeQuery: query];
-				break;
-			}
-				
-			default:
-				break;
+			query = @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.view_pkey";
+			res = [connection executeQuery: query];
+			BXAssertLog ([res querySucceeded], [[res error] description]);
+
+			query =
+			@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
+			@" SELECT c.oid FROM pg_class c WHERE baseten.is_enabled (c.oid) = true";
+			res = [connection executeQuery: query];
+			BXAssertLog ([res querySucceeded], [[res error] description]);
+		}
+		else if (NSOrderedAscending != [version compare: [NSDecimalNumber decimalNumberWithString: @"0.922"]])
+		{
+			query = @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.view_pkey";
+			res = [connection executeQuery: query];
+			BXAssertLog ([res querySucceeded], [[res error] description]);
+
+			query = 
+			@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
+			@" SELECT relid AS oid FROM baseten.enabled_relation";
+			res = [connection executeQuery: query];			
+			BXAssertLog ([res querySucceeded], [[res error] description]);
+		}
+		else
+		{
+			query = @"CREATE TEMPORARY TABLE baseten_view_pkey AS SELECT * FROM baseten.viewprimarykey";
+			res = [connection executeQuery: query];
+			BXAssertLog ([res querySucceeded], [[res error] description]);
+
+			query = 
+			@"CREATE TEMPORARY TABLE baseten_enabled_oids AS "
+			@" SELECT oid FROM pg_class WHERE baseten.isobservingcompatible (oid) = true";
+			res = [connection executeQuery: query];			
+			BXAssertLog ([res querySucceeded], [[res error] description]);
 		}
 	}
 	
