@@ -59,6 +59,7 @@
 - (BXPGExpressionValueType *) visitUnionSetExpression: (NSExpression *) expression;
 - (BXPGExpressionValueType *) visitIntersectSetExpression: (NSExpression *) expression;
 - (BXPGExpressionValueType *) visitMinusSetExpression: (NSExpression *) expression;
+- (BXPGExpressionValueType *) visitBlockExpression: (NSExpression *) expression;
 - (BXPGExpressionValueType *) visitUnknownExpression: (NSExpression *) expression;
 @end
 

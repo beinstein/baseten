@@ -185,7 +185,7 @@
  *     BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
  * 
  *     [ctx connectSync: NULL];
- *     BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
+ *     BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: @"table"];
  *     NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  *
  *     for (BXDatabaseObject* object in result)
@@ -213,7 +213,7 @@
  *     BXDatabaseContext* ctx = [[BXDatabaseContext alloc] initWithDatabaseURI: databaseURI];
  * 
  *     [ctx connectSync: NULL];
- *     BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
+ *     BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: @"table"];
  *     NSArray* result = [ctx executeFetchForEntity: entity withPredicate: nil error: NULL];
  *
  *     for (BXDatabaseObject* object in result)
@@ -280,18 +280,18 @@
  *
  * \latexonly
  * \begin{lstlisting}
- * BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];
+ * BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: @"table"];
  * \end{lstlisting}
  * \endlatexonly
  * \htmlonly
- * <code>BXEntityDescription* entity = [ctx entityForTable: @"table" error: NULL];</code>
+ * <code>BXEntityDescription* entity = [[ctx databaseObjectModel] entityForTable: @"table"];</code>
  * \endhtmlonly
  *
  * BXEntityDescriptions are used to specify tables for fetches. For getting a specific 
- * entity description, BXDatabaseContext has two methods: 
- * -entityForTable:error:
+ * entity description, BXDatabaseObjectModel has two methods: 
+ * -entityForTable:
  * and
- * -entityForTable:inSchema:error:.
+ * -entityForTable:inSchema:.
  * Entity descriptions may be accessed before making a
  * connection in which case the database context will check their existence on connect.
  *
@@ -763,11 +763,14 @@
  * Any two foreign keys 
  * in one table will be interpreted as a many-to-many relationship, if they also form the table's 
  * primary key. Objects from the helper table may be retrieved as with one-to-many relationships:<br>
- * <tt>[aPerson valueForKey:\@"person_title_rel"]</tt>.
+ * <tt>[aPerson valueForKey:\@"person_title_relSet"]</tt>.
  */
 
 /**
  * \page predicates Predicates
+ *
+ * Cocoa predicates are used to fetch objects that match certain criteria. Key paths in predicates 
+ * correspond to entity attributes and relationships.
  *
  * Most types of predicates and expressions are converted to SQL and sent to the database server.
  * Others cause the returned object set to be filtered again on the client side. Specifically, the following
@@ -776,12 +779,7 @@
  * after it has been received.
  *
  * <ul>
- *     <li>Use of NSDiacriticInsensitivePredicateOption</li>
  *     <li>Use of NSCustomSelectorPredicateOperatorType</li>
- *     <li>Use of NSSubqueryExpressionType</li>
- *     <li>Use of NSUnionSetExpressionType</li>
- *     <li>Use of NSIntersectSetExpressionType</li>
- *     <li>Use of NSMinusSetExpressionType</li>
  *     <li>A modifier other than NSDirectPredicateModifier in combination with any of the following:
  *         <ul>
  *             <li>NSBeginsWithPredicateOperatorType</li>
@@ -790,6 +788,37 @@
  *             <li>NSLikePredicateOperatorType</li>
  *             <li>NSContainsPredicateOperatorType</li>
  *             <li>NSInPredicateOperatorType</li>
+ *         </ul>
+ *     </li> 
+ *     <li>Use of any of the following predicate options:
+ *         <ul>
+ *             <li>NSDiacriticInsensitivePredicateOption</li>
+ *             <li>NSNormalizedPredicateOption</li>
+ *             <li>NSLocaleSensitivePredicateOption</li>
+ *         </ul>
+ *     </li>
+ *     <li>Use of any of the following expression types:
+ *         <ul>
+ *             <li>NSSubqueryExpressionType</li>
+ *             <li>NSUnionSetExpressionType</li>
+ *             <li>NSIntersectSetExpressionType</li>
+ *             <li>NSMinusSetExpressionType</li>
+ *             <li>NSBlockExpressionType</li>
+ *         </ul>
+ *     </li>
+ *     <li>Use of a function expression with a custom target and selector</li>
+ *     <li>Use of a function expression with any of the following predefined selectors:
+ *         <ul>
+ *             <li>average:</li>
+ *             <li>castObject:toType:</li>
+ *             <li>max:</li>
+ *             <li>median:</li>
+ *             <li>min:</li>
+ *             <li>mode:</li>
+ *             <li>random</li>
+ *             <li>random:</li>
+ *             <li>randomn:</li>
+ *             <li>stddev:</li>
  *         </ul>
  *     </li>
  * </ul>
@@ -1081,7 +1110,7 @@
  * \li Altering relations' names after having them enabled will not work. To rename relations, they need
  *     to be disabled first and re-enabled afterwards.
  * \li Altering relations' primary keys will not work. Again, disabling and re-enabling is required.
- * \li Altering relations' columns keys will not work. Again, disabling and re-enabling is required.
+ * \li Altering relations' columns will not work. Again, disabling and re-enabling is required.
  * \li Altering relations' foreign keys causes BaseTen's relationship information to become out-of-date
  *     and needing to be refreshed.
  *

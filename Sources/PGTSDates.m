@@ -27,23 +27,15 @@
 //
 
 
-#import "pcre.h"
 #import "PGTSDates.h"
 #import "PGTSConnection.h"
 #import "PGTSTypeDescription.h"
 #import "BXLogger.h"
 #import "BXArraySize.h"
+#import "BXRegularExpressions.h"
 
 
 #define kOvectorSize 64
-
-
-struct regular_expression_st 
-{
-	pcre* re_expression;
-	pcre_extra* re_extra;
-	char* re_pattern;
-};
 
 
 static struct regular_expression_st gTimestampExp = {};
@@ -72,32 +64,6 @@ SetDefaults ()
 							NSHourCalendarUnit | NSMinuteCalendarUnit | NSSecondCalendarUnit);
 		NSDateComponents* components = [calendar components: units fromDate: date];
 		gDefaultComponents = [components retain];
-	}
-}
-
-
-static void
-Compile (struct regular_expression_st* re, const char* pattern)
-{
-	const int options = PCRE_UTF8 | PCRE_MULTILINE | PCRE_DOLLAR_ENDONLY;
-	const char* error = NULL;
-	int errorOffset = 0;
-	if ((re->re_expression = pcre_compile (pattern, options, &error, &errorOffset, NULL)))
-	{
-		re->re_extra = pcre_study (re->re_expression, 0, &error);
-		if (error)
-		{
-			BXLogError (@"Failed to study pattern'%s': %s", pattern, error);
-			pcre_free (re->re_expression);
-		}
-		else
-		{
-			re->re_pattern = strdup (pattern);
-		}
-	}
-	else
-	{
-		BXLogError (@"Failed to compile pattern at offset %d '%s': %s", errorOffset, pattern, error);
 	}
 }
 
@@ -253,7 +219,7 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		//There might be a trailing 'BC' for years before 1 AD.
 		
 		const char* pattern = "^(?<y>\\d{4,7})-(?<m>\\d{2})-(?<d>\\d{2})(?<e> BC)?$";
-		Compile (&gDateExp, pattern);
+		BXRegularExpressionCompile (&gDateExp, pattern);
 	}
 }
 
@@ -293,7 +259,7 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		"^(?<H>\\d{2}):(?<M>\\d{2}):(?<S>\\d{2})"                             //Time
 		"(?<frac>\\.\\d{1,6})?"                                               //Fraction
 		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))?)?)?$"; //Time zone
-		Compile (&gTimeExp, pattern);
+		BXRegularExpressionCompile (&gTimeExp, pattern);
 	}
 }
 
@@ -331,7 +297,7 @@ CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, i
 		"(?<frac>\\.\\d{1,6})?"                                             //Fraction
 		"((?<tzd>[+-])(?<tzh>\\d{2})(:(?<tzm>\\d{2})(:(?<tzs>\\d{2}))?)?)?" //Time zone
 		"(?<e> BC)?$";                                                      //Era specifier
-		Compile (&gTimestampExp, pattern);
+		BXRegularExpressionCompile (&gTimestampExp, pattern);
 	}
 }
 

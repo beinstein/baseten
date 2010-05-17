@@ -86,6 +86,10 @@
 			retval = [visitor visitMinusSetExpression: self];
 			break;
 			
+		case NSBlockExpressionType:
+			retval = [visitor visitBlockExpression: self];
+			break;
+			
 		default:
 			retval = [visitor visitUnknownExpression: self];
 			break;

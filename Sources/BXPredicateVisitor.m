@@ -1179,6 +1179,12 @@ end:
 	return retval;
 }
 
+- (BXPGExpressionValueType *) visitBlockExpression: (NSExpression *) expression
+{
+	BXPGExpressionValueType *retval = nil;
+	return retval;
+}
+
 - (BXPGExpressionValueType *) visitUnknownExpression: (NSExpression *) expression
 {
 	BXPGExpressionValueType* retval = nil;
