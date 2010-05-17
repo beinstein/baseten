@@ -86,10 +86,12 @@
 			retval = [visitor visitMinusSetExpression: self];
 			break;
 			
+#if defined(MAC_OS_X_VERSION_10_6) && MAC_OS_X_VERSION_10_6 <= MAC_OS_X_VERSION_MAX_ALLOWED
 		case NSBlockExpressionType:
 			retval = [visitor visitBlockExpression: self];
 			break;
-			
+#endif
+
 		default:
 			retval = [visitor visitUnknownExpression: self];
 			break;

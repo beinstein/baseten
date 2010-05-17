@@ -38,9 +38,9 @@
 #define kOvectorSize 64
 
 
-static struct regular_expression_st gTimestampExp = {};
-static struct regular_expression_st gDateExp = {};
-static struct regular_expression_st gTimeExp = {};
+static struct bx_regular_expression_st gTimestampExp = {};
+static struct bx_regular_expression_st gDateExp = {};
+static struct bx_regular_expression_st gTimeExp = {};
 
 __strong static NSDateComponents* gDefaultComponents = nil;
 __strong static NSTimeZone* gDefaultTimeZone = nil;
@@ -69,7 +69,7 @@ SetDefaults ()
 
 
 static NSDate*
-CopyDate (struct regular_expression_st* re, const char* subject, int* ovector, int status)
+CopyDate (struct bx_regular_expression_st *re, const char *subject, int *ovector, int status)
 {
 	NSDate* retval = nil;
 	char buffer [16] = {};

@@ -31,7 +31,7 @@
 #import <BaseTen/BXExport.h>
 
 
-struct regular_expression_st 
+struct bx_regular_expression_st 
 {
 	pcre* re_expression;
 	pcre_extra* re_extra;
@@ -39,5 +39,5 @@ struct regular_expression_st
 };
 
 
-BX_EXPORT void BXRegularExpressionCompile (struct regular_expression_st *re, const char *pattern);
-BX_EXPORT void BXRegularExpressionFree (struct regular_expression_st *re);
+BX_EXPORT void BXRegularExpressionCompile (struct bx_regular_expression_st *re, const char *pattern);
+BX_EXPORT void BXRegularExpressionFree (struct bx_regular_expression_st *re);

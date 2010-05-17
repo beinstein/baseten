@@ -32,7 +32,7 @@
 
 
 void
-BXRegularExpressionCompile (struct regular_expression_st *re, const char *pattern)
+BXRegularExpressionCompile (struct bx_regular_expression_st *re, const char *pattern)
 {
 	const int options = PCRE_UTF8 | PCRE_MULTILINE | PCRE_DOLLAR_ENDONLY;
 	const char* error = NULL;
@@ -58,7 +58,7 @@ BXRegularExpressionCompile (struct regular_expression_st *re, const char *patter
 
 
 void
-BXRegularExpressionFree (struct regular_expression_st *re)
+BXRegularExpressionFree (struct bx_regular_expression_st *re)
 {
 	if (re)
 	{
