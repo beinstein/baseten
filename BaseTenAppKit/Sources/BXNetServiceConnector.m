@@ -436,6 +436,7 @@ MakeInvocation (const id target, const SEL selector)
 	if (0 < [host length])
 	{
 		[self setHostName: host];
+		[mHostResolver setRunLoop: CFRunLoopGetCurrent ()];
 		[mHostResolver setRunLoopMode: [mConnectorImpl runLoopMode]];
 		[mHostResolver resolveHost: host];
 	}
