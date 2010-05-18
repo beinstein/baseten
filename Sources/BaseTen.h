@@ -581,7 +581,8 @@
  * \page relationships Relationships
  *
  * BaseTen supports the same types of relationships as Core Data: one-to-one, one-to-many and many-to-many.
- * The relationships are created using foreign keys as shown in the following table.
+ * After BaseTen schema has been installed, 
+ * relationships are created using foreign keys as shown in the following table.
  *
  * <table>
  *     <caption>Required conditions for relationsips</caption>
@@ -602,7 +603,9 @@
  *         <td>A helper table that has foreign keys referencing two other tables. The foreign key columns also need to form the table's primary key.</td>
  *     </tr>
  * </table>
- * 
+ *
+ * \note Before BaseTen 1.8, relationships were only available in enabled tables and views.
+ *
  *
  * \section relationship_naming Relationship naming
  *
@@ -714,7 +717,7 @@
  * <tt>[anEmail valueForKey:\@"person"]</tt>
  *
  * Many-to-many relationships are modeled with helper tables. The helper table needs to have columns to contain 
- * both tables' primary keys. It needs to be BaseTen enabled as well.
+ * both tables' primary keys.
  *
  * Another example:
  * \latexonly
