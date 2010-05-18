@@ -28,7 +28,7 @@
 
 changequote(`{{', `}}')
 -- ' -- Fix for syntax coloring in SQL mode.
-define({{_bx_version_}}, {{0.938}})dnl
+define({{_bx_version_}}, {{0.939}})dnl
 define({{_bx_compat_version_}}, {{0.23}})dnl
 
 
@@ -998,6 +998,156 @@ REVOKE ALL PRIVILEGES ON FUNCTION "baseten".refresh_view_caches () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten".refresh_view_caches () TO basetenowner;
 
 
+CREATE VIEW "baseten"._rel_table_oneto AS
+	SELECT -- MTO, OTO
+		f.conid,
+		CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
+			COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
+		ELSE 
+			r2.relname::TEXT
+		END AS name,
+		CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
+			COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
+		ELSE 
+			r1.relname::TEXT || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
+		END AS inversename,
+		CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END AS kind,
+		true AS is_inverse,
+		2 = COALESCE (g.idx, 1) AS has_rel_names,
+		f.conrelid AS srcid,
+		r1.nspname AS srcnspname,
+		r1.relname AS srcrelname,
+		f.confrelid AS dstid,
+		r2.nspname AS dstnspname,
+		r2.relname AS dstrelname
+	FROM "baseten".foreign_key f
+	INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
+	INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
+	LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)))
+	--WHERE r1.enabled = true AND r2.enabled = true
+	UNION ALL
+	SELECT -- OTM, OTO
+		f.conid,
+		CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
+			COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
+		ELSE 
+			r1.relname::TEXT || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
+		END AS bane,
+		CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
+			COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
+		ELSE 
+			r2.relname::TEXT
+		END AS inversename,
+		CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END AS kind,
+		false AS is_inverse,
+		2 = COALESCE (g.idx, 1) AS has_rel_names,
+		f.confrelid AS srcid,
+		r2.nspname AS srcnspname,
+		r2.relname AS srcrelname,
+		f.conrelid AS dstid,
+		r1.nspname AS dstnspname,
+		r1.relname AS dstrelname
+	FROM "baseten".foreign_key f
+	INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
+	INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
+	LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)));
+	--WHERE r1.enabled = true AND r2.enabled = true;
+
+
+CREATE VIEW "baseten"._rel_table_manytomany AS
+	SELECT
+		f1.conid AS conid,
+		f2.conid AS dstconid,
+		CASE WHEN 1 = COALESCE (g.idx, 1) THEN f1.conname ELSE r2.relname || 'Set' END AS name,
+		CASE WHEN 1 = COALESCE (g.idx, 1) THEN f2.conname ELSE r1.relname || 'Set' END AS inversename,
+		'm' AS kind,
+		false AS is_inverse,
+		2 = COALESCE (g.idx, 1) AS has_rel_names,
+		f1.confrelid AS srcid,
+		r1.nspname AS srcnspname,
+		r1.relname AS srcrelname,
+		f2.confrelid AS dstid,
+		r2.nspname AS dstnspname,
+		r2.relname AS dstrelname,
+		f1.conrelid AS helperid,
+		rh.nspname AS helpernspname,
+		rh.relname AS helperrelname
+	FROM "baseten".foreign_key f1
+	INNER JOIN "baseten".foreign_key f2 ON (f1.conrelid = f2.conrelid AND f1.confrelid <> f2.confrelid)
+	INNER JOIN (
+		SELECT 
+			conrelid,
+			COUNT (conid) AS count
+		FROM "baseten".foreign_key
+		GROUP BY conrelid
+	) c ON (c.conrelid = f1.conrelid AND 2 = c.count)
+	INNER JOIN "baseten".relation rh ON (rh.id = f1.conrelid)
+	INNER JOIN pg_class ch ON (ch.relname = rh.relname)
+	INNER JOIN pg_namespace nh ON (nh.oid = ch.relnamespace AND nh.nspname = rh.nspname)
+	INNER JOIN (
+		SELECT
+			c.conrelid AS reloid,
+			"baseten".array_accum (a.attname) AS attnames
+		FROM pg_constraint c
+		INNER JOIN pg_attribute a ON (a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey))
+		WHERE c.contype = 'p'
+		GROUP BY c.conrelid
+	) p ON (p.reloid = ch.oid AND p.attnames @> (f1.conkey || f2.conkey))
+	INNER JOIN "baseten".relation r1 ON (r1.id = f1.confrelid)
+	INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
+	LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = f1.conname OR r1.relname = f2.conname));
+	--WHERE r1.enabled = true AND r2.enabled = true;
+
+
+CREATE VIEW "baseten"._rel_view AS
+	SELECT
+		rel.conid,
+		rel.dstconid,
+		r2.relname || CASE WHEN 'm' = rel.kind OR ('t' = rel.kind AND rel.is_inverse = false) THEN 'Set' ELSE '' END AS name,
+		r1.relname || CASE WHEN 'm' = rel.kind OR ('t' = rel.kind AND rel.is_inverse = true)  THEN 'Set' ELSE '' END AS inversename,
+		rel.kind,
+		rel.is_inverse,
+		true AS has_rel_names,
+		true AS has_views,
+		rel.srcid,
+		r1.nspname AS srcnspname,
+		r1.relname AS srcrelname,
+		rel.dstid,
+		r2.nspname AS dstnspname,
+		r2.relname AS dstrelname,
+		rel.helperid,
+		r3.nspname AS helpernspname,
+		r3.relname AS helperrelname
+	FROM
+		(
+			SELECT 
+				conid,
+				null::INTEGER AS dstconid,
+				kind,
+				is_inverse,
+				srcid,
+				dstid,
+				null::INTEGER AS helperid
+			FROM "baseten"._rel_view_oneto
+			UNION ALL
+			SELECT
+				conid,
+				dstconid,
+				'm' AS kind,
+				false AS is_inverse,
+				srcid,
+				dstid,
+				helperid
+			FROM "baseten"._rel_view_manytomany
+		) rel
+	INNER JOIN "baseten".relation r1 ON (r1.id = rel.srcid)
+	INNER JOIN "baseten".relation r2 ON (r2.id = rel.dstid)
+	LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid);
+	--WHERE r1.enabled = true AND r2.enabled = true AND (
+    --    r3.id IS NULL OR r3.enabled = true
+    --);
+
+
 CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 	SELECT "baseten".assign_internal_ids ();
 
@@ -1017,122 +1167,29 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			dstnspname,
 			dstrelname
 		)
-		SELECT -- MTO
-			f.conid,
-			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
-				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
-			ELSE 
-				r2.relname::TEXT
-			END,
-			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
-				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
-			ELSE 
-				r1.relname::TEXT || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
-			END,
-			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
-			true,
-			2 = COALESCE (g.idx, 1),
-			f.conrelid,
-			r1.nspname,
-			r1.relname,
-			f.confrelid,
-			r2.nspname,
-			r2.relname
-		FROM "baseten".foreign_key f
-		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
-		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
-		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)))
-		WHERE r1.enabled = true AND r2.enabled = true
-		UNION ALL
-		SELECT -- OTM
-			f.conid,
-			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
-				COALESCE ("baseten".split_part (f.conname, '__', 2), r1.nspname || '_' || r1.relname || '_' || f.conname)
-			ELSE 
-				r1.relname::TEXT || CASE WHEN f.conkey_is_unique THEN '' ELSE 'Set' END
-			END,
-			CASE WHEN 1 = COALESCE (g.idx, 1) THEN 
-				COALESCE ("baseten".split_part (f.conname, '__', 1), r1.nspname || '_' || r1.relname || '_' || f.conname)
-			ELSE 
-				r2.relname::TEXT
-			END,
-			CASE WHEN true = f.conkey_is_unique THEN 'o' ELSE 't' END,
-			false,
-			2 = COALESCE (g.idx, 1),
-			f.confrelid,
-			r2.nspname,
-			r2.relname,
-			f.conrelid,
-			r1.nspname,
-			r1.relname
-		FROM "baseten".foreign_key f
-		INNER JOIN "baseten".relation r1 ON (r1.id = f.conrelid)
-		INNER JOIN "baseten".relation r2 ON (r2.id = f.confrelid)
-		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = split_part (f.conname, '__', 1) OR r1.relname = split_part (f.conname, '__', 2)))
-		WHERE r1.enabled = true AND r2.enabled = true;
+		SELECT * FROM "baseten"._rel_table_oneto;
 		
 	-- MTM
 	INSERT INTO "baseten".relationship
 		(
 			conid,
-            dstconid,
-            name,
-            inversename,
-            kind,
-            is_inverse,
+			dstconid,
+			name,
+			inversename,
+			kind,
+			is_inverse,
 			has_rel_names,
-            srcid,
-            srcnspname,
-            srcrelname,
-            dstid,
-            dstnspname,
-            dstrelname,
+			srcid,
+			srcnspname,
+			srcrelname,
+			dstid,
+			dstnspname,
+			dstrelname,
 			helperid,
-            helpernspname,
-            helperrelname
+			helpernspname,
+			helperrelname
 		)
-		SELECT
-			f1.conid,
-			f2.conid,
-			CASE WHEN 1 = COALESCE (g.idx, 1) THEN f1.conname ELSE r2.relname || 'Set' END,
-			CASE WHEN 1 = COALESCE (g.idx, 1) THEN f2.conname ELSE r1.relname || 'Set' END,
-			'm',
-			false,
-			2 = COALESCE (g.idx, 1),
-			f1.confrelid,
-			r1.nspname,
-			r1.relname,
-			f2.confrelid,
-			r2.nspname,
-			r2.relname,
-			f1.conrelid,
-			rh.nspname,
-			rh.relname
-		FROM "baseten".foreign_key f1
-		INNER JOIN "baseten".foreign_key f2 ON (f1.conrelid = f2.conrelid AND f1.confrelid <> f2.confrelid)
-		INNER JOIN (
-			SELECT 
-				conrelid,
-				COUNT (conid) AS count
-			FROM "baseten".foreign_key
-			GROUP BY conrelid
-		) c ON (c.conrelid = f1.conrelid AND 2 = c.count)
-		INNER JOIN "baseten".relation rh ON (rh.id = f1.conrelid)
-		INNER JOIN pg_class ch ON (ch.relname = rh.relname)
-		INNER JOIN pg_namespace nh ON (nh.oid = ch.relnamespace AND nh.nspname = rh.nspname)
-		INNER JOIN (
-			SELECT
-				c.conrelid AS reloid,
-				"baseten".array_accum (a.attname) AS attnames
-			FROM pg_constraint c
-			INNER JOIN pg_attribute a ON (a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey))
-			WHERE c.contype = 'p'
-			GROUP BY c.conrelid
-		) p ON (p.reloid = ch.oid AND p.attnames @> (f1.conkey || f2.conkey))
-		INNER JOIN "baseten".relation r1 ON (r1.id = f1.confrelid)
-		INNER JOIN "baseten".relation r2 ON (r2.id = f2.confrelid)
-		LEFT JOIN generate_series (1, 2) g (idx) ON (NOT (r2.relname = f1.conname OR r1.relname = f2.conname))
-		WHERE r1.enabled = true AND r2.enabled = true;
+		SELECT * FROM "baseten"._rel_table_manytomany;
     
 	-- Views
 	SELECT "baseten".refresh_view_caches ();
@@ -1156,52 +1213,7 @@ CREATE FUNCTION "baseten"._insert_relationships () RETURNS VOID AS $$
 			helpernspname,
 			helperrelname
 		)
-		SELECT
-			rel.conid,
-			rel.dstconid,
-			r2.relname || CASE WHEN 'm' = rel.kind OR ('t' = rel.kind AND rel.is_inverse = false) THEN 'Set' ELSE '' END,
-			r1.relname || CASE WHEN 'm' = rel.kind OR ('t' = rel.kind AND rel.is_inverse = true)  THEN 'Set' ELSE '' END,
-			rel.kind,
-			rel.is_inverse,
-			true,
-			true,
-			rel.srcid,
-			r1.nspname,
-			r1.relname,
-			rel.dstid,
-			r2.nspname,
-			r2.relname,
-			rel.helperid,
-			r3.nspname,
-			r3.relname
-		FROM
-			(
-				SELECT 
-					conid,
-					null::INTEGER AS dstconid,
-					kind,
-					is_inverse,
-					srcid,
-					dstid,
-					null::INTEGER AS helperid
-				FROM "baseten"._rel_view_oneto
-				UNION ALL
-				SELECT
-					conid,
-					dstconid,
-					'm' AS kind,
-					false AS is_inverse,
-					srcid,
-					dstid,
-					helperid
-				FROM "baseten"._rel_view_manytomany
-			) rel
-		INNER JOIN "baseten".relation r1 ON (r1.id = rel.srcid)
-		INNER JOIN "baseten".relation r2 ON (r2.id = rel.dstid)
-		LEFT OUTER JOIN "baseten".relation r3 ON (r3.id = rel.helperid)
-		WHERE r1.enabled = true AND r2.enabled = true AND (
-            r3.id IS NULL OR r3.enabled = true
-        );
+		SELECT * FROM "baseten"._rel_view;
 $$ VOLATILE LANGUAGE SQL;
 REVOKE ALL PRIVILEGES ON FUNCTION "baseten"._insert_relationships () FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION "baseten"._insert_relationships () TO basetenowner;
@@ -2132,4 +2144,5 @@ GRANT EXECUTE ON FUNCTION "baseten".refresh_caches () TO basetenowner;
 
 GRANT basetenread TO basetenuser;
 GRANT basetenuser TO basetenowner;
+SELECT "baseten".refresh_caches ();
 COMMIT; -- Functions

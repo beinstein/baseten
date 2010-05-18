@@ -387,10 +387,10 @@
 				53877B000E263AED0097C35F /* BXAImportController.m */,
 				53DAF3CE0E2BC40200085C3E /* BXAPGInterface.h */,
 				53DAF3CF0E2BC40200085C3E /* BXAPGInterface.m */,
-				227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */,
-				227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */,
 				227A5F4A0E4C5B9D0009CC08 /* BXAInspectorPanelController.h */,
 				227A5F4B0E4C5B9D0009CC08 /* BXAInspectorPanelController.m */,
+				227A5CE20E4BC2EB0009CC08 /* BXAGetInfoWindowController.h */,
+				227A5CE30E4BC2EB0009CC08 /* BXAGetInfoWindowController.m */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";

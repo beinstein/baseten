@@ -1020,11 +1020,13 @@ static void FkeyOptionalityCallback (NSString* srcName, NSString* dstName, void*
 				if ('v' == [table kind])
 					[entity setIsView: YES];
 				
+				if (haveBaseTenSchema)
+					[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
+				
 				if ([table isEnabled])
 				{
 					[entity setEnabled: YES];
 					[entity setHasCapability: kBXEntityCapabilityAutomaticUpdate to: YES];
-					[entity setHasCapability: kBXEntityCapabilityRelationships to: YES];
 				}
 				
 				id superEntities = [PGTSArrayCreateMutableWeakNonretaining () autorelease];

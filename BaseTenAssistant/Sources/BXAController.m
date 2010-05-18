@@ -1086,11 +1086,14 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 - (void) SQLScriptReaderSucceeded: (BXPGSQLScriptReader *) reader userInfo: (id) userInfo
 {
 	[self hideProgressPanel];
+
+	NSDictionary *entities = [[mContext databaseObjectModel] entitiesBySchemaAndName: mContext reload: YES error: NULL];
+	if ([self checkBaseTenSchema: NULL])
+		[mEntitiesBySchema setContent: entities];
+	else
+		entities = nil;
 	
-	[[mContext databaseInterface] reloadDatabaseMetadata];
-	BOOL status = [self checkBaseTenSchema: NULL];
-	
-	InvokeRecoveryInvocation (userInfo, status);
+	InvokeRecoveryInvocation (userInfo, (entities ? YES : NO));
 	[reader setDelegateUserInfo: nil];
 }
 
@@ -1494,7 +1497,6 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 @implementation BXAController (IBActions)
 - (IBAction) reload: (id) sender
 {
-	BOOL ok = YES;
 	NSError* error = nil;
 
 	[mProgressCancelButton setEnabled: NO];
@@ -1509,7 +1511,7 @@ InvokeRecoveryInvocation (NSInvocation* recoveryInvocation, BOOL status)
 	[self hideProgressPanel];
 	[mProgressCancelButton setEnabled: YES];
 	
-	if (ok)
+	if (entities)
 		[mEntitiesBySchema setContent: entities];
 	else
 	{
