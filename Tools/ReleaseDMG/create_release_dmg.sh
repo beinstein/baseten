@@ -4,6 +4,7 @@ SYMROOT="$PWD"/BaseTen-dmg-build
 OBJROOT="$SYMROOT"/Intermediates
 CP=/bin/cp
 RM=/bin/rm
+CHFLAGS=/usr/bin/chflags
 
 function exit_on_error
 {
@@ -105,6 +106,12 @@ ln -s /Library/Frameworks /Volumes/BaseTen/Frameworks
 
 # Copy Finder .DS_Store data
 "$CP" DMG_DS_Store /Volumes/BaseTen/.DS_Store
+
+# Copy the background image
+"$RM" -f /Volumes/BaseTen/DMG-design.png 
+"$CP" -pRP DMG-design.png /Volumes/BaseTen/DMG-design.png
+"$CHFLAGS" hidden /Volumes/BaseTen/DMG-design.png
+
 
 # Copy volume icon and set it
 #"$CP" DMG_VolumeIcon.icns /Volumes/BaseTen/.VolumeIcon.icns
