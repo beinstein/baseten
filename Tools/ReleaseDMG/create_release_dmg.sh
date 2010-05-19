@@ -104,13 +104,13 @@ fi
 "$RM" -f /Volumes/BaseTen/Frameworks
 ln -s /Library/Frameworks /Volumes/BaseTen/Frameworks
 
-# Copy Finder .DS_Store data
-"$CP" DMG_DS_Store /Volumes/BaseTen/.DS_Store
-
 # Copy the background image
 "$RM" -f /Volumes/BaseTen/DMG-design.png 
 "$CP" -pRP DMG-design.png /Volumes/BaseTen/DMG-design.png
 "$CHFLAGS" hidden /Volumes/BaseTen/DMG-design.png
+
+# Copy Finder .DS_Store data
+"$CP" DMG_DS_Store /Volumes/BaseTen/.DS_Store
 
 
 # Copy volume icon and set it
